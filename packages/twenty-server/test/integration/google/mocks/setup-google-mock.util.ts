@@ -36,18 +36,18 @@ export type GoogleMock = {
     events: calendar_v3.Schema$Event[],
     options?: { nextSyncToken?: string },
   ) => void;
-  serveRecurringEventInstances: (
-    recurringEventId: string,
-    instances: calendar_v3.Schema$Event[],
-  ) => void;
+  serveRecurringEventInstances: (recurringEventInstances: {
+    recurringEventId: string;
+    instances: calendar_v3.Schema$Event[];
+  }) => void;
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
   failCalendarEventList: (failure: GoogleApiFailure) => void;
-  failRecurringEventInstances: (
-    recurringEventId: string,
-    failure: GoogleApiFailure,
-  ) => void;
+  failRecurringEventInstances: (recurringEventInstancesFailure: {
+    recurringEventId: string;
+    failure: GoogleApiFailure;
+  }) => void;
   failSentMessageHeaderRead: () => void;
   declineTokenRefresh: () => void;
 };
@@ -176,11 +176,10 @@ export const setupGoogleMock = ({
       events,
       { nextSyncToken = 'mock-calendar-sync-token' } = {},
     ) => httpMock.use(...googleCalendarEventsHandlers(events, nextSyncToken)),
-    serveRecurringEventInstances: (recurringEventId, instances) =>
+    serveRecurringEventInstances: (recurringEventInstances) =>
       httpMock.use(
         ...googleCalendarRecurringEventInstancesHandlers(
-          recurringEventId,
-          instances,
+          recurringEventInstances,
         ),
       ),
     rateLimitMessageList: (retryAfterIso) =>
@@ -241,7 +240,7 @@ export const setupGoogleMock = ({
           googleApiErrorResponse(failure),
         ),
       ),
-    failRecurringEventInstances: (recurringEventId, failure) =>
+    failRecurringEventInstances: ({ recurringEventId, failure }) =>
       httpMock.use(
         http.get(
           `${GOOGLE_CALENDAR_EVENTS_URL}/${recurringEventId}/instances`,

@@ -6,12 +6,12 @@ import {
   ConnectedAccountProvider,
   FeatureFlagKey,
 } from 'twenty-shared/types';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { enqueueJobAndDrain } from 'test/integration/utils/enqueue-job-and-drain.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -28,6 +28,7 @@ import { RESUME_PENDING_WAKE_UP_JOB_NAME } from 'src/engine/core-modules/pending
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { CALENDAR_RECURRING_EVENT_HORIZON_MS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-recurring-event-horizon-ms.constant';
 import { CALENDAR_RECURRING_EVENT_WAKE_UP_OWNER_TYPE } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-recurring-event-wake-up-owner-type.constant';
+import { PAUSED_OR_FAILED_CALENDAR_CHANNEL_RECHECK_DELAY_MS } from 'src/modules/calendar/calendar-event-import-manager/constants/paused-or-failed-calendar-channel-recheck-delay-ms.constant';
 import { getGoogleCalendarEventStartTime } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/get-google-calendar-event-start-time.util';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 
@@ -71,11 +72,17 @@ const getSortedEventTitles = (events: calendar_v3.Schema$Event[]) =>
 
 const getExpectedWakeUpTime = (
   earliestInstanceBeyondHorizon: calendar_v3.Schema$Event,
-) =>
-  new Date(
-    getGoogleCalendarEventStartTime(earliestInstanceBeyondHorizon) -
-      CALENDAR_RECURRING_EVENT_HORIZON_MS,
+) => {
+  const earliestInstanceStartTime = getGoogleCalendarEventStartTime(
+    earliestInstanceBeyondHorizon,
   );
+
+  assertIsDefinedOrThrow(earliestInstanceStartTime);
+
+  return new Date(
+    earliestInstanceStartTime - CALENDAR_RECURRING_EVENT_HORIZON_MS,
+  );
+};
 
 describe('Google calendar recurring event horizon (integration)', () => {
   const google = setupGoogleMock({ handle: HANDLE });
@@ -146,13 +153,32 @@ describe('Google calendar recurring event horizon (integration)', () => {
     await runCalendarChannelEventsImport(channel.calendarChannelId);
   };
 
-  const runRecurringEventWakeUp = (wakeUpId: string) =>
-    enqueueJobAndDrain({
-      queue: MessageQueue.delayedJobsQueue,
-      jobName: RESUME_PENDING_WAKE_UP_JOB_NAME,
-      data: { workspaceId, wakeUpId },
-      scope: { workspaceId, isWorkspaceJob: true },
+  const runRecurringEventWakeUp = async (wakeUpId: string) => {
+    await global.app
+      .get<MessageQueueService>(getQueueToken(MessageQueue.delayedJobsQueue), {
+        strict: false,
+      })
+      .add(
+        RESUME_PENDING_WAKE_UP_JOB_NAME,
+        { workspaceId, wakeUpId },
+        { workspaceId, isWorkspaceJob: true },
+      );
+
+    await expectEventually(async () => {
+      expect(
+        (await findRecurringEventWakeUps()).map(({ id }) => id),
+      ).not.toContain(wakeUpId);
     });
+
+    await removeRecurringEventWakeUpJobs();
+    await waitForAllJobsToFinish();
+  };
+
+  const setCalendarChannelSyncEnabled = (isSyncEnabled: boolean) =>
+    getCoreRepository<CalendarChannelEntity>(CalendarChannelEntity).update(
+      { id: channel.calendarChannelId },
+      { isSyncEnabled },
+    );
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({
@@ -166,6 +192,7 @@ describe('Google calendar recurring event horizon (integration)', () => {
   }, 60000);
 
   afterEach(async () => {
+    await setCalendarChannelSyncEnabled(true);
     await removeRecurringEventWakeUpJobs();
     await global.testDataSource.query(
       `DELETE FROM core."pendingWakeUp" WHERE "ownerType" = $1 AND "ownerId" = $2`,
@@ -209,10 +236,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
     expect(await findRecurringEventWakeUps()).toEqual([]);
 
     await setRecurringEventHorizonEnabled(true);
-    google.serveRecurringEventInstances(recurringEventId, [
-      instanceWithinHorizon,
-      instanceBeyondHorizon,
-    ]);
+    google.serveRecurringEventInstances({
+      recurringEventId,
+      instances: [instanceWithinHorizon, instanceBeyondHorizon],
+    });
 
     await runFullCalendarSync(events);
 
@@ -249,8 +276,14 @@ describe('Google calendar recurring event horizon (integration)', () => {
       isAllDay: true,
     });
 
-    google.serveRecurringEventInstances(weeklyEventId, weeklyEventInstances);
-    google.serveRecurringEventInstances(allDayEventId, [allDayEventInstance]);
+    google.serveRecurringEventInstances({
+      recurringEventId: weeklyEventId,
+      instances: weeklyEventInstances,
+    });
+    google.serveRecurringEventInstances({
+      recurringEventId: allDayEventId,
+      instances: [allDayEventInstance],
+    });
 
     await runFullCalendarSync([...weeklyEventInstances, allDayEventInstance]);
 
@@ -298,7 +331,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
       instanceInHundredDays,
     ];
 
-    google.serveRecurringEventInstances(recurringEventId, allInstances);
+    google.serveRecurringEventInstances({
+      recurringEventId,
+      instances: allInstances,
+    });
 
     await runFullCalendarSync([instanceInTenDays, instanceInHundredDays]);
 
@@ -330,17 +366,17 @@ describe('Google calendar recurring event horizon (integration)', () => {
     {
       title: 'once the recurring event has no instance left beyond 90 days',
       makeWakeUpObsolete: ({ recurringEventId, instanceWithinHorizon }) =>
-        google.serveRecurringEventInstances(recurringEventId, [
-          instanceWithinHorizon,
-        ]),
+        google.serveRecurringEventInstances({
+          recurringEventId,
+          instances: [instanceWithinHorizon],
+        }),
     },
     {
       title: 'once the recurring event is deleted',
       makeWakeUpObsolete: ({ recurringEventId }) =>
-        google.failRecurringEventInstances(recurringEventId, {
-          status: 404,
-          reason: 'notFound',
-          message: 'Not Found',
+        google.failRecurringEventInstances({
+          recurringEventId,
+          failure: { status: 404, reason: 'notFound', message: 'Not Found' },
         }),
     },
     {
@@ -362,10 +398,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
         daysFromNow: 100,
       });
 
-      google.serveRecurringEventInstances(recurringEventId, [
-        instanceWithinHorizon,
-        instanceBeyondHorizon,
-      ]);
+      google.serveRecurringEventInstances({
+        recurringEventId,
+        instances: [instanceWithinHorizon, instanceBeyondHorizon],
+      });
 
       await runFullCalendarSync([instanceWithinHorizon, instanceBeyondHorizon]);
 
@@ -378,4 +414,41 @@ describe('Google calendar recurring event horizon (integration)', () => {
     },
     120000,
   );
+
+  it('keeps the wake-up and checks again a day later while calendar sync is paused', async () => {
+    await setRecurringEventHorizonEnabled(true);
+
+    const recurringEventId = `series-${randomUUID()}`;
+    const instanceWithinHorizon = buildRecurringEventInstance({
+      recurringEventId,
+      daysFromNow: 10,
+    });
+    const instanceBeyondHorizon = buildRecurringEventInstance({
+      recurringEventId,
+      daysFromNow: 100,
+    });
+
+    google.serveRecurringEventInstances({
+      recurringEventId,
+      instances: [instanceWithinHorizon, instanceBeyondHorizon],
+    });
+
+    await runFullCalendarSync([instanceWithinHorizon, instanceBeyondHorizon]);
+
+    const [recurringEventWakeUp] = await findRecurringEventWakeUps();
+
+    await setCalendarChannelSyncEnabled(false);
+
+    const pausedWakeUpRunStartedAt = Date.now();
+
+    await runRecurringEventWakeUp(recurringEventWakeUp.id);
+
+    const [postponedWakeUp] = await findRecurringEventWakeUps();
+
+    expect(postponedWakeUp.ownerKey).toBe(recurringEventId);
+    expect(postponedWakeUp.resumeAt.getTime()).toBeGreaterThanOrEqual(
+      pausedWakeUpRunStartedAt +
+        PAUSED_OR_FAILED_CALENDAR_CHANNEL_RECHECK_DELAY_MS,
+    );
+  }, 120000);
 });

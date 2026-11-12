@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { CalendarChannelSyncStage, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Any, Not, Repository } from 'typeorm';
+import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -18,6 +18,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { CALENDAR_RECURRING_EVENT_HORIZON_MS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-recurring-event-horizon-ms.constant';
 import { CALENDAR_RECURRING_EVENT_WAKE_UP_OWNER_TYPE } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-recurring-event-wake-up-owner-type.constant';
+import { PAUSED_OR_FAILED_CALENDAR_CHANNEL_RECHECK_DELAY_MS } from 'src/modules/calendar/calendar-event-import-manager/constants/paused-or-failed-calendar-channel-recheck-delay-ms.constant';
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 
@@ -78,16 +79,10 @@ export class CalendarRecurringEventWakeUpService
       ownerKey: recurringEventExternalId,
     } = wakeUp;
 
-    const syncableCalendarChannel =
-      await this.calendarChannelRepository.findOne({
-        where: {
-          id: calendarChannelId,
-          workspaceId,
-          isSyncEnabled: true,
-          syncStage: Not(CalendarChannelSyncStage.FAILED),
-        },
-        relations: ['connectedAccount'],
-      });
+    const calendarChannel = await this.calendarChannelRepository.findOne({
+      where: { id: calendarChannelId, workspaceId },
+      relations: ['connectedAccount'],
+    });
 
     const isRecurringEventHorizonEnabled =
       await this.featureFlagService.isFeatureEnabled(
@@ -95,13 +90,26 @@ export class CalendarRecurringEventWakeUpService
         workspaceId,
       );
 
-    if (
-      !isDefined(syncableCalendarChannel) ||
-      !isRecurringEventHorizonEnabled
-    ) {
+    if (!isDefined(calendarChannel) || !isRecurringEventHorizonEnabled) {
       await this.pendingWakeUpService.claim({
         workspaceId,
         wakeUpId: wakeUp.id,
+      });
+
+      return;
+    }
+
+    if (
+      !calendarChannel.isSyncEnabled ||
+      calendarChannel.syncStage === CalendarChannelSyncStage.FAILED
+    ) {
+      await this.scheduleWakeUpForRecurringEvent({
+        workspaceId,
+        calendarChannelId,
+        recurringEventExternalId,
+        wakeUpAt: new Date(
+          Date.now() + PAUSED_OR_FAILED_CALENDAR_CHANNEL_RECHECK_DELAY_MS,
+        ),
       });
 
       return;
@@ -117,7 +125,7 @@ export class CalendarRecurringEventWakeUpService
     } =
       await this.googleCalendarGetEventsService.getUpcomingRecurringEventInstances(
         {
-          connectedAccount: syncableCalendarChannel.connectedAccount,
+          connectedAccount: calendarChannel.connectedAccount,
           recurringEventExternalId,
           recurringEventHorizon,
         },

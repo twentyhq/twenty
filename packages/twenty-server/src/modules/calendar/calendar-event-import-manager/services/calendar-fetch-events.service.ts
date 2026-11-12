@@ -74,11 +74,11 @@ export class CalendarFetchEventsService {
             calendarEventIdsToDelete,
             recurringEventExternalIdsBeyondHorizon,
             nextSyncCursor,
-          } = await this.getCalendarEventsService.getCalendarEvents(
+          } = await this.getCalendarEventsService.getCalendarEvents({
             connectedAccount,
-            calendarChannel.syncCursor || undefined,
+            syncCursor: calendarChannel.syncCursor || undefined,
             recurringEventHorizon,
-          );
+          });
 
           if (calendarEventIdsToDelete.length > 0) {
             const calendarChannelEventAssociationRepository =
@@ -128,12 +128,9 @@ export class CalendarFetchEventsService {
           }
 
           const hasCalendarEventsToImport =
-            calendarEventIds.length > 0 ||
-            (
-              await this.cacheStorage.setMembers(
-                calendarEventIdsToImportCacheKey,
-              )
-            ).length > 0;
+            (await this.cacheStorage.getSetLength(
+              calendarEventIdsToImportCacheKey,
+            )) > 0;
 
           if (hasCalendarEventsToImport) {
             await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(

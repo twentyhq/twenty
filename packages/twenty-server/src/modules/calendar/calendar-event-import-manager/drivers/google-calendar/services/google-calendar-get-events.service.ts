@@ -21,11 +21,15 @@ export class GoogleCalendarGetEventsService {
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
-  public async getCalendarEvents(
-    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
-    syncCursor?: string,
-    recurringEventHorizon?: Date,
-  ): Promise<GetCalendarEventsResponse> {
+  public async getCalendarEvents({
+    connectedAccount,
+    syncCursor,
+    recurringEventHorizon,
+  }: {
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>;
+    syncCursor?: string;
+    recurringEventHorizon?: Date;
+  }): Promise<GetCalendarEventsResponse> {
     const googleCalendarClient =
       await this.getGoogleCalendarClient(connectedAccount);
 
@@ -73,13 +77,15 @@ export class GoogleCalendarGetEventsService {
           continue;
         }
 
+        const itemStartTime = getGoogleCalendarEventStartTime(item);
+
         if (item.status === 'cancelled') {
           calendarEventIdsToDelete.push(item.id);
         } else if (
           isDefined(recurringEventHorizon) &&
           isNonEmptyString(item.recurringEventId) &&
-          getGoogleCalendarEventStartTime(item) >=
-            recurringEventHorizon.getTime()
+          isDefined(itemStartTime) &&
+          itemStartTime >= recurringEventHorizon.getTime()
         ) {
           calendarEventIdsToDelete.push(item.id);
           recurringEventExternalIdsBeyondHorizon.add(item.recurringEventId);
@@ -131,30 +137,17 @@ export class GoogleCalendarGetEventsService {
             pageToken: nextPageToken,
           })
           .catch((error: GaxiosError) => {
-            const httpStatus = error.response?.status;
-
-            if (httpStatus === 404 || httpStatus === 410) {
-              return { data: { items: [], nextPageToken: undefined } };
+            if (error.response?.status !== 404) {
+              this.handleError(error);
             }
 
-            if (!isDefined(httpStatus)) {
-              throw parseGaxiosError(error);
-            }
-
-            throw parseGoogleCalendarError(
-              {
-                code: httpStatus,
-                reason: error.response?.data?.error?.errors?.[0].reason || '',
-                message: error.response?.data?.error?.errors?.[0].message || '',
-              },
-              { cause: error },
-            );
+            return { data: { items: [], nextPageToken: undefined } };
           });
 
       for (const instance of recurringEventInstancesPage.items ?? []) {
         const instanceStartTime = getGoogleCalendarEventStartTime(instance);
 
-        if (!isString(instance.id) || Number.isNaN(instanceStartTime)) {
+        if (!isString(instance.id) || !isDefined(instanceStartTime)) {
           continue;
         }
 
