@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, Suspense, lazy } from 'react';
+import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';
@@ -17,36 +18,25 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-type AiChatToolCallApprovalToolFrontComponentProps = {
+type AiChatToolFrontComponentProps = {
   frontComponentId: string;
-  toolCallId: string;
-  toolName: string;
-  toolArguments: Record<string, unknown>;
-  isAnswering: boolean;
-  onToolArgumentsChange: (toolArguments: Record<string, unknown>) => void;
+  toolCall: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   unavailableFallback: ReactNode;
 };
 
-export const AiChatToolCallApprovalToolFrontComponent = ({
+export const AiChatToolFrontComponent = ({
   frontComponentId,
-  toolCallId,
-  toolName,
-  toolArguments,
-  isAnswering,
-  onToolArgumentsChange,
+  toolCall,
+  onToolCallArgumentsChange,
   unavailableFallback,
-}: AiChatToolCallApprovalToolFrontComponentProps) => (
+}: AiChatToolFrontComponentProps) => (
   <StyledContainer>
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
       <FrontComponentRenderer
         frontComponentId={frontComponentId}
-        toolCall={{
-          toolCallId,
-          toolName,
-          status: isAnswering ? 'approval-responded' : 'approval-requested',
-          input: toolArguments,
-        }}
-        onToolCallArgumentsChange={onToolArgumentsChange}
+        toolCall={toolCall}
+        onToolCallArgumentsChange={onToolCallArgumentsChange}
         loadingFallback={<FrontComponentSkeletonLoader />}
         unavailableFallback={unavailableFallback}
       />

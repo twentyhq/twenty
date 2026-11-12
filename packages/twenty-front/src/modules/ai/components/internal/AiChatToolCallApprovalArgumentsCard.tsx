@@ -6,11 +6,11 @@ import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
+import { AiChatToolFrontComponent } from '@/ai/components/AiChatToolFrontComponent';
 import { AiChatToolCallApprovalArgumentsEditor } from '@/ai/components/internal/AiChatToolCallApprovalArgumentsEditor';
 import { AiChatToolCallApprovalCardLayout } from '@/ai/components/internal/AiChatToolCallApprovalCardLayout';
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
-import { AiChatToolCallApprovalToolFrontComponent } from '@/ai/components/internal/AiChatToolCallApprovalToolFrontComponent';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 
@@ -37,6 +37,14 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const toolFrontComponentId = useFrontComponentIdByToolName().get(
     proposal.toolName,
+  );
+
+  const argumentsEditor = (
+    <AiChatToolCallApprovalArgumentsEditor
+      defaultArguments={proposal.arguments}
+      readonly={isAnswering}
+      onChange={setToolArguments}
+    />
   );
 
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
@@ -105,28 +113,20 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           onChange={handleRecordFieldChange}
         />
       )}
-      {template === 'generic' && !isDefined(toolFrontComponentId) && (
-        <AiChatToolCallApprovalArgumentsEditor
-          defaultArguments={proposal.arguments}
-          readonly={isAnswering}
-          onChange={setToolArguments}
-        />
-      )}
+      {template === 'generic' &&
+        !isDefined(toolFrontComponentId) &&
+        argumentsEditor}
       {template === 'generic' && isDefined(toolFrontComponentId) && (
-        <AiChatToolCallApprovalToolFrontComponent
+        <AiChatToolFrontComponent
           frontComponentId={toolFrontComponentId}
-          toolCallId={toolCallId}
-          toolName={proposal.toolName}
-          toolArguments={toolArguments ?? proposal.arguments}
-          isAnswering={isAnswering}
-          onToolArgumentsChange={setToolArguments}
-          unavailableFallback={
-            <AiChatToolCallApprovalArgumentsEditor
-              defaultArguments={proposal.arguments}
-              readonly={isAnswering}
-              onChange={setToolArguments}
-            />
-          }
+          toolCall={{
+            toolCallId,
+            toolName: proposal.toolName,
+            status: isAnswering ? 'approval-responded' : 'approval-requested',
+            input: toolArguments ?? proposal.arguments,
+          }}
+          onToolCallArgumentsChange={setToolArguments}
+          unavailableFallback={argumentsEditor}
         />
       )}
     </AiChatToolCallApprovalCardLayout>

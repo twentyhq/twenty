@@ -64,28 +64,25 @@ jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
 }));
 
 type ToolFrontComponentStubProps = {
-  toolArguments: Record<string, unknown>;
-  onToolArgumentsChange: (toolArguments: Record<string, unknown>) => void;
+  toolCall: { input?: Record<string, unknown> };
+  onToolCallArgumentsChange: (toolArguments: Record<string, unknown>) => void;
 };
 
 // the app's component runs in a sandboxed worker, so a stub plays its part
-jest.mock(
-  '@/ai/components/internal/AiChatToolCallApprovalToolFrontComponent',
-  () => ({
-    AiChatToolCallApprovalToolFrontComponent: ({
-      toolArguments,
-      onToolArgumentsChange,
-    }: ToolFrontComponentStubProps) => (
-      <button
-        onClick={() =>
-          onToolArgumentsChange({ ...toolArguments, decision: 'DECLINE' })
-        }
-      >
-        Decline instead
-      </button>
-    ),
-  }),
-);
+jest.mock('@/ai/components/AiChatToolFrontComponent', () => ({
+  AiChatToolFrontComponent: ({
+    toolCall,
+    onToolCallArgumentsChange,
+  }: ToolFrontComponentStubProps) => (
+    <button
+      onClick={() =>
+        onToolCallArgumentsChange({ ...toolCall.input, decision: 'DECLINE' })
+      }
+    >
+      Decline instead
+    </button>
+  ),
+}));
 
 const mockUsePreview = jest.fn();
 jest.mock('@/ai/hooks/useAiChatFrontComponentPreview', () => ({
