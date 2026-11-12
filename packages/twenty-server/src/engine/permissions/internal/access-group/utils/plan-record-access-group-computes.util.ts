@@ -1,17 +1,14 @@
 /* @license Enterprise */
 
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
-import { buildRecordAccessGroupComputeId } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-id.util';
 import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 
-type PlannedRecordAccessGroupCompute = Required<
-  Pick<
-    RecomputeRecordAccessGroupIdsJobData,
-    'objectMetadataId' | 'fromRelatedObjectMetadataIds'
-  >
->;
+type ComputeToPlan = {
+  objectMetadataId: string;
+  fromRelatedObjectMetadataIds: string[];
+};
 
+// Returns the objects to compute in order: an object comes after the objects it reads through a related record path
 export const planRecordAccessGroupComputes = ({
   objectMetadataIds,
   resolvedRelatedRecordPaths,
@@ -23,24 +20,18 @@ export const planRecordAccessGroupComputes = ({
     'isInherent' | 'sourceFlatObjectMetadata' | 'targetObjectMetadataId'
   >[];
   isObjectUsingRecordAccessGroups: (objectMetadataId: string) => boolean;
-}): PlannedRecordAccessGroupCompute[] => {
-  const plannedComputeById = new Map<string, PlannedRecordAccessGroupCompute>();
-  const computesToVisit: PlannedRecordAccessGroupCompute[] =
-    objectMetadataIds.map((objectMetadataId) => ({
+}): string[] => {
+  const computesToPlan: ComputeToPlan[] = objectMetadataIds.map(
+    (objectMetadataId) => ({
       objectMetadataId,
       fromRelatedObjectMetadataIds: [],
-    }));
+    }),
+  );
 
-  for (const compute of computesToVisit) {
-    const computeId = buildRecordAccessGroupComputeId(compute);
-
-    if (plannedComputeById.has(computeId)) {
-      continue;
-    }
-
-    plannedComputeById.set(computeId, compute);
-
-    const { objectMetadataId, fromRelatedObjectMetadataIds } = compute;
+  for (const [
+    index,
+    { objectMetadataId, fromRelatedObjectMetadataIds },
+  ] of computesToPlan.entries()) {
     const followingObjectMetadataIds = new Set(
       resolvedRelatedRecordPaths
         .filter(
@@ -59,15 +50,30 @@ export const planRecordAccessGroupComputes = ({
     );
 
     for (const followingObjectMetadataId of followingObjectMetadataIds) {
-      computesToVisit.push({
-        objectMetadataId: followingObjectMetadataId,
-        fromRelatedObjectMetadataIds: [
-          ...fromRelatedObjectMetadataIds,
-          objectMetadataId,
-        ],
-      });
+      const isAlreadyPlannedAfter = computesToPlan
+        .slice(index + 1)
+        .some(
+          (computeToPlan) =>
+            computeToPlan.objectMetadataId === followingObjectMetadataId &&
+            computeToPlan.fromRelatedObjectMetadataIds.length > 0,
+        );
+
+      if (!isAlreadyPlannedAfter) {
+        computesToPlan.push({
+          objectMetadataId: followingObjectMetadataId,
+          fromRelatedObjectMetadataIds: [
+            ...fromRelatedObjectMetadataIds,
+            objectMetadataId,
+          ],
+        });
+      }
     }
   }
 
-  return [...plannedComputeById.values()];
+  return computesToPlan
+    .map(({ objectMetadataId }) => objectMetadataId)
+    .filter(
+      (objectMetadataId, index, plannedObjectMetadataIds) =>
+        objectMetadataId !== plannedObjectMetadataIds[index - 1],
+    );
 };

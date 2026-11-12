@@ -255,12 +255,7 @@ describe('access group propagation progress (integration)', () => {
     await global.app
       .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
       .mdel(
-        [
-          'pending-compute-ids',
-          'planned-compute-ids',
-          'total-record-count',
-          'computed-record-count',
-        ].map(
+        ['plan', 'computed-record-count'].map(
           (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
         ),
       );

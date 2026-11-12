@@ -2,14 +2,12 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
-import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
+import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
@@ -27,66 +25,37 @@ export class RecordAccessGroupPropagationService {
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
-    private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
-    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
+    private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
   ) {}
 
-  async recomputeRecordAccessGroupIdsOfAllObjectRecordsAndPropagate({
-    workspaceId,
-    objectMetadataId,
-    fromRelatedObjectMetadataIds = [],
-  }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.accessGroupPropagationProgressService.markComputePending({
-      workspaceId,
-      objectMetadataId,
-      fromRelatedObjectMetadataIds,
-    });
+  async computeNextPlannedObject(workspaceId: string): Promise<void> {
+    const objectMetadataId =
+      await this.accessGroupPropagationPlanService.findNextObjectMetadataIdToCompute(
+        workspaceId,
+      );
+
+    if (!isDefined(objectMetadataId)) {
+      return;
+    }
+
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId,
         objectMetadataId,
         onRecordsComputed: (recordCount) =>
-          this.accessGroupPropagationProgressService.trackComputedRecords({
+          this.accessGroupPropagationPlanService.trackComputedRecords({
             workspaceId,
             recordCount,
           }),
       },
     );
-
-    const metadataMaps =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const followingObjectMetadataIds = new Set(
-      metadataMaps.resolvedRelatedRecordPaths
-        .filter(
-          (resolvedPath) =>
-            resolvedPath.sourceFlatObjectMetadata.id === objectMetadataId &&
-            isRelatedRecordPathFollowed({
-              resolvedPath,
-              objectMetadataId,
-              fromRelatedObjectMetadataIds,
-            }),
-        )
-        .map(({ targetObjectMetadataId }) => targetObjectMetadataId),
-    );
-
-    await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
-      workspaceId,
-      objectMetadataIds: followingObjectMetadataIds,
-      fromRelatedObjectMetadataIds: [
-        ...fromRelatedObjectMetadataIds,
-        objectMetadataId,
-      ],
-      metadataMaps,
-    });
-
-    await this.accessGroupPropagationProgressService.finishCompute({
+    await this.accessGroupPropagationPlanService.finishCompute({
       workspaceId,
       objectMetadataId,
-      fromRelatedObjectMetadataIds,
     });
   }
 
-  async scheduleRecomputeOfRelatedRecordPathTargets({
+  async planRecomputeOfRelatedRecordPathTargets({
     workspaceId,
   }: {
     workspaceId: string;
@@ -95,24 +64,17 @@ export class RecordAccessGroupPropagationService {
       await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
         workspaceId,
       );
-
     const objectMetadataIds = new Set(
       metadataMaps.resolvedRelatedRecordPaths.map(
         ({ targetObjectMetadataId }) => targetObjectMetadataId,
       ),
     );
 
-    await this.accessGroupPropagationProgressService.planComputes({
+    await this.accessGroupPropagationPlanService.planComputes({
       workspaceId,
       objectMetadataIds: [...objectMetadataIds].filter((objectMetadataId) =>
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
       ),
-    });
-    await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
-      workspaceId,
-      objectMetadataIds,
-      fromRelatedObjectMetadataIds: [],
-      metadataMaps,
     });
   }
 
@@ -326,27 +288,5 @@ export class RecordAccessGroupPropagationService {
           objectMetadataId: resolvedPath.targetObjectMetadataId,
         }).includes(resolvedPath),
     );
-  }
-
-  private async scheduleRecomputeOfObjectsUsingRecordAccessGroups({
-    workspaceId,
-    objectMetadataIds,
-    fromRelatedObjectMetadataIds,
-    metadataMaps,
-  }: {
-    workspaceId: string;
-    objectMetadataIds: Set<string>;
-    fromRelatedObjectMetadataIds: string[];
-    metadataMaps: RecordAccessGroupComputationMetadataMaps;
-  }): Promise<void> {
-    for (const objectMetadataId of objectMetadataIds) {
-      if (
-        isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId })
-      ) {
-        await this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(
-          { workspaceId, objectMetadataId, fromRelatedObjectMetadataIds },
-        );
-      }
-    }
   }
 }

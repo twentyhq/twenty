@@ -7,14 +7,12 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
-import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
+import { RUN_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/run-access-group-propagation-plan-job-name.constant';
 import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-related-record-path-targets-job-name.constant';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
+import { type RunAccessGroupPropagationPlanJobData } from 'src/engine/permissions/internal/access-group/types/run-access-group-propagation-plan-job-data.type';
 import { type RecomputeRelatedRecordPathTargetsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-related-record-path-targets-job-data.type';
 import { type SyncAccessGroupsJobData } from 'src/engine/permissions/internal/access-group/types/sync-access-groups-job-data.type';
-import { buildRecordAccessGroupComputeId } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-compute-id.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -23,7 +21,6 @@ export class AccessGroupSyncSchedulerService {
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
   ) {}
 
   async isEnabled(workspaceId: string): Promise<boolean> {
@@ -51,25 +48,18 @@ export class AccessGroupSyncSchedulerService {
     });
   }
 
-  async scheduleRecordAccessGroupIdsRecompute({
-    workspaceId,
-    objectMetadataId,
-    fromRelatedObjectMetadataIds = [],
-  }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.accessGroupPropagationProgressService.markComputePending({
-      workspaceId,
-      objectMetadataId,
-      fromRelatedObjectMetadataIds,
-    });
-    await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
-      RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-      { workspaceId, objectMetadataId, fromRelatedObjectMetadataIds },
+  async scheduleAccessGroupPropagationPlanRun(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageQueueService.add<RunAccessGroupPropagationPlanJobData>(
+      RUN_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME,
+      { workspaceId },
       {
         isWorkspaceJob: true,
         workspaceId,
         retryLimit: 3,
         deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${buildRecordAccessGroupComputeId({ objectMetadataId, fromRelatedObjectMetadataIds })}`,
+          id: `access-group-propagation-plan:${workspaceId}`,
           keepLastIfActive: true,
         },
       },

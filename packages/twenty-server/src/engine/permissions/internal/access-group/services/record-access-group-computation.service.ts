@@ -17,7 +17,6 @@ import {
 import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-of-records-job-name.constant';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
@@ -49,10 +48,9 @@ export class RecordAccessGroupComputationService {
     workspaceId,
     objectMetadataId,
     onRecordsComputed,
-  }: Pick<
-    RecomputeRecordAccessGroupIdsJobData,
-    'workspaceId' | 'objectMetadataId'
-  > & {
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
     onRecordsComputed?: (recordCount: number) => Promise<void>;
   }): Promise<void> {
     const metadataMaps =

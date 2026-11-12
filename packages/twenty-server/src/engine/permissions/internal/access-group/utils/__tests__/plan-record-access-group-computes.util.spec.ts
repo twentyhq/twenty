@@ -37,23 +37,17 @@ const plan = ({
 describe('planRecordAccessGroupComputes', () => {
   it('should plan only the changed objects when no path leads from them', () => {
     expect(plan({ objectMetadataIds: ['company'], paths: [] })).toEqual([
-      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
+      'company',
     ]);
   });
 
-  it('should plan the objects a changed object leads to', () => {
+  it('should plan the objects a changed object leads to after it', () => {
     expect(
       plan({
         objectMetadataIds: ['company'],
         paths: [buildPath({ source: 'company', target: 'person' })],
       }),
-    ).toEqual([
-      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
-      {
-        objectMetadataId: 'person',
-        fromRelatedObjectMetadataIds: ['company'],
-      },
-    ]);
+    ).toEqual(['company', 'person']);
   });
 
   it('should only keep following inherent paths past the first object', () => {
@@ -65,7 +59,7 @@ describe('planRecordAccessGroupComputes', () => {
           buildPath({ source: 'person', target: 'note' }),
           buildPath({ source: 'person', target: 'task', isInherent: true }),
         ],
-      }).map(({ objectMetadataId }) => objectMetadataId),
+      }),
     ).toEqual(['company', 'person', 'task']);
   });
 
@@ -75,11 +69,11 @@ describe('planRecordAccessGroupComputes', () => {
         objectMetadataIds: ['company'],
         paths: [buildPath({ source: 'company', target: 'person' })],
         objectsWithoutAccessGroups: ['person'],
-      }).map(({ objectMetadataId }) => objectMetadataId),
+      }),
     ).toEqual(['company']);
   });
 
-  it('should plan an object once per kind of compute and stop on cycles', () => {
+  it('should plan an object again after an object it reads, and stop on cycles', () => {
     expect(
       plan({
         objectMetadataIds: ['company', 'person'],
@@ -88,17 +82,19 @@ describe('planRecordAccessGroupComputes', () => {
           buildPath({ source: 'person', target: 'company', isInherent: true }),
         ],
       }),
-    ).toEqual([
-      { objectMetadataId: 'company', fromRelatedObjectMetadataIds: [] },
-      { objectMetadataId: 'person', fromRelatedObjectMetadataIds: [] },
-      {
-        objectMetadataId: 'person',
-        fromRelatedObjectMetadataIds: ['company'],
-      },
-      {
-        objectMetadataId: 'company',
-        fromRelatedObjectMetadataIds: ['person'],
-      },
-    ]);
+    ).toEqual(['company', 'person', 'company']);
+  });
+
+  it('should plan an object after every object leading to it', () => {
+    expect(
+      plan({
+        objectMetadataIds: ['company'],
+        paths: [
+          buildPath({ source: 'company', target: 'task' }),
+          buildPath({ source: 'company', target: 'person' }),
+          buildPath({ source: 'person', target: 'task', isInherent: true }),
+        ],
+      }),
+    ).toEqual(['company', 'task', 'person', 'task']);
   });
 });
