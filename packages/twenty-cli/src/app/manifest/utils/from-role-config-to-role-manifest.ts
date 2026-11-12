@@ -39,6 +39,7 @@ export const fromRoleConfigToRoleManifest = ({
           }),
       }),
     ),
+    rowLevelPermissionRules: roleConfig.rowLevelPermissionRules ?? [],
     rowLevelPermissionPredicateGroups:
       roleConfig.rowLevelPermissionPredicateGroups ?? [],
     rowLevelPermissionPredicates: roleConfig.rowLevelPermissionPredicates ?? [],

@@ -15,6 +15,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
+import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
+import { resolveRoleManifestRowLevelPermissionRules } from 'src/engine/core-modules/application/application-manifest/utils/resolve-role-manifest-row-level-permission-rules.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
@@ -57,10 +59,7 @@ import { resolveDatabaseEventTriggerManifestSettingsOrThrow } from 'src/engine/c
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
-import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 const CONNECTION_FLOW_HOOKS = new Set([
@@ -367,29 +366,17 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     for (const roleManifest of manifest.roles) {
+      const universalFlatRole = fromRoleManifestToUniversalFlatRole({
+        roleManifest,
+        applicationUniversalIdentifier,
+        now,
+      });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromRoleManifestToUniversalFlatRole({
-          roleManifest,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity: universalFlatRole,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatRoleMaps,
       });
-      for (const objectPermissionManifest of roleManifest.objectPermissions ??
-        []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromObjectPermissionManifestToUniversalFlatObjectPermission({
-              objectPermissionManifest,
-              roleUniversalIdentifier: roleManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatObjectPermissionMaps,
-        });
-      }
 
       for (const fieldPermissionManifest of roleManifest.fieldPermissions ??
         []) {
@@ -447,13 +434,44 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       );
       const {
         rules,
-        ruleUniversalIdentifierByPredicateGroupUniversalIdentifier,
-        ruleUniversalIdentifierByPredicateUniversalIdentifier,
-      } = buildRowLevelPermissionRules({
+        predicateGroups: linkedPredicateGroups,
+        predicates: linkedPredicates,
+        objectPermissions,
+      } = resolveRoleManifestRowLevelPermissionRules({
+        universalFlatRole,
+        universalFlatObjectPermissions: (
+          roleManifest.objectPermissions ?? []
+        ).map((objectPermissionManifest) =>
+          fromObjectPermissionManifestToUniversalFlatObjectPermission({
+            objectPermissionManifest,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        ),
+        declaredRules: (roleManifest.rowLevelPermissionRules ?? []).map(
+          (rowLevelPermissionRuleManifest) =>
+            fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule(
+              {
+                rowLevelPermissionRuleManifest,
+                roleUniversalIdentifier: roleManifest.universalIdentifier,
+                applicationUniversalIdentifier,
+                now,
+              },
+            ),
+        ),
         predicateGroups: universalFlatPredicateGroups,
         predicates: universalFlatPredicates,
         now,
       });
+
+      for (const objectPermission of objectPermissions) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: objectPermission,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatObjectPermissionMaps,
+        });
+      }
 
       for (const rule of rules) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -463,16 +481,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      for (const universalFlatPredicateGroup of universalFlatPredicateGroups) {
-        const linkedPredicateGroup: UniversalFlatRowLevelPermissionPredicateGroup =
-          {
-            ...universalFlatPredicateGroup,
-            rowLevelPermissionRuleUniversalIdentifier:
-              ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
-                universalFlatPredicateGroup.universalIdentifier,
-              ) ?? null,
-          };
-
+      for (const linkedPredicateGroup of linkedPredicateGroups) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: linkedPredicateGroup,
           universalFlatEntityMapsToMutate:
@@ -480,15 +489,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      for (const universalFlatPredicate of universalFlatPredicates) {
-        const linkedPredicate: UniversalFlatRowLevelPermissionPredicate = {
-          ...universalFlatPredicate,
-          rowLevelPermissionRuleUniversalIdentifier:
-            ruleUniversalIdentifierByPredicateUniversalIdentifier.get(
-              universalFlatPredicate.universalIdentifier,
-            ) ?? null,
-        };
-
+      for (const linkedPredicate of linkedPredicates) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: linkedPredicate,
           universalFlatEntityMapsToMutate:

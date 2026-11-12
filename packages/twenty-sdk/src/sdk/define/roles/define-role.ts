@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { validateRowLevelPermissionRules } from '@/sdk/define/roles/validate-row-level-permission-rules';
 
 const keepEachPermissionFlagOnce = <
   TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
@@ -128,8 +129,12 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  const rowLevelPermissionRulesValidation =
+    validateRowLevelPermissionRules(config);
+
   return createValidationResult({
     config: keepEachPermissionFlagOnce(config),
-    errors,
+    errors: [...errors, ...rowLevelPermissionRulesValidation.errors],
+    warnings: rowLevelPermissionRulesValidation.warnings,
   });
 };

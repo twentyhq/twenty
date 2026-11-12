@@ -199,6 +199,7 @@ export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionPredicateGroupManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
+export type { RowLevelPermissionRuleManifest } from 'twenty-shared/application';
 export {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,

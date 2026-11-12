@@ -256,6 +256,7 @@ export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
+  RowLevelPermissionRuleManifest,
   RowLevelPermissionPredicateGroupManifest,
   RowLevelPermissionPredicateManifest,
   RoleManifest,
