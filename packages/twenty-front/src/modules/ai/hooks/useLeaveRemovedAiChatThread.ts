@@ -47,7 +47,7 @@ export const useLeaveRemovedAiChatThread = () => {
         store.get(
           agentChatThreadListThreadsFamilySelector.selectorFamily({
             type: 'presetFilter',
-            filterStatus: store.get(agentChatThreadFilterStatusState.atom),
+            presetFilter: store.get(agentChatThreadFilterStatusState.atom),
           }),
         ),
       )[0]?.id ?? newAiChatThreadId;

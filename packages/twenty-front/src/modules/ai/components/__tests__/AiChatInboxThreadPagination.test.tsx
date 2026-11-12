@@ -32,7 +32,7 @@ jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
 
 const ACTIVE_PRESET_FILTER_SOURCE: AgentChatThreadListSource = {
   type: 'presetFilter',
-  filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+  presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
 };
 
 const THREADS = [{ id: 'thread-1' }, { id: 'thread-2' }, { id: 'thread-3' }];

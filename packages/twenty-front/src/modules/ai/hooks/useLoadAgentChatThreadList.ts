@@ -155,7 +155,7 @@ export const useLoadAgentChatThreadList = () => {
                 and: [
                   { deletedAt: { is: 'NULL' } },
                   computeAgentChatThreadFilterStatusGqlFilter({
-                    filterStatus: source.filterStatus,
+                    filterStatus: source.presetFilter,
                     workspaceMemberId,
                   }),
                 ],

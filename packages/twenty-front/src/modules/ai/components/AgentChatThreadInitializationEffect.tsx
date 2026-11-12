@@ -83,7 +83,7 @@ export const AgentChatThreadInitializationEffect = () => {
   );
   const agentChatThreadListThreads = useAtomFamilySelectorValue(
     agentChatThreadListThreadsFamilySelector,
-    { type: 'presetFilter', filterStatus: agentChatThreadFilterStatus },
+    { type: 'presetFilter', presetFilter: agentChatThreadFilterStatus },
   );
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);

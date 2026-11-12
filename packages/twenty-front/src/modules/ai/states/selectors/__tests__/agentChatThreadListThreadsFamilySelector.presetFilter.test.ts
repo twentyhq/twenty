@@ -193,7 +193,7 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
     .get(
       agentChatThreadListThreadsFamilySelector.selectorFamily({
         type: 'presetFilter',
-        filterStatus,
+        presetFilter: filterStatus,
       }),
     )
     .map(({ id }) => id);

@@ -13,7 +13,7 @@ export const useOpenAskAiThread = () => {
   );
   const agentChatThreadListThreads = useAtomFamilySelectorValue(
     agentChatThreadListThreadsFamilySelector,
-    { type: 'presetFilter', filterStatus: agentChatThreadFilterStatus },
+    { type: 'presetFilter', presetFilter: agentChatThreadFilterStatus },
   );
   const { selectAiChatThread } = useSelectAiChatThread();
 

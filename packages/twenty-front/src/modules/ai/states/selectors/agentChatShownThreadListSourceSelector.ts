@@ -16,7 +16,7 @@ export const agentChatShownThreadListSourceSelector =
         ? { type: 'channel', channelView }
         : {
             type: 'presetFilter',
-            filterStatus: get(agentChatThreadFilterStatusState),
+            presetFilter: get(agentChatThreadFilterStatusState),
           };
     },
     areEqual: isDeeplyEqual,

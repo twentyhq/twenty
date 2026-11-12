@@ -66,7 +66,7 @@ export const agentChatThreadListThreadsFamilySelector =
             isAgentChatThreadInFilterStatus({
               thread,
               inboxStatus,
-              filterStatus: source.filterStatus,
+              filterStatus: source.presetFilter,
             })
           );
         });
