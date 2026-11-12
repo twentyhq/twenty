@@ -6,7 +6,7 @@ import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/ut
 export const buildWorkflowActorMetadata = (
   executionContext: Pick<
     WorkflowExecutionContext,
-    'isActingOnBehalfOfUser' | 'initiator' | 'coreWorkflowId' | 'workflowName'
+    'isActingOnBehalfOfUser' | 'initiator' | 'workflowId' | 'workflowName'
   >,
 ): ActorMetadata => {
   const actor = executionContext.isActingOnBehalfOfUser
@@ -15,6 +15,6 @@ export const buildWorkflowActorMetadata = (
 
   return {
     ...actor,
-    context: { ...actor.context, workflowId: executionContext.coreWorkflowId },
+    context: { ...actor.context, workflowId: executionContext.workflowId },
   };
 };

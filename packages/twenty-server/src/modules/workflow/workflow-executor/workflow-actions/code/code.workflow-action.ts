@@ -64,7 +64,7 @@ export class CodeWorkflowAction implements WorkflowAction {
 
     const { workspaceId } = runInfo;
 
-    const { authContext, application, coreWorkflowId } =
+    const { authContext, application, workflowId } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
     const result = await this.runCodeStep({
@@ -72,7 +72,7 @@ export class CodeWorkflowAction implements WorkflowAction {
       logicFunctionId: step.settings.input.logicFunctionId,
       workspaceId,
       payload: logicFunctionInput,
-      executionContext: { authContext, application, coreWorkflowId },
+      executionContext: { authContext, application, workflowId },
     });
 
     await this.persistStepLog({
@@ -102,7 +102,7 @@ export class CodeWorkflowAction implements WorkflowAction {
     payload: object;
     executionContext: Pick<
       WorkflowExecutionContext,
-      'authContext' | 'application' | 'coreWorkflowId'
+      'authContext' | 'application' | 'workflowId'
     >;
   }): Promise<LogicFunctionExecuteResult> {
     if (isDefined(code)) {
@@ -110,7 +110,7 @@ export class CodeWorkflowAction implements WorkflowAction {
         flatApplication: executionContext.application,
         code,
         payload,
-        workflowId: executionContext.coreWorkflowId,
+        workflowId: executionContext.workflowId,
         ...getUserFromAuthContext(executionContext.authContext),
       });
     }

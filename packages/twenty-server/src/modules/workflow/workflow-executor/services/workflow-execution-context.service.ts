@@ -162,7 +162,7 @@ export class WorkflowExecutionContextService {
       initiator: workflowRun.createdBy,
       authContext,
       application,
-      coreWorkflowId: workflow.id,
+      workflowId: workflow.id,
       workflowName: workflow.name,
     };
   }
