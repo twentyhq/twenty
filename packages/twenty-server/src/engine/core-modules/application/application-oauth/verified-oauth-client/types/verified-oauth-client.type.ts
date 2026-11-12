@@ -1,4 +1,8 @@
-export type VerifiedOAuthClient = { name: string; logoPath?: string } & (
+export type VerifiedOAuthClient = {
+  name: string;
+  marketplaceAppUniversalIdentifier: string;
+  logoPath?: string;
+} & (
   | { registrationUniversalIdentifier: string }
   | { clientIdMetadataDocumentUrl: string }
 );

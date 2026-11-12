@@ -1,5 +1,6 @@
 import { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from 'twenty-shared/application';
 
+import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
@@ -7,7 +8,8 @@ import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manage
 export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] =
   [
     {
-      universalIdentifier: '20202020-b759-4b27-9593-4d075aea79ed',
+      universalIdentifier:
+        MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE,
       name: 'Claude',
       description:
         'Search, create and update your Twenty records from a Claude conversation.',
@@ -20,7 +22,8 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
       connectUrl: `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Twenty&connectorUrl=${MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER}`,
     },
     {
-      universalIdentifier: '20202020-2cef-4d6c-9c88-05b40177ce9e',
+      universalIdentifier:
+        MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CHATGPT,
       name: 'ChatGPT',
       description:
         'Search, create and update your Twenty records from a ChatGPT conversation.',
@@ -35,7 +38,7 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
     },
     {
       universalIdentifier:
-        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.TWENTY_CLI,
       name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
       description: 'Build, run and deploy Twenty apps from your terminal.',
       aboutDescription:
