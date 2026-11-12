@@ -17,6 +17,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
@@ -64,20 +66,43 @@ export class FieldMetadataService {
       },
     );
 
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatFieldMetadataOptionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
       ]);
 
-    // Options live in fieldMetadataOption rows, which the flat maps already resolved
-    return fieldMetadataEntities.map((fieldMetadataEntity) =>
-      Object.assign(fieldMetadataEntity, {
-        options:
-          flatFieldMetadataMaps.byUniversalIdentifier[
-            fieldMetadataEntity.universalIdentifier
-          ]?.options ?? fieldMetadataEntity.options,
+    return fieldMetadataEntities.map((fieldMetadataEntity) => {
+      const flatFieldMetadata =
+        flatFieldMetadataMaps.byUniversalIdentifier[
+          fieldMetadataEntity.universalIdentifier
+        ];
+
+      return Object.assign(fieldMetadataEntity, {
+        options: isDefined(flatFieldMetadata)
+          ? resolveFlatFieldMetadataOptions({
+              flatFieldMetadata,
+              flatFieldMetadataOptionMaps,
+            })
+          : fieldMetadataEntity.options,
+      });
+    });
+  }
+
+  private resolveFlatFieldMetadataWithOptions({
+    flatFieldMetadata,
+    flatFieldMetadataOptionMaps,
+  }: {
+    flatFieldMetadata: FlatFieldMetadata;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): FlatFieldMetadata {
+    return {
+      ...flatFieldMetadata,
+      options: resolveFlatFieldMetadataOptions({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps,
       }),
-    );
+    };
   }
 
   async createOneField({
@@ -231,7 +256,10 @@ export class FieldMetadataService {
       );
     }
 
-    return deletedFlatFieldMetadata;
+    return this.resolveFlatFieldMetadataWithOptions({
+      flatFieldMetadata: deletedFlatFieldMetadata,
+      flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
+    });
   }
 
   async updateOneField({
@@ -392,17 +420,26 @@ export class FieldMetadataService {
       );
     }
 
-    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
+    const {
+      flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: recomputedFlatFieldMetadataOptionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+          ],
         },
       );
 
-    return findFlatEntityByUniversalIdentifierOrThrow({
-      universalIdentifier: flatFieldMetadatasToUpdate[0].universalIdentifier,
-      flatEntityMaps: recomputedFlatFieldMetadataMaps,
+    return this.resolveFlatFieldMetadataWithOptions({
+      flatFieldMetadata: findFlatEntityByUniversalIdentifierOrThrow({
+        universalIdentifier: flatFieldMetadatasToUpdate[0].universalIdentifier,
+        flatEntityMaps: recomputedFlatFieldMetadataMaps,
+      }),
+      flatFieldMetadataOptionMaps: recomputedFlatFieldMetadataOptionMaps,
     });
   }
 
@@ -512,11 +549,17 @@ export class FieldMetadataService {
       );
     }
 
-    const { flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps } =
+    const {
+      flatFieldMetadataMaps: recomputedFlatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: recomputedFlatFieldMetadataOptionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+          ],
         },
       );
 
@@ -536,6 +579,11 @@ export class FieldMetadataService {
         ),
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },
+    ).map((flatFieldMetadata) =>
+      this.resolveFlatFieldMetadataWithOptions({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps: recomputedFlatFieldMetadataOptionMaps,
+      }),
     );
   }
 }

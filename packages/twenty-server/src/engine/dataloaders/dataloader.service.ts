@@ -551,11 +551,19 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+          flatObjectMetadataMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: [
+                'flatFieldMetadataMaps',
+                'flatFieldMetadataOptionMaps',
+                'flatObjectMetadataMaps',
+              ],
             },
           );
 
@@ -601,7 +609,12 @@ export class DataloaderService {
                 (flatFieldMetadata) =>
                   !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
               )
-              .map(fromFlatFieldMetadataToFieldMetadataDto);
+              .map((flatFieldMetadata) =>
+                fromFlatFieldMetadataToFieldMetadataDto(
+                  flatFieldMetadata,
+                  flatFieldMetadataOptionMaps,
+                ),
+              );
           },
         );
 

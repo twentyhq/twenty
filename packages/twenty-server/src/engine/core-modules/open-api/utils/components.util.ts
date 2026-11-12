@@ -266,7 +266,9 @@ export const computeSchemaComponents = (
     AllFlatEntityMaps,
     'flatFieldMetadataMaps'
   >['flatFieldMetadataMaps'],
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions | undefined,
+  flatFieldMetadataOptionMaps:
+    | FlatFieldMetadataOptionMapsForOptions
+    | undefined,
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return flatObjectMetadataItems.reduce(
     (schemas, item) => {

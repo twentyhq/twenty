@@ -67,6 +67,7 @@ const buildRequest = ({
   },
   metadataMaps: {
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
     featureFlagsMap: {
       [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
