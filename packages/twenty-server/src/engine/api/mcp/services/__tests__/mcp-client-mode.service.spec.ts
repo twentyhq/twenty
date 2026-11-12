@@ -2,11 +2,10 @@ import { Test } from '@nestjs/testing';
 
 import { McpClientModeService } from 'src/engine/api/mcp/services/mcp-client-mode.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
 describe('McpClientModeService', () => {
   const application = {
-    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    applicationRegistrationId: '20202020-0000-4000-8000-000000000002',
     universalIdentifier: '20202020-0000-4000-8000-000000000001',
   };
   const registrationLookup = {
@@ -38,7 +37,9 @@ describe('McpClientModeService', () => {
       oAuthRedirectUris: [redirectUri],
     });
 
-    await expect(service.isDirectMode({ application })).resolves.toBe(false);
+    await expect(
+      service.isDirectMode({ method: 'tools/list', application }),
+    ).resolves.toBe(false);
   });
 
   it.each([
@@ -54,7 +55,9 @@ describe('McpClientModeService', () => {
       oAuthRedirectUris: [redirectUri],
     });
 
-    await expect(service.isDirectMode({ application })).resolves.toBe(true);
+    await expect(
+      service.isDirectMode({ method: 'tools/list', application }),
+    ).resolves.toBe(true);
   });
 
   it.each<[string, boolean]>([
@@ -67,9 +70,9 @@ describe('McpClientModeService', () => {
         new Error('Registration lookup unavailable'),
       );
 
-      await expect(service.isDirectMode({ mode, application })).resolves.toBe(
-        expected,
-      );
+      await expect(
+        service.isDirectMode({ method: 'tools/call', mode, application }),
+      ).resolves.toBe(expected);
     },
   );
 
@@ -78,19 +81,22 @@ describe('McpClientModeService', () => {
       new Error('Registration lookup unavailable'),
     );
 
-    await expect(service.isDirectMode({})).resolves.toBe(true);
+    await expect(service.isDirectMode({ method: 'tools/list' })).resolves.toBe(
+      true,
+    );
   });
 
-  it('should keep direct mode for applications that are not OAuth-only', async () => {
+  it('should keep direct mode for applications without an OAuth registration', async () => {
     registrationLookup.findOneByUniversalIdentifierGlobal.mockRejectedValue(
       new Error('Registration lookup unavailable'),
     );
 
     await expect(
       service.isDirectMode({
+        method: 'tools/list',
         application: {
           ...application,
-          sourceType: ApplicationRegistrationSourceType.NPM,
+          applicationRegistrationId: null,
         },
       }),
     ).resolves.toBe(true);
@@ -101,6 +107,18 @@ describe('McpClientModeService', () => {
       null,
     );
 
-    await expect(service.isDirectMode({ application })).resolves.toBe(true);
+    await expect(
+      service.isDirectMode({ method: 'tools/list', application }),
+    ).resolves.toBe(true);
+  });
+
+  it('should accept published direct tool calls while the meta catalog is reviewed', async () => {
+    registrationLookup.findOneByUniversalIdentifierGlobal.mockRejectedValue(
+      new Error('Registration lookup unavailable'),
+    );
+
+    await expect(
+      service.isDirectMode({ method: 'tools/call', application }),
+    ).resolves.toBe(true);
   });
 });

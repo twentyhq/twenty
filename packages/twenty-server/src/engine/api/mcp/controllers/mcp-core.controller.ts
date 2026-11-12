@@ -111,6 +111,7 @@ export class McpCoreController {
       application,
       agentId: request.agentId,
       isDirectMode: await this.mcpClientModeService.isDirectMode({
+        method: body.method,
         mode,
         application,
       }),

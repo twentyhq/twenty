@@ -16,7 +16,7 @@ describe('buildMcpServerInstructions', () => {
     const instructions = buildMcpServerInstructions({
       objectNames: 'companies, people',
       actionToolNames: ['send_email', 'search_help_center'],
-      isDirectMode: false,
+      isDirectMode: true,
     });
 
     expect(getActionLine(instructions)).toContain(
@@ -30,7 +30,7 @@ describe('buildMcpServerInstructions', () => {
     const withUpload = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['create_file_upload', 'complete_file_upload'],
-      isDirectMode: false,
+      isDirectMode: true,
     });
 
     expect(withUpload).toContain('To attach a file: create_file_upload');
@@ -38,7 +38,7 @@ describe('buildMcpServerInstructions', () => {
     const withoutUpload = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
-      isDirectMode: false,
+      isDirectMode: true,
     });
 
     expect(withoutUpload).not.toContain('To attach a file');
@@ -48,7 +48,7 @@ describe('buildMcpServerInstructions', () => {
     const withHttp = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['http_request'],
-      isDirectMode: false,
+      isDirectMode: true,
     });
 
     expect(withHttp).toContain('http_request is ONLY for external');
@@ -56,7 +56,7 @@ describe('buildMcpServerInstructions', () => {
     const withoutHttp = buildMcpServerInstructions({
       objectNames: 'companies',
       actionToolNames: ['send_email'],
-      isDirectMode: false,
+      isDirectMode: true,
     });
 
     expect(withoutHttp).not.toContain('http_request is ONLY for external');
@@ -79,6 +79,21 @@ describe('buildMcpServerInstructions', () => {
     ]) {
       expect(instructions).toContain(toolName);
     }
+  });
+
+  it('should keep workspace metadata out of published meta-mode instructions', () => {
+    const instructions = buildMcpServerInstructions({
+      objectNames: 'companies, rockets',
+      actionToolNames: ['custom_tenant_action'],
+      skillNames: 'launch-planning',
+      isDirectMode: false,
+    });
+
+    expect(instructions).not.toContain('rockets');
+    expect(instructions).not.toContain('custom_tenant_action');
+    expect(instructions).not.toContain('launch-planning');
+    expect(instructions).toContain(LIST_OBJECT_METADATA_NAMES_TOOL_NAME);
+    expect(instructions).toContain(LIST_SKILLS_TOOL_NAME);
   });
 
   it('should route an unverified tool name to learn_tools, not to the catalog', () => {

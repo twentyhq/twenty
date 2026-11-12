@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { isChatGptOAuthRedirectUri } from 'src/engine/api/mcp/utils/is-chatgpt-oauth-redirect-uri.util';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 
 @Injectable()
 export class McpClientModeService {
@@ -14,17 +13,27 @@ export class McpClientModeService {
   ) {}
 
   async isDirectMode({
+    method,
     mode,
     application,
   }: {
+    method: string;
     mode?: string;
-    application?: Pick<FlatApplication, 'sourceType' | 'universalIdentifier'>;
+    application?: Pick<
+      FlatApplication,
+      'applicationRegistrationId' | 'universalIdentifier'
+    >;
   }): Promise<boolean> {
     if (isDefined(mode)) {
       return mode !== 'meta';
     }
 
-    if (!isDefined(application) || !isOAuthOnlyApplication(application)) {
+    // Keep published direct calls working while OpenAI reviews the meta-tool catalog.
+    if (method === 'tools/call') {
+      return true;
+    }
+
+    if (!isDefined(application?.applicationRegistrationId)) {
       return true;
     }
 

@@ -439,60 +439,84 @@ describe('OAuth (integration)', () => {
       expect(res.body.expires_in).toBeGreaterThan(0);
     });
 
-    it('should expose meta-tools to ChatGPT on the unchanged MCP URL', async () => {
-      const redirectUri =
-        'https://chatgpt.com/connector_platform_oauth_redirect';
-      const chatGptRegistration = await insertRegistration(ds, {
-        name: 'ChatGPT MCP integration test',
-        clientSecretHash: await bcrypt.hash(testClientSecret, 10),
-        redirectUris: [redirectUri],
-        scopes: ['api'],
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      });
+    it.each([
+      ApplicationRegistrationSourceType.OAUTH_ONLY,
+      ApplicationRegistrationSourceType.LOCAL,
+    ])(
+      'should expose meta-tools to ChatGPT using a %s registration on the unchanged MCP URL',
+      async (sourceType) => {
+        const redirectUri =
+          'https://chatgpt.com/connector_platform_oauth_redirect';
+        const chatGptRegistration = await insertRegistration(ds, {
+          name: 'ChatGPT MCP integration test',
+          clientSecretHash: await bcrypt.hash(testClientSecret, 10),
+          redirectUris: [redirectUri],
+          scopes: ['api'],
+          sourceType,
+        });
 
-      createdEntityIds.registrations.push(chatGptRegistration.id);
+        createdEntityIds.registrations.push(chatGptRegistration.id);
 
-      const code = await createAuthorizationCode(
-        chatGptRegistration.oAuthClientId,
-        redirectUri,
-      );
-      const tokenResponse = await postToken({
-        grant_type: 'authorization_code',
-        code,
-        client_id: chatGptRegistration.oAuthClientId,
-        client_secret: testClientSecret,
-        redirect_uri: redirectUri,
-      }).expect(200);
-      const [installedApplication] = await ds.query(
-        `SELECT id FROM core."application" WHERE "applicationRegistrationId" = $1 AND "workspaceId" = $2`,
-        [chatGptRegistration.id, TEST_WORKSPACE_ID],
-      );
+        const code = await createAuthorizationCode(
+          chatGptRegistration.oAuthClientId,
+          redirectUri,
+        );
+        const tokenResponse = await postToken({
+          grant_type: 'authorization_code',
+          code,
+          client_id: chatGptRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+          redirect_uri: redirectUri,
+        }).expect(200);
+        const [installedApplication] = await ds.query(
+          `SELECT id FROM core."application" WHERE "applicationRegistrationId" = $1 AND "workspaceId" = $2`,
+          [chatGptRegistration.id, TEST_WORKSPACE_ID],
+        );
 
-      assertIsDefinedOrThrow(installedApplication);
-      createdEntityIds.applications.push(installedApplication.id);
+        assertIsDefinedOrThrow(installedApplication);
+        createdEntityIds.applications.push(installedApplication.id);
 
-      const token: string = tokenResponse.body.access_token;
-      const { status, body } = await listMcpTools({ token });
+        const token: string = tokenResponse.body.access_token;
+        const { status, body } = await listMcpTools({ token });
 
-      expect(status).toBe(200);
+        expect(status).toBe(200);
 
-      const tools: { name: string }[] = body.result.tools;
-      const toolNames = tools.map(({ name }) => name);
+        const tools: { name: string }[] = body.result.tools;
+        const toolNames = tools.map(({ name }) => name);
 
-      expect(toolNames).toEqual(
-        expect.arrayContaining([
-          'get_tool_catalog',
-          'learn_tools',
-          'execute_tool',
-        ]),
-      );
-      expect(toolNames).not.toContain('find_many_companies');
+        expect(toolNames).toEqual(
+          expect.arrayContaining([
+            'get_tool_catalog',
+            'learn_tools',
+            'execute_tool',
+          ]),
+        );
+        expect(toolNames).not.toContain('find_many_companies');
 
-      const directToolNames = await listDirectModeMcpToolNames({ token });
+        const legacyCallResponse = await request(baseUrl)
+          .post('/mcp')
+          .set('Authorization', `Bearer ${token}`)
+          .set('Accept', 'application/json')
+          .send({
+            jsonrpc: '2.0',
+            method: 'tools/call',
+            params: {
+              name: 'find_many_companies',
+              arguments: { limit: 1, select: ['id'] },
+            },
+            id: 'legacy-call',
+          })
+          .expect(200);
 
-      expect(directToolNames).toContain('find_many_companies');
-      expect(directToolNames).not.toContain('execute_tool');
-    });
+        expect(legacyCallResponse.body.error).toBeUndefined();
+        expect(legacyCallResponse.body.result).toBeDefined();
+
+        const directToolNames = await listDirectModeMcpToolNames({ token });
+
+        expect(directToolNames).toContain('list_object_metadata_names');
+        expect(directToolNames).not.toContain('execute_tool');
+      },
+    );
 
     it('should reject a reused authorization code', async () => {
       const code = await createAuthorizationCode(

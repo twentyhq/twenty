@@ -28,6 +28,14 @@ export class McpInstructionBuilderService {
     authContext: WorkspaceAuthContext;
     isDirectMode: boolean;
   }): Promise<string> {
+    if (!isDirectMode) {
+      return buildMcpServerInstructions({
+        objectNames: '',
+        actionToolNames: [],
+        isDirectMode,
+      });
+    }
+
     const [{ flatObjectMetadataMaps }, allSkills, actionToolCatalog] =
       await Promise.all([
         this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({

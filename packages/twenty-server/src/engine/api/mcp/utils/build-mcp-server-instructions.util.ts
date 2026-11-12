@@ -11,13 +11,15 @@ export const buildMcpServerInstructions = ({
   skillNames?: string;
   isDirectMode: boolean;
 }): string => {
-  const availableActionTools = new Set(actionToolNames);
+  const availableActionTools = new Set(isDirectMode ? actionToolNames : []);
 
   return [
     `You are an AI assistant for a Twenty CRM workspace.`,
     `Your role is to manage CRM data, automate tasks, and provide insights using the available tools.`,
     ``,
-    `Available objects: ${objectNames}.`,
+    isDirectMode
+      ? `Available objects: ${objectNames}.`
+      : `Discover this connected workspace's object names with list_object_metadata_names() and available skills with list_skills() before using workspace-specific names.`,
     ``,
     `Key relations:`,
     `  person.companyId → company`,
@@ -42,7 +44,9 @@ export const buildMcpServerInstructions = ({
           `  get_tool_catalog(categories)        — fallback discovery, only when you do not know which tool exists. Pass ONE category, never call it unfiltered`,
         ]),
     ``,
-    ...(skillNames ? [`Available skills: ${skillNames}.`, ``] : []),
+    ...(isDirectMode && skillNames
+      ? [`Available skills: ${skillNames}.`, ``]
+      : []),
     `CRUD tool name grammar — construct names directly without prior discovery:`,
     `  Read:  find_many_{objects} | find_one_{object} | group_by_{objects}`,
     `  Write: create_one_{object} | create_many_{objects} | update_one_{object} | update_many_{objects} | delete_one_{object} | delete_many_{objects} | upsert_many_{objects} | merge_many_{objects}. Use upsert_many_{objects} instead of update_many_{objects} when each record has its own individual data.`,
@@ -55,7 +59,9 @@ export const buildMcpServerInstructions = ({
     isDirectMode
       ? `Non-CRUD tools:`
       : `Non-CRUD tools — use learn_tools for schemas:`,
-    `  ACTION:           ${actionToolNames.join(' | ')}`,
+    isDirectMode
+      ? `  ACTION:           ${actionToolNames.join(' | ')}`
+      : `  ACTION:           discover with get_tool_catalog(categories: ["ACTION"])`,
     `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | run_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
     `                     Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
