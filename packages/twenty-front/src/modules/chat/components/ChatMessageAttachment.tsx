@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
-import { ChatThreadMessageVoiceNote } from '@/activities/emails/components/ChatThreadMessageVoiceNote';
-import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/activities/emails/constants/ChatMessageBubbleMaxWidth';
+import { ChatMessageVoiceNote } from '@/chat/components/ChatMessageVoiceNote';
+import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/chat/constants/ChatMessageBubbleMaxWidth';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { FileChip } from '@/ui/field/display/components/FileChip';
@@ -44,15 +44,12 @@ const StyledVideo = styled.video`
   max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
 `;
 
-type ChatThreadMessageAttachmentProps = {
+type ChatMessageAttachmentProps = {
   file: FieldFilesValue;
 };
 
-export const ChatThreadMessageAttachment = ({
-  file,
-}: ChatThreadMessageAttachmentProps) => {
+export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
   const { openFilePreview } = useOpenFilePreview();
-  // keyed on the url so a refreshed signed url gets another chance to load
   const [failedMediaUrl, setFailedMediaUrl] = useState<string | undefined>();
 
   const hasMediaFailedToLoad =
@@ -88,7 +85,7 @@ export const ChatThreadMessageAttachment = ({
       );
     case FILE_CATEGORIES.AUDIO:
       return (
-        <ChatThreadMessageVoiceNote
+        <ChatMessageVoiceNote
           src={file.url}
           label={file.label}
           onError={handleMediaError}
