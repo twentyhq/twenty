@@ -23,6 +23,7 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
+import { useOpenNewAgentChatAsDirectMessage } from '@/ai/hooks/useOpenNewAgentChatAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
@@ -44,6 +45,7 @@ import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNe
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { getAgentChatInitialRecipients } from '@/ai/utils/getAgentChatInitialRecipients';
+import { getAgentChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAgentChatNewThreadDirectMessageWorkspaceMemberId';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -74,6 +76,11 @@ export const useAgentChat = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const isDirectMessageIdentityEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
+  );
+  const { openNewAgentChatAsDirectMessage } =
+    useOpenNewAgentChatAsDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -97,7 +104,7 @@ export const useAgentChat = () => {
     agentChatDraftsByThreadIdState,
   );
 
-  const handleSendMessage = useCallback(async () => {
+  const sendMessageOrOpenDirectMessage = useCallback(async () => {
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threadId =
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
@@ -174,6 +181,31 @@ export const useAgentChat = () => {
       });
 
       return;
+    }
+
+    const directMessageWorkspaceMemberId =
+      isDefined(newInboxChatRecipients) && isDirectMessageIdentityEnabled
+        ? getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+            isAssistantParticipant:
+              newInboxChatRecipients.isAssistantParticipant,
+            isAssistantMentioned,
+            channelId,
+            recipientWorkspaceMemberIds: initialRecipients.map(
+              ({ workspaceMemberId }) => workspaceMemberId,
+            ),
+            mentionedWorkspaceMemberIds: participantMentions.map(
+              ({ workspaceMemberId }) => workspaceMemberId,
+            ),
+            currentWorkspaceMemberId,
+          })
+        : undefined;
+
+    if (isDefined(directMessageWorkspaceMemberId)) {
+      return openNewAgentChatAsDirectMessage({
+        newChatThreadId: threadId,
+        workspaceMemberId: directMessageWorkspaceMemberId,
+        serializedDraft: serializedContentToSend,
+      });
     }
 
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
@@ -413,6 +445,8 @@ export const useAgentChat = () => {
     aiModels,
     canSendAgentChatMessage,
     isAiChatInboxEnabled,
+    isDirectMessageIdentityEnabled,
+    openNewAgentChatAsDirectMessage,
     enqueueToast,
     setCurrentAiChatThread,
     projectAiChatThreadToUrl,
@@ -422,6 +456,14 @@ export const useAgentChat = () => {
     attachChatThreadToRecord,
     warnAboutParticipantMentionsNotAdded,
   ]);
+
+  const handleSendMessage = useCallback(async () => {
+    const hasOpenedDirectMessage = await sendMessageOrOpenDirectMessage();
+
+    if (hasOpenedDirectMessage === true) {
+      await sendMessageOrOpenDirectMessage();
+    }
+  }, [sendMessageOrOpenDirectMessage]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
