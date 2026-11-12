@@ -4,24 +4,19 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { isDefined } from '@/utils/validation/isDefined';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
 import { getValidationRuleSyntaxError } from '@/utils/validation-rule/getValidationRuleSyntaxError';
-import { replaceValidationRuleVariables } from '@/utils/validation-rule/internal/replaceValidationRuleVariables';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
 
-// With allowsVariables, {{stepId.path}} workflow variables compile as untyped values
 export const compileValidationRuleExpression = ({
   expression,
   fields,
-  allowsVariables = false,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
-  allowsVariables?: boolean;
 }): ValidationRuleCompilationResult => {
   if (expression.trim().length === 0) {
     return {
@@ -40,14 +35,10 @@ export const compileValidationRuleExpression = ({
     };
   }
 
-  const { source, variableByIdentifier } = allowsVariables
-    ? replaceValidationRuleVariables(expression)
-    : { source: expression, variableByIdentifier: new Map<string, string>() };
-
   let parsedExpression: Expression;
 
   try {
-    parsedExpression = parseValidationRuleExpression(source);
+    parsedExpression = parseValidationRuleExpression(expression);
   } catch (error) {
     return {
       isValid: false,
@@ -90,28 +81,6 @@ export const compileValidationRuleExpression = ({
   let bindings: ValidationRuleBindings = {};
 
   for (const path of identifierPaths) {
-    const [rootSegment = '', ...memberSegments] = path.split('.');
-    const variable = variableByIdentifier.get(rootSegment);
-
-    if (isDefined(variable)) {
-      if (memberSegments.length === 0) {
-        continue;
-      }
-
-      const memberPath = memberSegments.join('.');
-      const wholeVariable = `{{${variable.slice(2, -2).trim()}.${memberPath}}}`;
-
-      return {
-        isValid: false,
-        errorMessage: `Write ${wholeVariable} instead of ${variable}.${memberPath}`,
-        errorCode: 'VARIABLE_MEMBER_ACCESS',
-        errorParams: {
-          variable: `${variable}.${memberPath}`,
-          path: wholeVariable,
-        },
-      };
-    }
-
     const resolution = resolveValidationRuleIdentifierPath({ path, fields });
 
     if (!resolution.isResolved) {
@@ -131,7 +100,6 @@ export const compileValidationRuleExpression = ({
     record: {},
     fields,
     now: new Date().toISOString(),
-    allowsVariables,
   });
 
   if (emptyRecordEvaluation.status === 'errored') {

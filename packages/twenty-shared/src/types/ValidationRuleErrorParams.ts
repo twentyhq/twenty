@@ -5,5 +5,4 @@ export type ValidationRuleErrorParams = {
   relationFieldName?: string;
   subfieldName?: string;
   token?: string;
-  variable?: string;
 };

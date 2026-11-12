@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
@@ -10,7 +8,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { evaluateWorkflowStepCondition } from 'src/modules/workflow/workflow-executor/utils/evaluate-workflow-step-condition.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
@@ -32,19 +29,7 @@ export class FilterWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { stepFilterGroups, stepFilters, condition } = step.settings.input;
-
-    if (isNonEmptyString(condition)) {
-      const matchesFilter = evaluateWorkflowStepCondition({
-        condition,
-        context,
-      });
-
-      return {
-        result: { matchesFilter },
-        shouldEndWorkflowRun: !matchesFilter,
-      };
-    }
+    const { stepFilterGroups, stepFilters } = step.settings.input;
 
     if (!stepFilterGroups || !stepFilters) {
       return {

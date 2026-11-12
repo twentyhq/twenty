@@ -7,12 +7,6 @@ export const stepIfElseBranchSchema = z.object({
   id: z.string(),
   nextStepIds: z.array(z.string()),
   filterGroupId: z.string().optional(),
-  condition: z
-    .string()
-    .optional()
-    .describe(
-      'Optional rule expression over workflow variables, e.g. `{{step-id.amount}} > 1000`. When set, the branch filters are ignored.',
-    ),
 });
 
 export const workflowIfElseActionSettingsSchema =

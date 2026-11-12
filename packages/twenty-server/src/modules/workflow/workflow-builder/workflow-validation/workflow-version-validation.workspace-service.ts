@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES,
   NON_ACTIVABLE_WORKFLOW_VALIDATION_ISSUE_CODES,
@@ -15,17 +14,12 @@ import {
   WorkflowVersionValidationException,
   WorkflowVersionValidationExceptionCode,
 } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
-import { getDatabaseEventTriggerConditionIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-database-event-trigger-condition-issues.util';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
-import { getWorkflowStepConditionIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-step-condition-issues.util';
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { validateWorkflowClassifyStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-classify-step.util';
 import { validateWorkflowConversationStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-conversation-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  type WorkflowTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const isBlockingActivation = (issue: WorkflowValidationIssue): boolean =>
   MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES.has(issue.code) ||
@@ -93,12 +87,11 @@ export class WorkflowVersionValidationWorkspaceService {
         return validateWorkflowClassifyStep(step);
       }
 
-      return getWorkflowStepConditionIssues(step);
+      return [];
     });
 
     const metadataIssues = await this.validateWorkspaceMetadata({
       workspaceId,
-      trigger,
       steps,
     });
 
@@ -112,21 +105,16 @@ export class WorkflowVersionValidationWorkspaceService {
 
   private async validateWorkspaceMetadata({
     workspaceId,
-    trigger,
     steps,
   }: {
     workspaceId: string;
-    trigger: WorkflowTrigger | null;
     steps: WorkflowAction[];
   }): Promise<WorkflowValidationIssue[]> {
     const hasRecordStep = steps.some((step) =>
       OBJECT_TARGETING_ACTION_TYPES.has(step.type),
     );
-    const hasTriggerCondition =
-      trigger?.type === WorkflowTriggerType.DATABASE_EVENT &&
-      isNonEmptyString(trigger.settings.condition?.trim());
 
-    if (!hasRecordStep && !hasTriggerCondition) {
+    if (!hasRecordStep) {
       return [];
     }
 
@@ -136,19 +124,11 @@ export class WorkflowVersionValidationWorkspaceService {
       flatFieldMetadataMaps,
     } = await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
-    return [
-      ...getDatabaseEventTriggerConditionIssues({
-        trigger,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      }),
-      ...getWorkflowRecordStepMetadataIssues({
-        steps,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        objectIdByNameSingular,
-      }),
-    ];
+    return getWorkflowRecordStepMetadataIssues({
+      steps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      objectIdByNameSingular,
+    });
   }
 }

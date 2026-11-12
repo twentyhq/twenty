@@ -8,7 +8,8 @@ import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { WorkflowDatabaseEventTriggerConditionInput } from '@/workflow/workflow-trigger/components/WorkflowDatabaseEventTriggerConditionInput';
+import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
+import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -52,19 +53,11 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       return;
     }
 
-    if (value === triggerEvent.objectType) {
-      return;
-    }
-
-    // Fields, filters and condition name the previous object's fields
     triggerOptions.onTriggerUpdate({
       ...trigger,
       settings: {
         ...trigger.settings,
         eventName: `${value}.${triggerEvent.event}`,
-        fields: null,
-        filter: undefined,
-        condition: undefined,
       },
     });
   };
@@ -87,6 +80,23 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     });
   };
 
+  const handleFilterSettingsUpdate = (filterSettings: FilterSettings) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        filter: {
+          stepFilterGroups: filterSettings.stepFilterGroups ?? [],
+          stepFilters: filterSettings.stepFilters ?? [],
+        },
+      },
+    });
+  };
+
   return (
     <>
       <WorkflowStepBody>
@@ -105,7 +115,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         />
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
-            key={selectedObjectMetadataItem.id}
             label={t`Fields (Optional)`}
             placeholder={t`Select specific fields to listen to`}
             objectMetadataItem={selectedObjectMetadataItem}
@@ -116,14 +125,16 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           />
         )}
         {isDefined(selectedObjectMetadataItem) && (
-          <WorkflowDatabaseEventTriggerConditionInput
-            key={selectedObjectMetadataItem.id}
-            trigger={trigger}
-            objectMetadataItem={selectedObjectMetadataItem}
-            readonly={triggerOptions.readonly ?? false}
-            onTriggerUpdate={(updatedTrigger) =>
-              triggerOptions.onTriggerUpdate?.(updatedTrigger)
+          <WorkflowStepFilterBuilder
+            instanceId={TRIGGER_STEP_ID}
+            defaultValue={
+              trigger.settings.filter ?? {
+                stepFilterGroups: [],
+                stepFilters: [],
+              }
             }
+            readonly={triggerOptions.readonly ?? false}
+            onFilterSettingsUpdate={handleFilterSettingsUpdate}
           />
         )}
       </WorkflowStepBody>

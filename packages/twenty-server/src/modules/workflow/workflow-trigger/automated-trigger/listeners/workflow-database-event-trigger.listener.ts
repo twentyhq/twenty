@@ -10,7 +10,6 @@ import {
   type ObjectRecordUpsertEvent,
 } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { In } from 'typeorm';
@@ -38,7 +37,6 @@ import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/u
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
-import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
 import { isDatabaseEventTriggerListeningToEvent } from 'src/engine/workspace-event-emitter/utils/is-database-event-trigger-listening-to-event.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -80,7 +78,6 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly applicationService: ApplicationService,
-    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
@@ -407,34 +404,34 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      const matchingEvents = await this.findMatchingEvents({
-        workspaceId,
-        objectMetadata: payload.objectMetadata,
+      const eventsWithWatchedFields = filterEventsByUpdatedFields({
         events: readableEventsByApplicationId.get(applicationId) ?? [],
         eventName: databaseEventName,
-        eventListener,
-        flatApplicationMaps,
+        watchedFields: (eventListener.settings as UpdateEventTriggerSettings)
+          .fields,
       });
 
-      for (const eventPayload of matchingEvents) {
-        await this.messageQueueService.add<WorkflowTriggerJobData>(
-          WorkflowTriggerJob.name,
-          {
-            workspaceId,
-            workflowId:
-              eventListener.legacyWorkflowId ?? eventListener.workflowId,
-            ...buildCoreDispatchIds(eventListener),
-            payload: eventPayload,
-          },
-          {
-            retryLimit: 3,
-            ...buildApplicationQueueJobScope({
+      for (const eventPayload of eventsWithWatchedFields) {
+        if (this.eventMatchesRecordFilter({ eventPayload, eventListener })) {
+          await this.messageQueueService.add<WorkflowTriggerJobData>(
+            WorkflowTriggerJob.name,
+            {
               workspaceId,
-              applicationId,
-              flatApplicationMaps,
-            }),
-          },
-        );
+              workflowId:
+                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              ...buildCoreDispatchIds(eventListener),
+              payload: eventPayload,
+            },
+            {
+              retryLimit: 3,
+              ...buildApplicationQueueJobScope({
+                workspaceId,
+                applicationId,
+                flatApplicationMaps,
+              }),
+            },
+          );
+        }
       }
     }
   }
@@ -520,70 +517,6 @@ export class WorkflowDatabaseEventTriggerListener {
       },
       eventBatch: workspaceEventBatch,
     });
-  }
-
-  // A trigger saved with a condition no longer reads its legacy filter
-  private async findMatchingEvents({
-    workspaceId,
-    objectMetadata,
-    events,
-    eventName,
-    eventListener,
-    flatApplicationMaps,
-  }: {
-    workspaceId: string;
-    objectMetadata: FlatObjectMetadata;
-    events: ObjectRecordEvent[];
-    eventName: string;
-    eventListener: DatabaseEventTriggerListener;
-    flatApplicationMaps: FlatApplicationCacheMaps;
-  }): Promise<ObjectRecordEvent[]> {
-    const { condition } =
-      eventListener.settings as BaseDatabaseEventTriggerSettings;
-    const watchedFields = (eventListener.settings as UpdateEventTriggerSettings)
-      .fields;
-
-    if (!isNonEmptyString(condition?.trim())) {
-      return filterEventsByUpdatedFields({
-        events,
-        eventName,
-        watchedFields,
-      }).filter((eventPayload) =>
-        this.eventMatchesRecordFilter({ eventPayload, eventListener }),
-      );
-    }
-
-    const application = findActiveFlatApplicationById(
-      flatApplicationMaps,
-      eventListener.applicationId,
-    );
-
-    if (!isDefined(application)) {
-      this.logger.warn(
-        `Condition of the trigger of workflow ${eventListener.workflowId} in workspace ${workspaceId} was not evaluated: its application ${eventListener.applicationId} is not active`,
-      );
-
-      return [];
-    }
-
-    const { events: matchingEvents, conditionErrorMessage } =
-      await this.databaseEventTriggerConditionService.filterMatchingEvents({
-        workspaceId,
-        objectMetadata,
-        events,
-        eventName,
-        watchedFields,
-        condition,
-        application,
-      });
-
-    if (isDefined(conditionErrorMessage)) {
-      this.logger.warn(
-        `Condition of the trigger of workflow ${eventListener.workflowId} in workspace ${workspaceId} failed to evaluate: ${conditionErrorMessage}`,
-      );
-    }
-
-    return matchingEvents;
   }
 
   private eventMatchesRecordFilter({

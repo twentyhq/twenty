@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -192,9 +191,6 @@ const fromDatabaseEventTriggerManifestOrThrow = ({
               ),
           ),
         }
-      : {}),
-    ...(isNonEmptyString(settings.condition)
-      ? { condition: settings.condition }
       : {}),
     ...(isDefined(settings.filter)
       ? {

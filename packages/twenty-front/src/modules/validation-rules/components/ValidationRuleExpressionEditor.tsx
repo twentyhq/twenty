@@ -20,12 +20,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { SettingsValidationRuleAskAiButton } from '@/validation-rules/components/SettingsValidationRuleAskAiButton';
 import { SettingsValidationRuleHelperPanel } from '@/validation-rules/components/SettingsValidationRuleHelperPanel';
-import { VALIDATION_RULE_FIELD_NODE_NAME } from '@/validation-rules/constants/ValidationRuleFieldNodeName';
 import { VALIDATION_RULE_HIGHLIGHT_COLORS } from '@/validation-rules/constants/ValidationRuleHighlightColors';
 import { ValidationRuleExpressionExtension } from '@/validation-rules/extensions/ValidationRuleExpressionExtension';
 import { ValidationRuleFieldNode } from '@/validation-rules/extensions/ValidationRuleFieldNode';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
-import { type ValidationRuleExpressionEditorVariables } from '@/validation-rules/types/ValidationRuleExpressionEditorVariables';
 import { type ValidationRuleFieldNodeAttributes } from '@/validation-rules/types/ValidationRuleFieldNodeAttributes';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
@@ -41,18 +39,13 @@ import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertV
 
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
 
-const StyledEditorActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[0.5]};
+const StyledAskAiButtonContainer = styled.div`
   position: absolute;
   right: ${themeCssVariables.spacing[1]};
   top: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledEditor = styled.div<{
-  hasError: boolean;
-  hasVariablePicker: boolean;
-}>`
+const StyledEditor = styled.div<{ hasError: boolean }>`
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid
     ${({ hasError }) =>
@@ -73,11 +66,7 @@ const StyledEditor = styled.div<{
     line-height: 24px;
     min-height: 56px;
     outline: none;
-    padding: ${themeCssVariables.spacing[2]}
-      ${({ hasVariablePicker }) =>
-        hasVariablePicker
-          ? themeCssVariables.spacing[16]
-          : themeCssVariables.spacing[8]}
+    padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[8]}
       ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
     white-space: pre-wrap;
     word-break: break-word;
@@ -121,8 +110,6 @@ type ValidationRuleExpressionEditorProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
-  // Lets the expression read {{stepId.path}} workflow variables
-  variables?: ValidationRuleExpressionEditorVariables;
 };
 
 export const ValidationRuleExpressionEditor = ({
@@ -130,7 +117,6 @@ export const ValidationRuleExpressionEditor = ({
   fields,
   editorFields,
   onChange,
-  variables,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
 
@@ -148,10 +134,6 @@ export const ValidationRuleExpressionEditor = ({
   const getFieldNodeAttributes = (
     path: string,
   ): ValidationRuleFieldNodeAttributes | null => {
-    if (path.startsWith('{{')) {
-      return variables?.getVariableNodeAttributes(path) ?? null;
-    }
-
     const field = editorFields.find((candidate) => candidate.path === path);
 
     return isDefined(field)
@@ -241,20 +223,6 @@ export const ValidationRuleExpressionEditor = ({
     });
   };
 
-  const insertVariable = (variable: string) => {
-    const attributes = getFieldNodeAttributes(variable);
-
-    editor
-      ?.chain()
-      .focus()
-      .insertContent(
-        isDefined(attributes)
-          ? [{ type: VALIDATION_RULE_FIELD_NODE_NAME, attrs: attributes }]
-          : [{ type: 'text', text: variable }],
-      )
-      .run();
-  };
-
   const handleEditorKeyDown = (event: KeyboardEvent): boolean => {
     const { items } = helperContext;
 
@@ -293,7 +261,6 @@ export const ValidationRuleExpressionEditor = ({
   const compilationResult = compileValidationRuleExpression({
     expression: value,
     fields,
-    allowsVariables: isDefined(variables),
   });
   const errorMessage =
     value.trim().length > 0 && !compilationResult.isValid
@@ -304,15 +271,11 @@ export const ValidationRuleExpressionEditor = ({
     <>
       <Card.Content divider>
         <Field.Root>
-          <StyledEditor
-            hasError={isDefined(errorMessage)}
-            hasVariablePicker={isDefined(variables)}
-          >
+          <StyledEditor hasError={isDefined(errorMessage)}>
             <EditorContent editor={editor} />
-            <StyledEditorActions>
-              {variables?.renderVariablePicker(insertVariable)}
+            <StyledAskAiButtonContainer>
               <SettingsValidationRuleAskAiButton />
-            </StyledEditorActions>
+            </StyledAskAiButtonContainer>
           </StyledEditor>
           {isDefined(errorMessage) && (
             <Field.Error match role="alert">

@@ -90,18 +90,4 @@ describe('computeValidationRuleEditorSegments', () => {
       { type: 'text', text: 'amont > 1' },
     ]);
   });
-
-  it('should show a known workflow variable as a chip', () => {
-    expect(
-      computeValidationRuleEditorSegments({
-        expression: '{{step-1.amount}} > 1 and {{step-1.unknown}}',
-        isFieldPath: (path) => path === '{{step-1.amount}}',
-        cursorOffset: null,
-        fieldRanges: [],
-      }),
-    ).toEqual([
-      { type: 'field', path: '{{step-1.amount}}' },
-      { type: 'text', text: ' > 1 and {{step-1.unknown}}' },
-    ]);
-  });
 });

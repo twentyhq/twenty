@@ -33,7 +33,6 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: WorkflowTriggerType.DATABASE_EVENT;
   settings: BaseWorkflowTriggerSettings & {
     eventName: string;
-    condition?: string;
   };
 };
 

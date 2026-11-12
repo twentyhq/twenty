@@ -1,6 +1,4 @@
 import { type WorkflowIfElseAction } from '@/workflow/types/Workflow';
-import { hasFilledStepFilter } from '@/workflow/workflow-steps/conditions/utils/hasFilledStepFilter';
-import { WorkflowStepConditionInput } from '@/workflow/workflow-steps/conditions/components/WorkflowStepConditionInput';
 import { WorkflowStepFilterAddFilterRuleSelect } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect';
 import { WorkflowStepFilterColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterColumn';
 import { WorkflowStepFilterGroupColumn } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterGroupColumn';
@@ -37,11 +35,8 @@ type WorkflowIfElseBranchEditorProps = {
   branchLabel: MessageDescriptor;
   elseIfIndex?: number;
   branchFilterGroup: StepFilterGroup | undefined;
-  conditionFromFilter: string | undefined;
   readonly: boolean;
   onFilterSettingsUpdate: (filterSettings: FilterSettings) => Promise<void>;
-  onConditionSeed: (condition: string) => void;
-  onConditionChange: (condition: string) => void;
 };
 
 export const WorkflowIfElseBranchEditor = ({
@@ -51,11 +46,8 @@ export const WorkflowIfElseBranchEditor = ({
   branchLabel,
   elseIfIndex,
   branchFilterGroup,
-  conditionFromFilter,
   readonly,
   onFilterSettingsUpdate,
-  onConditionSeed,
-  onConditionChange,
 }: WorkflowIfElseBranchEditorProps) => {
   const isElseBranch = !isDefined(branch.filterGroupId);
 
@@ -97,71 +89,45 @@ export const WorkflowIfElseBranchEditor = ({
       }}
     >
       <StyledBranchContainer>
-        <WorkflowStepConditionInput
-          instanceId={`${action.id}-${branch.id}`}
-          expressionLabel={capitalize(i18n._(branchLabel).toLowerCase())}
-          condition={branch.condition}
-          conditionFromFilter={conditionFromFilter}
-          hasFilterRows={
-            childStepFiltersAndChildStepFilterGroups.some(
-              isStepFilterGroupChildAStepFilterGroup,
-            ) ||
-            hasFilledStepFilter(
-              childStepFiltersAndChildStepFilterGroups.filter(
-                (child): child is StepFilter =>
-                  !isStepFilterGroupChildAStepFilterGroup(child),
-              ),
-            )
-          }
-          readonly={readonly}
-          onConditionSeed={onConditionSeed}
-          onConditionChange={onConditionChange}
-          filters={
-            <>
-              <StyledFiltersContainer>
-                {isDefined(branchFilterGroup) &&
-                  childStepFiltersAndChildStepFilterGroups.map(
-                    (stepFilterGroupChild, stepFilterGroupChildIndex) => {
-                      const isFilterGroup =
-                        isStepFilterGroupChildAStepFilterGroup(
-                          stepFilterGroupChild,
-                        );
-                      const preventDeletion =
-                        !isFilterGroup &&
-                        isLastFilterInIfBranch(stepFilterGroupChild);
+        <StyledFiltersContainer>
+          {isDefined(branchFilterGroup) &&
+            childStepFiltersAndChildStepFilterGroups.map(
+              (stepFilterGroupChild, stepFilterGroupChildIndex) => {
+                const isFilterGroup =
+                  isStepFilterGroupChildAStepFilterGroup(stepFilterGroupChild);
+                const preventDeletion =
+                  !isFilterGroup &&
+                  isLastFilterInIfBranch(stepFilterGroupChild);
 
-                      return isFilterGroup ? (
-                        <WorkflowStepFilterGroupColumn
-                          key={stepFilterGroupChild.id}
-                          parentStepFilterGroup={branchFilterGroup}
-                          stepFilterGroup={stepFilterGroupChild}
-                          stepFilterGroupIndex={stepFilterGroupChildIndex}
-                        />
-                      ) : (
-                        <WorkflowStepFilterColumn
-                          key={stepFilterGroupChild.id}
-                          stepFilterGroup={branchFilterGroup}
-                          stepFilter={stepFilterGroupChild}
-                          stepFilterIndex={stepFilterGroupChildIndex}
-                          firstFilterLabel={capitalize(
-                            i18n._(branchLabel).toLowerCase(),
-                          )}
-                          elseIfIndex={elseIfIndex}
-                          preventDeletion={preventDeletion}
-                        />
-                      );
-                    },
-                  )}
-              </StyledFiltersContainer>
+                return isFilterGroup ? (
+                  <WorkflowStepFilterGroupColumn
+                    key={stepFilterGroupChild.id}
+                    parentStepFilterGroup={branchFilterGroup}
+                    stepFilterGroup={stepFilterGroupChild}
+                    stepFilterGroupIndex={stepFilterGroupChildIndex}
+                  />
+                ) : (
+                  <WorkflowStepFilterColumn
+                    key={stepFilterGroupChild.id}
+                    stepFilterGroup={branchFilterGroup}
+                    stepFilter={stepFilterGroupChild}
+                    stepFilterIndex={stepFilterGroupChildIndex}
+                    firstFilterLabel={capitalize(
+                      i18n._(branchLabel).toLowerCase(),
+                    )}
+                    elseIfIndex={elseIfIndex}
+                    preventDeletion={preventDeletion}
+                  />
+                );
+              },
+            )}
+        </StyledFiltersContainer>
 
-              {!readonly && isDefined(branchFilterGroup) && (
-                <WorkflowStepFilterAddFilterRuleSelect
-                  stepFilterGroup={branchFilterGroup}
-                />
-              )}
-            </>
-          }
-        />
+        {!readonly && isDefined(branchFilterGroup) && (
+          <WorkflowStepFilterAddFilterRuleSelect
+            stepFilterGroup={branchFilterGroup}
+          />
+        )}
       </StyledBranchContainer>
     </WorkflowStepFilterContext.Provider>
   );
