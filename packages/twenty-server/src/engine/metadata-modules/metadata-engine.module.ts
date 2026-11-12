@@ -23,6 +23,7 @@ import { LogicFunctionLayerModule } from 'src/engine/metadata-modules/logic-func
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { MessageFolderMetadataModule } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.module';
+import { MetadataOwnershipModule } from 'src/engine/metadata-modules/metadata-ownership/metadata-ownership.module';
 import { MetadataTranslationModule } from 'src/engine/metadata-modules/metadata-translation/metadata-translation.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { SettingsMenuItemModule } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.module';
@@ -54,6 +55,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     LogicFunctionLayerModule,
     SkillModule,
     CommandMenuItemModule,
+    MetadataOwnershipModule,
     MetadataTranslationModule,
     NavigationMenuItemModule,
     SettingsMenuItemModule,

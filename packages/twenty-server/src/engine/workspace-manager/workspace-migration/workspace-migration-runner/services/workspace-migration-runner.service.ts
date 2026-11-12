@@ -17,6 +17,7 @@ import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/f
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { withDerivedFieldMetadataMaps } from 'src/engine/metadata-modules/flat-entity/utils/with-derived-field-metadata-maps.util';
 import { createSearchFieldMetadatasByTsVectorFieldIdAccessor } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/create-search-field-metadatas-by-ts-vector-field-id-accessor.util';
+import { getInvalidatedVisibilityScopeByFlatEntityMapsKey } from 'src/engine/metadata-modules/metadata-ownership/utils/get-invalidated-visibility-scope-by-flat-entity-maps-key.util';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
@@ -567,6 +568,16 @@ export class WorkspaceMigrationRunnerService {
         phase: 'cache-invalidation',
         status: 'success',
         value: performance.now() - postCommitInvalidateStart,
+      });
+
+      this.workspaceCacheService.recordInvalidatedVisibilityScopes({
+        cacheKeyNames: flatEntityMapsKeysToInvalidate,
+        visibilityScopeByCacheKeyName:
+          getInvalidatedVisibilityScopeByFlatEntityMapsKey({
+            metadataEvents: allMetadataEvents,
+            fromAllFlatEntityMaps: cachedAllFlatEntityMaps,
+            toAllFlatEntityMaps: allFlatEntityMaps,
+          }),
       });
     } catch (cacheError) {
       this.recordRunPhaseMetric({

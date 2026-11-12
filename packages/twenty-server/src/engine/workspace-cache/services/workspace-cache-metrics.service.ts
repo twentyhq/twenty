@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type WorkspaceCacheInvalidatedVisibilityScope } from 'src/engine/workspace-cache/types/workspace-cache-invalidated-visibility-scope.type';
 import {
   type WorkspaceCacheDataMap,
   type WorkspaceCacheKeyName,
@@ -107,6 +108,20 @@ export class WorkspaceCacheMetricsService {
 
   recordRecompute(seconds: number, cacheKey: WorkspaceCacheKeyName): void {
     this.recomputeDurationHistogram.record(seconds, { cache_key: cacheKey });
+  }
+
+  recordInvalidation({
+    cacheKey,
+    visibilityScope,
+  }: {
+    cacheKey: WorkspaceCacheKeyName;
+    visibilityScope: WorkspaceCacheInvalidatedVisibilityScope;
+  }): void {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.WorkspaceMetadataCacheInvalidation,
+      amount: 1,
+      attributes: { cache_key: cacheKey, visibility_scope: visibilityScope },
+    });
   }
 
   recordRedisWrite(seconds: number): void {

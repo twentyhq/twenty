@@ -13,6 +13,7 @@ import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
+import { type MetadataOwnershipIndex } from 'src/engine/metadata-modules/metadata-ownership/types/metadata-ownership-index.type';
 import { type FlatRoleTargetByApplicationIdMaps } from 'src/engine/metadata-modules/role-target/types/flat-role-target-by-application-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
@@ -52,6 +53,8 @@ export type WorkspaceDerivedCacheDataMap = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRoleTargetByApplicationIdMaps: FlatRoleTargetByApplicationIdMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
+  viewOwnershipIndex: MetadataOwnershipIndex;
+  workflowOwnershipIndex: MetadataOwnershipIndex;
 };
 
 export type WorkspaceDerivedCacheKeyName = keyof WorkspaceDerivedCacheDataMap;
