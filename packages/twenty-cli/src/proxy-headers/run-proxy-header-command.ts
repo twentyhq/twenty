@@ -8,6 +8,24 @@ import { parseProxyHeaderLines } from '@/proxy-headers/parse-proxy-header-lines'
 
 const SOURCE_NAME = 'The proxy header command';
 
+const describeFailure = ({
+  timedOut,
+  exitCode,
+}: {
+  timedOut: boolean;
+  exitCode: number | undefined;
+}) => {
+  if (timedOut) {
+    return `${SOURCE_NAME} did not finish within ${PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS / 1000} seconds.`;
+  }
+
+  if (isNumber(exitCode)) {
+    return `${SOURCE_NAME} failed with exit code ${exitCode}.`;
+  }
+
+  return `${SOURCE_NAME} failed.`;
+};
+
 export const runProxyHeaderCommand = async ({
   command,
   signal,
@@ -17,8 +35,7 @@ export const runProxyHeaderCommand = async ({
 }) => {
   signal.throwIfAborted();
 
-  // Run through a shell, like git credential helpers, so users can compose
-  // commands such as: echo "cf-access-token: $(cloudflared access token ...)"
+  // A shell, like git credential helpers, lets users compose $(...) commands.
   const subprocess = execa(command, {
     shell: true,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -46,9 +63,10 @@ export const runProxyHeaderCommand = async ({
       // stdout is never echoed: it holds the proxy credentials.
       throw new CliError({
         code: 'PROXY_HEADERS_FAILED',
-        message: result.timedOut
-          ? `${SOURCE_NAME} did not finish within ${PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS / 1000} seconds.`
-          : `${SOURCE_NAME} failed${isNumber(result.exitCode) ? ` with exit code ${result.exitCode}` : ''}.`,
+        message: describeFailure({
+          timedOut: result.timedOut,
+          exitCode: result.exitCode,
+        }),
         hint: 'Run the command yourself to check it prints "Name: value" lines, for example after signing in to the proxy again.',
         details: {
           exitCode: result.exitCode ?? null,

@@ -11,8 +11,30 @@ import { readSavedProxyHeaderSettings } from '@/proxy-headers/read-saved-proxy-h
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 import { parseApiUrl } from '@/target/parse-api-url';
 
-// Saved headers are dropped when a remote moves to another server, so one
-// proxy's credentials are never sent to a different host.
+const readSettingsSavedForServer = ({
+  existingRemote,
+  remoteName,
+  apiUrl,
+}: {
+  existingRemote: RemoteEntry | undefined;
+  remoteName: string;
+  apiUrl: string;
+}): ProxyHeaderSettings => {
+  if (!isDefined(existingRemote)) {
+    return { headers: {} };
+  }
+
+  // Never send one proxy's credentials to a remote's new server.
+  if (
+    parseApiUrl({ rawUrl: existingRemote.apiUrl, sourceName: remoteName }) !==
+    apiUrl
+  ) {
+    return { headers: {} };
+  }
+
+  return readSavedProxyHeaderSettings({ remote: existingRemote, remoteName });
+};
+
 export const readLoginProxyHeaderSettings = ({
   options,
   existingRemote,
@@ -27,12 +49,9 @@ export const readLoginProxyHeaderSettings = ({
   const headerOption = readStringArrayOption(options, 'proxyHeader');
   const commandOption = readStringOption(options, 'proxyHeaderCommand');
   const savedSettings =
-    isDefined(existingRemote) &&
-    (!isDefined(headerOption) || !isDefined(commandOption)) &&
-    parseApiUrl({ rawUrl: existingRemote.apiUrl, sourceName: remoteName }) ===
-      apiUrl
-      ? readSavedProxyHeaderSettings({ remote: existingRemote, remoteName })
-      : { headers: {} };
+    isDefined(headerOption) && isDefined(commandOption)
+      ? { headers: {} }
+      : readSettingsSavedForServer({ existingRemote, remoteName, apiUrl });
   const headers = isDefined(headerOption)
     ? parseProxyHeaderLines({
         lines: headerOption,

@@ -20,8 +20,6 @@ const SIGN_IN_PATH_SEGMENTS = new Set([
   'sso',
 ]);
 
-// Recognizes the sign-in pages of identity-aware proxies and identity
-// providers: Cloudflare Access, Google IAP, oauth2-proxy, Pomerium, Entra ID…
 export const isProxySignInUrl = (url: URL) =>
   url.hostname.endsWith('.cloudflareaccess.com') ||
   url.hostname

@@ -7,7 +7,13 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 import { validateProxyHeader } from '@/proxy-headers/validate-proxy-header';
 
-const createInvalidSettingError = (remoteName: string, field: string) =>
+const createInvalidSettingError = ({
+  remoteName,
+  field,
+}: {
+  remoteName: string;
+  field: 'proxyHeaders' | 'proxyHeaderCommand';
+}) =>
   new CliError({
     code: 'INVALID_CONFIG',
     exitCode: EXIT_CODE.USAGE,
@@ -29,17 +35,20 @@ export const readSavedProxyHeaderSettings = ({
   const { proxyHeaders = {}, proxyHeaderCommand } = remote;
 
   if (!isPlainObject(proxyHeaders)) {
-    throw createInvalidSettingError(remoteName, 'proxyHeaders');
+    throw createInvalidSettingError({ remoteName, field: 'proxyHeaders' });
   }
 
   if (isDefined(proxyHeaderCommand) && !isNonEmptyString(proxyHeaderCommand)) {
-    throw createInvalidSettingError(remoteName, 'proxyHeaderCommand');
+    throw createInvalidSettingError({
+      remoteName,
+      field: 'proxyHeaderCommand',
+    });
   }
 
   const headers = Object.fromEntries(
     Object.entries(proxyHeaders).map(([name, value]) => {
       if (!isString(value)) {
-        throw createInvalidSettingError(remoteName, 'proxyHeaders');
+        throw createInvalidSettingError({ remoteName, field: 'proxyHeaders' });
       }
 
       return validateProxyHeader({

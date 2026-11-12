@@ -20,6 +20,7 @@ import {
 import { createStandardInputStub } from '@/__tests__/utils/create-standard-input-stub';
 import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 import { createAppWorkerEnvironment } from '@/app/create-app-worker-environment';
+import { putUploadFile } from '@/app/deployment/put-upload-file';
 import { createProxyHeaders } from '@/proxy-headers/create-proxy-headers';
 import { createBoundedFetch } from '@/transport/create-target-fetch';
 
@@ -289,6 +290,32 @@ describe('proxy headers', () => {
       request('https://uploads.example.com/file'),
     ).rejects.toMatchObject({ code: 'INVALID_REQUEST_PATH' });
     expect(read).not.toHaveBeenCalled();
+  });
+
+  it('sends proxy headers with uploads to the API host only', async () => {
+    const target = {
+      apiUrl: server.url,
+      proxyHeaders: createProxyHeaders({
+        headers: { 'cf-access-token': proxy.acceptedToken },
+      }),
+    };
+    const upload = (uploadUrl: string) =>
+      putUploadFile({
+        target,
+        uploadUrl,
+        contentType: 'application/octet-stream',
+        bytes: new TextEncoder().encode('bundle'),
+        signal: new AbortController().signal,
+      });
+
+    expect(await upload(`${server.url}/file-upload/file-id?token=t`)).toBe(200);
+    expect(server.requests.at(-1)?.headers['cf-access-token']).toBe(
+      proxy.acceptedToken,
+    );
+
+    await upload(`${otherServerUrl}/bucket/file-id?signature=s`);
+
+    expect(server.requests.at(-1)?.headers['cf-access-token']).toBeUndefined();
   });
 
   it('shares one header command run between concurrent reads and renewals', async () => {

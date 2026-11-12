@@ -77,7 +77,10 @@ export const createRedirectError = ({
   url: URL;
   proxyHeaders?: ProxyHeaders;
 }) => {
-  const proxySignInOrigin = getProxySignInOrigin(response, url);
+  const proxySignInOrigin = getProxySignInOrigin({
+    response,
+    requestUrl: url,
+  });
 
   if (isDefined(proxySignInOrigin)) {
     return new CliError({
@@ -173,19 +176,17 @@ export const createBoundedFetch =
       );
 
     try {
-      // Starts the request synchronously when there are no proxy headers, so an
-      // abort right after the call still reaches fetch.
+      // Stays synchronous without proxy headers so an immediate abort reaches fetch.
       const proxyHeaderValues = isDefined(proxyHeaders)
         ? await proxyHeaders.read(signal)
         : {};
       let response = await send(proxyHeaderValues);
 
-      // The proxy rejected the request before Twenty saw it, so replaying it
-      // once with renewed headers is safe; stream bodies cannot be replayed.
+      // Safe to replay: the proxy rejected it before Twenty saw it.
       if (
-        proxyHeaders?.isRenewable === true &&
+        proxyHeaders?.isRenewable &&
         !(init.body instanceof ReadableStream) &&
-        isProxyRejection(response, url)
+        isProxyRejection({ response, requestUrl: url })
       ) {
         await response.body?.cancel();
         proxyHeaders.renew(proxyHeaderValues);

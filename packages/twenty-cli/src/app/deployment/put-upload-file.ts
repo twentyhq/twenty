@@ -3,14 +3,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { APP_APPLY } from '@/app/deployment/constants/app-apply.constant';
 import { CliError } from '@/output/cli-error';
 import { API_URL_PROTOCOLS } from '@/target/constants/api-url-protocols.constant';
+import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 
 export const putUploadFile = async ({
+  target,
   uploadUrl,
   contentType,
   bytes,
   signal,
 }: {
+  target: Pick<ResolvedTarget, 'apiUrl' | 'proxyHeaders'>;
   uploadUrl: string;
   contentType: string;
   bytes: Blob | Uint8Array<ArrayBuffer>;
@@ -25,9 +28,16 @@ export const putUploadFile = async ({
     });
   }
 
+  // Without S3 the server receives uploads on its own host, behind the same proxy.
+  const proxyHeaderValues =
+    isDefined(target.proxyHeaders) &&
+    url.origin === new URL(target.apiUrl).origin
+      ? await target.proxyHeaders.read(signal)
+      : {};
+
   const response = await fetchWithProxy(url, {
     method: 'PUT',
-    headers: { 'Content-Type': contentType },
+    headers: { ...proxyHeaderValues, 'Content-Type': contentType },
     body: bytes,
     redirect: 'manual',
     signal: AbortSignal.any([

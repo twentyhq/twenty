@@ -6,8 +6,7 @@ import { createProxyHeaders } from '@/proxy-headers/create-proxy-headers';
 import { parseProxyHeaderLines } from '@/proxy-headers/parse-proxy-header-lines';
 import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-settings.type';
 
-// Environment variables extend saved settings: headers merge by name and a
-// command replaces the saved one, so CI can override a developer's setup.
+// Environment headers override saved ones by name; an environment command replaces the saved one.
 export const resolveProxyHeaders = ({
   environment,
   savedSettings = { headers: {} },

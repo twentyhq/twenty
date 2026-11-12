@@ -1,5 +1,4 @@
-// The CLI sets these itself; letting a proxy header replace them would break
-// Twenty authentication or request framing.
+// Set by the CLI; replacing them would break Twenty auth or request framing.
 export const RESERVED_PROXY_HEADER_NAMES = new Set([
   'accept',
   'authorization',
