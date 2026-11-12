@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { UnipileMessaging } from '@unipile/sdk';
 
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
@@ -22,7 +22,7 @@ export const sendUnipileChatMessage = async ({
       new UnipileMessaging().sendMessage({
         ...getUnipileRequestOptions(),
         path: { account_id: accountId, chat_id: chatId },
-        body: attachments.length > 0 ? { text, attachments } : { text },
+        body: isNonEmptyArray(attachments) ? { text, attachments } : { text },
       }),
     { deadlineAtMs: Date.now() },
   );
