@@ -132,6 +132,9 @@ describe('EmptyInboxPlaceholder', () => {
     expect(
       screen.getByRole('button', { name: 'Connect an account' }),
     ).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Link email threads' }),
+    ).not.toBeInTheDocument();
   });
 
   it('waits for the accounts and their channels before showing anything', () => {

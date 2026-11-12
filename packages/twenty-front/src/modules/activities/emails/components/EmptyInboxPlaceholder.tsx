@@ -75,7 +75,7 @@ export const EmptyInboxPlaceholder = () => {
         </EmptyState.Description>
       </EmptyState.Content>
       <EmptyState.Actions>
-        {hasConnectedAccount && (
+        {hasUsableAccount && hasConnectedAccount && (
           <LinkEmailThreadsDropdown
             dropdownIdPrefix="empty-inbox-link-email-threads"
             trigger={
@@ -85,7 +85,7 @@ export const EmptyInboxPlaceholder = () => {
             }
           />
         )}
-        {hasAccountAbleToSend && (
+        {hasUsableAccount && hasAccountAbleToSend && (
           <Button
             startIcon={<IconMail />}
             onClick={openComposer}
