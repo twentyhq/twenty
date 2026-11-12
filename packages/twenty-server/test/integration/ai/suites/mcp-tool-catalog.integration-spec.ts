@@ -11,7 +11,9 @@ const baseUrl = `http://localhost:${APP_PORT}`;
 
 const META_MODE_PATH = '/mcp?mode=meta';
 
-const DIRECT_MODE_PATH = '/mcp';
+const GENERIC_MODE_PATH = '/mcp';
+
+const DIRECT_MODE_PATH = '/mcp?mode=direct';
 
 const postMcp = (body: object, bearer: string, path = META_MODE_PATH) =>
   request(baseUrl)
@@ -301,7 +303,143 @@ describe('MCP tool catalog (integration)', () => {
     });
   });
 
-  describe('direct mode (default)', () => {
+  describe('generic mode (default)', () => {
+    it('should list record tools that take the object as an argument, without per-object tools', async () => {
+      const toolNames = (
+        await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)
+      ).map((tool) => tool.name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining([
+          'find_records',
+          'group_records',
+          'create_records',
+          'update_record',
+          'update_records',
+          'upsert_records',
+          'delete_records',
+          'merge_records',
+          'get_field_metadata',
+          'list_object_metadata_names',
+          'execute_tool',
+          'learn_tools',
+        ]),
+      );
+
+      for (const unlistedToolName of [
+        'find_many_companies',
+        'create_one_person',
+        'create_complete_workflow',
+        'http_request',
+      ]) {
+        expect(toolNames).not.toContain(unlistedToolName);
+      }
+    });
+
+    it('should list the same record tools to a restricted API key', async () => {
+      const toolNames = (
+        await listMcpTools(restrictedApiKeyToken, GENERIC_MODE_PATH)
+      ).map((tool) => tool.name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining(['find_records', 'create_records']),
+      );
+    });
+
+    it('should find records of an object named in singular or plural', async () => {
+      for (const objectName of ['company', 'companies']) {
+        const result = await callMcpTool(
+          adminApiKeyToken,
+          'find_records',
+          { objectName, select: ['id'], limit: 1 },
+          GENERIC_MODE_PATH,
+        );
+
+        expect(result.isError).toBe(false);
+      }
+    });
+
+    it('should apply the filter passed to find_records', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_records',
+        {
+          objectName: 'company',
+          select: ['id'],
+          filter: { name: { eq: 'definitely-not-an-existing-company' } },
+        },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(false);
+      expect(Number(JSON.parse(result.content[0].text).result.count)).toBe(0);
+    });
+
+    it('should refuse a write the role does not allow', async () => {
+      const result = await callMcpTool(
+        restrictedApiKeyToken,
+        'create_records',
+        { objectName: 'company', records: [{ name: 'Not allowed' }] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(true);
+      expect(JSON.parse(result.content[0].text).message).toBe(
+        'Operation "create_many" is not available on "company"',
+      );
+    });
+
+    it('should suggest object names for an unknown object', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_records',
+        { objectName: 'compnies', select: ['id'] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(true);
+      expect(JSON.parse(result.content[0].text).error).toContain(
+        'Did you mean: companies',
+      );
+    });
+
+    it('should keep running per-object names that a client listed earlier', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_many_companies',
+        { limit: 1, select: ['id'] },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(false);
+    });
+
+    it('should run an unlisted tool through execute_tool', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'execute_tool',
+        { toolName: 'list_workflows', arguments: {} },
+        GENERIC_MODE_PATH,
+      );
+
+      expect(isDispatchFailure(result)).toBe(false);
+    });
+
+    it('should not name workspace objects in the instructions', async () => {
+      const response = await postMcp(
+        { jsonrpc: '2.0', method: 'initialize', id: '1' },
+        adminApiKeyToken,
+        GENERIC_MODE_PATH,
+      ).expect(200);
+
+      expect(response.body.result.instructions).toContain('find_records');
+      expect(response.body.result.instructions).not.toContain(
+        'Available objects:',
+      );
+    });
+  });
+
+  describe('direct mode', () => {
     it('should list registry tools directly, without the meta-tools or MCP-excluded tools', async () => {
       const toolNames = (
         await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)
@@ -376,17 +514,6 @@ describe('MCP tool catalog (integration)', () => {
         openWorldHint: true,
         destructiveHint: false,
       });
-    });
-
-    it('should keep accepting the explicit ?mode=direct', async () => {
-      const toolNames = (
-        await listMcpTools(adminApiKeyToken, '/mcp?mode=direct')
-      ).map((tool) => tool.name);
-
-      expect(toolNames).toEqual(
-        expect.arrayContaining(['find_many_companies']),
-      );
-      expect(toolNames).not.toContain('execute_tool');
     });
 
     it('should keep ?mode=meta on the meta-tools', async () => {

@@ -122,6 +122,20 @@ export const ShowMoreDirectMessages: Story = {
   },
 };
 
+export const Presence: Story = {
+  args: { onlineWorkspaceMemberIds: ['anna', 'felix', 'alice'] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findAllByRole('img', { name: 'Online' }),
+    ).toHaveLength(3);
+    await expect(
+      canvas.getAllByRole('img', { name: 'Offline' }).length,
+    ).toBeGreaterThan(0);
+  },
+};
+
 export const SearchAndKeyboardSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
