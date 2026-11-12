@@ -14,33 +14,36 @@ import { isSecureCookieDeployment } from 'src/engine/core-modules/user-session/u
 import { readCookieValue } from 'src/engine/core-modules/user-session/utils/read-cookie-value.util';
 
 const FLOW_COOKIE_MAX_AGE_MS = 10 * 60 * 1000;
+const MAX_CONCURRENT_FLOWS = 5;
+const NONCE_SEPARATOR = '.';
 
-// Binds an OAuth sign-in to the browser that started it: the callback only completes with this cookie.
 @Injectable()
 export class ConnectionProviderFlowCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  attachBrowserNonce(response: Response): string {
+  attachBrowserNonce(request: Request, response: Response): string {
     const browserNonce = randomUUID();
+    const browserNonces = [
+      ...this.readBrowserNonces(request),
+      browserNonce,
+    ].slice(-MAX_CONCURRENT_FLOWS);
 
-    response.cookie(this.resolveCookieName(), browserNonce, {
-      ...this.resolveCookieOptions(),
-      maxAge: FLOW_COOKIE_MAX_AGE_MS,
-    });
+    response.cookie(
+      this.resolveCookieName(),
+      browserNonces.join(NONCE_SEPARATOR),
+      { ...this.resolveCookieOptions(), maxAge: FLOW_COOKIE_MAX_AGE_MS },
+    );
 
     return browserNonce;
   }
 
-  readBrowserNonce(request: Request): string | undefined {
+  readBrowserNonces(request: Request): string[] {
     const cookieHeader = request.headers.cookie;
-
-    return isNonEmptyString(cookieHeader)
+    const cookieValue = isNonEmptyString(cookieHeader)
       ? readCookieValue(cookieHeader, this.resolveCookieName())
       : undefined;
-  }
 
-  clearBrowserNonce(response: Response): void {
-    response.clearCookie(this.resolveCookieName(), this.resolveCookieOptions());
+    return cookieValue?.split(NONCE_SEPARATOR).filter(Boolean) ?? [];
   }
 
   private isSecureDeployment(): boolean {

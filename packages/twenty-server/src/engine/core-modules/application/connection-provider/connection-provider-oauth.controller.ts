@@ -74,6 +74,7 @@ export class ConnectionProviderOAuthController {
     @Query('reconnectingConnectedAccountId')
     reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
@@ -154,7 +155,7 @@ export class ConnectionProviderOAuthController {
       const { authorizationUrl } =
         await this.oauthProviderFlowService.startAuthorizationFlow({
           ...authorizationArgs,
-          browserNonce: this.flowCookieService.attachBrowserNonce(res),
+          browserNonce: this.flowCookieService.attachBrowserNonce(req, res),
         });
 
       return res.redirect(authorizationUrl);
@@ -183,9 +184,7 @@ export class ConnectionProviderOAuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    const browserNonce = this.flowCookieService.readBrowserNonce(req);
-
-    this.flowCookieService.clearBrowserNonce(res);
+    const browserNonces = this.flowCookieService.readBrowserNonces(req);
 
     if (errorParam) {
       return this.flowRedirectService.redirectToErrorFromState({
@@ -212,7 +211,7 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
           state,
-          browserNonce,
+          browserNonces,
         });
 
       return await this.flowRedirectService.redirectToConnectedApplication({

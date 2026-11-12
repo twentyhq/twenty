@@ -27,7 +27,7 @@ const STATE_JWT_EXPIRES_IN = '10m';
 type CallbackArgs = {
   code: string;
   state: string;
-  browserNonce: string | undefined;
+  browserNonces: string[];
 };
 
 type AuthorizationStartArgs = ConnectionAuthorizationArgs & {
@@ -148,7 +148,7 @@ export class ConnectionProviderOAuthFlowService {
 
     const flowSecrets = await this.consumeFlowSecretsOrThrow({
       statePayload,
-      browserNonce: callbackArgs.browserNonce,
+      browserNonces: callbackArgs.browserNonces,
     });
     const client = await this.oauthClientResolverService.resolveForTokenRequest(
       { provider, workspaceId: statePayload.workspaceId },
@@ -262,10 +262,10 @@ export class ConnectionProviderOAuthFlowService {
 
   private async consumeFlowSecretsOrThrow({
     statePayload,
-    browserNonce,
+    browserNonces,
   }: {
     statePayload: AppOAuthStateJwtPayload;
-    browserNonce: string | undefined;
+    browserNonces: string[];
   }): Promise<ConnectionProviderFlowSecrets> {
     if (!isDefined(statePayload.flowSecretId)) {
       throw new ConnectionProviderException(
@@ -279,7 +279,7 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.flowSecretId,
       );
 
-    if (flowSecrets.browserNonce !== browserNonce) {
+    if (!browserNonces.includes(flowSecrets.browserNonce)) {
       throw new ConnectionProviderException(
         'OAuth sign-in must finish in the browser that started it',
         ConnectionProviderExceptionCode.INVALID_STATE,

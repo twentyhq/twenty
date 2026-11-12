@@ -161,7 +161,7 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
     );
   });
 
-  it('reuses a stored client and only probes the resource for its scope', async () => {
+  it('reuses a stored client of the same authorization server without registering again', async () => {
     const { fetchFn, requestedPaths } = buildAuthorizationServerFetch({
       isClientIdMetadataDocumentSupported: false,
     });
@@ -195,8 +195,38 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
       tokenEndpoint: `${AUTHORIZATION_SERVER_URL}/token`,
       scopes: ['read', 'write'],
     });
-    expect(requestedPaths).toEqual(['POST /mcp']);
+    expect(requestedPaths).not.toContain('POST /register');
     expect(oauthClientService.insertClientIfAbsent).not.toHaveBeenCalled();
+  });
+
+  it('registers again when the resource moved to another authorization server', async () => {
+    const { fetchFn } = buildAuthorizationServerFetch({
+      isClientIdMetadataDocumentSupported: false,
+    });
+    const { service, oauthClientService } = buildService({
+      fetchFn,
+      storedClient: {
+        registrationMethod: 'DYNAMIC_CLIENT_REGISTRATION',
+        redirectUri: REDIRECT_URL,
+        clientInformation: {
+          client_id: 'stored-client',
+          redirect_uris: [REDIRECT_URL],
+        },
+        discoveryState: {
+          authorizationServerUrl: 'https://old-auth.example.com',
+        },
+      },
+    });
+
+    const client = await service.resolveClientForAuthorization({
+      provider: PROVIDER,
+      workspaceId: WORKSPACE_ID,
+    });
+
+    expect(client.clientId).toBe('registered-client');
+    expect(oauthClientService.replaceClientIfUnchanged).toHaveBeenCalledWith(
+      expect.objectContaining({ expectedClientId: 'stored-client' }),
+    );
   });
 
   it('refuses a token request before any sign-in stored a client', async () => {

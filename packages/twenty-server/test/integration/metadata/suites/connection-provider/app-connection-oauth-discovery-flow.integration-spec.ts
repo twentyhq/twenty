@@ -153,6 +153,7 @@ describe('app connection OAuth discovery flow', () => {
 
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set('Cookie', browserCookie ?? '')
       .query({
         applicationId: provider.applicationId,
         providerName: provider.name,
@@ -227,6 +228,7 @@ describe('app connection OAuth discovery flow', () => {
   beforeEach(async () => {
     registrationCount = 0;
     tokenRequests = [];
+    browserCookie = undefined;
     await globalThis.testDataSource.query(
       'DELETE FROM core."connectionProviderOAuthClient" WHERE "connectionProviderId" = $1',
       [provider.id],
@@ -332,6 +334,21 @@ describe('app connection OAuth discovery flow', () => {
     );
     expect(await readStoredClients()).toHaveLength(0);
     expect(await readAccounts()).toHaveLength(0);
+  });
+
+  it('completes two sign-ins started in the same browser', async () => {
+    const firstState = getState(await authorize());
+    const secondState = getState(await authorize());
+
+    const firstRedirect = await callback(firstState, 'first-code');
+    const secondRedirect = await callback(secondState, 'second-code');
+
+    expect(firstRedirect.searchParams.get('errorMessage')).toBeNull();
+    expect(secondRedirect.searchParams.get('errorMessage')).toBeNull();
+    expect(tokenRequests.map((params) => params.get('code'))).toEqual([
+      'first-code',
+      'second-code',
+    ]);
   });
 
   it('refuses a callback whose flow secrets were already consumed', async () => {
