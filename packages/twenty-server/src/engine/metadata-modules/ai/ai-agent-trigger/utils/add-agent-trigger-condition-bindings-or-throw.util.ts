@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -14,6 +15,12 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
+
+type EventCondition = {
+  eventName: string;
+  condition: string;
+  conditionBindings?: ValidationRuleBindings;
+};
 
 const buildInvalidConditionException = ({
   condition,
@@ -30,9 +37,7 @@ const buildInvalidConditionException = ({
     },
   );
 
-const readEventCondition = (
-  trigger: unknown,
-): { eventName: string; condition: string } | undefined => {
+const readEventCondition = (trigger: unknown): EventCondition | undefined => {
   if (
     !isPlainObject(trigger) ||
     trigger.type !== 'DATABASE_EVENT' ||
@@ -41,43 +46,46 @@ const readEventCondition = (
     return undefined;
   }
 
-  const { eventName, condition } = trigger.settings;
+  const { eventName, condition, conditionBindings } = trigger.settings;
 
   return isNonEmptyString(condition) && isString(eventName)
-    ? { eventName, condition }
+    ? {
+        eventName,
+        condition,
+        ...(isPlainObject(conditionBindings) && {
+          conditionBindings: conditionBindings as ValidationRuleBindings,
+        }),
+      }
     : undefined;
 };
 
-const toEventConditionKey = ({
-  eventName,
-  condition,
-}: {
-  eventName: string;
-  condition: string;
-}) => JSON.stringify([eventName, condition]);
+const toEventConditionKey = ({ eventName, condition }: EventCondition) =>
+  JSON.stringify([eventName, condition]);
 
 // Agent validation sees no object metadata, so conditions are compiled where agents are written
-export const assertAgentTriggerConditionsCompileOrThrow = ({
+export const addAgentTriggerConditionBindingsOrThrow = <TTriggers>({
   triggers,
   storedTriggers,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  triggers: unknown;
+  triggers: TTriggers;
   storedTriggers?: unknown;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-}) => {
+}): TTriggers => {
   if (!Array.isArray(triggers)) {
-    return;
+    return triggers;
   }
 
-  // A stored condition whose field was later deleted must not block unrelated edits
-  const storedEventConditionKeys = new Set(
+  const storedEventConditionsByKey = new Map(
     (Array.isArray(storedTriggers) ? storedTriggers : [])
       .map(readEventCondition)
       .filter(isDefined)
-      .map(toEventConditionKey),
+      .map((storedEventCondition) => [
+        toEventConditionKey(storedEventCondition),
+        storedEventCondition,
+      ]),
   );
 
   const flatObjectMetadataByNameSingular = new Map(
@@ -89,18 +97,10 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
       ]),
   );
 
-  for (const trigger of triggers) {
-    const eventCondition = readEventCondition(trigger);
-
-    if (
-      !isDefined(eventCondition) ||
-      storedEventConditionKeys.has(toEventConditionKey(eventCondition))
-    ) {
-      continue;
-    }
-
-    const { eventName, condition } = eventCondition;
-
+  const compileOrThrow = ({
+    eventName,
+    condition,
+  }: EventCondition): ValidationRuleBindings => {
     const [objectNameSingular] = eventName.split('.');
     const flatObjectMetadata =
       flatObjectMetadataByNameSingular.get(objectNameSingular);
@@ -126,5 +126,33 @@ export const assertAgentTriggerConditionsCompileOrThrow = ({
         reason: compilation.errorMessage,
       });
     }
-  }
+
+    return compilation.bindings;
+  };
+
+  return triggers.map((trigger: unknown) => {
+    const eventCondition = readEventCondition(trigger);
+
+    if (
+      !isDefined(eventCondition) ||
+      !isPlainObject(trigger) ||
+      !isPlainObject(trigger.settings)
+    ) {
+      return trigger;
+    }
+
+    const storedEventCondition = storedEventConditionsByKey.get(
+      toEventConditionKey(eventCondition),
+    );
+
+    // A stored condition whose field was later deleted must not block unrelated edits
+    const conditionBindings = isDefined(storedEventCondition)
+      ? storedEventCondition.conditionBindings
+      : compileOrThrow(eventCondition);
+
+    return {
+      ...trigger,
+      settings: { ...trigger.settings, conditionBindings },
+    };
+  }) as TTriggers;
 };
