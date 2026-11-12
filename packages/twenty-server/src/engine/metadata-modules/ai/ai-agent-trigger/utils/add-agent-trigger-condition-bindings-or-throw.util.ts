@@ -53,7 +53,11 @@ const readEventCondition = (trigger: unknown): EventCondition | undefined => {
         eventName,
         condition,
         ...(isPlainObject(conditionBindings) && {
-          conditionBindings: conditionBindings as ValidationRuleBindings,
+          conditionBindings: Object.fromEntries(
+            Object.entries(conditionBindings).filter(
+              (entry): entry is [string, string] => isString(entry[1]),
+            ),
+          ),
         }),
       }
     : undefined;
