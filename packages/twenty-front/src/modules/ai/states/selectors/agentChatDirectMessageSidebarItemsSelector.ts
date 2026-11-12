@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -27,14 +28,11 @@ export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
 
     return sortChatThreadsByLastActivityDesc(directMessageThreads).map(
       (thread) => {
-        const peerWorkspaceMemberId = [
-          thread.directMessageFirstWorkspaceMemberId,
-          thread.directMessageSecondWorkspaceMemberId,
-        ].find(
-          (workspaceMemberId) =>
-            isDefined(workspaceMemberId) &&
-            workspaceMemberId !== currentWorkspaceMemberId,
-        );
+        const [peerWorkspaceMemberId] =
+          getAgentChatDirectMessagePeerWorkspaceMemberIds({
+            thread,
+            currentWorkspaceMemberId,
+          });
         const peerWorkspaceMember = workspaceMembers.find(
           ({ id }) => id === peerWorkspaceMemberId,
         );
