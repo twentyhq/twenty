@@ -11,6 +11,7 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { mergeAgentChatThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -109,20 +110,13 @@ export const useLoadAgentChatThreads = () => {
         ...favoriteParticipants,
       ]);
 
-      const currentThreadIds = currentList?.threadIds ?? [];
-      const threadIdsAddedDuringRequest = currentThreadIds.filter(
-        (threadId) => !(listBeforeRequest?.threadIds ?? []).includes(threadId),
-      );
-      const keptThreadIds =
-        mode === 'fetch-more' ? currentThreadIds : threadIdsAddedDuringRequest;
-
       store.set(agentChatThreadListState.atom, {
-        threadIds: [
-          ...keptThreadIds,
-          ...pageThreadIds.filter(
-            (threadId) => !keptThreadIds.includes(threadId),
-          ),
-        ],
+        threadIds: mergeAgentChatThreadListIds({
+          mode,
+          threadIdsBeforeRequest: listBeforeRequest?.threadIds ?? [],
+          currentThreadIds: currentList?.threadIds ?? [],
+          pageThreadIds,
+        }),
         hasNextPage: page.hasNextPage,
         endCursor: page.endCursor,
       });
