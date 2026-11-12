@@ -206,7 +206,7 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   editableProfileFields?: string[];
 
-  // TODO: remove once frontends cached before isInternalImportEnabled are gone
+  // TODO(@neo773): remove once frontends cached before isInternalImportEnabled are gone
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
