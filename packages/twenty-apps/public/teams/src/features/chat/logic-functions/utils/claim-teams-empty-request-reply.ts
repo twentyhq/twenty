@@ -6,7 +6,6 @@ import { buildTeamsEmptyRequestReplyKvKey } from 'src/features/chat/logic-functi
 
 const CLAIM_TTL_MS = 60 * 60 * 1000;
 
-// Teams redelivers an activity it did not see acknowledged, so the hint is sent once per activity.
 export const claimTeamsEmptyRequestReply = async (
   emptyRequest: TeamsAssistantEmptyRequest,
 ): Promise<boolean> => {
