@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -14,7 +14,7 @@ const StyledFetchMoreTrigger = styled.div`
 
 export const AgentChatThreadsFetchMoreTrigger = () => {
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
-  const { fetchMoreAgentChatThreads } = useRefreshAgentChatThreads();
+  const { fetchMoreAgentChatThreads } = useFetchMoreAgentChatThreads();
   const { ref } = useInView({
     onChange: (inView) => {
       if (inView) {

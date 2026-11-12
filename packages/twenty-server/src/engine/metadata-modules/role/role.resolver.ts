@@ -60,10 +60,12 @@ import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-ro
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
+import { AccessGroupPropagationProgressDTO } from 'src/engine/permissions/dtos/access-group-propagation-progress.dto';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -116,6 +118,17 @@ export class RoleResolver {
     }
 
     return role;
+  }
+
+  // TODO(@charlesBochet): report the real progress of the access group propagation
+  @Query(() => AccessGroupPropagationProgressDTO)
+  @UseGuards(AccessPolicyGuard(ROLE_READ_ACCESS_POLICY))
+  async accessGroupPropagationProgress(): Promise<AccessGroupPropagationProgressDTO> {
+    return {
+      totalRecordCount: 0,
+      remainingRecordCount: 0,
+      isInProgress: false,
+    };
   }
 
   @Mutation(() => WorkspaceMemberDTO)
@@ -413,5 +426,22 @@ export class RoleResolver {
       });
 
     return rowLevelPermissionPredicateGroups;
+  }
+
+  @ResolveField('rowLevelPermissionRules', () => [RowLevelPermissionRuleDTO], {
+    nullable: true,
+  })
+  async getRowLevelPermissionRulesForRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<RowLevelPermissionRuleDTO[]> {
+    const { rowLevelPermissionRules } =
+      await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
+        workspaceId: workspace.id,
+        roleId: role.id,
+      });
+
+    return rowLevelPermissionRules;
   }
 }

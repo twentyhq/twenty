@@ -15,7 +15,7 @@ import {
   isNonEmptyArray,
   isNonEmptyString,
 } from 'twenty-shared/utils';
-import { In, Not } from 'typeorm';
+import { In, IsNull, Not, Or } from 'typeorm';
 
 import { isBuiltInAssistantMessage } from 'src/engine/metadata-modules/ai/ai-history/utils/is-built-in-assistant-message.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -232,13 +232,40 @@ export class AgentChatService {
   async hasMessages({
     threadId,
     workspaceId,
+    excludedMessage,
   }: {
     threadId: string;
     workspaceId: string;
+    excludedMessage?: Pick<AgentMessageWorkspaceEntity, 'id' | 'turnId'>;
   }): Promise<boolean> {
     return this.messageRepository.existsBy(workspaceId, {
       threadId,
       role: Not(AgentMessageRole.SYSTEM),
+      ...(isDefined(excludedMessage) ? { id: Not(excludedMessage.id) } : {}),
+      ...(isDefined(excludedMessage?.turnId)
+        ? { turnId: Or(IsNull(), Not(excludedMessage.turnId)) }
+        : {}),
+    });
+  }
+
+  async findMemberMessage({
+    messageId,
+    threadId,
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    messageId: string;
+    threadId: string;
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<AgentMessageWorkspaceEntity | null> {
+    return this.messageRepository.findOne(workspaceId, {
+      where: {
+        id: messageId,
+        threadId,
+        role: AgentMessageRole.USER,
+        senderWorkspaceMemberId: workspaceMemberId,
+      },
     });
   }
 

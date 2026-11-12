@@ -74,6 +74,7 @@ export {
 } from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
 export type { AppMessageFolder } from './appMessageFolderType';
+export type { ArchiveInboxThreadInput } from './archiveInboxThreadInputType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
@@ -142,6 +143,7 @@ export { getRelatedRecordPathUniversalIdentifier } from './deterministic-identif
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
+export { getRowLevelPermissionRuleUniversalIdentifier } from './deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
@@ -178,6 +180,7 @@ export type {
   JobStatusResult,
 } from './enqueueJobType';
 export { SyncableEntity } from './enums/syncable-entities.enum';
+export type { EventTriggerManifestSettings } from './eventTriggerManifestSettingsType';
 export type { FieldManifestOptions } from './fieldManifestOptionsType';
 export type {
   RegularFieldManifest,
@@ -204,6 +207,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
@@ -245,6 +249,8 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RecordEventTriggerManifestAction } from './recordEventTriggerManifestActionType';
+export type { RecordEventTriggerManifestSettings } from './recordEventTriggerManifestSettingsType';
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {

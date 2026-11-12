@@ -1,3 +1,9 @@
+type AccessGroupPropagationProgress {
+  isInProgress: Boolean!
+  remainingRecordCount: Int!
+  totalRecordCount: Int!
+}
+
 input ActivateWorkspaceInput {
   """
   Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
@@ -206,6 +212,7 @@ type AgentMessageReactionSummary {
 }
 
 type AgentRun {
+  canReadThread: Boolean!
   createdAt: DateTime!
   creatorName: String!
   creatorSource: String!
@@ -363,6 +370,7 @@ enum AllMetadataName {
   roleTarget
   rowLevelPermissionPredicate
   rowLevelPermissionPredicateGroup
+  rowLevelPermissionRule
   searchFieldMetadata
   settingsMenuItem
   skill
@@ -491,6 +499,7 @@ type Application {
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
+  grantRoleId: UUID
   grantedIframeMediaPermissions: [IframeMediaPermission!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
@@ -850,6 +859,11 @@ type ApprovedAccessDomain {
   domain: String!
   id: UUID!
   isValidated: Boolean!
+}
+
+input ArchiveInboxThreadInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]
 }
 
 type AuthBypassProviders {
@@ -2440,8 +2454,10 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
+  IS_PERMISSION_TABLES_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -3457,6 +3473,7 @@ type Mutation {
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
+  archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
@@ -3667,6 +3684,7 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  stopGenerate(input: StopGenerateInput!): Boolean!
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
@@ -3975,7 +3993,7 @@ type ObjectRecordsPermissions {
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
   restrictedFields: JSON! @deprecated(reason: "Use unreadableFields and uneditableFields")
-  rowLevelRecordsPermissions: RowLevelRecordsPermissions
+  rowLevelRecordsPermissions: [RowLevelRecordsPermissions!]
   uneditableFields: [UUID!]!
   unreadableFields: [UUID!]!
 }
@@ -4287,6 +4305,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  accessGroupPropagationProgress: AccessGroupPropagationProgress!
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
@@ -4631,6 +4650,7 @@ type Role {
   rowLevelPermissionFieldPermissions: [FieldPermission!]
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
   rowLevelPermissionPredicates: [RowLevelPermissionPredicate!]
+  rowLevelPermissionRules: [RowLevelPermissionRule!]
   universalIdentifier: UUID
   workspaceMembers: [WorkspaceMember!]!
 }
@@ -4722,6 +4742,16 @@ enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH
 }
 
+type RowLevelPermissionRule {
+  canCreateRecords: Boolean!
+  canDestroyRecords: Boolean!
+  canReadRecords: Boolean!
+  canSoftDeleteRecords: Boolean!
+  canUpdateRecords: Boolean!
+  id: UUID!
+  objectMetadataId: UUID!
+}
+
 type RowLevelRecordsPermissions {
   canCreateRecords: Boolean!
   canDestroyRecords: Boolean!
@@ -4730,8 +4760,9 @@ type RowLevelRecordsPermissions {
   canUpdateRecords: Boolean!
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
-  uneditableFields: [UUID!]
-  unreadableFields: [UUID!]
+  ruleId: UUID!
+  uneditableFields: [UUID!]!
+  unreadableFields: [UUID!]!
 }
 
 input RunAgentInput {
@@ -5007,6 +5038,10 @@ type StandaloneRichTextConfiguration {
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
+}
+
+input StopGenerateInput {
+  runId: UUID!
 }
 
 type StopImpersonation {
@@ -5849,6 +5884,11 @@ input UpsertPermissionFlagsInput {
 }
 
 input UpsertRowLevelPermissionPredicatesInput {
+  canCreateRecords: Boolean
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
   objectMetadataId: UUID!
   predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
   predicates: [RowLevelPermissionPredicateInput!]!
@@ -6168,9 +6208,7 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   objectRecordsPermissions: [ObjectRecordsPermissions!]
-  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!
@@ -6510,6 +6548,7 @@ enum WorkflowActionType {
   IF_ELSE
   ITERATOR
   LOGIC_FUNCTION
+  MCP_TOOL
   PICK_RECORD
   SEND_CHAT_MESSAGE
   SEND_EMAIL

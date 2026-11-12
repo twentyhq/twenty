@@ -2,36 +2,44 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import {
+  IconBolt,
+  IconCalendarTime,
+  IconCoins,
+  IconStatusChange,
+  IconSum,
+  IconTextSize,
+  IconTimeDuration30,
+} from 'twenty-ui/icon';
 
+import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
+import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GetAgentRunsDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 const RUNS_POLL_INTERVAL_MS = 10000;
 
-const StyledTableContainer = styled.div`
-  margin-top: ${themeCssVariables.spacing[3]};
+const StyledTurnsContainer = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 const StyledEmptyStateContainer = styled.div`
   display: flex;
   flex: 1;
   min-height: 0;
-`;
-
-const StyledTableHeaderRowContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 const toggleId = (ids: Set<string>, id: string): Set<string> => {
@@ -55,9 +63,7 @@ export const CoreAgentRunsContent = ({
 }: CoreAgentRunsContentProps) => {
   const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
-  const [expandedThreadIds, setExpandedThreadIds] = useState<Set<string>>(
-    new Set(),
-  );
+  const { openAskAiThread } = useOpenAskAiThread();
 
   // runs start and settle outside this page, so the list refreshes while it is visible
   const { data, loading, error } = useQuery(GetAgentRunsDocument, {
@@ -69,31 +75,46 @@ export const CoreAgentRunsContent = ({
   const runs = data?.agentRuns ?? [];
 
   const header = (
-    <StyledTableHeaderRowContainer>
-      <TableRow gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}>
-        <TableHeader>{t`Status`}</TableHeader>
-        <TableHeader>{t`Started`}</TableHeader>
-        <TableHeader>{t`Source`}</TableHeader>
-        <TableHeader>{t`Input`}</TableHeader>
-        <TableHeader align="right">{t`Tokens`}</TableHeader>
-        <TableHeader align="right">{t`Credits`}</TableHeader>
-        <TableHeader align="right">{t`Duration`}</TableHeader>
-      </TableRow>
-    </StyledTableHeaderRowContainer>
+    <TableRow gridTemplateColumns={CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS}>
+      <TableHeader>
+        <IconStatusChange size={14} />
+        <TableHeaderText>{t`Status`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader>
+        <IconCalendarTime size={14} />
+        <TableHeaderText>{t`Started`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader>
+        <IconBolt size={14} />
+        <TableHeaderText>{t`Source`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader>
+        <IconTextSize size={14} />
+        <TableHeaderText>{t`Input`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader align="right">
+        <IconSum size={14} />
+        <TableHeaderText>{t`Tokens`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader align="right">
+        <IconCoins size={14} />
+        <TableHeaderText>{t`Credits`}</TableHeaderText>
+      </TableHeader>
+      <TableHeader align="right">
+        <IconTimeDuration30 size={14} />
+        <TableHeaderText>{t`Duration`}</TableHeaderText>
+      </TableHeader>
+    </TableRow>
   );
 
   if (loading && runs.length === 0) {
     return (
-      <SettingsPageContainer>
-        <StyledTableContainer>
-          <Table>
-            {header}
-            {Array.from({ length: 3 }).map((_, index) => (
-              <SkeletonLine height={32} key={index} />
-            ))}
-          </Table>
-        </StyledTableContainer>
-      </SettingsPageContainer>
+      <Table>
+        {header}
+        {Array.from({ length: 3 }).map((_, index) => (
+          <SkeletonLine height={32} key={index} />
+        ))}
+      </Table>
     );
   }
 
@@ -103,7 +124,7 @@ export const CoreAgentRunsContent = ({
         <EmptyState.Root>
           <AnimatedPlaceholder type="errorIndex" />
           <EmptyState.Content>
-            <EmptyState.Title>{t`Could not load runs`}</EmptyState.Title>
+            <EmptyState.Title>{t`Could not load turns`}</EmptyState.Title>
             <EmptyState.Description>
               {t`Try again in a moment`}
             </EmptyState.Description>
@@ -119,9 +140,9 @@ export const CoreAgentRunsContent = ({
         <EmptyState.Root>
           <AnimatedPlaceholder type="emptyTimeline" />
           <EmptyState.Content>
-            <EmptyState.Title>{t`No runs yet`}</EmptyState.Title>
+            <EmptyState.Title>{t`No turns yet`}</EmptyState.Title>
             <EmptyState.Description>
-              {t`Runs appear here once a workflow or an app uses this agent`}
+              {t`Turns appear here once a workflow or an app uses this agent`}
             </EmptyState.Description>
           </EmptyState.Content>
         </EmptyState.Root>
@@ -129,40 +150,39 @@ export const CoreAgentRunsContent = ({
     );
   }
 
-  const handleToggleRun = (runId: string) =>
-    setExpandedRunIds((runIds) => toggleId(runIds, runId));
+  const handleRunClick = (
+    run: Pick<CoreAgentRun, 'id' | 'threadId' | 'canReadThread'>,
+  ) => {
+    if (isDefined(run.threadId) && run.canReadThread) {
+      openAskAiThread(run.threadId);
+      return;
+    }
+
+    setExpandedRunIds((runIds) => toggleId(runIds, run.id));
+  };
 
   return (
-    <SettingsPageContainer>
-      <StyledTableContainer>
-        <Table>
-          {header}
-          {groupCoreAgentRunsByConversation(runs).map((item) =>
-            item.type === 'conversation' ? (
-              <CoreAgentRunConversation
-                key={item.threadId}
-                title={item.title}
-                runs={item.runs}
-                isExpanded={expandedThreadIds.has(item.threadId)}
-                onToggle={() =>
-                  setExpandedThreadIds((threadIds) =>
-                    toggleId(threadIds, item.threadId),
-                  )
-                }
-                expandedRunIds={expandedRunIds}
-                onToggleRun={handleToggleRun}
-              />
-            ) : (
-              <CoreAgentRunRow
-                key={item.run.id}
-                run={item.run}
-                isExpanded={expandedRunIds.has(item.run.id)}
-                onToggle={() => handleToggleRun(item.run.id)}
-              />
-            ),
-          )}
-        </Table>
-      </StyledTableContainer>
-    </SettingsPageContainer>
+    <StyledTurnsContainer>
+      <Table>
+        {header}
+        {groupCoreAgentRunsByConversation(runs).map((item) =>
+          item.type === 'conversation' ? (
+            <CoreAgentRunConversation
+              key={item.threadId}
+              threadId={item.threadId}
+              title={item.title}
+              runs={item.runs}
+            />
+          ) : (
+            <CoreAgentRunRow
+              key={item.run.id}
+              run={item.run}
+              isExpanded={expandedRunIds.has(item.run.id)}
+              onClick={() => handleRunClick(item.run)}
+            />
+          ),
+        )}
+      </Table>
+    </StyledTurnsContainer>
   );
 };

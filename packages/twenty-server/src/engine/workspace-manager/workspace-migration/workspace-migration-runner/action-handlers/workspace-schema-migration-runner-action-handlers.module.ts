@@ -62,6 +62,9 @@ import { UpdateRoleActionHandlerService } from 'src/engine/workspace-manager/wor
 import { CreateRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate-group/services/create-row-level-permission-predicate-group-action-handler.service';
 import { DeleteRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate-group/services/delete-row-level-permission-predicate-group-action-handler.service';
 import { UpdateRowLevelPermissionPredicateGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate-group/services/update-row-level-permission-predicate-group-action-handler.service';
+import { CreateRowLevelPermissionRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-rule/services/create-row-level-permission-rule-action-handler.service';
+import { DeleteRowLevelPermissionRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-rule/services/delete-row-level-permission-rule-action-handler.service';
+import { UpdateRowLevelPermissionRuleActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-rule/services/update-row-level-permission-rule-action-handler.service';
 import { CreateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/create-row-level-permission-predicate-action-handler.service';
 import { DeleteRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/delete-row-level-permission-predicate-action-handler.service';
 import { UpdateRowLevelPermissionPredicateActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/row-level-permission-predicate/services/update-row-level-permission-predicate-action-handler.service';
@@ -257,6 +260,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CreateRowLevelPermissionPredicateGroupActionHandlerService,
     UpdateRowLevelPermissionPredicateGroupActionHandlerService,
     DeleteRowLevelPermissionPredicateGroupActionHandlerService,
+    CreateRowLevelPermissionRuleActionHandlerService,
+    UpdateRowLevelPermissionRuleActionHandlerService,
+    DeleteRowLevelPermissionRuleActionHandlerService,
 
     CreateFrontComponentActionHandlerService,
     UpdateFrontComponentActionHandlerService,

@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
 import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -9,6 +10,7 @@ import { type ReactNode } from 'react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
@@ -34,6 +36,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEdit, IconTrash } from 'twenty-ui/icon';
 import { LabeledSeparator } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -47,7 +51,8 @@ const StyledSender = styled.div`
 `;
 
 const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
-  max-width: 100%;
+  max-width: ${({ isUser }) =>
+    isUser ? `min(100%, ${AI_CHAT_USER_MESSAGE_MAX_WIDTH})` : '100%'};
   min-width: 0;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
@@ -92,12 +97,16 @@ type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
   error?: AiChatError;
+  onEdit?: (messageId: string) => void;
+  onDelete?: (messageId: string) => void;
 };
 
 export const AiChatMessage = ({
   messageId,
   isLastMessageStreaming = false,
   error,
+  onEdit,
+  onDelete,
 }: AiChatMessageProps) => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -121,6 +130,7 @@ export const AiChatMessage = ({
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
     currentAiChatThread,
@@ -144,6 +154,7 @@ export const AiChatMessage = ({
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
+  const canManageMessage = isUser && isOwnMessage && !isReadOnly;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
   const hasHeader = isAiChatInboxEnabled && !isOwnMessage;
@@ -234,6 +245,24 @@ export const AiChatMessage = ({
                   <AiChatMessageReactionPicker messageId={messageId} />
                 )}
               <LightCopyIconButton copyText={messageText} />
+              {canManageMessage && isDefined(onEdit) && (
+                <LightIconButton
+                  aria-label={t`Edit message`}
+                  tooltip={t`Edit message`}
+                  onClick={() => onEdit(messageId)}
+                >
+                  <IconEdit />
+                </LightIconButton>
+              )}
+              {canManageMessage && isDefined(onDelete) && (
+                <LightIconButton
+                  aria-label={t`Delete message`}
+                  tooltip={t`Delete message`}
+                  onClick={() => onDelete(messageId)}
+                >
+                  <IconTrash />
+                </LightIconButton>
+              )}
             </StyledChatMessageActions>
           </StyledChatMessageFooter>
         )}

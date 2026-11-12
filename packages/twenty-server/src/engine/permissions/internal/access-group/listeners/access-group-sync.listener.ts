@@ -48,6 +48,15 @@ export class AccessGroupSyncListener {
     );
   }
 
+  @OnEvent('metadata.relatedRecordPath.*')
+  async handleRelatedRecordPathEvent({
+    workspaceId,
+  }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
+    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+      workspaceId,
+    );
+  }
+
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
   async handleFeatureFlagEnabled(
     batch: Pick<
@@ -80,6 +89,9 @@ export class AccessGroupSyncListener {
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
       await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
+      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
         workspaceId,
       );
     }

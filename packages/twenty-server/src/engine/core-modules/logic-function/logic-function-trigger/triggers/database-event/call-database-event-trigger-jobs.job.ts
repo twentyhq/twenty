@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
+import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { ApplicationRepeatedEventRecorderService } from 'src/engine/core-modules/event-logs/emit/application-repeated-event-recorder.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -20,6 +21,7 @@ import { buildApplicationJobMemoryLimitLogEntry } from 'src/engine/core-modules/
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import { buildLogicFunctionTriggerJobIds } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/build-logic-function-trigger-job-ids';
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
+import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
@@ -47,11 +49,14 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-      );
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      ['flatLogicFunctionMaps', 'flatApplicationMaps', 'flatFieldMetadataMaps'],
+    );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
       flatLogicFunctionMaps,
@@ -77,6 +82,11 @@ export class CallDatabaseEventTriggerJobsJob {
     if (logicFunctionsByApplicationId.size === 0) {
       return;
     }
+
+    const conditionFields = buildDatabaseEventTriggerConditionFields({
+      flatObjectMetadata: workspaceEventBatch.objectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     for (const [
       applicationId,
@@ -107,6 +117,11 @@ export class CallDatabaseEventTriggerJobsJob {
           ...workspaceEventBatch,
           events: readableEvents,
         },
+        conditionFields,
+        onConditionError: ({ logicFunctionId, errorMessage }) =>
+          this.logger.warn(
+            `Condition of logic function ${logicFunctionId} in workspace ${workspaceEventBatch.workspaceId} failed to evaluate: ${errorMessage}`,
+          ),
       });
 
       if (logicFunctionPayloads.length === 0) {
@@ -144,6 +159,13 @@ export class CallDatabaseEventTriggerJobsJob {
         logicFunctionPayloads,
       });
 
+      const logicFunctionsById = new Map(
+        logicFunctions.map((logicFunction) => [
+          logicFunction.id,
+          logicFunction,
+        ]),
+      );
+
       try {
         await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
           LogicFunctionTriggerJob.name,
@@ -153,6 +175,12 @@ export class CallDatabaseEventTriggerJobsJob {
               applicationUniversalIdentifier: application.universalIdentifier,
             },
             jobId: logicFunctionTriggerJobIds[index],
+            limiter: buildLogicFunctionJobLimiter({
+              logicFunctionId: logicFunctionPayload.logicFunctionId,
+              limiter: logicFunctionsById.get(
+                logicFunctionPayload.logicFunctionId,
+              )?.jobConfig?.limiter,
+            }),
             workspaceId: workspaceEventBatch.workspaceId,
             applicationUniversalIdentifier: application.universalIdentifier,
           })),

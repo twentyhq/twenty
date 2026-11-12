@@ -6,14 +6,9 @@ import { isObject } from '@sniptt/guards';
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
-import { type PrivateRecordStateRow } from 'src/engine/permissions/internal/record-permission-repository/types/private-record-state-row.type';
-import { buildFindPrivateRecordStatesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-private-record-states-query.util';
 import { buildFindRecordSharesQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-record-shares-query.util';
 import {
   buildFindRuleRecordSharesQuery,
@@ -21,7 +16,6 @@ import {
 } from 'src/engine/permissions/internal/record-permission-repository/utils/build-find-rule-record-shares-query.util';
 import { buildRecordShareTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-record-share-table-expression.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
-import { indexPrivateRecordStatesByRecordId } from 'src/engine/permissions/internal/record-permission-repository/utils/index-private-record-states-by-record-id.util';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -115,41 +109,6 @@ export class RecordPermissionReadRepository {
 
       return accessLevelsByObjectMetadataId;
     }, new Map<string, RecordShareAccessLevel[]>());
-  }
-
-  async findPrivateRecordStates({
-    workspaceId,
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-    recordIds,
-    transactionScope,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    recordIds: string[];
-    transactionScope?: RecordPermissionTransactionScope;
-  }): Promise<Map<string, PrivateRecordState>> {
-    if (recordIds.length === 0) {
-      return new Map();
-    }
-
-    const rows =
-      await this.recordPermissionQueryService.execute<PrivateRecordStateRow>({
-        workspaceId,
-        transactionScope,
-        query: buildFindPrivateRecordStatesQuery({
-          tableExpression: buildWorkspaceTableExpression({
-            workspaceId,
-            tableName: computeObjectTargetTable(flatObjectMetadata),
-          }),
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-          recordIds,
-        }),
-      });
-
-    return indexPrivateRecordStatesByRecordId(rows);
   }
 
   async findRecordIdsMatchingSQLConditions({

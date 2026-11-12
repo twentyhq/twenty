@@ -53,6 +53,20 @@ export const DIRECT_MESSAGE_PRESENTATION_FIXTURE = {
       },
       isUnread: false,
     },
+    {
+      threadId: 'dm-lucas',
+      peer: {
+        workspaceMemberId: 'lucas',
+        name: 'Lucas',
+        email: 'lucas@example.com',
+      },
+      isUnread: false,
+    },
+    {
+      threadId: 'dm-former-member',
+      peer: null,
+      isUnread: false,
+    },
   ],
 } satisfies {
   currentMember: DirectMessageMember;

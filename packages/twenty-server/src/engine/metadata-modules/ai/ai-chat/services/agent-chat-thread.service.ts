@@ -668,6 +668,30 @@ export class AgentChatThreadService {
     });
   }
 
+  async moveOwnThreadToChannel({
+    thread,
+    channelId,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    thread: AgentChatThreadWorkspaceEntity;
+    channelId: string | null;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    if (
+      thread.workspaceMemberId !== args.workspaceMemberId ||
+      (thread.channelId ?? null) === channelId
+    ) {
+      return thread;
+    }
+
+    await this.moveToChannel({
+      threadId: args.threadId,
+      channelId,
+      authContext: await this.sharingService.getAuthContextOrThrow(args),
+    });
+
+    return this.getWritableThread(args);
+  }
+
   // Activity no member wrote, such as an agent turn or an application's
   // message, leaves the chat unread for everyone
   async recordThreadActivity({

@@ -5,6 +5,7 @@ export const WORKSPACE_DERIVED_CACHE_KEY_NAMES = {
   userWorkspaceRoleMap: true,
   apiKeyRoleMap: true,
   flatRoleTargetByAgentIdMaps: true,
+  flatRoleTargetByApplicationIdMaps: true,
   graphQLResolverNameMap: true,
   objectIdByName: true,
   fieldIdByObjectIdAndName: true,

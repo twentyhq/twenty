@@ -9,7 +9,6 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
-  type ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
@@ -21,6 +20,7 @@ import {
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
   jsonRelationFilterValueSchema,
+  mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -743,7 +743,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       subFieldName,
     });
 
-    if (allowedOperands.includes(operand as unknown as ViewFilterOperand)) {
+    if (allowedOperands.includes(mapRLSOperandToRecordFilterOperand(operand))) {
       return undefined;
     }
 
@@ -771,7 +771,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
-    const recordFilterOperand = operand as unknown as ViewFilterOperand;
+    const recordFilterOperand = mapRLSOperandToRecordFilterOperand(operand);
 
     if (
       isRecordFilterOperandExpectingValue(recordFilterOperand) &&

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type MessageDescriptor } from '@lingui/core';
@@ -42,6 +42,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
@@ -49,10 +50,9 @@ import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
-  ThrottlerException,
   ThrottlerExceptionCode,
+  getThrottlerExceptionUserFriendlyMessage,
 } from 'src/engine/core-modules/throttler/throttler.exception';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
@@ -121,7 +121,7 @@ export class LogicFunctionExecutorService {
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
-    private readonly throttlerService: ThrottlerService,
+    private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
@@ -409,27 +409,20 @@ export class LogicFunctionExecutorService {
   }
 
   private async throttleExecution(workspaceId: string) {
-    try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        `${workspaceId}-logic-function-execution`,
-        1,
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
-        this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
+    const hasExecutionToken =
+      await this.logicFunctionExecutionThrottleService.consumeToken(
+        workspaceId,
       );
-    } catch (error) {
-      if (
-        !(error instanceof ThrottlerException) ||
-        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
-      ) {
-        throw error;
-      }
 
+    if (!hasExecutionToken) {
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
         {
-          userFriendlyMessage: error.userFriendlyMessage,
-          statusCode: error.statusCode,
+          userFriendlyMessage: getThrottlerExceptionUserFriendlyMessage(
+            ThrottlerExceptionCode.LIMIT_REACHED,
+          ),
+          statusCode: HttpStatus.TOO_MANY_REQUESTS,
         },
       );
     }

@@ -7,12 +7,13 @@ import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { type GraphQLResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findApplicationRoleIds } from 'test/integration/metadata/suites/application-grant-role/utils/find-application-role-ids.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -44,6 +45,10 @@ const ATTACH_RECORD = parse(
 
 const DETACH_RECORD = parse(
   'mutation DetachRecord($input: InboxThreadRecordInput!) { detachRecordFromInboxThread(input: $input) }',
+);
+
+const ARCHIVE_INBOX_THREAD = parse(
+  'mutation ArchiveInboxThread($input: ArchiveInboxThreadInput!) { archiveInboxThread(input: $input) }',
 );
 
 const SEND_INBOX_MESSAGE = parse(
@@ -96,6 +101,32 @@ describe('Inbox thread mutations for members and applications', () => {
 
   const detachRecord = (args: LinkRecordArgs) =>
     linkRecord({ ...args, mutation: DETACH_RECORD });
+
+  const archiveThread = ({
+    threadId,
+    workspaceMemberIds = [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    token = applicationToken,
+  }: {
+    threadId: string;
+    workspaceMemberIds?: string[];
+    token?: string;
+  }) =>
+    makeMetadataApiRequest(
+      {
+        query: ARCHIVE_INBOX_THREAD,
+        variables: { input: { threadId, workspaceMemberIds } },
+      },
+      token,
+    );
+
+  const readJaneInboxState = async (
+    threadId: string,
+  ): Promise<{ archivedAt: Date | null; isSubscribed: boolean }[]> =>
+    global.testDataSource.query(
+      `SELECT "archivedAt", "isSubscribed" FROM ${SCHEMA}."agentChatThreadParticipant"
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    );
 
   const readCompanyLinks = (
     threadId: string,
@@ -233,10 +264,12 @@ describe('Inbox thread mutations for members and applications', () => {
       })
     ).applicationAccessToken.token;
 
-    [{ defaultRoleId: applicationRoleId }] = await global.testDataSource.query(
-      `SELECT "defaultRoleId" FROM core."application" WHERE id = $1`,
-      [application.id],
-    );
+    const { grantRoleId } = await findApplicationRoleIds({
+      input: { id: application.id },
+    });
+
+    assertIsDefinedOrThrow(grantRoleId);
+    applicationRoleId = grantRoleId;
   });
 
   afterAll(async () => {
@@ -397,5 +430,93 @@ describe('Inbox thread mutations for members and applications', () => {
       (await attachRecord({ threadId, token: applicationToken })).body,
     ).toEqual({ data: { attachRecordToInboxThread: true } });
     expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
+  });
+
+  it('archives the conversation for the members the application wrote to', async () => {
+    const threadId = await createApplicationThread();
+
+    expect((await archiveThread({ threadId })).body).toEqual({
+      data: { archiveInboxThread: true },
+    });
+    expect(await readJaneInboxState(threadId)).toEqual([
+      { archivedAt: expect.anything(), isSubscribed: true },
+    ]);
+  });
+
+  it('leaves a member who stopped following the conversation unsubscribed', async () => {
+    const threadId = await createApplicationThread();
+
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant" SET "isSubscribed" = false
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    );
+
+    expect((await archiveThread({ threadId })).body).toEqual({
+      data: { archiveInboxThread: true },
+    });
+    expect(await readJaneInboxState(threadId)).toEqual([
+      { archivedAt: null, isSubscribed: false },
+    ]);
+  });
+
+  it('refuses an application that did not write in the conversation', async () => {
+    const threadId = await createMemberThread();
+
+    expectNotFound(
+      await archiveThread({ threadId }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readJaneInboxState(threadId)).toEqual([
+      expect.objectContaining({ archivedAt: null }),
+    ]);
+  });
+
+  it('archives it for nobody when one of the members cannot read it', async () => {
+    const threadId = await createApplicationThread();
+
+    expectNotFound(
+      await archiveThread({
+        threadId,
+        workspaceMemberIds: [
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        ],
+      }),
+      AiExceptionCode.THREAD_NOT_FOUND,
+    );
+    expect(await readJaneInboxState(threadId)).toEqual([
+      expect.objectContaining({ archivedAt: null }),
+    ]);
+  });
+
+  it('refuses to archive in a channel a conversation that is in none', async () => {
+    const threadId = await createApplicationThread();
+
+    const response = await makeMetadataApiRequest(
+      { query: ARCHIVE_INBOX_THREAD, variables: { input: { threadId } } },
+      applicationToken,
+    );
+
+    expect(response.body.errors?.[0]?.extensions).toMatchObject({
+      subCode: AiExceptionCode.CHAT_THREAD_NOT_IN_CHANNEL,
+    });
+    expect(await readJaneInboxState(threadId)).toEqual([
+      expect.objectContaining({ archivedAt: null }),
+    ]);
+  });
+
+  it('is not open to members, who archive from their own inbox', async () => {
+    const threadId = await createApplicationThread();
+
+    const response = await archiveThread({
+      threadId,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors?.[0]).toBeDefined();
+    expect(await readJaneInboxState(threadId)).toEqual([
+      expect.objectContaining({ archivedAt: null }),
+    ]);
   });
 });

@@ -9,28 +9,20 @@ const moduleEntries = Object.keys((packageJson as any).exports || {})
   )
   .map((module) => `src/${module.replace(/^\.\//, '')}/index.ts`);
 
-const entries = ['src/index.ts', ...moduleEntries];
+const entries = Object.fromEntries(
+  ['src/index.ts', ...moduleEntries].map((entry) => [
+    entry.replace(/^src\//, '').replace(/\.ts$/, ''),
+    entry,
+  ]),
+);
 
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
-};
+// Tooling skips dist/node_modules, and Node reads `?source` as a URL query.
+const getOutputFileName =
+  (extension: 'cjs' | 'mjs') =>
+  ({ name }: { name: string }) =>
+    `${name
+      .replace(/^(?:.*\/)?node_modules\//, 'vendor/')
+      .replace(/\.tsx?\?source$/, '.source')}.${extension}`;
 
 export default defineConfig(() => {
   return {
@@ -60,13 +52,25 @@ export default defineConfig(() => {
         output: [
           {
             format: 'es',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+            preserveModules: true,
+            preserveModulesRoot: 'src',
+            entryFileNames: getOutputFileName('mjs'),
           },
           {
             format: 'cjs',
             esModule: true,
             exports: 'named',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+            preserveModules: true,
+            preserveModulesRoot: 'src',
+            entryFileNames: getOutputFileName('cjs'),
+          },
+          // Dev servers resolve this merged build through the `development` export
+          // condition: ~40 files instead of ~1000, so they need no pre-bundling.
+          {
+            format: 'es',
+            dir: 'dist/dev',
+            entryFileNames: '[name].mjs',
+            chunkFileNames: 'chunks/[name].mjs',
           },
         ],
       },

@@ -21,9 +21,6 @@ export const restrictRecordsPermissionsToRuntimeLimitingRole = ({
     ...intersectedRecordsPermissions,
     objects: Object.fromEntries(
       Object.keys(recordsPermissions.objects).map((objectMetadataId) => {
-        const roleRowLevelRecordsPermissions =
-          recordsPermissions.objects[objectMetadataId]
-            ?.rowLevelRecordsPermissions;
         const intersectedObjectRecordsPermissions =
           intersectedRecordsPermissions.objects[objectMetadataId];
         const scopeUneditableFields =
@@ -33,8 +30,7 @@ export const restrictRecordsPermissionsToRuntimeLimitingRole = ({
         if (
           !isDefined(
             intersectedObjectRecordsPermissions?.rowLevelRecordsPermissions,
-          ) ||
-          !isDefined(roleRowLevelRecordsPermissions)
+          )
         ) {
           return [objectMetadataId, intersectedObjectRecordsPermissions];
         }
@@ -43,14 +39,16 @@ export const restrictRecordsPermissionsToRuntimeLimitingRole = ({
           objectMetadataId,
           {
             ...intersectedObjectRecordsPermissions,
-            rowLevelRecordsPermissions: {
-              ...intersectedObjectRecordsPermissions.rowLevelRecordsPermissions,
-              predicates: roleRowLevelRecordsPermissions.predicates.filter(
-                ({ fieldMetadataId }) =>
-                  !scopeUneditableFields.includes(fieldMetadataId),
+            rowLevelRecordsPermissions:
+              intersectedObjectRecordsPermissions.rowLevelRecordsPermissions.map(
+                (rule) => ({
+                  ...rule,
+                  predicates: rule.predicates.filter(
+                    ({ fieldMetadataId }) =>
+                      !scopeUneditableFields.includes(fieldMetadataId),
+                  ),
+                }),
               ),
-              predicateGroups: roleRowLevelRecordsPermissions.predicateGroups,
-            },
           },
         ];
       }),

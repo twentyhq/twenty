@@ -45,6 +45,10 @@ const driverOptions: LocalDriverOptions = {
     typeof import('src/engine/core-modules/cache-lock/cache-lock.service')
   >('src/engine/core-modules/cache-lock/cache-lock.service').CacheLockService
     .prototype,
+  secureHttpClientService: jest.createMockFromModule<
+    typeof import('src/engine/core-modules/secure-http-client/secure-http-client.service')
+  >('src/engine/core-modules/secure-http-client/secure-http-client.service')
+    .SecureHttpClientService.prototype,
 };
 
 const mockBuilderOptions = {

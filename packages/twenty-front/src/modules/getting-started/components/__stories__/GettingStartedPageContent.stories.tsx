@@ -310,8 +310,13 @@ export const DoneStepWithoutThread: Story = {
     });
 
     await expect(
-      within(followUpStepCard).queryByRole('button'),
+      within(followUpStepCard).queryByRole('button', {
+        name: 'Continue thread',
+      }),
     ).not.toBeInTheDocument();
+    await expect(
+      within(followUpStepCard).getByRole('button', { name: 'Next' }),
+    ).toBeVisible();
     await expect(
       within(followUpStepCard).queryByRole('group', {
         name: 'Follow-up instructions',
@@ -489,6 +494,17 @@ export const DoneSteps: Story = {
     expect(
       canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
     ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(
+        canvas.getByRole('region', { name: 'Invitations sent' }),
+      ).getByRole('button', { name: 'Next' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('region', { name: 'Handover ready' }),
+      ).toBeVisible(),
+    );
 
     const steps = canvas.getByRole('navigation', {
       name: 'Getting started steps',

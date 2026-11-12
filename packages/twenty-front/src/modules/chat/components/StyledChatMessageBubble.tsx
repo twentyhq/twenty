@@ -17,12 +17,12 @@ export const StyledChatMessageBubble = styled.div<{
 
     return 'transparent';
   }};
-  border: ${({ isOtherMember }) =>
-    isOtherMember
-      ? `1px solid ${themeCssVariables.border.color.medium}`
-      : 'none'};
   border-radius: ${({ isUser }) =>
     isUser ? themeCssVariables.border.radius.lgRound : '0'};
+  box-shadow: ${({ isOtherMember }) =>
+    isOtherMember
+      ? `inset 0 0 0 1px ${themeCssVariables.border.color.medium}`
+      : 'none'};
   color: ${({ isUser }) =>
     isUser
       ? themeCssVariables.font.color.secondary
