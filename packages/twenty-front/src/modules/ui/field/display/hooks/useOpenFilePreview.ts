@@ -6,6 +6,7 @@ import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { filePreviewGalleryFilesState } from '@/ui/field/display/states/filePreviewGalleryFilesState';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -16,7 +17,7 @@ export const useOpenFilePreview = () => {
   );
 
   const openFilePreview = useCallback(
-    (file: FieldFilesValue) => {
+    (file: FieldFilesValue, galleryFiles: FieldFilesValue[] = []) => {
       if (!store.get(isAttachmentPreviewEnabledState.atom)) {
         if (hasDownloadPermission && isNonEmptyString(file.url)) {
           downloadFile(file.url, file.label ?? 'file');
@@ -25,6 +26,7 @@ export const useOpenFilePreview = () => {
         return;
       }
 
+      store.set(filePreviewGalleryFilesState.atom, galleryFiles);
       store.set(filePreviewState.atom, file);
     },
     [store, hasDownloadPermission],

@@ -1,10 +1,16 @@
+import { FilePreviewDialogNavigationHotkeysEffect } from '@/ui/field/display/components/FilePreviewDialogNavigationHotkeysEffect';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconDownload, IconX } from 'twenty-ui/icon';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconDownload,
+  IconX,
+} from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
 
@@ -51,6 +57,24 @@ const StyledPreviewContent = styled.div`
   flex-direction: column;
 `;
 
+const StyledNavigation = styled.div`
+  align-items: center;
+  display: flex;
+  gap: var(--t-spacing-1);
+`;
+
+const StyledNavigationPosition = styled.span`
+  color: var(--t-font-color-tertiary);
+  font-size: var(--t-font-size-sm);
+  font-variant-numeric: tabular-nums;
+`;
+
+type FilePreviewDialogNavigation = {
+  positionLabel: string;
+  onPrevious?: () => void;
+  onNext?: () => void;
+};
+
 type FilePreviewDialogProps = {
   dialogId: string;
   scrollWrapperId: string;
@@ -59,6 +83,7 @@ type FilePreviewDialogProps = {
   documentUrl: string;
   documentExtension?: string;
   onClose: () => void;
+  navigation?: FilePreviewDialogNavigation;
   onDownload?: () => void;
   downloadLabel: string;
   loadingFallback: ReactNode;
@@ -72,6 +97,7 @@ export const FilePreviewDialog = ({
   documentUrl,
   documentExtension,
   onClose,
+  navigation,
   onDownload,
   downloadLabel,
   loadingFallback,
@@ -86,12 +112,42 @@ export const FilePreviewDialog = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup onKeyDown={onKeyDown} size="lg">
+          {isDefined(navigation) && (
+            <FilePreviewDialogNavigationHotkeysEffect
+              dialogId={dialogId}
+              onPrevious={navigation.onPrevious}
+              onNext={navigation.onNext}
+            />
+          )}
           <StyledPreviewLayout>
             <StyledHeader>
               <Dialog.Title size="md" render={<StyledTitle />}>
                 {title}
               </Dialog.Title>
               <StyledActions>
+                {isDefined(navigation) && (
+                  <StyledNavigation>
+                    <IconButton
+                      aria-label={t`Previous file`}
+                      disabled={!isDefined(navigation.onPrevious)}
+                      onClick={navigation.onPrevious}
+                      size="sm"
+                    >
+                      <IconChevronLeft />
+                    </IconButton>
+                    <StyledNavigationPosition>
+                      {navigation.positionLabel}
+                    </StyledNavigationPosition>
+                    <IconButton
+                      aria-label={t`Next file`}
+                      disabled={!isDefined(navigation.onNext)}
+                      onClick={navigation.onNext}
+                      size="sm"
+                    >
+                      <IconChevronRight />
+                    </IconButton>
+                  </StyledNavigation>
+                )}
                 {isDefined(onDownload) && (
                   <IconButton
                     aria-label={downloadLabel}
@@ -114,6 +170,7 @@ export const FilePreviewDialog = ({
               <StyledPreviewContent>
                 <Suspense fallback={loadingFallback}>
                   <DocumentViewer
+                    key={documentUrl}
                     documentName={documentName}
                     documentUrl={documentUrl}
                     documentExtension={documentExtension}

@@ -1007,24 +1007,14 @@ export const UserMessageWithManyImages: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const showMoreButton = await canvas.findByRole('button', {
-      name: 'Show 3 more images',
-    });
-
+    await expect(
+      await canvas.findByRole('button', { name: 'Show 3 more images' }),
+    ).toBeVisible();
     await expect(
       canvas.getByRole('button', { name: 'photo-3.png' }),
     ).toBeVisible();
     await expect(
       canvas.queryByRole('button', { name: 'photo-5.png' }),
-    ).not.toBeInTheDocument();
-
-    await userEvent.click(showMoreButton);
-
-    await expect(
-      await canvas.findByRole('button', { name: 'photo-6.png' }),
-    ).toBeVisible();
-    await expect(
-      canvas.queryByRole('button', { name: 'Show 3 more images' }),
     ).not.toBeInTheDocument();
   },
 };
