@@ -16,7 +16,7 @@ export const useLoadAgentChatThreads = () => {
   const { loadAgentChatThreadsPage } = useLoadAgentChatThreadsPage();
 
   const loadFavoriteThreadsOutsidePage = useCallback(
-    async (page: AgentChatThreadsPage) => {
+    async (page: Pick<AgentChatThreadsPage, 'threads'>) => {
       const pageThreadIds = page.threads.map(({ id }) => id);
       const unloadedFavoriteThreadIds = store
         .get(agentChatFavoriteThreadsSelector.atom)
