@@ -10,6 +10,9 @@ import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modu
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { reduceFlatViewGroupsByViewUniversalIdentifier } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-universal-identifier.util';
 
+// A view left without any group gets its first one at position 0.
+const NO_VIEW_GROUP_POSITION = -1;
+
 type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
   toOptions: FlatFieldMetadata<EnumFieldMetadataType>['options'];
@@ -110,50 +113,64 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   const createdAt = new Date().toISOString();
   const flatViewGroupsToCreate = createdFieldMetadataOptions.flatMap(
     (option, createdOptionIndex) =>
-      viewUniversalIdentifiers.map<FlatViewGroup>((viewUniversalIdentifier) => {
-        const viewGroupHighestPosition =
-          viewGroupsByViewUniversalIdentifier
-            .highestViewGroupPositionByViewUniversalIdentifier[
-            viewUniversalIdentifier
-          ] ?? -1;
+      viewUniversalIdentifiers.flatMap<FlatViewGroup>(
+        (viewUniversalIdentifier) => {
+          const hasViewGroupForOption = remainingFlatViewGroups.some(
+            (flatViewGroup) =>
+              flatViewGroup.viewUniversalIdentifier ===
+                viewUniversalIdentifier &&
+              flatViewGroup.fieldValue === option.value,
+          );
 
-        const currentVisibleCount =
-          visibleViewGroupCountByViewUniversalIdentifier[
-            viewUniversalIdentifier
-          ] ?? 0;
-        const isVisible = currentVisibleCount < VIEW_GROUP_VISIBLE_OPTIONS_MAX;
+          if (hasViewGroupForOption) {
+            return [];
+          }
 
-        if (isVisible) {
-          visibleViewGroupCountByViewUniversalIdentifier[
-            viewUniversalIdentifier
-          ] = currentVisibleCount + 1;
-        }
+          const viewGroupHighestPosition =
+            viewGroupsByViewUniversalIdentifier
+              .highestViewGroupPositionByViewUniversalIdentifier[
+              viewUniversalIdentifier
+            ] ?? NO_VIEW_GROUP_POSITION;
 
-        const viewGroupId = v4();
+          const currentVisibleCount =
+            visibleViewGroupCountByViewUniversalIdentifier[
+              viewUniversalIdentifier
+            ] ?? 0;
+          const isVisible =
+            currentVisibleCount < VIEW_GROUP_VISIBLE_OPTIONS_MAX;
 
-        const flatView = findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
-        });
+          if (isVisible) {
+            visibleViewGroupCountByViewUniversalIdentifier[
+              viewUniversalIdentifier
+            ] = currentVisibleCount + 1;
+          }
 
-        return {
-          id: viewGroupId,
-          fieldMetadataId: fromFlatFieldMetadata.id,
-          viewId: flatView.id,
-          viewUniversalIdentifier,
-          workspaceId,
-          createdAt: createdAt,
-          updatedAt: createdAt,
-          deletedAt: null,
-          universalIdentifier: viewGroupId,
-          isVisible,
-          fieldValue: option.value,
-          position: viewGroupHighestPosition + createdOptionIndex + 1,
-          applicationId: fromFlatFieldMetadata.applicationId,
-          applicationUniversalIdentifier:
-            fromFlatFieldMetadata.applicationUniversalIdentifier,
-        };
-      }),
+          const viewGroupId = v4();
+
+          const flatView = findFlatEntityByUniversalIdentifierOrThrow({
+            flatEntityMaps: flatViewMaps,
+            universalIdentifier: viewUniversalIdentifier,
+          });
+
+          return {
+            id: viewGroupId,
+            fieldMetadataId: fromFlatFieldMetadata.id,
+            viewId: flatView.id,
+            viewUniversalIdentifier,
+            workspaceId,
+            createdAt: createdAt,
+            updatedAt: createdAt,
+            deletedAt: null,
+            universalIdentifier: viewGroupId,
+            isVisible,
+            fieldValue: option.value,
+            position: viewGroupHighestPosition + createdOptionIndex + 1,
+            applicationId: fromFlatFieldMetadata.applicationId,
+            applicationUniversalIdentifier:
+              fromFlatFieldMetadata.applicationUniversalIdentifier,
+          };
+        },
+      ),
   );
 
   return {
