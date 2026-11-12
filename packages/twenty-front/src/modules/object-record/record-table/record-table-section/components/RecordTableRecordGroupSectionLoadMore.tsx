@@ -8,7 +8,9 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown } from 'twenty-ui/icon';
 
 const StyledFetchMoreTrigger = styled.div`
@@ -34,23 +36,28 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
     isRecordGroupTabsDisplayedComponentSelector,
   );
 
+  const [hasAutoloadFailed, setHasAutoloadFailed] = useState(false);
+
+  const handleLoadMore = async () => {
+    const fetchMoreResult = await fetchMoreRecords();
+
+    setHasAutoloadFailed(isDefined(fetchMoreResult?.error));
+  };
+
   const { ref: fetchMoreRef } = useInView({
     onChange: (inView) => {
       if (inView) {
-        fetchMoreRecords();
+        handleLoadMore();
       }
     },
   });
-
-  const handleLoadMore = () => {
-    fetchMoreRecords();
-  };
 
   if (recordIndexHasFetchedAllRecordsByGroup) {
     return null;
   }
 
-  if (isRecordGroupTabsDisplayed) {
+  // A failed page falls back to the manual row, so the trigger cannot retry in a loop
+  if (isRecordGroupTabsDisplayed && !hasAutoloadFailed) {
     // Remounting after each page fires the trigger again while it stays in view
     return loading ? null : <StyledFetchMoreTrigger ref={fetchMoreRef} />;
   }
