@@ -13,7 +13,6 @@ const ARRAY_VALUE_SAMPLES = [
   JSON.stringify([FieldActorSource.MANUAL]),
 ];
 
-// Read off the schema itself: it takes an array when it accepts one and refuses a bare value
 export const isFilterValueExpectedAsArray = ({
   filterType,
   operand,
