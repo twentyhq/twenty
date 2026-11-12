@@ -41,15 +41,7 @@ export class RecordAccessGroupPropagationService {
     }
 
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-      {
-        workspaceId,
-        objectMetadataId,
-        onRecordsComputed: (recordCount) =>
-          this.accessGroupPropagationPlanService.trackComputedRecords({
-            workspaceId,
-            recordCount,
-          }),
-      },
+      { workspaceId, objectMetadataId },
     );
     await this.accessGroupPropagationPlanService.finishCompute({
       workspaceId,

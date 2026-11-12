@@ -30,6 +30,7 @@ import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permission
 import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
@@ -40,6 +41,7 @@ export class RecordAccessGroupComputationService {
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
+    private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -47,11 +49,9 @@ export class RecordAccessGroupComputationService {
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
-    onRecordsComputed,
   }: {
     workspaceId: string;
     objectMetadataId: string;
-    onRecordsComputed?: (recordCount: number) => Promise<void>;
   }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
@@ -82,7 +82,10 @@ export class RecordAccessGroupComputationService {
         objectMetadataId,
         recordIds,
       });
-      await onRecordsComputed?.(recordIds.length);
+      await this.accessGroupPropagationPlanService.trackComputedRecords({
+        workspaceId,
+        recordCount: recordIds.length,
+      });
 
       recordIds = await this.recordAccessGroupRepository.findRecordIds({
         workspaceId,
