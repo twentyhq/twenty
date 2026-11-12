@@ -137,7 +137,13 @@ describe('getRoleDirtyFields', () => {
   });
 
   it('treats a saved field restriction as clean despite its generated ID', () => {
-    const buildRole = (fieldPermissionId: string) => ({
+    const buildRole = ({
+      fieldPermissionId,
+      canReadFieldValue,
+    }: {
+      fieldPermissionId: string;
+      canReadFieldValue: boolean | null;
+    }) => ({
       ...role,
       fieldPermissions: [
         {
@@ -145,22 +151,34 @@ describe('getRoleDirtyFields', () => {
           roleId: role.id,
           objectMetadataId: 'pet',
           fieldMetadataId: 'bio',
-          canReadFieldValue: null as boolean | null,
+          canReadFieldValue,
           canUpdateFieldValue: false,
         },
       ],
     });
+    const savedRoleWithUneditableField = buildRole({
+      fieldPermissionId: 'server-id',
+      canReadFieldValue: null,
+    });
 
     expect(
-      getRoleDirtyFields(buildRole('temporary-id'), buildRole('server-id')),
+      getRoleDirtyFields(
+        buildRole({
+          fieldPermissionId: 'temporary-id',
+          canReadFieldValue: null,
+        }),
+        savedRoleWithUneditableField,
+      ),
     ).toEqual({});
-
-    const draftWithUnreadableField = buildRole('temporary-id');
-    draftWithUnreadableField.fieldPermissions[0].canReadFieldValue = false;
-
     expect(
       Object.keys(
-        getRoleDirtyFields(draftWithUnreadableField, buildRole('server-id')),
+        getRoleDirtyFields(
+          buildRole({
+            fieldPermissionId: 'temporary-id',
+            canReadFieldValue: false,
+          }),
+          savedRoleWithUneditableField,
+        ),
       ),
     ).toEqual(['fieldPermissions']);
   });
