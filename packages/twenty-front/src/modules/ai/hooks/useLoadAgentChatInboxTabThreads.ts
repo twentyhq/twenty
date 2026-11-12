@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
 import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLiveUpdates';
+import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
@@ -21,14 +22,17 @@ export const useLoadAgentChatInboxTabThreads = () => {
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { getLiveUpdateCount, isUpdatedLiveSince } =
+  const { getLiveUpdateCount, applyLiveUpdatesSince } =
     useAgentChatThreadLiveUpdates();
+  const { captureAgentChatSession } = useCaptureAgentChatSession();
 
   const loadAgentChatInboxTabThreads = useCallback(
     async (mode: 'refresh' | 'fetch-more') => {
       const filterStatus = store.get(agentChatThreadFilterStatusState.atom);
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
+      const { isSameSession } = captureAgentChatSession();
       const isShownTab = () =>
+        isSameSession() &&
         !isDefined(store.get(agentChatShownChannelViewSelector.atom)) &&
         store.get(agentChatThreadFilterStatusState.atom) === filterStatus;
 
@@ -79,13 +83,10 @@ export const useLoadAgentChatInboxTabThreads = () => {
       }
 
       upsertRecordsInStore({
-        partialRecords: page.threads.filter(
-          ({ id }) =>
-            !isUpdatedLiveSince({
-              threadId: id,
-              updateCount: updateCountBeforeRequest,
-            }),
-        ),
+        partialRecords: applyLiveUpdatesSince({
+          threads: page.threads,
+          updateCount: updateCountBeforeRequest,
+        }),
       });
       addAgentChatThreadParticipants(page.participants);
 
@@ -111,9 +112,10 @@ export const useLoadAgentChatInboxTabThreads = () => {
     },
     [
       addAgentChatThreadParticipants,
+      applyLiveUpdatesSince,
+      captureAgentChatSession,
       fetchAgentChatThreadsPage,
       getLiveUpdateCount,
-      isUpdatedLiveSince,
       refreshAgentChatThreadPermissions,
       store,
       upsertRecordsInStore,

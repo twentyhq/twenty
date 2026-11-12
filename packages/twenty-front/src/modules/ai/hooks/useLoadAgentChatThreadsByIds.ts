@@ -15,7 +15,7 @@ export const useLoadAgentChatThreadsByIds = () => {
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
-  const { getLiveUpdateCount, isUpdatedLiveSince } =
+  const { getLiveUpdateCount, applyLiveUpdatesSince } =
     useAgentChatThreadLiveUpdates();
 
   const loadAgentChatThreadsByIds = useCallback(
@@ -36,15 +36,11 @@ export const useLoadAgentChatThreadsByIds = () => {
 
       await refreshAgentChatThreadPermissions(page.threads.map(({ id }) => id));
 
-      for (const thread of page.threads) {
-        addAgentChatThread(
-          isUpdatedLiveSince({
-            threadId: thread.id,
-            updateCount: updateCountBeforeRequest,
-          })
-            ? { id: thread.id }
-            : thread,
-        );
+      for (const thread of applyLiveUpdatesSince({
+        threads: page.threads,
+        updateCount: updateCountBeforeRequest,
+      })) {
+        addAgentChatThread(thread);
       }
       addAgentChatThreadParticipants(page.participants);
 
@@ -54,8 +50,8 @@ export const useLoadAgentChatThreadsByIds = () => {
       addAgentChatThread,
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
+      applyLiveUpdatesSince,
       getLiveUpdateCount,
-      isUpdatedLiveSince,
       refreshAgentChatThreadPermissions,
     ],
   );

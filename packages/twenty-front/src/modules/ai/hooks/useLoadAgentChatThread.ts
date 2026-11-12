@@ -18,7 +18,7 @@ export const useLoadAgentChatThread = () => {
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
-  const { getLiveUpdateCount, isUpdatedLiveSince } =
+  const { getLiveUpdateCount, applyLiveUpdatesSince } =
     useAgentChatThreadLiveUpdates();
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
@@ -42,14 +42,12 @@ export const useLoadAgentChatThread = () => {
 
       await refreshAgentChatThreadPermissions([thread.id]);
 
-      addAgentChatThread(
-        isUpdatedLiveSince({
-          threadId: thread.id,
-          updateCount: updateCountBeforeRequest,
-        })
-          ? { id: thread.id }
-          : thread,
-      );
+      const [loadedThread] = applyLiveUpdatesSince({
+        threads: [thread],
+        updateCount: updateCountBeforeRequest,
+      });
+
+      addAgentChatThread(loadedThread);
       addAgentChatThreadParticipants(page.participants);
 
       const usageAtom = agentChatUsageFamilyState.atomFamily({
@@ -57,17 +55,17 @@ export const useLoadAgentChatThread = () => {
       });
 
       if (!isDefined(store.get(usageAtom))) {
-        store.set(usageAtom, getAgentChatUsageFromThread(thread));
+        store.set(usageAtom, getAgentChatUsageFromThread(loadedThread));
       }
 
-      return thread;
+      return loadedThread;
     },
     [
       addAgentChatThread,
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
+      applyLiveUpdatesSince,
       getLiveUpdateCount,
-      isUpdatedLiveSince,
       refreshAgentChatThreadPermissions,
       store,
     ],

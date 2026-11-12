@@ -4,15 +4,13 @@ import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
 import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLiveUpdates';
+import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -24,18 +22,13 @@ export const useLoadAgentChatThreads = () => {
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
-  const { getLiveUpdateCount, isUpdatedLiveSince } =
+  const { getLiveUpdateCount, applyLiveUpdatesSince } =
     useAgentChatThreadLiveUpdates();
+  const { captureAgentChatSession } = useCaptureAgentChatSession();
 
   const loadAgentChatThreads = useCallback(
     async (mode: 'refresh' | 'fetch-more') => {
-      const workspaceId = store.get(currentWorkspaceState.atom)?.id;
-      const userWorkspace = store.get(currentUserWorkspaceState.atom);
-      const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
-      const isSameSession = () =>
-        store.get(currentWorkspaceState.atom)?.id === workspaceId &&
-        store.get(currentWorkspaceMemberState.atom)?.id === workspaceMemberId &&
-        store.get(currentUserWorkspaceState.atom) === userWorkspace;
+      const { isSameSession } = captureAgentChatSession();
 
       const listBeforeRequest = store.get(agentChatThreadListState.atom);
       const updateCountBeforeRequest = getLiveUpdateCount();
@@ -106,13 +99,10 @@ export const useLoadAgentChatThreads = () => {
       }
 
       upsertRecordsInStore({
-        partialRecords: [...page.threads, ...favoriteThreads].filter(
-          ({ id }) =>
-            !isUpdatedLiveSince({
-              threadId: id,
-              updateCount: updateCountBeforeRequest,
-            }),
-        ),
+        partialRecords: applyLiveUpdatesSince({
+          threads: [...page.threads, ...favoriteThreads],
+          updateCount: updateCountBeforeRequest,
+        }),
       });
       addAgentChatThreadParticipants([
         ...page.participants,
@@ -143,9 +133,10 @@ export const useLoadAgentChatThreads = () => {
     },
     [
       addAgentChatThreadParticipants,
+      applyLiveUpdatesSince,
+      captureAgentChatSession,
       fetchAgentChatThreadsPage,
       getLiveUpdateCount,
-      isUpdatedLiveSince,
       refreshAgentChatThreadPermissions,
       store,
       upsertRecordsInStore,

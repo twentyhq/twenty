@@ -12,12 +12,19 @@ export const agentChatShownInboxTabThreadListSelector =
   createAtomSelector<AgentChatInboxTabThreadList | null>({
     key: 'agentChatShownInboxTabThreadListSelector',
     get: ({ get }) => {
+      if (isDefined(get(agentChatShownChannelViewSelector))) {
+        return null;
+      }
+
       const inboxTabThreadList = get(agentChatInboxTabThreadListState);
 
-      return !isDefined(get(agentChatShownChannelViewSelector)) &&
-        inboxTabThreadList?.filterStatus ===
-          get(agentChatThreadFilterStatusState)
-        ? inboxTabThreadList
-        : null;
+      if (
+        inboxTabThreadList?.filterStatus !==
+        get(agentChatThreadFilterStatusState)
+      ) {
+        return null;
+      }
+
+      return inboxTabThreadList;
     },
   });
