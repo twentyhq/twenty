@@ -24,6 +24,7 @@ const buildService = (queryResults: unknown[][]) => {
   return {
     service: new AgentRunStatisticsService(turnRepository as never),
     manager,
+    turnRepository,
   };
 };
 
@@ -39,7 +40,7 @@ describe('AgentRunStatisticsService', () => {
     });
 
     it('returns one summary per requested agent, in the requested order', async () => {
-      const { service } = buildService([
+      const { service, manager, turnRepository } = buildService([
         [
           {
             agentId: 'agent-b',
@@ -74,12 +75,23 @@ describe('AgentRunStatisticsService', () => {
           ],
         },
       ]);
+
+      expect(turnRepository.query).toHaveBeenCalledTimes(1);
+      expect(turnRepository.query).toHaveBeenCalledWith(
+        'workspace',
+        expect.any(Function),
+      );
+      expect(manager.query).toHaveBeenCalledTimes(1);
+      expect(manager.query).toHaveBeenCalledWith(
+        expect.stringContaining('"workspace"."agentTurn"'),
+        [['agent-a', 'agent-b'], 14, 10],
+      );
     });
   });
 
   describe('findRunInsights', () => {
     it('converts database aggregates to numbers', async () => {
-      const { service } = buildService([
+      const { service, manager, turnRepository } = buildService([
         [
           {
             runCount: '12',
@@ -121,6 +133,25 @@ describe('AgentRunStatisticsService', () => {
           },
         ],
       });
+
+      expect(turnRepository.query).toHaveBeenCalledTimes(1);
+      expect(turnRepository.query).toHaveBeenCalledWith(
+        'workspace',
+        expect.any(Function),
+      );
+      expect(manager.query).toHaveBeenCalledTimes(2);
+      expect(manager.query).toHaveBeenNthCalledWith(1, expect.any(String), [
+        'agent-a',
+        14,
+        AgentTurnStatus.COMPLETED,
+      ]);
+      expect(manager.query).toHaveBeenNthCalledWith(2, expect.any(String), [
+        'agent-a',
+        'Europe/Paris',
+        13,
+        AgentTurnStatus.COMPLETED,
+        AgentTurnStatus.FAILED,
+      ]);
     });
 
     it('has no average duration when no run completed', async () => {
