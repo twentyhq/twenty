@@ -1,46 +1,44 @@
 import { validateRowLevelPermissionRules } from '@/sdk/define/roles/validate-row-level-permission-rules';
-import {
-  RowLevelPermissionPredicateGroupLogicalOperator,
-  RowLevelPermissionPredicateOperand,
-} from 'twenty-shared/types';
 
+const PREDICATE = {
+  universalIdentifier: 'predicate',
+  fieldUniversalIdentifier: 'owner',
+  operand: 'IS',
+};
 const RULE = {
   universalIdentifier: 'rule',
   objectUniversalIdentifier: 'company',
   canReadRecords: true,
-};
-const PREDICATE = {
-  universalIdentifier: 'predicate',
-  objectUniversalIdentifier: 'company',
-  fieldUniversalIdentifier: 'owner',
-  operand: RowLevelPermissionPredicateOperand.IS,
-};
-const ROOT_GROUP = {
-  universalIdentifier: 'root',
-  objectUniversalIdentifier: 'company',
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  predicates: [PREDICATE],
 };
 
 describe('validateRowLevelPermissionRules', () => {
-  it('should accept predicates and root groups linked to a declared rule', () => {
+  it('should accept a rule with nested predicates and predicate groups', () => {
     expect(
       validateRowLevelPermissionRules({
         label: 'Sales',
-        rowLevelPermissionRules: [RULE],
-        rowLevelPermissionPredicateGroups: [
-          { ...ROOT_GROUP, rowLevelPermissionRuleUniversalIdentifier: 'rule' },
-        ],
-        rowLevelPermissionPredicates: [
-          { ...PREDICATE, predicateGroupUniversalIdentifier: 'root' },
+        rowLevelPermissionRules: [
+          {
+            ...RULE,
+            predicateGroups: [
+              {
+                universalIdentifier: 'group',
+                logicalOperator: 'OR',
+                predicates: [
+                  { ...PREDICATE, universalIdentifier: 'predicate-in-group' },
+                ],
+              },
+            ],
+          },
         ],
       }),
     ).toEqual({ errors: [], warnings: [] });
   });
 
-  it('should warn when predicates sit outside a rule', () => {
+  it('should warn when predicates are declared outside a rule', () => {
     const { errors, warnings } = validateRowLevelPermissionRules({
       label: 'Sales',
-      rowLevelPermissionPredicates: [PREDICATE],
+      rowLevelPermissionPredicates: [{ universalIdentifier: 'predicate' }],
     });
 
     expect(errors).toEqual([]);
@@ -48,44 +46,59 @@ describe('validateRowLevelPermissionRules', () => {
     expect(warnings[0]).toContain('Role "Sales"');
   });
 
-  it('should reject a reference to a rule the role does not declare', () => {
+  it('should reject a rule without any predicate or predicate group', () => {
     expect(
       validateRowLevelPermissionRules({
         label: 'Sales',
-        rowLevelPermissionPredicates: [
-          { ...PREDICATE, rowLevelPermissionRuleUniversalIdentifier: 'rule' },
-        ],
+        rowLevelPermissionRules: [{ ...RULE, predicates: [] }],
       }).errors,
     ).toEqual([
-      'Row level permission predicate references unknown rule "rule"',
+      'Row level permission rule "rule" must have at least one predicate or predicate group',
     ]);
   });
 
-  it('should reject a rule on another object than its predicate', () => {
+  it('should reject a universalIdentifier used twice, across rules and nesting levels', () => {
     expect(
       validateRowLevelPermissionRules({
         label: 'Sales',
         rowLevelPermissionRules: [
-          { ...RULE, objectUniversalIdentifier: 'person' },
+          RULE,
+          {
+            ...RULE,
+            predicates: [],
+            predicateGroups: [
+              {
+                universalIdentifier: 'group',
+                logicalOperator: 'AND',
+                predicates: [PREDICATE],
+              },
+            ],
+          },
         ],
-        rowLevelPermissionPredicates: [
-          { ...PREDICATE, rowLevelPermissionRuleUniversalIdentifier: 'rule' },
-        ],
-      }).errors,
-    ).toEqual([
-      'Row level permission predicate and its rule "rule" must be on the same object',
-    ]);
-  });
-
-  it('should reject a duplicate rule and a rule without predicates', () => {
-    expect(
-      validateRowLevelPermissionRules({
-        label: 'Sales',
-        rowLevelPermissionRules: [RULE, RULE],
       }).errors,
     ).toEqual([
       'Duplicate row level permission rule universalIdentifier "rule"',
-      'Row level permission rule "rule" must have at least one predicate or predicate group',
+      'Duplicate row level permission predicate universalIdentifier "predicate"',
+    ]);
+  });
+
+  it('should reject a nested predicate or group missing a required property', () => {
+    expect(
+      validateRowLevelPermissionRules({
+        label: 'Sales',
+        rowLevelPermissionRules: [
+          {
+            ...RULE,
+            predicates: [{ ...PREDICATE, operand: '' }],
+            predicateGroups: [
+              { universalIdentifier: 'group', logicalOperator: '' },
+            ],
+          },
+        ],
+      }).errors,
+    ).toEqual([
+      'Row level permission predicate must have an operand',
+      'Row level permission predicate group must have a logicalOperator',
     ]);
   });
 });

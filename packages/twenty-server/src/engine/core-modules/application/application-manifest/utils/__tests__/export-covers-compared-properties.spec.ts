@@ -329,7 +329,6 @@ const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicate
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
     parentPredicateGroupUniversalIdentifier:
       PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
-    rowLevelPermissionRuleUniversalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
     position: 1,
   };
 
@@ -344,7 +343,6 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     workspaceMemberFieldUniversalIdentifier: FIELD_UID,
     workspaceMemberSubFieldName: 'primaryEmail',
     predicateGroupUniversalIdentifier: ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
-    rowLevelPermissionRuleUniversalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
     position: 0,
   };
 
@@ -353,6 +351,8 @@ const CREATE_PERMISSION_DERIVED_ON_IMPORT =
 
 const FIELD_PERMISSION_ON_RULE_GAP =
   'manifests do not declare field permissions on a row level permission rule yet';
+const NESTED_IN_RULE =
+  'a predicate and a predicate group are written under their rule';
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
@@ -843,6 +843,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
   {
@@ -872,6 +873,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
+      rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
   {

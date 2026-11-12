@@ -226,9 +226,7 @@ export const reconstructRolesManifest = ({
   }
 
   const {
-    rulesByRoleUniversalIdentifier,
-    predicateGroupsByRoleUniversalIdentifier,
-    predicatesByRoleUniversalIdentifier,
+    rowLevelPermissionsByRoleUniversalIdentifier,
     coverage: rowLevelPermissionCoverage,
   } = reconstructRowLevelPermissionPredicatesManifest({
     applicationAllFlatEntityMaps,
@@ -249,23 +247,19 @@ export const reconstructRolesManifest = ({
     );
 
     const children = childrenOf(flatRole.universalIdentifier);
+    const rowLevelPermissions =
+      rowLevelPermissionsByRoleUniversalIdentifier.get(
+        flatRole.universalIdentifier,
+      );
 
     return fromFlatRoleToRoleManifest({
       flatRole,
       children: {
         objectPermissions: children?.objectPermissions,
         fieldPermissions: children?.fieldPermissions,
-        rowLevelPermissionRules:
-          rulesByRoleUniversalIdentifier.get(flatRole.universalIdentifier) ??
-          [],
-        rowLevelPermissionPredicateGroups:
-          predicateGroupsByRoleUniversalIdentifier.get(
-            flatRole.universalIdentifier,
-          ) ?? [],
-        rowLevelPermissionPredicates:
-          predicatesByRoleUniversalIdentifier.get(
-            flatRole.universalIdentifier,
-          ) ?? [],
+        rowLevelPermissionRules: rowLevelPermissions?.rules,
+        rowLevelPermissionPredicateGroups: rowLevelPermissions?.predicateGroups,
+        rowLevelPermissionPredicates: rowLevelPermissions?.predicates,
         permissionFlagUniversalIdentifiers:
           children?.permissionFlagUniversalIdentifiers.sort(compareByCodePoint),
       },

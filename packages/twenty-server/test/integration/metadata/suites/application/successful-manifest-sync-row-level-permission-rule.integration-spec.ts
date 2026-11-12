@@ -59,18 +59,18 @@ const manifestWithoutRule = buildManifest({
   rowLevelPermissionPredicates: [companyNamePredicate],
 });
 
+const {
+  objectUniversalIdentifier: _objectUniversalIdentifier,
+  ...companyNameRulePredicate
+} = companyNamePredicate;
+
 const manifestWithRule = buildManifest({
   rowLevelPermissionRules: [
     {
       universalIdentifier: TEST_RULE_ID,
       objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
       canReadRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      ...companyNamePredicate,
-      rowLevelPermissionRuleUniversalIdentifier: TEST_RULE_ID,
+      predicates: [companyNameRulePredicate],
     },
   ],
 });
@@ -120,7 +120,7 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
     });
   });
 
-  it('moves the object permission onto the derived rule when the manifest declares no rule, and keeps it there on re-sync', async () => {
+  it('moves the object permission onto the derived rule of predicates declared outside a rule, and keeps it there on re-sync', async () => {
     await syncApplication({
       manifest: manifestWithoutRule,
       expectToFail: false,
@@ -143,7 +143,7 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
     ]);
   }, 60000);
 
-  it('writes a declared rule with its grants and leaves the object permission to the manifest', async () => {
+  it('writes a rule with its grants and nested predicates and leaves the object permission to the manifest', async () => {
     await syncApplication({ manifest: manifestWithRule, expectToFail: false });
 
     expect(await findRuleRows()).toMatchObject([
@@ -156,7 +156,7 @@ describe('Manifest sync - row level permission rules declared on a role', () => 
     ]);
   }, 60000);
 
-  it('keeps the predicate when a manifest moves it from a derived rule to a declared one', async () => {
+  it('keeps the predicate when a manifest moves it into a rule', async () => {
     await syncApplication({
       manifest: manifestWithoutRule,
       expectToFail: false,

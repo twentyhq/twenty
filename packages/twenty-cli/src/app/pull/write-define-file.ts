@@ -80,9 +80,45 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
+const ROW_LEVEL_PERMISSION_RULE_PREDICATE_GROUP_BOUND_DEPTH = 5;
+
+// Deeper predicate groups keep their enum values as string literals, which defineRole accepts
+const buildRowLevelPermissionRuleEnumBindings = (): EnumBinding[] =>
+  Array.from(
+    { length: ROW_LEVEL_PERMISSION_RULE_PREDICATE_GROUP_BOUND_DEPTH + 1 },
+    (_, depth) => {
+      const path = [
+        'rowLevelPermissionRules',
+        '[]',
+        ...Array.from({ length: depth }, () => [
+          'predicateGroups',
+          '[]',
+        ]).flat(),
+      ];
+
+      return [
+        {
+          path: [...path, 'predicates', '[]', 'operand'],
+          symbol: 'RowLevelPermissionPredicateOperand',
+          members: RowLevelPermissionPredicateOperand,
+        },
+        ...(depth > 0
+          ? [
+              {
+                path: [...path, 'logicalOperator'],
+                symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
+                members: RowLevelPermissionPredicateGroupLogicalOperator,
+              },
+            ]
+          : []),
+      ];
+    },
+  ).flat();
+
 export const buildRoleEnumBindings = (
   systemPermissionFlag: Record<string, string>,
 ): EnumBinding[] => [
+  ...buildRowLevelPermissionRuleEnumBindings(),
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',

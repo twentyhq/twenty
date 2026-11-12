@@ -1,5 +1,6 @@
 import {
   getRoleTargetUniversalIdentifier,
+  getRowLevelPermissionPredicatesFromRoleManifest,
   type Manifest,
 } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -243,14 +244,21 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'row-level permission predicate',
     getCandidates: (manifest) =>
       (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicates, () => undefined),
+        toCandidates(
+          getRowLevelPermissionPredicatesFromRoleManifest({ role }).predicates,
+          () => undefined,
+        ),
       ),
   },
   rowLevelPermissionPredicateGroup: {
     entityKind: 'row-level permission predicate group',
     getCandidates: (manifest) =>
       (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicateGroups, () => undefined),
+        toCandidates(
+          getRowLevelPermissionPredicatesFromRoleManifest({ role })
+            .predicateGroups,
+          () => undefined,
+        ),
       ),
   },
   roleTarget: {

@@ -25,9 +25,7 @@ export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevel
       parentRowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateGroupManifest.parentPredicateGroupUniversalIdentifier ??
         null,
-      rowLevelPermissionRuleUniversalIdentifier:
-        rowLevelPermissionPredicateGroupManifest.rowLevelPermissionRuleUniversalIdentifier ??
-        null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
       positionInRowLevelPermissionPredicateGroup:
         rowLevelPermissionPredicateGroupManifest.position ?? null,
       canReadRecords: false,

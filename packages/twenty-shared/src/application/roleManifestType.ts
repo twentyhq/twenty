@@ -16,18 +16,8 @@ export type ObjectPermissionManifest = Partial<SyncableEntityOptions> &
 export type FieldPermissionManifest = Partial<SyncableEntityOptions> &
   FieldPermissionGrant;
 
-export type RowLevelPermissionRuleManifest = SyncableEntityOptions & {
-  objectUniversalIdentifier: string;
-  canReadRecords?: boolean;
-  canCreateRecords?: boolean;
-  canUpdateRecords?: boolean;
-  canSoftDeleteRecords?: boolean;
-  canDestroyRecords?: boolean;
-};
-
 export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
-  rowLevelPermissionRuleUniversalIdentifier?: string | null;
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
   parentPredicateGroupUniversalIdentifier?: string | null;
   position?: number | null;
@@ -42,8 +32,31 @@ export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
   workspaceMemberFieldUniversalIdentifier?: string | null;
   workspaceMemberSubFieldName?: string | null;
   predicateGroupUniversalIdentifier?: string | null;
-  rowLevelPermissionRuleUniversalIdentifier?: string | null;
   position?: number | null;
+};
+
+export type RowLevelPermissionRulePredicateManifest = Omit<
+  RowLevelPermissionPredicateManifest,
+  'objectUniversalIdentifier' | 'predicateGroupUniversalIdentifier'
+>;
+
+export type RowLevelPermissionRulePredicateGroupManifest =
+  SyncableEntityOptions & {
+    logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+    position?: number | null;
+    predicates?: RowLevelPermissionRulePredicateManifest[];
+    predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
+  };
+
+export type RowLevelPermissionRuleManifest = SyncableEntityOptions & {
+  objectUniversalIdentifier: string;
+  canReadRecords?: boolean;
+  canCreateRecords?: boolean;
+  canUpdateRecords?: boolean;
+  canSoftDeleteRecords?: boolean;
+  canDestroyRecords?: boolean;
+  predicates?: RowLevelPermissionRulePredicateManifest[];
+  predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
 };
 
 export type RoleManifest = SyncableEntityOptions &

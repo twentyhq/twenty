@@ -1,15 +1,23 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import {
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
-  type RowLevelPermissionRuleManifest,
-} from 'twenty-shared/application';
+type RulePredicate = {
+  universalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  operand: string;
+};
 
-type RuleOwner = {
+type RulePredicateGroup = {
+  universalIdentifier: string;
+  logicalOperator: string;
+  predicates?: RulePredicate[];
+  predicateGroups?: RulePredicateGroup[];
+};
+
+type Rule = {
+  universalIdentifier: string;
   objectUniversalIdentifier: string;
-  rowLevelPermissionRuleUniversalIdentifier?: string | null;
+  predicates?: RulePredicate[];
+  predicateGroups?: RulePredicateGroup[];
 };
 
 export const validateRowLevelPermissionRules = ({
@@ -19,116 +27,123 @@ export const validateRowLevelPermissionRules = ({
   rowLevelPermissionPredicates = [],
 }: {
   label: string;
-  rowLevelPermissionRules?: Pick<
-    RowLevelPermissionRuleManifest,
-    'universalIdentifier' | 'objectUniversalIdentifier'
-  >[];
-  rowLevelPermissionPredicateGroups?: Pick<
-    RowLevelPermissionPredicateGroupManifest,
-    | 'objectUniversalIdentifier'
-    | 'rowLevelPermissionRuleUniversalIdentifier'
-    | 'parentPredicateGroupUniversalIdentifier'
-  >[];
-  rowLevelPermissionPredicates?: Pick<
-    RowLevelPermissionPredicateManifest,
-    | 'objectUniversalIdentifier'
-    | 'rowLevelPermissionRuleUniversalIdentifier'
-    | 'predicateGroupUniversalIdentifier'
-  >[];
+  rowLevelPermissionRules?: Rule[];
+  rowLevelPermissionPredicateGroups?: { universalIdentifier: string }[];
+  rowLevelPermissionPredicates?: { universalIdentifier: string }[];
 }): { errors: string[]; warnings: string[] } => {
   const errors: string[] = [];
-  const objectUniversalIdentifierByRuleUniversalIdentifier = new Map<
-    string,
-    string
-  >();
+  const ruleUniversalIdentifiers = new Set<string>();
+  const predicateGroupUniversalIdentifiers = new Set(
+    rowLevelPermissionPredicateGroups.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+  );
+  const predicateUniversalIdentifiers = new Set(
+    rowLevelPermissionPredicates.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+  );
+
+  const addUniversalIdentifier = ({
+    kind,
+    universalIdentifier,
+    universalIdentifiers,
+  }: {
+    kind: string;
+    universalIdentifier: string;
+    universalIdentifiers: Set<string>;
+  }): void => {
+    if (!isNonEmptyString(universalIdentifier)) {
+      errors.push(
+        `Row level permission ${kind} must have a universalIdentifier`,
+      );
+
+      return;
+    }
+
+    if (universalIdentifiers.has(universalIdentifier)) {
+      errors.push(
+        `Duplicate row level permission ${kind} universalIdentifier "${universalIdentifier}"`,
+      );
+
+      return;
+    }
+
+    universalIdentifiers.add(universalIdentifier);
+  };
+
+  const validateChildren = ({
+    predicates = [],
+    predicateGroups = [],
+  }: Pick<RulePredicateGroup, 'predicates' | 'predicateGroups'>): void => {
+    for (const predicate of predicates) {
+      addUniversalIdentifier({
+        kind: 'predicate',
+        universalIdentifier: predicate.universalIdentifier,
+        universalIdentifiers: predicateUniversalIdentifiers,
+      });
+
+      if (!isNonEmptyString(predicate.fieldUniversalIdentifier)) {
+        errors.push(
+          'Row level permission predicate must have a fieldUniversalIdentifier',
+        );
+      }
+
+      if (!isNonEmptyString(predicate.operand)) {
+        errors.push('Row level permission predicate must have an operand');
+      }
+    }
+
+    for (const predicateGroup of predicateGroups) {
+      addUniversalIdentifier({
+        kind: 'predicate group',
+        universalIdentifier: predicateGroup.universalIdentifier,
+        universalIdentifiers: predicateGroupUniversalIdentifiers,
+      });
+
+      if (!isNonEmptyString(predicateGroup.logicalOperator)) {
+        errors.push(
+          'Row level permission predicate group must have a logicalOperator',
+        );
+      }
+
+      validateChildren(predicateGroup);
+    }
+  };
 
   for (const rule of rowLevelPermissionRules) {
-    if (!isNonEmptyString(rule.universalIdentifier)) {
-      errors.push('Row level permission rule must have a universalIdentifier');
-    } else if (
-      objectUniversalIdentifierByRuleUniversalIdentifier.has(
-        rule.universalIdentifier,
-      )
-    ) {
-      errors.push(
-        `Duplicate row level permission rule universalIdentifier "${rule.universalIdentifier}"`,
-      );
-    } else {
-      objectUniversalIdentifierByRuleUniversalIdentifier.set(
-        rule.universalIdentifier,
-        rule.objectUniversalIdentifier,
-      );
-    }
+    addUniversalIdentifier({
+      kind: 'rule',
+      universalIdentifier: rule.universalIdentifier,
+      universalIdentifiers: ruleUniversalIdentifiers,
+    });
 
     if (!isNonEmptyString(rule.objectUniversalIdentifier)) {
       errors.push(
         'Row level permission rule must have an objectUniversalIdentifier',
       );
     }
-  }
 
-  const ruleOwners: (RuleOwner & { kind: string; isNested: boolean })[] = [
-    ...rowLevelPermissionPredicateGroups.map((group) => ({
-      objectUniversalIdentifier: group.objectUniversalIdentifier,
-      rowLevelPermissionRuleUniversalIdentifier:
-        group.rowLevelPermissionRuleUniversalIdentifier,
-      kind: 'predicate group',
-      isNested: isDefined(group.parentPredicateGroupUniversalIdentifier),
-    })),
-    ...rowLevelPermissionPredicates.map((predicate) => ({
-      objectUniversalIdentifier: predicate.objectUniversalIdentifier,
-      rowLevelPermissionRuleUniversalIdentifier:
-        predicate.rowLevelPermissionRuleUniversalIdentifier,
-      kind: 'predicate',
-      isNested: isDefined(predicate.predicateGroupUniversalIdentifier),
-    })),
-  ];
-  const referencedRuleUniversalIdentifiers = new Set<string>();
-  let hasPredicatesWithoutRule = false;
-
-  for (const ruleOwner of ruleOwners) {
-    const ruleUniversalIdentifier =
-      ruleOwner.rowLevelPermissionRuleUniversalIdentifier;
-
-    if (!isDefined(ruleUniversalIdentifier)) {
-      hasPredicatesWithoutRule ||= !ruleOwner.isNested;
-      continue;
-    }
-
-    referencedRuleUniversalIdentifiers.add(ruleUniversalIdentifier);
-
-    const ruleObjectUniversalIdentifier =
-      objectUniversalIdentifierByRuleUniversalIdentifier.get(
-        ruleUniversalIdentifier,
-      );
-
-    if (!isDefined(ruleObjectUniversalIdentifier)) {
-      errors.push(
-        `Row level permission ${ruleOwner.kind} references unknown rule "${ruleUniversalIdentifier}"`,
-      );
-    } else if (
-      ruleObjectUniversalIdentifier !== ruleOwner.objectUniversalIdentifier
+    if (
+      !isNonEmptyArray(rule.predicates) &&
+      !isNonEmptyArray(rule.predicateGroups)
     ) {
       errors.push(
-        `Row level permission ${ruleOwner.kind} and its rule "${ruleUniversalIdentifier}" must be on the same object`,
+        `Row level permission rule "${rule.universalIdentifier}" must have at least one predicate or predicate group`,
       );
     }
-  }
 
-  for (const ruleUniversalIdentifier of objectUniversalIdentifierByRuleUniversalIdentifier.keys()) {
-    if (!referencedRuleUniversalIdentifiers.has(ruleUniversalIdentifier)) {
-      errors.push(
-        `Row level permission rule "${ruleUniversalIdentifier}" must have at least one predicate or predicate group`,
-      );
-    }
+    validateChildren(rule);
   }
 
   return {
     errors,
-    warnings: hasPredicatesWithoutRule
-      ? [
-          `Role "${label}" declares row level permission predicates outside a rule, which is deprecated. Declare rowLevelPermissionRules with the operations each rule grants, set rowLevelPermissionRuleUniversalIdentifier on its root predicate groups and ungrouped predicates, and remove those operations from the object permission. Until then the object permission is applied to the matching records only.`,
-        ]
-      : [],
+    warnings:
+      isNonEmptyArray(rowLevelPermissionPredicateGroups) ||
+      isNonEmptyArray(rowLevelPermissionPredicates)
+        ? [
+            `Role "${label}" declares rowLevelPermissionPredicates or rowLevelPermissionPredicateGroups, which are deprecated. Move them inside rowLevelPermissionRules, with the operations each rule grants, and remove those operations from the object permission. Until then the object permission is applied to the matching records only.`,
+          ]
+        : [],
   };
 };

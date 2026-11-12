@@ -16,11 +16,11 @@ const NO_OBJECT_RECORDS_GRANTS = {
   canDestroyObjectRecords: false,
 };
 
-// TODO(charles): drop the fallback once published applications declare their rules
-export const resolveRoleManifestRowLevelPermissionRules = ({
+// TODO(charles): drop once published applications declare their predicates inside rules
+export const deriveUndeclaredRowLevelPermissionRules = ({
   universalFlatRole,
   universalFlatObjectPermissions,
-  declaredRules,
+  declaredRuleUniversalIdentifiers,
   predicateGroups,
   predicates,
   now,
@@ -36,7 +36,7 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
     | 'canDestroyAllObjectRecords'
   >;
   universalFlatObjectPermissions: UniversalFlatObjectPermission[];
-  declaredRules: UniversalFlatRowLevelPermissionRule[];
+  declaredRuleUniversalIdentifiers: ReadonlySet<string>;
   predicateGroups: UniversalFlatRowLevelPermissionPredicateGroup[];
   predicates: UniversalFlatRowLevelPermissionPredicate[];
   now: string;
@@ -52,99 +52,6 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
     ruleUniversalIdentifierByPredicateUniversalIdentifier,
   } = buildRowLevelPermissionRules({ predicateGroups, predicates, now });
 
-  const declaredRuleUniversalIdentifierByDerivedRuleUniversalIdentifier =
-    new Map<string, string>();
-
-  for (const predicateGroup of predicateGroups) {
-    const derivedRuleUniversalIdentifier =
-      ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
-        predicateGroup.universalIdentifier,
-      );
-
-    if (
-      isDefined(derivedRuleUniversalIdentifier) &&
-      isDefined(predicateGroup.rowLevelPermissionRuleUniversalIdentifier) &&
-      !isDefined(
-        predicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
-      )
-    ) {
-      declaredRuleUniversalIdentifierByDerivedRuleUniversalIdentifier.set(
-        derivedRuleUniversalIdentifier,
-        predicateGroup.rowLevelPermissionRuleUniversalIdentifier,
-      );
-    }
-  }
-
-  const undeclaredRuleUniversalIdentifiers = new Set<string>();
-
-  const resolveRuleUniversalIdentifier = ({
-    declaredRuleUniversalIdentifier,
-    derivedRuleUniversalIdentifier,
-  }: {
-    declaredRuleUniversalIdentifier: string | null | undefined;
-    derivedRuleUniversalIdentifier: string | undefined;
-  }): string | null => {
-    if (isDefined(declaredRuleUniversalIdentifier)) {
-      return declaredRuleUniversalIdentifier;
-    }
-
-    if (!isDefined(derivedRuleUniversalIdentifier)) {
-      return null;
-    }
-
-    undeclaredRuleUniversalIdentifiers.add(derivedRuleUniversalIdentifier);
-
-    return derivedRuleUniversalIdentifier;
-  };
-
-  const linkedPredicateGroups = predicateGroups.map((predicateGroup) => {
-    const derivedRuleUniversalIdentifier =
-      ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
-        predicateGroup.universalIdentifier,
-      );
-
-    return {
-      ...predicateGroup,
-      rowLevelPermissionRuleUniversalIdentifier: resolveRuleUniversalIdentifier(
-        {
-          declaredRuleUniversalIdentifier: isDefined(
-            derivedRuleUniversalIdentifier,
-          )
-            ? declaredRuleUniversalIdentifierByDerivedRuleUniversalIdentifier.get(
-                derivedRuleUniversalIdentifier,
-              )
-            : undefined,
-          derivedRuleUniversalIdentifier,
-        },
-      ),
-    };
-  });
-
-  const linkedPredicates = predicates.map((predicate) => {
-    const derivedRuleUniversalIdentifier =
-      ruleUniversalIdentifierByPredicateUniversalIdentifier.get(
-        predicate.universalIdentifier,
-      );
-    const isInPredicateGroup = isDefined(
-      predicate.rowLevelPermissionPredicateGroupUniversalIdentifier,
-    );
-
-    return {
-      ...predicate,
-      rowLevelPermissionRuleUniversalIdentifier: resolveRuleUniversalIdentifier(
-        {
-          declaredRuleUniversalIdentifier:
-            isInPredicateGroup && isDefined(derivedRuleUniversalIdentifier)
-              ? declaredRuleUniversalIdentifierByDerivedRuleUniversalIdentifier.get(
-                  derivedRuleUniversalIdentifier,
-                )
-              : predicate.rowLevelPermissionRuleUniversalIdentifier,
-          derivedRuleUniversalIdentifier,
-        },
-      ),
-    };
-  });
-
   const objectPermissionByObjectUniversalIdentifier = new Map(
     universalFlatObjectPermissions.map((universalFlatObjectPermission) => [
       universalFlatObjectPermission.objectMetadataUniversalIdentifier,
@@ -152,14 +59,9 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
     ]),
   );
 
-  const declaredRuleUniversalIdentifiers = new Set(
-    declaredRules.map(({ universalIdentifier }) => universalIdentifier),
-  );
-
-  const undeclaredRules = derivedRules
+  const rules = derivedRules
     .filter(
       ({ universalIdentifier }) =>
-        undeclaredRuleUniversalIdentifiers.has(universalIdentifier) &&
         !declaredRuleUniversalIdentifiers.has(universalIdentifier),
     )
     .map((rule) => {
@@ -187,9 +89,9 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
       };
     });
 
-  // All records wins over the rules, so an undeclared rule takes the object grant over
-  const objectUniversalIdentifiersWithUndeclaredRule = new Set(
-    undeclaredRules.map(
+  // All records wins over the rules, so a derived rule takes the object grant over
+  const objectUniversalIdentifiersWithDerivedRule = new Set(
+    rules.map(
       ({ objectMetadataUniversalIdentifier }) =>
         objectMetadataUniversalIdentifier,
     ),
@@ -197,13 +99,13 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
 
   const objectPermissions = [
     ...universalFlatObjectPermissions.map((universalFlatObjectPermission) =>
-      objectUniversalIdentifiersWithUndeclaredRule.has(
+      objectUniversalIdentifiersWithDerivedRule.has(
         universalFlatObjectPermission.objectMetadataUniversalIdentifier,
       )
         ? { ...universalFlatObjectPermission, ...NO_OBJECT_RECORDS_GRANTS }
         : universalFlatObjectPermission,
     ),
-    ...[...objectUniversalIdentifiersWithUndeclaredRule]
+    ...[...objectUniversalIdentifiersWithDerivedRule]
       .filter(
         (objectUniversalIdentifier) =>
           !objectPermissionByObjectUniversalIdentifier.has(
@@ -228,9 +130,21 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
   ];
 
   return {
-    rules: [...declaredRules, ...undeclaredRules],
-    predicateGroups: linkedPredicateGroups,
-    predicates: linkedPredicates,
+    rules,
+    predicateGroups: predicateGroups.map((predicateGroup) => ({
+      ...predicateGroup,
+      rowLevelPermissionRuleUniversalIdentifier:
+        ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
+          predicateGroup.universalIdentifier,
+        ) ?? null,
+    })),
+    predicates: predicates.map((predicate) => ({
+      ...predicate,
+      rowLevelPermissionRuleUniversalIdentifier:
+        ruleUniversalIdentifierByPredicateUniversalIdentifier.get(
+          predicate.universalIdentifier,
+        ) ?? null,
+    })),
     objectPermissions,
   };
 };

@@ -15,9 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
-import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
-import { assertRowLevelPermissionRuleLinksOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/assert-row-level-permission-rule-links-or-throw.util';
-import { resolveRoleManifestRowLevelPermissionRules } from 'src/engine/core-modules/application/application-manifest/utils/resolve-role-manifest-row-level-permission-rules.util';
+import { fromRoleManifestToUniversalFlatRowLevelPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-row-level-permissions.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
@@ -29,15 +27,12 @@ import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/a
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
-import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
-import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
-import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
@@ -409,68 +404,14 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
-      const universalFlatPredicateGroups = (
-        roleManifest.rowLevelPermissionPredicateGroups ?? []
-      ).map((rowLevelPermissionPredicateGroupManifest) =>
-        fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
-          {
-            rowLevelPermissionPredicateGroupManifest,
-            roleUniversalIdentifier: roleManifest.universalIdentifier,
-            applicationUniversalIdentifier,
-            now,
-          },
-        ),
-      );
-      const universalFlatPredicates = (
-        roleManifest.rowLevelPermissionPredicates ?? []
-      ).map((rowLevelPermissionPredicateManifest) =>
-        fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-          {
-            rowLevelPermissionPredicateManifest,
-            roleUniversalIdentifier: roleManifest.universalIdentifier,
-            applicationUniversalIdentifier,
-            now,
-          },
-        ),
-      );
-      const declaredRules = (roleManifest.rowLevelPermissionRules ?? []).map(
-        (rowLevelPermissionRuleManifest) =>
-          fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule(
-            {
-              rowLevelPermissionRuleManifest,
-              roleUniversalIdentifier: roleManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            },
-          ),
-      );
-
-      assertRowLevelPermissionRuleLinksOrThrow({
-        declaredRules,
-        predicateGroups: universalFlatPredicateGroups,
-        predicates: universalFlatPredicates,
-      });
-
       const {
         rules,
         predicateGroups: linkedPredicateGroups,
         predicates: linkedPredicates,
         objectPermissions,
-      } = resolveRoleManifestRowLevelPermissionRules({
+      } = fromRoleManifestToUniversalFlatRowLevelPermissions({
+        roleManifest,
         universalFlatRole,
-        universalFlatObjectPermissions: (
-          roleManifest.objectPermissions ?? []
-        ).map((objectPermissionManifest) =>
-          fromObjectPermissionManifestToUniversalFlatObjectPermission({
-            objectPermissionManifest,
-            roleUniversalIdentifier: roleManifest.universalIdentifier,
-            applicationUniversalIdentifier,
-            now,
-          }),
-        ),
-        declaredRules,
-        predicateGroups: universalFlatPredicateGroups,
-        predicates: universalFlatPredicates,
         now,
       });
 

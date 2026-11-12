@@ -10,9 +10,14 @@ export const getShadowedRowLevelPermissionRuleWarnings = ({
   rowLevelPermissionRules = [],
 }: {
   role: ObjectRecordsPermissionGrants;
-  rowLevelPermissionRules?: Omit<
+  rowLevelPermissionRules?: Pick<
     RowLevelPermissionRuleManifest,
-    'canCreateRecords'
+    | 'universalIdentifier'
+    | 'objectUniversalIdentifier'
+    | 'canReadRecords'
+    | 'canUpdateRecords'
+    | 'canSoftDeleteRecords'
+    | 'canDestroyRecords'
   >[];
 }): string[] =>
   rowLevelPermissionRules.flatMap((rule) => {

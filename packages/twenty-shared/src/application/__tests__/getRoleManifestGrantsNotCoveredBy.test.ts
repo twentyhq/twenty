@@ -353,20 +353,33 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
         operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
       });
       const role = buildRole({
-        ...restrictedRole,
-        objectPermissions: [],
+        universalIdentifier: 'role',
         rowLevelPermissionRules: [
           {
             universalIdentifier: 'role-rule',
             objectUniversalIdentifier: PERSON,
             canReadRecords: true,
+            predicateGroups: (
+              restrictedRole.rowLevelPermissionPredicateGroups ?? []
+            ).map(({ universalIdentifier, logicalOperator }) => ({
+              universalIdentifier,
+              logicalOperator,
+              predicates: (
+                restrictedRole.rowLevelPermissionPredicates ?? []
+              ).map(
+                ({
+                  universalIdentifier,
+                  fieldUniversalIdentifier,
+                  operand,
+                }) => ({
+                  universalIdentifier,
+                  fieldUniversalIdentifier,
+                  operand,
+                }),
+              ),
+            })),
           },
         ],
-        rowLevelPermissionPredicateGroups:
-          restrictedRole.rowLevelPermissionPredicateGroups?.map((group) => ({
-            ...group,
-            rowLevelPermissionRuleUniversalIdentifier: 'role-rule',
-          })),
       });
 
       for (const roles of [
@@ -389,15 +402,13 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
             universalIdentifier: 'role-rule',
             objectUniversalIdentifier: PERSON,
             canReadRecords: true,
-          },
-        ],
-        rowLevelPermissionPredicates: [
-          {
-            universalIdentifier: 'role-predicate',
-            objectUniversalIdentifier: PERSON,
-            fieldUniversalIdentifier: EMAIL_FIELD,
-            operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
-            rowLevelPermissionRuleUniversalIdentifier: 'role-rule',
+            predicates: [
+              {
+                universalIdentifier: 'role-predicate',
+                fieldUniversalIdentifier: EMAIL_FIELD,
+                operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+              },
+            ],
           },
         ],
       });

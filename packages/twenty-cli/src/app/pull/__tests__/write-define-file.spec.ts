@@ -525,6 +525,55 @@ describe('writeDefineFile', () => {
     expect(file).toContain("'application-permission-flag-uid'");
   });
 
+  it('should write the predicates and predicate groups nested in a row-level rule as enum members', () => {
+    const { content: file } = writeDefineFile({
+      definer: 'defineRole',
+      config: {
+        universalIdentifier: 'role-uid',
+        label: 'Auditor',
+        rowLevelPermissionRules: [
+          {
+            universalIdentifier: 'rule-uid',
+            objectUniversalIdentifier: 'object-uid',
+            canReadRecords: true,
+            predicates: [
+              {
+                universalIdentifier: 'predicate-uid',
+                fieldUniversalIdentifier: 'field-uid',
+                operand: 'CONTAINS',
+                value: 'Rex',
+              },
+            ],
+            predicateGroups: [
+              {
+                universalIdentifier: 'predicate-group-uid',
+                logicalOperator: 'OR',
+                predicates: [
+                  {
+                    universalIdentifier: 'predicate-in-group-uid',
+                    fieldUniversalIdentifier: 'field-uid',
+                    operand: 'IS_EMPTY',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      enumBindings: ROLE_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain(
+      'logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,',
+    );
+    expect(file).toContain(
+      'operand: RowLevelPermissionPredicateOperand.CONTAINS,',
+    );
+    expect(file).toContain(
+      'operand: RowLevelPermissionPredicateOperand.IS_EMPTY,',
+    );
+  });
+
   it('should write a permission flag with its permission type as a literal', () => {
     const { content: file } = writeDefineFile({
       definer: 'definePermissionFlag',

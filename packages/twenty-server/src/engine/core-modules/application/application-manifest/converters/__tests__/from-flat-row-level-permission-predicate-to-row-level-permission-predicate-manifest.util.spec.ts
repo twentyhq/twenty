@@ -15,12 +15,7 @@ const PREDICATE_GROUP_UID = '66666666-6666-4666-8666-666666666666';
 const PREDICATE_UID = '77777777-7777-4777-8777-777777777777';
 const NOW = '2026-09-15T10:00:00.000Z';
 
-const PREDICATE_MANIFEST: Required<
-  Omit<
-    RowLevelPermissionPredicateManifest,
-    'rowLevelPermissionRuleUniversalIdentifier'
-  >
-> = {
+const PREDICATE_MANIFEST: Required<RowLevelPermissionPredicateManifest> = {
   universalIdentifier: PREDICATE_UID,
   objectUniversalIdentifier: OBJECT_UID,
   fieldUniversalIdentifier: FIELD_UID,

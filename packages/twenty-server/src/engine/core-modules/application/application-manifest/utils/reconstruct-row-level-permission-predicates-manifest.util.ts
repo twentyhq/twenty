@@ -1,4 +1,5 @@
 import {
+  nestRowLevelPermissionRuleManifests,
   type RowLevelPermissionPredicateGroupManifest,
   type RowLevelPermissionPredicateManifest,
   type RowLevelPermissionRuleManifest,
@@ -26,6 +27,10 @@ import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/a
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
+
+type RowLevelPermissionRuleLink = {
+  rowLevelPermissionRuleUniversalIdentifier: string | null;
+};
 
 type RowLevelPermissionMetadataName = Extract<
   ChildMetadataName,
@@ -61,14 +66,13 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
   parentRoleStatusByUniversalIdentifier: ReadonlyMap<string, ParentStatus>;
 }): {
-  rulesByRoleUniversalIdentifier: Map<string, RowLevelPermissionRuleManifest[]>;
-  predicateGroupsByRoleUniversalIdentifier: Map<
+  rowLevelPermissionsByRoleUniversalIdentifier: Map<
     string,
-    RowLevelPermissionPredicateGroupManifest[]
-  >;
-  predicatesByRoleUniversalIdentifier: Map<
-    string,
-    RowLevelPermissionPredicateManifest[]
+    {
+      rules: RowLevelPermissionRuleManifest[];
+      predicateGroups: RowLevelPermissionPredicateGroupManifest[];
+      predicates: RowLevelPermissionPredicateManifest[];
+    }
   >;
   coverage: ApplicationExportCoverageEntry[];
 } => {
@@ -168,11 +172,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 
   const predicateGroupsByRoleUniversalIdentifier = new Map<
     string,
-    RowLevelPermissionPredicateGroupManifest[]
+    (RowLevelPermissionPredicateGroupManifest & RowLevelPermissionRuleLink)[]
   >();
   const predicatesByRoleUniversalIdentifier = new Map<
     string,
-    RowLevelPermissionPredicateManifest[]
+    (RowLevelPermissionPredicateManifest & RowLevelPermissionRuleLink)[]
   >();
   const exportedRuleUniversalIdentifiers = new Set<string>();
   const addExportedRuleUniversalIdentifier = ({
@@ -218,10 +222,13 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
           predicateGroupsByRoleUniversalIdentifier,
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
-        manifest:
-          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+        manifest: {
+          ...fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
             { flatRowLevelPermissionPredicateGroup },
           ),
+          rowLevelPermissionRuleUniversalIdentifier:
+            flatRowLevelPermissionPredicateGroup.rowLevelPermissionRuleUniversalIdentifier,
+        },
       });
     }
   }
@@ -264,17 +271,20 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
         manifestsByRoleUniversalIdentifier: predicatesByRoleUniversalIdentifier,
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicate.roleUniversalIdentifier,
-        manifest:
-          fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
+        manifest: {
+          ...fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
             { flatRowLevelPermissionPredicate },
           ),
+          rowLevelPermissionRuleUniversalIdentifier:
+            flatRowLevelPermissionPredicate.rowLevelPermissionRuleUniversalIdentifier,
+        },
       });
     }
   }
 
-  const rulesByRoleUniversalIdentifier = new Map<
+  const flatRulesByRoleUniversalIdentifier = new Map<
     string,
-    RowLevelPermissionRuleManifest[]
+    Omit<RowLevelPermissionRuleManifest, 'predicates' | 'predicateGroups'>[]
   >();
 
   for (const flatRowLevelPermissionRule of sortFlatEntitiesByUniversalIdentifier(
@@ -295,7 +305,7 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
       }),
     );
     appendByRole({
-      manifestsByRoleUniversalIdentifier: rulesByRoleUniversalIdentifier,
+      manifestsByRoleUniversalIdentifier: flatRulesByRoleUniversalIdentifier,
       roleUniversalIdentifier:
         flatRowLevelPermissionRule.roleUniversalIdentifier,
       manifest: fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest({
@@ -304,10 +314,28 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
     });
   }
 
-  return {
-    rulesByRoleUniversalIdentifier,
-    predicateGroupsByRoleUniversalIdentifier,
-    predicatesByRoleUniversalIdentifier,
-    coverage,
-  };
+  const rowLevelPermissionsByRoleUniversalIdentifier = new Map(
+    [
+      ...new Set([
+        ...flatRulesByRoleUniversalIdentifier.keys(),
+        ...predicateGroupsByRoleUniversalIdentifier.keys(),
+        ...predicatesByRoleUniversalIdentifier.keys(),
+      ]),
+    ].map((roleUniversalIdentifier) => [
+      roleUniversalIdentifier,
+      nestRowLevelPermissionRuleManifests({
+        rules:
+          flatRulesByRoleUniversalIdentifier.get(roleUniversalIdentifier) ?? [],
+        predicateGroups:
+          predicateGroupsByRoleUniversalIdentifier.get(
+            roleUniversalIdentifier,
+          ) ?? [],
+        predicates:
+          predicatesByRoleUniversalIdentifier.get(roleUniversalIdentifier) ??
+          [],
+      }),
+    ]),
+  );
+
+  return { rowLevelPermissionsByRoleUniversalIdentifier, coverage };
 };

@@ -13,18 +13,14 @@ const PARENT_PREDICATE_GROUP_UID = '44444444-4444-4444-8444-444444444444';
 const PREDICATE_GROUP_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-15T10:00:00.000Z';
 
-const PREDICATE_GROUP_MANIFEST: Required<
-  Omit<
-    RowLevelPermissionPredicateGroupManifest,
-    'rowLevelPermissionRuleUniversalIdentifier'
-  >
-> = {
-  universalIdentifier: PREDICATE_GROUP_UID,
-  objectUniversalIdentifier: OBJECT_UID,
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-  parentPredicateGroupUniversalIdentifier: PARENT_PREDICATE_GROUP_UID,
-  position: 0,
-};
+const PREDICATE_GROUP_MANIFEST: Required<RowLevelPermissionPredicateGroupManifest> =
+  {
+    universalIdentifier: PREDICATE_GROUP_UID,
+    objectUniversalIdentifier: OBJECT_UID,
+    logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+    parentPredicateGroupUniversalIdentifier: PARENT_PREDICATE_GROUP_UID,
+    position: 0,
+  };
 
 const forward = (
   rowLevelPermissionPredicateGroupManifest: RowLevelPermissionPredicateGroupManifest,

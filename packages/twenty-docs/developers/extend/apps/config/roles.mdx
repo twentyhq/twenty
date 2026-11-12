@@ -74,13 +74,12 @@ Object and field permissions decide _which objects and fields_ a role can touch.
 permission predicates** go further and decide _which records_ a role can see and act on — for
 example, a self-service role where each external user sees only their own records.
 
-Declare a **rule** with `rowLevelPermissionRules` on the role, and the predicates that select its
-records with `rowLevelPermissionPredicates`. A rule names an object and the operations it grants
-(`canReadRecords`, `canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`,
-`canDestroyRecords`) on the records its predicates match. Each predicate points at its rule with
-`rowLevelPermissionRuleUniversalIdentifier`, references an object and a field by their
-`universalIdentifier`, an `operand`, and (optionally) a workspaceMember field whose value is injected
-at query time — so you can express "the record's owner relation **is** the current workspace member":
+Declare **rules** with `rowLevelPermissionRules` on the role. A rule names an object, the operations
+it grants (`canReadRecords`, `canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`,
+`canDestroyRecords`) and, nested inside it, the predicates that select the records those operations
+apply to. A predicate references a field by its `universalIdentifier`, an `operand`, and (optionally)
+a workspaceMember field whose value is injected at query time — so you can express "the record's
+owner relation **is** the current workspace member":
 
 ```ts src/roles/partner-role.ts
 import {
@@ -103,55 +102,41 @@ export default defineRole({
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       canReadRecords: true,
       canUpdateRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
-      rowLevelPermissionRuleUniversalIdentifier:
-        'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
-          .universalIdentifier,
+      predicates: [
+        {
+          universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+          fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          workspaceMemberFieldUniversalIdentifier:
+            STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+              .universalIdentifier,
+        },
+      ],
     },
   ],
 });
 ```
 
-Because rules and predicates ship in the manifest, they are created, updated, and removed together
-with the role on every install and upgrade — there is no separate post-install step to keep in sync.
+Because rules ship in the manifest, they are created, updated, and removed together with the role
+on every install and upgrade — there is no separate post-install step to keep in sync.
 
 <Warning>
   An object permission that grants an operation on **all records** wins over the rules. Do not
   grant on `objectPermissions` (or with `canReadAllObjectRecords` and the other role-wide switches)
-  the operations a rule is meant to restrict: leave them to the rule.
+  the operations a rule is meant to restrict: leave them to the rule. `defineRole` warns when a
+  rule is shadowed this way.
 </Warning>
 
 A role can declare several rules on the same object. A record is reachable for an operation as soon
 as one rule granting that operation matches it, so one rule can let a partner read the accounts of
 its region while another lets it update only the accounts it owns.
 
-### Predicates declared without a rule (deprecated)
-
-Before rules, a role paired `objectPermissions` on an object with predicates that carried no
-`rowLevelPermissionRuleUniversalIdentifier`. Such a manifest still syncs: Twenty creates one rule
-per root predicate group, and one for the ungrouped predicates of each object, gives it the
-operations the role had on that object, and turns the object permission off so that the predicates
-keep restricting it. The CLI prints a deprecation warning for each role concerned. To migrate,
-declare the rules, link the root groups and ungrouped predicates to them, and remove the object
-permission.
-
 ### Combining predicates with groups
 
-Within a rule, predicates are combined with `AND`. To combine some of them with `OR` (or to
-nest logic), declare a `rowLevelPermissionPredicateGroups` entry and point each predicate at it via
-`predicateGroupUniversalIdentifier`. Link the root group to its rule; nested groups and the
-predicates inside a group take the rule of their root group. This role lets a partner see an Opportunity it either **owns**
-or is the **point of contact** for:
+The predicates of a rule are combined with `AND`. To combine some of them with `OR` (or to nest
+logic), add `predicateGroups` to the rule: a group has a `logicalOperator`, its own `predicates`,
+and may contain further `predicateGroups`. This role lets a partner see an Opportunity it either
+**owns** or is the **point of contact** for:
 
 ```ts src/roles/partner-opportunities-role.ts
 import {
@@ -175,46 +160,50 @@ export default defineRole({
       universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
       objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
       canReadRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicateGroups: [
-    {
-      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-      rowLevelPermissionRuleUniversalIdentifier:
-        'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-    {
-      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier:
-        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+      predicateGroups: [
+        {
+          universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+          predicates: [
+            {
+              universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+              fieldUniversalIdentifier:
+                OPPORTUNITY.fields.owner.universalIdentifier,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+            },
+            {
+              universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+              fieldUniversalIdentifier:
+                OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+            },
+          ],
+        },
+      ],
     },
   ],
 });
 ```
 
+### Predicates declared outside a rule (deprecated)
+
+Before rules, a role paired `objectPermissions` on an object with `rowLevelPermissionPredicates` and
+`rowLevelPermissionPredicateGroups` declared directly on the role. Such a manifest still syncs:
+Twenty creates one rule per top-level predicate group, and one for the ungrouped predicates of each
+object, gives it the operations the role had on that object, and turns the object permission off so
+that the predicates keep restricting it. `defineRole` prints a deprecation warning for each role
+concerned. To migrate, move the predicates and groups inside `rowLevelPermissionRules`, state the
+operations each rule grants, and remove the object permission.
+
 Notes:
 
 - Give every rule, predicate and group a stable `universalIdentifier` (any uuid) — it keys the entity
-  across upgrades, and predicates reference rules and groups by it.
-- Predicates can reference objects and fields owned by your app or by Twenty's standard objects.
+  across upgrades.
+- Predicates can reference fields owned by your app or by Twenty's standard objects.
 - Row-level security is enforced for workspaces on the **Organization plan or above**. On other
-  plans the predicates declared in an app manifest still sync, they are simply not enforced.
+  plans the rules declared in an app manifest still sync, they are simply not enforced.
 - The Metadata API behaves differently from the manifest here: without the entitlement,
   `upsertRowLevelPermissionPredicates` is rejected with
   `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` rather than syncing. A workspace on a plan that does not

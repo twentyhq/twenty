@@ -15,7 +15,9 @@ export const fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest = ({
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
   >;
-}): Required<RowLevelPermissionRuleManifest> => ({
+}): Required<
+  Omit<RowLevelPermissionRuleManifest, 'predicates' | 'predicateGroups'>
+> => ({
   universalIdentifier: flatRowLevelPermissionRule.universalIdentifier,
   objectUniversalIdentifier:
     flatRowLevelPermissionRule.objectMetadataUniversalIdentifier,
