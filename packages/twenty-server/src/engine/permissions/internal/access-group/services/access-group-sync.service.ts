@@ -9,6 +9,7 @@ import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { AccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group.repository';
@@ -23,6 +24,7 @@ export class AccessGroupSyncService {
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupComputationService: RecordAccessGroupComputationService,
     private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
+    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
   ) {}
 
   async syncAccessGroups(workspaceId: string): Promise<void> {
@@ -82,6 +84,10 @@ export class AccessGroupSyncService {
         },
       );
 
+    await this.accessGroupPropagationProgressService.planRecomputes({
+      workspaceId,
+      objectMetadataIds: objectMetadataIdsToRecompute,
+    });
     await Promise.all(
       objectMetadataIdsToRecompute.map((objectMetadataId) =>
         this.accessGroupSyncSchedulerService.scheduleRecordAccessGroupIdsRecompute(

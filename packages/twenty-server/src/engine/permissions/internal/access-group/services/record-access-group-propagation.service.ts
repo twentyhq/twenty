@@ -13,6 +13,7 @@ import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permission
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
+import { isRelatedRecordPathFollowed } from 'src/engine/permissions/internal/access-group/utils/is-related-record-path-followed.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
@@ -35,42 +36,15 @@ export class RecordAccessGroupPropagationService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    const jobData = {
-      workspaceId,
-      objectMetadataId,
-      propagatedFromObjectMetadataIds,
-    };
-    // A pass only takes back the records it counted, so an object scheduled again meanwhile stays counted
-    let untrackedRecordCount =
-      await this.accessGroupPropagationProgressService.trackStartedObjectRecompute(
-        jobData,
-      );
-    const trackRecomputedRecords = async ({
-      recordCount,
-      heldBackRecordCount,
-    }: {
-      recordCount: number;
-      heldBackRecordCount: number;
-    }) => {
-      const trackedRecordCount = Math.max(
-        0,
-        Math.min(recordCount, untrackedRecordCount - heldBackRecordCount),
-      );
-
-      untrackedRecordCount -= trackedRecordCount;
-      await this.accessGroupPropagationProgressService.trackRecomputedRecords({
-        ...jobData,
-        recordCount: trackedRecordCount,
-      });
-    };
-
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId,
         objectMetadataId,
-        // One record stays counted until the following objects are tracked, so the progress never looks idle in between
         onRecordsRecomputed: (recordCount) =>
-          trackRecomputedRecords({ recordCount, heldBackRecordCount: 1 }),
+          this.accessGroupPropagationProgressService.trackRecomputedRecords({
+            workspaceId,
+            recordCount,
+          }),
       },
     );
 
@@ -81,7 +55,7 @@ export class RecordAccessGroupPropagationService {
         .filter(
           (resolvedPath) =>
             resolvedPath.sourceFlatObjectMetadata.id === objectMetadataId &&
-            this.isRelatedRecordPathFollowed({
+            isRelatedRecordPathFollowed({
               resolvedPath,
               objectMetadataId,
               propagatedFromObjectMetadataIds,
@@ -100,9 +74,10 @@ export class RecordAccessGroupPropagationService {
       metadataMaps,
     });
 
-    await trackRecomputedRecords({
-      recordCount: untrackedRecordCount,
-      heldBackRecordCount: 0,
+    await this.accessGroupPropagationProgressService.finishRecompute({
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
     });
   }
 
@@ -116,13 +91,21 @@ export class RecordAccessGroupPropagationService {
         workspaceId,
       );
 
+    const objectMetadataIds = new Set(
+      metadataMaps.resolvedRelatedRecordPaths.map(
+        ({ targetObjectMetadataId }) => targetObjectMetadataId,
+      ),
+    );
+
+    await this.accessGroupPropagationProgressService.planRecomputes({
+      workspaceId,
+      objectMetadataIds: [...objectMetadataIds].filter((objectMetadataId) =>
+        isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
+      ),
+    });
     await this.scheduleRecomputeOfObjectsUsingRecordAccessGroups({
       workspaceId,
-      objectMetadataIds: new Set(
-        metadataMaps.resolvedRelatedRecordPaths.map(
-          ({ targetObjectMetadataId }) => targetObjectMetadataId,
-        ),
-      ),
+      objectMetadataIds,
       propagatedFromObjectMetadataIds: [],
       metadataMaps,
     });
@@ -230,7 +213,7 @@ export class RecordAccessGroupPropagationService {
       const { hops, targetObjectMetadataId } = resolvedPath;
 
       if (
-        !this.isRelatedRecordPathFollowed({
+        !isRelatedRecordPathFollowed({
           resolvedPath,
           objectMetadataId,
           propagatedFromObjectMetadataIds,
@@ -299,25 +282,6 @@ export class RecordAccessGroupPropagationService {
         objectMetadataId,
       ],
     }));
-  }
-
-  private isRelatedRecordPathFollowed({
-    resolvedPath: { isInherent, targetObjectMetadataId },
-    objectMetadataId,
-    propagatedFromObjectMetadataIds,
-  }: {
-    resolvedPath: Pick<
-      ResolvedRelatedRecordPath,
-      'isInherent' | 'targetObjectMetadataId'
-    >;
-    objectMetadataId: string;
-    propagatedFromObjectMetadataIds: string[];
-  }): boolean {
-    return (
-      (isInherent || propagatedFromObjectMetadataIds.length === 0) &&
-      targetObjectMetadataId !== objectMetadataId &&
-      !propagatedFromObjectMetadataIds.includes(targetObjectMetadataId)
-    );
   }
 
   async isObjectLeadingThroughRelatedRecordPath({

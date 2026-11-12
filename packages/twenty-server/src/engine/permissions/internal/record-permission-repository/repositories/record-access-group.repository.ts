@@ -53,30 +53,6 @@ export class RecordAccessGroupRepository {
     return rows.map(({ id }) => id);
   }
 
-  async countRecords({
-    workspaceId,
-    flatObjectMetadata,
-  }: {
-    workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
-  }): Promise<number> {
-    const tableExpression = buildWorkspaceTableExpression({
-      workspaceId,
-      tableName: computeObjectTargetTable(flatObjectMetadata),
-    });
-    const [{ count }] = await this.recordPermissionQueryService.execute<{
-      count: string;
-    }>({
-      workspaceId,
-      query: {
-        sql: `SELECT COUNT(*) AS "count" FROM ${tableExpression}`,
-        parameters: {},
-      },
-    });
-
-    return Number(count);
-  }
-
   async estimateRecordCount({
     workspaceId,
     flatObjectMetadata,

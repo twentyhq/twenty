@@ -94,7 +94,17 @@ describe('access group propagation progress (integration)', () => {
     await waitForAllJobsToFinish();
     await global.app
       .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
-      .del(`access-group-propagation-progress:${SEED_APPLE_WORKSPACE_ID}`);
+      .mdel(
+        [
+          'pending-recomputes',
+          'total-record-count',
+          'recomputed-record-count',
+        ].map(
+          (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
+        ),
+      );
+    // The plan reads the planner statistics, which a freshly seeded table may not have yet
+    await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 
   afterAll(async () => {
@@ -129,7 +139,7 @@ describe('access group propagation progress (integration)', () => {
     expect(errors?.[0].extensions.code).toBe('FORBIDDEN');
   });
 
-  it('should count the records of a rule change until they are recomputed', async () => {
+  it('should plan the records of a rule change and report them until they are recomputed', async () => {
     const [{ count }] = await global.testDataSource.query(
       `SELECT COUNT(*) AS "count" FROM ${PERSON_TABLE}`,
     );
@@ -190,11 +200,11 @@ describe('access group propagation progress (integration)', () => {
     try {
       await firstBatchReached;
 
-      expect((await readProgress()).progress).toEqual({
-        totalRecordCount: personCount,
-        remainingRecordCount: personCount,
-        isInProgress: true,
-      });
+      const { progress } = await readProgress();
+
+      expect(progress?.totalRecordCount).toBeGreaterThanOrEqual(personCount);
+      expect(progress?.remainingRecordCount).toBe(progress?.totalRecordCount);
+      expect(progress?.isInProgress).toBe(true);
     } finally {
       resumeRecompute();
     }
