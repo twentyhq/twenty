@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -13,9 +14,9 @@ import {
   AffiliateApply,
   AffiliateAudiences,
   AffiliateHero,
-  AffiliateIntegratorStrip,
   AffiliateProgramTerms,
 } from '@/sections/affiliate-program';
+import { ProgramSwitchStrip } from '@/sections/partner-programs';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 
@@ -38,7 +39,7 @@ export default async function AffiliateProgramPage({
         data={buildBreadcrumbListJsonLd(
           [
             { name: 'Home', path: '/' },
-            { name: 'Affiliate program', path: '/affiliate-partners' },
+            { name: 'Creator program', path: '/affiliate-partners' },
           ],
           locale,
         )}
@@ -48,7 +49,12 @@ export default async function AffiliateProgramPage({
         <AffiliateHero />
         <AffiliateProgramTerms />
         <AffiliateAudiences />
-        <AffiliateIntegratorStrip />
+        <ProgramSwitchStrip
+          heading={msg`You implement Twenty *for clients?*`}
+          body={msg`Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs.`}
+          label={msg`See the integrator program`}
+          href="/partners/become"
+        />
         <AffiliateProgramFaq />
         <AffiliateApply />
       </main>

@@ -60,7 +60,7 @@ export function AffiliateHero() {
       scheme="light"
     >
       <IntroStack>
-        <Eyebrow>{i18n._(msg`Twenty affiliate program`)}</Eyebrow>
+        <Eyebrow>{i18n._(msg`Twenty creator program`)}</Eyebrow>
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">

@@ -10,12 +10,12 @@ export function PartnerSignoff() {
   return (
     <Signoff
       body={i18n._(
-        msg`We certify real builders only. Every application is reviewed against a shipped Twenty project — send yours with proof.`,
+        msg`We review every application by hand. Show us what you have built with Twenty and who you build it for.`,
       )}
       heading={i18n._(msg`Ready to grow *with Twenty?*`)}
       scheme="light"
     >
-      <BecomePartnerButton label={msg`Become a partner`} />
+      <BecomePartnerButton label={msg`Apply as an integrator`} />
     </Signoff>
   );
 }

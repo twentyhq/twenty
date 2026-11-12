@@ -103,19 +103,19 @@ export function PartnerHero() {
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become\n*our partner*`)}
+              {i18n._(msg`Become a\n*Twenty integrator*`)}
             </Heading>
           </HeadingMeasure>
           <BodyMeasure>
             <Body muted size="sm">
               {i18n._(
-                msg`Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners.`,
+                msg`You implement Twenty for your clients. Earn 20% on every client you bring, get help from our team and other partners, and grow into a Lead Integrator to receive client briefs.`,
               )}
             </Body>
           </BodyMeasure>
         </HeadingPair>
         <CtaStack>
-          <BecomePartnerButton label={msg`Become a partner`} />
+          <BecomePartnerButton label={msg`Apply as an integrator`} />
           <HireLink href="/partners">
             {i18n._(msg`Looking to hire a partner?`)}
           </HireLink>
