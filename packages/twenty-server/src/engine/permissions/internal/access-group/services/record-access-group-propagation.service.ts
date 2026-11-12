@@ -40,8 +40,7 @@ export class RecordAccessGroupPropagationService {
       objectMetadataId,
       propagatedFromObjectMetadataIds,
     };
-    // A pass only ever takes back the records it counted when it started, so an
-    // object scheduled again meanwhile keeps the records of its next pass
+    // A pass only takes back the records it counted, so an object scheduled again meanwhile stays counted
     let untrackedRecordCount =
       await this.accessGroupPropagationProgressService.trackStartedObjectRecompute(
         jobData,
