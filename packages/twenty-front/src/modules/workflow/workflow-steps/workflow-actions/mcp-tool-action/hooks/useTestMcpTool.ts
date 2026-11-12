@@ -53,10 +53,6 @@ export const useTestMcpTool = (actionId: string) => {
   }: WorkflowMcpToolAction['settings']['input'] & {
     allowDestructiveTool: boolean;
   }): Promise<JsonObject | undefined> => {
-    if (isTesting) {
-      return undefined;
-    }
-
     setIsTesting(true);
 
     try {

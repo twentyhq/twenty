@@ -3,7 +3,6 @@ type McpToolAnnotations = {
   destructiveHint?: boolean | null;
 };
 
-// Same rule as the server's isDestructiveMcpServerTool
 export const isMcpToolSafeToTestWithoutConfirmation = ({
   annotations,
 }: {

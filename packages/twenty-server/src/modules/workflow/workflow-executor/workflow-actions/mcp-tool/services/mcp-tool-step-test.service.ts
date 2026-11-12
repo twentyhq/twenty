@@ -79,12 +79,12 @@ export class McpToolStepTestService {
         workspaceCustomApplicationId,
       })
     ) {
+      const { code, userFriendlyMessage } = LOOKUP_FAILURES.server_not_found;
+
       throw new WorkflowVersionStepException(
         `MCP server with id ${mcpServerId} not found`,
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-        {
-          userFriendlyMessage: msg`This MCP server is not available to this workflow.`,
-        },
+        code,
+        { userFriendlyMessage },
       );
     }
 

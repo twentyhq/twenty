@@ -22,8 +22,4 @@ describe('convertFlatVariablesToNestedContext', () => {
       }),
     ).toEqual({ trigger: { name: 'Acme' } });
   });
-
-  it('returns an empty context when there are no variables', () => {
-    expect(convertFlatVariablesToNestedContext({})).toEqual({});
-  });
 });

@@ -126,7 +126,6 @@ export const WorkflowEditActionMcpTool = ({
 
   const handleInputChange = (value: unknown, path: string[]) => {
     updateSettings({
-      ...settings,
       input: {
         ...settings.input,
         toolInput: setNestedValue(toolInput, path, value),
@@ -137,7 +136,7 @@ export const WorkflowEditActionMcpTool = ({
   const handleExpectedOutputBodyChange = (
     parsedValue: Record<string, unknown>,
   ) => {
-    updateSettings({ ...settings, expectedOutputSchema: parsedValue });
+    updateSettings({ expectedOutputSchema: parsedValue });
   };
 
   const runTest = async ({
@@ -155,15 +154,12 @@ export const WorkflowEditActionMcpTool = ({
       return;
     }
 
-    updateSettings((latestSettings) => ({
-      ...latestSettings,
-      expectedOutputSchema: testResult,
-    }));
+    updateSettings({ expectedOutputSchema: testResult });
     flushPendingSave();
   };
 
   const handleTestClick = async () => {
-    if (actionOptions.readonly || !isDefined(tool)) {
+    if (!isDefined(tool)) {
       return;
     }
 

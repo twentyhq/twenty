@@ -66,7 +66,6 @@ const WORKFLOW_VERSION_STEP_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
 };
 
-// Matches the step authoring mutations: an application may not test an MCP tool it cannot configure
 const WORKFLOW_MCP_TOOL_STEP_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {

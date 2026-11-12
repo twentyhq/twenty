@@ -1,5 +1,4 @@
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
-import { isFunction } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -21,7 +20,7 @@ export const useMcpToolStepForm = ({
   const latestSettingsRef = useRef(action.settings);
 
   const saveAction = useDebouncedCallback(
-    (updatedSettings: WorkflowMcpToolAction['settings']) => {
+    (updatedSettings: McpToolStepSettings) => {
       if (readonly === true) {
         return;
       }
@@ -37,14 +36,11 @@ export const useMcpToolStepForm = ({
     };
   }, [saveAction]);
 
-  const updateSettings = (
-    update:
-      | McpToolStepSettings
-      | ((latestSettings: McpToolStepSettings) => McpToolStepSettings),
-  ) => {
-    const updatedSettings = isFunction(update)
-      ? update(latestSettingsRef.current)
-      : update;
+  const updateSettings = (settingsUpdate: Partial<McpToolStepSettings>) => {
+    const updatedSettings = {
+      ...latestSettingsRef.current,
+      ...settingsUpdate,
+    };
 
     latestSettingsRef.current = updatedSettings;
     setSettings(updatedSettings);
