@@ -5,6 +5,7 @@ import { AppConnectionAccessService } from 'src/engine/core-modules/application/
 import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/connection-provider/application-connection-provider.resolver';
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
+import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
@@ -65,6 +66,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderConnectedAccountService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
+    ConnectionProviderFlowCookieService,
     ConnectionProviderLifecycleHookService,
     ApplicationConnectionProviderResolver,
     provideWorkspaceScopedRepository(ApplicationEntity),
@@ -76,6 +78,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,
+    ConnectionProviderFlowCookieService,
     ConnectionProviderLifecycleHookService,
   ],
 })

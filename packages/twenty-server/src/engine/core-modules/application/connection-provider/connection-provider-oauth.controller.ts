@@ -1,13 +1,22 @@
-import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderFlowRedirectService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-redirect.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -35,6 +44,7 @@ export class ConnectionProviderOAuthController {
     private readonly oauthProviderFlowService: ConnectionProviderOAuthFlowService,
     private readonly customFlowService: ConnectionProviderCustomFlowService,
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
+    private readonly flowCookieService: ConnectionProviderFlowCookieService,
     private readonly transientTokenService: TransientTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
@@ -141,10 +151,12 @@ export class ConnectionProviderOAuthController {
         return res.redirect(authorizationUrl);
       }
 
-      const { authorizationUrl } =
+      const { authorizationUrl, browserNonce } =
         await this.oauthProviderFlowService.startAuthorizationFlow(
           authorizationArgs,
         );
+
+      this.flowCookieService.attachBrowserNonce(res, browserNonce);
 
       return res.redirect(authorizationUrl);
     } catch (error) {
@@ -169,8 +181,13 @@ export class ConnectionProviderOAuthController {
     @Query('state') state: string,
     @Query('error') errorParam: string | undefined,
     @Query('error_description') errorDescription: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const browserNonce = this.flowCookieService.readBrowserNonce(req);
+
+    this.flowCookieService.clearBrowserNonce(res);
+
     if (errorParam) {
       return this.flowRedirectService.redirectToErrorFromState({
         res,
@@ -196,6 +213,7 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
           state,
+          browserNonce,
         });
 
       return await this.flowRedirectService.redirectToConnectedApplication({

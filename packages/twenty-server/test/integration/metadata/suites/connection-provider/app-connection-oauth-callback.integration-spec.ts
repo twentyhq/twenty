@@ -7,6 +7,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -99,6 +100,8 @@ describe('app connection OAuth callback', () => {
     });
   };
 
+  let browserCookie: string | undefined;
+
   type AuthorizeArgs = {
     reconnectingConnectedAccountId?: string;
     redirectLocation?: string;
@@ -128,6 +131,7 @@ describe('app connection OAuth callback', () => {
       });
 
     expect(response.status).toBe(302);
+    browserCookie = readFlowCookie(response);
 
     return new URL(response.headers.location);
   };
@@ -148,6 +152,7 @@ describe('app connection OAuth callback', () => {
   const callback = async (state: string, code: string): Promise<URL> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/callback')
+      .set('Cookie', browserCookie ?? '')
       .query({ state, code });
 
     expect(response.status).toBe(302);
@@ -280,6 +285,20 @@ describe('app connection OAuth callback', () => {
       applicationUniversalIdentifier: APPLICATION_IDENTIFIER,
     });
     await markerServer.close();
+  });
+
+  it('refuses a callback from a browser that did not start the sign-in', async () => {
+    const state = await authorize();
+
+    browserCookie = undefined;
+
+    const redirect = await callback(state, 'team-a:first');
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'browser that started it',
+    );
+    expect(await readAccounts()).toEqual([]);
+    expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
   });
 
   it('stores the identified account on first connect and runs onConnect for it', async () => {

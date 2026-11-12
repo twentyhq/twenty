@@ -5,6 +5,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
+import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
 import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -131,6 +132,8 @@ describe('app connections follow the provider scope', () => {
     return id;
   };
 
+  let browserCookie: string | undefined;
+
   const authorize = async ({
     providerName,
     reconnectingConnectedAccountId,
@@ -150,6 +153,7 @@ describe('app connections follow the provider scope', () => {
       });
 
     expect(response.status).toBe(302);
+    browserCookie = readFlowCookie(response);
     const location = new URL(response.headers.location);
 
     return {
@@ -172,6 +176,7 @@ describe('app connections follow the provider scope', () => {
   const callback = async (state: string, code: string) => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/callback')
+      .set('Cookie', browserCookie ?? '')
       .query({ state, code });
 
     expect(response.status).toBe(302);

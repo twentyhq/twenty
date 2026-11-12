@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { randomUUID } from 'crypto';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
@@ -29,6 +31,12 @@ const STATE_JWT_EXPIRES_IN = '10m';
 type CallbackArgs = {
   code: string;
   state: string;
+  browserNonce: string | undefined;
+};
+
+type AuthorizationStart = {
+  authorizationUrl: string;
+  browserNonce: string;
 };
 
 type CallbackResult = {
@@ -55,9 +63,10 @@ export class ConnectionProviderOAuthFlowService {
 
   async startAuthorizationFlow(
     authorizationArgs: ConnectionAuthorizationArgs,
-  ): Promise<{ authorizationUrl: string }> {
+  ): Promise<AuthorizationStart> {
     const { connectionProvider, workspaceId, userWorkspaceId } =
       authorizationArgs;
+    const browserNonce = randomUUID();
 
     await this.connectedAccountService.assertCallerCanConnectOrThrow({
       connectionProviderId: connectionProvider.id,
@@ -69,7 +78,10 @@ export class ConnectionProviderOAuthFlowService {
     });
 
     if (connectionProvider.type === 'oauth-discovery') {
-      return this.startOAuthDiscoveryAuthorizationFlow(authorizationArgs);
+      return this.startOAuthDiscoveryAuthorizationFlow({
+        authorizationArgs,
+        browserNonce,
+      });
     }
 
     assertOAuthProvider(connectionProvider);
@@ -84,9 +96,7 @@ export class ConnectionProviderOAuthFlowService {
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
-      flowSecrets: isDefined(codeVerifier)
-        ? { codeVerifier, oauthClientId: null }
-        : null,
+      flowSecrets: { codeVerifier, oauthClientId: null, browserNonce },
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
 
@@ -112,12 +122,16 @@ export class ConnectionProviderOAuthFlowService {
       authorizationUrl.searchParams.set(key, value);
     }
 
-    return { authorizationUrl: authorizationUrl.toString() };
+    return { authorizationUrl: authorizationUrl.toString(), browserNonce };
   }
 
-  private async startOAuthDiscoveryAuthorizationFlow(
-    authorizationArgs: ConnectionAuthorizationArgs,
-  ): Promise<{ authorizationUrl: string }> {
+  private async startOAuthDiscoveryAuthorizationFlow({
+    authorizationArgs,
+    browserNonce,
+  }: {
+    authorizationArgs: ConnectionAuthorizationArgs;
+    browserNonce: string;
+  }): Promise<AuthorizationStart> {
     const { connectionProvider, workspaceId } = authorizationArgs;
 
     assertOAuthDiscoveryProvider(connectionProvider);
@@ -130,13 +144,13 @@ export class ConnectionProviderOAuthFlowService {
 
     const state = await this.authorizationStateService.sign({
       ...authorizationArgs,
-      flowSecrets: { codeVerifier, oauthClientId: clientId },
+      flowSecrets: { codeVerifier, oauthClientId: clientId, browserNonce },
       expiresIn: STATE_JWT_EXPIRES_IN,
     });
 
     authorizationUrl.searchParams.set('state', state);
 
-    return { authorizationUrl: authorizationUrl.toString() };
+    return { authorizationUrl: authorizationUrl.toString(), browserNonce };
   }
 
   async completeAuthorizationFlow(
@@ -164,7 +178,10 @@ export class ConnectionProviderOAuthFlowService {
       provider,
       workspaceId: statePayload.workspaceId,
       code: callbackArgs.code,
-      flowSecrets: await this.resolveFlowSecrets(statePayload),
+      flowSecrets: await this.consumeFlowSecretsOrThrow({
+        statePayload,
+        browserNonce: callbackArgs.browserNonce,
+      }),
     });
 
     const identifiedAccount =
@@ -222,12 +239,15 @@ export class ConnectionProviderOAuthFlowService {
     provider: ConnectionProviderEntity;
     workspaceId: string;
     code: string;
-    flowSecrets: ConnectionProviderFlowSecrets | null;
+    flowSecrets: ConnectionProviderFlowSecrets;
   }): Promise<TokenExchangeResponse> {
     if (provider.type === 'oauth-discovery') {
       assertOAuthDiscoveryProvider(provider);
 
-      if (!isDefined(flowSecrets?.oauthClientId)) {
+      if (
+        !isDefined(flowSecrets.codeVerifier) ||
+        !isDefined(flowSecrets.oauthClientId)
+      ) {
         throw new ConnectionProviderException(
           'OAuth discovery state has no PKCE verifier or client',
           ConnectionProviderExceptionCode.INVALID_STATE,
@@ -256,7 +276,7 @@ export class ConnectionProviderOAuthFlowService {
         clientSecret,
         code,
         redirectUri: buildAppOAuthCallbackUrl(this.getServerUrl()),
-        codeVerifier: flowSecrets?.codeVerifier ?? null,
+        codeVerifier: flowSecrets.codeVerifier,
         contentType: provider.oauthConfig.tokenRequestContentType,
       });
     } catch (error) {
@@ -273,20 +293,33 @@ export class ConnectionProviderOAuthFlowService {
     }
   }
 
-  private async resolveFlowSecrets(
-    statePayload: AppOAuthStateJwtPayload,
-  ): Promise<ConnectionProviderFlowSecrets | null> {
-    if (isDefined(statePayload.flowSecretId)) {
-      return this.authorizationStateService.consumeFlowSecretsOrThrow(
-        statePayload.flowSecretId,
+  private async consumeFlowSecretsOrThrow({
+    statePayload,
+    browserNonce,
+  }: {
+    statePayload: AppOAuthStateJwtPayload;
+    browserNonce: string | undefined;
+  }): Promise<ConnectionProviderFlowSecrets> {
+    if (!isDefined(statePayload.flowSecretId)) {
+      throw new ConnectionProviderException(
+        'OAuth state has no flow secrets',
+        ConnectionProviderExceptionCode.INVALID_STATE,
       );
     }
 
-    if (isDefined(statePayload.codeVerifier)) {
-      return { codeVerifier: statePayload.codeVerifier, oauthClientId: null };
+    const flowSecrets =
+      await this.authorizationStateService.consumeFlowSecretsOrThrow(
+        statePayload.flowSecretId,
+      );
+
+    if (flowSecrets.browserNonce !== browserNonce) {
+      throw new ConnectionProviderException(
+        'OAuth sign-in must finish in the browser that started it',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
     }
 
-    return null;
+    return flowSecrets;
   }
 
   private getServerUrl(): string {

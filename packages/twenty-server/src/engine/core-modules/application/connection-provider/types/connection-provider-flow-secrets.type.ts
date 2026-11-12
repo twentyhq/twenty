@@ -1,4 +1,5 @@
 export type ConnectionProviderFlowSecrets = {
-  codeVerifier: string;
+  codeVerifier: string | null;
   oauthClientId: string | null;
+  browserNonce: string;
 };

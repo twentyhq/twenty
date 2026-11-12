@@ -14,7 +14,5 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
   flowSecretId: string | null;
-  // TODO: remove after 2.59, only read from states signed before the verifier moved server-side
-  codeVerifier?: string | null;
   iat?: number;
 };
