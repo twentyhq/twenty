@@ -9,7 +9,7 @@ export const buildRefusedTriggerPayload = ({
   exception,
   payload,
 }: {
-  exception: MessageQueueException;
+  exception: Pick<MessageQueueException, 'code'>;
   payload: object;
 }): object => {
   if (exception.code !== MessageQueueExceptionCode.JOB_TOO_LARGE) {

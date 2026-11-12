@@ -65,10 +65,11 @@ describe('buildWorkflowTriggerRefusalError', () => {
       }),
     );
 
-    expect(error).toBeInstanceOf(MessageQueueException);
-    expect(
-      buildWorkflowTriggerRefusalError(error as MessageQueueException),
-    ).toBe(
+    if (!(error instanceof MessageQueueException)) {
+      throw new Error('Expected the size limiter to refuse the job');
+    }
+
+    expect(buildWorkflowTriggerRefusalError(error)).toBe(
       `Workflow could not start: trigger job exceeds the 5 MiB queue size limit (job size: ${sizeBytes} bytes, maximum: ${MAX_JOB_SIZE_BYTES} bytes).`,
     );
   });

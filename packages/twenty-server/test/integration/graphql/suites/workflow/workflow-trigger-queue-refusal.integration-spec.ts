@@ -19,7 +19,7 @@ import { type WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workfl
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 const WORKFLOW_TRIGGER_JOB_NAME = 'WorkflowTriggerJob';
-const SIZE_LIMIT_CONFIG: Record<string, unknown> = {
+const SIZE_LIMIT_CONFIG: Record<string, boolean | number> = {
   IS_REDIS_MEMORY_FAIRNESS_ENABLED: true,
   JOB_QUEUE_MAX_JOB_SIZE_BYTES: 1,
 };

@@ -15,6 +15,10 @@ import {
   WorkflowTriggerJob,
   type WorkflowTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { buildRefusedTriggerPayload } from 'src/modules/workflow/workflow-trigger/utils/build-refused-trigger-payload.util';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 import { buildWorkflowTriggerRefusalError } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-trigger-refusal-error.util';
@@ -78,8 +82,9 @@ export class WorkflowTriggerDispatchWorkspaceService {
       });
 
       if (!isDefined(coreWorkflow) || !isDefined(coreWorkflowVersionId)) {
-        throw new Error(
+        throw new WorkflowTriggerException(
           `No core workflow version found for workflow ${workflowId}`,
+          WorkflowTriggerExceptionCode.NOT_FOUND,
         );
       }
 
@@ -109,7 +114,10 @@ export class WorkflowTriggerDispatchWorkspaceService {
     jobData,
     lastPublishedCoreWorkflowVersionId,
   }: {
-    jobData: WorkflowTriggerJobData;
+    jobData: Pick<
+      WorkflowTriggerJobData,
+      'workspaceId' | 'coreWorkflowVersionId' | 'workspaceWorkflowVersionId'
+    >;
     lastPublishedCoreWorkflowVersionId?: string | null;
   }): Promise<string | null | undefined> {
     if (isDefined(jobData.coreWorkflowVersionId)) {
