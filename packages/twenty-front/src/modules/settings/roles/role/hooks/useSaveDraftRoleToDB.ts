@@ -6,7 +6,7 @@ import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWo
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
 import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
-import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
@@ -95,8 +95,8 @@ export const useSaveDraftRoleToDB = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const setSettingsDraftRoleBase = useSetAtomFamilyState(
-    settingsDraftRoleBaseFamilyState,
+  const setSettingsInitialDraftRole = useSetAtomFamilyState(
+    settingsInitialDraftRoleFamilyState,
     roleId,
   );
   const setSettingsPersistedRole = useSetAtomFamilyState(
@@ -120,7 +120,7 @@ export const useSaveDraftRoleToDB = ({
     const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
 
     setSettingsPersistedRole(savedRole);
-    setSettingsDraftRoleBase(savedRole);
+    setSettingsInitialDraftRole(savedRole);
     setSettingsDraftRole((currentDraftRole) =>
       isDeeplyEqual(currentDraftRole, savedDraftRole)
         ? savedRole
