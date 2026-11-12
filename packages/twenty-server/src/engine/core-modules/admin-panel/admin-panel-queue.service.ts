@@ -213,19 +213,16 @@ export class AdminPanelQueueService {
       { strict: false },
     );
     const results: JobOperationResult[] = [];
-    let deletedCount = 0;
 
     for (const jobId of jobIds) {
       try {
         const isRemoved = await messageQueueService.removeJob(jobId);
 
-        if (!isRemoved) {
-          results.push({ jobId, success: false, error: 'Job not found' });
-          continue;
-        }
-
-        deletedCount++;
-        results.push({ jobId, success: true });
+        results.push(
+          isRemoved
+            ? { jobId, success: true }
+            : { jobId, success: false, error: 'Job not found' },
+        );
       } catch (error) {
         results.push({
           jobId,
@@ -235,6 +232,9 @@ export class AdminPanelQueueService {
       }
     }
 
-    return { deletedCount, results };
+    return {
+      deletedCount: results.filter(({ success }) => success).length,
+      results,
+    };
   }
 }
