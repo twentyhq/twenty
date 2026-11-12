@@ -411,6 +411,79 @@ describe('OAuth (integration)', () => {
     });
   });
 
+  describe('Client verification on the consent lookup', () => {
+    const findApplicationRegistrationByClientIdQuery = gql`
+      query FindApplicationRegistrationByClientId($clientId: String!) {
+        findApplicationRegistrationByClientId(clientId: $clientId) {
+          name
+          logoUrl
+          isVerified
+          isClaimingVerifiedClientName
+        }
+      }
+    `;
+
+    const lookUp = async (clientId: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: findApplicationRegistrationByClientIdQuery,
+          variables: { clientId },
+        },
+        null,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return response.body.data.findApplicationRegistrationByClientId;
+    };
+
+    it('should verify the Twenty CLI', async () => {
+      const metadata = await request(baseUrl)
+        .get('/.well-known/oauth-authorization-server')
+        .expect(200);
+
+      expect(await lookUp(metadata.body.cli_client_id)).toEqual({
+        name: 'Twenty CLI',
+        logoUrl: '/images/oauth-clients/twenty-cli.svg',
+        isVerified: true,
+        isClaimingVerifiedClientName: false,
+      });
+    });
+
+    it('should flag a self-registered client that calls itself the Twenty CLI', async () => {
+      const registration = await request(baseUrl)
+        .post('/oauth/register')
+        .send({
+          client_name: 'Twenty CLI',
+          redirect_uris: ['https://cli.example.com/callback'],
+        })
+        .expect(201);
+
+      const [createdRegistration] = await ds.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
+        [registration.body.client_id],
+      );
+
+      createdEntityIds.registrations.push(createdRegistration.id);
+
+      expect(await lookUp(registration.body.client_id)).toEqual({
+        name: 'Twenty CLI',
+        logoUrl: null,
+        isVerified: false,
+        isClaimingVerifiedClientName: true,
+      });
+    });
+
+    it('should neither verify nor flag any other client', async () => {
+      expect(await lookUp(testRegistration.oAuthClientId)).toEqual({
+        name: testRegistration.name,
+        logoUrl: null,
+        isVerified: false,
+        isClaimingVerifiedClientName: false,
+      });
+    });
+  });
+
   describe('Token endpoint validation', () => {
     it('should return 400 for unsupported grant_type', async () => {
       const res = await postToken({

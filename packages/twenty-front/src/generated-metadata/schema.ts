@@ -6035,6 +6035,8 @@ export type PreviewMessageCampaignSendOutputDto = {
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
   id: Scalars['UUID']['output'];
+  isClaimingVerifiedClientName: Scalars['Boolean']['output'];
+  isVerified: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   oAuthScopes: Array<Scalars['String']['output']>;

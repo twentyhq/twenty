@@ -29,7 +29,17 @@ const NATIVE_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
   logoUri: null,
   redirectUris: ['http://localhost/callback', 'http://127.0.0.1/callback'],
 };
-const DOCUMENTS = [WEB_CLIENT_DOCUMENT, NATIVE_CLIENT_DOCUMENT];
+const VERIFIED_CLIENT_DOCUMENT: ClientIdMetadataDocument = {
+  clientId: 'https://chatgpt.com/oauth/client.json',
+  clientName: 'ChatGPT',
+  logoUri: null,
+  redirectUris: ['https://chatgpt.com/connector_platform_oauth_redirect'],
+};
+const DOCUMENTS = [
+  WEB_CLIENT_DOCUMENT,
+  NATIVE_CLIENT_DOCUMENT,
+  VERIFIED_CLIENT_DOCUMENT,
+];
 const DOCUMENT_CLIENT_IDS = DOCUMENTS.map(({ clientId }) => clientId);
 const WEB_CLIENT_CALLBACK = WEB_CLIENT_DOCUMENT.redirectUris[0];
 
@@ -57,6 +67,16 @@ const findApplicationRegistrationByClientIdQuery = gql`
       name
       logoUrl
       oAuthScopes
+    }
+  }
+`;
+
+const findClientVerificationQuery = gql`
+  query FindClientVerification($clientId: String!) {
+    findApplicationRegistrationByClientId(clientId: $clientId) {
+      name
+      isVerified
+      isClaimingVerifiedClientName
     }
   }
 `;
@@ -204,6 +224,30 @@ describe('OAuth client ID metadata documents (integration)', () => {
         oAuthScopes: expect.arrayContaining(['api', 'profile']),
       });
       expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
+    });
+
+    it('should verify a client only when its document URL is on the verified list', async () => {
+      const lookUpVerification = async (clientId: string) => {
+        const response = await makeMetadataApiRequest(
+          { query: findClientVerificationQuery, variables: { clientId } },
+          null,
+        );
+
+        return response.body.data.findApplicationRegistrationByClientId;
+      };
+
+      expect(
+        await lookUpVerification(VERIFIED_CLIENT_DOCUMENT.clientId),
+      ).toEqual({
+        name: 'ChatGPT',
+        isVerified: true,
+        isClaimingVerifiedClientName: false,
+      });
+      expect(await lookUpVerification(WEB_CLIENT_DOCUMENT.clientId)).toEqual({
+        name: 'ChatGPT',
+        isVerified: false,
+        isClaimingVerifiedClientName: true,
+      });
     });
 
     it('should authorize, exchange and refresh with the document URL as client id', async () => {
