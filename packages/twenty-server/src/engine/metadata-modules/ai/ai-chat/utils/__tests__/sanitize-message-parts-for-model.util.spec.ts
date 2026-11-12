@@ -54,7 +54,7 @@ describe('sanitizeMessagePartsForModel', () => {
     ]);
   });
 
-  it('backfills an empty text part when an assistant message only has reasoning parts', () => {
+  it('leaves no parts when an assistant message only has reasoning parts', () => {
     const messages: ExtendedUIMessage[] = [
       {
         id: 'msg_1',
@@ -66,7 +66,7 @@ describe('sanitizeMessagePartsForModel', () => {
     const result = sanitizeMessagePartsForModel(messages, DIRECTLY_CALLABLE);
 
     expect(result).toHaveLength(1);
-    expect(result[0].parts).toEqual([buildTextPart('')]);
+    expect(result[0].parts).toEqual([]);
   });
 
   it('preserves text and tool parts on assistant messages and cleans uncallable tools', () => {
