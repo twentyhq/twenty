@@ -106,6 +106,39 @@ describe('linkedinSendMessageHandler', () => {
     });
   });
 
+  it('refuses attachments announced above the total size limit without downloading them', async () => {
+    await expect(
+      linkedinSendMessageHandler({
+        ...PAYLOAD,
+        attachments: [
+          { ...ATTACHMENT, size: 20 * 1024 * 1024 },
+          { ...ATTACHMENT, filename: 'photo.png', size: 10 * 1024 * 1024 },
+        ],
+      }),
+    ).rejects.toThrow(
+      'Attachments of a reply are larger than 26214400 bytes in total',
+    );
+    expect(mocks.downloadSendMessageAttachmentOrThrow).not.toHaveBeenCalled();
+    expect(mocks.sendUnipileChatMessage).not.toHaveBeenCalled();
+  });
+
+  it('limits each later download to what is left of the total size limit', async () => {
+    mocks.downloadSendMessageAttachmentOrThrow.mockResolvedValue({
+      content: Buffer.alloc(1024).toString('base64'),
+      content_type: 'application/pdf',
+      filename: 'deck.pdf',
+    });
+
+    await linkedinSendMessageHandler({
+      ...PAYLOAD,
+      attachments: [ATTACHMENT, { ...ATTACHMENT, filename: 'photo.png' }],
+    });
+
+    expect(mocks.downloadSendMessageAttachmentOrThrow).toHaveBeenLastCalledWith(
+      expect.objectContaining({ maxSizeBytes: 25 * 1024 * 1024 - 1024 }),
+    );
+  });
+
   it('sends nothing when an attachment cannot be downloaded', async () => {
     mocks.downloadSendMessageAttachmentOrThrow.mockRejectedValue(
       new Error('Attachment deck.pdf is larger than 26214400 bytes'),
