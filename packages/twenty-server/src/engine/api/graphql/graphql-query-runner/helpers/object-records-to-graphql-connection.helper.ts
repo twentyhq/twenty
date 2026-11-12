@@ -312,7 +312,9 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
     return Object.entries(fieldValue).reduce(
       (acc, [subFieldKey, subFieldValue]) => {
-        if (subFieldKey === '__typename') return acc;
+        if (subFieldKey === '__typename') {
+          return acc;
+        }
 
         const subFieldMetadata = compositeType.properties.find(
           (property) => property.name === subFieldKey,

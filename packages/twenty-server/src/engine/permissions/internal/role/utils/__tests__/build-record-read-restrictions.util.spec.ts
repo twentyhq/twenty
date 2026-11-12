@@ -5,11 +5,13 @@ import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/rol
 const buildObjectRecordsPermissions = (
   overrides: Partial<ObjectRecordsPermissions>,
 ): ObjectRecordsPermissions => ({
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
   ...overrides,
 });
 
@@ -43,18 +45,36 @@ describe('buildRecordReadRestrictions', () => {
       recordsPermissions: {
         objects: {
           person: buildObjectRecordsPermissions({
-            restrictedFields: {
-              jobTitle: { canRead: false, canUpdate: false },
-              city: { canRead: true, canUpdate: false },
-            },
+            unreadableFields: ['jobTitle'],
+            uneditableFields: ['jobTitle', 'city'],
           }),
           company: buildObjectRecordsPermissions({
-            restrictedFields: { name: { canRead: false } },
+            unreadableFields: ['name'],
+            uneditableFields: ['name'],
           }),
         },
       },
     });
 
     expect(unreadableFieldMetadataIds).toEqual(new Set(['jobTitle', 'name']));
+  });
+
+  it('should not throw on a cache entry written before the upgrade', () => {
+    const cachedEntry = JSON.parse(
+      JSON.stringify({
+        canCreateAllRecords: true,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: true,
+        canDestroyAllRecords: true,
+        restrictedFields: {},
+      }),
+    );
+
+    expect(
+      buildRecordReadRestrictions({
+        recordsPermissions: { objects: { 'object-id': cachedEntry } },
+      }).unreadableFieldMetadataIds.size,
+    ).toBe(0);
   });
 });

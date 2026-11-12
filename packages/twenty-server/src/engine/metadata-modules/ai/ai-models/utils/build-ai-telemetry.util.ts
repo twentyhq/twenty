@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type TelemetryOptions } from 'ai';
 
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.constant';
 
 type BuildAiTelemetryArgs = {
   functionId: string;

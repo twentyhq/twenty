@@ -18,8 +18,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
-  // oxlint-disable-next-line typescript/no-explicit-any
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export const decodeCursor = <T = CursorData>(cursor: string): T => {
@@ -100,8 +99,12 @@ export const getCursor = (
   args: FindManyResolverArgs<any, any>,
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
-  if (args.after) return decodeCursor(args.after);
-  if (args.before) return decodeCursor(args.before);
+  if (args.after) {
+    return decodeCursor(args.after);
+  }
+  if (args.before) {
+    return decodeCursor(args.before);
+  }
 
   return undefined;
 };

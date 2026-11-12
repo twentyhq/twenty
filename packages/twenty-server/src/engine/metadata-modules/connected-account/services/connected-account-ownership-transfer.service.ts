@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 
 @Injectable()
 export class ConnectedAccountOwnershipTransferService {
   constructor(
-    private readonly rolePermissionsService: RolePermissionsService,
+    private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -25,7 +25,7 @@ export class ConnectedAccountOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }) {
     const successorUserWorkspace =
-      await this.rolePermissionsService.findSuccessorUserWorkspace({
+      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });

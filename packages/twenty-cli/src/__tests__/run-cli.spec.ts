@@ -103,6 +103,78 @@ describe('runCli', () => {
     expect(stderr).toContain("Unknown command 'versoin'");
   });
 
+  it.each([
+    ['--with-token', 'test-api-key-not-a-real-secret'],
+    ['test-api-key-not-a-real-secret', '--with-token'],
+  ])(
+    'explains stdin token input for misplaced arguments %j',
+    async (...args) => {
+      const { stdout, stderr, exitCode } = await runCliForTest([
+        'auth',
+        'login',
+        '--url',
+        'https://example.com',
+        ...args,
+        '--json',
+      ]);
+
+      expect(exitCode).toBe(2);
+      expect(stderr).toBe('');
+      expect(parseSingleJsonLine(stdout)).toMatchObject({
+        ok: false,
+        command: 'auth login',
+        error: {
+          code: 'USAGE',
+          message:
+            '--with-token reads the API key from standard input, not as an argument.',
+          hint: expect.stringContaining(
+            `printf '%s' "$TWENTY_API_KEY" | twenty auth login --with-token --url <url>`,
+          ),
+        },
+      });
+      expect(stdout).not.toContain('test-api-key-not-a-real-secret');
+    },
+  );
+
+  it('prints token input guidance on stderr without echoing the supplied key', async () => {
+    const { stdout, stderr, exitCode } = await runCliForTest([
+      'auth',
+      'login',
+      '--url',
+      'https://example.com',
+      '--with-token',
+      'test-api-key-not-a-real-secret',
+    ]);
+
+    expect(exitCode).toBe(2);
+    expect(stdout).toBe('');
+    expect(stderr).toContain(
+      '--with-token reads the API key from standard input, not as an argument.',
+    );
+    expect(stderr).toContain(
+      '"$TWENTY_API_KEY" | twenty auth login --with-token',
+    );
+    expect(stderr).not.toContain('test-api-key-not-a-real-secret');
+  });
+
+  it.each([['auth', 'login'], ['version']])(
+    'keeps normal excess-argument guidance for %j',
+    async (...command) => {
+      const { stdout, exitCode } = await runCliForTest([
+        ...command,
+        'extra',
+        '--json',
+      ]);
+
+      expect(exitCode).toBe(2);
+      expect(parseSingleJsonLine(stdout).error).toMatchObject({
+        code: 'USAGE',
+        message: expect.stringContaining('Too many arguments'),
+        hint: `See: twenty ${command.join(' ')} --help`,
+      });
+    },
+  );
+
   it('uses the last --format value', async () => {
     const jsonRun = await runCliForTest([
       'version',

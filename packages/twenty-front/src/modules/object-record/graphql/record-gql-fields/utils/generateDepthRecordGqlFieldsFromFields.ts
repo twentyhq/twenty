@@ -60,7 +60,7 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           return recordGqlFields;
         }
 
-        if (junctionConfig?.isValid === true && depth === 1) {
+        if (junctionConfig?.isValid && depth === 1) {
           return {
             ...recordGqlFields,
             [fieldMetadata.name]: generateJunctionRelationGqlFields({

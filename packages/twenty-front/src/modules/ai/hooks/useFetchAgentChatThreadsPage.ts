@@ -74,7 +74,7 @@ export const useFetchAgentChatThreadsPage = () => {
           objectPermissionsByObjectMetadataId,
           chatObjectMetadataItem.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       });
 
       if (!hasReadPermission) {

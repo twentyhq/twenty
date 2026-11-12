@@ -52,7 +52,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
               objectPermissionsByObjectMetadataId,
               objectMetadataItem.id,
             ),
-            operationType: 'select',
+            operationType: 'read',
           }),
         );
 

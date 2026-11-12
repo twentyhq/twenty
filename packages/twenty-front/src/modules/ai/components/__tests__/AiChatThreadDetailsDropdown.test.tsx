@@ -6,7 +6,9 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -14,7 +16,10 @@ import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  AgentChatInboxAction,
+  FeatureFlagKey,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -26,6 +31,7 @@ const ACME_ID = '20202020-0000-4000-8000-000000000002';
 const GLOBEX_ID = '20202020-0000-4000-8000-000000000003';
 const OWNER_ID = '20202020-0000-4000-8000-000000000010';
 const WRITER_ID = '20202020-0000-4000-8000-000000000011';
+const FOLLOWER_ID = '20202020-0000-4000-8000-000000000012';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
@@ -52,6 +58,15 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
   useDetachChatThreadFromRecord: () => ({
     detachChatThreadFromRecord: (linkIds: string[]) =>
       detachChatThreadFromRecord(linkIds),
+  }),
+}));
+
+const executeAgentChatThreadInboxAction = jest.fn();
+
+jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
+  useExecuteAgentChatThreadInboxAction: () => ({
+    executeAgentChatThreadInboxAction,
+    isPending: false,
   }),
 }));
 
@@ -176,11 +191,15 @@ const renderDetails = async ({
   isAiChatInboxEnabled = true,
   shouldOpenDetails = true,
   deletedAt = null,
+  isSubscribed = false,
+  assigneeId = null,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
   isAiChatInboxEnabled?: boolean;
   shouldOpenDetails?: boolean;
   deletedAt?: string | null;
+  isSubscribed?: boolean;
+  assigneeId?: string | null;
 } = {}) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -197,12 +216,21 @@ const renderDetails = async ({
           },
         ],
       });
-      setAgentChatThreadPermissions(store, THREAD_ID, permissions);
+      store.set(
+        currentWorkspaceMemberState.atom,
+        buildWorkspaceMember(FOLLOWER_ID, 'Follower'),
+      );
+      setAgentChatThreadPermissions({
+        store,
+        threadId: THREAD_ID,
+        permissions,
+      });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
         __typename: 'AgentChatThread',
         id: THREAD_ID,
         title: 'Pricing questions',
         deletedAt,
+        assigneeId,
         workspaceMemberId: OWNER_ID,
         writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
@@ -210,6 +238,20 @@ const renderDetails = async ({
         buildWorkspaceMember(OWNER_ID, 'Owner'),
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
+      store.set(agentChatThreadParticipantsState.atom, {
+        [THREAD_ID]: {
+          __typename: 'AgentChatThreadParticipant',
+          id: 'participant-1',
+          threadId: THREAD_ID,
+          lastReadAt: null,
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed,
+          lastMentionedAt: null,
+          mentionsResolvedAt: null,
+          updatedAt: '2020-01-01T00:00:00.000Z',
+        },
+      });
     },
   });
 
@@ -245,9 +287,35 @@ describe('AiChatThreadDetailsDropdown', () => {
   it('does not present the creator and writers as followers', async () => {
     await renderDetails();
 
-    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.getByText('Following')).toBeVisible();
     expect(screen.queryByText('Owner Member')).not.toBeInTheDocument();
     expect(screen.queryByText('Writer Member')).not.toBeInTheDocument();
+  });
+
+  it('lets a member who follows the conversation unfollow it', async () => {
+    const user = userEvent.setup();
+
+    await renderDetails({ isSubscribed: true });
+
+    expect(screen.getByText('Follower Member')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Unfollow for me' }));
+
+    expect(executeAgentChatThreadInboxAction).toHaveBeenCalledTimes(1);
+    expect(executeAgentChatThreadInboxAction).toHaveBeenCalledWith({
+      threadIds: [THREAD_ID],
+      action: AgentChatInboxAction.UNSUBSCRIBE,
+      isInChannel: false,
+    });
+  });
+
+  it('does not let the assignee unfollow the conversation', async () => {
+    await renderDetails({ isSubscribed: true, assigneeId: FOLLOWER_ID });
+
+    expect(screen.getByText('Following')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Unfollow for me' }),
+    ).not.toBeInTheDocument();
   });
 
   it('opens the record picker on the linked records, searching the objects a conversation can be linked to', async () => {

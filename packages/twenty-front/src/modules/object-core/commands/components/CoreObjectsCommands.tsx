@@ -1,15 +1,25 @@
+import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconTrash } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CoreAgentEditionCommands } from '@/object-core/commands/components/CoreAgentEditionCommands';
+import { CoreAgentPageCommands } from '@/object-core/commands/components/CoreAgentPageCommands';
+import { CoreAgentsDeleteCommand } from '@/object-core/commands/components/CoreAgentsDeleteCommand';
+import { CoreAgentsIndexCommands } from '@/object-core/commands/components/CoreAgentsIndexCommands';
+import { CoreAgentsSeeTurnsCommand } from '@/object-core/commands/components/CoreAgentsSeeTurnsCommand';
 import { CoreWorkflowsDeleteConfirmationDialogCleanupEffect } from '@/object-core/commands/components/CoreWorkflowsDeleteConfirmationDialogCleanupEffect';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteConfirmationDialogId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
+import { useCoreAgentsSelectionCommands } from '@/object-core/commands/hooks/useCoreAgentsSelectionCommands';
+import { useCoreAgentEditionCommands } from '@/object-core/commands/hooks/useCoreAgentEditionCommands';
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { useDeleteSelectedCoreWorkflows } from '@/object-core/workflows/hooks/useDeleteSelectedCoreWorkflows';
 import { useOpenCoreWorkflowFiltersSidePanel } from '@/object-core/workflows/hooks/useOpenCoreWorkflowFiltersSidePanel';
 import { getDeleteCoreWorkflowsConfirmationContent } from '@/object-core/workflows/utils/getDeleteCoreWorkflowsConfirmationContent';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -20,17 +30,36 @@ type CoreObjectsCommandsProps = {
 
 export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
   const {
+    currentCoreAgent,
+    saveCommandLabel,
+    shouldDisplaySaveCommand,
+    cancelEditionCommandLabel,
+    shouldDisplayCancelEditionCommand,
+  } = useCoreAgentEditionCommands();
+
+  const {
     coreWorkflowFiltersCommandLabel,
     shouldDisplayCoreWorkflowFiltersCommand,
     coreWorkflowsDeleteCommandLabel,
     shouldDisplayCoreWorkflowsDeleteCommand,
+    selectedCoreWorkflowIds,
+    isOnCoreWorkflowShowPage,
   } = useCoreObjectsCommands();
+
+  const {
+    selectedCoreAgentIds,
+    seeTurnsCommandLabel: coreAgentsSeeTurnsCommandLabel,
+    shouldDisplaySeeTurnsCommand: shouldDisplayCoreAgentsSeeTurnsCommand,
+    deleteCommandLabel: coreAgentsDeleteCommandLabel,
+    shouldDisplayDeleteCommand: shouldDisplayCoreAgentsDeleteCommand,
+  } = useCoreAgentsSelectionCommands();
 
   const { openCoreWorkflowFiltersSidePanel } =
     useOpenCoreWorkflowFiltersSidePanel();
 
-  const { deleteSelectedCoreWorkflows, selectedCoreWorkflowIds } =
-    useDeleteSelectedCoreWorkflows();
+  const { deleteSelectedCoreWorkflows } = useDeleteSelectedCoreWorkflows();
+
+  const navigate = useNavigateApp();
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -40,9 +69,16 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
     openDialog(CORE_WORKFLOWS_DELETE_CONFIRMATION_DIALOG_ID);
   };
 
-  const handleConfirmDeleteSelectedCoreWorkflows = () => {
+  const handleConfirmDeleteSelectedCoreWorkflows = async () => {
     closeSidePanelMenu();
-    void deleteSelectedCoreWorkflows();
+
+    const wereCoreWorkflowsDeleted = await deleteSelectedCoreWorkflows(
+      selectedCoreWorkflowIds,
+    );
+
+    if (wereCoreWorkflowsDeleted && isOnCoreWorkflowShowPage) {
+      navigate(AppPath.WorkflowIndexPage);
+    }
   };
 
   const deleteConfirmationContent = getDeleteCoreWorkflowsConfirmationContent(
@@ -64,6 +100,7 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           />
         </SelectableListItem>
       )}
+      {section === 'THIS_OBJECT' && <CoreAgentsIndexCommands />}
       {section === 'SELECTION' && shouldDisplayCoreWorkflowsDeleteCommand && (
         <>
           <SelectableListItem
@@ -86,6 +123,29 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           />
           <CoreWorkflowsDeleteConfirmationDialogCleanupEffect />
         </>
+      )}
+      {section === 'SELECTION' && isDefined(currentCoreAgent) && (
+        <>
+          <CoreAgentEditionCommands
+            agent={currentCoreAgent}
+            saveCommandLabel={saveCommandLabel}
+            shouldDisplaySaveCommand={shouldDisplaySaveCommand}
+            cancelEditionCommandLabel={cancelEditionCommandLabel}
+            shouldDisplayCancelEditionCommand={
+              shouldDisplayCancelEditionCommand
+            }
+          />
+          <CoreAgentPageCommands />
+        </>
+      )}
+      {section === 'SELECTION' && shouldDisplayCoreAgentsSeeTurnsCommand && (
+        <CoreAgentsSeeTurnsCommand
+          agentId={selectedCoreAgentIds[0]}
+          label={coreAgentsSeeTurnsCommandLabel}
+        />
+      )}
+      {section === 'SELECTION' && shouldDisplayCoreAgentsDeleteCommand && (
+        <CoreAgentsDeleteCommand label={coreAgentsDeleteCommandLabel} />
       )}
     </>
   );

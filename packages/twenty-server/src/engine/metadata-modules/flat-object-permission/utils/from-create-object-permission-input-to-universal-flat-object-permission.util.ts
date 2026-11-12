@@ -49,6 +49,7 @@ export const fromCreateObjectPermissionInputToUniversalFlatObjectPermission = ({
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,
     canReadObjectRecords: canReadObjectRecords ?? undefined,
+    canCreateObjectRecords: canUpdateObjectRecords ?? undefined,
     canUpdateObjectRecords: canUpdateObjectRecords ?? undefined,
     canSoftDeleteObjectRecords: canSoftDeleteObjectRecords ?? undefined,
     canDestroyObjectRecords: canDestroyObjectRecords ?? undefined,

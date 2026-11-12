@@ -315,7 +315,9 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     let currentSizeBytes = 0;
 
     const flush = async () => {
-      if (chunk.length === 0) return;
+      if (chunk.length === 0) {
+        return;
+      }
       await client.insert({
         table,
         values: chunk,

@@ -60,7 +60,9 @@ export class CompositeFieldMetadataFilterGqlInputTypeGenerator {
         throw new Error('Relation fields are not supported in composite types');
       }
 
-      if (property.hidden === true) continue;
+      if (property.hidden === true) {
+        continue;
+      }
 
       const key = computeCompositeFieldEnumTypeKey(
         compositeType.type,

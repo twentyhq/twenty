@@ -1,14 +1,18 @@
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   InvokeCommand,
+  type InvokeCommandOutput,
   LogType,
   PublishLayerVersionCommand,
   UpdateFunctionConfigurationCommand,
 } from '@aws-sdk/client-lambda';
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import * as fs from 'fs/promises';
 import { join } from 'path';
+import { setTimeout } from 'timers/promises';
 import { isDefined } from 'twenty-shared/utils';
 
 import { YARN_ENGINE_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/yarn-engine-dirname';
@@ -23,6 +27,14 @@ import {
   BUILDER_LAMBDA_MEMORY_MB,
   BUILDER_LAMBDA_TIMEOUT_SECONDS,
   COMMON_LAYER_NAME_PREFIX,
+  HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+  HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+  HTTP_EGRESS_LAMBDA_MAX_INVOKE_ATTEMPTS,
+  HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES,
+  HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
+  HTTP_EGRESS_LAMBDA_MEMORY_MB,
+  HTTP_EGRESS_LAMBDA_RATE_LIMIT_RETRY_DELAY_MS,
+  HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
   YARN_INSTALL_FUNCTION_NAME_PREFIX,
   YARN_INSTALL_HANDLER_PATH,
@@ -37,6 +49,9 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildHttpEgressHandlerBundle } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util';
+import { buildHttpEgressRequestTooLargeResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-request-too-large-response.util';
+import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
 import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import {
@@ -55,6 +70,8 @@ import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-funct
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
+import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-build-result.schema';
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
@@ -74,6 +91,9 @@ export class LambdaToolFunctionsService {
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
+  private httpEgressFunction:
+    | { functionName: string; handlerCode: string }
+    | undefined;
 
   constructor(
     private readonly options: Pick<
@@ -82,6 +102,8 @@ export class LambdaToolFunctionsService {
     >,
     private readonly awsClient: LambdaAwsClientService,
     private readonly cacheLockService: CacheLockService,
+    // Retrying an invoke that may already have run would send a user's request twice.
+    private readonly httpEgressAwsClient: LambdaAwsClientService,
   ) {}
 
   async transpile(
@@ -178,6 +200,18 @@ export class LambdaToolFunctionsService {
     workspaceId,
     ...input
   }: FrontComponentBuilderRequest & { workspaceId: string }): Promise<unknown> {
+    const payload = JSON.stringify(input);
+    if (
+      Buffer.byteLength(payload) > FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES
+    ) {
+      throw new FrontComponentException(
+        'Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size.',
+        FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        {
+          userFriendlyMessage: msg`Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size.`,
+        },
+      );
+    }
     const isDependenciesBuild = input.action === 'buildDependencies';
     const functionName = await getFrontComponentBuilderName({
       workspaceId,
@@ -206,7 +240,7 @@ export class LambdaToolFunctionsService {
     const result = await lambdaClient.send(
       new InvokeCommand({
         FunctionName: functionName,
-        Payload: JSON.stringify(input),
+        Payload: payload,
       }),
       { abortSignal: AbortSignal.timeout(timeoutSeconds * 1000) },
     );
@@ -217,6 +251,128 @@ export class LambdaToolFunctionsService {
       );
     }
     return JSON.parse(result.Payload.transformToString());
+  }
+
+  async executeHttpRequest(
+    request: HttpEgressRequest,
+  ): Promise<HttpEgressResponse> {
+    const startedAt = Date.now();
+    const lambdaRequest: HttpEgressRequest = {
+      ...request,
+      limits: {
+        ...request.limits,
+        maxPayloadSizeBytes: Math.min(
+          request.limits.maxPayloadSizeBytes,
+          HTTP_EGRESS_LAMBDA_MAX_PAYLOAD_SIZE_BYTES,
+        ),
+      },
+    };
+
+    const payload = JSON.stringify(lambdaRequest);
+
+    if (
+      Buffer.byteLength(payload) > HTTP_EGRESS_LAMBDA_MAX_INVOKE_PAYLOAD_BYTES
+    ) {
+      return buildHttpEgressRequestTooLargeResponse(startedAt);
+    }
+
+    let functionName: string | undefined;
+    let result: InvokeCommandOutput;
+
+    try {
+      functionName = await this.ensureHttpEgressLambdaIsActive();
+      result = await this.invokeHttpEgressLambda({
+        functionName,
+        payload,
+        abortSignal: AbortSignal.timeout(
+          request.limits.timeoutMs + HTTP_EGRESS_LAMBDA_INVOKE_OVERHEAD_MS,
+        ),
+      });
+    } catch (error) {
+      if (isDefined(functionName)) {
+        await this.awsClient.clearFunctionCache(functionName);
+      }
+
+      // A request timeout comes back from the Lambda in time, so the client giving up means the invoke itself stalled.
+      return buildHttpEgressUnavailableResponse({
+        request,
+        startedAt,
+        isTimeout: false,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const resultPayload = result.Payload?.transformToString();
+
+    if (isDefined(result.FunctionError) || !isNonEmptyString(resultPayload)) {
+      return buildHttpEgressUnavailableResponse({
+        request,
+        startedAt,
+        isTimeout: resultPayload?.includes('Task timed out') ?? false,
+        reason: resultPayload ?? result.FunctionError,
+      });
+    }
+
+    return JSON.parse(resultPayload) as HttpEgressResponse;
+  }
+
+  private async invokeHttpEgressLambda({
+    functionName,
+    payload,
+    abortSignal,
+    attempt = 1,
+  }: {
+    functionName: string;
+    payload: string;
+    abortSignal: AbortSignal;
+    attempt?: number;
+  }): Promise<InvokeCommandOutput> {
+    const lambdaClient = await this.httpEgressAwsClient.getLambdaClient();
+
+    try {
+      return await lambdaClient.send(
+        new InvokeCommand({ FunctionName: functionName, Payload: payload }),
+        { abortSignal },
+      );
+    } catch (error) {
+      // A rate-limited invoke never ran, so it is the only failure that can be retried without sending the request twice.
+      const isRateLimited =
+        error instanceof LogicFunctionException &&
+        error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED;
+
+      if (!isRateLimited || attempt >= HTTP_EGRESS_LAMBDA_MAX_INVOKE_ATTEMPTS) {
+        throw error;
+      }
+
+      await setTimeout(
+        attempt * HTTP_EGRESS_LAMBDA_RATE_LIMIT_RETRY_DELAY_MS,
+        undefined,
+        { signal: abortSignal },
+      );
+
+      return this.invokeHttpEgressLambda({
+        functionName,
+        payload,
+        abortSignal,
+        attempt: attempt + 1,
+      });
+    }
+  }
+
+  private async ensureHttpEgressLambdaIsActive(): Promise<string> {
+    const { functionName, handlerCode } = await this.getHttpEgressFunction();
+
+    await this.ensureBuildToolLambdaIsActive({
+      functionName,
+      memoryMb: HTTP_EGRESS_LAMBDA_MEMORY_MB,
+      timeoutSeconds: HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS,
+      copyFiles: async (directory) => {
+        await fs.writeFile(join(directory, 'index.js'), handlerCode);
+      },
+      withCommonLayer: false,
+    });
+
+    return functionName;
   }
 
   async runYarnInstallCreateLayer(
@@ -319,11 +475,13 @@ export class LambdaToolFunctionsService {
     memoryMb,
     timeoutSeconds,
     copyFiles,
+    withCommonLayer = true,
   }: {
     functionName: string;
     memoryMb: number;
     timeoutSeconds: number;
     copyFiles: (directory: string) => Promise<void>;
+    withCommonLayer?: boolean;
   }): Promise<void> {
     const existingFunction = await this.awsClient.getFunction(functionName);
 
@@ -353,7 +511,9 @@ export class LambdaToolFunctionsService {
           return;
         }
 
-        const commonLayerArn = await this.ensureCommonLayerExists();
+        const layers = withCommonLayer
+          ? [await this.ensureCommonLayerExists()]
+          : [];
         const temporaryDirManager = new TemporaryDirManager();
         const { sourceTemporaryDir, lambdaZipPath } =
           await temporaryDirManager.init();
@@ -366,7 +526,7 @@ export class LambdaToolFunctionsService {
           const params: CreateFunctionCommandInput = {
             Code: { ZipFile: await fs.readFile(lambdaZipPath) },
             FunctionName: functionName,
-            Layers: [commonLayerArn],
+            Layers: layers,
             Handler: 'index.handler',
             Role: this.options.lambdaRole,
             Tags: this.options.resourceTags,
@@ -461,6 +621,32 @@ export class LambdaToolFunctionsService {
     });
 
     return this.yarnInstallFunctionName;
+  }
+
+  private async getHttpEgressFunction(): Promise<{
+    functionName: string;
+    handlerCode: string;
+  }> {
+    if (isDefined(this.httpEgressFunction)) {
+      return this.httpEgressFunction;
+    }
+
+    const handlerCode = await buildHttpEgressHandlerBundle();
+
+    this.httpEgressFunction = {
+      handlerCode,
+      functionName: computeHashedLambdaResourceName({
+        resourceNamePrefix: HTTP_EGRESS_FUNCTION_NAME_PREFIX,
+        namespace: this.options.resourceNamespace,
+        contents: [
+          handlerCode,
+          String(HTTP_EGRESS_LAMBDA_MEMORY_MB),
+          String(HTTP_EGRESS_LAMBDA_TIMEOUT_SECONDS),
+        ],
+      }),
+    };
+
+    return this.httpEgressFunction;
   }
 
   private async getBuilderFunctionName(): Promise<string> {

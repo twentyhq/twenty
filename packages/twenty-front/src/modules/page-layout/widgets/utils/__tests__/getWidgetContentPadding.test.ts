@@ -6,6 +6,7 @@ describe('getWidgetContentPadding', () => {
     WidgetType.WORKFLOW,
     WidgetType.WORKFLOW_RUN,
     WidgetType.WORKFLOW_VERSION,
+    WidgetType.EMAIL_THREAD,
   ])('returns no padding for %s', (widgetType) => {
     expect(getWidgetContentPadding(widgetType)).toBe('none');
   });

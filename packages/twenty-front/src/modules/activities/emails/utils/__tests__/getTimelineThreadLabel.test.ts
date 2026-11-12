@@ -41,6 +41,7 @@ describe('getTimelineThreadLabel', () => {
           type: MessageChannelType.APP,
           provider: 'app',
           applicationId: null,
+          conversationStyle: 'chat',
         },
       }),
     ).toBe('Conversation');

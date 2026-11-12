@@ -90,7 +90,9 @@ const USER_ACCESS_POLICY: AccessPolicy = {
   requiredPermissionFlags: [],
 };
 const getHMACKey = (email?: string, key?: string | null) => {
-  if (!email || !key) return null;
+  if (!email || !key) {
+    return null;
+  }
 
   const hmac = crypto.createHmac('sha256', key);
 
@@ -219,7 +221,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<Record<string, unknown>> {
-    if (!workspace) return {};
+    if (!workspace) {
+      return {};
+    }
     const userVars = await this.userVarService.getAll({
       userId: user.id,
       workspaceId: workspace.id,
@@ -248,7 +252,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<WorkspaceMemberDTO | null> {
-    if (!workspace) return null;
+    if (!workspace) {
+      return null;
+    }
 
     const workspaceMemberEntity = await this.userService.loadWorkspaceMember(
       user,
@@ -293,7 +299,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<WorkspaceMemberDTO[]> {
-    if (!workspace) return [];
+    if (!workspace) {
+      return [];
+    }
 
     const workspaceMemberEntities = await this.userService.loadWorkspaceMembers(
       workspace,
@@ -362,7 +370,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<DeletedWorkspaceMemberDTO[]> {
-    if (!workspace) return [];
+    if (!workspace) {
+      return [];
+    }
 
     const workspaceMemberEntities =
       await this.userService.loadDeletedWorkspaceMembersOnly(workspace);
@@ -621,7 +631,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<OnboardingStatus | null> {
-    if (!workspace) return null;
+    if (!workspace) {
+      return null;
+    }
 
     return this.onboardingService.getOnboardingStatus({
       userId: user.id,
@@ -637,7 +649,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<OnboardingStatus | null> {
-    if (!workspace) return null;
+    if (!workspace) {
+      return null;
+    }
 
     return this.onboardingService.getPreviousReversibleOnboardingStatus({
       userId: user.id,
@@ -653,7 +667,9 @@ export class UserResolver {
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
   ): Promise<boolean | null> {
-    if (!workspace) return null;
+    if (!workspace) {
+      return null;
+    }
 
     return this.userWorkspaceService.isWorkspaceCreator({
       userId: user.id,

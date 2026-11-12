@@ -134,7 +134,7 @@ export const RecordTableWidgetProvider = ({
   if (
     !canReachSomeRecords({
       objectRecordsPermissions: objectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     })
   ) {
     return null;

@@ -21,7 +21,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AI_MODEL_TIERS, parseAiModelVariantId } from 'twenty-shared/ai';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
-import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.constant';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { AI_DATA_POLICIES } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-data-policies.constant';

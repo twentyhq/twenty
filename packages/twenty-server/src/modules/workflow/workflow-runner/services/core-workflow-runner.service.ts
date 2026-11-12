@@ -127,7 +127,6 @@ export class CoreWorkflowRunnerService {
       await this.workflowRunWorkspaceService.createCoreWorkflowRun({
         coreWorkflowId: workflow.id,
         coreWorkflowVersionId: workflowVersion.id,
-        workspaceWorkflowId: workflow.workspaceWorkflowId,
         workspaceWorkflowVersionId,
         workflowName: workflow.name,
         trigger: workflowVersion.triggers[0],
@@ -146,9 +145,9 @@ export class CoreWorkflowRunnerService {
 
     if (isManualTrigger) {
       const scope =
-        await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+        await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
           workspaceId,
-          applicationId: workflow.applicationId,
+          coreWorkflowId: workflow.id,
         });
 
       await this.workflowRunEnqueueWorkspaceService.enqueueRunOrFailIt({

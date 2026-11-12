@@ -33,6 +33,10 @@ const FLAT_OBJECT_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['objectMetadataId'],
   },
+  rowLevelPermissionRule: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['objectMetadataId'],
+  },
   searchFieldMetadata: {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['objectMetadataId'],
@@ -69,6 +73,7 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends MetadataFlatEnti
       view: views,
       objectPermission: objectPermissions,
       fieldPermission: fieldPermissions,
+      rowLevelPermissionRule: rowLevelPermissionRules,
       searchFieldMetadata: searchFieldMetadatas,
       pageLayout: pageLayouts,
       commandMenuItem: commandMenuItems,
@@ -99,6 +104,10 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends MetadataFlatEnti
           fieldPermissions:
             fieldPermissions.byObjectMetadataId.get(objectMetadataEntity.id) ||
             [],
+          rowLevelPermissionRules:
+            rowLevelPermissionRules.byObjectMetadataId.get(
+              objectMetadataEntity.id,
+            ) || [],
           searchFieldMetadatas:
             searchFieldMetadatas.byObjectMetadataId.get(
               objectMetadataEntity.id,

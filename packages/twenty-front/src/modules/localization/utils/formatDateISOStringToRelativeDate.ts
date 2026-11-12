@@ -28,9 +28,15 @@ export const formatDateISOStringToRelativeDate = ({
     }).days;
 
     if (isDayMaximumPrecision) {
-      if (dayDiff === 0) return t`Today`;
-      if (dayDiff === -1) return t`Yesterday`;
-      if (dayDiff === 1) return t`Tomorrow`;
+      if (dayDiff === 0) {
+        return t`Today`;
+      }
+      if (dayDiff === -1) {
+        return t`Yesterday`;
+      }
+      if (dayDiff === 1) {
+        return t`Tomorrow`;
+      }
     }
 
     return formatRelative(

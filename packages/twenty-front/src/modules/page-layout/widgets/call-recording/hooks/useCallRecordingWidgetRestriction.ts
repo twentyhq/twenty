@@ -43,7 +43,7 @@ export const useCallRecordingWidgetRestriction = ({
   if (
     !canReachSomeRecords({
       objectRecordsPermissions: callRecordingObjectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     })
   ) {
     return {

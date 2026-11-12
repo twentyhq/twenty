@@ -21,7 +21,7 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   return (
     canReachSomeRecords({
       objectRecordsPermissions: objectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     }) ||
     (isRecordLevelSharingEnabled &&
       isShareableObjectMetadataItem(objectMetadataItem))

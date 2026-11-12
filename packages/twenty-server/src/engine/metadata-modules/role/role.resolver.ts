@@ -60,12 +60,13 @@ import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-ro
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-predicates.input';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionRuleDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-rule.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
 import { UpsertRowLevelPermissionPredicatesResultDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/upsert-row-level-permission-predicates-result.dto';
 import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/row-level-permission-predicate/filters/row-level-permission-predicate-graphql-api-exception.filter';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
@@ -80,7 +81,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class RoleResolver {
   constructor(
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly rolePermissionsService: RolePermissionsService,
     private readonly roleService: RoleService,
     private readonly objectPermissionService: ObjectPermissionService,
@@ -129,7 +130,7 @@ export class RoleResolver {
     actingUserWorkspaceId: string,
   ): Promise<WorkspaceMemberDTO> {
     const { workspaceMember, userWorkspaceId } =
-      await this.roleAssignmentService.assignRoleToWorkspaceMember({
+      await this.roleAssignmentWriteService.assignRoleToWorkspaceMember({
         workspaceId: workspace.id,
         workspaceMemberId,
         roleId,
@@ -413,5 +414,22 @@ export class RoleResolver {
       });
 
     return rowLevelPermissionPredicateGroups;
+  }
+
+  @ResolveField('rowLevelPermissionRules', () => [RowLevelPermissionRuleDTO], {
+    nullable: true,
+  })
+  async getRowLevelPermissionRulesForRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Context() context: { loaders: IDataloaders },
+  ): Promise<RowLevelPermissionRuleDTO[]> {
+    const { rowLevelPermissionRules } =
+      await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
+        workspaceId: workspace.id,
+        roleId: role.id,
+      });
+
+    return rowLevelPermissionRules;
   }
 }

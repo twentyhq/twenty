@@ -9,6 +9,7 @@ import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 import { useToast } from 'twenty-ui/components/feedback';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
 type ImpersonationSwitchProps = {
@@ -37,10 +38,11 @@ export const ImpersonationSwitch = ({ divider }: ImpersonationSwitchProps) => {
           },
         },
       });
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        allowImpersonation: value,
-      });
+      setCurrentWorkspace((workspace) =>
+        isDefined(workspace)
+          ? { ...workspace, allowImpersonation: value }
+          : workspace,
+      );
     } catch (err: any) {
       enqueueToast(getToastOptionsFromError({ error: err }));
     }

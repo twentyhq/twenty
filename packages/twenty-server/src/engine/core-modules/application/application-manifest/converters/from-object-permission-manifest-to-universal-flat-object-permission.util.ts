@@ -29,6 +29,8 @@ export const fromObjectPermissionManifestToUniversalFlatObjectPermission = ({
     objectMetadataUniversalIdentifier:
       objectPermissionManifest.objectUniversalIdentifier,
     canReadObjectRecords: objectPermissionManifest.canReadObjectRecords ?? null,
+    canCreateObjectRecords:
+      objectPermissionManifest.canUpdateObjectRecords ?? null,
     canUpdateObjectRecords:
       objectPermissionManifest.canUpdateObjectRecords ?? null,
     canSoftDeleteObjectRecords:

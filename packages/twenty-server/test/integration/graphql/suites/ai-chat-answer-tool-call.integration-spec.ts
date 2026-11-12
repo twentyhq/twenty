@@ -79,6 +79,7 @@ describe('Answering a chat tool call', () => {
     await getAppProviderByClassName<AgentConversationWriterService>(
       'AgentConversationWriterService',
     ).upsertAssistantMessage({
+      agentId: null,
       id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,

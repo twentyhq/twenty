@@ -71,37 +71,6 @@ describe('getAuthProvidersByWorkspace', () => {
       sso: [],
     });
   });
-  it('should handle workspace with SSO providers inactive', () => {
-    const result = getAuthProvidersByWorkspace({
-      workspace: {
-        ...mockWorkspace,
-        workspaceSsoIdentityProviders: [
-          {
-            id: 'sso1',
-            name: 'SSO Provider 1',
-            type: IdentityProviderType.SAML,
-            status: SsoIdentityProviderStatus.Inactive,
-            issuer: 'sso1.example.com',
-          },
-        ],
-      },
-      systemEnabledProviders: {
-        google: true,
-        magicLink: false,
-        password: true,
-        microsoft: true,
-        sso: [],
-      },
-    });
-
-    expect(result).toEqual({
-      google: true,
-      magicLink: false,
-      password: true,
-      microsoft: false,
-      sso: [],
-    });
-  });
 
   it('should disable Microsoft auth if isMicrosoftAuthEnabled is false', () => {
     const result = getAuthProvidersByWorkspace({

@@ -700,6 +700,7 @@ describe('app apply', () => {
       exportRequest && readGraphqlRequest(exportRequest).arguments,
     ).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
+      shouldIncludeSourceFiles: true,
     });
     expect((await readdir(join(appPath, '.twenty/cli'))).sort()).toEqual([
       'pull-base.json',

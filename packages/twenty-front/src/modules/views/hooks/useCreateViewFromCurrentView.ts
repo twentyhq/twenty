@@ -131,6 +131,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             groupLoadLimit: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.groupLoadLimit
               : undefined,
+            shouldDisplayGroupsAsTabs: shouldCopyFiltersAndSortsAndAggregate
+              ? (sourceView.shouldDisplayGroupsAsTabs ?? undefined)
+              : undefined,
             mainGroupByFieldMetadataId: shouldCopyFiltersAndSortsAndAggregate
               ? sourceView.mainGroupByFieldMetadataId
               : mainGroupByFieldMetadataId,

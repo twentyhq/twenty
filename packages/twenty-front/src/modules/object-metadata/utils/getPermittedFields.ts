@@ -5,7 +5,10 @@ import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type GetPermittedFieldsArgs = {
   fields: FieldMetadataItem[];
-  objectPermissions: Pick<ObjectRecordsPermissions, 'restrictedFields'>;
+  objectPermissions: Pick<
+    ObjectRecordsPermissions,
+    'unreadableFields' | 'uneditableFields'
+  >;
 };
 
 const getFieldWithPermittedMorphTargets = ({

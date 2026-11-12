@@ -38,10 +38,6 @@ import {
   type WebSearchOperationType,
 } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { type StepDebitResult } from 'src/engine/metadata-modules/ai/ai-billing/types/step-debit-result.type';
-import {
-  extractCacheCreationTokens,
-  extractCacheCreationTokensFromSteps,
-} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -125,6 +121,8 @@ export type AgentStepLoopInput = {
 export type AgentStepLoop = {
   stream: ReturnType<typeof streamText<ToolSet, Context, AgentStepLoopOutput>>;
   getStopReason: () => StepDebitResult['stopReason'];
+  // what a loop that ended early, such as a stopped one, did before it ended
+  getFinishedSteps: () => StepResult<ToolSet>[];
 };
 
 const sumSteps = (
@@ -230,7 +228,7 @@ export class AgentStepLoopService {
         ],
         [
           MetricsKeys.AiChatCacheWriteTokens,
-          extractCacheCreationTokensFromSteps(steps),
+          sumSteps(steps, (usage) => usage.inputTokenDetails?.cacheWriteTokens),
         ],
       ] as const) {
         this.metricsService.incrementCounterBy({
@@ -332,12 +330,7 @@ export class AgentStepLoopService {
         const stepDebit =
           await this.aiBillingService.decrementAndCheckAvailableCredits({
             modelId: registeredModel.modelId,
-            billingInput: {
-              usage: step.usage,
-              cacheCreationTokens: extractCacheCreationTokens(
-                step.providerMetadata,
-              ),
-            },
+            billingInput: { usage: step.usage },
             workspaceId: billing.workspaceId,
             operationType: billing.operationType,
             spenders: billing.spenders,
@@ -398,6 +391,7 @@ export class AgentStepLoopService {
     return {
       stream,
       getStopReason: () => stopReason,
+      getFinishedSteps: () => [...finishedSteps],
     };
   }
 
@@ -418,7 +412,6 @@ export class AgentStepLoopService {
         `inputTokens(fullContext)=${step.usage.inputTokens ?? 0}, ` +
         `cacheReadTokens=${step.usage.inputTokenDetails?.cacheReadTokens ?? 0}, ` +
         `cacheWriteTokens=${step.usage.inputTokenDetails?.cacheWriteTokens ?? 0}, ` +
-        `cacheCreationTokens=${extractCacheCreationTokens(step.providerMetadata)}, ` +
         `totalTokens=${step.usage.totalTokens ?? 0}`,
     );
   }

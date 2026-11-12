@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
+import { ChatThreadMessageVoiceNote } from '@/activities/emails/components/ChatThreadMessageVoiceNote';
 import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/activities/emails/constants/ChatMessageBubbleMaxWidth';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
@@ -40,11 +41,6 @@ const StyledVideo = styled.video`
   border-radius: ${themeCssVariables.border.radius.md};
   display: block;
   max-height: ${CHAT_MESSAGE_MEDIA_MAX_HEIGHT};
-  max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
-`;
-
-const StyledAudio = styled.audio`
-  display: block;
   max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
 `;
 
@@ -92,11 +88,9 @@ export const ChatThreadMessageAttachment = ({
       );
     case FILE_CATEGORIES.AUDIO:
       return (
-        <StyledAudio
+        <ChatThreadMessageVoiceNote
           src={file.url}
-          aria-label={file.label}
-          controls
-          preload="metadata"
+          label={file.label}
           onError={handleMediaError}
         />
       );

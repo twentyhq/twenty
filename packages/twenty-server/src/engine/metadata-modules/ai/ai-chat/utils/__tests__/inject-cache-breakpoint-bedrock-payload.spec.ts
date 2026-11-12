@@ -6,7 +6,7 @@ import {
   getCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
-import { AI_SDK_BEDROCK } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { AI_SDK_BEDROCK } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
 const BEDROCK_CLAUDE = {

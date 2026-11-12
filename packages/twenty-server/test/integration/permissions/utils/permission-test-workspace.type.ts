@@ -19,7 +19,8 @@ export type PermissionTestRecordName =
   | 'insideEveryFilter'
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
-  | 'outsideRegionFilter';
+  | 'outsideRegionFilter'
+  | 'sharedWithMemberWithoutAccess';
 
 export type PermissionTestWorkspace = {
   workspaceId: string;
@@ -39,7 +40,7 @@ export type PermissionTestWorkspace = {
 };
 
 export type PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: boolean;
     canUpdate: boolean;
     canSoftDelete: boolean;

@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexSelectableRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexSelectableRecordIdsComponentSelector';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
@@ -21,8 +21,8 @@ export const useSelectAllRecords = (recordIndexId?: string) => {
     recordIndexId,
   );
 
-  const allRecordIds = useAtomComponentSelectorCallbackState(
-    recordIndexAllRecordIdsComponentSelector,
+  const selectableRecordIds = useAtomComponentSelectorCallbackState(
+    recordIndexSelectableRecordIdsComponentSelector,
     recordIndexId,
   );
 
@@ -41,7 +41,7 @@ export const useSelectAllRecords = (recordIndexId?: string) => {
       return false;
     }
 
-    for (const recordId of store.get(allRecordIds)) {
+    for (const recordId of store.get(selectableRecordIds)) {
       store.set(isRecordSelectedFamilyState(recordId), true);
     }
 
@@ -50,7 +50,7 @@ export const useSelectAllRecords = (recordIndexId?: string) => {
     return true;
   }, [
     allRecordsSelectedStatus,
-    allRecordIds,
+    selectableRecordIds,
     recordSelectionRange,
     resetRecordSelection,
     isRecordSelectedFamilyState,

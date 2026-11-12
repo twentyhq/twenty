@@ -1,0 +1,2 @@
+export const ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME =
+  '2.57.0_AddCanCreatePermissionsFastInstanceCommand_1793995650464';

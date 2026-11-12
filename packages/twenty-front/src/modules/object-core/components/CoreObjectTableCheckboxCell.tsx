@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
 type CoreObjectTableCheckboxCellProps = {
   checked: boolean;
   indeterminate?: boolean;
+  disabled?: boolean;
   ariaLabel: string;
   onToggle: () => void;
 };
@@ -20,6 +21,7 @@ type CoreObjectTableCheckboxCellProps = {
 export const CoreObjectTableCheckboxCell = ({
   checked,
   indeterminate = false,
+  disabled = false,
   ariaLabel,
   onToggle,
 }: CoreObjectTableCheckboxCellProps) => {
@@ -33,6 +35,7 @@ export const CoreObjectTableCheckboxCell = ({
       <Checkbox
         checked={checked}
         indeterminate={indeterminate}
+        disabled={disabled}
         aria-label={ariaLabel}
         onCheckedChange={onToggle}
       />

@@ -8,9 +8,9 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { AiChatNewThreadRecipientChip } from '@/ai/components/AiChatNewThreadRecipientChip';
+import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
@@ -34,6 +34,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatNewThreadRecipientBar = () => {
   const { t } = useLingui();
+  const { displayName: assistantName } = useAiChatAssistantProfile();
   const theme = useTheme();
   const dropdownInstanceId = useId();
   const recipientRowRef = useRef<HTMLDivElement>(null);
@@ -83,8 +84,8 @@ export const AiChatNewThreadRecipientBar = () => {
       contentPaddingInline={0}
     >
       {recipients.isAssistantParticipant && (
-        <AiChatNewThreadRecipientChip
-          label={AGENT_CHAT_ASSISTANT_NAME}
+        <ChatRecipientChip
+          label={assistantName}
           avatar={<AiChatAssistantAvatar />}
           disabled={agentChatIsSendingMessage}
           onRemove={() => {
@@ -100,7 +101,7 @@ export const AiChatNewThreadRecipientBar = () => {
         const label = getWorkspaceMemberNameOrEmail(workspaceMember);
 
         return (
-          <AiChatNewThreadRecipientChip
+          <ChatRecipientChip
             key={workspaceMember.id}
             label={label}
             disabled={agentChatIsSendingMessage}
@@ -127,7 +128,7 @@ export const AiChatNewThreadRecipientBar = () => {
         );
       })}
       {isDefined(channel) && (
-        <AiChatNewThreadRecipientChip
+        <ChatRecipientChip
           label={channel.name}
           disabled={agentChatIsSendingMessage}
           avatar={

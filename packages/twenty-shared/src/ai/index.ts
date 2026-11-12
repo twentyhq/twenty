@@ -27,6 +27,7 @@ export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
+export { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from './constants/attach-conversation-to-records-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
@@ -61,6 +62,7 @@ export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
+export type { AgentMessageRow } from './types/AgentMessageRow';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -160,7 +162,6 @@ export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-re
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
-export type { AgentMessageRow } from './utils/map-agent-messages-to-ui-messages.util';
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
 export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';

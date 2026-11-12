@@ -1,22 +1,22 @@
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
-import { type ObjectPermissionAction } from 'twenty-shared/application';
+import { type DisableableObjectPermissionAction } from 'twenty-shared/application';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getObjectPermissionAction = (
   operationType: ObjectRecordsOperationType,
-): ObjectPermissionAction => {
+): DisableableObjectPermissionAction => {
   switch (operationType) {
-    case 'select':
+    case 'read':
       return 'canReadObjectRecords';
-    case 'insert':
+    case 'create':
+      return 'canCreateObjectRecords';
     case 'update':
       return 'canUpdateObjectRecords';
-    case 'delete':
+    case 'destroy':
       return 'canDestroyObjectRecords';
-    case 'restore':
-    case 'soft-delete':
+    case 'softDelete':
       return 'canSoftDeleteObjectRecords';
     default:
       return assertUnreachable(operationType);

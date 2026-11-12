@@ -55,7 +55,7 @@ it('does not offer objects without read or write permissions', () => {
     objectPermissionsByObjectMetadataId: {
       company: {
         ...getObjectPermissionsForObject({}, 'company'),
-        canUpdateAllRecords: false,
+        canCreateAllRecords: false,
       },
       task: {
         ...getObjectPermissionsForObject({}, 'task'),

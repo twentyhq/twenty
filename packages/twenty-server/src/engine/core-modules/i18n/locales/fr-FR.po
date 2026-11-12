@@ -128,6 +128,11 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24 h"
 
+#. js-lingui-id: OUcoW0
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "A backup code was used to sign in to your account"
+msgstr "Un code de secours a été utilisé pour vous connecter à votre compte"
+
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
@@ -473,7 +478,7 @@ msgid "A title is required to create a calendar event"
 msgstr "Un titre est requis pour créer un événement de calendrier"
 
 #. js-lingui-id: jFM4QN
-#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "Un code de récupération pour l'authentification à deux facteurs a été généré pour vous"
 
@@ -487,6 +492,12 @@ msgstr "Un utilisateur avec cette adresse e-mail existe déjà."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
 msgstr "Un agentChatChannelUniversalIdentifier valide est requis pour le type AGENT_CHAT_CHANNEL"
+
+#. js-lingui-id: rIulqG
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentUniversalIdentifier is required for AGENT type"
+msgstr "Un agentUniversalIdentifier valide est requis pour le type AGENT"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -529,6 +540,12 @@ msgstr "Un targetRecordId valide est requis pour le type RECORD"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr "Un viewUniversalIdentifier valide est requis pour le type VIEW"
+
+#. js-lingui-id: dUn4Ws
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid workflowUniversalIdentifier is required for WORKFLOW type"
+msgstr "Un workflowUniversalIdentifier valide est requis pour le type WORKFLOW"
 
 #. js-lingui-id: 4/naVr
 #: src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception.ts
@@ -579,18 +596,6 @@ msgstr "Un webhook avec cette configuration existe déjà."
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
 msgstr "Une action d’en-tête de widget est introuvable"
-
-#. js-lingui-id: 3VQj1J
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow"
-msgstr "Un workflow"
-
-#. js-lingui-id: ePMKG3
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow automated trigger"
-msgstr "Un déclencheur automatisé de flux de travail"
 
 #. js-lingui-id: bQaMUu
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -707,7 +712,6 @@ msgid "Activate Workflow"
 msgstr "Activer le workflow"
 
 #. js-lingui-id: AnKsxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Active"
@@ -1271,6 +1275,7 @@ msgstr "Une erreur inattendue s'est produite lors du traitement de la route du s
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
@@ -1663,7 +1668,6 @@ msgstr "a joint un fichier"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Attaché à"
@@ -1719,14 +1723,12 @@ msgstr "Position de l'enregistrement de la pièce jointe"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachment target"
 msgstr "Cible de la pièce jointe"
 
 #. js-lingui-id: j81CIH
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attachments"
 msgstr "Pièces jointes"
@@ -1766,12 +1768,6 @@ msgstr "Pièces jointes liées au tableau de bord"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the opportunity"
 msgstr "Pièces jointes liées à l'opportunité"
-
-#. js-lingui-id: GAfs9e
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Attachments linked to the workflow"
-msgstr "Pièces jointes associées au workflow"
 
 #. js-lingui-id: mGHuob
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -1839,18 +1835,6 @@ msgctxt "fieldMetadata.label"
 msgid "Authored template URL"
 msgstr "URL du modèle créé"
 
-#. js-lingui-id: hq1K5d
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Automated Trigger Type"
-msgstr "Type de déclencheur automatisé"
-
-#. js-lingui-id: g5/Q0d
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Automated Triggers"
-msgstr "Déclencheurs automatisés"
-
 #. js-lingui-id: wDnUny
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
@@ -1863,11 +1847,21 @@ msgctxt "fieldMetadata.label"
 msgid "Avatar"
 msgstr "Avatar"
 
+#. js-lingui-id: HgqIng
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Avatar color must be one of: {allowedColors}"
+msgstr "La couleur de l'avatar doit être l'une des suivantes : {allowedColors}"
+
 #. js-lingui-id: KEsv0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Avatar File"
 msgstr "Fichier d'avatar"
+
+#. js-lingui-id: 3eVrE5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Avatar shape must be one of: {allowedShapes}"
+msgstr "La forme de l'avatar doit être l'une des suivantes : {allowedShapes}"
 
 #. js-lingui-id: HYoTlQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2001,6 +1995,11 @@ msgstr "Le corps du texte doit être un objet"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Le corps du texte doit être un objet pour le widget \"{widgetTitle}\""
+
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "Réservez un appel de 15 minutes et nous vous aiderons à rendre votre espace de travail prêt pour la mise en production."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2447,6 +2446,11 @@ msgstr "Enregistrements d'appel"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Enregistrements d'appel"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Appel demandé"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,8 +3572,7 @@ msgid "Conversations"
 msgstr "Conversations"
 
 #. js-lingui-id: X/ryFh
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "ID du workflow principal"
@@ -3704,6 +3707,7 @@ msgstr "Créer"
 #. js-lingui-id: emlHP+
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create"
 msgstr "Créer"
@@ -3746,6 +3750,12 @@ msgstr "Créer une vue"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create View"
 msgstr "Créer une vue"
+
+#. js-lingui-id: f+tB/R
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Create Workflow"
+msgstr "Créer un workflow"
 
 #. js-lingui-id: 4lG6GV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -3810,8 +3820,6 @@ msgstr "Créé par"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3857,9 +3865,7 @@ msgstr "La création d'un enregistrement d'un objet privé nécessite l'argument
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3895,9 +3901,7 @@ msgstr "Date de création"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3947,12 +3951,6 @@ msgstr "Les crédits utilisés nécessitent une date de début et une date de fi
 msgctxt "skill.label"
 msgid "CRM Hygiene"
 msgstr "Hygiène du CRM"
-
-#. js-lingui-id: OZIOad
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Cron"
-msgstr "Cron"
 
 #. js-lingui-id: bK9ya1
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -4087,12 +4085,6 @@ msgstr "La structure des données est invalide."
 msgid "Database configuration is disabled."
 msgstr "La configuration de la base de données est désactivée."
 
-#. js-lingui-id: U+zQxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Database Event"
-msgstr "Événement de base de données"
-
 #. js-lingui-id: EMLSIx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Database event triggers need an event name such as \"company.created\""
@@ -4131,9 +4123,7 @@ msgstr "Format de date"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4159,7 +4149,6 @@ msgid "Deactivate Workflow"
 msgstr "Désactiver le workflow"
 
 #. js-lingui-id: GuGzWG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deactivated"
@@ -4456,9 +4445,7 @@ msgstr "Supprimé le"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -4663,7 +4650,6 @@ msgstr "Points et virgule"
 
 #. js-lingui-id: Hw0zHo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Draft"
@@ -4725,8 +4711,8 @@ msgid "Duplicate Workflow"
 msgstr "Dupliquer le flux de travail"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Duplicated option {field}"
 msgstr "Option dupliquée {field}"
 
@@ -5078,6 +5064,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Enrichir"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "Saisissez un nom comprenant entre 1 et {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractères ainsi que des options d’apparence prises en charge pour l’assistant."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5092,6 +5083,11 @@ msgstr "Saisissez votre code d'authentification à deux facteurs pour continuer.
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "Enter your two-factor authentication code to generate a recovery code."
 msgstr "Saisissez votre code d'authentification à deux facteurs pour générer un code de récupération."
+
+#. js-lingui-id: gb/uW+
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
+msgid "Enter your two-factor authentication code to generate new backup codes."
+msgstr "Saisissez votre code d'authentification à deux facteurs pour générer de nouveaux codes de secours."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -5206,7 +5202,6 @@ msgid "Event Participants"
 msgstr "Participants à l'événement"
 
 #. js-lingui-id: lr7Nsq
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5508,6 +5503,11 @@ msgstr "Le champ \"{workspaceMemberFieldName}\" n'est pas un champ de l'objet wo
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
 msgstr "Le champ {0}.{fieldName} n'est pas disponible. Sélectionnez des champs accessibles de niveau supérieur."
 
+#. js-lingui-id: T0uER/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
+msgstr "Le champ {fieldName} est utilisé par {survivingPredicateCount} prédicat(s) d'autorisation au niveau des lignes"
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -5752,9 +5752,7 @@ msgstr "Champ utilisé pour la recherche en texte intégral"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5997,7 +5995,6 @@ msgstr "Flux"
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
 msgstr "Flux"
@@ -6155,6 +6152,11 @@ msgstr "frontComponentId ne doit pas être défini pour la clé de composant du 
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "frontComponentId ne doit pas être défini lorsque engineComponentKey est TRIGGER_WORKFLOW_VERSION"
 
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "La requête du générateur de composants frontend dépasse la limite de 6 MiB. Réduisez les dépendances de l'application ou la taille du SDK généré."
+
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6242,7 +6244,6 @@ msgstr "Général"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-note-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
@@ -6535,9 +6536,7 @@ msgstr "UID iCal"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6581,9 +6580,7 @@ msgstr "ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6646,6 +6643,7 @@ msgid "In progress"
 msgstr "En cours"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "La boîte de réception n'est pas activée pour cet espace de travail."
@@ -6697,6 +6695,18 @@ msgstr "Index avec le même nom existe déjà"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same universal identifier already exists"
 msgstr "Un index avec le même identifiant universel existe déjà"
+
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr "Les chemins d'enregistrements associés inhérents ne peuvent pas former un cycle"
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr "Les chemins d'enregistrements associés inhérents ne peuvent pas comporter plus de deux relations"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -6816,6 +6826,16 @@ msgstr "Argument invalide fourni."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Invalid attendee email addresses: {invalidAttendeeList}"
 msgstr "Adresses e-mail des participants non valides : {invalidAttendeeList}"
+
+#. js-lingui-id: EZUA9N
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Invalid avatar color"
+msgstr "Couleur d'avatar invalide"
+
+#. js-lingui-id: yXFZvO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Invalid avatar shape"
+msgstr "Forme d'avatar invalide"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6961,7 +6981,7 @@ msgid "Invalid email address."
 msgstr "Adresse e-mail invalide."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Adresses e-mail non valides : {invalidEmailList}"
 
@@ -7411,6 +7431,11 @@ msgstr "Données du prédicat d'autorisation au niveau des lignes invalides."
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
 msgstr "Données du groupe de prédicats d'autorisation au niveau des lignes invalides."
+
+#. js-lingui-id: SSt1rf
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Invalid row level permission rule data."
+msgstr "Données de règle d'autorisation au niveau des lignes non valides."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -7995,14 +8020,14 @@ msgid "Label is required."
 msgstr "L'étiquette est requise."
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not be empty"
 msgstr "L'étiquette ne doit pas être vide"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not contain a comma"
 msgstr "L'étiquette ne doit pas contenir de virgule"
 
@@ -8035,12 +8060,6 @@ msgstr "Dernier message"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Expéditeur du dernier message"
-
-#. js-lingui-id: qqD3aX
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last published Version ID"
-msgstr "ID de la dernière version publiée"
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8081,9 +8100,7 @@ msgstr "Dernière modification du lien"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8118,9 +8135,7 @@ msgstr "Dernière modification de l'enregistrement"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9007,6 +9022,11 @@ msgstr "Le fournisseur de connexion du fournisseur de messagerie ne peut pas êt
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Le fournisseur de connexion du fournisseur de messagerie ne peut pas être modifié après sa création : déclarez un nouveau fournisseur de messagerie avec un nouveau universalIdentifier"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Le conversationStyle \"{conversationStyle}\" du fournisseur de messagerie n’est pas pris en charge"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -9167,7 +9187,6 @@ msgstr "Mon premier tableau de bord"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9307,6 +9326,11 @@ msgctxt "fieldMetadata.label"
 msgid "New"
 msgstr "Nouveau"
 
+#. js-lingui-id: 2k6acO
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "New backup codes were generated for your account"
+msgstr "De nouveaux codes de secours ont été générés pour votre compte"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9374,6 +9398,12 @@ msgstr "Aucune entrée fournie dans l'étape de formulaire"
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Aucune boîte mail n’est connectée pour cette action. Connectez-en une dans les paramètres."
+
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "Pas plus de {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} chemins d'enregistrements liés inhérents ne peuvent se suivre"
 
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
@@ -9739,6 +9769,7 @@ msgid "Object label is too short"
 msgstr "L'étiquette de l'objet est trop courte"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9763,6 +9794,8 @@ msgstr "ID des métadonnées de l'objet"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -9773,6 +9806,7 @@ msgstr "Métadonnées de l'objet non trouvées"
 #. js-lingui-id: rHce90
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -9864,6 +9898,12 @@ msgstr "Objet à supprimer non trouvé"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Objet à mettre à jour non trouvé"
+
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr "Objet dont les enregistrements peuvent appartenir au groupe"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -10157,48 +10197,54 @@ msgid "Option \"{optionLabel}\" has an unsupported color"
 msgstr "L’option \"{optionLabel}\" a une couleur non prise en charge"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is invalid"
 msgstr "L'ID de l'option est invalide"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "L'ID de l'option est requis"
 
+#. js-lingui-id: ove8Z3
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+msgid "Option id must be a lowercase UUID of version 4 or later"
+msgstr "L’identifiant de l’option doit être un UUID en minuscules de version 4 ou ultérieure"
+
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "L'étiquette d'option \"{sanitizedLabel}\" est en dessous de 1 caractère"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "L'étiquette d'option dépasse 63 caractères"
 
 #. js-lingui-id: h8lHqX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label format not supported"
 msgstr "Format d'étiquette d'option non pris en charge"
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label is required"
 msgstr "L'étiquette d'option est requise"
 
 #. js-lingui-id: dFudyC
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label must be a string of at least one character"
 msgstr "L'étiquette de l'option doit être une chaîne d'au moins un caractère"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "La valeur de l'option \"{sanitizedValue}\" est en dessous de 1 caractère"
 
@@ -10209,29 +10255,29 @@ msgid "Option value \"{value}\" already exists on this field"
 msgstr "La valeur d'option \"{value}\" existe déjà dans ce champ"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "La valeur de l'option dépasse 63 caractères"
 
 #. js-lingui-id: zEGChV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
 msgstr "Format de valeur d'option non pris en charge"
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value is required"
 msgstr "La valeur de l'option est requise"
 
 #. js-lingui-id: Kub9t0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
 msgstr "La valeur de l'option doit être une chaîne d'au moins un caractère"
 
 #. js-lingui-id: EabrTR
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Options are required for enum fields"
 msgstr "Des options sont requises pour les champs enum"
 
@@ -10874,9 +10920,7 @@ msgstr "Point de contact"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11273,6 +11317,11 @@ msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "ID de l'enregistrement"
 
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
+msgid "Record not found"
+msgstr "Enregistrement introuvable"
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -11365,8 +11414,7 @@ msgid "Recurring Event ID"
 msgstr "ID de l'événement récurrent"
 
 #. js-lingui-id: zEHtXk
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Référence à l'enregistrement du workflow principal"
@@ -11581,6 +11629,11 @@ msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
 msgstr "Retirer des favoris"
 
+#. js-lingui-id: 60CVOK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Remove the row-level permission rules that use this field before deleting it"
+msgstr "Supprimez les règles d'autorisation au niveau des lignes qui utilisent ce champ avant de le supprimer"
+
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
 msgid "Remove this permission from all roles before deleting it"
@@ -11655,6 +11708,11 @@ msgstr "Demandé"
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
 msgstr "La plage de fichiers demandée ne peut pas être servie."
+
+#. js-lingui-id: WIwnbY
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Required fields and relations cannot be restricted on a row level permission rule."
+msgstr "Les champs et relations obligatoires ne peuvent pas être restreints dans une règle d'autorisation au niveau des lignes."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11804,6 +11862,11 @@ msgstr "Le rôle «{roleLabel}» ne peut pas être assigné aux clés API"
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
 msgstr "Le rôle «{roleLabel}» ne peut pas être attribué aux applications"
 
+#. js-lingui-id: xIGy+v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
+msgstr "Le rôle \"{roleLabel}\" ne peut pas être attribué à cet agent"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11821,6 +11884,11 @@ msgstr "Le rôle «{roleLabel}» ne peut pas être assigné aux webhooks"
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "Le rôle \"{roleLabel}\" ne peut pas être attribué : les rôles personnalisés nécessitent le forfait Organization"
 
+#. js-lingui-id: 3heof5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
+msgstr "Le rôle \"{roleLabel}\" doit appartenir à l'application pour être attribué à ses agents"
+
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
@@ -11836,19 +11904,6 @@ msgstr "Le rôle ne peut pas être attribué à cette entité."
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
 msgstr "ID du rôle"
-
-#. js-lingui-id: k2/sGI
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Role is not editable"
-msgstr "Le rôle n'est pas modifiable"
 
 #. js-lingui-id: zeffu9
 #: src/engine/permissions/permissions.exception.ts
@@ -11890,6 +11945,8 @@ msgstr "Le nom du rôle est invalide"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Role not found"
 msgstr "Rôle introuvable"
 
@@ -11898,6 +11955,7 @@ msgstr "Rôle introuvable"
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rôle introuvable."
@@ -12070,6 +12128,33 @@ msgstr "Prédicat d'autorisation au niveau des lignes à mettre à jour introuva
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Un prédicat d'autorisation au niveau des lignes avec cet identifiant universel existe déjà"
 
+#. js-lingui-id: 1ypLxw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule already exists"
+msgstr "La règle d'autorisation au niveau des lignes existe déjà"
+
+#. js-lingui-id: PrMheT
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Row level permission rule not found."
+msgstr "Règle d'autorisation au niveau des lignes introuvable."
+
+#. js-lingui-id: WmZbv+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to delete not found"
+msgstr "Règle d'autorisation au niveau des lignes à supprimer introuvable"
+
+#. js-lingui-id: B+cihG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to update not found"
+msgstr "Règle d'autorisation au niveau des lignes à mettre à jour introuvable"
+
+#. js-lingui-id: LRPzAu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule with this universal identifier already exists"
+msgstr "Une règle d'autorisation au niveau des lignes avec cet identifiant universel existe déjà"
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12088,7 +12173,6 @@ msgid "Running"
 msgstr "Exécution en cours"
 
 #. js-lingui-id: 6ZqFBn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Runs"
@@ -12257,9 +12341,7 @@ msgstr "Vecteur de recherche"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12517,6 +12599,11 @@ msgstr "L'usurpation d'identité au niveau du serveur n'est pas activée pour ce
 msgid "serverRouteTriggerSettings can only be set by an installed application"
 msgstr "serverRouteTriggerSettings ne peut être défini que par une application installée"
 
+#. js-lingui-id: aMFlAV
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
+msgid "Set up two-factor authentication before generating backup codes."
+msgstr "Configurez l'authentification à deux facteurs avant de générer des codes de secours."
+
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Set up two-factor authentication before impersonating users in another workspace."
@@ -12530,12 +12617,6 @@ msgstr "Configurez l'authentification à deux facteurs sur votre propre compte a
 #. js-lingui-id: vGWuPM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
-msgid "Settings"
-msgstr "Paramètres"
-
-#. js-lingui-id: S97dl8
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
 msgid "Settings"
 msgstr "Paramètres"
 
@@ -12791,7 +12872,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Certaines des permissions que vous avez sélectionnées ne sont pas valides. Veuillez réessayer avec des paramètres de permission valides."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Certaines adhésions à l'espace de travail n'ont pas pu être trouvées. Ils peuvent ne plus avoir accès à cet espace de travail."
 
@@ -13090,12 +13171,6 @@ msgctxt "fieldMetadata.label"
 msgid "Status"
 msgstr "Statut"
 
-#. js-lingui-id: 0j9QWW
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Statuses"
-msgstr "Statuts"
-
 #. js-lingui-id: 9vB6Yo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13243,7 +13318,6 @@ msgstr "Système"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
@@ -13298,6 +13372,11 @@ msgstr "Onglet introuvable pour la duplication du widget."
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
 msgstr "Personnalisez votre espace de travail"
+
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Parlez à notre équipe"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13652,6 +13731,16 @@ msgstr "Les dépendances de production de l'application sont trop volumineuses p
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Les autorisations demandées par l'application ont changé. Examinez-les à nouveau avant d'approuver."
 
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Le profil de l’assistant ne peut pas être mis à jour avant l’activation de l’espace de travail."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Les pièces jointes sont trop volumineuses pour être envoyées dans un seul e-mail."
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -13767,19 +13856,11 @@ msgstr "Le créateur du lien"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The creator of the record"
 msgstr "Le créateur de l'enregistrement"
-
-#. js-lingui-id: F8Sp1a
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The current statuses of the workflow versions"
-msgstr "Les statuts actuels des versions du workflow"
 
 #. js-lingui-id: Jx3FUl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14276,34 +14357,10 @@ msgstr "La requête du webhook n'a pas pu être traitée."
 msgid "The webhook subscription could not be managed for this account."
 msgstr "L'abonnement au webhook n'a pas pu être géré pour ce compte."
 
-#. js-lingui-id: Y7dW06
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow automated trigger settings"
-msgstr "Les paramètres de déclencheur automatisé du flux de travail"
-
-#. js-lingui-id: VIRlXt
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow automated trigger type"
-msgstr "Le type de déclencheur automatique du workflow"
-
 #. js-lingui-id: yf0hmT
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "Le champ de workflow n'appartient pas à l'objet référencé."
-
-#. js-lingui-id: ilJZDO
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow last published version id"
-msgstr "L'identifiant de la dernière version publiée du workflow"
-
-#. js-lingui-id: ffNEb6
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow name"
-msgstr "Le nom du workflow"
 
 #. js-lingui-id: UAyJ4f
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
@@ -14379,9 +14436,7 @@ msgstr "Les dépendances de l’application Workspace ont changé pendant la com
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14389,12 +14444,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Le membre de l’espace de travail qui a effectué la dernière mise à jour de l’enregistrement"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Son rôle ne peut pas accéder à ces enregistrements, et cet objet n'est partagé qu'avec des rôles qui le peuvent."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Son rôle ne peut pas voir cet enregistrement, et cet objet n'est partagé qu'avec des personnes qui le peuvent."
 
@@ -14814,6 +14869,11 @@ msgstr "Cet index n'existe pas ou a déjà été supprimé."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Cette instance n'a pas signalé d'identifiant de serveur. Définissez SERVER_ID sur cette instance, puis réessayez."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Cette tâche est trop volumineuse pour être mise en file d'attente."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -14863,6 +14923,11 @@ msgstr "Ce membre n'a pas configuré l'authentification à deux facteurs, il n'y
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "Ce canal de messages ne peut pas envoyer de messages."
+
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "Le style de conversation de ce fournisseur de messagerie n’est pas pris en charge."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
@@ -15071,18 +15136,14 @@ msgid "This role cannot be edited."
 msgstr "Ce rôle ne peut pas être modifié."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Ce rôle ne peut pas être modifié car il s'agit d'un rôle système. Seuls les rôles personnalisés peuvent être modifiés."
+
+#. js-lingui-id: ujHiJC
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This row level permission rule does not belong to this role and object."
+msgstr "Cette règle d'autorisation au niveau des lignes n'appartient pas à ce rôle ni à cet objet."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15251,6 +15312,11 @@ msgstr "Cet espace de travail a atteint sa limite d'enregistrements."
 msgid "This workspace has reached its storage limit."
 msgstr "Cet espace de travail a atteint sa limite de stockage."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "Cet espace de travail a utilisé tous ses sièges. Contactez l'administrateur de votre espace de travail pour en ajouter davantage."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15323,12 +15389,6 @@ msgstr "Fil de discussion auquel cet état appartient"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Jeudi"
-
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "Ranger"
 
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15415,12 +15475,6 @@ msgstr "Activités de la chronologie liées à la tâche."
 msgctxt "fieldMetadata.description"
 msgid "Timeline activities linked to the version"
 msgstr "Activités de la chronologie liées à la version"
-
-#. js-lingui-id: qNlIHQ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Timeline activities linked to the workflow"
-msgstr "Activités de la chronologie liées au workflow"
 
 #. js-lingui-id: ApXfXx
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -15558,13 +15612,23 @@ msgstr "Trop de candidats administrateurs trouvés."
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Trop de participants : {attendeeCount}. Le maximum autorisé est {MAX_EMAIL_RECIPIENTS}."
 
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Trop de fichiers sont ouverts. Veuillez réessayer dans une minute."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Trop de tâches sont en attente. Veuillez réessayer plus tard."
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
 msgstr "Trop de personnes sélectionnées. Affinez votre sélection et réessayez."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Trop de destinataires : {total}. Le maximum autorisé est {MAX_EMAIL_RECIPIENTS}."
 
@@ -15811,6 +15875,11 @@ msgstr "La configuration de l'authentification à deux facteurs est requise."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Two-factor authentication verification is required."
 msgstr "La vérification de l'authentification à deux facteurs est requise."
+
+#. js-lingui-id: CTG0vZ
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "Two-factor authentication was removed from your account"
+msgstr "L'authentification à deux facteurs a été supprimée de votre compte"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16121,9 +16190,7 @@ msgstr "Mis à jour le"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -16333,7 +16400,6 @@ msgstr "L'utilisateur ne fait pas partie de l'espace de travail."
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
 msgstr "Utilisateur introuvable."
@@ -16473,8 +16539,8 @@ msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand
 msgstr "La valeur \"{stringifiedValue}\" ne correspond à aucun enregistrement pour l’opérande \"{operand}\", l’enregistrement actuel n’est pas disponible pour un prédicat d’autorisation au niveau de la ligne"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "La valeur doit être en MAJUSCULES et suivre le format snake_case \"{sanitizedValue}\""
 
@@ -16506,12 +16572,6 @@ msgstr "Étapes de la version"
 msgctxt "fieldMetadata.label"
 msgid "Version trigger"
 msgstr "Déclencheur de version"
-
-#. js-lingui-id: TesjoU
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Versions"
-msgstr "Versions"
 
 #. js-lingui-id: tH32bu
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util.ts
@@ -16992,6 +17052,11 @@ msgstr "Nous n'avons pas pu nous connecter à votre compte de messagerie. Veuill
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "Nous avons rencontré un problème de connexion à votre compte de messagerie. Veuillez vérifier vos paramètres et réessayer."
 
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "Nous confirmerons l'heure par e-mail."
+
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
@@ -17231,17 +17296,8 @@ msgid "Work"
 msgstr "Professionnel"
 
 #. js-lingui-id: y8IlfM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Workflow"
-msgstr "Workflow"
-
-#. js-lingui-id: Ybs2Ml
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
 msgid "Workflow"
 msgstr "Workflow"
 
@@ -17255,24 +17311,6 @@ msgstr "Workflow"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow already exists"
 msgstr "Le workflow existe déjà"
-
-#. js-lingui-id: BwauV3
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Workflow Automated Trigger"
-msgstr "Déclencheur automatisé de flux de travail"
-
-#. js-lingui-id: aANbrX
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflow Automated Triggers"
-msgstr "Déclencheurs automatisés de flux de travail"
-
-#. js-lingui-id: np4/Yp
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow automated triggers linked to the workflow."
-msgstr "Déclencheurs automatisés du workflow liés au workflow."
 
 #. js-lingui-id: obUQdf
 #: src/engine/metadata-modules/skill/__tests__/skill.resolver.spec.ts
@@ -17318,12 +17356,6 @@ msgstr "Workflow introuvable"
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
 msgstr "Workflow introuvable."
-
-#. js-lingui-id: OpiqiN
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow record position"
-msgstr "Position de l'enregistrement du Workflow"
 
 #. js-lingui-id: ysb9m+
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
@@ -17411,12 +17443,6 @@ msgstr "Exécutions de Workflow"
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the version."
 msgstr "Exécutions de Workflow liées à la version."
-
-#. js-lingui-id: T71oyd
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow runs linked to the workflow."
-msgstr "Exécutions de Workflow liées au Workflow."
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -17529,24 +17555,6 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Workflow Versions"
 msgstr "Versions de Workflow"
 
-#. js-lingui-id: pa3yzc
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow versions linked to the workflow."
-msgstr "Versions de Workflow liées au Workflow."
-
-#. js-lingui-id: 1fxsyJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowAutomatedTrigger record position"
-msgstr "Position de l'enregistrement de WorkflowAutomatedTrigger"
-
-#. js-lingui-id: 4ffNty
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowAutomatedTrigger workflow"
-msgstr "DéclencheurAutomatiqueDuWorkflow workflow"
-
 #. js-lingui-id: oxqc8m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -17559,22 +17567,10 @@ msgctxt "navigationMenuItem.name"
 msgid "Workflows"
 msgstr "Flux de travail"
 
-#. js-lingui-id: O0tztx
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflows"
-msgstr "Flux de travail"
-
 #. js-lingui-id: W5Wgz6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "WorkflowVersion"
-msgstr "Version de Workflow"
-
-#. js-lingui-id: mhEqo/
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowVersion workflow"
 msgstr "Version de Workflow"
 
 #. js-lingui-id: m34s12
@@ -17972,7 +17968,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Vous ne pouvez pas générer de code de récupération pour vous-même. Réinitialisez plutôt l'authentification à deux facteurs depuis votre profil."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Vous ne pouvez pas changer votre propre rôle. Veuillez demander à un autre administrateur de mettre à jour votre rôle."
 
@@ -17993,7 +17989,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Vous ne pouvez pas supprimer l’accès aux paramètres de votre propre rôle. Demandez à un autre administrateur d’effectuer cette modification."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Vous ne pouvez pas retirer le rôle d'administrateur du dernier administrateur. Veuillez d'abord assigner un autre administrateur."
 
@@ -18114,6 +18110,11 @@ msgstr "Vous n'avez pas l'autorisation d'effectuer cette action."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Vous n'avez pas l'autorisation d'effectuer cette action de workflow."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Vous n'avez pas la permission de mettre à jour le profil de l'assistant. Veuillez contacter votre administrateur de l'espace de travail."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18241,7 @@ msgstr "Votre rôle ne peut pas supprimer certains de ces enregistrements, ils n
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Votre rôle dans cet espace de travail n'a pas pu être trouvé. Veuillez contacter votre administrateur de l'espace de travail."
 
@@ -18260,8 +18261,13 @@ msgstr "Votre formule Twenty sera bientôt renouvelée"
 msgid "Your Twenty trial is ending soon"
 msgstr "Votre période d’essai Twenty se termine bientôt"
 
+#. js-lingui-id: 9xG1k0
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
+msgid "Your two-factor authentication changed. Generate backup codes again."
+msgstr "Votre authentification à deux facteurs a changé. Générez de nouveau des codes de secours."
+
 #. js-lingui-id: pOQQ3U
-#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Your two-factor authentication was reset"
 msgstr "Votre authentification à deux facteurs a été réinitialisée"
 

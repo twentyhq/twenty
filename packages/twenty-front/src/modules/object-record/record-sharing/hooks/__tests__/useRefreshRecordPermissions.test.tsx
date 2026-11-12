@@ -120,14 +120,17 @@ describe('Viewer-scoped record permissions', () => {
       const pending = deferred();
       mockQuery.mockReturnValue(pending.promise);
       const request = result.current.refreshRecordPermissions([target]);
-      if (change === 'workspace')
+      if (change === 'workspace') {
         store.set(currentWorkspaceState.atom, { id: 'other' } as never);
-      if (change === 'member')
+      }
+      if (change === 'member') {
         store.set(currentWorkspaceMemberState.atom, { id: 'other' } as never);
-      if (change === 'role')
+      }
+      if (change === 'role') {
         store.set(currentUserWorkspaceState.atom, {
           objectRecordsPermissions: [],
         } as never);
+      }
       await act(async () => {
         pending.resolve(response());
         await request;

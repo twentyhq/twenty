@@ -52,6 +52,14 @@ export const GETTING_STARTED_STEP_CONTENT: Record<
     icon: 'IconUsers',
     iconColor: 'orange',
   },
+  [GettingStartedStepActionKey.BOOK_CALL]: {
+    title: msg`Talk to our team`,
+    doneTitle: msg`Call requested`,
+    description: msg`Book a 15-minute call and we'll help you get your workspace production-ready.`,
+    doneDescription: msg`We'll confirm the time by email.`,
+    icon: 'IconCalendarEvent',
+    iconColor: 'pink',
+  },
   [GettingStartedStepActionKey.HANDOVER_DEALS]: {
     title: msg`Hand over won deals`,
     doneTitle: msg`Handover ready`,

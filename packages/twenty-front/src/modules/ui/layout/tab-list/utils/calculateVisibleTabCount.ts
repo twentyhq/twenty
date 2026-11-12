@@ -5,12 +5,13 @@ import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { isDefined } from 'twenty-shared/utils';
 
 type CalculateVisibleTabCountParams = {
-  visibleTabs: SingleTabProps[];
+  visibleTabs: Pick<SingleTabProps, 'id'>[];
   tabWidthsById: TabWidthsById;
   containerWidth: number;
   moreButtonWidth: number;
   addButtonWidth?: number;
   rightPadding?: number;
+  horizontalPadding?: number;
 };
 
 export const calculateVisibleTabCount = ({
@@ -20,6 +21,7 @@ export const calculateVisibleTabCount = ({
   moreButtonWidth,
   addButtonWidth = 0,
   rightPadding = 0,
+  horizontalPadding = TAB_LIST_HORIZONTAL_PADDING,
 }: CalculateVisibleTabCountParams): number => {
   const measuredTabWidths = visibleTabs
     .map((tab) => tabWidthsById[tab.id])
@@ -35,7 +37,7 @@ export const calculateVisibleTabCount = ({
 
   const availableWidth =
     containerWidth -
-    TAB_LIST_HORIZONTAL_PADDING -
+    horizontalPadding -
     rightPadding -
     (addButtonWidth > 0 ? addButtonWidth + TAB_LIST_GAP : 0);
 

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
-import { parseJson } from 'twenty-shared/utils';
+import { parseJson, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constant';
@@ -89,7 +89,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
 
     if (state) {
       for (const [key, value] of Object.entries(state)) {
-        if (key !== 'oauthRetryCount' && value != null) {
+        if (key !== 'oauthRetryCount' && isDefined(value)) {
           url.searchParams.set(key, String(value));
         }
       }

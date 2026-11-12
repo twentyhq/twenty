@@ -26,11 +26,18 @@ export type EnqueueJobsInput = EnqueueJobOptions & {
   jobs?: EnqueueJobItem[];
 };
 
+export type EnqueuedJob = {
+  jobId: string;
+  sizeBytes: number;
+};
+
 export type EnqueueJobsResult = {
   enqueued: boolean;
   logicFunctionUniversalIdentifier: string;
   enqueuedJobsCount: number;
   jobIds: string[];
+  jobs: EnqueuedJob[];
+  availableBytes?: number | null;
 };
 
 export type JobStatusState =

@@ -1,9 +1,7 @@
+import { API_KEY_STDIN_HINT } from '@/commands/auth/login/constants/api-key-stdin-hint.constant';
 import { readInputValue } from '@/input/read-input-value';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
-
-const PIPE_HINT =
-  'Pipe it in, for example: printf \'%s\' "$TWENTY_API_KEY" | twenty auth login --with-token --url <url>';
 
 export const readApiKeyFromStandardInput = async (signal: AbortSignal) => {
   if (process.stdin.isTTY === true) {
@@ -11,7 +9,7 @@ export const readApiKeyFromStandardInput = async (signal: AbortSignal) => {
       code: 'USAGE',
       exitCode: EXIT_CODE.USAGE,
       message: 'The API key must come from standard input.',
-      hint: PIPE_HINT,
+      hint: API_KEY_STDIN_HINT,
     });
   }
 
@@ -27,7 +25,7 @@ export const readApiKeyFromStandardInput = async (signal: AbortSignal) => {
         apiKey === ''
           ? 'Standard input is empty.'
           : 'Standard input must contain only the API key.',
-      hint: PIPE_HINT,
+      hint: API_KEY_STDIN_HINT,
     });
   }
 

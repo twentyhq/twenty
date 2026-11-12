@@ -16,7 +16,8 @@ import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -26,7 +27,8 @@ type DirectMessagePair = readonly [string, string];
 export class AgentChatDirectMessageConversationPrivacyService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
   ) {}
 
   async isDirectMessageIdentityEnabled(workspaceId: string): Promise<boolean> {
@@ -69,14 +71,14 @@ export class AgentChatDirectMessageConversationPrivacyService {
       return isDefined(member) && !isDefined(member.deletedAt);
     });
 
-    await this.recordSharingWriteService.setRecordsPrivate({
+    await this.privateRecordSystemWriteService.setRecordsPrivacy({
       workspaceId,
-      flatObjectMetadata: conversationObjectMetadata,
+      objectMetadataId: conversationObjectMetadata.id,
       recordIds: conversationRecordIds,
       isPrivate: true,
       transactionScope,
     });
-    await this.recordSharingWriteService.insertRecordShares({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       transactionScope,
       recordShares: conversationRecordIds.flatMap((conversationRecordId) =>
@@ -114,7 +116,7 @@ export class AgentChatDirectMessageConversationPrivacyService {
         conversationObjectName,
       });
 
-    await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
+    await this.recordShareSystemWriteService.deleteRecordSharesByRecordIds({
       workspaceId,
       objectMetadataId: conversationObjectMetadata.id,
       recordIds: conversationRecordIds,

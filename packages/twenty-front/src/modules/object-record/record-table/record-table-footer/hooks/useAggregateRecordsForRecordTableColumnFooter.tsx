@@ -24,6 +24,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import {
+  combineFilters,
   computeRecordGqlOperationFilter,
   findById,
   isDefined,
@@ -118,11 +119,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: {
-      ...requestFilters,
-      ...recordGroupFilter,
-      ...anyFieldFilter,
-    },
+    filter: combineFilters([requestFilters, recordGroupFilter, anyFieldFilter]),
     skip: !isDefined(aggregateOperationForViewField),
   });
 

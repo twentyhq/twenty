@@ -1,3 +1,4 @@
+import { useSettingsAiAssistantProfile } from '@/settings/ai/hooks/useSettingsAiAssistantProfile';
 import { useSettingsAiBehavior } from '@/settings/ai/hooks/useSettingsAiBehavior';
 import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
 
@@ -12,6 +13,7 @@ export const SettingsAiWorkspaceBehaviorSection = () => {
     saveDirectMessageMode,
     saveInboxMode,
   } = useSettingsAiBehavior();
+  const { profile } = useSettingsAiAssistantProfile();
 
   if (!isBehaviorVisible) {
     return null;
@@ -26,6 +28,7 @@ export const SettingsAiWorkspaceBehaviorSection = () => {
       isLoading={isLoading}
       disabled={isSaving}
       errorMessage={errorMessage}
+      assistantName={profile?.displayName}
     />
   );
 };

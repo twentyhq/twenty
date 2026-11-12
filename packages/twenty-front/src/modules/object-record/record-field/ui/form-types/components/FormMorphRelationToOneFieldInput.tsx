@@ -77,7 +77,7 @@ export const FormMorphRelationToOneFieldInput = ({
               objectPermissionsByObjectMetadataId[
                 morphRelation.targetObjectMetadata.id
               ],
-            operationType: 'select',
+            operationType: 'read',
           }),
         )
         .map(
@@ -104,7 +104,7 @@ export const FormMorphRelationToOneFieldInput = ({
         objectPermissionsByObjectMetadataId[
           selectedMorphValue.targetObjectMetadataId
         ],
-      operationType: 'select',
+      operationType: 'read',
     });
 
   const hasForbiddenSelectedRecord =

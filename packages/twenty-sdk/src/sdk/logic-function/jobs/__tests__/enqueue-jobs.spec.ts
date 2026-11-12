@@ -33,6 +33,11 @@ const successResponse = (enqueuedJobsCount: number) =>
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       enqueuedJobsCount,
       jobIds: JOB_IDS.slice(0, enqueuedJobsCount),
+      jobs: JOB_IDS.slice(0, enqueuedJobsCount).map((jobId) => ({
+        jobId,
+        sizeBytes: 1_200,
+      })),
+      availableBytes: 50_000,
     },
   });
 
@@ -69,6 +74,8 @@ describe('enqueueJobs', () => {
       logicFunctionUniversalIdentifier: TARGET_UNIVERSAL_IDENTIFIER,
       enqueuedJobsCount: 2,
       jobIds: JOB_IDS,
+      jobs: JOB_IDS.map((jobId) => ({ jobId, sizeBytes: 1_200 })),
+      availableBytes: 50_000,
     });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
@@ -78,7 +85,7 @@ describe('enqueueJobs', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain(
-      'enqueueJobs(input:$v1){enqueued,logicFunctionUniversalIdentifier,enqueuedJobsCount,jobIds}',
+      'enqueueJobs(input:$v1){enqueued,logicFunctionUniversalIdentifier,enqueuedJobsCount,jobIds,jobs{jobId,sizeBytes},availableBytes}',
     );
     expect(Object.values(sentBody.variables)).toEqual([
       {

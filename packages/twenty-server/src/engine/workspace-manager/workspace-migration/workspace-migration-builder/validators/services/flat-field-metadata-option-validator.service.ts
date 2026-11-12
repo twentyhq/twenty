@@ -8,10 +8,8 @@ import { FieldMetadataOptionExceptionCode } from 'src/engine/metadata-modules/fi
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
-import {
-  validateMetadataOptionLabel,
-  validateMetadataOptionValue,
-} from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
+import { validateMetadataOptionLabel } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util';
+import { validateMetadataOptionValue } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util';
 import { validateMetadataOptionColor } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';

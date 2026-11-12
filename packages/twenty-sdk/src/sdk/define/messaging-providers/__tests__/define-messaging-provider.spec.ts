@@ -61,4 +61,21 @@ describe('defineMessagingProvider', () => {
 
     expect(result.errors).toHaveLength(4);
   });
+
+  it('accepts a chat conversation style', () => {
+    expect(
+      defineMessagingProvider({ ...baseValidConfig, conversationStyle: 'chat' })
+        .success,
+    ).toBe(true);
+  });
+
+  it('rejects an unknown conversation style', () => {
+    const result = defineMessagingProvider({
+      ...baseValidConfig,
+      // @ts-expect-error apps written in JavaScript can pass any value
+      conversationStyle: 'thread',
+    });
+
+    expect(result.success).toBe(false);
+  });
 });

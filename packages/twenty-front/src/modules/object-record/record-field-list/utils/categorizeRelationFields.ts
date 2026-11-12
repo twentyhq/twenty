@@ -34,7 +34,7 @@ const canReadRelationTarget = (
         objectPermissionsByObjectMetadataId,
         fieldMetadataItem.relation?.targetObjectMetadata.id,
       ),
-      operationType: 'select',
+      operationType: 'read',
     });
 
   const canReadMorphRelation = fieldMetadataItem?.morphRelations?.every(
@@ -45,7 +45,7 @@ const canReadRelationTarget = (
           objectPermissionsByObjectMetadataId,
           morphRelation.targetObjectMetadata.id,
         ),
-        operationType: 'select',
+        operationType: 'read',
       }),
   );
 

@@ -86,12 +86,12 @@ export class MessagingProviderMessageSenderService {
   }: {
     sender: MessagingProviderSender;
     workspaceId: string;
-    payload: Omit<SendAppMessagePayload, 'messagingProviderName'>;
+    payload: SendAppMessagePayload;
   }): Promise<SendAppMessageResult> {
     const data = await this.logicFunctionExecutorService.executeOrThrow({
       logicFunctionId: sendMessageLogicFunctionId,
       workspaceId,
-      payload: { messagingProviderName: messagingProvider.name, ...payload },
+      payload,
       shouldEnforceUsageLimits: true,
       toException: (reason) =>
         new MessagingProviderException(

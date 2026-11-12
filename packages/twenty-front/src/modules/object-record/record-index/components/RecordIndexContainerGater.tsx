@@ -57,7 +57,7 @@ export const RecordIndexContainerGater = memo(() => {
 
   const hasObjectReadPermissions = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const {

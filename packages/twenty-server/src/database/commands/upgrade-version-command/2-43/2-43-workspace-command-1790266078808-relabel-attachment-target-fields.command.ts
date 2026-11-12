@@ -15,6 +15,7 @@ import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { LEGACY_ATTACHMENT_TARGET_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-43/constants/legacy-attachment-target-workflow-field-universal-identifier.constant';
 
 const ATTACHMENT = STANDARD_OBJECTS.attachment;
 const ATTACHMENT_FIELDS = ATTACHMENT.fields;
@@ -33,7 +34,7 @@ const PREVIOUS_STANDARD_LABEL_BY_FIELD_UNIVERSAL_IDENTIFIER: Record<
   [ATTACHMENT_FIELDS.targetCompany.universalIdentifier]: 'Company',
   [ATTACHMENT_FIELDS.targetOpportunity.universalIdentifier]: 'Opportunity',
   [ATTACHMENT_FIELDS.targetDashboard.universalIdentifier]: 'Dashboard',
-  [ATTACHMENT_FIELDS.targetWorkflow.universalIdentifier]: 'Workflow',
+  [LEGACY_ATTACHMENT_TARGET_WORKFLOW_FIELD_UNIVERSAL_IDENTIFIER]: 'Workflow',
 };
 
 const ATTACHED_TO_LABEL = 'Attached to';

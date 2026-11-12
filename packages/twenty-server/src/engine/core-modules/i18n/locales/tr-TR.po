@@ -128,6 +128,11 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "24 SAAT"
 
+#. js-lingui-id: OUcoW0
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "A backup code was used to sign in to your account"
+msgstr "Hesabınızda oturum açmak için bir yedek kod kullanıldı"
+
 #. js-lingui-id: jqjN6z
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
@@ -473,7 +478,7 @@ msgid "A title is required to create a calendar event"
 msgstr "Takvim etkinliği oluşturmak için bir başlık gereklidir"
 
 #. js-lingui-id: jFM4QN
-#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A two-factor authentication recovery code was generated for you"
 msgstr "Sizin için iki faktörlü kimlik doğrulama kurtarma kodu oluşturuldu"
 
@@ -487,6 +492,12 @@ msgstr "Bu e-posta ile bir kullanıcı zaten mevcut."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentChatChannelUniversalIdentifier is required for AGENT_CHAT_CHANNEL type"
 msgstr "AGENT_CHAT_CHANNEL türü için geçerli bir agentChatChannelUniversalIdentifier gereklidir"
+
+#. js-lingui-id: rIulqG
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid agentUniversalIdentifier is required for AGENT type"
+msgstr "AGENT türü için geçerli bir agentUniversalIdentifier gereklidir"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -529,6 +540,12 @@ msgstr "RECORD türü için geçerli bir targetRecordId gereklidir"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
 msgstr "VIEW türü için geçerli bir viewUniversalIdentifier gereklidir"
+
+#. js-lingui-id: dUn4Ws
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid workflowUniversalIdentifier is required for WORKFLOW type"
+msgstr "WORKFLOW türü için geçerli bir workflowUniversalIdentifier gereklidir"
 
 #. js-lingui-id: 4/naVr
 #: src/engine/metadata-modules/validation-rule/exceptions/record-validation-rule.exception.ts
@@ -579,18 +596,6 @@ msgstr "Bu yapılandırmaya sahip bir webhook zaten mevcut."
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-front-component-header-command-menu-items.util.ts
 msgid "A widget header action was not found"
 msgstr "Bir widget üst bilgisi eylemi bulunamadı"
-
-#. js-lingui-id: 3VQj1J
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow"
-msgstr "Bir iş akışı"
-
-#. js-lingui-id: ePMKG3
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow automated trigger"
-msgstr "İş Akışı Otomatik Tetikleyicisi"
 
 #. js-lingui-id: bQaMUu
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -707,7 +712,6 @@ msgid "Activate Workflow"
 msgstr "İş Akışını Aktif Et"
 
 #. js-lingui-id: AnKsxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Active"
@@ -1271,6 +1275,7 @@ msgstr "Sunucu rotası işlenirken beklenmeyen bir hata oluştu."
 #: src/engine/core-modules/emailing-domain/exceptions/email-group-access.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter.ts
 #: src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter.ts
@@ -1663,7 +1668,6 @@ msgstr "bir dosya ekledi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attached to"
 msgstr "Eklendiği"
@@ -1719,14 +1723,12 @@ msgstr "Ek kaydının konumu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachment target"
 msgstr "Ek hedefi"
 
 #. js-lingui-id: j81CIH
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Attachments"
 msgstr "Ekler"
@@ -1766,12 +1768,6 @@ msgstr "Gösterge paneline bağlı ekler"
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the opportunity"
 msgstr "Fırsata bağlı ekler"
-
-#. js-lingui-id: GAfs9e
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Attachments linked to the workflow"
-msgstr "İş akışına bağlı ekler"
 
 #. js-lingui-id: mGHuob
 #: src/engine/metadata-modules/timeline-activity-type/constants/standard-timeline-activity-type-definitions.constant.ts
@@ -1839,18 +1835,6 @@ msgctxt "fieldMetadata.label"
 msgid "Authored template URL"
 msgstr "Oluşturulan şablon URL'si"
 
-#. js-lingui-id: hq1K5d
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Automated Trigger Type"
-msgstr "Otomatik Tetikleyici Türü"
-
-#. js-lingui-id: g5/Q0d
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Automated Triggers"
-msgstr "Otomatik Tetikleyiciler"
-
 #. js-lingui-id: wDnUny
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
@@ -1863,11 +1847,21 @@ msgctxt "fieldMetadata.label"
 msgid "Avatar"
 msgstr "Avatar"
 
+#. js-lingui-id: HgqIng
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Avatar color must be one of: {allowedColors}"
+msgstr "Avatar rengi şu değerlerden biri olmalıdır: {allowedColors}"
+
 #. js-lingui-id: KEsv0p
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Avatar File"
 msgstr "Avatar Dosyası"
+
+#. js-lingui-id: 3eVrE5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Avatar shape must be one of: {allowedShapes}"
+msgstr "Avatar şekli şu değerlerden biri olmalıdır: {allowedShapes}"
 
 #. js-lingui-id: HYoTlQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -2001,6 +1995,11 @@ msgstr "Gövde bir nesne olmalıdır"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-standalone-rich-text-body.util.ts
 msgid "Body must be an object for widget \"{widgetTitle}\""
 msgstr "Widget \"{widgetTitle}\" için gövde bir nesne olmalıdır"
+
+#. js-lingui-id: MgiiPI
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Book a 15-minute call and we'll help you get your workspace production-ready."
+msgstr "15 dakikalık bir görüşme ayırtın, çalışma alanınızı üretime hazır hale getirmenize yardımcı olalım."
 
 #. js-lingui-id: rEDXNA
 #: src/utils/__test__/custom-exception.spec.ts
@@ -2447,6 +2446,11 @@ msgstr "Çağrı Kayıtları"
 msgctxt "pageLayoutWidget.title"
 msgid "Call Recordings"
 msgstr "Çağrı Kayıtları"
+
+#. js-lingui-id: eaM0Ir
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Call requested"
+msgstr "Arama talep edildi"
 
 #. js-lingui-id: swt/ln
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3568,8 +3572,7 @@ msgid "Conversations"
 msgstr "Sohbetler"
 
 #. js-lingui-id: X/ryFh
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
 msgstr "Çekirdek iş akışı kimliği"
@@ -3704,6 +3707,7 @@ msgstr "Oluştur"
 #. js-lingui-id: emlHP+
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create"
 msgstr "Oluştur"
@@ -3746,6 +3750,12 @@ msgstr "Görünüm oluştur"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create View"
 msgstr "Görünüm oluştur"
+
+#. js-lingui-id: f+tB/R
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Create Workflow"
+msgstr "İş Akışı Oluştur"
 
 #. js-lingui-id: 4lG6GV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -3810,8 +3820,6 @@ msgstr "Oluşturan"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3857,9 +3865,7 @@ msgstr "Özel bir nesnenin kaydını oluşturmak için shareWith bağımsız de�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -3895,9 +3901,7 @@ msgstr "Oluşturulma tarihi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -3947,12 +3951,6 @@ msgstr "Kullanılan krediler için geçerli bir başlangıç ve bitiş tarihi ge
 msgctxt "skill.label"
 msgid "CRM Hygiene"
 msgstr "CRM temizliği"
-
-#. js-lingui-id: OZIOad
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Cron"
-msgstr "Cron"
 
 #. js-lingui-id: bK9ya1
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
@@ -4087,12 +4085,6 @@ msgstr "Veri yapısı geçersiz."
 msgid "Database configuration is disabled."
 msgstr "Veritabanı yapılandırması devre dışı."
 
-#. js-lingui-id: U+zQxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Database Event"
-msgstr "Veritabanı Olayı"
-
 #. js-lingui-id: EMLSIx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Database event triggers need an event name such as \"company.created\""
@@ -4131,9 +4123,7 @@ msgstr "Tarih formatı"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -4159,7 +4149,6 @@ msgid "Deactivate Workflow"
 msgstr "İş Akışını Devre Dışı Bırak"
 
 #. js-lingui-id: GuGzWG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deactivated"
@@ -4456,9 +4445,7 @@ msgstr "Silindiği tarih"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -4663,7 +4650,6 @@ msgstr "Nokta ve virgül"
 
 #. js-lingui-id: Hw0zHo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Draft"
@@ -4725,8 +4711,8 @@ msgid "Duplicate Workflow"
 msgstr "İş Akışını Yinelenen"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Duplicated option {field}"
 msgstr "Çift seçenek {field}"
 
@@ -5078,6 +5064,11 @@ msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Zenginleştir"
 
+#. js-lingui-id: XAfsPq
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
+msgstr "1 ile {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter arasında bir ad ve desteklenen asistan görünüm seçenekleri girin."
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5092,6 +5083,11 @@ msgstr "Devam etmek için iki faktörlü kimlik doğrulama kodunuzu girin."
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "Enter your two-factor authentication code to generate a recovery code."
 msgstr "Kurtarma kodu oluşturmak için iki faktörlü kimlik doğrulama kodunuzu girin."
+
+#. js-lingui-id: gb/uW+
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
+msgid "Enter your two-factor authentication code to generate new backup codes."
+msgstr "Yeni yedek kodlar oluşturmak için iki faktörlü kimlik doğrulama kodunuzu girin."
 
 #. js-lingui-id: vNNSFX
 #: src/engine/core-modules/admin-panel/services/admin-panel-server-admin.service.ts
@@ -5206,7 +5202,6 @@ msgid "Event Participants"
 msgstr "Etkinlik Katılımcıları"
 
 #. js-lingui-id: lr7Nsq
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -5508,6 +5503,11 @@ msgstr "\"{workspaceMemberFieldName}\" alanı workspaceMember nesnesinin bir ala
 msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
 msgstr "{0}.{fieldName} alanı kullanılamıyor. Erişilebilir üst düzey alanları seçin."
 
+#. js-lingui-id: T0uER/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Field {fieldName} is used by {survivingPredicateCount} row-level permission predicate(s)"
+msgstr "{fieldName} alanı, {survivingPredicateCount} satır düzeyi izin yüklem(ler)i tarafından kullanılıyor"
+
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
@@ -5752,9 +5752,7 @@ msgstr "Tam Metin Araması için Kullanılan Alan"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -5997,7 +5995,6 @@ msgstr "Akış"
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
 msgstr "Akış"
@@ -6155,6 +6152,11 @@ msgstr "frontComponentId motor bileşeni anahtarı {engineComponentKey} için ay
 msgid "frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION"
 msgstr "engineComponentKey TRIGGER_WORKFLOW_VERSION olduğunda frontComponentId ayarlanmamalıdır"
 
+#. js-lingui-id: 7Z3KH2
+#: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
+msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+msgstr "Ön uç bileşen oluşturucu isteği 6 MiB sınırını aşıyor. Uygulama bağımlılıklarını veya oluşturulan SDK boyutunu azaltın."
+
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6242,7 +6244,6 @@ msgstr "Genel"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-note-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
@@ -6535,9 +6536,7 @@ msgstr "iCal Kimlik"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -6581,9 +6580,7 @@ msgstr "Kimlik"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -6646,6 +6643,7 @@ msgid "In progress"
 msgstr "Devam Ediyor"
 
 #. js-lingui-id: V5c2LO
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
 msgstr "Bu çalışma alanında Gelen Kutusu etkin değil."
@@ -6697,6 +6695,18 @@ msgstr "Aynı ada sahip dizin zaten mevcut"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "Index with same universal identifier already exists"
 msgstr "Aynı evrensel tanımlayıcıya sahip indeks zaten mevcut"
+
+#. js-lingui-id: 5K0P9Y
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot form a cycle"
+msgstr "Yerleşik ilişkili kayıt yolları döngü oluşturamaz"
+
+#. js-lingui-id: GdaBpX
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "Inherent related record paths cannot have more than two relations"
+msgstr "Yerleşik ilişkili kayıt yolları ikiden fazla ilişkiye sahip olamaz"
 
 #. js-lingui-id: ghVcC2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -6816,6 +6826,16 @@ msgstr "Geçersiz argüman sağlandı."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Invalid attendee email addresses: {invalidAttendeeList}"
 msgstr "Geçersiz katılımcı e-posta adresleri: {invalidAttendeeList}"
+
+#. js-lingui-id: EZUA9N
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Invalid avatar color"
+msgstr "Geçersiz avatar rengi"
+
+#. js-lingui-id: yXFZvO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-avatar.util.ts
+msgid "Invalid avatar shape"
+msgstr "Geçersiz avatar şekli"
 
 #. js-lingui-id: mIrUSZ
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -6961,7 +6981,7 @@ msgid "Invalid email address."
 msgstr "Geçersiz e-posta adresi."
 
 #. js-lingui-id: e2K52e
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Invalid email addresses: {invalidEmailList}"
 msgstr "Geçersiz e-posta adresleri: {invalidEmailList}"
 
@@ -7411,6 +7431,11 @@ msgstr "Geçersiz satır düzeyi izin koşulu verileri."
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 msgid "Invalid row level permission predicate group data."
 msgstr "Geçersiz satır düzeyi izin koşulu grubu verileri."
+
+#. js-lingui-id: SSt1rf
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Invalid row level permission rule data."
+msgstr "Geçersiz satır düzeyi izin kuralı verileri."
 
 #. js-lingui-id: xzNMzS
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
@@ -7995,14 +8020,14 @@ msgid "Label is required."
 msgstr "Etiket gerekli."
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not be empty"
 msgstr "Etiket boş olamaz"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Label must not contain a comma"
 msgstr "Etiket virgül içeremez"
 
@@ -8035,12 +8060,6 @@ msgstr "Son mesaj"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Son mesajın göndereni"
-
-#. js-lingui-id: qqD3aX
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Last published Version ID"
-msgstr "Son yayınlanan Sürüm Kimliği"
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8081,9 +8100,7 @@ msgstr "Bağlantının son değiştirildiği zaman"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -8118,9 +8135,7 @@ msgstr "Kaydın son değiştirildiği zaman"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9007,6 +9022,11 @@ msgstr "Mesajlaşma sağlayıcısının bağlantı sağlayıcısı değiştirile
 msgid "Messaging provider connection provider cannot be changed after creation: declare a new messaging provider with a new universalIdentifier"
 msgstr "Mesajlaşma sağlayıcısının bağlantı sağlayıcısı oluşturulduktan sonra değiştirilemez: yeni bir universalIdentifier ile yeni bir mesajlaşma sağlayıcısı tanımlayın"
 
+#. js-lingui-id: HRnauu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Messaging provider conversationStyle \"{conversationStyle}\" is not supported"
+msgstr "Mesajlaşma sağlayıcısının conversationStyle \"{conversationStyle}\" özelliği desteklenmiyor"
+
 #. js-lingui-id: A2qm/C
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Messaging provider display name is required"
@@ -9167,7 +9187,6 @@ msgstr "İlk Gösterge Panelim"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9307,6 +9326,11 @@ msgctxt "fieldMetadata.label"
 msgid "New"
 msgstr "Yeni"
 
+#. js-lingui-id: 2k6acO
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "New backup codes were generated for your account"
+msgstr "Hesabınız için yeni yedek kodlar oluşturuldu"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9374,6 +9398,12 @@ msgstr "Form adımında giriş sağlanmadı."
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Bu eylem için bağlı posta kutusu yok. Ayarlar'dan bir tane bağlayın."
+
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "En fazla {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} yerleşik ilgili kayıt yolu birbirini takip edebilir."
 
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
@@ -9739,6 +9769,7 @@ msgid "Object label is too short"
 msgstr "Nesne etiketi çok kısa"
 
 #. js-lingui-id: gB0eae
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Object metadata ID"
@@ -9763,6 +9794,8 @@ msgstr "Nesne metaveri kimliği"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -9773,6 +9806,7 @@ msgstr "Nesne meta verisi bulunamadı"
 #. js-lingui-id: rHce90
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
@@ -9864,6 +9898,12 @@ msgstr "Silinecek nesne bulunamadı"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
 msgstr "Güncellenecek nesne bulunamadı"
+
+#. js-lingui-id: hTpmKy
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Object whose records can belong to the group"
+msgstr "Kayıtları gruba ait olabilen nesne"
 
 #. js-lingui-id: KFbNbH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -10157,48 +10197,54 @@ msgid "Option \"{optionLabel}\" has an unsupported color"
 msgstr "\"{optionLabel}\" seçeneği desteklenmeyen bir renge sahip"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is invalid"
 msgstr "Seçenek kimliği geçersiz"
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "Seçenek kimliği gerekli"
 
+#. js-lingui-id: ove8Z3
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
+msgid "Option id must be a lowercase UUID of version 4 or later"
+msgstr "Seçenek kimliği, sürüm 4 veya sonrası küçük harfli bir UUID olmalıdır"
+
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Seçenek etiketi \"{sanitizedLabel}\" 1 karakter altındadır"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Seçenek etiketi 63 karakteri aşıyor"
 
 #. js-lingui-id: h8lHqX
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label format not supported"
 msgstr "Seçenek etiket formatı desteklenmiyor"
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label is required"
 msgstr "Seçenek etiketi gerekli"
 
 #. js-lingui-id: dFudyC
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
 msgid "Option label must be a string of at least one character"
 msgstr "Seçenek etiketi en az bir karakter uzunluğunda bir dize olmalıdır"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Seçenek değeri \"{sanitizedValue}\" 1 karakter altındadır"
 
@@ -10209,29 +10255,29 @@ msgid "Option value \"{value}\" already exists on this field"
 msgstr "Seçenek değeri \"{value}\" bu alanda zaten mevcut"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Seçenek değeri 63 karakteri aşıyor"
 
 #. js-lingui-id: zEGChV
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
 msgstr "Seçenek değeri formatı desteklenmiyor"
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value is required"
 msgstr "Seçenek değeri gerekli"
 
 #. js-lingui-id: Kub9t0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
 msgstr "Seçenek değeri en az bir karakter uzunluğunda bir dize olmalıdır"
 
 #. js-lingui-id: EabrTR
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Options are required for enum fields"
 msgstr "Enum alanlar için seçenekler gereklidir"
 
@@ -10874,9 +10920,7 @@ msgstr "İletişim Noktası"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11273,6 +11317,11 @@ msgctxt "fieldMetadata.label"
 msgid "Record ID"
 msgstr "Kayıt Kimliği"
 
+#. js-lingui-id: kC4rhG
+#: src/engine/permissions/record-share/services/record-sharing-write.service.ts
+msgid "Record not found"
+msgstr "Kayıt bulunamadı"
+
 #. js-lingui-id: 4R+xJM
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -11365,8 +11414,7 @@ msgid "Recurring Event ID"
 msgstr "Tekrarlayan Etkinlik Kimliği"
 
 #. js-lingui-id: zEHtXk
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
+#: src/database/commands/upgrade-version-command/2-23/utils/build-legacy-workflow-core-workflow-id-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
 msgstr "Çekirdek iş akışı satırına referans"
@@ -11581,6 +11629,11 @@ msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
 msgstr "Favorilerden çıkar"
 
+#. js-lingui-id: 60CVOK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util.ts
+msgid "Remove the row-level permission rules that use this field before deleting it"
+msgstr "Bu alanı silmeden önce bu alanı kullanan satır düzeyindeki izin kurallarını kaldırın"
+
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
 msgid "Remove this permission from all roles before deleting it"
@@ -11655,6 +11708,11 @@ msgstr "Talep edildi"
 #: src/engine/core-modules/file/file.exception.ts
 msgid "Requested file range cannot be served."
 msgstr "İstenen dosya aralığı sunulamaz."
+
+#. js-lingui-id: WIwnbY
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "Required fields and relations cannot be restricted on a row level permission rule."
+msgstr "Zorunlu alanlar ve ilişkiler satır düzeyi izin kuralında kısıtlanamaz."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11804,6 +11862,11 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
 msgstr "\"{roleLabel}\" rolü uygulamalara atanamaz"
 
+#. js-lingui-id: xIGy+v
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to this agent"
+msgstr "\"{roleLabel}\" rolü bu ajana atanamaz"
+
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11821,6 +11884,11 @@ msgstr "\"{roleLabel}\" rolü web kancalarına atanamaz"
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "\"{roleLabel}\" rolü atanamaz: özel roller için Organization planı gerekir"
 
+#. js-lingui-id: 3heof5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
+msgid "Role \"{roleLabel}\" must be owned by the application to be assigned to its agents"
+msgstr "\"{roleLabel}\" rolünün ajanlarına atanabilmesi için uygulamaya ait olması gerekir"
+
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
@@ -11836,19 +11904,6 @@ msgstr "Rol bu varlığa atanamaz."
 msgctxt "fieldMetadata.label"
 msgid "Role ID"
 msgstr "Rol Kimliği"
-
-#. js-lingui-id: k2/sGI
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-msgid "Role is not editable"
-msgstr "Rol düzenlenemez"
 
 #. js-lingui-id: zeffu9
 #: src/engine/permissions/permissions.exception.ts
@@ -11890,6 +11945,8 @@ msgstr "Rol adı geçersiz"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
 msgid "Role not found"
 msgstr ""
 
@@ -11898,6 +11955,7 @@ msgstr ""
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
 #: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rol bulunamadı."
@@ -12070,6 +12128,33 @@ msgstr "Güncellenecek satır düzeyi izin koşulu bulunamadı"
 msgid "Row level permission predicate with this universal identifier already exists"
 msgstr "Bu evrensel tanımlayıcıya sahip satır düzeyi izin koşulu zaten mevcut"
 
+#. js-lingui-id: 1ypLxw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule already exists"
+msgstr "Satır düzeyi izin kuralı zaten mevcut"
+
+#. js-lingui-id: PrMheT
+#: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-rule.exception.ts
+msgid "Row level permission rule not found."
+msgstr "Satır düzeyi izin kuralı bulunamadı."
+
+#. js-lingui-id: WmZbv+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to delete not found"
+msgstr "Silinecek satır düzeyi izin kuralı bulunamadı"
+
+#. js-lingui-id: B+cihG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule to update not found"
+msgstr "Güncellenecek satır düzeyi izin kuralı bulunamadı"
+
+#. js-lingui-id: LRPzAu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-rule-validator.service.ts
+msgid "Row level permission rule with this universal identifier already exists"
+msgstr "Bu evrensel tanımlayıcıya sahip satır düzeyi izin kuralı zaten mevcut"
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12088,7 +12173,6 @@ msgid "Running"
 msgstr "Çalıştırılıyor"
 
 #. js-lingui-id: 6ZqFBn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Runs"
@@ -12257,9 +12341,7 @@ msgstr "Arama vektörü"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12517,6 +12599,11 @@ msgstr "Sunucu düzeyinde başka biri gibi davranma, bu kullanıcı veya çalı�
 msgid "serverRouteTriggerSettings can only be set by an installed application"
 msgstr "serverRouteTriggerSettings yalnızca yüklü bir uygulama tarafından ayarlanabilir"
 
+#. js-lingui-id: aMFlAV
+#: src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts
+msgid "Set up two-factor authentication before generating backup codes."
+msgstr "Yedek kodlar oluşturmadan önce iki faktörlü kimlik doğrulamayı ayarlayın."
+
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Set up two-factor authentication before impersonating users in another workspace."
@@ -12530,12 +12617,6 @@ msgstr "Kurtarma kodu oluşturmadan önce kendi hesabınızda iki faktörlü kim
 #. js-lingui-id: vGWuPM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
-msgid "Settings"
-msgstr "Ayarlar"
-
-#. js-lingui-id: S97dl8
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
 msgid "Settings"
 msgstr "Ayarlar"
 
@@ -12791,7 +12872,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Seçilen izinlerin bir kısmı geçerli değil. Lütfen geçerli izin ayarlarıyla tekrar deneyin."
 
 #. js-lingui-id: aPJopM
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Bazı çalışma alanı üyelikleri bulunamadı. Bu çalışma alanına artık erişimleri olmayabilir."
 
@@ -13090,12 +13171,6 @@ msgctxt "fieldMetadata.label"
 msgid "Status"
 msgstr "Durum"
 
-#. js-lingui-id: 0j9QWW
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Statuses"
-msgstr "Durumlar"
-
 #. js-lingui-id: 9vB6Yo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -13243,7 +13318,6 @@ msgstr "Sistem"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-automated-trigger-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
@@ -13298,6 +13372,11 @@ msgstr "Bileşen kopyalama için sekme bulunamadı."
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
 msgstr "Çalışma alanınızı özelleştirin"
+
+#. js-lingui-id: gNSS33
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "Talk to our team"
+msgstr "Ekibimizle konuşun"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13652,6 +13731,16 @@ msgstr "Uygulamanın üretim bağımlılıkları kurulamayacak kadar büyük. Ma
 msgid "The application's requested permissions have changed. Review them again before approving."
 msgstr "Uygulamanın talep ettiği izinler değişti. Onaylamadan önce bunları tekrar inceleyin."
 
+#. js-lingui-id: ptZop4
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "The assistant profile cannot be updated before the workspace is activated."
+msgstr "Çalışma alanı etkinleştirilmeden önce asistan profili güncellenemez."
+
+#. js-lingui-id: VqGyEL
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "The attachments are too large to send in one email."
+msgstr "Ekler tek bir e-postada gönderilemeyecek kadar büyük."
+
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "The calendar provider rejected the event creation request."
@@ -13767,19 +13856,11 @@ msgstr "Bağlantının oluşturucusu"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The creator of the record"
 msgstr "Kaydın oluşturucusu"
-
-#. js-lingui-id: F8Sp1a
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The current statuses of the workflow versions"
-msgstr "İş akışı sürümlerinin mevcut durumları"
 
 #. js-lingui-id: Jx3FUl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14276,34 +14357,10 @@ msgstr "Web kancası isteği işlenemedi."
 msgid "The webhook subscription could not be managed for this account."
 msgstr "Bu hesap için webhook aboneliği yönetilemedi."
 
-#. js-lingui-id: Y7dW06
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow automated trigger settings"
-msgstr "İş akışı otomatik tetikleyici ayarları"
-
-#. js-lingui-id: VIRlXt
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow automated trigger type"
-msgstr "İş akışı otomatik tetikleyici türü"
-
 #. js-lingui-id: yf0hmT
 #: src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util.ts
 msgid "The workflow field does not belong to the referenced object."
 msgstr "İş akışı alanı, başvurulan nesneye ait değil."
-
-#. js-lingui-id: ilJZDO
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow last published version id"
-msgstr "Son yayımlanan iş akışı sürümü kimliği"
-
-#. js-lingui-id: ffNEb6
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow name"
-msgstr "İş akışı adı"
 
 #. js-lingui-id: UAyJ4f
 #: src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util.ts
@@ -14379,9 +14436,7 @@ msgstr "Çalışma Alanı uygulaması bağımlılıkları derleme sırasında de
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -14389,12 +14444,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Kaydı en son güncelleyen çalışma alanı üyesi"
 
 #. js-lingui-id: lRojhv
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rolleri bu kayıtlara erişemez ve bu nesne yalnızca erişebilen rollerle paylaşılır."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/permissions/internal/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rolleri bu kaydı göremez ve bu nesne yalnızca görebilen kişilerle paylaşılır."
 
@@ -14814,6 +14869,11 @@ msgstr "Bu indeks mevcut değil veya zaten silinmiş."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Bu örnek bir sunucu tanımlayıcısı bildirmedi. SERVER_ID değerini bu örnekte ayarlayın ve ardından tekrar deneyin."
 
+#. js-lingui-id: pYq4bp
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "This job is too large to be enqueued."
+msgstr "Bu iş kuyruğa alınamayacak kadar büyük."
+
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
@@ -14863,6 +14923,11 @@ msgstr "Bu üye iki faktörlü kimlik doğrulamayı ayarlamadı, dolayısıyla k
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "This message channel cannot send messages."
 msgstr "Bu mesaj kanalı mesaj gönderemez."
+
+#. js-lingui-id: Rt42MP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "This messaging provider's conversation style is not supported."
+msgstr "Bu mesajlaşma sağlayıcısının konuşma stili desteklenmiyor."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/permissions/permissions.exception.ts
@@ -15071,18 +15136,14 @@ msgid "This role cannot be edited."
 msgstr "Bu rol düzenlenemez."
 
 #. js-lingui-id: KoDdqN
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-permission-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Bu rol sistem rolü olduğu için değiştirilemez. Sadece özel roller düzenlenebilir."
+
+#. js-lingui-id: ujHiJC
+#: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
+msgid "This row level permission rule does not belong to this role and object."
+msgstr "Bu satır düzeyi izin kuralı bu role ve nesneye ait değil."
 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15251,6 +15312,11 @@ msgstr "Bu çalışma alanı kayıt sınırına ulaştı."
 msgid "This workspace has reached its storage limit."
 msgstr "Bu çalışma alanı depolama sınırına ulaştı."
 
+#. js-lingui-id: fqOt5p
+#: src/engine/core-modules/billing/constants/billing-seat-limit-reached-message.constant.ts
+msgid "This workspace has used all its seats. Contact your workspace admin to add more."
+msgstr "Bu çalışma alanındaki tüm koltuklar kullanıldı. Daha fazla eklemek için çalışma alanı yöneticinizle iletişime geçin."
+
 #. js-lingui-id: ChHeV3
 #: src/engine/core-modules/billing/constants/subscription-inactive-reason-user-friendly-message.constant.ts
 msgid "This workspace is suspended."
@@ -15323,12 +15389,6 @@ msgstr "Bu durumun ait olduğu dizi"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "Perşembe"
-
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "Temizle"
 
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -15415,12 +15475,6 @@ msgstr "Görevle bağlantılı Zaman Çizelgesi Aktiviteleri."
 msgctxt "fieldMetadata.description"
 msgid "Timeline activities linked to the version"
 msgstr "Versiyonla bağlantılı Zaman Çizelgesi aktiviteleri"
-
-#. js-lingui-id: qNlIHQ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Timeline activities linked to the workflow"
-msgstr "İş akışı ile bağlantılı Zaman Çizelgesi aktiviteleri"
 
 #. js-lingui-id: ApXfXx
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -15558,13 +15612,23 @@ msgstr "Çok fazla yönetici adayı bulundu."
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Çok fazla katılımcı: {attendeeCount}. İzin verilen maksimum sayı {MAX_EMAIL_RECIPIENTS}."
 
+#. js-lingui-id: 4kqJG4
+#: src/engine/core-modules/file/file.exception.ts
+msgid "Too many files are being opened. Please try again in a minute."
+msgstr "Çok fazla dosya açılıyor. Lütfen bir dakika sonra tekrar deneyin."
+
+#. js-lingui-id: M59lHq
+#: src/engine/core-modules/message-queue/message-queue.exception.ts
+msgid "Too many jobs are waiting. Please try again later."
+msgstr "Çok fazla iş bekliyor. Lütfen daha sonra tekrar deneyin."
+
 #. js-lingui-id: 0hbCNP
 #: src/modules/emailing/exceptions/message-list.exception.ts
 msgid "Too many people selected. Narrow your selection and try again."
 msgstr "Çok fazla kişi seçildi. Seçiminizi daraltıp tekrar deneyin."
 
 #. js-lingui-id: JS61oF
-#: src/engine/core-modules/tool/tools/email-tool/email-composer.service.ts
+#: src/engine/core-modules/email/utils/get-email-recipients-error.util.ts
 msgid "Too many recipients: {total}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Çok fazla alıcı: {total}. İzin verilen maksimum sayı {MAX_EMAIL_RECIPIENTS}."
 
@@ -15811,6 +15875,11 @@ msgstr "İki faktörlü kimlik doğrulama kurulumu gerekli."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Two-factor authentication verification is required."
 msgstr "İki faktörlü kimlik doğrulaması gereklidir."
+
+#. js-lingui-id: CTG0vZ
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
+msgid "Two-factor authentication was removed from your account"
+msgstr "İki faktörlü kimlik doğrulama hesabınızdan kaldırıldı"
 
 #. js-lingui-id: /OnFql
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
@@ -16121,9 +16190,7 @@ msgstr "Güncellenme tarihi"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -16333,7 +16400,6 @@ msgstr "Kullanıcı çalışma alanının bir üyesi değildir."
 
 #. js-lingui-id: siJgSI
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/core-modules/sso/sso.exception.ts
 #: src/engine/core-modules/user/user.exception.ts
 msgid "User not found."
 msgstr "Kullanıcı bulunamadı."
@@ -16473,8 +16539,8 @@ msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand
 msgstr "\"{stringifiedValue}\" değeri, \"{operand}\" işlenen için hiçbir kayda karşılık gelmiyor, mevcut kayıt satır düzeyi izin önermesi için kullanılamıyor"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Değer \"{sanitizedValue}\" UPPER_CASE olmalı ve snake_case kurallarına uymalıdır."
 
@@ -16506,12 +16572,6 @@ msgstr "Versiyon adımları"
 msgctxt "fieldMetadata.label"
 msgid "Version trigger"
 msgstr "Versiyon tetiği"
-
-#. js-lingui-id: TesjoU
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Versions"
-msgstr "Versiyonlar"
 
 #. js-lingui-id: tH32bu
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util.ts
@@ -16992,6 +17052,11 @@ msgstr "E-posta hesabınıza giriş yapamadık. Lütfen e-posta adresinizi ve ş
 msgid "We encountered an issue connecting to your email account. Please check your settings and try again."
 msgstr "E-posta hesabınıza bağlanırken bir sorunla karşılaştık. Ayarlarınızı kontrol edin ve tekrar deneyin."
 
+#. js-lingui-id: tP7Xh1
+#: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
+msgid "We'll confirm the time by email."
+msgstr "Saati e-posta ile onaylayacağız."
+
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
@@ -17231,17 +17296,8 @@ msgid "Work"
 msgstr "İş"
 
 #. js-lingui-id: y8IlfM
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
-msgid "Workflow"
-msgstr "İş Akışı"
-
-#. js-lingui-id: Ybs2Ml
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
 msgid "Workflow"
 msgstr "İş Akışı"
 
@@ -17255,24 +17311,6 @@ msgstr "İş Akışı"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
 msgid "Workflow already exists"
 msgstr "İş akışı zaten mevcut"
-
-#. js-lingui-id: BwauV3
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Workflow Automated Trigger"
-msgstr "İş Akışı Otomatik Tetikleyicisi"
-
-#. js-lingui-id: aANbrX
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflow Automated Triggers"
-msgstr "İş Akışı Otomatik Tetikleyicileri"
-
-#. js-lingui-id: np4/Yp
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow automated triggers linked to the workflow."
-msgstr "İş akışına bağlı otomatik tetikleyiciler."
 
 #. js-lingui-id: obUQdf
 #: src/engine/metadata-modules/skill/__tests__/skill.resolver.spec.ts
@@ -17318,12 +17356,6 @@ msgstr "İş akışı bulunamadı"
 #: src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception.ts
 msgid "Workflow not found."
 msgstr "İş akışı bulunamadı."
-
-#. js-lingui-id: OpiqiN
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow record position"
-msgstr "İş akışı kayıt pozisyonu"
 
 #. js-lingui-id: ysb9m+
 #: src/modules/workflow/workflow-runner/exceptions/workflow-run.exception.ts
@@ -17411,12 +17443,6 @@ msgstr "İş Akışı Çalıştırmaları"
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the version."
 msgstr "Versiyona bağlı iş akışı çalıştırmaları."
-
-#. js-lingui-id: T71oyd
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow runs linked to the workflow."
-msgstr "İş akışına bağlı çalıştırmalar."
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -17529,24 +17555,6 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Workflow Versions"
 msgstr "İş Akışı Versiyonları"
 
-#. js-lingui-id: pa3yzc
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow versions linked to the workflow."
-msgstr "İş akışına bağlı versiyonlar."
-
-#. js-lingui-id: 1fxsyJ
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowAutomatedTrigger record position"
-msgstr "WorkflowAutomatedTrigger kaydının konumu"
-
-#. js-lingui-id: 4ffNty
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowAutomatedTrigger workflow"
-msgstr "İş Akışı Otomatik Tetikleyici iş akışı"
-
 #. js-lingui-id: oxqc8m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -17559,23 +17567,11 @@ msgctxt "navigationMenuItem.name"
 msgid "Workflows"
 msgstr "İş Akışları"
 
-#. js-lingui-id: O0tztx
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflows"
-msgstr "İş Akışları"
-
 #. js-lingui-id: W5Wgz6
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "WorkflowVersion"
 msgstr "İş Akışı Sürümü"
-
-#. js-lingui-id: mhEqo/
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "WorkflowVersion workflow"
-msgstr "İş akışı versiyonu iş akışı"
 
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -17972,7 +17968,7 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Kendiniz için kurtarma kodu oluşturamazsınız. Bunun yerine profilinizden iki faktörlü kimlik doğrulamayı sıfırlayın."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Kendi rolünüzü değiştiremezsiniz. Lütfen başka bir yöneticiden rolünüzü güncellemesini isteyin."
 
@@ -17993,7 +17989,7 @@ msgid "You cannot remove settings access from your own role. Ask another adminis
 msgstr "Kendi rolünüzden Ayarlar'a erişimi kaldıramazsınız. Başka bir yöneticiden bu değişikliği yapmasını isteyin."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Son yöneticiden yönetici rolünü kaldıramazsınız. Lütfen önce başka bir yönetici atayın."
 
@@ -18114,6 +18110,11 @@ msgstr "Bu işlemi gerçekleştirme izniniz yok."
 #: src/modules/workflow/common/exceptions/workflow-query-validation.exception.ts
 msgid "You do not have permission to perform this workflow action."
 msgstr "Bu iş akışı işlemini gerçekleştirme izniniz yok."
+
+#. js-lingui-id: 3qp2VE
+#: src/engine/core-modules/workspace/services/workspace-assistant-profile.service.ts
+msgid "You do not have permission to update the assistant profile. Please contact your workspace administrator."
+msgstr "Yardımcı profilini güncelleme izniniz yok. Lütfen çalışma alanı yöneticinizle iletişime geçin."
 
 #. js-lingui-id: 1dsy9v
 #: src/engine/core-modules/workspace/services/workspace.service.ts
@@ -18240,7 +18241,7 @@ msgstr "Rolünüz bu kayıtların bazılarını silemez, bu nedenle birleştiril
 
 #. js-lingui-id: XxkUFT
 #: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
-#: src/engine/permissions/role-assignment/role-assignment.service.ts
+#: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Bu çalışma alanındaki rolünüz bulunamadı. Lütfen çalışma alanı yöneticinizle iletişime geçin."
 
@@ -18260,8 +18261,13 @@ msgstr "Twenty planınız yakında yenilenecek"
 msgid "Your Twenty trial is ending soon"
 msgstr "Twenty denemeniz yakında sona eriyor"
 
+#. js-lingui-id: 9xG1k0
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-backup-code.service.ts
+msgid "Your two-factor authentication changed. Generate backup codes again."
+msgstr "İki faktörlü kimlik doğrulamanız değişti. Yedek kodları yeniden oluşturun."
+
 #. js-lingui-id: pOQQ3U
-#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
+#: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "Your two-factor authentication was reset"
 msgstr "İki faktörlü kimlik doğrulamanız sıfırlandı"
 

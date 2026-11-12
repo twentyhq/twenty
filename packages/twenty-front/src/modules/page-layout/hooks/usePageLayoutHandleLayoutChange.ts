@@ -42,7 +42,9 @@ export const usePageLayoutHandleLayoutChange = ({
         }),
       );
 
-      if (!isDefined(activeTabId)) return;
+      if (!isDefined(activeTabId)) {
+        return;
+      }
 
       const currentTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
@@ -57,7 +59,9 @@ export const usePageLayoutHandleLayoutChange = ({
         (tab) => tab.id === activeTabId,
       );
 
-      if (!currentTab) return;
+      if (!currentTab) {
+        return;
+      }
 
       const updatedWidgets = convertLayoutsToWidgets(
         currentTab.widgets,

@@ -108,7 +108,7 @@ export const useMultipleRecordPickerPerformSearch = () => {
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,
           ),
-          operationType: 'select',
+          operationType: 'read',
         });
 
       const filteredSearchableObjectMetadataItems =

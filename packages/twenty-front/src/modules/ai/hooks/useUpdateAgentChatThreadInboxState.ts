@@ -5,6 +5,7 @@ import { applyAgentChatInboxAction } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
+import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
   type AgentChatThreadVisit,
@@ -64,6 +65,24 @@ export const useUpdateAgentChatThreadInboxState = () => {
         });
       }
       const optimisticVisitState = store.get(agentChatThreadVisitState.atom);
+      const getThreadLastActivityAt = (threadId: string) =>
+        store.get(agentChatThreadRecordFamilySelector.selectorFamily(threadId))
+          ?.lastActivityAt ?? null;
+
+      if (action === AgentChatInboxAction.MOVE_TO_INBOX) {
+        store.set(
+          agentChatReopenedThreadActivityState.atom,
+          (reopenedThreadActivity) => ({
+            ...reopenedThreadActivity,
+            ...Object.fromEntries(
+              threadIds.map((threadId) => [
+                threadId,
+                getThreadLastActivityAt(threadId),
+              ]),
+            ),
+          }),
+        );
+      }
 
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
         if (!isDefined(participants)) {
@@ -79,10 +98,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
               participant: participants[threadId],
               action,
               now,
-              threadLastActivityAt:
-                store.get(
-                  agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-                )?.lastActivityAt ?? null,
+              threadLastActivityAt: getThreadLastActivityAt(threadId),
               snoozedUntil: snoozedUntil?.toISOString(),
             }),
             threadId,

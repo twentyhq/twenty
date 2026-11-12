@@ -23,6 +23,7 @@ export const timelineThreadFragment = gql`
       type
       provider
       applicationId
+      conversationStyle
     }
   }
   ${participantFragment}

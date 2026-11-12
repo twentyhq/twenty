@@ -54,7 +54,7 @@ export const RecordTableCellFieldContextGeneric = ({
 
   let hasObjectReadPermissions = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
   let isInvalidJunctionRelation = false;
 
@@ -73,7 +73,7 @@ export const RecordTableCellFieldContextGeneric = ({
 
     hasObjectReadPermissions = canReachSomeRecords({
       objectRecordsPermissions: relationObjectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     });
 
     if (hasObjectReadPermissions) {
@@ -104,7 +104,7 @@ export const RecordTableCellFieldContextGeneric = ({
                 objectPermissionsByObjectMetadataId,
                 targetId,
               ),
-              operationType: 'select',
+              operationType: 'read',
             }),
           );
         }

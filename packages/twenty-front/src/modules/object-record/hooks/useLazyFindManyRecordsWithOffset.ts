@@ -49,7 +49,7 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const hasReadPermission = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const findManyRecordsLazyWithOffset = useCallback(

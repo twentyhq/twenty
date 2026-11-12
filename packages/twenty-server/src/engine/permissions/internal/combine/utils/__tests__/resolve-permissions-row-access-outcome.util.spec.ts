@@ -25,11 +25,13 @@ const flatObjectMetadata = {
 };
 
 const readOnlyPermissions: ObjectRecordsPermissions = {
+  canCreateAllRecords: false,
   canReadAllRecords: true,
   canUpdateAllRecords: false,
   canSoftDeleteAllRecords: false,
   canDestroyAllRecords: false,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const readOnlyPrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -54,7 +56,7 @@ const owningApplicationPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 const resolveOutcome = ({
   principals = readOnlyPrincipals,
-  operationType = 'select',
+  operationType = 'read',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
@@ -80,17 +82,6 @@ const resolveOutcome = ({
           objects: { [flatObjectMetadata.id]: readOnlyPermissions },
         },
       },
-      flatApplicationMaps: {
-        byId: {
-          [APPLICATION_ID]: {
-            id: APPLICATION_ID,
-            defaultRoleId: APPLICATION_ROLE_ID,
-            deletedAt: null,
-          },
-        },
-      },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -121,11 +112,23 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        operationType: 'delete',
+        operationType: 'create',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toBe(false);
   });
+
+  it.each(['softDelete', 'destroy'] as const)(
+    'leaves %s the role lacks to the share grant path',
+    (operationType) => {
+      expect(
+        resolveOutcome({
+          operationType,
+          featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        }),
+      ).toBeUndefined();
+    },
+  );
 
   it('denies a disabled operation unless the principal owns the object', () => {
     expect(
@@ -164,7 +167,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       canReadObjectRecords: boolean;
     }): PermissionsPrincipalsWithRolesContext => ({
       ...readOnlyPrincipals,
-      aiRunScope: {
+      runtimeLimitingRole: {
         recordsPermissions: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {
@@ -191,7 +194,34 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       ).toBeUndefined();
     });
 
-    it('never lets a share carry it beyond its roles', () => {
+    it('lets a share through when the scope reaches all records for the operation', () => {
+      const principals: PermissionsPrincipalsWithRolesContext = {
+        ...readOnlyPrincipals,
+        runtimeLimitingRole: {
+          recordsPermissions: {
+            ...NO_ROLE_RECORDS_PERMISSIONS,
+            objects: {
+              [flatObjectMetadata.id]: {
+                ...readOnlyPermissions,
+                canUpdateAllRecords: true,
+              },
+            },
+          },
+          permissionFlags: {},
+        },
+      };
+
+      expect(
+        resolveOutcome({
+          principals,
+          operationType: 'update',
+          featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+          hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        }),
+      ).toBe(true);
+    });
+
+    it('never lets a share carry it past a scope that lacks the operation', () => {
       const principals = scopedPrincipals({ canReadObjectRecords: true });
       const featureFlagKeys = [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED];
 

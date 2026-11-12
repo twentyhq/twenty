@@ -34,6 +34,7 @@ import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 
 export const PULL_ENTITY_KINDS = [
   'application',
+  'frontComponent',
   'object',
   'field',
   'index',

@@ -16,7 +16,9 @@ export const extractArgumentsFromAst = (
   for (const arg of argumentNodes) {
     const value = valueFromASTUntyped(arg.value, variables);
 
-    if (!isDefined(value)) continue;
+    if (!isDefined(value)) {
+      continue;
+    }
     result[arg.name.value] = value;
   }
 

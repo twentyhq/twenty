@@ -1,0 +1,2 @@
+export const ADD_REMOTE_ORIGIN_TO_FILE_UPGRADE_COMMAND_NAME =
+  '2.58.0_AddRemoteOriginToFileFastInstanceCommand_1794243399000';

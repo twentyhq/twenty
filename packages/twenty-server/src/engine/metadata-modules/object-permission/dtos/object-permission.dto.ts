@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { RestrictedFieldsPermissions } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
@@ -26,8 +25,18 @@ export class ObjectPermissionDTO {
 
   @Field(() => GraphQLJSON, {
     nullable: true,
+    deprecationReason: 'Use unreadableFields and uneditableFields',
   })
-  restrictedFields?: RestrictedFieldsPermissions;
+  restrictedFields?: Record<
+    string,
+    { canRead: boolean | null; canUpdate: boolean | null }
+  >;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  unreadableFields?: string[];
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  uneditableFields?: string[];
 
   @Field(() => [RowLevelPermissionPredicateDTO], { nullable: true })
   rowLevelPermissionPredicates?: RowLevelPermissionPredicateDTO[];

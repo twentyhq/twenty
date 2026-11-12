@@ -239,13 +239,6 @@ export const WIDGET_PROPS = {
     type: WidgetType.FIELD_RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
-  workflow: {
-    title: i18nLabel(
-      msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.WORKFLOW,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
   messageCampaign: {
     title: i18nLabel(
       msg({ message: `Email`, context: 'pageLayoutWidget.title' }),

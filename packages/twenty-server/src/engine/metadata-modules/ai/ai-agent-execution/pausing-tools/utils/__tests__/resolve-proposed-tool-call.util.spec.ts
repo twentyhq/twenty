@@ -5,6 +5,11 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
 const RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+const COMPONENT_DRAFT = {
+  draftId: RECORD_ID,
+  checksum: 'reviewed-checksum',
+  isCurrent: true,
+};
 
 const APPROVAL_BY_OPERATION = {
   create_one: { template: 'recordCreate' },
@@ -78,7 +83,12 @@ const foundRecord = (record: Record<string, unknown>) =>
   });
 
 describe('resolveProposedToolCall', () => {
-  it('takes the component publication template from the registered tool', async () => {
+  it('checks the draft without publishing before proposing its exact revision', async () => {
+    const executeTool = jest.fn().mockResolvedValue({
+      success: true,
+      message: 'Component draft retrieved.',
+      result: COMPONENT_DRAFT,
+    });
     const resolution = await resolveProposedToolCall({
       input: {
         toolName: PUBLISH_TOOL_ENTRY.name,
@@ -86,9 +96,14 @@ describe('resolveProposedToolCall', () => {
         summary: 'Save the reviewed component',
       },
       findTool,
-      executeTool: jest.fn(),
+      executeTool,
     });
 
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'inspect_front_component',
+      args: { draftId: RECORD_ID },
+    });
     expect(resolution).toMatchObject({
       proposal: {
         toolName: PUBLISH_TOOL_ENTRY.name,
@@ -97,6 +112,74 @@ describe('resolveProposedToolCall', () => {
       },
     });
   });
+
+  it.each([
+    {
+      message: 'Could not inspect the draft.',
+      error: 'Component draft not found or expired.',
+    },
+    { message: 'Tool "inspect_front_component" is not available here.' },
+  ])('refuses a draft that cannot be inspected: %j', async (failure) => {
+    const resolution = await resolveProposedToolCall({
+      input: {
+        toolName: PUBLISH_TOOL_ENTRY.name,
+        arguments: { draftId: RECORD_ID, checksum: COMPONENT_DRAFT.checksum },
+        summary: 'Save the reviewed component',
+      },
+      findTool,
+      executeTool: jest.fn().mockResolvedValue({ success: false, ...failure }),
+    });
+
+    expect(resolution).toEqual({ error: failure.error ?? failure.message });
+  });
+
+  it.each([
+    { ...COMPONENT_DRAFT, isCurrent: false },
+    { ...COMPONENT_DRAFT, checksum: 'different-revision' },
+  ])('refuses a superseded or mismatched revision: %j', async (draft) => {
+    const resolution = await resolveProposedToolCall({
+      input: {
+        toolName: PUBLISH_TOOL_ENTRY.name,
+        arguments: { draftId: RECORD_ID, checksum: COMPONENT_DRAFT.checksum },
+        summary: 'Save the reviewed component',
+      },
+      findTool,
+      executeTool: jest.fn().mockResolvedValue({
+        success: true,
+        message: 'Component draft retrieved.',
+        result: draft,
+      }),
+    });
+
+    expect(resolution).toEqual({
+      error:
+        'This preview changed. Propose the draftId and checksum of the latest revision.',
+    });
+  });
+
+  it.each([undefined, { ...COMPONENT_DRAFT, draftId: 'another-draft' }])(
+    'refuses an inspection result that does not identify the requested draft: %j',
+    async (draft) => {
+      const resolution = await resolveProposedToolCall({
+        input: {
+          toolName: PUBLISH_TOOL_ENTRY.name,
+          arguments: { draftId: RECORD_ID, checksum: COMPONENT_DRAFT.checksum },
+          summary: 'Save the reviewed component',
+        },
+        findTool,
+        executeTool: jest.fn().mockResolvedValue({
+          success: true,
+          message: 'Component draft retrieved.',
+          result: draft,
+        }),
+      });
+
+      expect(resolution).toEqual({
+        error:
+          'Could not read the component draft. Use the draftId returned by preview_front_component.',
+      });
+    },
+  );
 
   it.each([
     { draftId: undefined, checksum: 'reviewed-checksum' },

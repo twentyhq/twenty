@@ -1,5 +1,5 @@
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
-import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type RecordSortToCompute } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/compute-record-gql-operation-order-by-from-flat-maps.util';
 
 import { type ObjectRecordProperties } from './object-record-properties.type';
 
@@ -31,9 +31,7 @@ export type FindRecordsInput = {
     recordFilters?: any;
   };
   orderBy?: {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    recordSorts?: any;
-    gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
+    recordSorts?: RecordSortToCompute[];
   };
   limit?: number;
   offset?: number;

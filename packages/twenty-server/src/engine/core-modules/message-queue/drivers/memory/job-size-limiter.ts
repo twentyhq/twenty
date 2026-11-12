@@ -2,15 +2,13 @@ import { Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildJobMemoryLimitRefusalLogMessage } from 'src/engine/core-modules/message-queue/drivers/memory/build-job-memory-limit-refusal-log-message.util';
-import { type JobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-limit-refusal.type';
+import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   MessageQueueException,
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type SizedJob = { index: number; groupKey: string; sizeBytes: number };
@@ -29,9 +27,11 @@ export class JobSizeLimiter {
 
   checkJobSizesOrThrow({
     queueName,
+    jobName,
     jobs,
   }: {
     queueName: MessageQueue;
+    jobName: string;
     jobs: SizedJob[];
   }): void {
     if (!this.isEnabled()) {
@@ -49,12 +49,17 @@ export class JobSizeLimiter {
 
     const { index, groupKey, sizeBytes } = oversizedJob;
 
-    this.reportRefusal({
-      queueName,
-      groupKey,
-      reason: 'size',
-      requestedBytes: sizeBytes,
-      limitBytes: maxBytes,
+    reportJobMemoryLimitRefusal({
+      logger: this.logger,
+      metricsService: this.metricsService,
+      refusal: {
+        queueName,
+        jobName,
+        groupKey,
+        reason: 'size',
+        requestedBytes: sizeBytes,
+        limitBytes: maxBytes,
+      },
     });
 
     throw new MessageQueueException(
@@ -62,15 +67,5 @@ export class JobSizeLimiter {
       MessageQueueExceptionCode.JOB_TOO_LARGE,
       { index, sizeBytes, maxBytes },
     );
-  }
-
-  private reportRefusal(refusal: JobMemoryLimitRefusal): void {
-    this.logger.warn(buildJobMemoryLimitRefusalLogMessage(refusal));
-
-    void this.metricsService.incrementCounterForEvent({
-      key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: refusal.queueName, reason: refusal.reason },
-      shouldStoreInCache: false,
-    });
   }
 }

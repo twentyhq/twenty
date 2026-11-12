@@ -28,7 +28,7 @@ export const getDestinationFromSortableTarget = (
   }
   const destDroppableId = String(group);
   const targetItem = getNavItemById(
-    target.id != null ? String(target.id) : undefined,
+    isDefined(target.id) ? String(target.id) : undefined,
   );
   const isTargetFolder =
     isDefined(targetItem) && isNavigationMenuItemFolder(targetItem);

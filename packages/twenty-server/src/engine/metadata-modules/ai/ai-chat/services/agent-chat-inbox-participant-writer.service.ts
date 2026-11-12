@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { AGENT_CHAT_THREAD_PARTICIPANT_COLUMN_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participant-column-names.constant';
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -29,7 +30,8 @@ export class AgentChatInboxParticipantWriterService {
     private readonly participantEventService: AgentChatThreadParticipantEventService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
   ) {}
 
   async writeParticipantInboxState({
@@ -40,11 +42,7 @@ export class AgentChatInboxParticipantWriterService {
     workspaceMemberIds: string[];
     reason: AgentChatInboxDeliveryReason;
   }): Promise<void> {
-    const participantWorkspaceMemberIds = [
-      ...new Set(workspaceMemberIds),
-    ].filter(
-      (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
-    );
+    const participantWorkspaceMemberIds = [...new Set(workspaceMemberIds)];
 
     if (!isNonEmptyArray(participantWorkspaceMemberIds)) {
       return;
@@ -52,7 +50,9 @@ export class AgentChatInboxParticipantWriterService {
 
     await this.assertCanDeliverToWorkspaceMembers({
       ...access,
-      memberIds: participantWorkspaceMemberIds,
+      memberIds: participantWorkspaceMemberIds.filter(
+        (workspaceMemberId) => workspaceMemberId !== access.workspaceMemberId,
+      ),
     });
 
     const { workspaceId, threadId } = access;
@@ -176,9 +176,9 @@ export class AgentChatInboxParticipantWriterService {
         insertedParticipantIds.add(id);
       }
 
-      await this.recordSharingWriteService.setRecordsPrivate({
+      await this.privateRecordSystemWriteService.setRecordsPrivacy({
         workspaceId,
-        flatObjectMetadata: participantObjectMetadata,
+        objectMetadataId: participantObjectMetadata.id,
         recordIds: identifiers.map(({ id }) => id),
         isPrivate: true,
         transactionScope: scope,
@@ -216,7 +216,7 @@ export class AgentChatInboxParticipantWriterService {
 
     const participantsAfter = await findParticipants();
 
-    await this.recordSharingWriteService.insertRecordShares({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       recordShares: buildAgentChatThreadParticipantOwnerShares({
         participants: participantsAfter,

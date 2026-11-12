@@ -1,3 +1,5 @@
+import { type MessagingProviderConversationStyle } from './messagingProviderConversationStyleType';
+
 export type SendAppMessageRecipient = {
   handle: string;
   displayName: string | null;
@@ -11,7 +13,15 @@ export type SendAppMessageAttachment = {
   downloadUrl: string;
 };
 
-export type SendAppMessagePayload = {
+export type SendAppMessageEmail = {
+  subject: string;
+  html: string;
+  cc: SendAppMessageRecipient[];
+  bcc: SendAppMessageRecipient[];
+  inReplyToExternalId: string | null;
+};
+
+type SendAppMessagePayloadBase = {
   messagingProviderName: string;
   connectedAccountId: string;
   messageChannelId: string;
@@ -22,6 +32,15 @@ export type SendAppMessagePayload = {
   recipients: SendAppMessageRecipient[];
   attachments: SendAppMessageAttachment[];
 };
+
+export type SendAppMessagePayload =
+  | (SendAppMessagePayloadBase & {
+      conversationStyle: Extract<MessagingProviderConversationStyle, 'chat'>;
+    })
+  | (SendAppMessagePayloadBase & {
+      conversationStyle: Extract<MessagingProviderConversationStyle, 'email'>;
+      email: SendAppMessageEmail;
+    });
 
 export type SendAppMessageResult = {
   externalId: string;

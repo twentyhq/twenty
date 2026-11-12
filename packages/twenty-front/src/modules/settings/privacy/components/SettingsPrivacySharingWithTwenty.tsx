@@ -15,7 +15,7 @@ export const SettingsPrivacySharingWithTwenty = () => {
   const { t } = useLingui();
   const isTwentyCloud = useIsTwentyCloud();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { updateWorkspaceAiDataPolicyField, isAiDataPolicySaving } =
+  const { updateWorkspaceAiDataPolicyField } =
     useUpdateWorkspaceAiDataPolicyField();
 
   return (
@@ -35,7 +35,6 @@ export const SettingsPrivacySharingWithTwenty = () => {
               getWorkspaceAiDataPolicy(currentWorkspace)
                 .isProductImprovementDataSharingEnabled
             }
-            disabled={isAiDataPolicySaving}
             onChange={(checked) =>
               updateWorkspaceAiDataPolicyField({
                 field: 'isProductImprovementDataSharingEnabled',

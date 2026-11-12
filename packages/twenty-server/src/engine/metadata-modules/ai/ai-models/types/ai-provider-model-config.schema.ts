@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
+import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.constant';
 import { aiModelBenchmarkSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.schema';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';

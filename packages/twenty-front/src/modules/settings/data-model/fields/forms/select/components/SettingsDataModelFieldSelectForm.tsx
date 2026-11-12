@@ -180,7 +180,9 @@ export const SettingsDataModelFieldSelectForm = ({
     result: DraggableListDropResult,
     onChange: (options: FieldMetadataItemOption[]) => void,
   ) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
     const nextOptions = moveArrayItem(values, {
       fromIndex: result.source.index,
@@ -201,7 +203,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleSetOptionAsDefault = (
     optionValue: FieldMetadataItemOption['value'],
   ) => {
-    if (isOptionDefaultValue(optionValue)) return;
+    if (isOptionDefaultValue(optionValue)) {
+      return;
+    }
 
     if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
@@ -230,7 +234,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleRemoveOptionAsDefault = (
     optionValue: FieldMetadataItemOption['value'],
   ) => {
-    if (!isOptionDefaultValue(optionValue)) return;
+    if (!isOptionDefaultValue(optionValue)) {
+      return;
+    }
 
     if (fieldType === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });

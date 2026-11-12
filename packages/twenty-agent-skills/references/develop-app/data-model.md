@@ -120,13 +120,13 @@ When adding permissions:
 - Grant the smallest useful scope.
 - Keep sensitive objects and fields out of broad roles.
 - Check whether the app introduces side effects through logic functions before granting write access.
-- To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
+- To keep some permissions from being granted on an object, set `disabledObjectPermissionActions` on `defineObject()`, for example `['canDestroyObjectRecords']`. Allowed values are the object permission flags: `'canReadObjectRecords'`, `'canCreateObjectRecords'`, `'canUpdateObjectRecords'`, `'canSoftDeleteObjectRecords'` and `'canDestroyObjectRecords'`. Creating records still follows the update permission for now: disabling `'canUpdateObjectRecords'` also disables `'canCreateObjectRecords'`, and disabling `'canCreateObjectRecords'` alone has no effect yet. Users, API keys and agents never get these actions on that object, whatever their role grants; the app's own logic functions keep them. List the update, soft-delete and destroy flags to make an object only the app can write.
 - To do the same on one field, set `disabledFieldPermissionActions` on the field, with `'canReadFieldValue'` and/or `'canUpdateFieldValue'`. `['canUpdateFieldValue']` makes a field only the app can write, which suits values the app computes or syncs.
 - To extend access from a record to its related records, declare a related record path with `defineRelatedRecordPath()`: an `objectUniversalIdentifier`, then `firstFieldMetadataUniversalIdentifier` and optionally `secondFieldMetadataUniversalIdentifier` and `thirdFieldMetadataUniversalIdentifier`, each a relation field on the object the previous hop reached. Set `isInherent: true` for records that belong to their parent (attachments, timeline activities): those follow whenever the parent is readable. Leave it unset for paths that should apply only when the role grants the starting object directly. Convention: `src/related-record-paths/`. Paths are in preview: they sync, but record permissions don't use them yet, and once enforced they require the Organization plan or above, like row-level security.
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`.
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`. Two date functions are available in both forms: `daysSince(date)` returns whole days since the date (negative for a future date), and `isInRelativeDateRange(date, direction, amount, unit)` checks a period, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
@@ -140,6 +140,15 @@ export default defineValidationRule({
   expression: and(gt(field('amount'), 0), isNonEmptyString(field('reference'))),
   message: 'An invoice needs an amount and a reference',
 });
+```
+
+To check a transition, read the value stored before the update with `previous('stage')` in the builder, or `previous.stage` in a string. On creation every previous value is empty. `previous` reads the object's own fields and their composite subfields, not relations.
+
+```ts
+const { eq, field, notEq, or, previous } = ruleExpression;
+
+// Won is final
+expression: or(eq(field('stage'), previous('stage')), notEq(previous('stage'), 'WON')),
 ```
 
 A sync fails if the app removes a field one of its rules reads. If the field is deactivated outside the app, or deleted outside the app while the rule's expression is unchanged, the sync succeeds and the rule stays off. A new or edited rule that names a deleted field fails the sync. A sync keeps an existing rule's `isActive`.

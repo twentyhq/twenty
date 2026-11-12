@@ -1,5 +1,6 @@
 import chunk from 'lodash.chunk';
 
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -8,17 +9,24 @@ import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
 
 export const transformEventBatchToEventPayloads = ({
   workspaceEventBatch,
   logicFunctions,
+  conditionFields = [],
+  onConditionError,
 }: {
   workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
   logicFunctions: Pick<
     LogicFunctionEntity,
     'id' | 'workspaceId' | 'databaseEventTriggerSettings'
   >[];
+  conditionFields?: ValidationRuleFieldDescriptor[];
+  onConditionError?: (conditionError: {
+    logicFunctionId: string;
+    errorMessage: string;
+  }) => void;
 }): LogicFunctionTriggerJobData[] => {
   const result: LogicFunctionTriggerJobData[] = [];
   const { events, ...batchEventInfo } = workspaceEventBatch;
@@ -26,11 +34,21 @@ export const transformEventBatchToEventPayloads = ({
   for (const logicFunction of logicFunctions) {
     const triggerSettings = logicFunction.databaseEventTriggerSettings;
 
-    const filteredEvents = filterEventsByUpdatedFields({
-      events,
-      eventName: workspaceEventBatch.name,
-      watchedFields: triggerSettings?.updatedFields,
-    });
+    const { events: filteredEvents, conditionErrorMessage } =
+      filterEventsMatchingDatabaseEventTrigger({
+        events,
+        eventName: workspaceEventBatch.name,
+        watchedFields: triggerSettings?.updatedFields,
+        condition: triggerSettings?.condition,
+        fields: conditionFields,
+      });
+
+    if (isDefined(conditionErrorMessage)) {
+      onConditionError?.({
+        logicFunctionId: logicFunction.id,
+        errorMessage: conditionErrorMessage,
+      });
+    }
 
     if (triggerSettings?.batchMode !== true) {
       for (const event of filteredEvents) {

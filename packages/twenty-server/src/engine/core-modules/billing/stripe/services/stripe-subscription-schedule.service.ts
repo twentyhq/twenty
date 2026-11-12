@@ -92,7 +92,9 @@ export class StripeSubscriptionScheduleService {
     scheduleId: string,
     params: Stripe.SubscriptionScheduleUpdateParams,
   ) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     return await this.stripe.subscriptionSchedules.update(scheduleId, {
       ...params,
@@ -101,7 +103,9 @@ export class StripeSubscriptionScheduleService {
   }
 
   async createSubscriptionSchedule(stripeSubscriptionId: string) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     const schedule = await this.stripe.subscriptionSchedules.create({
       from_subscription: stripeSubscriptionId,
@@ -144,7 +148,9 @@ export class StripeSubscriptionScheduleService {
   }
 
   releaseSubscriptionSchedule(scheduleId: string) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     return this.stripe.subscriptionSchedules.release(scheduleId);
   }

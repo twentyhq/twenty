@@ -31,7 +31,7 @@ export const commandMenuTargetObjectPermissionsSelector = createAtomSelector<
       targetObjectReadPermissions[objectMetadataItem.nameSingular] =
         canReachSomeRecords({
           objectRecordsPermissions: objectPermissions,
-          operationType: 'select',
+          operationType: 'read',
         });
       targetObjectWritePermissions[objectMetadataItem.nameSingular] =
         canReachSomeRecords({

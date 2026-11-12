@@ -25,6 +25,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -297,11 +298,15 @@ export const usePersistField = ({
           fieldName,
         });
 
+        const recordBeforeUpdate =
+          store.get(recordStoreFamilyState.atomFamily(recordId)) ?? undefined;
+
         store.set(recordFieldSelector, valueToPersist);
 
         const completedUpdateInput = await completeRecordUpdate({
           recordId,
           updateInput: { [fieldName]: valueToPersist },
+          recordBeforeUpdate,
         });
 
         if (!isDefined(completedUpdateInput)) {

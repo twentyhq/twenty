@@ -18,7 +18,9 @@ export const getFieldButtonIcon = (
     | undefined
     | null,
 ): IconComponent | undefined => {
-  if (!isDefined(fieldDefinition)) return undefined;
+  if (!isDefined(fieldDefinition)) {
+    return undefined;
+  }
 
   if (
     isFieldDisplayedAsPhone(fieldDefinition) ||

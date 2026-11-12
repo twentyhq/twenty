@@ -61,7 +61,7 @@ Tipuri de declanșatoare disponibile:
 Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
-* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția. O `condition` o limitează la înregistrările care îndeplinesc o expresie de regulă.
 > de ex. `person.updated`, `*.created`, `company.*`
 * **serverRoute**: Expune o singură rută HTTP la nivelul înregistrării. O funcție de tip **resolver** (declarată cu `serverRouteTriggerSettings`) rulează în workspace-ul proprietar și fie returnează un `Response` sincron, fie workspace-ul țintă ȘI funcția logică de pus în coadă; pe ramura de punere în coadă, platforma confirmă cu `202` și rulează acea **țintă** în coada worker-ului. Consultați [declanșatorul de rută de server](#server-route-trigger).
 
@@ -440,11 +440,12 @@ Pentru ștergeri permanente, folosiți `.destroyed`.
 
 `databaseEventTriggerSettings` acceptă:
 
-| Proprietate     | Descriere                                                                                                                                                                                                                      |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `eventName`     | Eveniment de ascultat, cum ar fi `person.updated`. Acceptă `*` pentru numele obiectului, operație sau ambele.                                                                                                                  |
-| `updatedFields` | Listă opțională de nume de câmpuri. La evenimentele `.updated`, numai modificările care afectează unul dintre acestea declanșează funcția.                                                                                     |
-| `batchMode`     | Boolean opțional. Când este `true`, funcția de gestionare este apelată o dată pentru fiecare lot de înregistrări, în loc de o dată pentru fiecare înregistrare. Serverul decide câte înregistrări conține un lot, până la 200. |
+| Proprietate     | Descriere                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eventName`     | Eveniment de ascultat, cum ar fi `person.updated`. Acceptă `*` pentru numele obiectului, operație sau ambele.                                                                                                                                                                                                                                                                                                          |
+| `updatedFields` | Listă opțională de nume de câmpuri. La evenimentele `.updated` și `.upserted`, numai modificările care afectează una dintre ele declanșează funcția.                                                                                                                                                                                                                                                                   |
+| `condiție`      | [Expresie de regulă](/ro/user-guide/data-model/capabilities/validation-rules#write-a-condition) opțională pe care înregistrarea trebuie să o îndeplinească, cum ar fi `stage == 'CUSTOMER'`. `anterior.\<field>` citește înregistrarea înainte de o actualizare. Aceasta citește propriile câmpuri ale înregistrării; o relație de tip mulți-la-unu este câmpul său id (`companyId`), nu `company.name`. |
+| `batchMode`     | Boolean opțional. Când este `true`, funcția de gestionare este apelată o dată pentru fiecare lot de înregistrări, în loc de o dată pentru fiecare înregistrare. Serverul decide câte înregistrări conține un lot, până la 200.                                                                                                                                                                                         |
 
 Exemplu de eveniment de creare:
 
@@ -1199,6 +1200,7 @@ Puncte cheie:
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
 * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+* `TWENTY_INTERNAL_API_URL`: adresa privată a Twenty. Numai funcțiile logice și numai atunci când operatorul setează `SERVER_INTERNAL_URL`, de exemplu, în spatele unui proxy de autentificare. Clienții îl folosesc automat, inclusiv `RestApiClient.resolveUrl`. Dacă apelezi API-ul direct, folosește-l când este setat și revino la `TWENTY_API_URL`. Construiește linkurile pe care le oferi browserelor sau altor servicii, precum URL-urile webhook, folosind `TWENTY_API_URL` sau `getServerRouteUrl`.
 * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă pentru accesul implicit: rolul unei persoane se intersectează cu cel al aplicației dvs. atunci când cineva se află în spatele execuției, iar rolul propriu al aplicației dvs. atunci când nu se află nimeni. Persoana este cea care a declanșat execuția într-o funcție logică sau cea care privește pagina într-o componentă front-end.
 * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată numai la rolul propriu al aplicației dvs. Numai funcții logice, injectată întotdeauna acolo și utilizată de `runAs: 'application'`.
 

@@ -53,7 +53,9 @@ export const computeRelationConnectQueryConfigs = (
     const nestedRelationConnectFields =
       relationConnectQueryFieldsByEntityIndex[entityIndex];
 
-    if (!isDefined(nestedRelationConnectFields)) continue;
+    if (!isDefined(nestedRelationConnectFields)) {
+      continue;
+    }
 
     for (const [connectFieldName, connectObject] of Object.entries(
       nestedRelationConnectFields,

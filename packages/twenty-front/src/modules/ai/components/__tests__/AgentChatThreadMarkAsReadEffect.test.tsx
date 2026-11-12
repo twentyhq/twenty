@@ -3,6 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
@@ -163,6 +164,33 @@ describe('AgentChatThreadMarkAsReadEffect', () => {
       );
 
       recordPageView.unmount();
+
+      expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+        threadIds: [THREAD_ID],
+        action: 'ARCHIVE',
+      });
+    });
+
+    it('keeps a chat the member reopened since its last activity', () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+      jotaiStore.set(agentChatReopenedThreadActivityState.atom, {
+        [THREAD_ID]: LAST_ACTIVITY_AT,
+      });
+
+      renderChatView().unmount();
+
+      expect(updateAgentChatThreadInboxState).not.toHaveBeenCalledWith(
+        expect.objectContaining({ action: 'ARCHIVE' }),
+      );
+    });
+
+    it('files a reopened chat once something new happened in it', () => {
+      setReadUpTo(LAST_ACTIVITY_AT);
+      jotaiStore.set(agentChatReopenedThreadActivityState.atom, {
+        [THREAD_ID]: '2026-10-01T08:00:00.000Z',
+      });
+
+      renderChatView().unmount();
 
       expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
         threadIds: [THREAD_ID],

@@ -25,6 +25,8 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -54,8 +56,8 @@ import {
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -73,10 +75,12 @@ export class AgentChatSharingService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly rolePermissionsService: RolePermissionsService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -161,7 +165,7 @@ export class AgentChatSharingService {
   }
 
   getReadableThread(args: AgentChatThreadAccessArgs) {
-    return this.getThreadWithAccess({ ...args, operationType: 'select' });
+    return this.getThreadWithAccess({ ...args, operationType: 'read' });
   }
 
   async getThreadWithAccess({
@@ -258,7 +262,7 @@ export class AgentChatSharingService {
       async () => [
         ...(await this.findThreadIdsGrantedForOperation({
           threadIds,
-          operationType: 'select',
+          operationType: 'read',
         })),
       ],
       authContext,
@@ -291,7 +295,7 @@ export class AgentChatSharingService {
       authContext: await this.getAuthContextOrThrow(args),
     };
     const sharing =
-      await this.recordSharingPermissionsService.findRecordSharing(
+      await this.recordSharingPermissionsService.findRecordSharingPanel(
         recordTarget,
       );
 
@@ -381,7 +385,7 @@ export class AgentChatSharingService {
         await Promise.all(
           [...roleIdByMemberId.keys()].map(async (memberId) => {
             const principals =
-              await this.principalPermissionsService.buildPermissionsPrincipals(
+              await this.principalPermissionsReadService.resolvePermissionsPrincipals(
                 {
                   authContext: {
                     type: 'user',
@@ -398,8 +402,14 @@ export class AgentChatSharingService {
               transactionScope,
             };
             const [canReadThread, canUpdateThread] = await Promise.all([
-              this.recordPermissionsService.canReadRecords(question),
-              this.recordPermissionsService.canUpdateRecords(question),
+              this.recordPermissionsReadService.canAccessRecords({
+                ...question,
+                operationType: 'read',
+              }),
+              this.recordPermissionsReadService.canAccessRecords({
+                ...question,
+                operationType: 'update',
+              }),
             ]);
 
             return canReadThread && canUpdateThread ? memberId : undefined;
@@ -467,20 +477,20 @@ export class AgentChatSharingService {
           workspaceMemberId: authContext.workspaceMemberId,
           ...(isDefined(args.channelId) ? { channelId: args.channelId } : {}),
         });
-        await this.recordSharingWriteService.setRecordsPrivate({
+        await this.privateRecordSystemWriteService.setRecordsPrivacy({
           workspaceId: args.workspaceId,
-          flatObjectMetadata: objectMetadata,
+          objectMetadataId: objectMetadata.id,
           recordIds: [threadId],
           isPrivate: true,
           transactionScope,
         });
-        await this.recordSharingWriteService.deleteRecordSharesByRecordIds({
+        await this.recordShareSystemWriteService.deleteRecordSharesByRecordIds({
           workspaceId: args.workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: [threadId],
           transactionScope,
         });
-        await this.recordSharingWriteService.insertRecordShares({
+        await this.recordShareSystemWriteService.insertRecordShares({
           workspaceId: args.workspaceId,
           recordShares: [
             {
@@ -541,7 +551,7 @@ export class AgentChatSharingService {
         this.workspaceOrmManager
           .getRepository('agentChatThread')
           .validateWriteIsPermitted({
-            operationType: 'insert',
+            operationType: 'create',
             columnsToReturn: ['id'],
             updatedColumns,
           }),
@@ -684,15 +694,15 @@ export class AgentChatSharingService {
       ({ id }) => id,
     );
 
-    await this.recordSharingWriteService.setRecordsPrivate({
+    await this.privateRecordSystemWriteService.setRecordsPrivacy({
       workspaceId,
-      flatObjectMetadata: participantObjectMetadata,
+      objectMetadataId: participantObjectMetadata.id,
       recordIds: insertedParticipantIds,
       isPrivate: true,
       transactionScope,
     });
 
-    await this.recordSharingWriteService.insertRecordShares({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       recordShares: buildAgentChatThreadParticipantOwnerShares({
         participants: insertedParticipantIds.map((id) => ({
@@ -738,7 +748,7 @@ export class AgentChatSharingService {
             if (!isDefined(thread)) {
               return throwAgentChatThreadNotFound();
             }
-            await this.assertOperationAllowed(args.threadId, 'restore');
+            await this.assertOperationAllowed(args.threadId, 'softDelete');
             if (!isDefined(thread.deletedAt)) {
               return thread;
             }
@@ -812,7 +822,7 @@ export class AgentChatSharingService {
     const { permissionsPrincipals, objectIdByNameSingular } =
       getWorkspaceContext();
 
-    return this.recordPermissionsService.findGrantedRecordIdsOnReadableObject({
+    return this.recordPermissionsReadService.filterGrantedRecordIds({
       principals: permissionsPrincipals,
       objectMetadataId: objectIdByNameSingular.agentChatThread,
       recordIds: threadIds,

@@ -37,19 +37,29 @@ export const parseBaseFilter = (
 
   // baseFilter = field_1.subfield[in]:["2023-00-00 OO:OO:OO","2024-00-00 OO:OO:OO"]
   for (const c of baseFilter) {
-    if (fillValue) value += c;
+    if (fillValue) {
+      value += c;
+    }
 
-    if (c === ']' && !fillValue) fillComparator = false;
-    if (c === ':' && !fillComparator) fillValue = true;
+    if (c === ']' && !fillValue) {
+      fillComparator = false;
+    }
+    if (c === ':' && !fillComparator) {
+      fillValue = true;
+    }
 
-    if (fillComparator) comparator += c;
+    if (fillComparator) {
+      comparator += c;
+    }
 
     if (c === '[' && fillFields) {
       fillFields = false;
       fillComparator = true;
     }
 
-    if (fillFields) fields += c;
+    if (fillFields) {
+      fields += c;
+    }
   }
   // field = field_1.subfield ; comparator = in ; value = ["2023-00-00 OO:OO:OO","2024-00-00 OO:OO:OO"]
 

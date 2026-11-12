@@ -6,7 +6,9 @@ import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuote
 export const selectFieldDefaultValueSchema = (
   options?: FieldMetadataItemOption[],
 ) => {
-  if (!options?.length) return simpleQuotesStringSchema.nullable();
+  if (!options?.length) {
+    return simpleQuotesStringSchema.nullable();
+  }
 
   const optionValues = options.map(({ value }) => value);
 

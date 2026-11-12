@@ -28,8 +28,9 @@ export class RelationFieldMetadataGqlObjectTypeGenerator {
     >;
     typeOptions: OutputTypeOptions;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 

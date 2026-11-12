@@ -61,7 +61,9 @@ export const getLineChartTooltipData = ({
   const tooltipItems = sortedPoints
     .map((point) => {
       const enrichedSeriesItem = enrichedSeriesMap.get(String(point.seriesId));
-      if (!enrichedSeriesItem) return null;
+      if (!enrichedSeriesItem) {
+        return null;
+      }
 
       const value = getPointValue(point);
       return {

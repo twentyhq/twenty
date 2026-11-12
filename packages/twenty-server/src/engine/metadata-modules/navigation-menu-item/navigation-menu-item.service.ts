@@ -68,7 +68,9 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps.byUniversalIdentifier,
     )
       .filter((item): item is NonNullable<typeof item> => {
-        if (!isDefined(item)) return false;
+        if (!isDefined(item)) {
+          return false;
+        }
 
         const itemIsUserScoped = isDefined(item.userWorkspaceId);
 
@@ -201,6 +203,8 @@ export class NavigationMenuItemService {
       flatViewMaps,
       flatPageLayoutMaps,
       flatAgentChatChannelMaps,
+      flatWorkflowMaps,
+      flatAgentMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -210,6 +214,8 @@ export class NavigationMenuItemService {
           'flatViewMaps',
           'flatPageLayoutMaps',
           'flatAgentChatChannelMaps',
+          'flatWorkflowMaps',
+          'flatAgentMaps',
         ],
       },
     );
@@ -249,6 +255,8 @@ export class NavigationMenuItemService {
           flatViewMaps,
           flatPageLayoutMaps,
           flatAgentChatChannelMaps,
+          flatWorkflowMaps,
+          flatAgentMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({

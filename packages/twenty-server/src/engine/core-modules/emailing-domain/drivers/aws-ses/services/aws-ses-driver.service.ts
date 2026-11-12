@@ -227,13 +227,17 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     const identity = await sesClient
       .send(new GetEmailIdentityCommand({ EmailIdentity: input.domain }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
 
         return null;
       });
@@ -254,7 +258,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     await sesClient
       .send(new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
   }
 
@@ -272,7 +278,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     await sesClient
@@ -282,13 +290,17 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         }),
       )
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
 
     await sesClient
       .send(new DeleteTenantCommand({ TenantName: tenantName }))
       .catch((error) => {
-        if (!(error instanceof NotFoundException)) throw error;
+        if (!(error instanceof NotFoundException)) {
+          throw error;
+        }
       });
   }
 

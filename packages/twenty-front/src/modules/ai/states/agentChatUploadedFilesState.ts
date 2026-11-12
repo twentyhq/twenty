@@ -7,4 +7,5 @@ export const agentChatUploadedFilesState = createAtomState<
 >({
   key: 'ai/agentChatUploadedFilesState',
   defaultValue: [],
+  useSessionStorage: true,
 });

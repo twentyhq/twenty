@@ -7,7 +7,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -36,7 +36,7 @@ export class AgentChatChannelGrantService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     @InjectWorkspaceScopedRepository(AgentChatChannelEntity)
     private readonly channelRepository: WorkspaceScopedRepository<AgentChatChannelEntity>,
     @InjectWorkspaceScopedRepository(AgentChatChannelRoleEntity)
@@ -178,7 +178,7 @@ export class AgentChatChannelGrantService {
         .filter(isDefined),
     });
 
-    await this.recordSharingWriteService.syncRuleRecordShares({
+    await this.recordShareSystemWriteService.syncRuleRecordShares({
       workspaceId,
       objectMetadataId: threadObjectMetadata.id,
       scope:

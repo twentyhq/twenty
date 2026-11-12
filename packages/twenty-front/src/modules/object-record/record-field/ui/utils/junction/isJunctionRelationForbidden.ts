@@ -55,7 +55,7 @@ export const isJunctionRelationForbidden = ({
   if (
     !canReachSomeRecords({
       objectRecordsPermissions: junctionPermissions,
-      operationType: 'select',
+      operationType: 'read',
     })
   ) {
     return true;
@@ -75,7 +75,7 @@ export const isJunctionRelationForbidden = ({
         objectPermissionsByObjectMetadataId,
         targetId,
       ),
-      operationType: 'select',
+      operationType: 'read',
     }),
   );
 };

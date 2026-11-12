@@ -12,6 +12,7 @@ const styles = {
       align-items: center;
       display: flex;
       height: auto;
+      min-width: 0;
     }
   `,
   fixHeight: css`

@@ -14,7 +14,9 @@ export const getParsedNameFromDisplayName = (
     .replace(/^['"]+|['"]+$/g, '')
     .trim();
 
-  if (!isNonEmptyString(cleaned) || cleaned.includes('@')) return EMPTY_NAME;
+  if (!isNonEmptyString(cleaned) || cleaned.includes('@')) {
+    return EMPTY_NAME;
+  }
 
   const stripTrailingGroupTag = (input: string): string =>
     input.replace(/:[^:]+$/, '').trim();
