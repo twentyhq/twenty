@@ -10,6 +10,7 @@ import { findTeamsAssistantHistory } from 'src/features/chat/logic-functions/dat
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsAssistantAnswerResult } from 'src/features/chat/logic-functions/types/teams-assistant-answer-result.type';
 import { type TeamsAssistantRequestRecord } from 'src/features/chat/logic-functions/types/teams-assistant-request-record.type';
+import { buildTeamsAssistantAnswerText } from 'src/features/chat/logic-functions/utils/build-teams-assistant-answer-text';
 import { fetchWorkspaceBaseUrl } from 'src/features/chat/logic-functions/utils/fetch-workspace-base-url';
 import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { resolveTeamsSenderWorkspaceMemberId } from 'src/features/chat/logic-functions/utils/resolve-teams-sender-workspace-member-id';
@@ -108,7 +109,13 @@ export const answerTeamsAssistantRequest = async ({
       deadlineAtMs: agentDeadlineAtMs,
     });
 
-    await status.finish(responseText);
+    await status.finish(
+      buildTeamsAssistantAnswerText({
+        responseText,
+        requestId: request.id,
+        workspaceBaseUrl,
+      }),
+    );
     await updateTeamsAssistantRequest({
       client,
       id: request.id,
