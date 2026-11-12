@@ -2,16 +2,21 @@
 
 import {
   type RowLevelPermissionPredicate,
+  RowLevelPermissionPredicateOperand,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
 
-import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
+
+const ANY_OF_OPERANDS: RowLevelPermissionPredicateOperand[] = [
+  RowLevelPermissionPredicateOperand.IS,
+  RowLevelPermissionPredicateOperand.CONTAINS,
+];
 
 const canSplitMemberFieldValues = ({
   memberFieldKey,
@@ -26,9 +31,7 @@ const canSplitMemberFieldValues = ({
 
   return (
     predicatesReadingKey.length === 1 &&
-    RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(
-      predicatesReadingKey[0].operand,
-    )
+    ANY_OF_OPERANDS.includes(predicatesReadingKey[0].operand)
   );
 };
 
