@@ -5,7 +5,7 @@ import {
 
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatThreadFilterStatusState =
+export const agentChatSelectedPresetFilterState =
   createAtomState<AgentChatThreadFilterStatus>({
     key: 'agentChatThreadFilterStatusState',
     defaultValue: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,

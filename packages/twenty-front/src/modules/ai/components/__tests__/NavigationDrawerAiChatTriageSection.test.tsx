@@ -11,7 +11,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -147,7 +147,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE,
     AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED,
   ])('keeps Open current for the %s filter', (filterStatus) => {
-    jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);
+    jotaiStore.set(agentChatSelectedPresetFilterState.atom, filterStatus);
 
     renderTriage();
 
@@ -165,7 +165,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
   it('marks Snoozed as current while its conversations are shown', () => {
     jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
+      agentChatSelectedPresetFilterState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
 
@@ -208,7 +208,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
 
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+    expect(jotaiStore.get(agentChatSelectedPresetFilterState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {

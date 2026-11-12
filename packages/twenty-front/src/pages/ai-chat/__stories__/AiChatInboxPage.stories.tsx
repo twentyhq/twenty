@@ -29,7 +29,7 @@ import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
@@ -281,7 +281,7 @@ const meta = {
       AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
     );
     jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
+      agentChatSelectedPresetFilterState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     );
     jotaiStore.set(

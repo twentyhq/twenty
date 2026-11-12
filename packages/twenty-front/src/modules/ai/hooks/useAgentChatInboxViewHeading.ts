@@ -5,15 +5,15 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatT
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { getAgentChatChannelViewLabel } from '@/ai/utils/getAgentChatChannelViewLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useAgentChatInboxViewHeading = () => {
   const { t } = useLingui();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
+  const agentChatSelectedPresetFilter = useAtomStateValue(
+    agentChatSelectedPresetFilterState,
   );
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
@@ -26,9 +26,9 @@ export const useAgentChatInboxViewHeading = () => {
   if (!isDefined(agentChatShownChannelView)) {
     return {
       HeadingIcon:
-        AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus],
+        AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatSelectedPresetFilter],
       headingLabel: t(
-        AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
+        AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatSelectedPresetFilter],
       ),
       channelViewLabel: undefined,
     };

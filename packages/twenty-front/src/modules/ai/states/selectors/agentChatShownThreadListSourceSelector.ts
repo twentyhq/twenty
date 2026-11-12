@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
@@ -16,7 +16,7 @@ export const agentChatShownThreadListSourceSelector =
         ? { type: 'channel', channelView }
         : {
             type: 'presetFilter',
-            presetFilter: get(agentChatThreadFilterStatusState),
+            presetFilter: get(agentChatSelectedPresetFilterState),
           };
     },
     areEqual: isDeeplyEqual,

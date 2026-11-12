@@ -11,7 +11,7 @@ import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPers
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -130,7 +130,7 @@ const meta = {
     });
     jotaiStore.set(agentChatChannelViewState.atom, null);
     jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
+      agentChatSelectedPresetFilterState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     );
     jotaiStore.set(
@@ -209,7 +209,7 @@ export const SwitchViews: Story = {
     await expect(
       canvas.getByRole('region', { name: 'Inbox header' }),
     ).toHaveAttribute('data-pathname', '/inbox');
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+    await expect(jotaiStore.get(agentChatSelectedPresetFilterState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
     );
 
@@ -240,7 +240,7 @@ export const SwitchViews: Story = {
 export const FromSnoozed: Story = {
   beforeEach: () => {
     jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
+      agentChatSelectedPresetFilterState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
   },
@@ -256,7 +256,7 @@ export const FromSnoozed: Story = {
       }),
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+    await expect(jotaiStore.get(agentChatSelectedPresetFilterState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
     );
   },

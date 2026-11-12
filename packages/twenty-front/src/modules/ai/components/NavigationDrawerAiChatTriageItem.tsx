@@ -11,7 +11,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatT
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
@@ -36,8 +36,8 @@ export const NavigationDrawerAiChatTriageItem = ({
   const { t } = useLingui();
   const location = useLocation();
   const navigate = useNavigateApp();
-  const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
-    useAtomState(agentChatThreadFilterStatusState);
+  const [agentChatSelectedPresetFilter, setAgentChatSelectedPresetFilter] =
+    useAtomState(agentChatSelectedPresetFilterState);
   const setAgentChatChannelView = useSetAtomState(agentChatChannelViewState);
   const isChannelShown = isDefined(
     useAtomStateValue(agentChatShownChannelViewSelector),
@@ -46,13 +46,13 @@ export const NavigationDrawerAiChatTriageItem = ({
     AI_CHAT_INBOX_INSTANCE_ID,
   );
   const isCurrentFilter =
-    agentChatThreadFilterStatus === filterStatus ||
+    agentChatSelectedPresetFilter === filterStatus ||
     (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
-      isAgentChatOpenThreadFilterStatus(agentChatThreadFilterStatus));
+      isAgentChatOpenThreadFilterStatus(agentChatSelectedPresetFilter));
 
   const handleClick = () => {
     resetRecordSelection();
-    setAgentChatThreadFilterStatus(filterStatus);
+    setAgentChatSelectedPresetFilter(filterStatus);
     setAgentChatChannelView(null);
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
