@@ -7,6 +7,11 @@ import { type RelationType } from 'src/engine/metadata-modules/field-metadata/in
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
+type CreatedMorphRelationField =
+  FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
+    morphRelations: RelationDTO[];
+  };
+
 export const createMorphRelationBetweenObjects = async ({
   objectMetadataId,
   firstTargetObjectMetadataId,
@@ -29,7 +34,7 @@ export const createMorphRelationBetweenObjects = async ({
   isLabelSyncedWithName?: boolean;
   targetFieldLabel?: string;
   targetFieldIcon?: string;
-}) => {
+}): Promise<CreatedMorphRelationField> => {
   const createFieldInput: CreateOneFieldFactoryInput = {
     name: name || 'owner',
     label: label || 'owner field',
@@ -87,9 +92,7 @@ export const createMorphRelationBetweenObjects = async ({
   });
 
   const createdMorphRelationField =
-    createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
-      morphRelations: RelationDTO[];
-    };
+    createdFieldPerson as CreatedMorphRelationField;
 
   const targetObjectMetadataIdsInCreationOrder = [
     firstTargetObjectMetadataId,
