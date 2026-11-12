@@ -55,10 +55,10 @@ export class RecordAccessGroupRepository {
 
   async estimateRecordCount({
     workspaceId,
-    flatObjectMetadata,
+    flatObjectMetadatas,
   }: {
     workspaceId: string;
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadatas: FlatObjectMetadata[];
   }): Promise<number> {
     const [row] = await this.recordPermissionQueryService.execute<{
       count: string;
@@ -66,13 +66,17 @@ export class RecordAccessGroupRepository {
       workspaceId,
       query: {
         // reltuples is -1 until a table is analyzed and live tuples reset with stats, so take the larger
-        sql: `SELECT GREATEST("reltuples", pg_stat_get_live_tuples("oid"))::bigint AS "count"
-          FROM pg_class WHERE "oid" = to_regclass(:tableExpression)`,
+        sql: `SELECT SUM(GREATEST("reltuples", pg_stat_get_live_tuples("oid")))::bigint AS "count"
+          FROM pg_class WHERE "oid" IN (
+            SELECT to_regclass("tableExpression") FROM unnest(:tableExpressions::text[]) AS "tableExpression"
+          )`,
         parameters: {
-          tableExpression: buildWorkspaceTableExpression({
-            workspaceId,
-            tableName: computeObjectTargetTable(flatObjectMetadata),
-          }),
+          tableExpressions: flatObjectMetadatas.map((flatObjectMetadata) =>
+            buildWorkspaceTableExpression({
+              workspaceId,
+              tableName: computeObjectTargetTable(flatObjectMetadata),
+            }),
+          ),
         },
       },
     });

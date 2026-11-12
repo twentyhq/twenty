@@ -12,7 +12,6 @@ type PlannedRecordAccessGroupRecompute = Required<
   >
 >;
 
-// Walks the related record paths the way the recompute jobs will, to list every recompute a change leads to
 export const planRecordAccessGroupRecomputes = ({
   objectMetadataIds,
   resolvedRelatedRecordPaths,

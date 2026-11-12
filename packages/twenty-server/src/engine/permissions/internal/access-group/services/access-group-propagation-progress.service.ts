@@ -60,22 +60,18 @@ export class AccessGroupPropagationProgressService {
       await this.clearRecordCounts(workspaceId);
     }
 
-    let plannedRecordCount = 0;
-
-    for (const { objectMetadataId } of newRecomputes) {
-      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: objectMetadataId,
-        flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+    const plannedRecordCount =
+      await this.recordAccessGroupRepository.estimateRecordCount({
+        workspaceId,
+        flatObjectMetadatas: newRecomputes
+          .map(({ objectMetadataId }) =>
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: objectMetadataId,
+              flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
+            }),
+          )
+          .filter(isDefined),
       });
-
-      if (isDefined(flatObjectMetadata)) {
-        plannedRecordCount +=
-          await this.recordAccessGroupRepository.estimateRecordCount({
-            workspaceId,
-            flatObjectMetadata,
-          });
-      }
-    }
 
     await this.cacheStorageService.setAdd(
       this.buildPendingRecomputesKey(workspaceId),
