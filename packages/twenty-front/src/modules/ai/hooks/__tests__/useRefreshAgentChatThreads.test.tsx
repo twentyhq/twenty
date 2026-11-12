@@ -4,6 +4,8 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -95,8 +97,14 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
+const useAgentChatThreadLoading = () => ({
+  ...useRefreshAgentChatThreads(),
+  ...useFetchMoreAgentChatThreads(),
+  ...useLoadAgentChatThread(),
+});
+
 const renderRefresh = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useRefreshAgentChatThreads(), {
+  renderHook(() => useAgentChatThreadLoading(), {
     wrapper: getWrapper(store),
   }).result;
 
