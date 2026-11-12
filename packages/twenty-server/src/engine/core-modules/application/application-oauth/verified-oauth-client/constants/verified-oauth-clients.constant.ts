@@ -3,13 +3,11 @@ import { type VerifiedOAuthClient } from 'src/engine/core-modules/application/ap
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 // A document URL is matched in full, not by host: vendors also serve user content from the same host.
-// logoPath is served by the front end, from its public folder.
 export const VERIFIED_OAUTH_CLIENTS: VerifiedOAuthClient[] = [
   {
     name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
     registrationUniversalIdentifier:
       TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-    logoPath: '/images/oauth-clients/twenty-cli.svg',
     marketplaceAppUniversalIdentifier:
       MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.TWENTY_CLI,
   },

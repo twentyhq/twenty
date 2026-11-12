@@ -1123,6 +1123,7 @@ describe('OAuth (integration)', () => {
   describe('Per-user authorizations', () => {
     const exchangeForTokens = async (
       scope = 'read write',
+      userId = TEST_USER_ID,
     ): Promise<{
       accessToken: string;
       refreshToken: string;
@@ -1133,7 +1134,7 @@ describe('OAuth (integration)', () => {
       const tokenId = await insertAppToken(ds, {
         value: hashedCode,
         type: AppTokenType.AuthorizationCode,
-        userId: TEST_USER_ID,
+        userId,
         workspaceId: TEST_WORKSPACE_ID,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
         context: {
@@ -1445,29 +1446,50 @@ describe('OAuth (integration)', () => {
       variables: { applicationAuthorizationId },
     });
 
-    it('should list every member authorization to a user who manages applications', async () => {
-      await exchangeForTokens();
+    const OTHER_MEMBER_USER_ID = USER_DATA_SEED_IDS.JONY;
 
-      const { id } = await findListedAuthorization();
-
+    const findOtherMemberAuthorization = async () => {
       const res = await makeMetadataApiRequest(
         LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
       );
 
       expect(res.body.errors).toBeUndefined();
-      expect(res.body.data.workspaceApplicationAuthorizations).toContainEqual({
-        id,
+
+      return res.body.data.workspaceApplicationAuthorizations.find(
+        (authorization: { applicationId: string; userId: string }) =>
+          authorization.applicationId === testApplication.id &&
+          authorization.userId === OTHER_MEMBER_USER_ID,
+      );
+    };
+
+    afterEach(() =>
+      ds.query(
+        `DELETE FROM core."applicationAuthorization"
+         WHERE "userId" = $1 AND "applicationId" = $2`,
+        [OTHER_MEMBER_USER_ID, testApplication.id],
+      ),
+    );
+
+    it('should list another member authorization to a user who manages applications', async () => {
+      await exchangeForTokens('read write', OTHER_MEMBER_USER_ID);
+
+      expect(await findOtherMemberAuthorization()).toEqual({
+        id: expect.any(String),
         applicationId: testApplication.id,
-        userId: expect.any(String),
+        userId: OTHER_MEMBER_USER_ID,
         marketplaceAppUniversalIdentifier: null,
       });
+      expect(await findListedAuthorization()).toBeUndefined();
     });
 
-    it('should let a user who manages applications revoke a member authorization', async () => {
-      const { refreshToken } = await exchangeForTokens();
+    it('should let a user who manages applications revoke another member authorization', async () => {
+      const { refreshToken } = await exchangeForTokens(
+        'read write',
+        OTHER_MEMBER_USER_ID,
+      );
 
-      const { id } = await findListedAuthorization();
+      const { id } = await findOtherMemberAuthorization();
 
       const revokeResponse = await makeMetadataApiRequest(
         revokeWorkspaceAuthorizationOperation(id),
@@ -1487,6 +1509,7 @@ describe('OAuth (integration)', () => {
       }).expect(400);
 
       expect(res.body.error).toBe('invalid_grant');
+      expect(await findOtherMemberAuthorization()).toBeUndefined();
     });
 
     it('should refuse the workspace list and revoke to a member who does not manage applications', async () => {
