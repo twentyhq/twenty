@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import {
   Logger,
   type OnModuleDestroy,
@@ -480,7 +482,7 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      void this.clearCompletedJobData(job);
+      void this.clearOversizedCompletedJobData(job);
       this.releaseFinishedJobMemory({ queueName, job });
     });
     this.workerMap[queueName].on('failed', (job) => {
@@ -896,13 +898,26 @@ export class BullMQDriver
     });
   }
 
-  private async clearCompletedJobData(job: Job): Promise<void> {
-    if (!this.jobMemoryLimiter.isEnabled()) {
+  private async clearOversizedCompletedJobData(job: Job): Promise<void> {
+    const memorySizeBytes = computeJobSizeBytes({
+      data: job.data,
+      options: job.opts,
+    });
+
+    if (
+      memorySizeBytes <=
+      this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES')
+    ) {
       return;
     }
 
     try {
-      await job.updateData({});
+      await job.updateData({
+        memorySizeBytes,
+        hash: createHash('sha256')
+          .update(JSON.stringify(job.data) ?? '')
+          .digest('hex'),
+      });
     } catch (error) {
       this.logger.warn(
         `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
