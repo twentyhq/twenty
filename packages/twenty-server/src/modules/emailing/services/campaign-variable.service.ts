@@ -12,6 +12,8 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
@@ -27,6 +29,7 @@ export type PersonCampaignVariables = {
 
 type PersonVariableSchema = PersonCampaignVariables & {
   fieldsByName: Map<string, FlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
 };
 
 const COMPUTED_VARIABLE_NAMES = ['fullName', 'personId'];
@@ -36,6 +39,7 @@ const MAX_VARIABLES_IN_ERROR_MESSAGE = 40;
 const PERSON_FIELD_CACHE_KEYS = [
   'flatObjectMetadataMaps',
   'flatFieldMetadataMaps',
+  'flatFieldMetadataOptionMaps',
 ] as const;
 
 const MAX_CACHED_WORKSPACE_SCHEMAS = 100;
@@ -87,6 +91,7 @@ export class CampaignVariableService {
         ...COMPUTED_VARIABLE_NAMES,
       ]),
       fieldsByName: new Map(fields.map((field) => [field.name, field])),
+      flatFieldMetadataOptionMaps: data.flatFieldMetadataOptionMaps,
     };
 
     writeLruEntry({
@@ -132,7 +137,7 @@ export class CampaignVariableService {
     workspaceId: string,
     person: PersonWorkspaceEntity | null,
   ): Promise<Record<string, string>> {
-    const { definitions, fieldsByName } =
+    const { definitions, fieldsByName, flatFieldMetadataOptionMaps } =
       await this.getPersonVariableSchema(workspaceId);
 
     const variables: Record<string, string> = {};
@@ -142,6 +147,7 @@ export class CampaignVariableService {
         this.resolveValue(person, definition.name),
         definition,
         fieldsByName.get(definition.fieldName),
+        flatFieldMetadataOptionMaps,
       );
     }
 
@@ -201,6 +207,7 @@ export class CampaignVariableService {
     value: unknown,
     definition: CampaignVariableDefinition,
     field: FlatFieldMetadata | undefined,
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
   ): string {
     if (!isDefined(value) || value === '') {
       return '';
@@ -217,7 +224,13 @@ export class CampaignVariableService {
       }
       case FieldMetadataType.SELECT:
       case FieldMetadataType.RATING: {
-        const option = field?.options?.find(
+        const options = isDefined(field)
+          ? resolveFlatFieldMetadataOptionsFromCachedMaps({
+              flatFieldMetadata: field,
+              flatFieldMetadataOptionMaps,
+            })
+          : null;
+        const option = options?.find(
           (fieldOption) => fieldOption.value === value,
         );
 

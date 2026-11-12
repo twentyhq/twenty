@@ -37,6 +37,10 @@ import {
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import {
+  type FlatFieldMetadataOptionMapsForOptions,
+  resolveFlatFieldMetadataOptions,
+} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataRequiredOnCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-required-on-create.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -262,6 +266,7 @@ export const computeSchemaComponents = (
     AllFlatEntityMaps,
     'flatFieldMetadataMaps'
   >['flatFieldMetadataMaps'],
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions | undefined,
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return flatObjectMetadataItems.reduce(
     (schemas, item) => {
@@ -269,7 +274,15 @@ export const computeSchemaComponents = (
         findManyFlatEntityByIdInFlatEntityMapsOrThrow<FlatFieldMetadata>({
           flatEntityMaps: flatFieldMetadataMaps,
           flatEntityIds: item.fieldIds,
-        }).filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata));
+        })
+          .filter((fieldMetadata) => !isMorphRelationHead(fieldMetadata))
+          .map((fieldMetadata) => ({
+            ...fieldMetadata,
+            options: resolveFlatFieldMetadataOptions({
+              flatFieldMetadata: fieldMetadata,
+              flatFieldMetadataOptionMaps,
+            }),
+          }));
 
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent({
         item,

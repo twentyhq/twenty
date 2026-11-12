@@ -67,6 +67,7 @@ describe('computeSchemaComponents', () => {
         [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        undefined,
       ),
     ).toMatchInlineSnapshot(`
 {
@@ -932,6 +933,7 @@ describe('computeSchemaComponents', () => {
         [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        undefined,
       ),
     ).toMatchSnapshot();
   });

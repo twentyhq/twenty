@@ -43,6 +43,7 @@ describe('processTwoDimensionalResults', () => {
         ],
         primaryAxisGroupByField: relationFieldMetadata,
         secondaryAxisGroupByField: selectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         primaryRelationLabelResolution: {
@@ -76,6 +77,7 @@ describe('processTwoDimensionalResults', () => {
         ],
         primaryAxisGroupByField: selectFieldMetadata,
         secondaryAxisGroupByField: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         primaryRelationLabelResolution: undefined,
@@ -100,6 +102,7 @@ describe('processTwoDimensionalResults', () => {
       ],
       primaryAxisGroupByField: relationFieldMetadata,
       secondaryAxisGroupByField: selectFieldMetadata,
+      flatFieldMetadataOptionMaps: undefined,
       userTimezone,
       firstDayOfTheWeek,
       primaryRelationLabelResolution: undefined,

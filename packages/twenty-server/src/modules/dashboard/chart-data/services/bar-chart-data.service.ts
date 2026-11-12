@@ -55,11 +55,19 @@ export class BarChartDataService {
     locale,
   }: GetBarChartDataParams): Promise<BarChartDataDTO> {
     try {
-      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+      } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+            flatMapsKeys: [
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+              'flatFieldMetadataOptionMaps',
+            ],
           },
         );
 
@@ -194,6 +202,7 @@ export class BarChartDataService {
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
+          flatFieldMetadataOptionMaps,
           configuration,
           userTimezone,
           firstDayOfTheWeek,
@@ -207,6 +216,7 @@ export class BarChartDataService {
         filteredRawResults: resolvedResults,
         primaryAxisGroupByField,
         aggregateField,
+        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone,
         firstDayOfTheWeek,

@@ -7,6 +7,7 @@ import {
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
 } from 'twenty-shared/utils';
 
+import { FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -31,6 +32,7 @@ export const transformToTwoDimensionalBarChartData = ({
   primaryAxisGroupByField,
   secondaryAxisGroupByField,
   aggregateField,
+  flatFieldMetadataOptionMaps,
   configuration,
   userTimezone,
   firstDayOfTheWeek,
@@ -42,6 +44,7 @@ export const transformToTwoDimensionalBarChartData = ({
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
   configuration: BarChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -63,6 +66,7 @@ export const transformToTwoDimensionalBarChartData = ({
     applyGapFilling({
       data: filteredRawResults,
       primaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       omitNullValues: configuration.omitNullValues ?? false,
       isDescOrder,
@@ -70,8 +74,14 @@ export const transformToTwoDimensionalBarChartData = ({
       splitMultiValueFields: configuration.splitMultiValueFields,
     });
 
-  const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
-  const secondarySelectOptions = getSelectOptions(secondaryAxisGroupByField);
+  const primarySelectOptions = getSelectOptions({
+    fieldMetadata: primaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
+  });
+  const secondarySelectOptions = getSelectOptions({
+    fieldMetadata: secondaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
+  });
 
   const indexByKey = configuration.primaryAxisGroupBySubFieldName
     ? `${primaryAxisGroupByField.name}${capitalize(configuration.primaryAxisGroupBySubFieldName)}`
@@ -91,6 +101,7 @@ export const transformToTwoDimensionalBarChartData = ({
     rawResults: gapFilledResults,
     primaryAxisGroupByField,
     secondaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
     primaryDateGranularity: configuration.primaryAxisDateGranularity,
     primarySubFieldName: configuration.primaryAxisGroupBySubFieldName,
     secondaryDateGranularity: configuration.secondaryAxisGroupByDateGranularity,
