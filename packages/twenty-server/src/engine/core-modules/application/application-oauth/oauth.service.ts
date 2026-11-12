@@ -13,6 +13,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
+import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -22,6 +23,7 @@ import { OAuthErrorResponse } from 'src/engine/core-modules/application/applicat
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -402,6 +404,7 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
+          refreshToken: payload,
         });
 
         if (authorizationError) {
@@ -558,9 +561,10 @@ export class OAuthService {
 
       if (
         isDefined(decoded.userId) &&
-        (await this.isAuthorizationRevoked({
+        !(await this.isRefreshTokenAuthorized({
           userId: decoded.userId,
           applicationId: decoded.applicationId,
+          refreshToken: decoded,
         }))
       ) {
         return { active: false };
@@ -648,10 +652,12 @@ export class OAuthService {
     userId,
     workspaceId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -659,10 +665,15 @@ export class OAuthService {
         applicationId,
       });
 
-    if (isDefined(authorization?.revokedAt)) {
+    if (
+      isDefined(authorization) &&
+      !isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+    ) {
       return this.errorResponse(
         'invalid_grant',
-        'The user revoked this application access',
+        isDefined(authorization.revokedAt)
+          ? 'The user revoked this application access'
+          : 'Refresh token was issued for an earlier authorization',
       );
     }
 
@@ -731,12 +742,14 @@ export class OAuthService {
     );
   }
 
-  private async isAuthorizationRevoked({
+  private async isRefreshTokenAuthorized({
     userId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
   }): Promise<boolean> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -744,7 +757,10 @@ export class OAuthService {
         applicationId,
       });
 
-    return isDefined(authorization?.revokedAt);
+    return (
+      !isDefined(authorization) ||
+      isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+    );
   }
 
   // RFC 6749 §3.3: an empty scope means no scopes, not one blank one
