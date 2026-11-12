@@ -48,7 +48,6 @@ export const SettingsRolePermissions = ({
       <SettingsRolePermissionsObjectsSection
         roleId={roleId}
         isEditable={isEditable}
-        fromAgentId={fromAgentId}
       />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}

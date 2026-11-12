@@ -29,13 +29,11 @@ const StyledTableRows = styled.div`
 type SettingsRolePermissionsObjectsSectionProps = {
   roleId: string;
   isEditable: boolean;
-  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectsSection = ({
   roleId,
   isEditable,
-  fromAgentId,
 }: SettingsRolePermissionsObjectsSectionProps) => {
   const { t } = useLingui();
   const settingsRoleListedObjectOverrideIds = useAtomFamilyStateValue(
@@ -94,7 +92,6 @@ export const SettingsRolePermissionsObjectsSection = ({
                   roleId={roleId}
                   objectMetadataItem={objectMetadataItem}
                   isEditable={isEditable}
-                  fromAgentId={fromAgentId}
                 />
               ))
             ) : (

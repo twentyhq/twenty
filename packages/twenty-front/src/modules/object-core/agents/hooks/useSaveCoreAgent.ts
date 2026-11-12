@@ -13,6 +13,7 @@ import { coreAgentIsSavingFamilyState } from '@/object-core/agents/states/coreAg
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getCoreAgentDraftError } from '@/object-core/agents/utils/getCoreAgentDraftError';
+import { getRowLevelPermissionRulesSaveError } from '@/settings/roles/role/utils/getRowLevelPermissionRulesSaveError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
 import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -106,7 +107,11 @@ export const useSaveCoreAgent = (agent: CoreAgent) => {
       return;
     }
 
-    const draftError = getCoreAgentDraftError(draft);
+    const draftError =
+      getCoreAgentDraftError(draft) ??
+      (isRoleDirty
+        ? getRowLevelPermissionRulesSaveError(settingsDraftRole)
+        : undefined);
 
     if (isDefined(draftError)) {
       enqueueToast({ status: 'error', children: draftError });

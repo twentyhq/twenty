@@ -69,12 +69,33 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     return mode === 'read' || fieldPermission?.canUpdateFieldValue !== false;
   };
 
+  const getFieldLockedReason = (
+    field: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>,
+  ) => {
+    if (!(field.isUIEditable ?? true)) {
+      return mode === 'read' ? t`Always visible` : t`Can't be edited`;
+    }
+
+    if (
+      mode === 'read' &&
+      objectMetadataItem.labelIdentifierFieldMetadataId === field.id
+    ) {
+      return t`Always visible`;
+    }
+
+    if (
+      mode === 'update' &&
+      getFieldPermission(field.id)?.canReadFieldValue === false
+    ) {
+      return t`Can't be seen`;
+    }
+
+    return undefined;
+  };
+
   const isFieldLocked = (
     field: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>,
-  ) =>
-    !(field.isUIEditable ?? true) ||
-    (mode === 'read' &&
-      objectMetadataItem.labelIdentifierFieldMetadataId === field.id);
+  ) => isDefined(getFieldLockedReason(field));
 
   const allowedFieldIds = fieldMetadataItems
     .filter((field) => isFieldAllowed(field.id))
@@ -103,7 +124,11 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     if (mode === 'read') {
       upsertFieldPermissionInDraftRole(
         isAllowed
-          ? { ...fieldPermission, canReadFieldValue: null }
+          ? {
+              ...fieldPermission,
+              canReadFieldValue: null,
+              canUpdateFieldValue: null,
+            }
           : {
               ...fieldPermission,
               canReadFieldValue: false,
@@ -115,11 +140,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
 
     upsertFieldPermissionInDraftRole(
       isAllowed
-        ? {
-            ...fieldPermission,
-            canReadFieldValue: null,
-            canUpdateFieldValue: null,
-          }
+        ? { ...fieldPermission, canUpdateFieldValue: null }
         : { ...fieldPermission, canUpdateFieldValue: false },
     );
   };
@@ -199,8 +220,6 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     return selectControl;
   }
 
-  const lockedReason = mode === 'read' ? t`Always visible` : t`Can't be edited`;
-
   return (
     <DropdownRoot
       dropdownId={`settings-role-object-fields-${mode}-${objectMetadataItem.id}`}
@@ -246,14 +265,14 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
           >
             <Dropdown.Section scrollable>
               {matchingFieldMetadataItems.map((field) => {
-                const isLocked = isFieldLocked(field);
+                const lockedReason = getFieldLockedReason(field);
 
                 return (
                   <Dropdown.OptionItem
                     key={field.id}
                     value={field.id}
-                    disabled={isLocked}
-                    description={isLocked ? lockedReason : undefined}
+                    disabled={isDefined(lockedReason)}
+                    description={lockedReason}
                     startIcon={<SelectOptionIcon Icon={getIcon(field.icon)} />}
                   >
                     {field.label}

@@ -780,14 +780,6 @@ const SettingsRoleEdit = lazy(() =>
   })),
 );
 
-const SettingsRoleObjectLevel = lazy(() =>
-  import('~/pages/settings/members/roles/SettingsRoleObjectLevel').then(
-    (module) => ({
-      default: module.SettingsRoleObjectLevel,
-    }),
-  ),
-);
-
 type CreateSettingsRouteObjectsArgs = {
   isAdminPageEnabled?: boolean;
 };
@@ -1150,11 +1142,6 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.RoleCreate}
         element={<SettingsRoleCreate />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
-      />
-      <Route
-        path={SettingsPath.RoleObjectLevel}
-        element={<SettingsRoleObjectLevel />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
     </Route>

@@ -30,6 +30,7 @@ import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import { getRowLevelPermissionRulesSaveError } from '@/settings/roles/role/utils/getRowLevelPermissionRulesSaveError';
 import { useLingui } from '@lingui/react/macro';
 
 type SettingsRoleProps = {
@@ -134,6 +135,14 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         status: 'error',
         children: t`Role name cannot be empty`,
       });
+      return;
+    }
+
+    const rulesSaveError =
+      getRowLevelPermissionRulesSaveError(settingsDraftRole);
+
+    if (isDefined(rulesSaveError)) {
+      enqueueToast({ status: 'error', children: rulesSaveError });
       return;
     }
 
