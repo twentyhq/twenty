@@ -9,8 +9,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
@@ -19,7 +19,7 @@ import { PrivateRecordRepository } from 'src/engine/permissions/internal/private
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { omitUnreadableFieldsFromEvents } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-events.util';
-import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
+import { resolveUnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-unreadable-fields-on-matching-records.util';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -84,20 +84,18 @@ export class RecordEventPermissionsReadService {
     );
 
     return omitUnreadableFieldsFromEvents({
-      fieldsHiddenOnMatchingRecords: await resolveFieldsHiddenOnMatchingRecords(
-        {
+      unreadableFieldsOnMatchingRecords:
+        await resolveUnreadableFieldsOnMatchingRecords({
           principals,
           metadataMaps,
           flatObjectMetadata: eventBatch.objectMetadata,
-          fieldList: 'unreadableFields',
           records: resolveEventRecordSnapshots(readableEvents),
           findRelationJoinValues: (args) =>
             this.recordPermissionReadRepository.findRelationJoinValues({
               ...args,
               workspaceId: eventBatch.workspaceId,
             }),
-        },
-      ),
+        }),
       events: readableEvents,
       objectMetadata: eventBatch.objectMetadata,
       recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
@@ -216,7 +214,7 @@ export class RecordEventPermissionsReadService {
       }
 
       // a destroyed record has no row left to query, so only its last snapshot can be checked
-      return findGrantedRecordIds({
+      return findAccessibleRecordIds({
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,

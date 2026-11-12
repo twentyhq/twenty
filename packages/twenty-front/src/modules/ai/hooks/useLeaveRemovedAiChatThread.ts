@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
@@ -16,7 +16,7 @@ export const useLeaveRemovedAiChatThread = () => {
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
     shouldPreserveClosedInbox: true,
   });
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
 
   const leaveRemovedAiChatThread = useCallback(async () => {
     const currentThreadId = store.get(currentAiChatThreadState.atom);

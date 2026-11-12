@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
+import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 export const isAgentChatThreadSettledForMember = ({

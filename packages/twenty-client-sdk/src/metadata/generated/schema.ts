@@ -1,9 +1,9 @@
 // @ts-nocheck
 export type Scalars = {
-    String: string,
     Boolean: boolean,
-    Float: number,
     Int: number,
+    String: string,
+    Float: number,
     ID: string,
     BigInt: any,
     ConnectionCursor: any,
@@ -12,6 +12,13 @@ export type Scalars = {
     JSONObject: any,
     UUID: string,
     Upload: File,
+}
+
+export interface AccessGroupPropagationProgress {
+    isInProgress: Scalars['Boolean']
+    remainingRecordCount: Scalars['Int']
+    totalRecordCount: Scalars['Int']
+    __typename: 'AccessGroupPropagationProgress'
 }
 
 export interface Agent {
@@ -2623,6 +2630,7 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
+    stopGenerate: Scalars['Boolean']
     stopImpersonation: StopImpersonation
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
@@ -3165,6 +3173,7 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    accessGroupPropagationProgress: AccessGroupPropagationProgress
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
@@ -4496,6 +4505,14 @@ export interface WorkspaceUrlsAndId {
     id: Scalars['UUID']
     workspaceUrls: WorkspaceUrls
     __typename: 'WorkspaceUrlsAndId'
+}
+
+export interface AccessGroupPropagationProgressGenqlSelection{
+    isInProgress?: boolean | number
+    remainingRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
 }
 
 export interface ActivateWorkspaceInput {
@@ -7429,6 +7446,7 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    stopGenerate?: { __args: {input: StopGenerateInput} }
     stopImpersonation?: StopImpersonationGenqlSelection
     switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
@@ -8012,6 +8030,7 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    accessGroupPropagationProgress?: AccessGroupPropagationProgressGenqlSelection
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
@@ -8632,6 +8651,8 @@ export interface StartWorkspaceSetupChatResultGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StopGenerateInput {runId: Scalars['UUID']}
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
@@ -9713,6 +9734,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+
+    const AccessGroupPropagationProgress_possibleTypes: string[] = ['AccessGroupPropagationProgress']
+    export const isAccessGroupPropagationProgress = (obj?: { __typename?: any } | null): obj is AccessGroupPropagationProgress => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAccessGroupPropagationProgress"')
+      return AccessGroupPropagationProgress_possibleTypes.includes(obj.__typename)
+    }
+    
 
 
     const Agent_possibleTypes: string[] = ['Agent']

@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
