@@ -14,7 +14,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { hasCreatedByField } from 'src/engine/permissions/internal/record-permission-repository/utils/has-created-by-field.util';
 import { type RecordSharingChange } from 'src/engine/permissions/record-share/types/record-sharing-change.type';
-import { PrivateRecordWriteService } from 'src/engine/permissions/internal/private-record/services/private-record-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import {
@@ -51,7 +51,7 @@ export class RecordSharingWriteService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordSharingChangeService: RecordSharingChangeService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
-    private readonly privateRecordWriteService: PrivateRecordWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
 
@@ -229,7 +229,7 @@ export class RecordSharingWriteService {
     });
 
     if (isPrivate) {
-      await this.privateRecordWriteService.setPrivateOrThrow({
+      await this.privateRecordSystemWriteService.setRecordsPrivacy({
         workspaceId,
         objectMetadataId,
         recordIds,
@@ -277,7 +277,7 @@ export class RecordSharingWriteService {
         'flatFieldMetadataMaps',
       ]);
 
-    await this.privateRecordWriteService.setPrivateOrThrow({
+    await this.privateRecordSystemWriteService.setRecordsPrivacy({
       workspaceId,
       objectMetadataId: flatObjectMetadata.id,
       recordIds: [args.recordId],

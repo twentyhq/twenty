@@ -476,6 +476,12 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       ).toEqual(UNSATISFIABLE_RECORD_FILTER);
     });
 
+    it('should match nothing when the workspace member carries an empty list', () => {
+      expect(
+        build([LOCALE_BOUND_ROLE_ID], buildWorkspaceMember({ locale: [] })),
+      ).toEqual(UNSATISFIABLE_RECORD_FILTER);
+    });
+
     it('should match nothing when the workspace member value does not fit the target field', () => {
       expect(
         build([TEAM_BOUND_ROLE_ID], buildWorkspaceMember({ team: 'SALES' })),

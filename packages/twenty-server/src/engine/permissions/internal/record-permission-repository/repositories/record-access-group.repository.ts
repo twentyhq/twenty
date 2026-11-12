@@ -7,8 +7,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordPermissionQueryService } from 'src/engine/permissions/internal/record-permission-repository/services/record-permission-query.service';
 import { type RecordAccessGroupSQLCondition } from 'src/engine/permissions/internal/record-permission-repository/types/record-access-group-sql-condition.type';
+import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
+import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
+import { type RelatedRecordPathFollowingLookup } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-following-lookup.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -106,24 +109,114 @@ export class RecordAccessGroupRepository {
     workspaceId,
     flatObjectMetadata,
     recordAccessGroupSQLConditions,
+    relatedRecordPathAccessGroupSources,
     recordIds,
     transactionScope,
   }: {
     workspaceId: string;
     flatObjectMetadata: FlatObjectMetadata;
     recordAccessGroupSQLConditions: RecordAccessGroupSQLCondition[];
+    relatedRecordPathAccessGroupSources: RelatedRecordPathAccessGroupSource[];
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
-  }): Promise<void> {
-    await this.recordPermissionQueryService.execute({
+  }): Promise<string[]> {
+    const updatedRows = await this.recordPermissionQueryService.execute<{
+      id: string;
+    }>({
       workspaceId,
       transactionScope,
       query: buildRecomputeRecordAccessGroupIdsQuery({
         workspaceId,
         flatObjectMetadata,
         recordAccessGroupSQLConditions,
+        relatedRecordPathAccessGroupSources,
         recordIds,
       }),
     });
+
+    return updatedRows.map(({ id }) => id);
+  }
+
+  async findRecordsFollowingRelatedRecordPaths({
+    workspaceId,
+    lookups,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    lookups: RelatedRecordPathFollowingLookup[];
+    transactionScope?: RecordPermissionTransactionScope;
+  }): Promise<{ objectMetadataId: string; id: string }[]> {
+    if (lookups.length === 0) {
+      return [];
+    }
+
+    const buildTableExpression = (flatObjectMetadata: FlatObjectMetadata) =>
+      buildWorkspaceTableExpression({
+        workspaceId,
+        tableName: computeObjectTargetTable(flatObjectMetadata),
+      });
+    const lookupQueries = lookups.map(
+      (
+        { targetFlatObjectMetadata, writtenHop, followingHops },
+        lookupIndex,
+      ) => {
+        const followingHopAliases = followingHops.map(
+          (_, hopIndex) => `following_${hopIndex}`,
+        );
+        const { fromExpressions, joinConditions } =
+          buildRelatedRecordPathHopsJoin({
+            workspaceId,
+            hops: followingHops,
+            hopTableAliases: followingHopAliases,
+            targetTableAlias: 'target',
+          });
+        const writtenJoinColumn = `${escapeIdentifier(followingHopAliases[0] ?? 'target')}.${escapeIdentifier(writtenHop.targetColumnName)}`;
+
+        return `SELECT ${lookupIndex} AS "lookupIndex", "target"."id"
+          FROM ${[
+            ...fromExpressions,
+            `${buildTableExpression(targetFlatObjectMetadata)} AS "target"`,
+          ].join(', ')}
+          WHERE (${writtenJoinColumn} = ANY(:joinValuesBefore_${lookupIndex})
+            OR ${writtenJoinColumn} IN (
+              SELECT "written".${escapeIdentifier(writtenHop.sourceColumnName)}
+              FROM ${buildTableExpression(writtenHop.flatObjectMetadata)} AS "written"
+              WHERE "written"."id" = ANY(:recordIds_${lookupIndex})
+            ))
+            ${joinConditions.map((joinCondition) => `AND ${joinCondition}`).join(' ')}`;
+      },
+    );
+
+    const rows = await this.recordPermissionQueryService.execute<{
+      lookupIndex: number;
+      id: string;
+    }>({
+      workspaceId,
+      transactionScope,
+      query: {
+        sql: lookupQueries.join(' UNION '),
+        parameters: Object.fromEntries(
+          lookups.flatMap(
+            ({ writtenHop, recordIds, recordsBefore }, lookupIndex) => [
+              [`recordIds_${lookupIndex}`, recordIds],
+              [
+                `joinValuesBefore_${lookupIndex}`,
+                recordsBefore
+                  .map(
+                    (recordBefore) => recordBefore[writtenHop.sourceColumnName],
+                  )
+                  .filter(isDefined),
+              ],
+            ],
+          ),
+        ),
+      },
+    });
+
+    return rows.map(({ lookupIndex, id }) => ({
+      objectMetadataId:
+        lookups[Number(lookupIndex)].targetFlatObjectMetadata.id,
+      id,
+    }));
   }
 }
