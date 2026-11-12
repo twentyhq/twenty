@@ -99,15 +99,9 @@ export class FieldMetadataController {
         },
       );
 
-    return this.fieldMetadataService.addOptionApplicationIds({
-      fieldMetadataDtos: resolvedFields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          derivedFieldMetadataIds,
-        ),
-      ),
-      workspaceId,
-    });
+    return resolvedFields.map((field) =>
+      fromFieldMetadataEntityToFieldMetadataDto(field, derivedFieldMetadataIds),
+    );
   }
 
   @Get()
@@ -189,10 +183,7 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = await this.fieldMetadataService.toFieldMetadataDto({
-      flatFieldMetadata: flatField,
-      workspaceId,
-    });
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -251,10 +242,7 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = await this.fieldMetadataService.toFieldMetadataDto({
-      flatFieldMetadata: flatField,
-      workspaceId,
-    });
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

@@ -78,18 +78,6 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
         existingOptionsByFieldMetadataUniversalIdentifier.get(
           fieldMetadataUniversalIdentifier,
         ) ?? [],
-      isUniversalIdentifierUsedByOtherField: (universalIdentifier) => {
-        const existingOption =
-          existingFlatFieldMetadataOptionMaps.byUniversalIdentifier[
-            universalIdentifier
-          ];
-
-        return (
-          isDefined(existingOption) &&
-          existingOption.fieldMetadataUniversalIdentifier !==
-            fieldMetadataUniversalIdentifier
-        );
-      },
       applicationUniversalIdentifier,
       workspaceCustomApplicationUniversalIdentifier,
     });

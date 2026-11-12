@@ -126,6 +126,7 @@ export class FieldMetadataEntity<
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
 
+  // Deprecated: options are read from the fieldMetadataOption rows. Still written, as a copy, until it is dropped.
   @Column('jsonb', { nullable: true })
   options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 

@@ -110,22 +110,14 @@ export class FieldMetadataResolver {
     const derivedFieldMetadataIds =
       await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
-    const fieldMetadataDtos =
-      await this.fieldMetadataService.addOptionApplicationIds({
-        fieldMetadataDtos: connection.edges.map((edge) =>
-          fromFieldMetadataEntityToFieldMetadataDto(
-            edge.node,
-            derivedFieldMetadataIds,
-          ),
-        ),
-        workspaceId,
-      });
-
     return {
       ...connection,
-      edges: connection.edges.map((edge, edgeIndex) => ({
+      edges: connection.edges.map((edge) => ({
         ...edge,
-        node: fieldMetadataDtos[edgeIndex],
+        node: fromFieldMetadataEntityToFieldMetadataDto(
+          edge.node,
+          derivedFieldMetadataIds,
+        ),
       })),
     };
   }
@@ -154,18 +146,10 @@ export class FieldMetadataResolver {
     const derivedFieldMetadataIds =
       await this.derivedFieldMetadataIdsService.getForWorkspace(workspaceId);
 
-    const [fieldMetadataDto] =
-      await this.fieldMetadataService.addOptionApplicationIds({
-        fieldMetadataDtos: [
-          fromFieldMetadataEntityToFieldMetadataDto(
-            fieldMetadata,
-            derivedFieldMetadataIds,
-          ),
-        ],
-        workspaceId,
-      });
-
-    return fieldMetadataDto;
+    return fromFieldMetadataEntityToFieldMetadataDto(
+      fieldMetadata,
+      derivedFieldMetadataIds,
+    );
   }
 
   @ResolveField(() => ObjectMetadataDTO, { nullable: true })
@@ -268,10 +252,7 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return await this.fieldMetadataService.toFieldMetadataDto({
-        flatFieldMetadata,
-        workspaceId,
-      });
+      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(error);
     }
@@ -289,10 +270,7 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return await this.fieldMetadataService.toFieldMetadataDto({
-        flatFieldMetadata,
-        workspaceId,
-      });
+      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }

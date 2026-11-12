@@ -19,6 +19,8 @@ import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-module
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-modules/flat-entity/utils/transpile-flat-entity-operation-array-to-record.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
+import { addMissingFieldMetadataOptionOperationsToOperationRecord } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/add-missing-field-metadata-option-operations-to-operation-record.util';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
@@ -320,7 +322,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
   }
 
   private async validateBuildAndRunWorkspaceMigrationFromRecordInternal({
-    allFlatEntityOperationRecordByMetadataName,
+    allFlatEntityOperationRecordByMetadataName:
+      callerFlatEntityOperationRecordByMetadataName,
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
@@ -335,6 +338,24 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         hasSchemaMetadataChanged: boolean;
       })
   > {
+    const allFlatEntityOperationRecordByMetadataName =
+      isDefined(callerFlatEntityOperationRecordByMetadataName.fieldMetadata) &&
+      !isDefined(
+        callerFlatEntityOperationRecordByMetadataName.fieldMetadataOption,
+      ) &&
+      isFieldMetadataOptionEntityAvailable()
+        ? addMissingFieldMetadataOptionOperationsToOperationRecord({
+            allFlatEntityOperationRecordByMetadataName:
+              callerFlatEntityOperationRecordByMetadataName,
+            existingFlatFieldMetadataOptionMaps: (
+              await this.workspaceCacheService.getOrRecompute(workspaceId, [
+                'flatFieldMetadataOptionMaps',
+              ])
+            ).flatFieldMetadataOptionMaps,
+            applicationUniversalIdentifier,
+          })
+        : callerFlatEntityOperationRecordByMetadataName;
+
     const callerMetadataNames = Object.keys(
       allFlatEntityOperationRecordByMetadataName,
     ) as AllMetadataName[];

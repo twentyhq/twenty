@@ -1,4 +1,4 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   getTargetOptionColumnsByUniversalIdentifier,
@@ -36,15 +36,11 @@ const hasOptionColumnsChanged = ({
 export const computeFieldMetadataOptionOperationsForField = ({
   targetUniversalFlatFieldMetadata,
   existingOptions,
-  isUniversalIdentifierUsedByOtherField,
   applicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
   targetUniversalFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
   existingOptions: UniversalFlatFieldMetadataOption[];
-  isUniversalIdentifierUsedByOtherField: (
-    universalIdentifier: string,
-  ) => boolean;
   applicationUniversalIdentifier: string;
   // Without it the caller is never overriding, so rows are written directly.
   workspaceCustomApplicationUniversalIdentifier?: string;
@@ -57,16 +53,6 @@ export const computeFieldMetadataOptionOperationsForField = ({
   };
 
   if (isFieldMetadataOptionSyncSkipped(targetUniversalFlatFieldMetadata)) {
-    return operations;
-  }
-
-  // Caller-owned rows here would collide with the field app's sync; the backfill creates them.
-  if (
-    !isNonEmptyArray(existingOptions) &&
-    isDefined(targetUniversalFlatFieldMetadata) &&
-    targetUniversalFlatFieldMetadata.applicationUniversalIdentifier !==
-      applicationUniversalIdentifier
-  ) {
     return operations;
   }
 
@@ -145,12 +131,8 @@ export const computeFieldMetadataOptionOperationsForField = ({
     applicationUniversalIdentifier,
     now,
   })) {
-    // An option id reused across fields keeps its first field's row.
     if (
-      existingOptionUniversalIdentifiers.has(
-        targetOption.universalIdentifier,
-      ) ||
-      isUniversalIdentifierUsedByOtherField(targetOption.universalIdentifier)
+      existingOptionUniversalIdentifiers.has(targetOption.universalIdentifier)
     ) {
       continue;
     }

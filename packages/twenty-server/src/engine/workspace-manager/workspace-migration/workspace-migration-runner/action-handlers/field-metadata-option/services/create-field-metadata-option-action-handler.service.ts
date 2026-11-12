@@ -10,6 +10,7 @@ import {
   FlatCreateFieldMetadataOptionAction,
   UniversalCreateFieldMetadataOptionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/types/workspace-migration-field-metadata-option-action.type';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -20,6 +21,12 @@ export class CreateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   'create',
   'fieldMetadataOption',
 ) {
+  constructor(
+    private readonly fieldMetadataOptionEnumSchemaService: FieldMetadataOptionEnumSchemaService,
+  ) {
+    super();
+  }
+
   override async transpileUniversalActionToFlatAction({
     action,
     allFlatEntityMaps,
@@ -63,8 +70,21 @@ export class CreateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldMetadataOptionAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      FlatCreateFieldMetadataOptionAction,
+      UniversalCreateFieldMetadataOptionAction
+    >,
   ): Promise<void> {
-    return;
+    await this.fieldMetadataOptionEnumSchemaService.applyEnumChangeOfOptionAction(
+      {
+        fieldMetadataUniversalIdentifier:
+          context.flatAction.flatEntity.fieldMetadataUniversalIdentifier,
+        fieldMetadataOptionEnumChangeTracker:
+          context.fieldMetadataOptionEnumChangeTracker,
+        allFlatEntityMaps: context.allFlatEntityMaps,
+        queryRunner: context.queryRunner,
+        workspaceId: context.workspaceId,
+      },
+    );
   }
 }

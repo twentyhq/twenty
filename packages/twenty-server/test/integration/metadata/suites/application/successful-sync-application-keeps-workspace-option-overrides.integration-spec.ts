@@ -1,3 +1,4 @@
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -9,6 +10,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = 'd1b2c3d4-0001-4000-a000-0000000000d1';
@@ -233,23 +235,39 @@ describe('Sync application keeps the option edits a workspace made on its fields
       expectToFail: false,
     });
 
+    const { flatFieldMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatFieldMetadataMaps']);
+
     expect(
-      (await findSelectField()).options.map((option) => ({
+      (
+        flatFieldMetadataMaps.byUniversalIdentifier[SELECT_FIELD_ID]?.options ??
+        []
+      ).map(({ applicationId: _applicationId, ...option }) => ({
         ...option,
         id: undefined,
       })),
     ).toEqual(
       [
-        { value: 'CLOSED', label: 'Done', color: 'blue' },
-        { value: 'OPEN', label: 'Opened', color: 'green' },
+        { value: 'CLOSED', label: 'Done', color: 'blue', position: 0 },
+        { value: 'OPEN', label: 'Opened', color: 'green', position: 1 },
         {
           value: 'ARCHIVED',
           label: 'Archived',
           color: 'purple',
+          position: 2,
         },
-        { value: 'PAUSED', label: 'Paused', color: 'gray', isActive: false },
-        { value: 'PENDING', label: 'Pending', color: 'yellow' },
-      ].map((option, position) => ({ ...option, position, id: undefined })),
+        {
+          value: 'PAUSED',
+          label: 'Paused',
+          color: 'gray',
+          position: 3,
+          isActive: false,
+        },
+        // The app declares it at 3: positions can tie across applications
+        { value: 'PENDING', label: 'Pending', color: 'yellow', position: 3 },
+      ].map((option) => ({ ...option, id: undefined })),
     );
     expect(await findStatusEnumLabels()).toEqual([
       'ARCHIVED',

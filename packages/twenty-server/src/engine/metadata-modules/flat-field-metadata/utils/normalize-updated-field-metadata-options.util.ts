@@ -25,6 +25,10 @@ export const normalizeUpdatedFieldMetadataOptions = <
       .map((option) => [option.value, option]),
   );
 
+  const existingOptionById = new Map(
+    existingOptions.map((option) => [option.id, option]),
+  );
+
   return updatedOptions.map((updatedOption) => {
     const {
       id: updatedOptionId,
@@ -38,14 +42,19 @@ export const normalizeUpdatedFieldMetadataOptions = <
 
     unclaimedExistingOptionByValue.delete(updatedOption.value);
 
+    // An explicit id, even null, is kept as sent so option id validation still sees it.
+    const id =
+      updatedOptionId === undefined
+        ? (existingOption?.id ?? v4())
+        : updatedOptionId;
+    // Read-only: the owner comes from the option's row, never from the input.
+    const applicationId = existingOptionById.get(id)?.applicationId;
+
     return {
-      // An explicit id, even null, is kept as sent so option id validation still sees it.
-      id:
-        updatedOptionId === undefined
-          ? (existingOption?.id ?? v4())
-          : updatedOptionId,
+      id,
       ...optionProperties,
       ...(isActive === false ? { isActive: false } : {}),
+      ...(isDefined(applicationId) ? { applicationId } : {}),
     } as TOption;
   });
 };

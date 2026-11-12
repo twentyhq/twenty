@@ -25,7 +25,6 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { keepWorkspaceOptionStateInManifestFieldOptions } from 'src/engine/core-modules/application/application-manifest/utils/keep-workspace-option-state-in-manifest-field-options.util';
 import { addFieldMetadataOptionDeletionsToOperationRecord } from 'src/engine/core-modules/application/application-manifest/utils/add-field-metadata-option-deletions-to-operation-record.util';
 import { findForeignFieldMetadataOptionsCollidingWithApplicationOptions } from 'src/engine/core-modules/application/application-manifest/utils/find-foreign-field-metadata-options-colliding-with-application-options.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -238,21 +237,13 @@ export class ApplicationManifestMigrationService {
 
     const hasWorkflows = (manifest.workflows ?? []).length > 0;
 
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    keepWorkspaceOptionStateInManifestFieldOptions({
-      toFlatFieldMetadataMapsToMutate:
-        toAllUniversalFlatEntityMaps.flatFieldMetadataMaps,
-      toFlatFieldMetadataOptionMaps:
-        toAllUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
-      existingFlatFieldMetadataOptionMaps:
-        existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
-      workspaceCustomApplicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
-    });
+    const workspaceCustomFlatApplication = hasWorkflows
+      ? (
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          )
+        ).workspaceCustomFlatApplication
+      : undefined;
 
     const idByUniversalIdentifierByMetadataName = hasWorkflows
       ? preallocateWorkflowReferenceIds({
@@ -275,7 +266,7 @@ export class ApplicationManifestMigrationService {
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
       isWorkspaceCustomApplication:
-        ownerFlatApplication.id === workspaceCustomFlatApplication.id,
+        ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
       connectedAccounts,
       now,
     });

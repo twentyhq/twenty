@@ -190,6 +190,11 @@ export class WorkspaceMigrationBuildOrchestratorService {
         ALL_METADATA_NAME.fieldMetadata,
         workspaceMigrationFieldActionsBuilderService,
       ),
+      // Right after fields, so the entities built next validate against the options of this migration
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.fieldMetadataOption,
+        workspaceMigrationFieldMetadataOptionActionsBuilderService,
+      ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.index,
         workspaceMigrationIndexActionsBuilderService,
@@ -321,10 +326,6 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.timelineActivityType,
         workspaceMigrationTimelineActivityTypeActionsBuilderService,
-      ),
-      createEntityActionsBuilderTask(
-        ALL_METADATA_NAME.fieldMetadataOption,
-        workspaceMigrationFieldMetadataOptionActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.relatedRecordPath,
