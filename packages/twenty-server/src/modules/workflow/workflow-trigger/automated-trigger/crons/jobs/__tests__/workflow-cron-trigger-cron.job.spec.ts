@@ -361,6 +361,9 @@ describe('WorkflowCronTriggerCronJob', () => {
 
         expect(
           mockCronTriggerDeduplicationService.shouldDispatch,
+        ).toHaveBeenCalledTimes(1);
+        expect(
+          mockCronTriggerDeduplicationService.shouldDispatch,
         ).toHaveBeenCalledWith(
           `workflow-cron:${WORKSPACE_1}:workflow-1`,
           expectedPattern,

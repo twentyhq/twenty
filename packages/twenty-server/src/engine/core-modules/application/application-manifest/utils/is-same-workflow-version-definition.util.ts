@@ -1,9 +1,14 @@
 import { isString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  computeCronPatternFromWorkflowCronSchedule,
+  workflowCronTriggerSchema,
+} from 'twenty-shared/workflow';
 
 import {
   type StoredWorkflowNode,
+  type StoredWorkflowNodeSettings,
   type StoredWorkflowVersionDefinition,
 } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
@@ -19,22 +24,44 @@ const normalizeCodeStepInput = (input: unknown): unknown => {
   return inlineInput;
 };
 
+// A cron run reads only the pattern, so a custom pattern equals the editor schedule it maps to
+const normalizeCronSettings = (settings: StoredWorkflowNodeSettings) => {
+  const parsedSettings =
+    workflowCronTriggerSchema.shape.settings.safeParse(settings);
+
+  if (!parsedSettings.success) {
+    return settings;
+  }
+
+  const { type: _type, schedule: _schedule, ...rest } = settings;
+
+  return {
+    ...rest,
+    pattern: computeCronPatternFromWorkflowCronSchedule(parsedSettings.data),
+  };
+};
+
 // Only state no run reads is normalized, so a manifest edit is never compared away
 const normalizeSettings = ({
   type,
-  settings: { objectType, errorHandlingOptions, ...rest },
+  settings,
 }: Pick<StoredWorkflowNode, 'type'> &
-  Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
-  ...rest,
-  ...(type === 'CODE' ? { input: normalizeCodeStepInput(rest.input) } : {}),
-  ...(type === 'MANUAL' ? {} : { objectType }),
-  ...(isDefined(errorHandlingOptions)
-    ? {
-        errorHandlingOptions:
-          normalizeStoredWorkflowErrorHandlingOptions(errorHandlingOptions),
-      }
-    : {}),
-});
+  Required<Pick<StoredWorkflowNode, 'settings'>>) => {
+  const { objectType, errorHandlingOptions, ...rest } =
+    type === 'CRON' ? normalizeCronSettings(settings) : settings;
+
+  return {
+    ...rest,
+    ...(type === 'CODE' ? { input: normalizeCodeStepInput(rest.input) } : {}),
+    ...(type === 'MANUAL' ? {} : { objectType }),
+    ...(isDefined(errorHandlingOptions)
+      ? {
+          errorHandlingOptions:
+            normalizeStoredWorkflowErrorHandlingOptions(errorHandlingOptions),
+        }
+      : {}),
+  };
+};
 
 const normalizeNode = ({
   valid: _valid,
