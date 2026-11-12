@@ -1,8 +1,8 @@
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -16,12 +16,18 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useChatThreads(agentChatRecentThreadsSelector);
+  const { threads } = useAgentChatThreadList(
+    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+  );
 
   // Earlier pages can hold only chats filtered out of this list, so an empty
   // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
-    return <AgentChatThreadsFetchMoreTrigger />;
+    return (
+      <AgentChatThreadListFetchMoreTrigger
+        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      />
+    );
   }
 
   return (
@@ -33,7 +39,9 @@ export const MobileHomeAiChatSection = () => {
         currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
-      <AgentChatThreadsFetchMoreTrigger />
+      <AgentChatThreadListFetchMoreTrigger
+        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      />
     </>
   );
 };

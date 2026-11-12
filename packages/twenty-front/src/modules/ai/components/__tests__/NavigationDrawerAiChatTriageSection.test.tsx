@@ -10,8 +10,9 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -147,7 +148,10 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE,
     AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED,
   ])('keeps Open current for the %s filter', (filterStatus) => {
-    jotaiStore.set(agentChatThreadFilterStatusState.atom, filterStatus);
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: filterStatus,
+    });
 
     renderTriage();
 
@@ -164,10 +168,10 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('marks Snoozed as current while its conversations are shown', () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    });
 
     renderTriage();
 
@@ -189,7 +193,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('marks no status current while a channel is shown', () => {
-    jotaiStore.set(agentChatChannelViewState.atom, {
+    setAgentChatShownChannelView(jotaiStore, {
       channelId: 'sales',
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,
@@ -208,8 +212,11 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
 
-    expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    expect(jotaiStore.get(agentChatSelectedThreadListSourceState.atom)).toEqual(
+      {
+        type: 'presetFilter',
+        presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      },
     );
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
       threadId: null,

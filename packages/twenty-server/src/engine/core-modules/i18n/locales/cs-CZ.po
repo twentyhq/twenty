@@ -2960,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chaty spojené s příležitostí"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Vyberte aktivní kartu a pozici widgetu odpovídající jejímu režimu rozvržení."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3454,6 +3459,11 @@ msgstr "Poskytovatel připojení s názvem {0} již pro tuto aplikaci existuje"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Poskytovatel připojení typu 'custom' musí odkazovat na logickou funkci authorize a callback"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr ""
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5386,11 +5396,6 @@ msgstr "Nepodařilo se vytvořit záznam."
 msgid "Failed to delete file {fileId}"
 msgstr "Nepodařilo se smazat soubor {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Nepodařilo se odstranit úlohy. Zkuste to prosím znovu později."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6162,6 +6167,11 @@ msgstr "frontComponentId nesmí být nastaven, pokud je engineComponentKey TRIGG
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Požadavek nástroje pro sestavování frontendových komponent překračuje limit 6 MiB. Snižte závislosti aplikace nebo velikost vygenerovaného SDK."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Frontendová komponenta nenalezena."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9748,6 +9758,11 @@ msgstr "Přístup OAuth byl odepřen."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "Poskytovateli připojení OAuth chybí konfigurační blok oauth"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr ""
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13806,7 +13821,7 @@ msgstr "Podmínka databázového triggeru události musí být text"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Podmínka spuštění agenta je neplatná"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14864,6 +14879,11 @@ msgstr "Toto nahrávání souboru již bylo dokončeno."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "This form no longer waits for an answer."
 msgstr "Tento formulář již nečeká na odpověď."
+
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Tato frontendová komponenta není v tomto rozvržení stránky k dispozici."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17226,6 +17246,11 @@ msgstr "Kdo obdrží přístup"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Proč byl přístup udělen"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Je vyžadována konfigurace widgetu."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

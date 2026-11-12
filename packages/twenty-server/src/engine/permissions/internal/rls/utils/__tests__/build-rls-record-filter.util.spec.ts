@@ -6,6 +6,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -629,6 +630,85 @@ describe('buildRecordFilterForRule with access group member values', () => {
       buildForAccessGroup({
         roleId: TEAM_BOUND_ROLE_ID,
         memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN'] },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it.each([
+    [RowLevelPermissionPredicateOperand.IS, ['sales'], 'sales', true],
+    [RowLevelPermissionPredicateOperand.IS, ['sales'], 'support', false],
+    [
+      RowLevelPermissionPredicateOperand.IS,
+      ['sales', 'support'],
+      'sales',
+      false,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.IS_NOT,
+      ['sales', 'support'],
+      'legal',
+      false,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.CONTAINS,
+      ['sal', 'sup'],
+      'sales',
+      false,
+    ],
+    [RowLevelPermissionPredicateOperand.IS, [''], 'sales', false],
+  ])(
+    'should give a text field a single member value and match nothing for several (%s %j on "%s")',
+    (operand, memberValues, name, expected) => {
+      const filter = buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-text-member-list', USER_ROLE_ID, {
+              operand,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_TEAM_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: memberValues,
+        },
+      });
+
+      if (!isDefined(filter)) {
+        throw new Error('Expected a filter to be built');
+      }
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: 'record-1', name, deletedAt: null },
+          filter,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it('should give a select field a single member value as a one item list', () => {
+    expect(
+      buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-select-member-text', USER_ROLE_ID, {
+              fieldMetadataId: STATUS_FIELD_ID,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'OPEN' },
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
   });

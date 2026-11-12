@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { generateDeterministicIndexForFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-deterministic-index-for-flat-field-metadata-or-throw.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { isPrimaryKeyFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-primary-key-flat-field-metadata.util';
+import { findUniqueFieldBackingFlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/utils/find-unique-field-backing-flat-index-metadata.util';
 import { buildFieldSideEffectParentNotFoundFailure } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/build-field-side-effect-parent-not-found-failure.util';
 import { resolveParentFlatObjectMetadataAfterStateForFieldSideEffect } from 'src/engine/metadata-modules/metadata-side-effect/handlers/field-metadata/utils/resolve-parent-flat-object-metadata-after-state-for-field-side-effect.util';
 import {
@@ -59,10 +60,6 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       return { status: 'noop' };
     }
 
-    const existingFlatObjectMetadata =
-      relatedFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-        flatFieldMetadata.objectMetadataUniversalIdentifier
-      ];
     const optimisticFlatObjectMetadata =
       resolveParentFlatObjectMetadataAfterStateForFieldSideEffect({
         objectMetadataUniversalIdentifier:
@@ -75,37 +72,20 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
       existingFlatFieldMetadata.isUnique === true;
     const backingIndexMustBeCreated = flatFieldMetadata.isUnique === true;
 
-    if (
-      (backingIndexMustBeDeleted && !isDefined(existingFlatObjectMetadata)) ||
-      (backingIndexMustBeCreated && !isDefined(optimisticFlatObjectMetadata))
-    ) {
+    if (backingIndexMustBeCreated && !isDefined(optimisticFlatObjectMetadata)) {
       return buildFieldSideEffectParentNotFoundFailure({
         flatFieldMetadata,
         operation: 'update',
       });
     }
 
-    const previousFlatIndexMetadata =
-      backingIndexMustBeDeleted && isDefined(existingFlatObjectMetadata)
-        ? generateDeterministicIndexForFlatFieldMetadataOrThrow({
-            flatFieldMetadata: {
-              ...flatFieldMetadata,
-              name: existingFlatFieldMetadata.name,
-              isUnique: true,
-            },
-            flatObjectMetadata: existingFlatObjectMetadata,
-          })
-        : undefined;
-
-    const flatIndexMetadataToDelete =
-      isDefined(previousFlatIndexMetadata) &&
-      isDefined(
-        relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-          previousFlatIndexMetadata.universalIdentifier
-        ],
-      )
-        ? previousFlatIndexMetadata
-        : undefined;
+    const flatIndexMetadataToDelete = backingIndexMustBeDeleted
+      ? findUniqueFieldBackingFlatIndexMetadata({
+          fieldMetadataUniversalIdentifier:
+            flatFieldMetadata.universalIdentifier,
+          flatIndexMaps: relatedFlatEntityMaps.flatIndexMaps,
+        })
+      : undefined;
 
     const flatIndexMetadataToCreate =
       backingIndexMustBeCreated && isDefined(optimisticFlatObjectMetadata)
