@@ -26,9 +26,11 @@ type BillingPeriodBoundaryUpdate = {
 export const resolveBillingPeriodBoundaryUpdate = ({
   incomingPeriodStart,
   storedSubscription,
+  shouldResetCurrentPeriodMaxSeats = false,
 }: {
   incomingPeriodStart: Date | undefined;
   storedSubscription: StoredBillingPeriod | null;
+  shouldResetCurrentPeriodMaxSeats?: boolean;
 }): BillingPeriodBoundaryUpdate => {
   if (!isDefined(storedSubscription) || !isDefined(incomingPeriodStart)) {
     return {};
@@ -48,6 +50,10 @@ export const resolveBillingPeriodBoundaryUpdate = ({
   // Stripe never moves a period backwards, so an older window is a late event and must not rewind the boundary.
   if (incomingPeriodStart.getTime() < currentPeriodStart.getTime()) {
     return { currentPeriodStart, currentPeriodEnd, currentPeriodMaxSeats };
+  }
+
+  if (shouldResetCurrentPeriodMaxSeats) {
+    return { currentPeriodMaxSeats: null };
   }
 
   return { currentPeriodMaxSeats };

@@ -83,6 +83,40 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     ).toEqual({ currentPeriodMaxSeats: 8 });
   });
 
+  it('drops the seats about to be replaced from the max seats when asked to reset', () => {
+    expect(
+      resolveBillingPeriodBoundaryUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: FEBRUARY,
+          currentPeriodEnd: MARCH,
+          currentPeriodMaxSeats: null,
+          seats: 20,
+        }),
+        shouldResetCurrentPeriodMaxSeats: true,
+      }),
+    ).toEqual({ currentPeriodMaxSeats: null });
+  });
+
+  it('still records the period the subscription moved off when asked to reset', () => {
+    expect(
+      resolveBillingPeriodBoundaryUpdate({
+        incomingPeriodStart: FEBRUARY,
+        storedSubscription: buildStoredSubscription({
+          currentPeriodStart: JANUARY,
+          currentPeriodEnd: FEBRUARY,
+          currentPeriodMaxSeats: 20,
+          seats: 20,
+        }),
+        shouldResetCurrentPeriodMaxSeats: true,
+      }),
+    ).toEqual({
+      previousPeriodStart: JANUARY,
+      previousPeriodMaxSeats: 20,
+      currentPeriodMaxSeats: null,
+    });
+  });
+
   // Out-of-order events must not rewind the window the rollover settles against
   it('keeps the stored window when a late event carries an older one', () => {
     expect(

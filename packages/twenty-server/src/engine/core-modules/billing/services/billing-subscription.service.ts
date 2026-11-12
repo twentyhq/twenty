@@ -332,6 +332,7 @@ export class BillingSubscriptionService {
   async syncSubscriptionToDatabase(
     workspaceId: string,
     stripeSubscriptionId: string,
+    { shouldResetCurrentPeriodMaxSeats = false } = {},
   ) {
     const subscription =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
@@ -381,6 +382,7 @@ export class BillingSubscriptionService {
         ...resolveBillingPeriodBoundaryUpdate({
           incomingPeriodStart: incomingSubscription.currentPeriodStart,
           storedSubscription,
+          shouldResetCurrentPeriodMaxSeats,
         }),
       },
       {

@@ -223,7 +223,13 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async syncSeats(workspaceId: string) {
+  async syncSeats({
+    workspaceId,
+    isBillingPeriodRenewal = false,
+  }: {
+    workspaceId: string;
+    isBillingPeriodRenewal?: boolean;
+  }) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
@@ -250,6 +256,7 @@ export class BillingSubscriptionUpdateService {
             type: SubscriptionUpdateType.SEATS,
             newSeats: billedSeats,
           },
+          shouldResetCurrentPeriodMaxSeats: isBillingPeriodRenewal,
         });
       },
     });
@@ -289,10 +296,12 @@ export class BillingSubscriptionUpdateService {
     workspaceId,
     subscriptionId,
     subscriptionUpdate,
+    shouldResetCurrentPeriodMaxSeats = false,
   }: {
     workspaceId: string;
     subscriptionId: string;
     subscriptionUpdate: SubscriptionUpdate;
+    shouldResetCurrentPeriodMaxSeats?: boolean;
   }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
@@ -423,6 +432,7 @@ export class BillingSubscriptionUpdateService {
     await this.billingSubscriptionService.syncSubscriptionToDatabase(
       subscription.workspaceId,
       subscription.stripeSubscriptionId,
+      { shouldResetCurrentPeriodMaxSeats },
     );
   }
 

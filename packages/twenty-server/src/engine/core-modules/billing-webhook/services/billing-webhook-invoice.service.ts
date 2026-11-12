@@ -135,7 +135,7 @@ export class BillingWebhookInvoiceService {
 
     await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
       UpdateSubscriptionQuantityJob.name,
-      { workspaceId },
+      { workspaceId, isBillingPeriodRenewal: true },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         workspaceId,

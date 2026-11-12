@@ -6,7 +6,10 @@ import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billin
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
+export type UpdateSubscriptionQuantityJobData = {
+  workspaceId: string;
+  isBillingPeriodRenewal?: boolean;
+};
 
 @Processor({
   queueName: MessageQueue.billingQueue,
@@ -19,6 +22,6 @@ export class UpdateSubscriptionQuantityJob {
 
   @Process(UpdateSubscriptionQuantityJob.name)
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
-    await this.billingSubscriptionUpdateService.syncSeats(data.workspaceId);
+    await this.billingSubscriptionUpdateService.syncSeats(data);
   }
 }
