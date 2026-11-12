@@ -324,7 +324,7 @@ describe('NavigationDrawerAiChatContent', () => {
 
     const { getByRole } = renderContent();
 
-    const directMessages = getByRole('region', { name: 'DMs' });
+    const directMessages = getByRole('region', { name: 'Direct messages' });
     const recents = getByRole('region', { name: 'Recent' });
 
     expect(within(directMessages).getByText('Alice Example')).toBeVisible();
@@ -338,7 +338,7 @@ describe('NavigationDrawerAiChatContent', () => {
 
     const { getByRole, queryByRole } = renderContent();
 
-    expect(queryByRole('region', { name: 'DMs' })).toBeNull();
+    expect(queryByRole('region', { name: 'Direct messages' })).toBeNull();
     expect(
       within(getByRole('region', { name: 'Recent' })).getByText(
         'Direct message',

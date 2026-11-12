@@ -49,10 +49,7 @@ export const NavigationDrawerDirectMessagesSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
-      label={t({
-        message: 'DMs',
-        comment: 'Abbreviation of direct messages, sidebar section title',
-      })}
+      label={t`Direct messages`}
       rightIcon={memberPicker}
       alwaysShowRightIcon
     >
