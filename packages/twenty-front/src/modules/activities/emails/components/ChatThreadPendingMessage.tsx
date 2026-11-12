@@ -12,6 +12,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPendingBubble = styled(StyledChatMessageBubble)<{
@@ -78,7 +79,13 @@ export const ChatThreadPendingMessage = ({
       )}
       {pendingMessage.status === 'failed' && (
         <StyledFailedRow>
-          {t`Sending failed`}
+          {isNonEmptyString(pendingMessage.errorMessage) ? (
+            <Tooltip content={pendingMessage.errorMessage}>
+              <span tabIndex={0}>{t`Sending failed`}</span>
+            </Tooltip>
+          ) : (
+            t`Sending failed`
+          )}
           <LightIconButton
             aria-label={t`Retry`}
             disabled={isRetryDisabled}

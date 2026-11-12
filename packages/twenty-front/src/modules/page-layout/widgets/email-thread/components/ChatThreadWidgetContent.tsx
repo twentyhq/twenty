@@ -22,9 +22,13 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  MyConnectedAccountsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const StyledChatThreadBody = styled.div`
   display: flex;
@@ -55,6 +59,7 @@ export const ChatThreadWidgetContent = ({
     useReplyConnectedAccount(messageChannelId);
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
   const { sendAppChannelMessage } = useSendAppChannelMessage();
+  const apolloClient = useApolloClient();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
@@ -129,12 +134,19 @@ export const ChatThreadWidgetContent = ({
                   : null
               }
               isDisconnected={isDisconnected}
+              draftKey={messageThreadId}
               onSendMessage={({ id, text }) =>
                 sendAppChannelMessage({
                   messageChannelId: messageChannel.id,
                   messageThreadId,
                   text,
                   idempotencyKey: id,
+                }).catch(async (error) => {
+                  await apolloClient
+                    .refetchQueries({ include: [MyConnectedAccountsDocument] })
+                    .catch(() => undefined);
+
+                  throw error;
                 })
               }
               onMessageSent={onMessageSent}
