@@ -5391,11 +5391,6 @@ msgstr "Falha ao criar o registro."
 msgid "Failed to delete file {fileId}"
 msgstr "Falha ao excluir arquivo {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Falha ao excluir trabalhos. Por favor, tente novamente mais tarde."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

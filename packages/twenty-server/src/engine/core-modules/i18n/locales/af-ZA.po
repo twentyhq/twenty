@@ -5391,11 +5391,6 @@ msgstr "Kon nie rekord skep nie."
 msgid "Failed to delete file {fileId}"
 msgstr "Kon nie lêer {fileId} verwyder nie"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Kon nie werke uitvee nie. Probeer asseblief weer later."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

@@ -5391,11 +5391,6 @@ msgstr "Kayıt oluşturulamadı."
 msgid "Failed to delete file {fileId}"
 msgstr "Dosya {fileId} silinemedi"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "İşler silinemedi. Lütfen daha sonra tekrar deneyin."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

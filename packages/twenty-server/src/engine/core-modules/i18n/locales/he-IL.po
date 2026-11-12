@@ -5391,11 +5391,6 @@ msgstr "יצירת הרשומה נכשלה."
 msgid "Failed to delete file {fileId}"
 msgstr "לא הצליח למחוק קובץ {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "נכשל המחיקה של המשימות. אנא נסה שוב מאוחר יותר."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

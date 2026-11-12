@@ -5391,11 +5391,6 @@ msgstr "Nem sikerült létrehozni a rekordot."
 msgid "Failed to delete file {fileId}"
 msgstr "Fájl törlése nem sikerült: {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "A feladatok törlése nem sikerült. Kérjük, próbálja meg később."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
