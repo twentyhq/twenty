@@ -36,7 +36,7 @@ const StyledTileImage = styled.img`
 
 const StyledHiddenImageCount = styled.span`
   align-items: center;
-  background: ${themeCssVariables.background.overlaySecondary};
+  background: ${themeCssVariables.background.overlayPrimary};
   color: ${themeCssVariables.font.color.inverted};
   display: flex;
   font-size: ${themeCssVariables.font.size.xl};
