@@ -8,6 +8,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -46,6 +47,8 @@ export class CalendarEventsImportService {
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   public async processCalendarEventsImport(
@@ -127,14 +130,21 @@ export class CalendarEventsImportService {
             );
           }
 
+          const workspace = await this.workspaceRepository.findOne({
+            where: { id: workspaceId },
+            select: ['id', 'isInternalMessagesImportEnabled'],
+          });
+
           const { filteredEvents, eventsToRemove } =
             filterEventsAndReturnEventsToRemove(
-              [calendarChannel.handle, ...connectedAccount.handleAliases],
+              calendarChannel.handle,
+              connectedAccount.handleAliases,
               calendarEvents,
               blocklist
                 .map((blocklistItem) => blocklistItem.handle)
                 .filter(isDefined),
               calendarChannel.excludePrivateEvents,
+              workspace?.isInternalMessagesImportEnabled ?? false,
             );
 
           const eventExternalIdsToRemove = eventsToRemove.map(
