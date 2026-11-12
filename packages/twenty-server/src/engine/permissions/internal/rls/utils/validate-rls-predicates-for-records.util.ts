@@ -7,7 +7,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
-} from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+} from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
@@ -16,7 +16,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 
-export const validateRLSPredicatesForRecords = async <T extends ObjectRecord>({
+export const validateRlsPredicatesForRecords = async <T extends ObjectRecord>({
   records,
   objectMetadata,
   principals,

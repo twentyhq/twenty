@@ -9,7 +9,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { omitUnreadableFieldsFromEvents } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-events.util';
-import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
+import { type UnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/unreadable-fields-on-matching-records.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
@@ -80,17 +80,17 @@ const buildUpdateEvent = ({
 const filter = ({
   events,
   recordsPermissions,
-  fieldsHiddenOnMatchingRecords = [],
+  unreadableFieldsOnMatchingRecords = [],
 }: {
   events: ObjectRecordUpdateEvent[];
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
-  fieldsHiddenOnMatchingRecords?: FieldsHiddenOnMatchingRecords[];
+  unreadableFieldsOnMatchingRecords?: UnreadableFieldsOnMatchingRecords[];
 }) =>
   omitUnreadableFieldsFromEvents<ObjectRecordUpdateEvent>({
     events,
     objectMetadata: invoice,
     recordsPermissions,
-    fieldsHiddenOnMatchingRecords,
+    unreadableFieldsOnMatchingRecords,
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -145,7 +145,7 @@ describe('omitUnreadableFieldsFromEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      fieldsHiddenOnMatchingRecords: [
+      unreadableFieldsOnMatchingRecords: [
         {
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'New' } },
@@ -174,7 +174,7 @@ describe('omitUnreadableFieldsFromEvents', () => {
           },
         },
       },
-      fieldsHiddenOnMatchingRecords: [
+      unreadableFieldsOnMatchingRecords: [
         {
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'New' } },
@@ -183,6 +183,27 @@ describe('omitUnreadableFieldsFromEvents', () => {
     });
 
     expect(event).toBeUndefined();
+  });
+
+  it('should keep a field another matching RLS rule leaves readable', () => {
+    const [event] = filter({
+      events: [
+        buildUpdateEvent({
+          recordId: 'record-1',
+          updatedFields: ['name', 'secret'],
+        }),
+      ],
+      recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
+      unreadableFieldsOnMatchingRecords: [
+        {
+          fieldMetadataIds: ['secret-field-id'],
+          recordFilter: { name: { eq: 'New' } },
+        },
+        { fieldMetadataIds: [], recordFilter: { secret: { eq: 'new' } } },
+      ],
+    });
+
+    expect(event.properties.updatedFields).toEqual(['name', 'secret']);
   });
 
   it('should keep a field unreadable on an RLS rule the record does not match', () => {
@@ -194,7 +215,7 @@ describe('omitUnreadableFieldsFromEvents', () => {
         }),
       ],
       recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
-      fieldsHiddenOnMatchingRecords: [
+      unreadableFieldsOnMatchingRecords: [
         {
           fieldMetadataIds: ['secret-field-id'],
           recordFilter: { name: { eq: 'Another' } },

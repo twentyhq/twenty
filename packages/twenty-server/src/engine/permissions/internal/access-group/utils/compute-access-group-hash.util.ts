@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 
 const sortByContent = <TEntry>(entries: TEntry[]): string[] =>
   entries.map((entry) => JSON.stringify(entry)).sort();
@@ -78,7 +78,7 @@ export const computeAccessGroupHash = ({
     'predicates' | 'predicateGroups'
   > | null;
   rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: RowLevelPermissionMemberFieldValues | null;
+  memberFieldValues: RlsMemberFieldValues | null;
   isRelationHopEnabled: boolean;
 }): string =>
   createHash('sha256')

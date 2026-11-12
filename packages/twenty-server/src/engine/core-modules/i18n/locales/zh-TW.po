@@ -13803,6 +13803,11 @@ msgstr "無法驗證元件相依性。請嘗試再次建立元件。"
 msgid "The condition of a database event trigger must be text"
 msgstr "資料庫事件觸發條件的條件必須是文字"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts

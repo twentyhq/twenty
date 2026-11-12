@@ -26,6 +26,8 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { keepWorkspaceOptionStateInManifestFieldOptions } from 'src/engine/core-modules/application/application-manifest/utils/keep-workspace-option-state-in-manifest-field-options.util';
+import { addFieldMetadataOptionDeletionsToOperationRecord } from 'src/engine/core-modules/application/application-manifest/utils/add-field-metadata-option-deletions-to-operation-record.util';
+import { findForeignFieldMetadataOptionsCollidingWithApplicationOptions } from 'src/engine/core-modules/application/application-manifest/utils/find-foreign-field-metadata-options-colliding-with-application-options.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -287,7 +289,7 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
-    const allFlatEntityOperationRecordByMetadataName =
+    const fromToFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
         toAllUniversalFlatEntityMaps,
@@ -299,6 +301,21 @@ export class ApplicationManifestMigrationService {
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
         },
+      });
+
+    const allFlatEntityOperationRecordByMetadataName =
+      addFieldMetadataOptionDeletionsToOperationRecord({
+        allFlatEntityOperationRecordByMetadataName:
+          fromToFlatEntityOperationRecordByMetadataName,
+        flatFieldMetadataOptionsToDelete:
+          findForeignFieldMetadataOptionsCollidingWithApplicationOptions({
+            existingFlatFieldMetadataOptionMaps:
+              existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+            toFlatFieldMetadataOptionMaps:
+              toAllUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+            applicationUniversalIdentifier:
+              ownerFlatApplication.universalIdentifier,
+          }),
       });
 
     const connectionProviderIdsToDelete = Object.values(

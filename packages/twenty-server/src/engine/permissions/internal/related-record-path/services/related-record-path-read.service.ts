@@ -2,8 +2,9 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { type FeatureFlagKey } from 'twenty-shared/types';
 
+import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -18,7 +19,7 @@ export class RelatedRecordPathReadService {
     workspaceId: string;
     featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   }): Promise<FlatRelatedRecordPathMaps | undefined> {
-    if (!featureFlagsMap[FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]) {
+    if (!isRelatedRecordPathsEnabled({ featureFlagsMap })) {
       return undefined;
     }
 

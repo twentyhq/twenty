@@ -1,0 +1,1 @@
+export const CHAT_MESSAGE_IMAGE_GRID_TILE_MAX_SIZE = '140px';

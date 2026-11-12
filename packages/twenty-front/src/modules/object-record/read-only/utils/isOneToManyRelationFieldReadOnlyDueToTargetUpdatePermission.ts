@@ -7,7 +7,10 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldRelationOneToMany';
-import { canReachSomeRecords, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 type IsOneToManyRelationFieldReadOnlyDueToTargetUpdatePermissionParams = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
@@ -30,7 +33,7 @@ const isTargetRecordUpdateBlocked = ({
   );
 
   if (
-    !canReachSomeRecords({
+    !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: targetObjectPermissions,
       operationType: 'update',
     })

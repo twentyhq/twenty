@@ -48,13 +48,7 @@ export const DirectMessageMemberPicker = ({
     >
       <Dropdown.Trigger
         render={
-          <LightIconButton
-            emphasis="subtle"
-            aria-label={t({
-              message: 'Add DM',
-              comment: 'Abbreviation of add direct message, sidebar button',
-            })}
-          >
+          <LightIconButton emphasis="subtle" aria-label={t`New direct message`}>
             <IconPlus />
           </LightIconButton>
         }

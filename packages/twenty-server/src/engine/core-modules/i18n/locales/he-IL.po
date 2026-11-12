@@ -13803,6 +13803,11 @@ msgstr "לא ניתן היה לאמת את יחסי התלות של הרכיב. 
 msgid "The condition of a database event trigger must be text"
 msgstr "התנאי של מפעיל אירועי מסד נתונים חייב להיות טקסט"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts

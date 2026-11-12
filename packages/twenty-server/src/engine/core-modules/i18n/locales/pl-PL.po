@@ -13803,6 +13803,11 @@ msgstr "Nie można było zweryfikować zależności komponentu. Spróbuj utworzy
 msgid "The condition of a database event trigger must be text"
 msgstr "Warunek wyzwalacza zdarzenia bazy danych musi być tekstem"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
