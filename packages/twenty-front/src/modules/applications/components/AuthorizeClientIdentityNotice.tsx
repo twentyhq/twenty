@@ -1,32 +1,21 @@
 import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Text } from 'twenty-ui/primitives/typography';
 import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledVerifiedNotice = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledVerifiedLine = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
+  width: fit-content;
 `;
 
 const StyledVerifiedIcon = styled.span`
   color: ${themeCssVariables.color.green};
   display: flex;
-`;
-
-// Wraps inside the card without widening it: the card sizes itself to its content.
-const StyledReminder = styled.div`
-  min-width: 100%;
-  width: 0;
 `;
 
 const StyledWarningContainer = styled.div`
@@ -45,26 +34,22 @@ export const AuthorizeClientIdentityNotice = ({
   isClaimingVerifiedClientName,
 }: AuthorizeClientIdentityNoticeProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
 
   if (isVerified) {
     return (
-      <StyledVerifiedNotice>
-        <StyledVerifiedLine>
+      <Tooltip
+        content={t`Only continue if you started this connection from ${appName}.`}
+      >
+        <StyledVerifiedNotice>
           <StyledVerifiedIcon>
             <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
           </StyledVerifiedIcon>
           <Text size="sm" color="secondary">
             <Trans>Registered with Twenty as the official {appName}</Trans>
           </Text>
-        </StyledVerifiedLine>
-        <StyledReminder>
-          <Text size="sm" color="tertiary">
-            <Trans>
-              Only continue if you started this connection from {appName}.
-            </Trans>
-          </Text>
-        </StyledReminder>
-      </StyledVerifiedNotice>
+        </StyledVerifiedNotice>
+      </Tooltip>
     );
   }
 

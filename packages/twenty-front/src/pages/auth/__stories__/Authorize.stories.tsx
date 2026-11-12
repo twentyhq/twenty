@@ -139,9 +139,6 @@ export const VerifiedClient: Story = {
     await canvas.findByText(
       'Registered with Twenty as the official Twenty CLI',
     );
-    await canvas.findByText(
-      'Only continue if you started this connection from Twenty CLI.',
-    );
   },
 };
 
