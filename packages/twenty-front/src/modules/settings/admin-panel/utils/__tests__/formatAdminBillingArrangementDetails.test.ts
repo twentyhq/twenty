@@ -3,6 +3,7 @@ import { formatAdminBillingArrangementDetails } from '@/settings/admin-panel/uti
 import {
   BillingArrangementLabel,
   BillingArrangementSeatCapMode,
+  BillingArrangementStatus,
   BillingArrangementType,
 } from '~/generated-admin/graphql';
 
@@ -27,7 +28,9 @@ const arrangement = (
   startsAt: '2026-11-01T00:00:00.000Z',
   endsAt: null,
   revokedAt: null,
-  isActive: true,
+  endDate: null,
+  status: BillingArrangementStatus.ACTIVE,
+  isManageable: true,
   createdAt: '2026-11-01T00:00:00.000Z',
   ...overrides,
 });

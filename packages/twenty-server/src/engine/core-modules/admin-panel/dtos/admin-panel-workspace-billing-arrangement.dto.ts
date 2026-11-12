@@ -3,6 +3,7 @@ import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
+import { BillingArrangementStatus } from 'src/engine/core-modules/billing/enums/billing-arrangement-status.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 
 @ObjectType('AdminPanelWorkspaceBillingArrangement')
@@ -49,8 +50,14 @@ export class AdminPanelWorkspaceBillingArrangementDTO {
   @Field(() => Date, { nullable: true })
   revokedAt: Date | null;
 
+  @Field(() => Date, { nullable: true })
+  endDate: Date | null;
+
+  @Field(() => BillingArrangementStatus)
+  status: BillingArrangementStatus;
+
   @Field(() => Boolean)
-  isActive: boolean;
+  isManageable: boolean;
 
   @Field(() => Date)
   createdAt: Date;

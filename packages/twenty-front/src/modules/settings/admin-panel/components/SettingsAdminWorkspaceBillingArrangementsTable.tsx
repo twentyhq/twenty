@@ -13,19 +13,16 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceBillingArrangementRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementRowDropdownMenu';
-import { ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES } from '@/settings/admin-panel/constants/AdminManagedBillingArrangementTypes';
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
 import { END_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/endWorkspaceBillingArrangement';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { type AdminBillingArrangement } from '@/settings/admin-panel/types/AdminBillingArrangement';
-import { type AdminBillingArrangementStatus } from '@/settings/admin-panel/types/AdminBillingArrangementStatus';
 import { formatAdminBillingArrangementDetails } from '@/settings/admin-panel/utils/formatAdminBillingArrangementDetails';
-import { getAdminBillingArrangementEndDate } from '@/settings/admin-panel/utils/getAdminBillingArrangementEndDate';
-import { getAdminBillingArrangementStatus } from '@/settings/admin-panel/utils/getAdminBillingArrangementStatus';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { BillingArrangementStatus } from '~/generated-admin/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 type SettingsAdminWorkspaceBillingArrangementsTableProps = {
@@ -41,14 +38,25 @@ const END_BILLING_ARRANGEMENT_MODAL_ID = 'end-billing-arrangement-modal';
 const EM_DASH = '—';
 
 const STATUS_TAGS: Record<
-  AdminBillingArrangementStatus,
+  BillingArrangementStatus,
   { label: MessageDescriptor; color: ThemeColor }
 > = {
-  active: { label: msg`Active`, color: 'green' },
-  scheduled: { label: msg`Scheduled`, color: 'blue' },
-  ended: { label: msg`Ended`, color: 'gray' },
-  'one-time': { label: msg`One-time`, color: 'gray' },
+  [BillingArrangementStatus.ACTIVE]: { label: msg`Active`, color: 'green' },
+  [BillingArrangementStatus.SCHEDULED]: {
+    label: msg`Scheduled`,
+    color: 'blue',
+  },
+  [BillingArrangementStatus.ENDED]: { label: msg`Ended`, color: 'gray' },
+  [BillingArrangementStatus.ONE_TIME]: {
+    label: msg`One-time`,
+    color: 'gray',
+  },
 };
+
+const ENDABLE_STATUSES: BillingArrangementStatus[] = [
+  BillingArrangementStatus.ACTIVE,
+  BillingArrangementStatus.SCHEDULED,
+];
 
 export const SettingsAdminWorkspaceBillingArrangementsTable = ({
   workspaceId,
@@ -73,19 +81,8 @@ export const SettingsAdminWorkspaceBillingArrangementsTable = ({
     },
   );
 
-  const now = new Date();
-
-  const getStatus = (arrangement: AdminBillingArrangement) =>
-    getAdminBillingArrangementStatus({ arrangement, now });
-
-  const isEndable = (arrangement: AdminBillingArrangement) => {
-    const status = getStatus(arrangement);
-
-    return (
-      ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES.includes(arrangement.type) &&
-      (status === 'active' || status === 'scheduled')
-    );
-  };
+  const isEndable = (arrangement: AdminBillingArrangement) =>
+    arrangement.isManageable && ENDABLE_STATUSES.includes(arrangement.status);
 
   const handleEndClick = (arrangement: AdminBillingArrangement) => {
     setArrangementPendingEnd(arrangement);
@@ -110,13 +107,13 @@ export const SettingsAdminWorkspaceBillingArrangementsTable = ({
   };
 
   const formatEndDate = (arrangement: AdminBillingArrangement): string => {
-    if (getStatus(arrangement) === 'one-time') {
+    if (arrangement.status === BillingArrangementStatus.ONE_TIME) {
       return EM_DASH;
     }
 
-    const endDate = getAdminBillingArrangementEndDate(arrangement);
-
-    return isDefined(endDate) ? beautifyExactDate(endDate) : t`Never`;
+    return isDefined(arrangement.endDate)
+      ? beautifyExactDate(arrangement.endDate)
+      : t`Never`;
   };
 
   const formatReason = (arrangement: AdminBillingArrangement): string => {
@@ -169,7 +166,7 @@ export const SettingsAdminWorkspaceBillingArrangementsTable = ({
           {
             label: t`Status`,
             Cell: ({ item }) => {
-              const status = STATUS_TAGS[getStatus(item)];
+              const status = STATUS_TAGS[item.status];
 
               return <Tag color={status.color}>{t(status.label)}</Tag>;
             },

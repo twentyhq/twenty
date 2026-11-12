@@ -29,6 +29,7 @@ import {
   type BillingCreditGrantType,
 } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import {
@@ -41,8 +42,11 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
+import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
+import { getBillingArrangementEndDate } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-end-date.util';
+import { getBillingArrangementStatus } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-status.util';
 import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -75,6 +79,7 @@ export class AdminPanelBillingService {
     private readonly billingCreditService: BillingCreditService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async grantWorkspaceCredits({
@@ -176,39 +181,48 @@ export class AdminPanelBillingService {
   }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
     this.assertBillingArrangementIsManageable(type);
 
-    const startsAt = new Date();
-
-    if (
-      type === BillingArrangementType.COMMITTED_SEATS &&
-      seatCapMode === BillingArrangementSeatCapMode.HARD &&
-      isDefined(seats)
-    ) {
-      await this.assertHardSeatCapCoversBilledMembers({ workspaceId, seats });
-    }
-
     const trimmedComment = comment?.trim();
 
-    const arrangement = await this.billingArrangementService.insertArrangement({
-      workspaceId,
-      arrangement: {
-        type,
-        label,
-        comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
-        startsAt,
-        endsAt: endsAt ?? null,
-        seats: seats ?? null,
-        seatCapMode: seatCapMode ?? null,
-        stripePriceId: null,
-        stripeDiscountId: null,
-        creditAllowanceMicro: isDefined(creditAllowance)
-          ? Math.round(creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
-          : null,
-        stripeCreditNoteId: null,
-        creditGrantId: null,
-        usageLimitId: null,
+    const arrangement = await this.cacheLockService.withLock(
+      async () => {
+        if (
+          type === BillingArrangementType.COMMITTED_SEATS &&
+          seatCapMode === BillingArrangementSeatCapMode.HARD &&
+          isDefined(seats)
+        ) {
+          await this.assertHardSeatCapCoversBilledMembers({
+            workspaceId,
+            seats,
+          });
+        }
+
+        return await this.billingArrangementService.insertArrangement({
+          workspaceId,
+          arrangement: {
+            type,
+            label,
+            comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
+            startsAt: new Date(),
+            endsAt: endsAt ?? null,
+            seats: seats ?? null,
+            seatCapMode: seatCapMode ?? null,
+            stripePriceId: null,
+            stripeDiscountId: null,
+            creditAllowanceMicro: isDefined(creditAllowance)
+              ? Math.round(
+                  creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
+                )
+              : null,
+            stripeCreditNoteId: null,
+            creditGrantId: null,
+            usageLimitId: null,
+          },
+          grantedByUserId,
+        });
       },
-      grantedByUserId,
-    });
+      buildBillingSeatLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
 
     await this.applyBillingArrangementChange(arrangement);
 
@@ -227,7 +241,7 @@ export class AdminPanelBillingService {
     this.assertBillingIsEnabled();
 
     const arrangement =
-      await this.billingArrangementService.findArrangementOrFail({
+      await this.billingArrangementService.findArrangementOrThrow({
         workspaceId,
         arrangementId: billingArrangementId,
       });
@@ -307,6 +321,24 @@ export class AdminPanelBillingService {
           isWorkspaceJob: true,
         },
       );
+
+      const endDate = getBillingArrangementEndDate(arrangement);
+      const msUntilEnd = isDefined(endDate)
+        ? endDate.getTime() - Date.now()
+        : 0;
+
+      if (msUntilEnd > 0) {
+        await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
+          UpdateSubscriptionQuantityJob.name,
+          { workspaceId: arrangement.workspaceId },
+          {
+            ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+            delay: msUntilEnd,
+            workspaceId: arrangement.workspaceId,
+            isWorkspaceJob: true,
+          },
+        );
+      }
     }
 
     if (
@@ -349,7 +381,11 @@ export class AdminPanelBillingService {
       startsAt: arrangement.startsAt,
       endsAt: arrangement.endsAt,
       revokedAt: arrangement.revokedAt,
-      isActive: isBillingArrangementActive({ arrangement, now: new Date() }),
+      endDate: getBillingArrangementEndDate(arrangement),
+      status: getBillingArrangementStatus({ arrangement, now: new Date() }),
+      isManageable: ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES.includes(
+        arrangement.type,
+      ),
       createdAt: arrangement.createdAt,
     };
   }
@@ -400,16 +436,6 @@ export class AdminPanelBillingService {
         this.getWorkspaceCreditGrants(workspaceId),
         this.getWorkspaceBillingArrangements(workspaceId),
       ]);
-
-    // Granted credits and arrangements can exist before a customer or subscription does
-    if (
-      !customer &&
-      !subscription &&
-      creditGrants.length === 0 &&
-      billingArrangements.length === 0
-    ) {
-      return null;
-    }
 
     const stripeCustomerId =
       customer?.stripeCustomerId ?? subscription?.stripeCustomerId ?? null;

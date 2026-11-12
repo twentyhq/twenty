@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -12,7 +13,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES } from '@/settings/admin-panel/constants/AdminManagedBillingArrangementTypes';
 import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { BILLING_ARRANGEMENT_SEAT_CAP_MODE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
@@ -46,6 +46,12 @@ const StyledActionSlot = styled.div`
 
 const COMMENT_MAX_LENGTH = 500;
 
+const CREATABLE_ARRANGEMENT_TYPES: BillingArrangementType[] = [
+  BillingArrangementType.FREE_SEATS,
+  BillingArrangementType.COMMITTED_SEATS,
+  BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
+];
+
 const TYPE_DESCRIPTIONS: Partial<
   Record<BillingArrangementType, MessageDescriptor>
 > = {
@@ -63,7 +69,9 @@ const parseSeats = (value: string): number | null => {
 const parseCreditAllowance = (value: string): number | null => {
   const parsed = Number(value);
 
-  return value.trim() !== '' && Number.isFinite(parsed) && parsed >= 0
+  return isNonEmptyString(value.trim()) &&
+    Number.isFinite(parsed) &&
+    parsed >= 0
     ? parsed
     : null;
 };
@@ -185,12 +193,10 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
                 dropdownId={`${modalInstanceId}-type`}
                 label={t`Type`}
                 value={type}
-                options={ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES.map(
-                  (arrangementType) => ({
-                    value: arrangementType,
-                    label: t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangementType]),
-                  }),
-                )}
+                options={CREATABLE_ARRANGEMENT_TYPES.map((arrangementType) => ({
+                  value: arrangementType,
+                  label: t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangementType]),
+                }))}
                 onChange={setType}
                 fullWidth
               />

@@ -91,7 +91,7 @@ export class BillingArrangementService {
     });
   }
 
-  async findArrangementOrFail({
+  async findArrangementOrThrow({
     workspaceId,
     arrangementId,
   }: {

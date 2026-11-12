@@ -32,7 +32,9 @@ export const GET_WORKSPACE_BILLING_ADMIN_PANEL = gql`
         startsAt
         endsAt
         revokedAt
-        isActive
+        endDate
+        status
+        isManageable
         createdAt
       }
       usage {

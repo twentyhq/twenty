@@ -195,14 +195,16 @@ export type AdminPanelWorkspaceBillingArrangement = {
   createdAt: Scalars['DateTime']['output'];
   creditAllowance?: Maybe<Scalars['Float']['output']>;
   creditGrantId?: Maybe<Scalars['UUID']['output']>;
+  endDate?: Maybe<Scalars['DateTime']['output']>;
   endsAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
-  isActive: Scalars['Boolean']['output'];
+  isManageable: Scalars['Boolean']['output'];
   label: BillingArrangementLabel;
   revokedAt?: Maybe<Scalars['DateTime']['output']>;
   seatCapMode?: Maybe<BillingArrangementSeatCapMode>;
   seats?: Maybe<Scalars['Int']['output']>;
   startsAt: Scalars['DateTime']['output'];
+  status: BillingArrangementStatus;
   stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
   stripeDiscountId?: Maybe<Scalars['String']['output']>;
   type: BillingArrangementType;
@@ -455,6 +457,14 @@ export enum BillingArrangementLabel {
 export enum BillingArrangementSeatCapMode {
   HARD = 'HARD',
   SOFT = 'SOFT'
+}
+
+/** Whether a billing arrangement applies now, later, no longer, or only once */
+export enum BillingArrangementStatus {
+  ACTIVE = 'ACTIVE',
+  ENDED = 'ENDED',
+  ONE_TIME = 'ONE_TIME',
+  SCHEDULED = 'SCHEDULED'
 }
 
 /** The kind of commercial exception a billing arrangement grants */
