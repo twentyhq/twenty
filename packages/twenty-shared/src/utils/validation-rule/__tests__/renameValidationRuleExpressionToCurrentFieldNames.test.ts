@@ -1,5 +1,5 @@
 import { FieldMetadataType, RelationType } from '@/types';
-import { renameValidationRuleExpressionToCurrentFieldNames } from '@/utils/validation-rule/renameValidationRuleExpressionFields';
+import { renameValidationRuleExpressionToCurrentFieldNames } from '@/utils/validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
 
 const FIELDS = [
   {
