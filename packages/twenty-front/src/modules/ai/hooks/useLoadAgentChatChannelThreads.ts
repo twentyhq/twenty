@@ -9,7 +9,6 @@ import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { GetAgentChatChannelThreadIdsDocument } from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE = 30;
@@ -112,7 +111,7 @@ export const useLoadAgentChatChannelThreads = () => {
         hasNextPage: page.hasNextPage,
         endCursor: page.endCursor ?? null,
         lastLoadedActivityAt: isDefined(lastPageThread)
-          ? getAgentChatThreadLastActivityAt(lastPageThread)
+          ? (lastPageThread.lastActivityAt ?? null)
           : (listBeforeRequest?.lastLoadedActivityAt ?? null),
       });
     },

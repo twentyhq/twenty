@@ -6,7 +6,7 @@ import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { filterAgentChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
 import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
@@ -49,22 +49,9 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
       }),
     );
 
-    if (!isDefined(channelThreadList) || !channelThreadList.hasNextPage) {
-      return threads;
-    }
-
-    const { lastLoadedActivityAt } = channelThreadList;
-
-    if (!isDefined(lastLoadedActivityAt)) {
-      return threads;
-    }
-
-    const lastLoadedActivityTime = new Date(lastLoadedActivityAt).getTime();
-
-    return threads.filter(
-      (thread) =>
-        new Date(getAgentChatThreadLastActivityAt(thread)).getTime() >=
-        lastLoadedActivityTime,
-    );
+    return filterAgentChatThreadsWithinLoadedPages({
+      threads,
+      pagedList: channelThreadList,
+    });
   },
 });

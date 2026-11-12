@@ -7,6 +7,7 @@ import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatR
 import { agentChatShownInboxTabThreadListSelector } from '@/ai/states/selectors/agentChatShownInboxTabThreadListSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { filterAgentChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 export const agentChatVisibleThreadsSelector = createAtomSelector<
@@ -22,31 +23,21 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
         (thread): thread is AgentChatThreadRecord =>
           isDefined(thread) && !isDefined(thread.deletedAt),
       );
-    const inboxTabThreadIds = new Set(inboxTabThreads.map(({ id }) => id));
-    const lastLoadedActivityAt = inboxTabThreadList?.lastLoadedActivityAt;
-    const isPastLoadedPages = (thread: AgentChatThreadRecord) =>
-      isDefined(inboxTabThreadList) &&
-      inboxTabThreadList.hasNextPage &&
-      !inboxTabThreadIds.has(thread.id) &&
-      (!isDefined(thread.lastActivityAt) ||
-        (isDefined(lastLoadedActivityAt) &&
-          new Date(thread.lastActivityAt).getTime() <
-            new Date(lastLoadedActivityAt).getTime()));
-
     const threadsById = new Map(
       [...get(agentChatRecentThreadsSelector), ...inboxTabThreads].map(
         (thread) => [thread.id, thread],
       ),
     );
 
-    return [...threadsById.values()].filter(
-      (thread) =>
-        !isPastLoadedPages(thread) &&
+    return filterAgentChatThreadsWithinLoadedPages({
+      threads: [...threadsById.values()].filter((thread) =>
         isAgentChatThreadInFilterStatus({
           thread,
           inboxStatus: get(agentChatThreadInboxStatusFamilySelector, thread.id),
           filterStatus,
         }),
-    );
+      ),
+      pagedList: inboxTabThreadList,
+    });
   },
 });

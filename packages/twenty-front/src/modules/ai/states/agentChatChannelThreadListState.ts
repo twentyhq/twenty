@@ -1,12 +1,8 @@
+import { type AgentChatThreadPagedList } from '@/ai/types/AgentChatThreadPagedList';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export type AgentChatChannelThreadList = {
+export type AgentChatChannelThreadList = AgentChatThreadPagedList & {
   viewKey: string;
-  threadIds: string[];
-  hasNextPage: boolean;
-  endCursor: string | null;
-  // Kept apart from the chats so it holds when the last one is filed away
-  lastLoadedActivityAt: string | null;
 };
 
 export const agentChatChannelThreadListState =
