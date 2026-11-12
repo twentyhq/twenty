@@ -6,6 +6,7 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
+import { getDefaultToolInputFromJsonSchema } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/getDefaultToolInputFromJsonSchema';
 import { useMcpToolStepForm } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useMcpToolStepForm';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
@@ -13,7 +14,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isObject } from '@sniptt/guards';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
-import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -56,8 +56,8 @@ export const WorkflowEditActionMcpTool = ({
   const inputSchema = isDefined(tool)
     ? jsonSchemaToInputSchema(tool.inputSchema)
     : undefined;
-  const defaultToolInput = isDefined(inputSchema)
-    ? getFunctionInputFromInputSchema(inputSchema)[0]
+  const defaultToolInput = isDefined(tool)
+    ? getDefaultToolInputFromJsonSchema(tool.inputSchema)
     : undefined;
   const toolInput = isObject(defaultToolInput)
     ? mergeDefaultFunctionInputAndFunctionInput({
