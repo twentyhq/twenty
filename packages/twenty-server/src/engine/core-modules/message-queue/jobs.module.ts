@@ -58,8 +58,8 @@ import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WebhookJobModule } from 'src/engine/metadata-modules/webhook/jobs/webhook-job.module';
-import { DeferredWorkspaceMigrationActionRecoveryCronJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/jobs/deferred-workspace-migration-action-recovery.cron.job';
-import { RunDeferredWorkspaceMigrationActionsJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-migration-actions.job';
+import { DeferredWorkspaceOperationRecoveryCronJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/jobs/deferred-workspace-operation-recovery.cron.job';
+import { RunDeferredWorkspaceOperationsJob } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-operations.job';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { CleanOnboardingWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-onboarding-workspaces.job';
@@ -147,8 +147,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     TriggerUninstallApplicationJob,
     TriggerUpgradeApplicationJob,
     WarmUpLogicFunctionJob,
-    RunDeferredWorkspaceMigrationActionsJob,
-    DeferredWorkspaceMigrationActionRecoveryCronJob,
+    RunDeferredWorkspaceOperationsJob,
+    DeferredWorkspaceOperationRecoveryCronJob,
   ],
 })
 export class JobsModule {

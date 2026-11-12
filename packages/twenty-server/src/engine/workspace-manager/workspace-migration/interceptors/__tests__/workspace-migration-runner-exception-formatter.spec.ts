@@ -6,10 +6,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 describe('workspaceMigrationRunnerExceptionFormatter', () => {
-  it('should format deferred actions in progress as a conflict carrying its sub code and message', () => {
+  it('should format deferred operations in progress as a conflict carrying its sub code and message', () => {
     const exception = new WorkspaceMigrationRunnerException({
       message:
-        '4 deferred schema action(s) are still running on workspace 2020',
+        '4 deferred schema operation(s) are still running on workspace 2020',
       code: WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS,
     });
 

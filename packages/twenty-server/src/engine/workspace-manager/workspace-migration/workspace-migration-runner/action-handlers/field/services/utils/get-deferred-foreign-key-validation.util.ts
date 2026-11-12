@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
-import { type DeferredWorkspaceMigrationActionPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type DeferredWorkspaceOperationPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 
 export const getDeferredForeignKeyValidation = ({
   flatAction,
@@ -14,7 +14,7 @@ export const getDeferredForeignKeyValidation = ({
 }):
   | {
       name: 'validate_foreignKey';
-      payload: DeferredWorkspaceMigrationActionPayload<'validate_foreignKey'>;
+      payload: DeferredWorkspaceOperationPayload<'validate_foreignKey'>;
     }
   | undefined => {
   if (!shouldDeferActions) {
