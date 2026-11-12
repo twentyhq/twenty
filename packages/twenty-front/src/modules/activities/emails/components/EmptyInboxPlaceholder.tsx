@@ -1,6 +1,7 @@
 import { myConnectedAccountsState } from '@/accounts/states/myConnectedAccountsState';
 import { hasUsableMessagingConnectedAccount } from '@/accounts/utils/hasUsableMessagingConnectedAccount';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { EmailsCardErrorState } from '@/activities/emails/components/EmailsCardErrorState';
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
@@ -32,8 +33,13 @@ export const EmptyInboxPlaceholder = () => {
   const { connectedAccountId, loading: connectedAccountLoading } =
     useFirstConnectedAccount();
   const myConnectedAccounts = useAtomStateValue(myConnectedAccountsState);
-  const { channels: myMessageChannels, loading: myMessageChannelsLoading } =
-    useMyMessageChannels();
+  const {
+    channels: myMessageChannels,
+    loading: myMessageChannelsLoading,
+    error: myMessageChannelsError,
+    refetch: refetchMyMessageChannels,
+    hasLoaded: hasLoadedMyMessageChannels,
+  } = useMyMessageChannels();
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
@@ -55,6 +61,10 @@ export const EmptyInboxPlaceholder = () => {
 
   if (connectedAccountLoading || myMessageChannelsLoading) {
     return <SkeletonLoader />;
+  }
+
+  if (isDefined(myMessageChannelsError) && !hasLoadedMyMessageChannels) {
+    return <EmailsCardErrorState onRetry={() => refetchMyMessageChannels()} />;
   }
 
   return (
