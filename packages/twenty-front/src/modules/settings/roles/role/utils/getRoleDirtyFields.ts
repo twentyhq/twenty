@@ -17,58 +17,44 @@ export const getRoleDirtyFields = (
     return dirtyFields;
   }
 
-  const hasSamePermissionFlags = isDeeplyEqual(
-    draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-    persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
-  );
-  const hasSameUnreadableFields = isDeeplyEqual(
-    getUnreadableFieldMetadataIds(draftRole),
-    getUnreadableFieldMetadataIds(persistedRole),
-  );
-  const hasSameUneditableFields = isDeeplyEqual(
-    getUneditableFieldMetadataIds(draftRole),
-    getUneditableFieldMetadataIds(persistedRole),
-  );
-  const hasSameRowLevelPermissionPredicates = isDeeplyEqual(
-    (draftRole.rowLevelPermissionPredicates ?? []).toSorted(
-      sortByProperty('id'),
+  const isSameByKey: Record<string, boolean> = {
+    rowLevelPermissionRules: true,
+    permissionFlags: isDeeplyEqual(
+      draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
+      persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
     ),
-    (persistedRole.rowLevelPermissionPredicates ?? []).toSorted(
-      sortByProperty('id'),
+    objectPermissions: isDeeplyEqual(
+      resolveSettingsRoleObjectPermissions(draftRole),
+      resolveSettingsRoleObjectPermissions(persistedRole),
     ),
-  );
-  const hasSameRowLevelPermissionPredicateGroups = isDeeplyEqual(
-    (draftRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
-      sortByProperty('id'),
+    fieldPermissions:
+      isDeeplyEqual(
+        getUnreadableFieldMetadataIds(draftRole),
+        getUnreadableFieldMetadataIds(persistedRole),
+      ) &&
+      isDeeplyEqual(
+        getUneditableFieldMetadataIds(draftRole),
+        getUneditableFieldMetadataIds(persistedRole),
+      ),
+    rowLevelPermissionPredicates: isDeeplyEqual(
+      (draftRole.rowLevelPermissionPredicates ?? []).toSorted(
+        sortByProperty('id'),
+      ),
+      (persistedRole.rowLevelPermissionPredicates ?? []).toSorted(
+        sortByProperty('id'),
+      ),
     ),
-    (persistedRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
-      sortByProperty('id'),
+    rowLevelPermissionPredicateGroups: isDeeplyEqual(
+      (draftRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
+        sortByProperty('id'),
+      ),
+      (persistedRole.rowLevelPermissionPredicateGroups ?? []).toSorted(
+        sortByProperty('id'),
+      ),
     ),
-  );
-  const hasSameObjectPermissions = isDeeplyEqual(
-    resolveSettingsRoleObjectPermissions(draftRole),
-    resolveSettingsRoleObjectPermissions(persistedRole),
-  );
+  };
 
   return Object.fromEntries(
-    Object.entries(dirtyFields).filter(
-      ([key]) =>
-        key !== 'rowLevelPermissionRules' &&
-        !(key === 'permissionFlags' && hasSamePermissionFlags) &&
-        !(key === 'objectPermissions' && hasSameObjectPermissions) &&
-        !(
-          key === 'rowLevelPermissionPredicates' &&
-          hasSameRowLevelPermissionPredicates
-        ) &&
-        !(
-          key === 'rowLevelPermissionPredicateGroups' &&
-          hasSameRowLevelPermissionPredicateGroups
-        ) &&
-        !(
-          key === 'fieldPermissions' &&
-          hasSameUnreadableFields &&
-          hasSameUneditableFields
-        ),
-    ),
+    Object.entries(dirtyFields).filter(([key]) => isSameByKey[key] !== true),
   );
 };
