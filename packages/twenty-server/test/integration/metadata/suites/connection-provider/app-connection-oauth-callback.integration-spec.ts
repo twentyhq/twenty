@@ -8,6 +8,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -106,12 +107,14 @@ describe('app connection OAuth callback', () => {
     reconnectingConnectedAccountId?: string;
     redirectLocation?: string;
     providerName?: string;
+    browserHeaders?: Record<string, string>;
   };
 
   const requestAuthorization = async ({
     reconnectingConnectedAccountId,
     redirectLocation,
     providerName = provider.name,
+    browserHeaders,
   }: AuthorizeArgs = {}): Promise<URL> => {
     const transient = await generateTransientTokenResponse({
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -119,13 +122,18 @@ describe('app connection OAuth callback', () => {
 
     expect(transient.errors).toBeUndefined();
 
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(
+        browserHeaders ??
+          (await buildSignedInBrowserHeaders({ transientToken })),
+      )
       .query({
         applicationId: provider.applicationId,
         providerName,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
         reconnectingConnectedAccountId,
         redirectLocation,
       });
@@ -299,6 +307,33 @@ describe('app connection OAuth callback', () => {
     );
     expect(await readAccounts()).toEqual([]);
     expect(readExecutions(onConnectExecutionsUrl)).toEqual([]);
+  });
+
+  it('refuses to start a sign-in in a browser that is not signed in to Twenty', async () => {
+    const redirect = await requestAuthorization({ browserHeaders: {} });
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'signed in as the requesting user',
+    );
+    expect(browserCookie).toBeUndefined();
+  });
+
+  it('refuses to start a sign-in in a browser signed in as another member', async () => {
+    const otherMember = await generateTransientTokenResponse({
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    });
+
+    const redirect = await requestAuthorization({
+      browserHeaders: await buildSignedInBrowserHeaders({
+        transientToken:
+          otherMember.data.generateTransientToken.transientToken.token,
+      }),
+    });
+
+    expect(redirect.searchParams.get('errorMessage')).toContain(
+      'signed in as the requesting user',
+    );
+    expect(browserCookie).toBeUndefined();
   });
 
   it('stores the identified account on first connect and runs onConnect for it', async () => {

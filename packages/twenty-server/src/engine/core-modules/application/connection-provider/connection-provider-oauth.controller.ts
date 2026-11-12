@@ -29,6 +29,8 @@ import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/ap
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -46,6 +48,8 @@ export class ConnectionProviderOAuthController {
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
     private readonly flowCookieService: ConnectionProviderFlowCookieService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userSessionService: UserSessionService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -65,7 +69,7 @@ export class ConnectionProviderOAuthController {
     });
   }
 
-  // Public: the transient token carries workspace and user context
+  // Public: the transient token carries workspace and user context, the session cookie proves whose browser this is
   @Get('authorize')
   async authorize(
     @Query('applicationId') applicationId: string,
@@ -108,6 +112,8 @@ export class ConnectionProviderOAuthController {
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
       }
+
+      await this.assertBrowserSignedInAsOrThrow({ request: req, userId });
 
       const provider =
         await this.oauthProviderService.findOneByApplicationAndName({
@@ -229,6 +235,28 @@ export class ConnectionProviderOAuthController {
         state,
         error,
       });
+    }
+  }
+
+  // The transient token travels in a link: without this, a member could start their own sign-in in someone else's browser
+  private async assertBrowserSignedInAsOrThrow({
+    request,
+    userId,
+  }: {
+    request: Request;
+    userId: string;
+  }): Promise<void> {
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+    const session = isDefined(sessionToken)
+      ? await this.userSessionService.resolveSession(sessionToken)
+      : null;
+
+    if (session?.payload.userId !== userId) {
+      throw new ConnectionProviderException(
+        'App connection sign-in must start in a browser signed in as the requesting user',
+        ConnectionProviderExceptionCode.FORBIDDEN,
+      );
     }
   }
 }

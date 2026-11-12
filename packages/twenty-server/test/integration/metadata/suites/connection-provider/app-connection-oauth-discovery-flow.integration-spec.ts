@@ -5,6 +5,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -151,14 +152,20 @@ describe('app connection OAuth discovery flow', () => {
 
     expect(transient.errors).toBeUndefined();
 
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
-      .set('Cookie', browserCookie ?? '')
+      .set(
+        await buildSignedInBrowserHeaders({
+          transientToken,
+          flowCookie: browserCookie,
+        }),
+      )
       .query({
         applicationId: provider.applicationId,
         providerName: provider.name,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
       });
 
     expect(response.status).toBe(302);

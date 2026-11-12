@@ -6,6 +6,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
 import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientToken } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -141,12 +142,14 @@ describe('app connections follow the provider scope', () => {
     providerName: string;
     reconnectingConnectedAccountId?: string;
   }): Promise<{ state: string | null; errorMessage: string | null }> => {
+    const transientToken = await generateTransientToken();
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(await buildSignedInBrowserHeaders({ transientToken }))
       .query({
         applicationId,
         providerName,
-        transientToken: await generateTransientToken(),
+        transientToken,
         ...(isDefined(reconnectingConnectedAccountId)
           ? { reconnectingConnectedAccountId }
           : {}),
