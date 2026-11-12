@@ -3181,9 +3181,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-ui@npm:~2.56.0":
-  version: 2.56.0
-  resolution: "twenty-ui@npm:2.56.0"
+"twenty-ui@npm:~2.57.0":
+  version: 2.57.0
+  resolution: "twenty-ui@npm:2.57.0"
   dependencies:
     "@base-ui/react": "npm:^1.9.0"
     "@base-ui/utils": "npm:0.5.0"
@@ -3203,7 +3203,7 @@ __metadata:
       optional: true
     monaco-editor:
       optional: true
-  checksum: 10c0/24abbc0b2e2e7835f9f6ed855548b001dc268adc70a32e6eaded00a78d908762d20bce44eb878fd47a338fd84068fe9a7d0cbd08db5a80827b15a133e20e05f0
+  checksum: 10c0/24768fafa69d7b02aca270b0bb8cdd6b31df9c7dee7d9073d30ee4e956011e6adeba622b65cb26d2ce904f05602a405c7893eccafb458bf586eb54b8e5e71282
   languageName: node
   linkType: hard
 
@@ -3416,7 +3416,7 @@ __metadata:
     react: "npm:19.2.0"
     react-dom: "npm:19.2.0"
     sharp: "npm:^0.35.5"
-    twenty-ui: "npm:~2.56.0"
+    twenty-ui: "npm:~2.57.0"
     uuid: "npm:^11.1.1"
     winston: "npm:^3.14.2"
   languageName: unknown

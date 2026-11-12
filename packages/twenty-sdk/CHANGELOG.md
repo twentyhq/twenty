@@ -101,9 +101,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
+- **`eventTriggerSettings` for logic functions and `EVENT` triggers for agents.** With `on: 'recordEvent'`, a trigger names an object, an action and `watchedFieldUniversalIdentifiers` instead of an event name and field names, plus an optional `condition`: a rule expression the record must meet, where `previous.<field>` reads it before an update. The build fails on an unknown object or field, or a condition reading a field the object does not have. These settings need a Twenty server that knows them; to deploy to an older server, keep `databaseEventTriggerSettings`.
+
+  ```ts
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+  },
+  ```
+
 - **`SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`.** The SDK names of the User Apps and Workspace Apps permission flags, with the same universal identifiers as `CONNECTED_ACCOUNTS` and `APPLICATIONS`. They are left out of `Object.keys`, `Object.values` and `Object.entries`, which list the same 26 names as before, so code that enumerates or filters the flags behaves as before. Only the SDK names change: the API keeps reporting these flags as `CONNECTED_ACCOUNTS` and `APPLICATIONS`, for example in `currentUserWorkspace.permissionFlags` and in command menu expressions.
 
 ### Deprecated
+
+- **`databaseEventTriggerSettings` on logic functions and `DATABASE_EVENT` triggers on agents.** Use `eventTriggerSettings` and `EVENT` triggers with `on: 'recordEvent'` instead. The old forms keep working for one more release.
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 

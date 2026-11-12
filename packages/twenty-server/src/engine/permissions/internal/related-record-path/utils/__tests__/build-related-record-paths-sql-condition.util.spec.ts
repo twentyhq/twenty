@@ -220,7 +220,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
         isUncorrelated: true,
       }),
     ).toEqual({
-      sql: `"attachment"."targetCompanyId" IN (SELECT "related_record_path_0"."id" FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner))`,
+      sql: `"attachment"."targetCompanyId" = ANY(ARRAY(SELECT "related_record_path_0"."id" FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner)))`,
       parameters: { related_record_path_0Owner: 'member-id' },
     });
   });
