@@ -7,6 +7,8 @@ export const WORKSPACE_DERIVED_CACHE_KEY_NAMES = {
   flatRoleTargetByAgentIdMaps: true,
   flatRoleTargetByApplicationIdMaps: true,
   graphQLResolverNameMap: true,
+  objectIdByName: true,
+  fieldIdByObjectIdAndName: true,
   viewOwnershipIndex: true,
   workflowOwnershipIndex: true,
 } as const satisfies Record<WorkspaceDerivedCacheKeyName, true>;
