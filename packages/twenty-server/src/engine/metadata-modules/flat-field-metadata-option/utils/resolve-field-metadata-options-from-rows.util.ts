@@ -1,3 +1,4 @@
+import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -14,39 +15,37 @@ export type FieldMetadataOptionRowForOptions = Pick<
     Pick<FieldMetadataOptionEntity, 'overrides' | 'isActive' | 'applicationId'>
   >;
 
-const OVERRIDABLE_PROPERTIES = [
-  'label',
-  'color',
-  'position',
-  'isActive',
-] as const;
+const readOverride = (
+  { overrides }: FieldMetadataOptionRowForOptions,
+  property: 'label' | 'color' | 'position' | 'isActive',
+): unknown =>
+  readAuthoredOverrideProperty({
+    metadataName: 'fieldMetadataOption',
+    overrides,
+    path: [property],
+    // The caches are built without an author, so a workspace override is read before the owner's
+    authorContext: { ownerApplicationUniversalIdentifier: undefined },
+  });
 
 const resolveEffectiveOptionRow = (
   fieldMetadataOptionRow: FieldMetadataOptionRowForOptions,
-) => {
-  const effectiveOptionRow: Record<string, unknown> = {
+): FieldMetadataOptionRowForOptions => {
+  const label = readOverride(fieldMetadataOptionRow, 'label');
+  const color = readOverride(fieldMetadataOptionRow, 'color');
+  const position = readOverride(fieldMetadataOptionRow, 'position');
+  const isActive = readOverride(fieldMetadataOptionRow, 'isActive');
+
+  return {
     ...fieldMetadataOptionRow,
+    label: isString(label) ? label : fieldMetadataOptionRow.label,
+    color:
+      isString(color) || isNull(color) ? color : fieldMetadataOptionRow.color,
+    position: isNumber(position) ? position : fieldMetadataOptionRow.position,
+    isActive: isBoolean(isActive) ? isActive : fieldMetadataOptionRow.isActive,
   };
-
-  for (const property of OVERRIDABLE_PROPERTIES) {
-    const overrideValue = readAuthoredOverrideProperty({
-      metadataName: 'fieldMetadataOption',
-      overrides: fieldMetadataOptionRow.overrides,
-      path: [property],
-      authorContext: { ownerApplicationUniversalIdentifier: undefined },
-    });
-
-    if (overrideValue !== undefined) {
-      effectiveOptionRow[property] = overrideValue;
-    }
-  }
-
-  return effectiveOptionRow as FieldMetadataOptionRowForOptions;
 };
 
 // A field without rows predates the option table or its backfill, so its stored options still stand.
-// An option carries isActive only when deactivated, and applicationId only when another application
-// than its field owns it.
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
