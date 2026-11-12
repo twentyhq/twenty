@@ -363,10 +363,6 @@ export class McpProtocolService {
             toolContext,
             categories: MCP_GENERIC_MODE_LISTED_TOOL_CATEGORIES,
           })),
-          ...createGenericRecordTools({
-            toolRegistry: this.toolRegistry,
-            context: toolContext,
-          }),
           ...toolSet,
         });
       default:
@@ -394,19 +390,7 @@ export class McpProtocolService {
 
     const { toolName, toolArguments, progressToken } = toolCallParams;
 
-    const { toolSet: baseToolSet, toolContext } =
-      await this.resolveMcpToolSet(context);
-
-    const toolSet =
-      context.toolMode === 'generic'
-        ? {
-            ...createGenericRecordTools({
-              toolRegistry: this.toolRegistry,
-              context: toolContext,
-            }),
-            ...baseToolSet,
-          }
-        : baseToolSet;
+    const { toolSet } = await this.resolveMcpToolSet(context);
 
     // Also keeps per-object names working for clients that snapshotted an earlier tools/list
     const shouldForwardToExecuteTool =
@@ -426,7 +410,7 @@ export class McpProtocolService {
   }
 
   private async resolveMcpToolSet(context: McpCoreQueryContext) {
-    return Sentry.startSpan(
+    const { toolSet, toolContext } = await Sentry.startSpan(
       { name: 'mcp build tool set', op: 'mcp.tools', onlyIfParent: true },
       () =>
         this.buildMcpToolSet(context.workspace, {
@@ -438,6 +422,21 @@ export class McpProtocolService {
           agentId: context.agentId,
         }),
     );
+
+    if (context.toolMode !== 'generic') {
+      return { toolSet, toolContext };
+    }
+
+    return {
+      toolSet: {
+        ...createGenericRecordTools({
+          toolRegistry: this.toolRegistry,
+          context: toolContext,
+        }),
+        ...toolSet,
+      },
+      toolContext,
+    };
   }
 
   private buildAnnotatedRegistryTools({
