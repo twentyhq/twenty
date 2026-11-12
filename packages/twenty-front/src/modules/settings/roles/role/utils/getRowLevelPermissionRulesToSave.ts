@@ -46,7 +46,6 @@ export const getRowLevelPermissionRulesToSave = ({
     ]),
   );
 
-  // A saved rule keeps its create grant, a new one follows update like object grants do
   const getCanCreateRecords = (
     rootPredicateGroup: RowLevelPermissionPredicateGroup,
   ) => {
