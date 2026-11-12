@@ -37,6 +37,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
@@ -323,6 +324,13 @@ export const useAgentChat = () => {
           store.set(lastSentBrowsingContextAtom, browsingContext);
         }
       } else {
+        // The fetched list predates this message until the refetch below lands
+        store.set(
+          agentChatIsAwaitingPersistedRefetchFamilyState.atomFamily({
+            threadId,
+          }),
+          true,
+        );
         store.set(isAwaitingFirstChunkAtom, false);
       }
 
