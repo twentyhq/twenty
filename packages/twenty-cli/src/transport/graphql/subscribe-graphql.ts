@@ -5,9 +5,9 @@ import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-timeout-milliseconds.constant';
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
+import { createRequestHeaders } from '@/transport/create-request-headers';
 import {
   createRedirectError,
-  createRequestHeaders,
   toTransportError,
 } from '@/transport/create-target-fetch';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';

@@ -10,6 +10,7 @@ import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-time
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { getProxySignInOrigin } from '@/transport/get-proxy-sign-in-origin';
+import { createRequestHeaders } from '@/transport/create-request-headers';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
@@ -110,28 +111,6 @@ export const createRedirectError = ({
       redirectOrigin: redirectOrigin ?? null,
     },
   });
-};
-
-export const createRequestHeaders = ({
-  initHeaders,
-  bearerToken,
-  proxyHeaderValues,
-}: {
-  initHeaders: HeadersInit | undefined;
-  bearerToken?: string;
-  proxyHeaderValues: Record<string, string>;
-}) => {
-  const headers = new Headers(initHeaders);
-
-  for (const [name, value] of Object.entries(proxyHeaderValues)) {
-    headers.set(name, value);
-  }
-
-  if (isDefined(bearerToken)) {
-    headers.set('Authorization', `Bearer ${bearerToken}`);
-  }
-
-  return headers;
 };
 
 export const createBoundedFetch =
