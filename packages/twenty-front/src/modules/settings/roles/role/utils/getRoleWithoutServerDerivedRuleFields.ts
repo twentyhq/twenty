@@ -9,11 +9,13 @@ export const getRoleWithoutServerDerivedRuleFields = (
 ): RoleWithPartialMembers => ({
   ...role,
   rowLevelPermissionRules: undefined,
-  objectPermissions: role.objectPermissions?.filter((objectPermission) =>
-    SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
-      isDefined(objectPermission[key]),
-    ),
-  ),
+  objectPermissions: role.objectPermissions
+    ?.filter((objectPermission) =>
+      SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
+        isDefined(objectPermission[key]),
+      ),
+    )
+    .sort(sortByProperty('objectMetadataId')),
   rowLevelPermissionFieldPermissions: undefined,
   rowLevelPermissionPredicates: role.rowLevelPermissionPredicates
     ?.map(({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({

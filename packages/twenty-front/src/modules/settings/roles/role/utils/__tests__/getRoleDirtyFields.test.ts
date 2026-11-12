@@ -143,4 +143,22 @@ describe('getRoleDirtyFields', () => {
       ),
     ).toEqual({});
   });
+
+  it('should not report object permissions listed in another order', () => {
+    const companyPermission = {
+      objectMetadataId: 'company',
+      canReadObjectRecords: false,
+    };
+    const personPermission = {
+      objectMetadataId: 'person',
+      canUpdateObjectRecords: false,
+    };
+
+    expect(
+      getRoleDirtyFields(
+        { ...role, objectPermissions: [personPermission, companyPermission] },
+        { ...role, objectPermissions: [companyPermission, personPermission] },
+      ),
+    ).toEqual({});
+  });
 });
