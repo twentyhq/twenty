@@ -14,11 +14,11 @@ export class ApplyAccessGroupPropagationPlanJob {
   ) {}
 
   @Process(APPLY_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME)
-  async handle({
-    workspaceId,
-  }: ApplyAccessGroupPropagationPlanJobData): Promise<void> {
+  async handle(
+    applyJobData: ApplyAccessGroupPropagationPlanJobData,
+  ): Promise<void> {
     await this.recordAccessGroupPropagationService.computeNextPlannedObject(
-      workspaceId,
+      applyJobData,
     );
   }
 }

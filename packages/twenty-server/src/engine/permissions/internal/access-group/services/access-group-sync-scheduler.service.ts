@@ -49,15 +49,16 @@ export class AccessGroupSyncSchedulerService {
   }
 
   async enqueueApplyAccessGroupPropagationPlanJob(
-    workspaceId: string,
+    applyJobData: ApplyAccessGroupPropagationPlanJobData,
   ): Promise<void> {
+    const { workspaceId } = applyJobData;
+
     await this.messageQueueService.add<ApplyAccessGroupPropagationPlanJobData>(
       APPLY_ACCESS_GROUP_PROPAGATION_PLAN_JOB_NAME,
-      { workspaceId },
+      applyJobData,
       {
         isWorkspaceJob: true,
         workspaceId,
-        retryLimit: 3,
         deduplication: {
           id: `access-group-propagation-plan:${workspaceId}`,
           keepLastIfActive: true,

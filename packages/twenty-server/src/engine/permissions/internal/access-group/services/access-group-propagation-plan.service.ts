@@ -13,6 +13,7 @@ import { ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS } from 'src/engine/permissions/int
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { type AccessGroupPropagationPlan } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-plan.type';
+import { type ApplyAccessGroupPropagationPlanJobData } from 'src/engine/permissions/internal/access-group/types/apply-access-group-propagation-plan-job-data.type';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
 import { areRecordAccessGroupComputesAlreadyPlanned } from 'src/engine/permissions/internal/access-group/utils/are-record-access-group-computes-already-planned.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
@@ -35,7 +36,7 @@ export class AccessGroupPropagationPlanService {
     private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
   ) {}
 
-  async planComputes({
+  async planAndApplyComputes({
     workspaceId,
     objectMetadataIds,
   }: {
@@ -69,8 +70,8 @@ export class AccessGroupPropagationPlanService {
       });
 
     await this.withPlanLock(workspaceId, async () => {
-      const plan = await this.findPlan(workspaceId);
-      const { objectMetadataIdsToCompute, totalRecordCount } = plan;
+      const { objectMetadataIdsToCompute, totalRecordCount } =
+        await this.findPlan(workspaceId);
 
       if (
         areRecordAccessGroupComputesAlreadyPlanned({
@@ -87,20 +88,25 @@ export class AccessGroupPropagationPlanService {
         );
       }
 
-      await this.savePlan(workspaceId, {
+      const plan = {
         objectMetadataIdsToCompute: [
           ...objectMetadataIdsToCompute,
           ...plannedObjectMetadataIds,
         ],
         totalRecordCount: totalRecordCount + plannedRecordCount,
-      });
+      };
+
+      await this.saveAndApplyPlan({ workspaceId, plan });
     });
   }
 
   async findNextObjectMetadataIdToCompute(
-    workspaceId: string,
+    applyJobData: ApplyAccessGroupPropagationPlanJobData,
   ): Promise<string | undefined> {
-    const { objectMetadataIdsToCompute } = await this.findPlan(workspaceId);
+    const { objectMetadataIdsToCompute } = await this.withPlanLock(
+      applyJobData.workspaceId,
+      () => this.findPlanOrRestoreFromApplyJobData(applyJobData),
+    );
 
     return objectMetadataIdsToCompute[0];
   }
@@ -130,43 +136,41 @@ export class AccessGroupPropagationPlanService {
   }
 
   async finishCompute({
-    workspaceId,
+    applyJobData,
     objectMetadataId,
   }: {
-    workspaceId: string;
+    applyJobData: ApplyAccessGroupPropagationPlanJobData;
     objectMetadataId: string;
   }): Promise<void> {
-    const hasComputesLeft = await this.withPlanLock(workspaceId, async () => {
-      const plan = await this.findPlan(workspaceId);
+    const { workspaceId } = applyJobData;
+
+    await this.withPlanLock(workspaceId, async () => {
+      const plan = await this.findPlanOrRestoreFromApplyJobData(applyJobData);
       const [runningObjectMetadataId, ...waitingObjectMetadataIds] =
         plan.objectMetadataIdsToCompute;
 
       if (runningObjectMetadataId !== objectMetadataId) {
-        return isDefined(runningObjectMetadataId);
+        return;
       }
 
       if (!isNonEmptyArray(waitingObjectMetadataIds)) {
-        await this.cacheStorageService.mdel([
-          this.buildPlanCacheKey(workspaceId),
-          this.buildComputedRecordCountCacheKey(workspaceId),
-        ]);
+        await this.stopPlan(workspaceId);
 
-        return false;
+        return;
       }
 
-      await this.savePlan(workspaceId, {
-        ...plan,
-        objectMetadataIdsToCompute: waitingObjectMetadataIds,
-      });
-
-      return true;
-    });
-
-    if (hasComputesLeft) {
-      await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
+      await this.saveAndApplyPlan({
         workspaceId,
-      );
-    }
+        plan: { ...plan, objectMetadataIdsToCompute: waitingObjectMetadataIds },
+      });
+    });
+  }
+
+  async stopPlan(workspaceId: string): Promise<void> {
+    await this.cacheStorageService.mdel([
+      this.buildPlanCacheKey(workspaceId),
+      this.buildComputedRecordCountCacheKey(workspaceId),
+    ]);
   }
 
   async findProgress(
@@ -182,10 +186,7 @@ export class AccessGroupPropagationPlanService {
       };
     }
 
-    const computedRecordCount =
-      (await this.cacheStorageService.get<number>(
-        this.buildComputedRecordCountCacheKey(workspaceId),
-      )) ?? 0;
+    const computedRecordCount = await this.findComputedRecordCount(workspaceId);
     const totalRecordCount = Math.max(
       plan.totalRecordCount,
       computedRecordCount,
@@ -196,6 +197,62 @@ export class AccessGroupPropagationPlanService {
       remainingRecordCount: totalRecordCount - computedRecordCount,
       isInProgress: true,
     };
+  }
+
+  private async findPlanOrRestoreFromApplyJobData({
+    workspaceId,
+    plan,
+    computedRecordCount,
+  }: ApplyAccessGroupPropagationPlanJobData): Promise<AccessGroupPropagationPlan> {
+    const cachedPlan = await this.findPlan(workspaceId);
+
+    if (
+      isNonEmptyArray(cachedPlan.objectMetadataIdsToCompute) ||
+      !isNonEmptyArray(plan.objectMetadataIdsToCompute)
+    ) {
+      return cachedPlan;
+    }
+
+    const computedRecordCountCacheKey =
+      this.buildComputedRecordCountCacheKey(workspaceId);
+
+    await this.savePlan(workspaceId, plan);
+    await this.cacheStorageService.del(computedRecordCountCacheKey);
+    await this.cacheStorageService.incrBy(
+      computedRecordCountCacheKey,
+      computedRecordCount,
+    );
+    await this.cacheStorageService.expire(
+      computedRecordCountCacheKey,
+      ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
+    );
+
+    return plan;
+  }
+
+  private async saveAndApplyPlan({
+    workspaceId,
+    plan,
+  }: {
+    workspaceId: string;
+    plan: AccessGroupPropagationPlan;
+  }): Promise<void> {
+    await this.savePlan(workspaceId, plan);
+    await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
+      {
+        workspaceId,
+        plan,
+        computedRecordCount: await this.findComputedRecordCount(workspaceId),
+      },
+    );
+  }
+
+  private async findComputedRecordCount(workspaceId: string): Promise<number> {
+    return (
+      (await this.cacheStorageService.get<number>(
+        this.buildComputedRecordCountCacheKey(workspaceId),
+      )) ?? 0
+    );
   }
 
   private async findPlan(
