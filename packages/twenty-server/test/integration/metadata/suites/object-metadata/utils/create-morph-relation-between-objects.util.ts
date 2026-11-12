@@ -86,7 +86,27 @@ export const createMorphRelationBetweenObjects = async ({
     expectToFail: false,
   });
 
-  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
-    morphRelations: RelationDTO[];
+  const createdMorphRelationField =
+    createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
+      morphRelations: RelationDTO[];
+    };
+
+  const targetObjectMetadataIdsInCreationOrder = [
+    firstTargetObjectMetadataId,
+    secondTargetObjectMetadataId,
+  ];
+
+  // The API returns morph relations in database row order, which is not stable
+  return {
+    ...createdMorphRelationField,
+    morphRelations: [...createdMorphRelationField.morphRelations].sort(
+      (morphRelationA, morphRelationB) =>
+        targetObjectMetadataIdsInCreationOrder.indexOf(
+          morphRelationA.targetObjectMetadata.id,
+        ) -
+        targetObjectMetadataIdsInCreationOrder.indexOf(
+          morphRelationB.targetObjectMetadata.id,
+        ),
+    ),
   };
 };
