@@ -22,6 +22,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
+import { type AgentChatThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import {
@@ -797,6 +799,62 @@ export const MultiplayerConversation: Story = {
     } finally {
       jotaiStore.set(threadRecordAtom, previousThread);
     }
+  },
+};
+
+const READ_RECEIPTS_THREAD_ID = 'conversation-presentation-story';
+
+const seedReadPositions = (readPositions: AgentChatThreadReadPosition[]) => {
+  const readPositionsAtom = agentChatThreadReadPositionsFamilyState.atomFamily({
+    threadId: READ_RECEIPTS_THREAD_ID,
+  });
+
+  jotaiStore.set(readPositionsAtom, readPositions);
+
+  return () => jotaiStore.set(readPositionsAtom, null);
+};
+
+export const ReadReceipts: Story = {
+  ...MultiplayerConversation,
+  beforeEach: () =>
+    seedReadPositions([
+      {
+        workspaceMemberId: mockedWorkspaceMemberData.id,
+        lastReadAt: MOCKED_DATE,
+      },
+      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
+      { workspaceMemberId: 'former-member', lastReadAt: null },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const receipts = await canvas.findAllByRole('img', { name: 'Read' });
+
+    await expect(receipts).toHaveLength(3);
+    await userEvent.hover(receipts[0]);
+    await expect(
+      await within(document.body).findByText('Read by 1 of 2'),
+    ).toBeVisible();
+    await expect(within(document.body).getByText('Not yet')).toBeVisible();
+  },
+};
+
+export const SentReceipts: Story = {
+  ...MultiplayerConversation,
+  beforeEach: () =>
+    seedReadPositions([
+      {
+        workspaceMemberId: mockedWorkspaceMemberData.id,
+        lastReadAt: MOCKED_DATE,
+      },
+      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'Sent' }),
+    ).toBeVisible();
+    await expect(canvas.getAllByRole('img', { name: 'Read' })).toHaveLength(2);
   },
 };
 

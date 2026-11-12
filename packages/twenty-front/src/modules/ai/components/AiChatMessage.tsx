@@ -17,7 +17,13 @@ import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantM
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
+import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
+import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
+import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
+import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
@@ -70,6 +76,7 @@ type AiChatUserMessageTextProps = {
   text: string;
   children: ReactNode;
   isOtherMember: boolean;
+  meta?: ReactNode;
 };
 
 const AiChatUserMessageText = ({
@@ -77,6 +84,7 @@ const AiChatUserMessageText = ({
   text,
   children,
   isOtherMember,
+  meta,
 }: AiChatUserMessageTextProps) => {
   const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
 
@@ -86,9 +94,12 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent text={text}>
-        {children}
-      </AiChatUserMessageCollapsibleContent>
+      <StyledChatMessageBubbleContent>
+        <AiChatUserMessageCollapsibleContent text={text}>
+          {children}
+        </AiChatUserMessageCollapsibleContent>
+        {meta}
+      </StyledChatMessageBubbleContent>
     </StyledChatMessageBubble>
   );
 };
@@ -130,6 +141,10 @@ export const AiChatMessage = ({
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const agentChatThreadReadPositions = useAtomFamilyStateValue(
+    agentChatThreadReadPositionsFamilyState,
+    { threadId: currentAiChatThread },
+  );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
   const isDirectMessage = useAtomFamilySelectorValue(
     agentChatThreadIsDirectMessageFamilySelector,
@@ -158,6 +173,11 @@ export const AiChatMessage = ({
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
   const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
   const hasHeader = isAiChatInboxEnabled && !isOwnMessage;
+  const hasOwnReceipt =
+    isAiChatInboxEnabled &&
+    isOwnMessage &&
+    isUser &&
+    isDefined(agentChatThreadReadPositions);
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
@@ -211,6 +231,14 @@ export const AiChatMessage = ({
               messageId={messageId}
               text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
+              meta={
+                hasOwnReceipt && (
+                  <StyledChatMessageMeta>
+                    <ChatMessageTime date={createdAt} />
+                    <AiChatMessageReceipt messageId={messageId} />
+                  </StyledChatMessageMeta>
+                )
+              }
             >
               {messageContent}
             </AiChatUserMessageText>
@@ -234,7 +262,9 @@ export const AiChatMessage = ({
             {isAiChatInboxEnabled && !isDirectMessage && (
               <AiChatMessageReactions messageId={messageId} />
             )}
-            {!hasHeader && <ChatMessageTimestamp createdAt={createdAt} />}
+            {!hasHeader && !hasOwnReceipt && (
+              <ChatMessageTimestamp createdAt={createdAt} />
+            )}
             <StyledChatMessageActions
               className="message-actions"
               isRightAligned={shouldMirrorMessageActions}
