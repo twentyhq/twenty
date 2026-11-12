@@ -35,11 +35,15 @@ export class AccessGroupPropagationProgressService {
   }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-    const pendingRecomputeKeys = new Set(
-      await this.cacheStorageService.setMembers(
+    const [plannedRecomputeKeys, pendingRecomputeCount] = await Promise.all([
+      this.cacheStorageService.setMembers(
+        this.buildPlannedRecomputesKey(workspaceId),
+      ),
+      this.cacheStorageService.getSetLength(
         this.buildPendingRecomputesKey(workspaceId),
       ),
-    );
+    ]);
+    const isPropagationRunning = pendingRecomputeCount > 0;
     const newRecomputes = planRecordAccessGroupRecomputes({
       objectMetadataIds,
       resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
@@ -47,7 +51,8 @@ export class AccessGroupPropagationProgressService {
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
     }).filter(
       (recompute) =>
-        !pendingRecomputeKeys.has(
+        !isPropagationRunning ||
+        !plannedRecomputeKeys.includes(
           buildRecordAccessGroupRecomputeKey(recompute),
         ),
     );
@@ -56,8 +61,8 @@ export class AccessGroupPropagationProgressService {
       return;
     }
 
-    if (pendingRecomputeKeys.size === 0) {
-      await this.clearRecordCounts(workspaceId);
+    if (!isPropagationRunning) {
+      await this.clearPlan(workspaceId);
     }
 
     const plannedRecordCount =
@@ -74,7 +79,7 @@ export class AccessGroupPropagationProgressService {
       });
 
     await this.cacheStorageService.setAdd(
-      this.buildPendingRecomputesKey(workspaceId),
+      this.buildPlannedRecomputesKey(workspaceId),
       newRecomputes.map(buildRecordAccessGroupRecomputeKey),
       ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS,
     );
@@ -84,8 +89,8 @@ export class AccessGroupPropagationProgressService {
     });
   }
 
-  // A job the plan did not list as pending still reads as in progress: one queued behind a running recompute of the same object, or one outliving the plan
-  async startRecompute(
+  // Only a scheduled recompute is pending, so one the plan expected but no job ever queued cannot hold the progress open
+  async markRecomputePending(
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
     await this.cacheStorageService.setAdd(
@@ -126,7 +131,7 @@ export class AccessGroupPropagationProgressService {
     if (
       (await this.cacheStorageService.getSetLength(pendingRecomputesKey)) === 0
     ) {
-      await this.clearRecordCounts(jobData.workspaceId);
+      await this.clearPlan(jobData.workspaceId);
     }
   }
 
@@ -177,8 +182,9 @@ export class AccessGroupPropagationProgressService {
     );
   }
 
-  private async clearRecordCounts(workspaceId: string): Promise<void> {
+  private async clearPlan(workspaceId: string): Promise<void> {
     await this.cacheStorageService.mdel([
+      this.buildPlannedRecomputesKey(workspaceId),
       this.buildTotalRecordCountKey(workspaceId),
       this.buildRecomputedRecordCountKey(workspaceId),
     ]);
@@ -186,6 +192,10 @@ export class AccessGroupPropagationProgressService {
 
   private buildPendingRecomputesKey(workspaceId: string): string {
     return `access-group-propagation:${workspaceId}:pending-recomputes`;
+  }
+
+  private buildPlannedRecomputesKey(workspaceId: string): string {
+    return `access-group-propagation:${workspaceId}:planned-recomputes`;
   }
 
   private buildTotalRecordCountKey(workspaceId: string): string {

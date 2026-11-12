@@ -97,6 +97,7 @@ describe('access group propagation progress (integration)', () => {
       .mdel(
         [
           'pending-recomputes',
+          'planned-recomputes',
           'total-record-count',
           'recomputed-record-count',
         ].map(
