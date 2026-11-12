@@ -4,7 +4,6 @@ import {
   getEffectiveObjectPermissionsFromRoleManifest,
 } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 
-// An operation reaches an object through an all-records grant or through a row level permission rule
 export const getReachableObjectPermissionsFromRoleManifest = ({
   role,
   objectUniversalIdentifier,
