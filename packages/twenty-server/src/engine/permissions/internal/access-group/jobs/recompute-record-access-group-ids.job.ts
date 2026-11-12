@@ -30,7 +30,7 @@ export class RecomputeRecordAccessGroupIdsJob {
       );
     } catch (error) {
       if (attemptsMade >= retryLimit) {
-        await this.accessGroupPropagationProgressService.finishObjectRecompute(
+        await this.accessGroupPropagationProgressService.abandonObjectRecompute(
           jobData,
         );
       }

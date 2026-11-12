@@ -30,7 +30,6 @@ import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
-import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
@@ -42,15 +41,20 @@ export class RecordAccessGroupComputationService {
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
-    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async recomputeRecordAccessGroupIdsOfAllObjectRecords(
-    jobData: RecomputeRecordAccessGroupIdsJobData,
-  ): Promise<void> {
-    const { workspaceId, objectMetadataId } = jobData;
+  async recomputeRecordAccessGroupIdsOfAllObjectRecords({
+    workspaceId,
+    objectMetadataId,
+    onRecordsRecomputed,
+  }: Pick<
+    RecomputeRecordAccessGroupIdsJobData,
+    'workspaceId' | 'objectMetadataId'
+  > & {
+    onRecordsRecomputed?: (recordCount: number) => Promise<void>;
+  }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
         workspaceId,
@@ -67,10 +71,6 @@ export class RecordAccessGroupComputationService {
       flatEntityMaps: metadataMaps.flatObjectMetadataMaps,
     });
 
-    await this.accessGroupPropagationProgressService.trackObjectRecompute(
-      jobData,
-    );
-
     let recordIds = await this.recordAccessGroupRepository.findRecordIds({
       workspaceId,
       flatObjectMetadata,
@@ -84,10 +84,7 @@ export class RecordAccessGroupComputationService {
         objectMetadataId,
         recordIds,
       });
-      await this.accessGroupPropagationProgressService.trackRecomputedRecords({
-        ...jobData,
-        recordCount: recordIds.length,
-      });
+      await onRecordsRecomputed?.(recordIds.length);
 
       recordIds = await this.recordAccessGroupRepository.findRecordIds({
         workspaceId,

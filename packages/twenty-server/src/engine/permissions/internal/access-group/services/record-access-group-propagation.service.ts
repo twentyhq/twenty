@@ -35,8 +35,33 @@ export class RecordAccessGroupPropagationService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
+    const jobData = {
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
+    };
+    // A pass only ever takes back the records it counted when it started, so an
+    // object scheduled again meanwhile keeps the records of its next pass
+    let untrackedRecordCount =
+      await this.accessGroupPropagationProgressService.trackObjectRecompute(
+        jobData,
+      );
+    const trackRecomputedRecords = async (recordCount: number) => {
+      const trackedRecordCount = Math.min(recordCount, untrackedRecordCount);
+
+      untrackedRecordCount -= trackedRecordCount;
+      await this.accessGroupPropagationProgressService.trackRecomputedRecords({
+        ...jobData,
+        recordCount: trackedRecordCount,
+      });
+    };
+
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
+      {
+        workspaceId,
+        objectMetadataId,
+        onRecordsRecomputed: trackRecomputedRecords,
+      },
     );
 
     const metadataMaps =
@@ -65,12 +90,8 @@ export class RecordAccessGroupPropagationService {
       metadataMaps,
     });
 
-    // Finished after the following objects are tracked, so the progress never looks idle in between
-    await this.accessGroupPropagationProgressService.finishObjectRecompute({
-      workspaceId,
-      objectMetadataId,
-      propagatedFromObjectMetadataIds,
-    });
+    // Settled after the following objects are tracked, so the progress never looks idle in between
+    await trackRecomputedRecords(untrackedRecordCount);
   }
 
   async scheduleRecomputeOfRelatedRecordPathTargets({

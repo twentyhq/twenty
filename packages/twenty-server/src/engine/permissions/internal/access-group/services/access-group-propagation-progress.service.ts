@@ -59,7 +59,7 @@ export class AccessGroupPropagationProgressService {
   // Sets rather than adds, so a deduplicated job or a retry never counts an object twice
   async trackObjectRecompute(
     jobData: RecomputeRecordAccessGroupIdsJobData,
-  ): Promise<void> {
+  ): Promise<number> {
     const { workspaceId, objectMetadataId } = jobData;
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -71,7 +71,7 @@ export class AccessGroupPropagationProgressService {
     });
 
     if (!isDefined(flatObjectMetadata)) {
-      return;
+      return 0;
     }
 
     const recordCount = await this.recordAccessGroupRepository.countRecords({
@@ -87,6 +87,8 @@ export class AccessGroupPropagationProgressService {
         { command: 'HSET', field: 'remaining', value: recordCount },
       ],
     });
+
+    return recordCount;
   }
 
   async trackRecomputedRecords({
@@ -104,7 +106,7 @@ export class AccessGroupPropagationProgressService {
     });
   }
 
-  async finishObjectRecompute(
+  async abandonObjectRecompute(
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
     await this.applyUpdates({
