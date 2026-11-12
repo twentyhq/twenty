@@ -192,9 +192,18 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
 
 type ExportOccurrence = {
   types: string;
-  import: string;
+  import: { development: string; default: string };
   require: string;
 };
+
+const computeExportOccurrence = (entryPath: string): ExportOccurrence => ({
+  types: `./dist/${entryPath}.d.ts`,
+  import: {
+    development: `./dist/dev/${entryPath}.mjs`,
+    default: `./dist/${entryPath}.mjs`,
+  },
+  require: `./dist/${entryPath}.cjs`,
+});
 type ExportsConfig = Record<string, ExportOccurrence | string>;
 
 const generateModulePackageExports = (moduleDirectories: string[]) => {
@@ -208,11 +217,7 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
 
     return {
       ...acc,
-      [`./${moduleName}`]: {
-        types: `./dist/${moduleName}/index.d.ts`,
-        import: `./dist/${moduleName}/index.mjs`,
-        require: `./dist/${moduleName}/index.cjs`,
-      },
+      [`./${moduleName}`]: computeExportOccurrence(`${moduleName}/index`),
     };
   }, {});
 };
@@ -222,11 +227,7 @@ const computePackageJsonFilesAndExportsConfig = (
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
   const exports = {
-    '.': {
-      types: './dist/index.d.ts',
-      import: './dist/index.mjs',
-      require: './dist/index.cjs',
-    },
+    '.': computeExportOccurrence('index'),
     ...generateModulePackageExports(moduleDirectories),
   } satisfies ExportsConfig;
 

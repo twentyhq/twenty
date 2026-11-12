@@ -15,6 +15,9 @@ export class AgentRunDTO {
   @Field(() => String, { nullable: true })
   threadTitle: string | null;
 
+  @Field(() => Boolean)
+  canReadThread: boolean;
+
   @Field(() => AgentTurnStatus)
   status: AgentTurnStatus;
 

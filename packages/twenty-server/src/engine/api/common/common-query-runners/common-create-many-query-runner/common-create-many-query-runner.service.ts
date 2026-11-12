@@ -49,7 +49,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
+import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -75,9 +76,11 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
+    const isPrivateByDefault = isPrivateByDefaultObject(
+      queryRunnerContext.flatObjectMetadata,
+    );
 
-    if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
+    if (isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
       await this.recordSharingWriteService.assertShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
@@ -88,7 +91,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
         resolveCreatedRecordSharingOrThrow({
-          objectSharing,
+          isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
+          isPrivateByDefault,
           shareWith: args.shareWith,
         }),
       ) ||
@@ -156,8 +160,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        objectSharing.isPrivateByDefault &&
-        isDefined(queryRunnerContext.transactionScope)
+        isPrivateByDefault && isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepositoryWithoutPermissionChecks(
               flatObjectMetadata.nameSingular,
             )
@@ -606,9 +609,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
-      objectSharing,
+      isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
+      isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
       shareWith,
     });
 
@@ -627,7 +630,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     await this.recordSharingWriteService.insertRecordSharesForCreatedRecords({
       authContext,
       objectMetadataId: flatObjectMetadata.id,
-      objectSharing,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       createdRecordSharing,
       transactionScope,
