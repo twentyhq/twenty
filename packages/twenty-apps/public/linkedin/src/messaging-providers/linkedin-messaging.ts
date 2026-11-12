@@ -7,7 +7,6 @@ import {
   LINKEDIN_SEND_MESSAGE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// The pinned twenty-sdk 2.57 does not type markThreadAsReadLogicFunction; inline it once the pin reaches 2.59.
 const linkedinMessagingProvider: Parameters<
   typeof defineMessagingProvider
 >[0] & {

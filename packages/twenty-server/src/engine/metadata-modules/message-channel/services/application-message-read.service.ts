@@ -63,7 +63,6 @@ export class ApplicationMessageReadService {
       return;
     }
 
-    // Upstream read state belongs to the account owner, not to members it is shared with.
     const ownedConnectedAccount =
       await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
         id: messageChannel.connectedAccountId,
@@ -132,7 +131,6 @@ export class ApplicationMessageReadService {
         },
       });
     } catch (error) {
-      // a failed mark must not block the next open from retrying
       await this.cacheStorageService.del(throttleKey);
 
       throw error;

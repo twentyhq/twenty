@@ -12,7 +12,6 @@ export const useMarkAppChannelThreadAsRead = () => {
     MarkAppChannelThreadAsReadMutationVariables
   >(MARK_APP_CHANNEL_THREAD_AS_READ);
 
-  // Best effort: the conversation stays readable in Twenty whatever the provider answers.
   const markAppChannelThreadAsRead = ({
     messageChannelId,
     messageThreadId,

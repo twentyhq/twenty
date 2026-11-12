@@ -12,7 +12,6 @@ export type AppThreadLatestMessages = {
   latestMessageIds: string[];
 };
 
-// Must run inside a workspace context.
 export const findAppThreadLatestMessages = async ({
   workspaceOrmManager,
   messageChannelId,

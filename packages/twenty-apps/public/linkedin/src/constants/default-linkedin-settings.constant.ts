@@ -6,6 +6,5 @@ export const DEFAULT_LINKEDIN_SETTINGS: LinkedinSettings = {
   historyConversationLimit: 20,
   contactAutoCreationPolicy: 'SENT',
   isNameMatchingEnabled: true,
-  // Opt-in: marking a chat as read on LinkedIn can show the sender a read receipt.
   areChatsMarkedAsRead: false,
 };

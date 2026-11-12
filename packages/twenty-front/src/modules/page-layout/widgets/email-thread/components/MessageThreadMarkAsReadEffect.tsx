@@ -27,7 +27,6 @@ export const MessageThreadMarkAsReadEffect = ({
   );
 
   const userWorkspaceId = currentWorkspaceMember?.userWorkspaceId;
-  // only app channels have a messaging provider, and upstream read state belongs to the account owner
   const isOwnedAppChannel =
     isDefined(messageChannel) &&
     isNonEmptyString(messageChannel.messagingProviderUniversalIdentifier) &&
@@ -38,7 +37,6 @@ export const MessageThreadMarkAsReadEffect = ({
   const appChannelIdToMark =
     hasSendPermission && isOwnedAppChannel ? messageChannel.id : null;
 
-  // Threads open from many places (timeline, record pages, links), so the opened widget is the one place that sees them all.
   useEffect(() => {
     if (!isDefined(appChannelIdToMark)) {
       return;
