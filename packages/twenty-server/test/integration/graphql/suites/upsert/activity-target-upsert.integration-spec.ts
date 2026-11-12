@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import { isDefined } from 'twenty-shared/utils';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
@@ -9,10 +8,10 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 describe('activity target upsert', () => {
-  it('keeps one live task target and restores it after deletion', async () => {
+  it('keeps one live task target and creates a new one after deletion', async () => {
     const taskId = randomUUID();
     const personId = randomUUID();
-    let taskTargetId: string | undefined;
+    const taskTargetIds: string[] = [];
 
     try {
       await createOneOperation({
@@ -44,7 +43,7 @@ describe('activity target upsert', () => {
       const createdTaskTargetId =
         firstCreateResponse.body.data.createTaskTargets[0].id;
 
-      taskTargetId = createdTaskTargetId;
+      taskTargetIds.push(createdTaskTargetId);
 
       const repeatedCreateResponse = await createTaskTarget();
 
@@ -60,11 +59,14 @@ describe('activity target upsert', () => {
         }),
       );
 
-      const restoreResponse = await createTaskTarget();
+      const recreateResponse = await createTaskTarget();
+      const recreatedTaskTarget =
+        recreateResponse.body.data.createTaskTargets[0];
 
-      expect(restoreResponse.body.data.createTaskTargets[0]).toEqual(
-        expect.objectContaining({ id: createdTaskTargetId, deletedAt: null }),
-      );
+      taskTargetIds.push(recreatedTaskTarget.id);
+
+      expect(recreatedTaskTarget.id).not.toEqual(createdTaskTargetId);
+      expect(recreatedTaskTarget.deletedAt).toBeNull();
 
       const findResponse = await makeGraphqlApiRequest(
         findManyOperationFactory({
@@ -80,7 +82,7 @@ describe('activity target upsert', () => {
 
       expect(findResponse.body.data.taskTargets.edges).toHaveLength(1);
     } finally {
-      if (isDefined(taskTargetId)) {
+      for (const taskTargetId of taskTargetIds) {
         await makeGraphqlApiRequest(
           destroyOneOperationFactory({
             objectMetadataSingularName: 'taskTarget',
