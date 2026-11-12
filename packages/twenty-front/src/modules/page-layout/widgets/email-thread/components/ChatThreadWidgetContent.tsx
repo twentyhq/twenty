@@ -97,19 +97,19 @@ export const ChatThreadWidgetContent = ({
 
   return (
     <StyledWidgetContentContainer>
+      {isDisconnected &&
+        isDefined(connectionProvider) &&
+        isDefined(connectedAccount.applicationId) && (
+          <ChatThreadDisconnectedBanner
+            applicationId={connectedAccount.applicationId}
+            connectionProviderName={connectionProvider.name}
+            channelName={connectionProvider.displayName}
+            connectedAccountId={connectedAccount.id}
+            canReconnect={canReconnect}
+          />
+        )}
       <WidgetRelationsHeader />
       <StyledChatThreadBody>
-        {isDisconnected &&
-          isDefined(connectionProvider) &&
-          isDefined(connectedAccount.applicationId) && (
-            <ChatThreadDisconnectedBanner
-              applicationId={connectedAccount.applicationId}
-              connectionProviderName={connectionProvider.name}
-              channelName={connectionProvider.displayName}
-              connectedAccountId={connectedAccount.id}
-              canReconnect={canReconnect}
-            />
-          )}
         <StyledWidgetScrollContainer
           ref={scrollContainerRef}
           onScroll={handleScroll}
