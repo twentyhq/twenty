@@ -1,3 +1,4 @@
+import { DIRECT_MESSAGE_MEMBER_PICKER_DROPDOWN_ID } from '@/ai/constants/DirectMessageMemberPickerDropdownId';
 import { type DirectMessageMember } from '@/ai/types/DirectMessageMember';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -8,8 +9,6 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-
-const DIRECT_MESSAGE_MEMBER_PICKER_DROPDOWN_ID = 'direct-message-member-picker';
 
 type DirectMessageMemberPickerProps = {
   humanMembers: readonly DirectMessageMember[];

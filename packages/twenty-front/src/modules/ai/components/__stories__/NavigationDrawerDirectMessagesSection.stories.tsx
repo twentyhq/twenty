@@ -122,6 +122,24 @@ export const ShowMoreDirectMessages: Story = {
   },
 };
 
+export const AddDirectMessageFromRow: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Add direct message' }),
+    );
+    await userEvent.type(
+      await body.findByRole('searchbox', { name: 'Search members' }),
+      'ali',
+    );
+    await userEvent.click(body.getByRole('option', { name: /Alice/ }));
+
+    await expect(args.onSelectMember).toHaveBeenCalledWith('alice');
+  },
+};
+
 export const SearchAndKeyboardSelection: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
