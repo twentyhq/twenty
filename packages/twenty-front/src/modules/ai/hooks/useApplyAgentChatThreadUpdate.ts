@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
-import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
+import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThreadFieldUpdateCountsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -26,10 +26,15 @@ export const useApplyAgentChatThreadUpdate = () => {
 
       store.set(agentChatThreadRecordUpdateCountState.atom, updateCount);
       store.set(
-        agentChatThreadLastUpdateCountByIdState.atom,
-        (lastUpdateCountById) => ({
-          ...lastUpdateCountById,
-          [update.id]: updateCount,
+        agentChatThreadFieldUpdateCountsState.atom,
+        (fieldUpdateCountsById) => ({
+          ...fieldUpdateCountsById,
+          [update.id]: {
+            ...fieldUpdateCountsById[update.id],
+            ...Object.fromEntries(
+              Object.keys(update).map((fieldName) => [fieldName, updateCount]),
+            ),
+          },
         }),
       );
     },

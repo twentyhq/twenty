@@ -7,7 +7,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
 import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
+import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThreadFieldUpdateCountsState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
@@ -372,13 +372,14 @@ describe('useRefreshAgentChatThreads', () => {
     store: ReturnType<typeof createStore>,
     thread: Pick<AgentChatThreadRecord, 'id' | 'title'>,
   ) => {
-    store.set(recordStoreFamilyState.atomFamily(thread.id), {
+    store.set(recordStoreFamilyState.atomFamily(thread.id), (storedThread) => ({
       __typename: 'AgentChatThread',
+      ...storedThread,
       ...thread,
-    });
+    }));
     store.set(agentChatThreadRecordUpdateCountState.atom, 1);
-    store.set(agentChatThreadLastUpdateCountByIdState.atom, {
-      [thread.id]: 1,
+    store.set(agentChatThreadFieldUpdateCountsState.atom, {
+      [thread.id]: { title: 1 },
     });
   };
 
@@ -418,6 +419,10 @@ describe('useRefreshAgentChatThreads', () => {
 
   it('keeps a chat updated live during the request, in one request', async () => {
     const store = buildStore();
+    store.set(recordStoreFamilyState.atomFamily('thread-1'), {
+      ...buildThread('thread-1', 'Stored title'),
+      lastMessageText: 'Stored message',
+    });
     let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
       undefined;
 
@@ -437,7 +442,10 @@ describe('useRefreshAgentChatThreads', () => {
     await act(async () => {
       resolveQuery(
         buildPage([
-          buildThread('thread-1', 'Stale title'),
+          {
+            ...buildThread('thread-1', 'Stale title'),
+            lastMessageText: 'Newer message',
+          },
           buildThread('thread-2', 'Other thread'),
         ]),
       );
@@ -449,6 +457,7 @@ describe('useRefreshAgentChatThreads', () => {
       {
         id: 'thread-1',
         title: 'Renamed meanwhile',
+        lastMessageText: 'Newer message',
         createdAt: '2026-09-07T00:00:00.000Z',
       },
       { id: 'thread-2', title: 'Other thread' },

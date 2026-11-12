@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
+import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThreadFieldUpdateCountsState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -23,8 +23,8 @@ export const useAgentChatThreadLiveUpdates = () => {
       threads: AgentChatThreadRecord[];
       updateCount: number;
     }): AgentChatThreadRecord[] => {
-      const lastUpdateCountById = store.get(
-        agentChatThreadLastUpdateCountByIdState.atom,
+      const fieldUpdateCountsById = store.get(
+        agentChatThreadFieldUpdateCountsState.atom,
       );
 
       return threads.map((thread) => {
@@ -32,10 +32,27 @@ export const useAgentChatThreadLiveUpdates = () => {
           agentChatThreadRecordFamilySelector.selectorFamily(thread.id),
         );
 
-        return (lastUpdateCountById[thread.id] ?? 0) > updateCount &&
-          isDefined(storedThread)
-          ? { ...thread, ...storedThread }
-          : thread;
+        if (!isDefined(storedThread)) {
+          return thread;
+        }
+
+        const liveFieldNames = Object.entries(
+          fieldUpdateCountsById[thread.id] ?? {},
+        )
+          .filter(([, fieldUpdateCount]) => fieldUpdateCount > updateCount)
+          .map(([fieldName]) => fieldName);
+
+        return {
+          ...thread,
+          ...Object.fromEntries(
+            liveFieldNames
+              .filter((fieldName) => fieldName in storedThread)
+              .map((fieldName) => [
+                fieldName,
+                storedThread[fieldName as keyof AgentChatThreadRecord],
+              ]),
+          ),
+        };
       });
     },
     [store],
