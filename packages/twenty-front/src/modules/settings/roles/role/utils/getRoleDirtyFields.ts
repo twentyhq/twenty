@@ -3,23 +3,27 @@ import { isDefined } from 'twenty-shared/utils';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-// Rules and their ids are derived by the server from the saved groups, so the draft never edits them
+const byId = (first: { id: string }, second: { id: string }) =>
+  first.id.localeCompare(second.id);
+
+// The server derives rules and their ids, and syncing a rule edit reorders these lists
 const withoutServerDerivedRuleFields = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => ({
   ...role,
   rowLevelPermissionRules: undefined,
-  rowLevelPermissionPredicates: role.rowLevelPermissionPredicates?.map(
-    ({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({
+  rowLevelPermissionPredicates: role.rowLevelPermissionPredicates
+    ?.map(({ rowLevelPermissionRuleId: _ruleId, ...predicate }) => ({
       ...predicate,
       relationFieldMetadataId: predicate.relationFieldMetadataId ?? null,
-    }),
-  ),
-  rowLevelPermissionPredicateGroups:
-    role.rowLevelPermissionPredicateGroups?.map(
+    }))
+    .sort(byId),
+  rowLevelPermissionPredicateGroups: role.rowLevelPermissionPredicateGroups
+    ?.map(
       ({ rowLevelPermissionRuleId: _ruleId, ...predicateGroup }) =>
         predicateGroup,
-    ),
+    )
+    .sort(byId),
 });
 
 export const getRoleDirtyFields = (

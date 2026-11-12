@@ -1,4 +1,5 @@
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import { RowLevelPermissionPredicateGroupLogicalOperator } from '~/generated-metadata/graphql';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
 
 const role = { ...mockedRoles[1], permissionFlags: [] };
@@ -68,5 +69,40 @@ describe('getRoleDirtyFields', () => {
 
   it('retains new-role fields when there is no persisted role', () => {
     expect(getRoleDirtyFields(draftRole, undefined)).toEqual(draftRole);
+  });
+
+  it('treats reordered rule predicates and groups as clean', () => {
+    const buildGroup = (id: string) => ({
+      __typename: 'RowLevelPermissionPredicateGroup' as const,
+      id,
+      parentRowLevelPermissionPredicateGroupId: null,
+      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      positionInRowLevelPermissionPredicateGroup: null,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      roleId: role.id,
+      objectMetadataId: 'object-id',
+      rowLevelPermissionRuleId: null,
+    });
+    const firstGroup = buildGroup('first-group');
+    const secondGroup = buildGroup('second-group');
+
+    expect(
+      getRoleDirtyFields(
+        {
+          ...role,
+          rowLevelPermissionPredicateGroups: [secondGroup, firstGroup],
+        },
+        {
+          ...role,
+          rowLevelPermissionPredicateGroups: [
+            firstGroup,
+            { ...secondGroup, rowLevelPermissionRuleId: 'server-rule-id' },
+          ],
+        },
+      ),
+    ).toEqual({});
   });
 });
