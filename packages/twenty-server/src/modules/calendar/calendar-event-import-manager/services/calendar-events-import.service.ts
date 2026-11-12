@@ -132,7 +132,7 @@ export class CalendarEventsImportService {
 
           const workspace = await this.workspaceRepository.findOne({
             where: { id: workspaceId },
-            select: ['id', 'isInternalMessagesImportEnabled'],
+            select: ['id', 'isInternalImportEnabled'],
           });
 
           const { filteredEvents, eventsToRemove } =
@@ -144,7 +144,7 @@ export class CalendarEventsImportService {
                 .map((blocklistItem) => blocklistItem.handle)
                 .filter(isDefined),
               calendarChannel.excludePrivateEvents,
-              workspace?.isInternalMessagesImportEnabled ?? false,
+              workspace?.isInternalImportEnabled ?? false,
             );
 
           const eventExternalIdsToRemove = eventsToRemove.map(

@@ -171,7 +171,7 @@ export class WorkspaceService {
     aiChatAssistantProfile: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
-    isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isInternalImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };

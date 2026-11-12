@@ -15388,7 +15388,7 @@ export default {
             "isGoogleAuthEnabled": [
                 4
             ],
-            "isInternalMessagesImportEnabled": [
+            "isInternalImportEnabled": [
                 4
             ],
             "isMicrosoftAuthBypassEnabled": [
@@ -16938,7 +16938,7 @@ export default {
             "isGoogleAuthEnabled": [
                 4
             ],
-            "isInternalMessagesImportEnabled": [
+            "isInternalImportEnabled": [
                 4
             ],
             "isMicrosoftAuthBypassEnabled": [

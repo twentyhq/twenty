@@ -186,7 +186,7 @@ export class MessagingMessagesImportService {
 
           const workspace = await this.workspaceRepository.findOne({
             where: { id: workspaceId },
-            select: ['id', 'isInternalMessagesImportEnabled'],
+            select: ['id', 'isInternalImportEnabled'],
           });
 
           const messagesToSave = filterEmails(
@@ -197,7 +197,7 @@ export class MessagingMessagesImportService {
               .map((blocklistItem) => blocklistItem.handle)
               .filter(isDefined),
             messageChannel.excludeGroupEmails,
-            workspace?.isInternalMessagesImportEnabled ?? false,
+            workspace?.isInternalImportEnabled ?? false,
           );
 
           if (messagesToSave.length > 0) {

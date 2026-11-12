@@ -20,24 +20,24 @@ export const SettingsWorkspaceEmailSyncSection = () => {
   const { enqueueToast } = useToast();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const handleSyncInternalEmailsChange = (value: boolean) => {
+  const handleSyncInternalImportChange = (value: boolean) => {
     if (!isDefined(currentWorkspace)) {
       return;
     }
 
-    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
+    if (value === currentWorkspace.isInternalImportEnabled) {
       return;
     }
 
     setCurrentWorkspace({
       ...currentWorkspace,
-      isInternalMessagesImportEnabled: value,
+      isInternalImportEnabled: value,
     });
 
     updateWorkspace({
       variables: {
         input: {
-          isInternalMessagesImportEnabled: value,
+          isInternalImportEnabled: value,
         },
       },
     }).catch((error) => {
@@ -54,10 +54,10 @@ export const SettingsWorkspaceEmailSyncSection = () => {
       <Card.Root>
         <SettingsOptionCardContentSwitch
           Icon={IconMail}
-          title={t`Sync Internal Emails`}
-          description={t`Include emails where all participants share the same domain.`}
-          checked={currentWorkspace?.isInternalMessagesImportEnabled ?? false}
-          onChange={handleSyncInternalEmailsChange}
+          title={t`Sync Internal Emails and Meetings`}
+          description={t`Include emails and meetings where all participants share the same domain.`}
+          checked={currentWorkspace?.isInternalImportEnabled ?? false}
+          onChange={handleSyncInternalImportChange}
         />
       </Card.Root>
     </Section.Root>

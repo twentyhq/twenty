@@ -5797,7 +5797,7 @@ input UpdateWorkspaceInput {
   isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
-  isInternalMessagesImportEnabled: Boolean
+  isInternalImportEnabled: Boolean
   isMicrosoftAuthBypassEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
   isPasswordAuthBypassEnabled: Boolean
@@ -6593,7 +6593,7 @@ type Workspace {
   isCustomDomainEnabled: Boolean!
   isGoogleAuthBypassEnabled: Boolean!
   isGoogleAuthEnabled: Boolean!
-  isInternalMessagesImportEnabled: Boolean!
+  isInternalImportEnabled: Boolean!
   isMicrosoftAuthBypassEnabled: Boolean!
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!

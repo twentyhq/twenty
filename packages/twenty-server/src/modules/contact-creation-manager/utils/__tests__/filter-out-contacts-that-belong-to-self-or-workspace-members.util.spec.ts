@@ -23,7 +23,7 @@ describe('filterOutContactsThatBelongToSelfOrWorkspaceMembers', () => {
     expect(result).toEqual([contact('bob@other.com')]);
   });
 
-  it('keeps same-domain contacts when isInternalMessagesImportEnabled is true', () => {
+  it('keeps same-domain contacts when isInternalImportEnabled is true', () => {
     const contacts = [contact('alice@acme.com'), contact('bob@other.com')];
     const result = filterOutContactsThatBelongToSelfOrWorkspaceMembers(
       contacts,

@@ -1,0 +1,2 @@
+export const RENAME_WORKSPACE_IS_INTERNAL_MESSAGES_IMPORT_ENABLED_UPGRADE_COMMAND_NAME =
+  '2.58.0_RenameWorkspaceIsInternalMessagesImportEnabledToIsInternalImportEnabledFastInstanceCommand_1794510157045';

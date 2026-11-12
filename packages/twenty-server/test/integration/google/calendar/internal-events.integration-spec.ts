@@ -40,7 +40,7 @@ describe('Google calendar internal events (integration)', () => {
 
   afterAll(async () => {
     await updateWorkspace({
-      data: { isInternalMessagesImportEnabled: false },
+      data: { isInternalImportEnabled: false },
     });
     await channel?.cleanup().catch(() => undefined);
   });
@@ -86,7 +86,7 @@ describe('Google calendar internal events (integration)', () => {
 
   it('imports internal events when internal import is enabled on the workspace', async () => {
     await updateWorkspace({
-      data: { isInternalMessagesImportEnabled: true },
+      data: { isInternalImportEnabled: true },
     });
 
     const internalTitle = `Internal event ${randomUUID()}`;
