@@ -125,4 +125,28 @@ await attachRecordToInboxThread({
 * La llamada se ejecuta con el mismo acceso que [enviar un mensaje](#who-sends-the-message), lo que requiere el permiso `AI`. Un miembro debe poder editar la conversación, y tu aplicación puede actuar en una conversación que ella misma escribió o en una a la que se concedió su rol predeterminado; de lo contrario, la llamada falla con `THREAD_NOT_FOUND`.
 * El registro debe poder leerse con ese acceso; de lo contrario, la llamada falla con `RECORD_NOT_FOUND`.
 
+## Archivar una conversación
+
+`archiveInboxThread()` archiva una conversación que escribió tu aplicación, para los miembros que indiques, como si cada uno de ellos la hubiera archivado desde su bandeja de entrada. Úsalo cuando el trabajo relacionado con un mensaje se haya realizado en otro lugar: el correo electrónico que propusiste se envió desde Gmail, la reunión sobre la que preguntaste se aprobó en el calendario.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+* Solo tu aplicación puede llamarlo en una conversación que ella misma escribió o en una para la que se concedió su función predeterminada; de lo contrario, la llamada falla con `THREAD_NOT_FOUND`. Los miembros archivan desde su propia bandeja de entrada.
+* Todos los miembros que nombres deben poder leer la conversación. Si alguno no puede, la llamada falla con `THREAD_NOT_FOUND` y la archiva para nadie.
+* Un mensaje nuevo en la conversación la devuelve a la bandeja de entrada, igual que cuando un miembro la archiva.
+* Se omite a un miembro que dejó de seguir la conversación, por lo que permanece fuera de su bandeja de entrada.
+
+Omite `workspaceMemberIds` para marcar una conversación como terminada en su canal, tal como lo hace un miembro desde la vista del canal. Las bandejas de entrada de los propios miembros se mantienen como están, y una conversación que no está en ningún canal falla con `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
+
 <PageBanner illustration="card-page-inbox" />

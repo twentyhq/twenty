@@ -7,6 +7,7 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
@@ -27,6 +28,8 @@ import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatS
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
@@ -42,6 +45,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
   isMobile: boolean;
   isCentered?: boolean;
+  hasPageContentInset: boolean;
 }>`
   align-items: flex-end;
   background: ${themeCssVariables.background.primary};
@@ -50,45 +54,27 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
   margin-top: auto;
-  padding-block: ${({ isMobile }) =>
-    isMobile ? '0' : themeCssVariables.spacing[3]};
-  padding-inline: ${({ isCentered }) =>
-    isCentered ? themeCssVariables.spacing[4] : themeCssVariables.spacing[3]};
-`;
-
-const StyledInputBox = styled.div<{
-  isMobile: boolean;
-  isCentered: boolean;
-}>`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: calc(
-    ${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]}
-  );
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile, isCentered }) => {
+  padding-block: ${({ isMobile, isCentered }) => {
     if (isMobile) {
-      return 'auto';
+      return '0';
     }
 
-    return isCentered ? themeCssVariables.spacing[20] : '140px';
+    return isCentered
+      ? themeCssVariables.spacing[3]
+      : themeCssVariables.spacing[2];
   }};
-  padding: ${themeCssVariables.spacing[2]};
-  width: 100%;
-
-  &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
-    box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
-  }
+  padding-inline: ${({ isCentered, hasPageContentInset }) =>
+    hasPageContentInset && !isCentered
+      ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
+      : themeCssVariables.spacing[4]};
 `;
 
-const StyledEditorWrapper = styled.div<{
-  isMobile: boolean;
-  isCentered: boolean;
-}>`
+const StyledInputBox = styled(StyledChatComposerBox)<{ isMobile: boolean }>`
+  min-height: ${({ isMobile }) =>
+    isMobile ? 'auto' : themeCssVariables.spacing[20]};
+`;
+
+const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -99,20 +85,14 @@ const StyledEditorWrapper = styled.div<{
     border: none;
     box-shadow: none;
     color: ${themeCssVariables.font.color.primary};
+    cursor: text;
     font-family: inherit;
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile, isCentered }) => {
-      if (isMobile) {
-        return 'auto';
-      }
-
-      return isCentered
-        ? themeCssVariables.spacing[6]
-        : themeCssVariables.spacing[12];
-    }};
+    min-height: ${({ isMobile }) =>
+      isMobile ? 'auto' : themeCssVariables.spacing[6]};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -163,6 +143,7 @@ const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
+  const hasPageContentInset = useHasAiChatPageContentInset();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
   const shouldShowUsageLimitBanner =
@@ -182,8 +163,8 @@ const EditableAiChatEditorSection = () => {
   const [dictationInterimText, setDictationInterimText] = useState('');
 
   const composer = (
-    <StyledInputBox isMobile={isMobile} isCentered={isComposerCentered}>
-      <StyledEditorWrapper isMobile={isMobile} isCentered={isComposerCentered}>
+    <StyledInputBox isMobile={isMobile}>
+      <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       {!isDirectMessage && (
@@ -227,7 +208,11 @@ const EditableAiChatEditorSection = () => {
         </StyledMessageListPlaceholder>
       )}
 
-      <StyledInputArea isMobile={isMobile} isCentered={isComposerCentered}>
+      <StyledInputArea
+        isMobile={isMobile}
+        isCentered={isComposerCentered}
+        hasPageContentInset={hasPageContentInset}
+      >
         {isComposerCentered && !isDirectMessage && (
           <AiChatEmptyState isCentered />
         )}
@@ -256,9 +241,13 @@ export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const access = useCurrentAiChatThreadAccess();
+  const hasPageContentInset = useHasAiChatPageContentInset();
   if (access !== 'writer') {
     return (
-      <StyledInputArea isMobile={isMobile}>
+      <StyledInputArea
+        isMobile={isMobile}
+        hasPageContentInset={hasPageContentInset}
+      >
         <div role="status">
           {access === 'loading'
             ? t`Loading conversation…`

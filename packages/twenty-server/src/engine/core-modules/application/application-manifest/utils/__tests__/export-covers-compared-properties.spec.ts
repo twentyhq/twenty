@@ -346,6 +346,8 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
 const CREATE_PERMISSION_DERIVED_ON_IMPORT =
   'Not in the manifest yet: importing derives it from the update permission';
 
+const RULE_DERIVED_ON_IMPORT =
+  'rules are derived on import from the predicate groups and predicates';
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
@@ -784,6 +786,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...NESTED_ROLE_CHILD_GAPS,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         'manifests do not declare field permissions on a row level permission rule yet',
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -835,6 +838,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -864,6 +868,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -891,6 +896,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
     workspaceLocalProperties: ['visibility'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
+      jobConfig:
+        'no manifest slot yet, every application workflow gets the default',
       lastPublishedVersionId:
         'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:

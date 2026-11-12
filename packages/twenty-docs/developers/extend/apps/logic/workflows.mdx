@@ -104,7 +104,7 @@ Application workflows support these step types: `LOGIC_FUNCTION`, `CODE`, `AI_AG
 Their inputs match the steps of the [workflow builder](/user-guide/workflows/capabilities/workflow-actions), with universal identifiers in place of names:
 - Record steps take `objectUniversalIdentifier` instead of an object name.
 - Filters and sorts point at fields with `fieldMetadataUniversalIdentifier`.
-- Filter operands take `ViewFilterOperand` values, exported by `twenty-sdk/define`. Filter group operators take string values such as `'AND'` or `'OR'`.
+- Filter operands take `ViewFilterOperand` values. Filter group operators take `StepLogicalOperator` values in step filters and `RecordFilterGroupLogicalOperator` values in record filters, both `AND` or `OR`. `twenty-sdk/define` exports all three, along with `ViewFilterOperandDeprecated` for the operands older workflows still store.
 - Form fields of type `RECORD` name their object with `settings.objectUniversalIdentifier`. Fields of type `SELECT` and `MULTI_SELECT` offer the options of an existing field of the same type, named with `settings.selectedFieldUniversalIdentifier`.
 - A `CODE` step carries its TypeScript source in `input.code`: a module exporting a `main` function, which receives `input.logicFunctionInput`. To share code across workflows, use a `LOGIC_FUNCTION` step instead.
 

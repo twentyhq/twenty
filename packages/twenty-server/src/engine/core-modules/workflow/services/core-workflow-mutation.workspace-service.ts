@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -479,6 +480,7 @@ export class CoreWorkflowMutationWorkspaceService {
       universalIdentifier: uuidv4(),
       workspaceWorkflowId: null,
       isSystem: false,
+      jobConfig: DEFAULT_WORKFLOW_JOB_CONFIG,
       visibility: visibility ?? WorkflowVisibility.WORKSPACE,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,

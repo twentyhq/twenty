@@ -20,13 +20,13 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   font-family: ${themeCssVariables.font.family};
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledStepsContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[1]};
 `;

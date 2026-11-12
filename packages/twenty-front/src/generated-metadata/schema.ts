@@ -237,6 +237,7 @@ export type AgentMessageReactionSummary = {
 
 export type AgentRun = {
   __typename?: 'AgentRun';
+  canReadThread: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   creatorName: Scalars['String']['output'];
   creatorSource: Scalars['String']['output'];
@@ -402,6 +403,7 @@ export enum AllMetadataName {
   roleTarget = 'roleTarget',
   rowLevelPermissionPredicate = 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup = 'rowLevelPermissionPredicateGroup',
+  rowLevelPermissionRule = 'rowLevelPermissionRule',
   searchFieldMetadata = 'searchFieldMetadata',
   settingsMenuItem = 'settingsMenuItem',
   skill = 'skill',
@@ -537,6 +539,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  grantRoleId?: Maybe<Scalars['UUID']['output']>;
   grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
@@ -2587,6 +2590,7 @@ export enum FeatureFlagKey {
   IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
+  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -3870,6 +3874,7 @@ export type Mutation = {
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
+  stopGenerate: Scalars['Boolean']['output'];
   stopImpersonation: StopImpersonation;
   switchBillingPlan: BillingUpdate;
   switchSubscriptionInterval: BillingUpdate;
@@ -5058,6 +5063,11 @@ export type MutationStopAgentChatStreamArgs = {
 };
 
 
+export type MutationStopGenerateArgs = {
+  input: StopGenerateInput;
+};
+
+
 export type MutationSwitchBillingPlanArgs = {
   plan?: InputMaybe<BillingPlanKey>;
 };
@@ -5743,7 +5753,7 @@ export type ObjectRecordsPermissions = {
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Use unreadableFields and uneditableFields */
   restrictedFields: Scalars['JSON']['output'];
-  rowLevelRecordsPermissions?: Maybe<RowLevelRecordsPermissions>;
+  rowLevelRecordsPermissions?: Maybe<Array<RowLevelRecordsPermissions>>;
   uneditableFields: Array<Scalars['UUID']['output']>;
   unreadableFields: Array<Scalars['UUID']['output']>;
 };
@@ -6969,6 +6979,7 @@ export type Role = {
   rowLevelPermissionFieldPermissions?: Maybe<Array<FieldPermission>>;
   rowLevelPermissionPredicateGroups?: Maybe<Array<RowLevelPermissionPredicateGroup>>;
   rowLevelPermissionPredicates?: Maybe<Array<RowLevelPermissionPredicate>>;
+  rowLevelPermissionRules?: Maybe<Array<RowLevelPermissionRule>>;
   universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
@@ -7064,6 +7075,17 @@ export enum RowLevelPermissionPredicateOperand {
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
 
+export type RowLevelPermissionRule = {
+  __typename?: 'RowLevelPermissionRule';
+  canCreateRecords: Scalars['Boolean']['output'];
+  canDestroyRecords: Scalars['Boolean']['output'];
+  canReadRecords: Scalars['Boolean']['output'];
+  canSoftDeleteRecords: Scalars['Boolean']['output'];
+  canUpdateRecords: Scalars['Boolean']['output'];
+  id: Scalars['UUID']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
 export type RowLevelRecordsPermissions = {
   __typename?: 'RowLevelRecordsPermissions';
   canCreateRecords: Scalars['Boolean']['output'];
@@ -7073,8 +7095,9 @@ export type RowLevelRecordsPermissions = {
   canUpdateRecords: Scalars['Boolean']['output'];
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
-  uneditableFields?: Maybe<Array<Scalars['UUID']['output']>>;
-  unreadableFields?: Maybe<Array<Scalars['UUID']['output']>>;
+  ruleId: Scalars['UUID']['output'];
+  uneditableFields: Array<Scalars['UUID']['output']>;
+  unreadableFields: Array<Scalars['UUID']['output']>;
 };
 
 export type RunAgentInput = {
@@ -7367,6 +7390,10 @@ export type StartWorkspaceSetupChatResult = {
   __typename?: 'StartWorkspaceSetupChatResult';
   outcome: WorkspaceSetupChatOutcome;
   thread?: Maybe<AgentChatThread>;
+};
+
+export type StopGenerateInput = {
+  runId: Scalars['UUID']['input'];
 };
 
 export type StopImpersonation = {
@@ -8235,6 +8262,11 @@ export type UpsertPermissionFlagsInput = {
 };
 
 export type UpsertRowLevelPermissionPredicatesInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId: Scalars['UUID']['input'];
   predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
   predicates: Array<RowLevelPermissionPredicateInput>;
@@ -8553,11 +8585,7 @@ export type UserWorkspace = {
   id: Scalars['UUID']['output'];
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
-  /** @deprecated Use objectRecordsPermissions */
-  objectPermissions?: Maybe<Array<ObjectPermission>>;
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
-  /** @deprecated Use objectRecordsPermissions */
-  objectsPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodSummary>>;
   updatedAt: Scalars['DateTime']['output'];
@@ -8916,6 +8944,7 @@ export enum WorkflowActionType {
   IF_ELSE = 'IF_ELSE',
   ITERATOR = 'ITERATOR',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  MCP_TOOL = 'MCP_TOOL',
   PICK_RECORD = 'PICK_RECORD',
   SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
   SEND_EMAIL = 'SEND_EMAIL',

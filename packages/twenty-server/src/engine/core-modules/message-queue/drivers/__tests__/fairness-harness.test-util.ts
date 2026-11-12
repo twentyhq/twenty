@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import { FAIR_TICKET_OFFSET } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import {
+  type QueueJobLimiter,
   type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
@@ -234,7 +235,12 @@ jest.mock('bullmq', () => ({
 
       return storedJobs;
     },
-    getRanges: async () => mockBullMQ.jobs.map((job) => job.id),
+    getRanges: async (states: string[]) =>
+      mockBullMQ.jobs
+        .filter((job) =>
+          states.includes(job.isPromoted ? 'waiting' : 'delayed'),
+        )
+        .map((job) => job.id),
     upsertJobScheduler: async (
       _schedulerId: string,
       _repeat: unknown,
@@ -315,7 +321,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'limiter'
   >;
 
 const buildScenarioJobScope = ({
@@ -333,7 +339,9 @@ const buildScenarioJobScope = ({
   return { workspaceId, applicationUniversalIdentifier };
 };
 
-export const createFairnessHarness = async () => {
+export const createFairnessHarness = async ({
+  isGroupLimiterEnabled = false,
+}: { isGroupLimiterEnabled?: boolean } = {}) => {
   const redis: Redis = new RedisMock();
 
   await redis.flushall();
@@ -346,7 +354,12 @@ export const createFairnessHarness = async () => {
   const driver = new BullMQDriver(
     { prefix: KEY_PREFIX, connection: {} },
     metricsService as never,
-    { get: () => undefined } as never,
+    {
+      get: (key: string) =>
+        key === 'IS_WORKER_GROUP_LIMITER_ENABLED'
+          ? isGroupLimiterEnabled
+          : undefined,
+    } as never,
     { emit: jest.fn() } as never,
   );
 
@@ -444,21 +457,32 @@ export const createFairnessHarness = async () => {
       labels,
       workspaceId,
       applicationUniversalIdentifier,
+      limiter,
+      delay,
+      jobIds,
     }: {
       labels: string[];
+      jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
+      limiter?: QueueJobLimiter;
+      delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
-        labels.map((label) => ({
+        labels.map((label, index) => ({
           data: { label, workspaceId },
+          jobId: jobIds?.[index],
+          limiter,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,
           }),
         })),
+        isDefined(delay) || isDefined(jobIds)
+          ? { delay, doNotCheckDuplicatesBasedOnPrefix: isDefined(jobIds) }
+          : undefined,
       );
     },
     scheduleCron: async ({
@@ -530,6 +554,8 @@ export const createFairnessHarness = async () => {
     },
     readPriority: ({ label }: { label: string }) =>
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
+    readDelay: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.delay,
     breakRedis: () => {
       const runCommand = jest
         .fn()

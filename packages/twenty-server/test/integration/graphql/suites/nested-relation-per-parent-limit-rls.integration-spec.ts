@@ -3,6 +3,7 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
+  COMPANY_NAME_RLS_RULE_GRANTS,
   type CompanyNameRlsRoleSetup,
   VISIBLE_COMPANY_NAME_TOKEN,
   cleanupCompanyNameRlsRole,
@@ -44,6 +45,7 @@ describe('nested relation per-parent limit respects row-level permission predica
       objectNameSingular: 'person',
       fieldName: 'jobTitle',
       value: VISIBLE_JOB_TITLE_TOKEN,
+      ruleGrants: COMPANY_NAME_RLS_RULE_GRANTS,
     });
 
     await makeGraphqlApiRequest(

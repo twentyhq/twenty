@@ -8,20 +8,10 @@ import {
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 const toLimitingObjectRecordsPermissions = ({
-  rowLevelRecordsPermissions,
+  rowLevelRecordsPermissions: _rowLevelRecordsPermissions,
   ...objectRecordsPermissions
 }: ObjectRecordsPermissions): LimitingObjectRecordsPermissions =>
-  isDefined(rowLevelRecordsPermissions)
-    ? {
-        ...objectRecordsPermissions,
-        canCreateAllRecords: rowLevelRecordsPermissions.canCreateRecords,
-        canReadAllRecords: rowLevelRecordsPermissions.canReadRecords,
-        canUpdateAllRecords: rowLevelRecordsPermissions.canUpdateRecords,
-        canSoftDeleteAllRecords:
-          rowLevelRecordsPermissions.canSoftDeleteRecords,
-        canDestroyAllRecords: rowLevelRecordsPermissions.canDestroyRecords,
-      }
-    : objectRecordsPermissions;
+  objectRecordsPermissions;
 
 export const toLimitingRoleRecordsPermissions = (
   recordsPermissions: RoleRecordsPermissions,

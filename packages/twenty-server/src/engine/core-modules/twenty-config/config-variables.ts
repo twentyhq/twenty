@@ -1639,6 +1639,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
+      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKER_GROUP_LIMITER_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
       'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
     type: ConfigVariableType.NUMBER,
   })

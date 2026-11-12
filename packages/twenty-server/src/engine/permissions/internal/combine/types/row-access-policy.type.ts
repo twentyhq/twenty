@@ -6,9 +6,9 @@ import {
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/internal/principal/types/application-default-role-maps.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
@@ -20,8 +20,8 @@ export type PermissionsMetadataMaps = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   rolesPermissions: Record<string, RoleRecordsPermissions>;
-  flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
+  flatRelatedRecordPathMaps?: FlatRelatedRecordPathMaps;
 };
 
 export type PermissionsRowAccessRequest = {
@@ -68,4 +68,5 @@ export type PermissionsRowAccessSqlRequest = PermissionsRowAccessRequest & {
   recordShareTableExpression: string;
   tableAlias: string;
   callerAccessGroupCompactIds?: number[];
+  callerRelatedRecordPathAccessGroupCompactIds?: number[];
 };

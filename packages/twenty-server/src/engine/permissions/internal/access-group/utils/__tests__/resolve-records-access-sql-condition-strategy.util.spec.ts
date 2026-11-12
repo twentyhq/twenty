@@ -30,15 +30,20 @@ const allRecords: ObjectRecordsPermissions = {
 const withRlsRule: ObjectRecordsPermissions = {
   ...allRecords,
   canReadAllRecords: false,
-  rowLevelRecordsPermissions: {
-    canCreateRecords: false,
-    canReadRecords: true,
-    canUpdateRecords: false,
-    canSoftDeleteRecords: false,
-    canDestroyRecords: false,
-    predicates: [],
-    predicateGroups: [],
-  },
+  rowLevelRecordsPermissions: [
+    {
+      ruleId: 'rule-id',
+      canCreateRecords: false,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields: [],
+    },
+  ],
 };
 
 const buildRequest = ({
@@ -63,7 +68,6 @@ const buildRequest = ({
   metadataMaps: {
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-    flatApplicationMaps: { byId: {} },
     featureFlagsMap: {
       [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
     },

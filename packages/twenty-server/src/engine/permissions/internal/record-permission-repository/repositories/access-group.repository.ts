@@ -34,13 +34,13 @@ export class AccessGroupRepository {
     });
   }
 
-  async findObjectAccessGroups({
+  async findAccessGroupsOfObjects({
     workspaceId,
-    objectMetadataId,
+    objectMetadataIds,
     transactionScope,
   }: {
     workspaceId: string;
-    objectMetadataId: string;
+    objectMetadataIds: string[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<AccessGroup[]> {
     return this.recordPermissionQueryService.execute<AccessGroup>({
@@ -49,9 +49,9 @@ export class AccessGroupRepository {
       query: {
         sql: `SELECT "compactId", "groupHash", "roleId", "objectMetadataId", "rowLevelPermissionPredicateGroupId", "memberFieldValues"
           FROM ${buildAccessGroupTableExpression(workspaceId)}
-          WHERE "objectMetadataId" = :objectMetadataId
+          WHERE "objectMetadataId" = ANY(:objectMetadataIds)
           ORDER BY "compactId"`,
-        parameters: { objectMetadataId },
+        parameters: { objectMetadataIds },
       },
     });
   }
