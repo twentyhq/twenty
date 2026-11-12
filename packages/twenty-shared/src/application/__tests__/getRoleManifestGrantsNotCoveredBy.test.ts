@@ -346,5 +346,75 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
         }),
       ).toEqual([]);
     });
+
+    it('treats a declared rule and the deprecated form with the same predicates as the same access', () => {
+      const restrictedRole = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+      const role = buildRole({
+        ...restrictedRole,
+        objectPermissions: [],
+        rowLevelPermissionRules: [
+          {
+            universalIdentifier: 'role-rule',
+            objectUniversalIdentifier: PERSON,
+            canReadRecords: true,
+          },
+        ],
+        rowLevelPermissionPredicateGroups:
+          restrictedRole.rowLevelPermissionPredicateGroups?.map((group) => ({
+            ...group,
+            rowLevelPermissionRuleUniversalIdentifier: 'role-rule',
+          })),
+      });
+
+      for (const roles of [
+        { role, superset },
+        { role: superset, superset: role },
+      ]) {
+        expect(
+          getRoleManifestGrantsNotCoveredBy({
+            ...roles,
+            toolPermissionFlagUniversalIdentifiers: [],
+          }),
+        ).toEqual([]);
+      }
+    });
+
+    it('reports an operation a role only grants through a rule', () => {
+      const role = buildRole({
+        rowLevelPermissionRules: [
+          {
+            universalIdentifier: 'role-rule',
+            objectUniversalIdentifier: PERSON,
+            canReadRecords: true,
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: 'role-predicate',
+            objectUniversalIdentifier: PERSON,
+            fieldUniversalIdentifier: EMAIL_FIELD,
+            operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+            rowLevelPermissionRuleUniversalIdentifier: 'role-rule',
+          },
+        ],
+      });
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset: buildRole(),
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([
+        {
+          type: 'OBJECT_RECORDS',
+          objectUniversalIdentifier: PERSON,
+          action: 'canReadObjectRecords',
+        },
+      ]);
+    });
   });
 });

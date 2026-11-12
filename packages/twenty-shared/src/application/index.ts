@@ -332,6 +332,7 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';

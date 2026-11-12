@@ -1,10 +1,8 @@
 import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
 import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
 import { type RoleManifest } from '@/application/roleManifestType';
-import {
-  getEffectiveObjectPermissionsFromRoleManifest,
-  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
-} from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getReachableObjectPermissionsFromRoleManifest } from '@/application/utils/getReachableObjectPermissionsFromRoleManifest';
 import { getRowLevelRestrictionSignature } from '@/application/utils/getRowLevelRestrictionSignature';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
@@ -95,6 +93,8 @@ const getObjectGrantsNotCoveredBy = ({
     ...[
       ...(role.objectPermissions ?? []),
       ...(superset.objectPermissions ?? []),
+      ...(role.rowLevelPermissionRules ?? []),
+      ...(superset.rowLevelPermissionRules ?? []),
     ].map((permission) => permission.objectUniversalIdentifier),
     ...(superset.rowLevelPermissionPredicates ?? []).map(
       (predicate) => predicate.objectUniversalIdentifier,
@@ -104,12 +104,12 @@ const getObjectGrantsNotCoveredBy = ({
   return [...objectUniversalIdentifiers].flatMap(
     (objectUniversalIdentifier): RoleManifestGrant[] => {
       const roleEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role,
           objectUniversalIdentifier,
         });
       const supersetEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role: superset,
           objectUniversalIdentifier,
         });
@@ -163,7 +163,7 @@ const getFieldGrantsNotCoveredBy = ({
       const { objectUniversalIdentifier, fieldUniversalIdentifier } =
         supersetFieldPermission;
       const roleEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role,
           objectUniversalIdentifier,
         });

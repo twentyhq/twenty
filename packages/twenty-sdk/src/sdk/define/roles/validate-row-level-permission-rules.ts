@@ -1,6 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import {
+  type RowLevelPermissionPredicateGroupManifest,
+  type RowLevelPermissionPredicateManifest,
+  type RowLevelPermissionRuleManifest,
+} from 'twenty-shared/application';
 
 type RuleOwner = {
   objectUniversalIdentifier: string;
@@ -12,13 +16,25 @@ export const validateRowLevelPermissionRules = ({
   rowLevelPermissionRules = [],
   rowLevelPermissionPredicateGroups = [],
   rowLevelPermissionPredicates = [],
-}: Pick<
-  RoleConfig,
-  | 'label'
-  | 'rowLevelPermissionRules'
-  | 'rowLevelPermissionPredicateGroups'
-  | 'rowLevelPermissionPredicates'
->): { errors: string[]; warnings: string[] } => {
+}: {
+  label: string;
+  rowLevelPermissionRules?: Pick<
+    RowLevelPermissionRuleManifest,
+    'universalIdentifier' | 'objectUniversalIdentifier'
+  >[];
+  rowLevelPermissionPredicateGroups?: Pick<
+    RowLevelPermissionPredicateGroupManifest,
+    | 'objectUniversalIdentifier'
+    | 'rowLevelPermissionRuleUniversalIdentifier'
+    | 'parentPredicateGroupUniversalIdentifier'
+  >[];
+  rowLevelPermissionPredicates?: Pick<
+    RowLevelPermissionPredicateManifest,
+    | 'objectUniversalIdentifier'
+    | 'rowLevelPermissionRuleUniversalIdentifier'
+    | 'predicateGroupUniversalIdentifier'
+  >[];
+}): { errors: string[]; warnings: string[] } => {
   const errors: string[] = [];
   const objectUniversalIdentifierByRuleUniversalIdentifier = new Map<
     string,
@@ -52,12 +68,16 @@ export const validateRowLevelPermissionRules = ({
 
   const ruleOwners: (RuleOwner & { kind: string; isNested: boolean })[] = [
     ...rowLevelPermissionPredicateGroups.map((group) => ({
-      ...group,
+      objectUniversalIdentifier: group.objectUniversalIdentifier,
+      rowLevelPermissionRuleUniversalIdentifier:
+        group.rowLevelPermissionRuleUniversalIdentifier,
       kind: 'predicate group',
       isNested: isDefined(group.parentPredicateGroupUniversalIdentifier),
     })),
     ...rowLevelPermissionPredicates.map((predicate) => ({
-      ...predicate,
+      objectUniversalIdentifier: predicate.objectUniversalIdentifier,
+      rowLevelPermissionRuleUniversalIdentifier:
+        predicate.rowLevelPermissionRuleUniversalIdentifier,
       kind: 'predicate',
       isNested: isDefined(predicate.predicateGroupUniversalIdentifier),
     })),
