@@ -8,6 +8,7 @@ type HealthCheckLogicFunctionConfigBase = Omit<
   LogicFunctionConfig,
   | 'cronTriggerSettings'
   | 'databaseEventTriggerSettings'
+  | 'eventTriggerSettings'
   | 'httpRouteTriggerSettings'
   | 'toolTriggerSettings'
   | 'workflowActionTriggerSettings'

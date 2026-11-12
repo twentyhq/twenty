@@ -1112,10 +1112,10 @@ msgstr "{roleLabel} نمی‌تواند رکوردهای {objectLabel} را {hum
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} به نقش \"{newRoleName}\" اختصاص داده خواهد شد."
 
-#. js-lingui-id: Mkqwbv
+#. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
-msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr "{runCount, plural, one {# اجرا} other {# اجرا}}"
+msgid "{runCount, plural, one {# turn} other {# turns}}"
+msgstr "{runCount, plural, one {# نوبت} other {# نوبت}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2990,6 +2990,11 @@ msgstr "نقش‌های عامل"
 msgid "Agent run"
 msgstr "اجرای عامل"
 
+#. js-lingui-id: aeu9gE
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Agent sections"
+msgstr "بخش‌های عامل"
+
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
@@ -4861,6 +4866,11 @@ msgstr "آواتار"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Average"
 msgstr "میانگین"
+
+#. js-lingui-id: RSsxRl
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Avg duration"
+msgstr "میانگین مدت‌زمان"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -7069,6 +7079,7 @@ msgstr "تکمیل‌شده"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7990,8 +8001,13 @@ msgstr "پیش‌نمایش بارگیری نشد."
 msgid "Could not load related records"
 msgstr "بارگیری رکوردهای مرتبط ممکن نشد"
 
+#. js-lingui-id: 3167/q
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Could not load run insights"
+msgstr "بارگیری بینش‌های اجرا ممکن نشد"
+
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Could not load runs"
 msgstr "بارگیری اجراها ناموفق بود"
 
@@ -8004,6 +8020,11 @@ msgstr "نسخه این گردش کار بارگیری نشد."
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
 msgstr "این گردش کار بارگیری نشد."
+
+#. js-lingui-id: 6UPqqs
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Could not load turns"
+msgstr "بارگیری نوبت‌ها ممکن نشد"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8414,6 +8435,11 @@ msgstr "ایجاد رکورد"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "ایجاد رکورد"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "ذخیره‌سازی اشتراک‌گذاری رکورد و گروه دسترسی را به‌جای اشیا، به‌صورت جدول‌های متعلق به موتور مجوز ایجاد کنید. فقط هنگام ایجاد یک فضای کاری اعمال می‌شود."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -9824,6 +9850,12 @@ msgstr "حذف سطح"
 msgid "Delete limit"
 msgstr "حذف سقف"
 
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr ""
+
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
 msgid "Delete node"
@@ -10715,6 +10747,7 @@ msgstr "تکثیر ویجت"
 
 #. js-lingui-id: lkz6PL
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -10987,6 +11020,12 @@ msgstr "ویرایش پیوند"
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Edit linked records"
 msgstr "ویرایش رکوردهای پیوندشده"
+
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr ""
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -11966,6 +12005,7 @@ msgstr "پاک‌سازی دائمی رکوردهای حذف‌شدهٔ نرم"
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -12719,6 +12759,7 @@ msgstr "چهره"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12735,6 +12776,11 @@ msgstr "چهره"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Failed"
 msgstr "ناموفق"
+
+#. js-lingui-id: GUHLDy
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failed · 14d"
+msgstr "ناموفق · ۱۴ روز"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13272,6 +13318,11 @@ msgstr "بارگذاری فایل ناموفق بود: {fileName}"
 #: src/modules/settings/workspace/components/WorkspaceLogoUploader.tsx
 msgid "Failed to upload picture"
 msgstr "بارگذاری تصویر ناموفق بود"
+
+#. js-lingui-id: D98pOW
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failure rate"
+msgstr "نرخ شکست"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -13855,6 +13906,7 @@ msgid "Fix the payment issue to restore your premium features."
 msgstr "برای بازیابی قابلیت‌های ممتاز خود، مشکل پرداخت را برطرف کنید."
 
 #. js-lingui-id: ylQd2j
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Flow"
@@ -15508,6 +15560,16 @@ msgstr "وارد کردن فایل‌های CSV"
 msgid "Import data"
 msgstr "وارد کردن داده‌ها"
 
+#. js-lingui-id: Iu+TFD
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Import new emails from this account"
+msgstr "وارد کردن ایمیل‌های جدید از این حساب"
+
+#. js-lingui-id: QOjodt
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Import new events from this account"
+msgstr "وارد کردن رویدادهای جدید از این حساب"
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16842,6 +16904,11 @@ msgstr "آخرین پرداخت ناموفق بود. لطفاً جزئیات ص�
 msgid "Last refreshed"
 msgstr "آخرین تازه‌سازی"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr "آخرین اجرا"
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -18155,6 +18222,7 @@ msgstr "حداکثر مقادیر"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18178,6 +18246,11 @@ msgstr "سرور MCP"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "سرورهای MCP"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "سرورهای MCP در دسترس نیستند"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18989,6 +19062,8 @@ msgstr "ناموجود"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19956,6 +20031,11 @@ msgstr "رویدادی یافت نشد"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "هنوز هیچ رویدادی با این {objectName} زمان‌بندی نشده است."
 
+#. js-lingui-id: dAMlIe
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+msgid "No failed runs"
+msgstr "هیچ اجرای ناموفقی وجود ندارد"
+
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
 msgid "No field configured"
@@ -20014,6 +20094,11 @@ msgstr "بدون ورودی"
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "هیچ فیلد ورودی برای این عمل وجود ندارد"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "هیچ فیلد ورودی برای این ابزار وجود ندارد"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20353,7 +20438,7 @@ msgid "No rules yet"
 msgstr "هنوز قانونی وجود ندارد"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "No runs yet"
 msgstr "هنوز اجرایی وجود ندارد"
 
@@ -20458,6 +20543,11 @@ msgstr "هیچ راه‌اندازی برای این تابع پیکربندی �
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "هیچ راه‌اندازی فعال نیست. یکی از گزینه‌های بالا را تغییر وضعیت دهید تا نحوه فراخوانی این تابع را انتخاب کنید."
+
+#. js-lingui-id: 96i2d6
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "No turns yet"
+msgstr "هنوز نوبتی وجود ندارد"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -21745,6 +21835,7 @@ msgstr "پیام اصلی در دسترس نیست"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -21888,6 +21979,7 @@ msgid "Override Draft"
 msgstr "بازنویسی پیش‌نویس"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
@@ -22155,6 +22247,16 @@ msgstr "مسیر"
 msgid "Pause"
 msgstr "مکث"
 
+#. js-lingui-id: 03eLh4
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Pause or resume importing emails from this account"
+msgstr "مکث یا ازسرگیری وارد کردن ایمیل‌ها از این حساب"
+
+#. js-lingui-id: ylzMCX
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Pause or resume importing events from this account"
+msgstr "وارد کردن رویدادها از این حساب را متوقف یا از سر بگیرید"
+
 #. js-lingui-id: URAE3q
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -22316,6 +22418,11 @@ msgstr "پرچم مجوز"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
 msgstr "پرچم‌های مجوز"
+
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "جدول‌های مجوز"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -23434,6 +23541,17 @@ msgstr "اخیر"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "رویدادهای اخیر (قدیمی‌ترین ← جدیدترین)"
+
+#. js-lingui-id: gKFqSG
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Recent failed runs"
+msgstr "اجراهای ناموفق اخیر"
+
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr "اجراهای اخیر"
 
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -24992,6 +25110,7 @@ msgid "runs"
 msgstr "اجرا"
 
 #. js-lingui-id: Tpm2G9
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24999,15 +25118,26 @@ msgstr "اجرا"
 msgid "Runs"
 msgstr "اجراها"
 
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr "اجراها · ۱۴ روز"
+
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
 msgstr "اجراها و شکست‌ها به‌ازای هر نسخه"
 
-#. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr "وقتی یک گردش‌کار یا یک برنامه از این عامل استفاده کند، اجراها اینجا ظاهر می‌شوند"
+#. js-lingui-id: +L9ulP
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
+msgid "Runs appear here once this workflow is triggered"
+msgstr "پس از راه‌اندازی این گردش‌کار، اجراها در اینجا نمایش داده می‌شوند"
+
+#. js-lingui-id: NQVS6K
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Runs per day"
+msgstr "اجراها در روز"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25871,16 +26001,10 @@ msgstr "مشاهده رکوردها"
 msgid "See Records on All Objects"
 msgstr "مشاهده رکوردها در همه اشیا"
 
-#. js-lingui-id: dcr/0m
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
-msgid "See Runs"
-msgstr "مشاهده اجراها"
-
-#. js-lingui-id: dKYXK6
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
-msgid "See Settings"
-msgstr "مشاهده تنظیمات"
+msgid "See Turns"
+msgstr "مشاهده نوبت‌ها"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26684,6 +26808,7 @@ msgstr "در حال راه‌اندازی <0>پایگاه داده</0> شما...
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27682,6 +27807,8 @@ msgstr "اشتراک خود را آغاز کنید."
 
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Started"
 msgstr "شروع شد"
 
@@ -27736,6 +27863,7 @@ msgstr "آمار"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28270,15 +28398,26 @@ msgid "Switched to a production instance."
 msgstr "به یک نمونه تولید تغییر یافت."
 
 #. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/SettingsAccountsChannelSyncSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
 msgstr "همگام‌سازی"
+
+#. js-lingui-id: sCZwJy
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Sync calendar"
+msgstr "همگام‌سازی تقویم"
 
 #. js-lingui-id: NmHVSC
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "همگام‌سازی کاتالوگ"
+
+#. js-lingui-id: uhtQRu
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Sync emails"
+msgstr "همگام‌سازی ایمیل‌ها"
 
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -28818,6 +28957,11 @@ msgstr "گواهی سرور ایمیل نامعتبر است"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "بازارچه بارگیری نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "سرورهای MCP بارگذاری نشدند، بنابراین این مرحله در حال حاضر قابل ویرایش نیست."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28874,6 +29018,11 @@ msgstr "نامی که گیرندگان در صندوق ورودی خود به‌
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "نامی که گیرندگان در کنار نشانی شما می‌بینند. هنگام ایجاد کانال تنظیم می‌شود."
+
+#. js-lingui-id: op7R9r
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
+msgstr "تعداد روزها از تاریخ تا امروز، بر حسب UTC. برای تاریخی در آینده منفی است."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28934,6 +29083,11 @@ msgstr "رکوردهای انتخاب‌شده (تا {maxRecordsFormatted}) به
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "ایمیل مشترکی که می‌خواهید استفاده کنید."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "این ابزار بدون آرگومان اجرا می‌شود."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29550,6 +29704,11 @@ msgstr "این زیردامنه رزرو شده است"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "این کار فوراً {0} اعتبار را از این فضای کاری پس می‌گیرد. لغو قابل بازگردانی نیست."
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "این ابزار دیگر توسط سرور MCP آن ارائه نمی‌شود. ابزارهای سرور را همگام‌سازی کنید یا ابزار دیگری را انتخاب کنید."
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -29952,6 +30111,11 @@ msgstr "ابزار حذف شد"
 msgid "Tool details: {displayMessage}"
 msgstr "جزئیات ابزار: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "ابزار یافت نشد"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30247,6 +30411,11 @@ msgstr "زمانی درست است که دست‌کم یکی از دو طرف د
 msgid "True when both sides are true."
 msgstr "زمانی درست است که هر دو طرف درست باشند."
 
+#. js-lingui-id: NYXoie
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+msgstr "وقتی تاریخ در دوره‌ای قرار می‌گیرد که از امروز، بر حسب UTC، محاسبه شده است، درست است: PAST، NEXT یا THIS، یک مقدار، و یک واحد مانند DAY، WEEK یا MONTH. PAST و NEXT دوره جاری را شامل نمی‌شوند."
+
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
@@ -30285,6 +30454,8 @@ msgstr "دوباره تلاش کنید"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "لحظه‌ای دیگر دوباره تلاش کنید"
 
@@ -30329,6 +30500,16 @@ msgstr "تبدیل به"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 msgstr "زبانه هوش مصنوعی را به صندوق ورودی برای دسته‌بندی، تخصیص، تعویق و پیگیری گفتگوها تبدیل کنید؛ اجازه دهید گردش‌های کاری پیام‌ها و پرسش‌های عامل را به صندوق ورودی اعضا ارسال کنند و زبانه گفتگوها را در صفحه‌های رکورد نمایش دهید."
+
+#. js-lingui-id: R3c2/s
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Turns"
+msgstr "نوبت‌ها"
+
+#. js-lingui-id: ZKeDcZ
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Turns appear here once a workflow or an app uses this agent"
+msgstr "پس از اینکه یک گردش‌کار یا برنامه از این عامل استفاده کند، نوبت‌ها در اینجا نمایش داده می‌شوند"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -31917,6 +32098,7 @@ msgstr "در حال تأیید ایمیل شما"
 
 #. js-lingui-id: eE0JZ4
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
@@ -32880,6 +33062,11 @@ msgstr "اجرای گردش کار"
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow not found."
 msgstr "گردش کار یافت نشد."
+
+#. js-lingui-id: fezYCQ
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
+msgid "Workflow sections"
+msgstr "بخش‌های گردش‌کار"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

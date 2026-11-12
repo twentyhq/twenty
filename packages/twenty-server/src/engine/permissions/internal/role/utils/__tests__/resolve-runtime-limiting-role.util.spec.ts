@@ -337,7 +337,6 @@ describe('resolveRuntimeLimitingRole', () => {
                 },
               },
             },
-            flatApplicationMaps: { byId: {} },
             featureFlagsMap: {},
           },
           flatObjectMetadata: flatObjectMetadataMaps.byUniversalIdentifier
