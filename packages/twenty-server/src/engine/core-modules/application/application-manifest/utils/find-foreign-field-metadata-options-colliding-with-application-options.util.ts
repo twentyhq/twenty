@@ -4,8 +4,7 @@ import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/fl
 import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
-// A workspace edit that changes an app field's option ids replaces the app's rows with
-// caller-owned ones. The sync never sees them, so they would block its rows on value.
+// Workspace edits can re-key an app field's options into rows the sync doesn't see but collides with.
 export const findForeignFieldMetadataOptionsCollidingWithApplicationOptions = ({
   existingFlatFieldMetadataOptionMaps,
   toFlatFieldMetadataOptionMaps,
@@ -45,10 +44,17 @@ export const findForeignFieldMetadataOptionsCollidingWithApplicationOptions = ({
     );
   }
 
-  return Object.values(existingFlatFieldMetadataOptionMaps.byUniversalIdentifier)
+  return Object.values(
+    existingFlatFieldMetadataOptionMaps.byUniversalIdentifier,
+  )
     .filter(isDefined)
-    .filter(
-      (existingOption) =>
+    .filter((existingOption) => {
+      const applicationOptionValues =
+        applicationOptionValuesByFieldUniversalIdentifier.get(
+          existingOption.fieldMetadataUniversalIdentifier,
+        );
+
+      return (
         existingOption.applicationUniversalIdentifier !==
           applicationUniversalIdentifier &&
         !isDefined(
@@ -56,8 +62,8 @@ export const findForeignFieldMetadataOptionsCollidingWithApplicationOptions = ({
             existingOption.universalIdentifier
           ],
         ) &&
-        applicationOptionValuesByFieldUniversalIdentifier
-          .get(existingOption.fieldMetadataUniversalIdentifier)
-          ?.has(existingOption.value) === true,
-    );
+        isDefined(applicationOptionValues) &&
+        applicationOptionValues.has(existingOption.value)
+      );
+    });
 };
