@@ -48,12 +48,26 @@ describe('getPieChartFormattedValue', () => {
   const createMockDatum = (
     key: string,
     options?: { computedId?: string },
-  ): ComputedDatum<PieChartDataItemWithColor> =>
-    ({
-      id: options?.computedId ?? key,
-      value: 0,
-      data: { key, value: 0 },
-    }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
+  ): ComputedDatum<PieChartDataItemWithColor> => ({
+    id: options?.computedId ?? key,
+    label: key,
+    hidden: false,
+    arc: {
+      index: 0,
+      startAngle: 0,
+      endAngle: 0,
+      angle: 0,
+      angleDeg: 0,
+      padAngle: 0,
+      innerRadius: 0,
+      outerRadius: 0,
+      thickness: 0,
+    },
+    color: '#color',
+    formattedValue: '0',
+    value: 0,
+    data: { key, value: 0 },
+  });
 
   const defaultFormatOptions = {
     displayType: 'number' as const,

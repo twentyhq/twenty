@@ -39,6 +39,7 @@ import { WorkspaceSurfaceHeaderPortalContext } from '@/ui/layout/contexts/Worksp
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { ToastStoryContainer } from '~/testing/components/ToastStoryContainer';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -390,10 +391,13 @@ const meta = {
 
     setTestObjectMetadataItemsInMetadataStore(jotaiStore, [chatMetadata]);
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
-    jotaiStore.set(
-      currentUserWorkspaceState.atom,
-      mockedUserData.currentUserWorkspace,
-    );
+    jotaiStore.set(currentUserWorkspaceState.atom, {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [
+        ...(mockedUserData.currentUserWorkspace.permissionFlags ?? []),
+        PermissionFlagType.AI,
+      ],
+    });
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
       getRecordFromRecordNode<WorkspaceMember>({

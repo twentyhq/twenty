@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { listLinkedSlackUserIds } from 'src/logic-functions/data/list-linked-slack-user-ids';
@@ -25,7 +24,7 @@ const buildClient = (
   }
 
   return {
-    client: { query: queryMock } as unknown as CoreApiClient,
+    client: { query: queryMock },
     queryMock,
   };
 };

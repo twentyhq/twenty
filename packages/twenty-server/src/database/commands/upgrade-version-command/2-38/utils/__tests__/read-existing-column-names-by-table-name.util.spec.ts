@@ -1,11 +1,16 @@
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { readExistingColumnNamesByTableName } from 'src/database/commands/upgrade-version-command/2-38/utils/read-existing-column-names-by-table-name.util';
 
 const buildDataSource = (
   rows: { tableName: string; columnName: string }[],
-): DataSource =>
-  ({ query: jest.fn().mockResolvedValue(rows) }) as unknown as DataSource;
+): DataSource => {
+  const dataSource = new DataSource({ type: 'postgres' });
+
+  dataSource.query = jest.fn().mockResolvedValue(rows);
+
+  return dataSource;
+};
 
 describe('readExistingColumnNamesByTableName', () => {
   it('groups columns by table and leaves missing tables out', async () => {

@@ -1,6 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
@@ -34,7 +33,7 @@ const textField = {
 
 const flatFieldMetadataMaps = {
   byUniversalIdentifier: { [MORPH_ID]: head },
-} as unknown as FlatEntityMaps<FlatFieldMetadata>;
+};
 
 const createdEvent = (field: FlatFieldMetadata) =>
   ({
@@ -72,9 +71,7 @@ describe('filterMorphRelationDuplicateFieldMetadataEvents', () => {
     expect(
       filterMorphRelationDuplicateFieldMetadataEvents({
         events: [createdEvent(target)],
-        flatFieldMetadataMaps: {
-          byUniversalIdentifier: {},
-        } as unknown as FlatEntityMaps<FlatFieldMetadata>,
+        flatFieldMetadataMaps: { byUniversalIdentifier: {} },
       }),
     ).toEqual([]);
   });

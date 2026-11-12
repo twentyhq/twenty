@@ -13,21 +13,21 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type WorkspaceRepositoryOptions } from 'src/engine/twenty-orm/types/workspace-repository-options.type';
+import { TwentyOrmQueryExecutor } from 'src/engine/twenty-orm/datasource/twenty-orm-query-executor';
+import { toTwentyOrmException } from 'src/engine/twenty-orm/utils/to-twenty-orm-exception.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
-import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { ClientQueryExecutor } from 'src/engine/workspace-query-executor/client-query-executor';
+import { PoolQueryExecutor } from 'src/engine/workspace-query-executor/pool-query-executor';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm/datasource/utils/run-in-rollback-safe-transaction.util';
+import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executor/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -36,17 +36,16 @@ const tableShapeCache = new WeakMap<
 
 export class WorkspaceDataSource {
   private readonly logger = new Logger(WorkspaceDataSource.name);
-  private readonly pool: Pool;
+  private readonly pool: Pick<Pool, 'connect' | 'query'>;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
-  private permissionsPrincipals?: PermissionsPrincipalsWithRolesContext | null;
 
   constructor({
     pool,
     internalContext,
     authContext,
   }: {
-    pool: Pool;
+    pool: Pick<Pool, 'connect' | 'query'>;
     internalContext: WorkspaceInternalContext;
     authContext: WorkspaceAuthContext;
   }) {
@@ -62,7 +61,9 @@ export class WorkspaceDataSource {
     return this.buildRepository<T>({
       nameSingular,
       shouldBypassPermissionChecks: false,
-      executor: new PoolQueryExecutor({ pool: this.pool }),
+      executor: new TwentyOrmQueryExecutor({
+        executor: new PoolQueryExecutor({ pool: this.pool }),
+      }),
       shouldSkipEventEmission:
         repositoryOptions?.shouldSkipEventEmission ?? false,
     });
@@ -75,7 +76,9 @@ export class WorkspaceDataSource {
     return this.buildRepository<T>({
       nameSingular,
       shouldBypassPermissionChecks: true,
-      executor: new PoolQueryExecutor({ pool: this.pool }),
+      executor: new TwentyOrmQueryExecutor({
+        executor: new PoolQueryExecutor({ pool: this.pool }),
+      }),
       shouldSkipEventEmission:
         repositoryOptions?.shouldSkipEventEmission ?? false,
     });
@@ -96,6 +99,13 @@ export class WorkspaceDataSource {
               event,
             ),
           ),
+      },
+      recordAccessGroupQueue: {
+        queueRecompute: async (args) => {
+          afterCommit(() =>
+            this.internalContext.recordAccessGroupQueue.queueRecompute(args),
+          );
+        },
       },
       recordStock: {
         assertRecordStockAvailable: (args) =>
@@ -166,10 +176,19 @@ export class WorkspaceDataSource {
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutor) => Promise<T>,
   ): Promise<T> {
-    return runInRollbackSafeTransaction({
-      pool: this.pool,
-      work: (client) => work(new ClientQueryExecutor({ client })),
-    });
+    try {
+      return await runInRollbackSafeTransaction({
+        pool: this.pool,
+        work: (client) =>
+          work(
+            new TwentyOrmQueryExecutor({
+              executor: new ClientQueryExecutor({ client }),
+            }),
+          ),
+      });
+    } catch (error) {
+      throw toTwentyOrmException(error);
+    }
   }
 
   private buildRepository<T extends ObjectLiteral = ObjectRecord>({
@@ -238,7 +257,7 @@ export class WorkspaceDataSource {
       executor,
       permissionsPrincipals: shouldRepositoryBypassPermissionChecks
         ? undefined
-        : this.resolvePermissionsPrincipals(),
+        : internalContext.permissionsPrincipals,
       shouldBypassPermissionChecks: shouldRepositoryBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
@@ -274,20 +293,6 @@ export class WorkspaceDataSource {
           ),
         ),
     });
-  }
-
-  private resolvePermissionsPrincipals():
-    | PermissionsPrincipalsWithRolesContext
-    | undefined {
-    if (this.permissionsPrincipals === undefined) {
-      this.permissionsPrincipals =
-        resolvePermissionsPrincipalsWithRoles({
-          authContext: this.authContext,
-          roleMaps: this.internalContext,
-        }) ?? null;
-    }
-
-    return this.permissionsPrincipals ?? undefined;
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {

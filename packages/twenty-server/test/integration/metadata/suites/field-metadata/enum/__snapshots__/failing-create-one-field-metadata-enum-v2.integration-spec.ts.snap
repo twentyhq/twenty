@@ -26,6 +26,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -63,10 +80,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -103,6 +121,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -140,10 +175,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -625,6 +661,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -662,10 +715,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -785,6 +839,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -822,10 +893,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -1111,6 +1183,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -1148,10 +1237,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -1342,6 +1432,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -1379,10 +1486,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -1419,6 +1527,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -1456,10 +1581,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -2044,6 +2170,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -2081,10 +2224,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -2358,6 +2502,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -2395,10 +2556,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -2901,6 +3063,23 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -2938,10 +3117,11 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -2984,6 +3164,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -3021,10 +3218,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -3061,6 +3259,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -3098,10 +3313,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -3666,6 +3882,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -3703,10 +3936,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -4128,6 +4362,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -4165,10 +4416,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -4753,6 +5005,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -4790,10 +5059,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",
@@ -5067,6 +5337,23 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "type": "create",
           },
         ],
+        "fieldMetadataOption": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_METADATA_OPTION_INPUT",
+                "message": "Field option field not found",
+                "userFriendlyMessage": "Field option field not found",
+              },
+            ],
+            "flatEntityMinimalInformation": {
+              "universalIdentifier": Any<String>,
+            },
+            "metadataName": "fieldMetadataOption",
+            "status": "fail",
+            "type": "create",
+          },
+        ],
         "viewField": [
           {
             "errors": [
@@ -5104,10 +5391,11 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
           },
         ],
       },
-      "message": "Validation failed for 1 fieldMetadata, 2 viewFields",
+      "message": "Validation failed for 1 fieldMetadata, 1 fieldMetadataOption, 2 viewFields",
       "summary": {
         "fieldMetadata": 1,
-        "totalErrors": 3,
+        "fieldMetadataOption": 1,
+        "totalErrors": 4,
         "viewField": 2,
       },
       "userFriendlyMessage": "Many validation errors",

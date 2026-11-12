@@ -8,7 +8,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type ObjectRecordsPermissions } from 'src/engine/permissions/types/object-records-permissions.type';
 
 export const buildUnselectableRelationWarningsByFieldName = ({
   objectName,
@@ -16,7 +15,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   selectableRelationFields,
-  recordsPermissions,
+  unreadableFieldMetadataIds,
 }: {
   objectName: string;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'id' | 'fieldIds'>;
@@ -44,11 +43,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
     >
   >;
   selectableRelationFields: CommonSelectedFields;
-  recordsPermissions: {
-    objects: Partial<
-      Record<string, Pick<ObjectRecordsPermissions, 'restrictedFields'>>
-    >;
-  };
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();
 
@@ -70,12 +65,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       continue;
     }
 
-    const isSourceFieldRestricted =
-      recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields[
-        field.id
-      ]?.canRead === false;
-
-    if (isSourceFieldRestricted) {
+    if (unreadableFieldMetadataIds.has(field.id)) {
       warningsByFieldName.set(
         field.name,
         `Field '${field.name}' on ${objectName} cannot be selected because your role restricts access to this field.`,

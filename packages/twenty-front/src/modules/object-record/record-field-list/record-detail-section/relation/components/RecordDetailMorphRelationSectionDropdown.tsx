@@ -1,3 +1,4 @@
+import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { type ReactElement, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -48,7 +49,7 @@ export const RecordDetailMorphRelationSectionDropdown = ({
   const isRecordReadOnlyFromRelatedRecordPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
       return isRecordReadOnly({
-        objectPermissions: { canUpdateObjectRecords: true },
+        objectPermissions: getDefaultObjectPermissions(),
         isRecordDeleted: isDeleted,
         objectMetadataItem: relatedObjectMetadataItem,
       });

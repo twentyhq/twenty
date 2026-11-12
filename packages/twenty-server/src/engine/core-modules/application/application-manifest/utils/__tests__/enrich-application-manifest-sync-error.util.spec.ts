@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import {
@@ -16,15 +17,29 @@ const NESTED_FIELD_UNIVERSAL_IDENTIFIER = 'nested-field-universal-identifier';
 const ROLE_UNIVERSAL_IDENTIFIER = 'role-universal-identifier';
 const VIEW_FIELD_UNIVERSAL_IDENTIFIER = 'view-field-universal-identifier';
 
-const manifest = {
-  application: { displayName: 'Stripe' },
+const manifest: Manifest = {
+  application: {
+    universalIdentifier: 'application-universal-identifier',
+    defaultRoleUniversalIdentifier: 'default-role-universal-identifier',
+    displayName: 'Stripe',
+    description: '',
+    packageJsonChecksum: '',
+    yarnLockChecksum: null,
+  },
   objects: [
     {
       universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      nameSingular: 'invoice',
+      namePlural: 'invoices',
       labelSingular: 'Invoice',
+      labelPlural: 'Invoices',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        NESTED_FIELD_UNIVERSAL_IDENTIFIER,
       fields: [
         {
           universalIdentifier: NESTED_FIELD_UNIVERSAL_IDENTIFIER,
+          type: FieldMetadataType.DATE,
+          name: 'dueDate',
           label: 'Due Date',
         },
       ],
@@ -33,6 +48,9 @@ const manifest = {
   fields: [
     {
       universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+      objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      type: FieldMetadataType.NUMBER,
+      name: 'amount',
       label: 'Amount',
     },
   ],
@@ -45,9 +63,26 @@ const manifest = {
   viewFields: [
     {
       universalIdentifier: VIEW_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+      viewUniversalIdentifier: 'view-universal-identifier',
+      position: 0,
     },
   ],
-} as unknown as Manifest;
+  logicFunctions: [],
+  frontComponents: [],
+  permissionFlags: [],
+  skills: [],
+  agents: [],
+  publicAssets: [],
+  views: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};
 
 describe('enrichApplicationManifestSyncError', () => {
   it('should resolve the offending object and produce an installation exception', () => {

@@ -6,7 +6,6 @@ import { AiWorkspaceStatsResolver } from 'src/engine/metadata-modules/ai/ai-work
 import { AiWorkspaceStatsService } from 'src/engine/metadata-modules/ai/ai-workspace-stats/services/ai-workspace-stats.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 
 @Module({
   imports: [
@@ -14,7 +13,6 @@ import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     PermissionsModule,
     ToolProviderModule,
-    UserRoleModule,
   ],
   providers: [AiWorkspaceStatsResolver, AiWorkspaceStatsService],
 })

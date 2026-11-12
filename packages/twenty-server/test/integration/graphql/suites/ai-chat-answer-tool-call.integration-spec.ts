@@ -79,6 +79,7 @@ describe('Answering a chat tool call', () => {
     await getAppProviderByClassName<AgentConversationWriterService>(
       'AgentConversationWriterService',
     ).upsertAssistantMessage({
+      agentId: null,
       id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,
@@ -209,7 +210,7 @@ describe('Answering a chat tool call', () => {
         .spyOn(aiModelRegistryService, 'getAvailableModels')
         .mockReturnValue([{ modelId: 'test-model' }] as never),
       jest
-        .spyOn(aiModelRegistryService, 'validateModelAvailability')
+        .spyOn(aiModelRegistryService, 'validateModelAvailabilityOrThrow')
         .mockReturnValue(undefined as never),
     );
     enqueueStream = jest

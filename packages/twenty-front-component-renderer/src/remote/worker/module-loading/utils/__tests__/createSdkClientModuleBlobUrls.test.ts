@@ -1,15 +1,12 @@
 import { createSdkClientModuleBlobUrls } from '../createSdkClientModuleBlobUrls';
 
 describe('createSdkClientModuleBlobUrls', () => {
-  const createObjectUrlMock = jest.fn();
+  const createObjectUrlMock = jest.fn<string, [Blob]>();
 
   beforeEach(() => {
     jest.clearAllMocks();
-    createObjectUrlMock.mockImplementation(
-      (blob: Blob) => `blob:mock/${(blob as Blob).size}`,
-    );
-    global.URL.createObjectURL =
-      createObjectUrlMock as unknown as typeof URL.createObjectURL;
+    createObjectUrlMock.mockImplementation((blob) => `blob:mock/${blob.size}`);
+    global.URL.createObjectURL = createObjectUrlMock;
   });
 
   it('mints a blob url for each sdk client module source', () => {

@@ -23,6 +23,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { styled } from '@linaria/react';
 import { memo, useCallback } from 'react';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -54,7 +55,10 @@ export const RecordIndexContainerGater = memo(() => {
     objectMetadataItem.id,
   );
 
-  const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
+  const hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions: objectPermissions,
+    operationType: 'read',
+  });
 
   const {
     fieldDefinitionByFieldMetadataItemId,

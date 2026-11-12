@@ -7,6 +7,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ToastProvider } from 'twenty-ui/components/feedback';
+import { isDefined } from 'twenty-shared/utils';
 import { type ResizeHandleProps } from 'twenty-ui/primitives/layout';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -85,7 +86,13 @@ const LogsSwitch = () => {
   );
 };
 
-const renderLogConsole = ({ hasSecurityPermission = true } = {}) => {
+const renderLogConsole = ({
+  hasSecurityPermission = true,
+  displayModeSavedByEarlierVersion,
+}: {
+  hasSecurityPermission?: boolean;
+  displayModeSavedByEarlierVersion?: string;
+} = {}) => {
   resetJotaiStore();
   jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
   jotaiStore.set(currentUserWorkspaceState.atom, {
@@ -96,6 +103,13 @@ const renderLogConsole = ({ hasSecurityPermission = true } = {}) => {
   jotaiStore.set(isLogConsoleEnabledState.atom, false);
   jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
   jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
+
+  if (isDefined(displayModeSavedByEarlierVersion)) {
+    localStorage.setItem(
+      logConsoleDisplayModeState.key,
+      JSON.stringify(displayModeSavedByEarlierVersion),
+    );
+  }
 
   render(
     <I18nProvider i18n={i18n}>
@@ -142,16 +156,11 @@ describe('LogConsole', () => {
   });
 
   it('opens a console still saved as closed by an earlier version when its bar is dragged', () => {
-    const displayModeSavedByEarlierVersion = 'closed' as unknown as 'collapsed';
+    renderLogConsole({ displayModeSavedByEarlierVersion: 'closed' });
+    act(() => jotaiStore.set(isLogConsoleEnabledState.atom, true));
 
-    renderLogConsole();
-    act(() => {
-      jotaiStore.set(isLogConsoleEnabledState.atom, true);
-      jotaiStore.set(
-        logConsoleDisplayModeState.atom,
-        displayModeSavedByEarlierVersion,
-      );
-    });
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('closed');
+
     act(() => capturedResizeHandleProps?.onResizeStart?.(100));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');

@@ -4,14 +4,16 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 
 export const getWorkspaceCustomApplicationUniversalIdentifierOrThrow = ({
   workspaceCustomApplicationId,
   flatApplicationMaps,
 }: {
   workspaceCustomApplicationId: string;
-  flatApplicationMaps: FlatApplicationCacheMaps;
+  flatApplicationMaps: {
+    byId: Partial<Record<string, Pick<FlatApplication, 'universalIdentifier'>>>;
+  };
 }): string => {
   const workspaceCustomFlatApplication =
     flatApplicationMaps.byId[workspaceCustomApplicationId];

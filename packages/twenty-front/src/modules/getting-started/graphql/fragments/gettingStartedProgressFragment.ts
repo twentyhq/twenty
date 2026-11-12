@@ -8,10 +8,12 @@ export const GETTING_STARTED_PROGRESS_FRAGMENT = gql`
       title
       doneTitle
       description
+      doneDescription
       icon
       iconColor
       promptLabel
       prompt
+      doneChatThreadId
     }
     completedStepActionKeys
     selectedStepActionKey

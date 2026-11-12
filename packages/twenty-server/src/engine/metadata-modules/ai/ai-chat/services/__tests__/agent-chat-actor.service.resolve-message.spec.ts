@@ -45,6 +45,7 @@ const buildService = (
     {} as never,
     { resolveWorkspaceMember } as never,
     {} as never,
+    {} as never,
   );
 
   return { service, resolveWorkspaceMember };

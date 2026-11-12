@@ -1,36 +1,23 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type IframeMediaPermission } from 'twenty-shared/types';
-import { IconTrash } from 'twenty-ui/icon';
-import { Button, Switch } from 'twenty-ui/primitives/input';
-import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconCamera, IconMicrophone, IconVideo, IconX } from 'twenty-ui/icon';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
+import { SettingsSecurityOriginTableCell } from '@/settings/security/components/SettingsSecurityOriginTableCell';
+import { IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS } from '@/settings/security/constants/IframeMediaPermissionsTableGridAutoColumns';
+import { type IframeMediaAccess } from '@/settings/security/types/IframeMediaAccess';
+import { getIframeMediaAccess } from '@/settings/security/utils/getIframeMediaAccess';
 import { useSettingsSecurityIframeMediaPermissionsOrThrow } from '@/settings/security/contexts/SettingsSecurityIframeMediaPermissionsContext';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 type SettingsSecurityIframeMediaPermissionRowProps = {
   permission: IframeMediaPermission;
   disabled: boolean;
 };
-
-const StyledRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledControls = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledLabel = styled.label`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 export const SettingsSecurityIframeMediaPermissionRow = ({
   permission,
@@ -38,47 +25,56 @@ export const SettingsSecurityIframeMediaPermissionRow = ({
 }: SettingsSecurityIframeMediaPermissionRowProps) => {
   const { t } = useLingui();
   const { savePermission } = useSettingsSecurityIframeMediaPermissionsOrThrow();
-  const { origin, microphone, camera } = permission;
+  const { origin } = permission;
+
+  const accessOptions: SelectOption<IframeMediaAccess>[] = [
+    {
+      value: 'microphoneAndCamera',
+      label: t`Microphone and camera`,
+      Icon: IconVideo,
+    },
+    { value: 'microphone', label: t`Microphone only`, Icon: IconMicrophone },
+    { value: 'camera', label: t`Camera only`, Icon: IconCamera },
+  ];
 
   return (
-    <StyledRow role="group" aria-label={origin}>
-      <Text>{origin}</Text>
-      <StyledControls>
-        <StyledLabel>
-          <Switch
-            checked={microphone}
-            disabled={disabled || (microphone && !camera)}
-            size="sm"
-            onCheckedChange={(checked) =>
-              void savePermission({ origin, microphone: checked, camera })
-            }
-          />
-          <Text render={<span />}>{t`Microphone`}</Text>
-        </StyledLabel>
-        <StyledLabel>
-          <Switch
-            checked={camera}
-            disabled={disabled || (camera && !microphone)}
-            size="sm"
-            onCheckedChange={(checked) =>
-              void savePermission({ origin, microphone, camera: checked })
-            }
-          />
-          <Text render={<span />}>{t`Camera`}</Text>
-        </StyledLabel>
-        <Button
+    <TableRow
+      gridAutoColumns={IFRAME_MEDIA_PERMISSIONS_TABLE_GRID_AUTO_COLUMNS}
+    >
+      <SettingsSecurityOriginTableCell origin={origin} />
+      <TableCell role="group" aria-label={t`Media access for ${origin}`}>
+        <Select<IframeMediaAccess>
+          dropdownId={`iframe-media-permission-access-${origin}`}
+          value={getIframeMediaAccess(permission)}
+          options={accessOptions}
+          onChange={(access) =>
+            void savePermission({
+              origin,
+              microphone: access !== 'camera',
+              camera: access !== 'microphone',
+            })
+          }
+          disabled={disabled}
+          dropdownWidth={GenericDropdownContentWidth.Large}
+          selectSizeVariant="small"
+          withSearchInput={false}
+          needIconCheck
+          fullWidth
+        />
+      </TableCell>
+      <TableCell align="right">
+        <IconButton
           aria-label={t`Remove media access for ${origin}`}
           disabled={disabled}
+          variant="ghost"
           size="sm"
-          variant="outline"
-          startIcon={<IconTrash size={16} />}
           onClick={() =>
             void savePermission({ origin, microphone: false, camera: false })
           }
         >
-          {t`Remove`}
-        </Button>
-      </StyledControls>
-    </StyledRow>
+          <IconX />
+        </IconButton>
+      </TableCell>
+    </TableRow>
   );
 };

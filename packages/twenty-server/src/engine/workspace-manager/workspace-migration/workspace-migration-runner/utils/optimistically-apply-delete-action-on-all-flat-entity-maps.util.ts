@@ -26,6 +26,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'viewSort':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
+    case 'rowLevelPermissionRule':
     case 'viewFilterGroup':
     case 'index':
     case 'logicFunction':
@@ -55,6 +56,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule':
     case 'searchFieldMetadata': {

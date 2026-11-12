@@ -7,7 +7,7 @@ import { type SessionCookieAccess } from 'src/engine/core-modules/user-session/t
 // Opt-in so a new channel that makes the browser send cookies (e.g. front component host fetch) gets no session by default.
 // Sec-Fetch-Mode is set by the browser and cannot be forged by page scripts; a navigation's response is never readable by them.
 export const resolveSessionCookieAccess = (
-  request: Request,
+  request: Pick<Request, 'headers'>,
 ): SessionCookieAccess => {
   if (isDefined(request.headers[SESSION_COOKIE_OPT_IN_HEADER_NAME])) {
     return 'opted-in';

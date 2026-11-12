@@ -6,7 +6,7 @@ export const isSlackDirectMessageChannel = async ({
   client,
   slackChannelId,
 }: {
-  client: WebClient;
+  client: { conversations: Pick<WebClient['conversations'], 'info'> };
   slackChannelId: string;
 }): Promise<boolean> => {
   const channelInfo = await client.conversations

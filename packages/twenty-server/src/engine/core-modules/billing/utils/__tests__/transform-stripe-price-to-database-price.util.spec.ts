@@ -9,28 +9,34 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { transformStripePriceToDatabasePrice } from 'src/engine/core-modules/billing/utils/transform-stripe-price-to-database-price.util';
 describe('transformStripePriceToDatabasePrice', () => {
-  const createMockPrice = (overrides = {}): Stripe.Price =>
-    ({
-      id: 'price_123',
-      active: true,
-      product: 'prod_123',
-      currency: 'usd',
-      nickname: null,
-      tax_behavior: null,
-      type: 'recurring',
-      billing_scheme: 'per_unit',
-      unit_amount_decimal: '1000',
-      unit_amount: 1000,
-      transform_quantity: null,
-      recurring: {
-        usage_type: 'licensed',
-        interval: 'month',
-        meter: null,
-      },
-      currency_options: null,
-      tiers: null,
-      ...overrides,
-    }) as unknown as Stripe.Price;
+  const createMockPrice = (overrides = {}): Stripe.Price => ({
+    id: 'price_123',
+    object: 'price',
+    created: 0,
+    livemode: false,
+    lookup_key: null,
+    metadata: {},
+    custom_unit_amount: null,
+    tiers_mode: null,
+    active: true,
+    product: 'prod_123',
+    currency: 'usd',
+    nickname: null,
+    tax_behavior: null,
+    type: 'recurring',
+    billing_scheme: 'per_unit',
+    unit_amount_decimal: '1000',
+    unit_amount: 1000,
+    transform_quantity: null,
+    recurring: {
+      usage_type: 'licensed',
+      interval: 'month',
+      interval_count: 1,
+      meter: null,
+      trial_period_days: null,
+    },
+    ...overrides,
+  });
 
   it('should transform basic price data correctly', () => {
     const mockPrice = createMockPrice();
@@ -56,7 +62,9 @@ describe('transformStripePriceToDatabasePrice', () => {
       recurring: {
         usage_type: 'licensed',
         interval: 'month',
+        interval_count: 1,
         meter: null,
+        trial_period_days: null,
       },
     });
   });

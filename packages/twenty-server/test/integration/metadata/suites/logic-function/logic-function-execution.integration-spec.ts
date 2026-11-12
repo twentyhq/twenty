@@ -163,21 +163,16 @@ describe('Logic Function Execution', () => {
 
     expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
 
-    const data = result?.data as unknown as {
-      grouped: Record<string, Array<{ category: string; name: string }>>;
-      categories: string[];
-    };
-
-    expect(data?.grouped).toMatchObject({
-      fruit: [
-        { category: 'fruit', name: 'apple' },
-        { category: 'fruit', name: 'banana' },
-      ],
-      vegetable: [{ category: 'vegetable', name: 'carrot' }],
+    expect(result?.data).toMatchObject({
+      grouped: {
+        fruit: [
+          { category: 'fruit', name: 'apple' },
+          { category: 'fruit', name: 'banana' },
+        ],
+        vegetable: [{ category: 'vegetable', name: 'carrot' }],
+      },
+      categories: expect.arrayContaining(['fruit', 'vegetable']),
     });
-    expect(data?.categories).toEqual(
-      expect.arrayContaining(['fruit', 'vegetable']),
-    );
   });
 
   it('should run with the function variables and its own temporary directory', async () => {

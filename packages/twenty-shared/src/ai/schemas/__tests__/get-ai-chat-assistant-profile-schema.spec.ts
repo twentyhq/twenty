@@ -33,12 +33,36 @@ describe('getAiChatAssistantProfileSchema', () => {
   });
 
   it.each([
+    'Scout Bot',
+    'Équipe 🤖',
+    'Scout: [support] [EMEA]',
+    'Scout 50% %20 `code` *bold* _name_ (team)! ~name~',
+  ])('preserves a name supported by raw references %j', (displayName) => {
+    expect(
+      getAiChatAssistantProfileSchema().partial().parse({ displayName }),
+    ).toEqual({ displayName });
+  });
+
+  it('normalizes boundary whitespace before validating the name', () => {
+    expect(
+      getAiChatAssistantProfileSchema()
+        .partial()
+        .parse({ displayName: '\n  Scout Bot  \r\n' }),
+    ).toEqual({ displayName: 'Scout Bot' });
+  });
+
+  it.each([
     { displayName: null },
     { displayName: '  ' },
     {
       displayName: 'A'.repeat(AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH + 1),
     },
     { displayName: 42 },
+    { displayName: 'Scout\nBot' },
+    { displayName: 'Scout\rBot' },
+    { displayName: 'Scout [support' },
+    { displayName: 'Scout support]' },
+    { displayName: 'Scout [[support]]' },
     { avatarShape: null },
     { avatarShape: 'square' },
     { avatarColor: null },

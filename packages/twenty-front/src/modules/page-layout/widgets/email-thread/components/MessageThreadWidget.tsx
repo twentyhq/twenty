@@ -1,6 +1,7 @@
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useMessageThreadChannel } from '@/activities/emails/hooks/useMessageThreadChannel';
+import { useSubscribeToMessageThreadMessages } from '@/activities/emails/hooks/useSubscribeToMessageThreadMessages';
 import { isChatTimelineThreadChannel } from '@/activities/emails/utils/isChatTimelineThreadChannel';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
@@ -32,8 +33,15 @@ export const MessageThreadWidget = ({
     fetchMoreMessages,
     refetchMessages,
     threadLoading,
+    isFetchingMoreMessages,
     lastMessageChannelId,
   } = useEmailThread(targetRecord.id);
+
+  useSubscribeToMessageThreadMessages({
+    messageThreadId: targetRecord.id,
+    loadedMessageIds: messages.map(({ id }) => id),
+    refetchMessages,
+  });
 
   const { messageThreadChannel, messageThreadChannelLoading } =
     useMessageThreadChannel(targetRecord.id);
@@ -78,7 +86,7 @@ export const MessageThreadWidget = ({
       <ChatThreadWidgetContent
         messageThreadId={thread.id}
         messages={messages}
-        loading={threadLoading}
+        loading={isFetchingMoreMessages}
         onFetchMoreMessages={fetchMoreMessages}
         messageChannelId={lastMessageChannelId}
         onMessageSent={refetchMessages}
@@ -92,6 +100,7 @@ export const MessageThreadWidget = ({
       lastMessage={lastMessage}
       loading={threadLoading}
       onFetchMoreMessages={fetchMoreMessages}
+      messageChannelId={lastMessageChannelId}
     />
   );
 };

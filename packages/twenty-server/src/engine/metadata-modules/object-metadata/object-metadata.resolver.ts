@@ -7,6 +7,7 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -61,7 +62,7 @@ import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-const OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
+const OBJECT_RECORD_STATISTICS_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
     userSession: {
       standard: true,
@@ -73,7 +74,7 @@ const OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
     oauthClient: true,
     application: true,
   },
-  requiredPermissionFlags: [],
+  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
 };
 
 @MetadataResolver(() => ObjectMetadataDTO)
@@ -93,7 +94,7 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectConnectionDTO)
   @AllowSuspendedWorkspace()
   async objects(
@@ -137,7 +138,7 @@ export class ObjectMetadataResolver {
     };
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
   @Query(() => ObjectMetadataDTO)
   async object(
     @Args('id', {
@@ -224,7 +225,7 @@ export class ObjectMetadataResolver {
     return !objectMetadata.isUIEditable;
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [ObjectRecordCountDTO])
   async objectRecordCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -232,7 +233,7 @@ export class ObjectMetadataResolver {
     return this.objectRecordCountService.getRecordCounts(workspaceId);
   }
 
-  @UseGuards(AccessPolicyGuard(OBJECT_METADATA_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(OBJECT_RECORD_STATISTICS_ACCESS_POLICY))
   @Query(() => [UUIDScalarType])
   async mostlyEmptyFieldMetadataIds(
     @Args('objectMetadataId', { type: () => UUIDScalarType })

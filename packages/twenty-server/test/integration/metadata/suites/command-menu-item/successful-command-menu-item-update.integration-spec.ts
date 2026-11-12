@@ -66,7 +66,6 @@ describe('CommandMenuItem update should succeed', () => {
         expectToFail: false,
         input: { id: createdCommandMenuItemId },
       });
-      createdCommandMenuItemId = undefined as unknown as string;
     }
   });
 

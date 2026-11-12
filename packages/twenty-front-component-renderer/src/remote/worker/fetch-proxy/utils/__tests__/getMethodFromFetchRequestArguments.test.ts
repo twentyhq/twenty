@@ -5,7 +5,7 @@ describe('getMethodFromFetchRequestArguments', () => {
     const request = { url: 'https://api.twenty.test', method: 'PUT' };
 
     expect(
-      getMethodFromFetchRequestArguments(request as unknown as Request, {
+      getMethodFromFetchRequestArguments(request, {
         method: 'POST',
       }),
     ).toBe('POST');
@@ -14,12 +14,9 @@ describe('getMethodFromFetchRequestArguments', () => {
   it('should use the Request method when init has no method', () => {
     const request = { url: 'https://api.twenty.test', method: 'DELETE' };
 
-    expect(
-      getMethodFromFetchRequestArguments(
-        request as unknown as Request,
-        undefined,
-      ),
-    ).toBe('DELETE');
+    expect(getMethodFromFetchRequestArguments(request, undefined)).toBe(
+      'DELETE',
+    );
   });
 
   it('should default to GET when input is a string and init has no method', () => {

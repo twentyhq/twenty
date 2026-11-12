@@ -37,9 +37,12 @@ jest.mock(
   '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue',
   () => ({
     useAtomComponentStateValue: (state: unknown) => {
-      if (state === recordIndexCalendarFieldMetadataIdComponentState)
+      if (state === recordIndexCalendarFieldMetadataIdComponentState) {
         return mockCalendarField.id;
-      if (state === recordIndexCalendarLayoutComponentState) return mockLayout;
+      }
+      if (state === recordIndexCalendarLayoutComponentState) {
+        return mockLayout;
+      }
       return [];
     },
   }),

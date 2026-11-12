@@ -7,7 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findLegacyOpenParentJoinColumnNames } from 'src/database/commands/upgrade-version-command/2-43/utils/find-legacy-open-parent-join-column-names.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -35,10 +36,10 @@ export const preserveLegacyRecordAccess = async ({
   workspaceId: string;
   objects: FlatObjectMetadata[];
   wasRecordSharingEnabled: boolean;
-  inheritanceMetadata?: Pick<
-    PermissionsMetadataMaps,
-    'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
-  >;
+  inheritanceMetadata?: {
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  };
 }): Promise<void> => {
   const completed = await manager.query<{ id: string }[]>(
     'SELECT id FROM core."keyValuePair" WHERE "key" = $1 AND "workspaceId" = $2',

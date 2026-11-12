@@ -98,11 +98,7 @@ const buildArgs = (): BuildUnselectableRelationWarningsArgs => ({
     }),
   ]),
   selectableRelationFields: {},
-  recordsPermissions: {
-    objects: {
-      [OPPORTUNITY_OBJECT_ID]: { restrictedFields: {} },
-    },
-  },
+  unreadableFieldMetadataIds: new Set<string>(),
 });
 
 describe('buildUnselectableRelationWarningsByFieldName', () => {

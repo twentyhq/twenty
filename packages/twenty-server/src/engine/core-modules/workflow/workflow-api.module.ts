@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
+import { CoreWorkflowConnectionResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-connection.resolver';
 import { CoreWorkflowRunResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-run.resolver';
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
@@ -14,10 +15,8 @@ import { WorkflowVersionStepResolver } from 'src/engine/core-modules/workflow/re
 import { CoreWorkflowAccessModule } from 'src/engine/core-modules/workflow/core-workflow-access.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
-import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -30,7 +29,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity]),
     CoreWorkflowAccessModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
@@ -53,9 +52,9 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowBuilderResolver,
     WorkflowVersionStepResolver,
     CoreWorkflowResolver,
+    CoreWorkflowConnectionResolver,
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowRunResolver,
-    provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })
 export class WorkflowApiModule {}

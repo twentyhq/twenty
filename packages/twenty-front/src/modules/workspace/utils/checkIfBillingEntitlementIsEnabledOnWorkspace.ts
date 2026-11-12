@@ -3,7 +3,10 @@ import { type BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 export const checkIfBillingEntitlementIsEnabledOnWorkspace = (
   entitlementKey: BillingEntitlementKey,
-  workspace: CurrentWorkspace | null | undefined,
+  workspace:
+    | Partial<Pick<CurrentWorkspace, 'billingEntitlements'>>
+    | null
+    | undefined,
 ) =>
   workspace?.billingEntitlements?.some(
     (entitlement) =>

@@ -7,6 +7,7 @@ export const OBJECT_PERMISSION_FRAGMENT = gql`
     canUpdateObjectRecords
     canSoftDeleteObjectRecords
     canDestroyObjectRecords
-    restrictedFields
+    unreadableFields
+    uneditableFields
   }
 `;

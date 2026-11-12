@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchCurrentWorkspaceId } from 'src/logic-functions/utils/fetch-current-workspace-id';
@@ -23,7 +22,7 @@ vi.mock('src/logic-functions/utils/fetch-current-workspace-id', () => ({
 
 const authTest = vi.fn();
 
-const slackClient = { auth: { test: authTest } } as unknown as WebClient;
+const slackClient = { auth: { test: authTest } };
 
 const CONNECTION_ID = 'connected-account-1';
 

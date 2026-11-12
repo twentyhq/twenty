@@ -25,7 +25,9 @@ export const mapViewFieldsToColumnDefinitions = ({
       const correspondingColumnDefinition =
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
-      if (!isDefined(correspondingColumnDefinition)) return null;
+      if (!isDefined(correspondingColumnDefinition)) {
+        return null;
+      }
 
       const { isLabelIdentifier } = correspondingColumnDefinition;
 
@@ -57,7 +59,9 @@ export const mapViewFieldsToColumnDefinitions = ({
     })
     .filter(isDefined);
 
-  if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;
+  if (!labelIdentifierFieldMetadataId) {
+    return columnDefinitionsFromViewFields;
+  }
 
   const labelIdentifierIndex = columnDefinitionsFromViewFields.findIndex(
     ({ fieldMetadataId }) => fieldMetadataId === labelIdentifierFieldMetadataId,

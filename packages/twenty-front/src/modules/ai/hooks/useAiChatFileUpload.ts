@@ -1,9 +1,12 @@
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -70,6 +73,20 @@ export const useAiChatFileUpload = () => {
   };
 
   const uploadFiles = async (files: File[]) => {
+    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
+    const currentThread = store.get(
+      agentChatThreadRecordFamilySelector.selectorFamily(
+        currentAiChatThread ?? '',
+      ),
+    );
+
+    if (
+      currentThread?.conversationType ===
+      AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
+      return [];
+    }
+
     setAgentChatSelectedFiles((previousSelectedFiles) => [
       ...previousSelectedFiles,
       ...files,

@@ -6,7 +6,7 @@ import {
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/workspace-query-executor/constants/postgres-error-codes.constants';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
 
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';

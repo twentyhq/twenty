@@ -54,11 +54,14 @@ export const createWhereExpressionRecorder = (): WhereExpressionRecorder => {
       return whereExpression;
     };
 
-  const whereExpression = {
+  const whereExpression: WhereExpressionBuilder = {
     where: recordCall('where'),
     andWhere: recordCall('andWhere'),
     orWhere: recordCall('orWhere'),
-  } as unknown as WhereExpressionBuilder;
+    whereInIds: jest.fn(),
+    andWhereInIds: jest.fn(),
+    orWhereInIds: jest.fn(),
+  };
 
   return { whereExpression, calls };
 };

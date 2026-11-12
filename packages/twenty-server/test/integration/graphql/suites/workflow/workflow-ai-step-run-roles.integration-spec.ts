@@ -34,10 +34,7 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -137,7 +134,7 @@ const mockModelCallingFindTool = ({
     modelId: TEST_AI_MODEL_ID,
     sdkPackage: '@ai-sdk/openai',
     model,
-  } as unknown as RegisteredAiModel);
+  });
 
   return calls;
 };
@@ -174,6 +171,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       input: {
         roleId: memberRoleId,
         objectMetadataId,
+        canReadRecords: true,
         predicates: predicates.map(({ value }) => ({
           fieldMetadataId: nameFieldMetadataId,
           operand: RowLevelPermissionPredicateOperand.CONTAINS,
@@ -195,8 +193,9 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   const createAiStepWorkflow = async (
     stepInput: Partial<WorkflowAiAgentAction['settings']['input']> = {},
   ): Promise<string> => {
-    const { coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowId } =
-      await createCoreWorkflow({ name: 'AI step run roles' });
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+      name: 'AI step run roles',
+    });
 
     coreWorkflowIds.push(coreWorkflowId);
 
@@ -241,10 +240,6 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
         JSON.stringify(trigger),
         JSON.stringify([step]),
       ],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = $2 WHERE id = $1`,
-      [workspaceWorkflowId, workspaceWorkflowVersionId],
     );
     await global.testDataSource.query(
       `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
@@ -437,6 +432,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   });
 
   it('applies the row rules of its member to what the step reads', async () => {
+    await setMemberObjectAccess(false);
     await setMemberRowRule([{ value: 'Visible' }]);
     const calls = mockModelCallingFindTool();
 

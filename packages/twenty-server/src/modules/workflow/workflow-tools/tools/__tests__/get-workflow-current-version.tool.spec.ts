@@ -1,6 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 import { createGetWorkflowCurrentVersionTool } from '../get-workflow-current-version.tool';
 
@@ -43,13 +42,7 @@ const buildDeps = ({
 });
 
 const buildTool = (deps: ReturnType<typeof buildDeps>) =>
-  createGetWorkflowCurrentVersionTool(
-    deps as unknown as Pick<
-      WorkflowToolDependencies,
-      'coreWorkflowListService' | 'coreWorkflowVersionListService'
-    >,
-    buildContext(),
-  );
+  createGetWorkflowCurrentVersionTool(deps, buildContext());
 
 describe('get_workflow_current_version tool', () => {
   it('should read the definition from core using the core workflow id', async () => {

@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { SetMessageTextDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789757500001-set-message-text-displayed-max-rows.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const STANDARD_APPLICATION = {
@@ -25,7 +26,7 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
   let validateBuildAndRunLegacyWorkspaceMigrationMock: jest.Mock;
   let loggerLogMock: jest.SpyInstance;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -33,23 +34,36 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    command = new SetMessageTextDisplayedMaxRowsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: STANDARD_APPLICATION,
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunLegacyWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        SetMessageTextDisplayedMaxRowsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: STANDARD_APPLICATION,
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunLegacyWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(SetMessageTextDisplayedMaxRowsCommand);
 
     loggerLogMock = jest.spyOn(command['logger'], 'log').mockImplementation();
   });
@@ -91,7 +105,9 @@ describe('SetMessageTextDisplayedMaxRowsCommand', () => {
 
     await runOnWorkspace();
 
-    expect(validateBuildAndRunLegacyWorkspaceMigrationMock).toHaveBeenCalledWith(
+    expect(
+      validateBuildAndRunLegacyWorkspaceMigrationMock,
+    ).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
         applicationUniversalIdentifier:

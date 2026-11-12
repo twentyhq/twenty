@@ -1,4 +1,4 @@
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { MakeBillingCreditGrantExpiresAtNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1788871259040-make-billing-credit-grant-expires-at-nullable';
 import { ConvertLiveCreditGrantsToNoExpirySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1788877128693-convert-live-credit-grants-to-no-expiry';
@@ -14,8 +14,11 @@ const buildFakeDataSource = ({
 } => {
   const queries: { sql: string; params?: unknown[] }[] = [];
 
-  const dataSource = {
-    query: jest.fn(async (sql: string, params?: unknown[]) => {
+  const dataSource = new DataSource({ type: 'postgres' });
+
+  dataSource.query = jest
+    .fn()
+    .mockImplementation(async (sql: string, params?: unknown[]) => {
       queries.push({ sql, params });
 
       if (sql.includes('pg_tables')) {
@@ -23,8 +26,7 @@ const buildFakeDataSource = ({
       }
 
       return [];
-    }),
-  } as unknown as DataSource;
+    });
 
   return { dataSource, queries };
 };

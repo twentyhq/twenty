@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for agent 1`] = `
+[
+  "navigationMenuItem",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for agentChatChannel 1`] = `
 [
@@ -38,6 +42,14 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewFilter",
   "view",
   "searchFieldMetadata",
+  "fieldMetadataOption",
+  "rowLevelPermissionPredicate",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadataOption 1`] = `
+[
+  "fieldMetadata",
 ]
 `;
 
@@ -46,6 +58,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "role",
   "objectMetadata",
   "fieldMetadata",
+  "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
 ]
 `;
 
@@ -74,6 +88,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "view",
   "pageLayout",
   "agentChatChannel",
+  "workflow",
+  "agent",
 ]
 `;
 
@@ -83,6 +99,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "index",
   "objectPermission",
   "fieldPermission",
+  "rowLevelPermissionRule",
   "view",
   "searchFieldMetadata",
   "pageLayout",
@@ -141,6 +158,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "rowLevelPermissionPredicate",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
   "agentChatChannelRole",
 ]
 `;
@@ -166,6 +184,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldMetadata",
   "objectMetadata",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
 ]
 `;
 
@@ -174,7 +193,15 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
   "role",
   "rowLevelPermissionPredicateGroup",
+  "rowLevelPermissionRule",
   "rowLevelPermissionPredicate",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for rowLevelPermissionRule 1`] = `
+[
+  "objectMetadata",
+  "role",
 ]
 `;
 
@@ -262,6 +289,10 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for webhook 1`] = `[]`;
 
-exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `[]`;
+exports[`getMetadataRelatedMetadataNames should return related metadata names for workflow 1`] = `
+[
+  "navigationMenuItem",
+]
+`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for workflowVersion 1`] = `[]`;

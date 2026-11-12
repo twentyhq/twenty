@@ -1,7 +1,10 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
-import { type Editor } from '@tiptap/core';
+import { Editor } from '@tiptap/core';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
@@ -9,12 +12,11 @@ import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMen
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-const editor = {
-  view: {
-    dom: document.createElement('div'),
-    coordsAtPos: () => ({ left: 0, top: 0, bottom: 16 }),
-  },
-} as unknown as Editor;
+const editor = new Editor({ extensions: [Document, Paragraph, Text] });
+
+jest
+  .spyOn(editor.view, 'coordsAtPos')
+  .mockReturnValue({ left: 0, right: 0, top: 0, bottom: 16 });
 
 const buildResult = (
   label: string,

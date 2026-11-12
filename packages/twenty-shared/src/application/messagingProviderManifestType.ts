@@ -1,3 +1,4 @@
+import { type MessagingProviderConversationStyle } from '@/application/messagingProviderConversationStyleType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type MessagingProviderManifest = SyncableEntityOptions & {
@@ -5,4 +6,5 @@ export type MessagingProviderManifest = SyncableEntityOptions & {
   displayName: string;
   connectionProvider: SyncableEntityOptions;
   sendMessageLogicFunction?: SyncableEntityOptions;
+  conversationStyle?: MessagingProviderConversationStyle;
 };

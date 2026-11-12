@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
+import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
@@ -139,7 +140,38 @@ describe('CalDAV calendar events import without entity tags (integration)', () =
   afterEach(() => {
     proxy.degradations.blankLastModified = false;
     proxy.degradations.hideCollectionMembers = false;
+    proxy.degradations.hideFullUrlMultigetMembers = false;
   });
+
+  it('keeps one event when an event created from Twenty cannot be read back by its full URL', async () => {
+    proxy.degradations.hideFullUrlMultigetMembers = true;
+
+    const title = `CalDAV created event ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'CalDAV created event sync workflow',
+      stepType: 'CREATE_CALENDAR_EVENT',
+      input: {
+        connectedAccountId,
+        title,
+        startsAt: '2026-08-13T09:00:00Z',
+        endsAt: '2026-08-13T10:00:00Z',
+        isFullDay: false,
+        timeZone: 'UTC',
+        sendInvitations: false,
+        addConferencing: false,
+      },
+    });
+
+    expect(workflowRun).toMatchObject({
+      status: 'COMPLETED',
+      stepStatus: 'SUCCESS',
+    });
+
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([title])).toEqual([title]);
+  }, 300000);
 
   it('imports an event when the server never returns an entity tag', async () => {
     const summary = `CalDAV untagged event ${randomUUID()}`;

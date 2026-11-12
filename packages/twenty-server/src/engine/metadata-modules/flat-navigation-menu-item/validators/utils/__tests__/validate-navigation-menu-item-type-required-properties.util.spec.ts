@@ -82,6 +82,18 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
         'A valid nativePageKey is required for NATIVE_PAGE type',
       ],
     },
+    {
+      type: NavigationMenuItemType.WORKFLOW,
+      expectedMessages: [
+        'A valid workflowUniversalIdentifier is required for WORKFLOW type',
+      ],
+    },
+    {
+      type: NavigationMenuItemType.AGENT,
+      expectedMessages: [
+        'A valid agentUniversalIdentifier is required for AGENT type',
+      ],
+    },
   ])(
     'should report every missing property for $type type',
     ({ type, expectedMessages }) => {
@@ -128,6 +140,14 @@ describe('validateNavigationMenuItemTypeRequiredProperties', () => {
     {
       type: NavigationMenuItemType.NATIVE_PAGE,
       overrides: { nativePageKey: 'workflows' as const },
+    },
+    {
+      type: NavigationMenuItemType.WORKFLOW,
+      overrides: { workflowUniversalIdentifier: VALID_UUID },
+    },
+    {
+      type: NavigationMenuItemType.AGENT,
+      overrides: { agentUniversalIdentifier: VALID_UUID },
     },
   ])(
     'should not report any error when $type type properties are valid',

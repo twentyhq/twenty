@@ -4,8 +4,9 @@ import {
 } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { Injectable } from '@nestjs/common';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -14,9 +15,11 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
+import { type AgentChatAuthorizedConversation } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-authorized-conversation.type';
 import { resolveAgentChatMessageWorkspaceMemberIdOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-message-workspace-member-id-or-throw.util';
 import {
   AiException,
@@ -32,7 +35,8 @@ export class AgentChatActorService {
     private readonly threads: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly threadService: AgentChatThreadService,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   async resolveMessage({
@@ -117,7 +121,7 @@ export class AgentChatActorService {
     return thread.workspaceMemberId;
   }
 
-  async authorize({
+  async resolveAuthorizedConversation({
     workspaceId,
     threadId,
     sender,
@@ -125,7 +129,7 @@ export class AgentChatActorService {
     workspaceId: string;
     threadId: string;
     sender: AgentChatSender;
-  }) {
+  }): Promise<AgentChatAuthorizedConversation> {
     const authContext = await this.userAuthContextService.resolve({
       workspaceId,
       ...sender,
@@ -144,12 +148,9 @@ export class AgentChatActorService {
       );
     }
     if (
-      !(await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId,
-        userWorkspaceId: sender.userWorkspaceId,
-        applicationId: sender.applicationId ?? undefined,
-        agentId: authContext.agentId,
-        setting: PermissionFlagType.AI,
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
+        permissionFlag: PermissionFlagType.AI,
       }))
     ) {
       throw new AiException(
@@ -163,14 +164,14 @@ export class AgentChatActorService {
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
-    return { authContext };
+    return { authContext, thread };
   }
 
   // a member with no role left cannot act in the chat nor run the calls they approve
   async hasRole(authContext: WorkspaceAuthContext): Promise<boolean> {
-    const roleIds = await this.permissionsService.getRoleIds(authContext);
-
-    return roleIds.length > 0;
+    return isNonEmptyArray(
+      await this.rolePermissionsService.findRoleIds({ authContext }),
+    );
   }
 
   // resolved from the application context of the turn that made the call
@@ -263,11 +264,11 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    const authorization = await this.authorize({
+    const authorizedConversation = await this.resolveAuthorizedConversation({
       workspaceId,
       threadId,
       sender,
     });
-    return { message, sender, authorization };
+    return { message, sender, authorizedConversation };
   }
 }

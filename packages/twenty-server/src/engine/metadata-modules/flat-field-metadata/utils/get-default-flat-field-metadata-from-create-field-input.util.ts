@@ -85,5 +85,9 @@ export const getDefaultFlatFieldMetadata = ({
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    fieldMetadataOptionUniversalIdentifiers: [],
+    rowLevelPermissionPredicateUniversalIdentifiers: [],
+    relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+    workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
   } as const satisfies UniversalFlatFieldMetadata;
 };

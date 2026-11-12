@@ -1,4 +1,4 @@
-import { type RulesLogic } from 'json-logic-js';
+import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
@@ -142,9 +142,9 @@ describe('evaluateWidgetVisibility', () => {
   });
 
   it('should throw error for invalid operator', () => {
-    const invalidConditionalDisplay = {
+    const invalidConditionalDisplay: RulesLogic<AdditionalOperation> = {
       invalidOperator: 'test',
-    } as unknown as RulesLogic;
+    };
 
     expect(() => {
       evaluateWidgetVisibility({

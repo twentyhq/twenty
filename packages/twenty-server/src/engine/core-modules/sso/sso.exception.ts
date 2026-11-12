@@ -7,7 +7,6 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum SsoExceptionCode {
-  USER_NOT_FOUND = 'USER_NOT_FOUND',
   IDENTITY_PROVIDER_NOT_FOUND = 'IDENTITY_PROVIDER_NOT_FOUND',
   IDENTITY_PROVIDER_ALREADY_EXISTS = 'IDENTITY_PROVIDER_ALREADY_EXISTS',
   INVALID_ISSUER_URL = 'INVALID_ISSUER_URL',
@@ -18,8 +17,6 @@ export enum SsoExceptionCode {
 
 const getSsoExceptionUserFriendlyMessage = (code: SsoExceptionCode) => {
   switch (code) {
-    case SsoExceptionCode.USER_NOT_FOUND:
-      return msg`User not found.`;
     case SsoExceptionCode.IDENTITY_PROVIDER_NOT_FOUND:
       return msg`Identity provider not found.`;
     case SsoExceptionCode.IDENTITY_PROVIDER_ALREADY_EXISTS:

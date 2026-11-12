@@ -1,6 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 import { createListWorkflowRunsTool } from '../list-workflow-runs.tool';
 
@@ -29,10 +28,7 @@ describe('list_workflow_runs tool', () => {
     const deps = buildDeps([]);
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createListWorkflowRunsTool(deps, context);
 
     await tool.execute({});
 
@@ -71,10 +67,7 @@ describe('list_workflow_runs tool', () => {
     const deps = buildDeps(workflowRuns);
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createListWorkflowRunsTool(deps, context);
 
     const result = await tool.execute({});
 
@@ -103,10 +96,7 @@ describe('list_workflow_runs tool', () => {
     };
     const context = buildContext();
 
-    const tool = createListWorkflowRunsTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    const tool = createListWorkflowRunsTool(deps, context);
 
     await tool.execute({
       coreWorkflowId: 'core-wf-1',

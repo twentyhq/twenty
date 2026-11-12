@@ -60,6 +60,7 @@ export class GettingStartedWorkflowWorkspaceService {
           ? await this.coreWorkflowListService.findOneById({
               workspaceId,
               userWorkspaceId,
+              callerApplication: undefined,
               coreWorkflowId: savedWorkflow.workflowId,
             })
           : null;

@@ -13,9 +13,15 @@ import {
 import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
+import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-certificate-base64-body.util';
 
 const WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA = z.object({
   workspaceInviteHash: z.string().optional(),
@@ -38,6 +44,57 @@ const RELAY_STATE_BODY_SCHEMA = z.object({
     })
     .pipe(WORKSPACE_INVITE_HASH_PAYLOAD_SCHEMA),
 });
+
+const SAML_BEARER_CONFIRMATION_METHOD = 'urn:oasis:names:tc:SAML:2.0:cm:bearer';
+
+const SAML_ASSERTION_SCHEMA = z
+  .object({
+    Assertion: z.object({
+      $: z.object({ ID: z.string().min(1) }),
+      Subject: z.array(
+        z.object({
+          SubjectConfirmation: z.array(
+            z.object({
+              $: z.object({ Method: z.string() }),
+              SubjectConfirmationData: z
+                .array(
+                  z.object({
+                    $: z
+                      .object({ NotOnOrAfter: z.coerce.date().optional() })
+                      .optional(),
+                  }),
+                )
+                .optional(),
+            }),
+          ),
+        }),
+      ),
+    }),
+  })
+  .transform(({ Assertion }, ctx) => {
+    const bearerNotOnOrAfterTimestamps = Assertion.Subject.flatMap(
+      ({ SubjectConfirmation }) =>
+        SubjectConfirmation.filter(
+          ({ $ }) => $.Method === SAML_BEARER_CONFIRMATION_METHOD,
+        ).flatMap(({ SubjectConfirmationData = [] }) =>
+          SubjectConfirmationData.map(({ $ }) => $?.NotOnOrAfter?.getTime()),
+        ),
+    ).filter(isDefined);
+
+    if (bearerNotOnOrAfterTimestamps.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'No bearer SubjectConfirmationData with NotOnOrAfter',
+      });
+
+      return z.NEVER;
+    }
+
+    return {
+      assertionId: Assertion.$.ID,
+      validUntil: new Date(Math.max(...bearerNotOnOrAfterTimestamps)),
+    };
+  });
 
 export type SamlRequest = Omit<
   Request,
@@ -66,16 +123,14 @@ export class SamlAuthStrategy extends PassportStrategy(
                 identityProvider &&
                 this.ssoService.isSamlIdentityProvider(identityProvider)
               ) {
-                // IdP metadata XML typically has whitespace-formatted certificates
-                const sanitizedCertificate =
-                  identityProvider.certificate.replace(/\s/g, '');
-
                 const config: SamlConfig = {
                   entryPoint: identityProvider.ssoURL,
                   issuer: this.ssoService.buildIssuerURL(identityProvider),
                   callbackUrl:
                     this.ssoService.buildCallbackUrl(identityProvider),
-                  idpCert: sanitizedCertificate,
+                  idpCert: getCertificateBase64Body(
+                    identityProvider.certificate,
+                  ),
                   wantAssertionsSigned: true,
                   wantAuthnResponseSigned: false,
                   disableRequestedAuthnContext: true,
@@ -121,7 +176,9 @@ export class SamlAuthStrategy extends PassportStrategy(
     });
   }
 
-  private extractWorkspaceInviteHash(req: Request): string | undefined {
+  private extractWorkspaceInviteHash(
+    req: Pick<Request, 'body'>,
+  ): string | undefined {
     const result = RELAY_STATE_BODY_SCHEMA.safeParse(req.body);
 
     return result.success
@@ -129,7 +186,11 @@ export class SamlAuthStrategy extends PassportStrategy(
       : undefined;
   }
 
-  validate: VerifyWithRequest = async (request, profile, done) => {
+  validate = async (
+    request: Pick<Request, 'params' | 'body'>,
+    profile: Parameters<VerifyWithRequest>[1],
+    done: Parameters<VerifyWithRequest>[2],
+  ): Promise<void> => {
     try {
       if (!profile) {
         return done(new Error('Profile must be provided'));
@@ -139,6 +200,45 @@ export class SamlAuthStrategy extends PassportStrategy(
 
       if (!isEmail(email)) {
         return done(new Error('Invalid email'));
+      }
+
+      const assertion = SAML_ASSERTION_SCHEMA.safeParse(
+        profile.getAssertion?.(),
+      );
+
+      if (!assertion.success) {
+        return done(
+          new AuthException(
+            'SAML assertion has no ID or bearer NotOnOrAfter',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
+      }
+
+      const { assertionId, validUntil } = assertion.data;
+
+      if (Date.now() >= validUntil.getTime()) {
+        return done(
+          new AuthException(
+            'SAML assertion has expired',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
+      }
+
+      const isFirstUse = await this.ssoService.consumeSamlAssertion({
+        identityProviderId: request.params.identityProviderId,
+        assertionId,
+        validUntil,
+      });
+
+      if (!isFirstUse) {
+        return done(
+          new AuthException(
+            'SAML assertion has already been used',
+            AuthExceptionCode.SSO_AUTH_FAILED,
+          ),
+        );
       }
 
       done(null, {

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { RecordSharePrincipalType } from 'twenty-shared/types';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -18,6 +19,10 @@ import { resolveAgentChatReplyDecision } from 'src/engine/metadata-modules/ai/ai
 import { resolveAgentChatReplyExecutionDecision } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-agent-chat-reply-execution-decision.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 type AssistantPolicyThread = Pick<
   AgentChatThreadWorkspaceEntity,
@@ -35,10 +40,10 @@ export class AgentChatAssistantPolicyService {
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareStorageService: RecordShareStorageService,
+    private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
   ) {}
 
-  async resolveAssistantMessageDecision({
+  async resolveAssistantMessageDecisionOrThrow({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds = [],
@@ -46,6 +51,8 @@ export class AgentChatAssistantPolicyService {
     isInitialAssistantParticipant,
     isInitialMessage,
     isReplyRequested = true,
+    hasRequestedRecipients = false,
+    isUncommittedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
@@ -54,6 +61,8 @@ export class AgentChatAssistantPolicyService {
     isInitialAssistantParticipant?: boolean;
     isInitialMessage: boolean;
     isReplyRequested?: boolean;
+    hasRequestedRecipients?: boolean;
+    isUncommittedThread?: boolean;
   }): Promise<AgentChatAssistantDecision> {
     const workspaceAssistantMode = await this.resolveWorkspaceAssistantMode({
       workspaceId,
@@ -63,7 +72,22 @@ export class AgentChatAssistantPolicyService {
       workspaceId,
       thread,
       candidateWorkspaceMemberIds,
+      isUncommittedThread,
     });
+    const isAssistantOptOutLeftAlone =
+      isInitialMessage &&
+      !isInitialAssistantParticipant &&
+      !isAssistantMentioned &&
+      hasRequestedRecipients &&
+      chatAudience === AgentChatAudience.ASSISTANT_CHAT;
+
+    if (isAssistantOptOutLeftAlone) {
+      throw new AiException(
+        'None of the requested recipients can reply in this chat',
+        AiExceptionCode.CHAT_RECIPIENTS_CANNOT_REPLY,
+      );
+    }
+
     const isAssistantParticipant = resolveAgentChatAssistantParticipation({
       mode: workspaceAssistantMode,
       audience: chatAudience,
@@ -124,32 +148,72 @@ export class AgentChatAssistantPolicyService {
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    return thread.conversationType === 'DIRECT_MESSAGE'
-      ? (workspace.aiChatDirectMessageAssistantMode ??
-          AiChatAssistantMode.MENTION_ONLY)
-      : (workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC);
+    if (
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
+      return this.resolveDirectMessageAssistantMode({
+        workspaceId,
+        configuredMode: workspace.aiChatDirectMessageAssistantMode,
+      });
+    }
+
+    return workspace.aiChatInboxAssistantMode ?? AiChatAssistantMode.AUTOMATIC;
+  }
+
+  private async resolveDirectMessageAssistantMode({
+    workspaceId,
+    configuredMode,
+  }: {
+    workspaceId: string;
+    configuredMode: AiChatAssistantMode;
+  }): Promise<AiChatAssistantMode> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]) {
+      return AiChatAssistantMode.NEVER;
+    }
+
+    return configuredMode;
   }
 
   private async resolveChatAudience({
     workspaceId,
     thread,
     candidateWorkspaceMemberIds,
+    isUncommittedThread = false,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds: string[];
+    isUncommittedThread?: boolean;
   }): Promise<AgentChatAudience> {
-    if (thread.conversationType === 'DIRECT_MESSAGE') {
+    if (
+      thread.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+    ) {
       return AgentChatAudience.DIRECT_MESSAGE;
     }
 
     if (
       (isDefined(thread.conversationType) &&
-        thread.conversationType !== 'STANDARD') ||
+        thread.conversationType !== AgentChatThreadConversationType.STANDARD) ||
       isDefined(thread.channelId) ||
       !isDefined(thread.workspaceMemberId)
     ) {
       return AgentChatAudience.CONVERSATION;
+    }
+
+    if (isUncommittedThread) {
+      const audienceMemberIds = new Set([
+        thread.workspaceMemberId,
+        ...candidateWorkspaceMemberIds,
+      ]);
+
+      return audienceMemberIds.size <= 1
+        ? AgentChatAudience.ASSISTANT_CHAT
+        : AgentChatAudience.CONVERSATION;
     }
 
     const { flatObjectMetadataMaps } =
@@ -165,11 +229,12 @@ export class AgentChatAssistantPolicyService {
       return AgentChatAudience.CONVERSATION;
     }
 
-    const [threadShares, audienceMemberCount] = await Promise.all([
-      this.recordShareStorageService.findByRecordIds({
+    const [hasSharedAudience, audienceMemberCount] = await Promise.all([
+      this.recordSharingPermissionsService.isRecordSharedBeyondMember({
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
-        recordIds: [thread.id],
+        recordId: thread.id,
+        workspaceMemberId: thread.workspaceMemberId,
       }),
       this.participantService.countMembers({
         workspaceId,
@@ -181,11 +246,6 @@ export class AgentChatAssistantPolicyService {
         ],
       }),
     ]);
-    const hasSharedAudience = threadShares.some(
-      ({ principalType, principalId }) =>
-        principalType !== RecordSharePrincipalType.WORKSPACE_MEMBER ||
-        principalId !== thread.workspaceMemberId,
-    );
 
     return !hasSharedAudience && audienceMemberCount <= 1
       ? AgentChatAudience.ASSISTANT_CHAT

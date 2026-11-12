@@ -1,6 +1,5 @@
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
-import { type TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 import { buildTwoFactorAuthenticationMethodSummary } from './two-factor-authentication-method.presenter';
@@ -10,18 +9,11 @@ describe('buildTwoFactorAuthenticationMethodSummary', () => {
     id: string,
     status: OTPStatus,
     strategy: TwoFactorAuthenticationStrategy,
-  ): TwoFactorAuthenticationMethodEntity =>
-    ({
-      id,
-      status,
-      strategy,
-      userWorkspaceId: 'uw-123',
-      userWorkspace: {} as any,
-      secret: 'secret',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: new Date(),
-    }) as unknown as TwoFactorAuthenticationMethodEntity;
+  ) => ({
+    id,
+    status,
+    strategy,
+  });
 
   it('should return undefined when methods is undefined', () => {
     const result = buildTwoFactorAuthenticationMethodSummary(undefined);

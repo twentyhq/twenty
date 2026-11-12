@@ -8,10 +8,12 @@ export type MailboxState = {
   highestModSeq?: bigint;
 };
 
+type MailboxStateClient = Pick<ImapFlow, 'status' | 'search'>;
+
 // David.fx and other non-RFC servers omit the required UIDNEXT on SELECT;
 // fall back to STATUS, then the highest live UID, so the sync range isn't empty.
 const resolveUidNext = async (
-  client: ImapFlow,
+  client: MailboxStateClient,
   folderPath: string,
   mailboxUidNext: number | undefined,
 ): Promise<number> => {
@@ -35,7 +37,7 @@ const resolveUidNext = async (
 };
 
 export const resolveMailboxState = async (
-  client: ImapFlow,
+  client: MailboxStateClient,
   folderPath: string,
   mailbox: NonNullable<ImapFlow['mailbox']>,
 ): Promise<MailboxState> => {

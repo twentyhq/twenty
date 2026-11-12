@@ -3,7 +3,7 @@ import { type ChartValueRange } from '@/page-layout/widgets/graph/types/ChartVal
 import { calculateValueRangeFromValues } from '@/page-layout/widgets/graph/utils/calculateValueRangeFromValues';
 
 export const calculateValueRangeFromLineChartSeries = (
-  data: LineChartSeriesWithColor[],
+  data: Pick<LineChartSeriesWithColor, 'data'>[],
 ): ChartValueRange => {
   const values: number[] = [];
 

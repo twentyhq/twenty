@@ -1,7 +1,7 @@
 import { type ApplicationManifest } from 'twenty-shared/application';
 
 export const toGalleryImagePaths = (
-  application: ApplicationManifest | undefined,
+  application: Partial<ApplicationManifest> | undefined,
 ): string[] => {
   const galleryImages = application?.galleryImages;
 

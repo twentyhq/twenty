@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { isDefined } from 'twenty-shared/utils';
 import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -555,6 +556,41 @@ describe('Chat channel access and triage through the authenticated API', () => {
       { principalType: 'ROLE', sourceId: channelId },
     ]);
   });
+
+  it.each(['other', 'private'] as const)(
+    "drops a destroyed chat's channel grants when its id comes back in the %s scope",
+    async (destination) => {
+      const channelId = await createChannel();
+      const recreatedChannelId =
+        destination === 'other' ? await createChannel() : undefined;
+      const threadId = await createThreadInChannel(channelId);
+
+      createdThreadIds.splice(createdThreadIds.indexOf(threadId), 1);
+      await destroyAgentChatThread({ threadId });
+
+      expect(await readChannelGrants(threadId)).toEqual([
+        { principalType: 'ROLE', sourceId: channelId },
+      ]);
+
+      const threadService = getAppProviderByClassName<AgentChatThreadService>(
+        'AgentChatThreadService',
+      );
+
+      await threadService.createThreadIfMissing({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: JANE,
+        threadId,
+        channelId: recreatedChannelId,
+      });
+      createdThreadIds.push(threadId);
+
+      expect(await readChannelGrants(threadId)).toEqual(
+        isDefined(recreatedChannelId)
+          ? [{ principalType: 'ROLE', sourceId: recreatedChannelId }]
+          : [],
+      );
+    },
+  );
 
   it('refuses a role from outside the workspace', async () => {
     const response = await makeMetadataApiRequest({

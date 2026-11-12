@@ -1,7 +1,9 @@
 import { computeObjectNavigationTargetBackfill } from 'src/database/commands/upgrade-version-command/2-35/utils/compute-object-navigation-target-backfill.util';
+import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const NOW = '2026-08-24T00:00:00.000Z';
@@ -11,7 +13,12 @@ const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   '20202020-1111-1111-1111-11111111c0c0';
 
 const buildFlatCommandMenuItem = (
-  overrides: Partial<FlatCommandMenuItem> & Pick<FlatCommandMenuItem, 'id'>,
+  overrides: Partial<Omit<FlatCommandMenuItem, 'payload'>> &
+    Pick<FlatCommandMenuItem, 'id'> & {
+      payload?:
+        | FlatCommandMenuItem['payload']
+        | ObjectMetadataCommandMenuItemPayload;
+    },
 ): FlatCommandMenuItem =>
   ({
     universalIdentifier: overrides.id,
@@ -35,18 +42,18 @@ const buildFlatCommandMenuItemMaps = (
   universalIdentifiersByApplicationId: {},
 });
 
-const flatObjectMetadataMaps = {
+const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
   byUniversalIdentifier: {
-    [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: {
+    [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER]: getFlatObjectMetadataMock({
       id: COMPANY_OBJECT_ID,
       universalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-    },
+    }),
   },
   universalIdentifierById: {
     [COMPANY_OBJECT_ID]: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
   },
   universalIdentifiersByApplicationId: {},
-} as unknown as FlatEntityMaps<FlatObjectMetadata>;
+};
 
 describe('computeObjectNavigationTargetBackfill', () => {
   it('derives the target from the object navigation payload', () => {
@@ -123,7 +130,7 @@ describe('computeObjectNavigationTargetBackfill', () => {
           id: 'command-1',
           payload: {
             objectMetadataItemId: 'deleted-object',
-          } as unknown as FlatCommandMenuItem['payload'],
+          },
         }),
       ]),
       flatObjectMetadataMaps,

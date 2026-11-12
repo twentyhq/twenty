@@ -10,7 +10,7 @@ import {
 type MockPointOverrides = {
   seriesId: string;
   dataX?: string | number;
-  dataY?: number | string | null;
+  dataY: number | string | null;
   pointY?: number;
 };
 
@@ -23,8 +23,14 @@ const createMockPoint = ({
   const fallbackValue = dataY ?? pointY ?? 0;
   return {
     id: `${seriesId}-${dataX}`,
+    indexInSeries: 0,
+    absIndex: 0,
+    seriesIndex: 0,
     seriesId,
-    x: dataX,
+    seriesColor: '#color',
+    color: '#color',
+    borderColor: '#color',
+    x: 0,
     y: pointY ?? Number(dataY ?? 0),
     data: {
       x: dataX,
@@ -32,29 +38,46 @@ const createMockPoint = ({
       xFormatted: String(dataX),
       yFormatted: String(fallbackValue),
     },
-  } as unknown as Point<LineSeries>;
+  };
 };
 
 const createMockSlice = (
   points: Point<LineSeries>[],
-): SliceTooltipProps<LineSeries>['slice'] =>
-  ({
-    id: 'slice-1',
-    points,
-  }) as unknown as SliceTooltipProps<LineSeries>['slice'];
+): SliceTooltipProps<LineSeries>['slice'] => ({
+  id: 'slice-1',
+  x0: 0,
+  x: 0,
+  y0: 0,
+  y: 0,
+  width: 0,
+  height: 0,
+  points,
+});
 
-const createSeries = (key: string): LineChartEnrichedSeries =>
-  ({
-    key,
-    label: key,
-    data: [],
-    colorScheme: {
-      name: 'test',
-      solid: '#solid',
-      variations: Array(12).fill('#v0'),
-    },
-    areaFillId: `area-${key}`,
-  }) as unknown as LineChartEnrichedSeries;
+const createSeries = (key: string): LineChartEnrichedSeries => ({
+  key,
+  label: key,
+  data: [],
+  colorScheme: {
+    name: 'test',
+    solid: '#solid',
+    variations: [
+      '#v0',
+      '#v1',
+      '#v2',
+      '#v3',
+      '#v4',
+      '#v5',
+      '#v6',
+      '#v7',
+      '#v8',
+      '#v9',
+      '#v10',
+      '#v11',
+    ],
+  },
+  areaFillId: `area-${key}`,
+});
 
 describe('getLineChartTooltipData', () => {
   const formatOptions: GraphValueFormatOptions = {};
@@ -129,10 +152,10 @@ describe('getLineChartTooltipData', () => {
     ]);
   });
 
-  it('should fall back to point.y when data.y is undefined', () => {
+  it('should fall back to point.y when data.y is null', () => {
     const enrichedSeries = [createSeries('series1')];
     const slice = createMockSlice([
-      createMockPoint({ seriesId: 'series1', dataY: undefined, pointY: 7 }),
+      createMockPoint({ seriesId: 'series1', dataY: null, pointY: 7 }),
     ]);
 
     const result = getLineChartTooltipData({

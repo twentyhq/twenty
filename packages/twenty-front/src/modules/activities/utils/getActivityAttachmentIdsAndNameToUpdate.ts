@@ -14,7 +14,9 @@ export const getActivityAttachmentIdsAndNameToUpdate = (
 ) => {
   const activityAttachmentsNameAndPaths =
     getActivityAttachmentPathsAndName(newActivityBody);
-  if (activityAttachmentsNameAndPaths.length === 0) return [];
+  if (activityAttachmentsNameAndPaths.length === 0) {
+    return [];
+  }
 
   const attachmentsWithFile = filterAttachmentsWithFile(oldActivityAttachments);
 

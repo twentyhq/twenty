@@ -3,6 +3,7 @@ import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadCom
 import { ChatThreadDisconnectedBanner } from '@/activities/emails/components/ChatThreadDisconnectedBanner';
 import { ChatThreadMessages } from '@/activities/emails/components/ChatThreadMessages';
 import { useChatThreadCounterparts } from '@/activities/emails/hooks/useChatThreadCounterparts';
+import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
 import { useStickToBottomScroll } from '@/activities/emails/hooks/useStickToBottomScroll';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -20,8 +21,18 @@ import {
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const StyledChatThreadBody = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+`;
 
 type ChatThreadWidgetContentProps = {
   messageThreadId: string;
@@ -43,6 +54,7 @@ export const ChatThreadWidgetContent = ({
   const { messageChannel, connectedAccount } =
     useReplyConnectedAccount(messageChannelId);
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
+  const { sendAppChannelMessage } = useSendAppChannelMessage();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
@@ -81,42 +93,54 @@ export const ChatThreadWidgetContent = ({
   return (
     <StyledWidgetContentContainer>
       <WidgetRelationsHeader />
-      {isDisconnected &&
-        isDefined(connectionProvider) &&
-        isDefined(connectedAccount.applicationId) && (
-          <ChatThreadDisconnectedBanner
-            applicationId={connectedAccount.applicationId}
-            connectionProviderName={connectionProvider.name}
-            channelName={connectionProvider.displayName}
-            connectedAccountId={connectedAccount.id}
-            canReconnect={canReconnect}
+      <StyledChatThreadBody>
+        {isDisconnected &&
+          isDefined(connectionProvider) &&
+          isDefined(connectedAccount.applicationId) && (
+            <ChatThreadDisconnectedBanner
+              applicationId={connectedAccount.applicationId}
+              connectionProviderName={connectionProvider.name}
+              channelName={connectionProvider.displayName}
+              connectedAccountId={connectedAccount.id}
+              canReconnect={canReconnect}
+            />
+          )}
+        <StyledWidgetScrollContainer
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+        >
+          <ChatThreadMessages messages={messages} />
+          <CustomResolverFetchMoreLoader
+            loading={loading}
+            onLastRowVisible={onFetchMoreMessages}
           />
-        )}
-      <StyledWidgetScrollContainer
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-      >
-        <ChatThreadMessages messages={messages} />
-        <CustomResolverFetchMoreLoader
-          loading={loading}
-          onLastRowVisible={onFetchMoreMessages}
-        />
-      </StyledWidgetScrollContainer>
-      {hasSendPermission && canChannelSend && isDefined(connectionProvider) && (
-        <ChatThreadComposer
-          key={messageThreadId}
-          messageThreadId={messageThreadId}
-          messageChannelId={messageChannel.id}
-          channelName={connectionProvider.displayName}
-          recipientName={
-            isDefined(firstCounterpart)
-              ? getDisplayNameFromParticipant({ participant: firstCounterpart })
-              : null
-          }
-          isDisconnected={isDisconnected}
-          onMessageSent={onMessageSent}
-        />
-      )}
+        </StyledWidgetScrollContainer>
+        {hasSendPermission &&
+          canChannelSend &&
+          isDefined(connectionProvider) && (
+            <ChatThreadComposer
+              key={messageThreadId}
+              channelName={connectionProvider.displayName}
+              recipientName={
+                isDefined(firstCounterpart)
+                  ? getDisplayNameFromParticipant({
+                      participant: firstCounterpart,
+                    })
+                  : null
+              }
+              isDisconnected={isDisconnected}
+              onSendMessage={({ id, text }) =>
+                sendAppChannelMessage({
+                  messageChannelId: messageChannel.id,
+                  messageThreadId,
+                  text,
+                  idempotencyKey: id,
+                })
+              }
+              onMessageSent={onMessageSent}
+            />
+          )}
+      </StyledChatThreadBody>
     </StyledWidgetContentContainer>
   );
 };

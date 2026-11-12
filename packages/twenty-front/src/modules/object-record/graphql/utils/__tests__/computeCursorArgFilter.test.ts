@@ -121,9 +121,14 @@ describe('computeCursorArgFilter', () => {
   });
 
   it('should ignore nested values that are not order-by directions', () => {
-    const orderBy = [
-      { name: { firstName: 'AscNullsFirst', metadata: 'not-a-direction' } },
-    ] as unknown as RecordGqlOperationOrderBy;
+    const orderBy: RecordGqlOperationOrderBy = [
+      {
+        name: {
+          firstName: 'AscNullsFirst',
+          metadata: { source: 'AscNullsFirst' },
+        },
+      },
+    ];
 
     const result = computeCursorArgFilter({
       orderBy,
@@ -167,7 +172,7 @@ describe('computeCursorArgFilter', () => {
   });
 
   it('should fall back to the id tie-breaker when there are no order-by fields', () => {
-    const orderBy = [{}] as unknown as RecordGqlOperationOrderBy;
+    const orderBy = [{}];
 
     const result = computeCursorArgFilter({
       orderBy,

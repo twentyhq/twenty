@@ -182,7 +182,9 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
       },
     };
 
-    const result = await updateOneFieldMetadata({
+    const result = await updateOneFieldMetadata<
+      FieldMetadataDTO & { morphRelations: RelationDTO[] }
+    >({
       expectToFail: false,
       input,
       gqlFields: `
@@ -206,10 +208,7 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
       `,
     });
 
-    const updateOneField = result.data
-      ?.updateOneField as unknown as FieldMetadataDTO & {
-      morphRelations: RelationDTO[];
-    };
+    const updateOneField = result.data?.updateOneField;
 
     expect(updateOneField?.morphRelations.length).toBe(3);
 
@@ -257,7 +256,9 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
       },
     };
 
-    const result = await updateOneFieldMetadata({
+    const result = await updateOneFieldMetadata<
+      FieldMetadataDTO & { morphRelations: RelationDTO[] }
+    >({
       expectToFail: false,
       input,
       gqlFields: `
@@ -279,10 +280,7 @@ describe('updateOne FieldMetadataService morph relation fields v2 - Add one targ
       `,
     });
 
-    const updateOneField = result.data
-      ?.updateOneField as unknown as FieldMetadataDTO & {
-      morphRelations: RelationDTO[];
-    };
+    const updateOneField = result.data?.updateOneField;
 
     const morphRelationsLabels = updateOneField.morphRelations.map(
       (morphRelation) => morphRelation.sourceFieldMetadata.label,

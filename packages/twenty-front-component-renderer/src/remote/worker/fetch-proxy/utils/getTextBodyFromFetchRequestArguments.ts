@@ -4,8 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { isRequestObject } from '@/remote/worker/fetch-proxy/utils/isRequestObject';
 import { isTextContentType } from '@/remote/worker/fetch-proxy/utils/isTextContentType';
 
+type RequestWithReadableBody = Pick<Request, 'headers'> & {
+  clone: () => Pick<Request, 'text'>;
+};
+
 const getRequestInputBody = async (
-  input: Request,
+  input: RequestWithReadableBody,
 ): Promise<string | undefined> => {
   const requestBody = await input.clone().text();
 
@@ -25,7 +29,7 @@ const getRequestInputBody = async (
 };
 
 export const getTextBodyFromFetchRequestArguments = async (
-  input: RequestInfo | URL,
+  input: string | URL | RequestWithReadableBody,
   init: RequestInit | undefined,
 ): Promise<string | undefined> => {
   const initBody = init?.body;

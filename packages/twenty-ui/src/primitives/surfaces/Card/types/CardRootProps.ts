@@ -4,4 +4,6 @@ export type CardRootProps = useRender.ComponentProps<'div'> & {
   fullWidth?: boolean;
   backgroundColor?: string;
   variant?: 'default' | 'compact';
+  borderStyle?: 'solid' | 'dashed';
+  isSelected?: boolean;
 };

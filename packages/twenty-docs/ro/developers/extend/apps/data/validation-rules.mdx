@@ -9,6 +9,8 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 O regulă de validare este o condiție aplicată unei înregistrări. Când este evaluată ca falsă, Twenty respinge înregistrarea și afișează mesajul regulii.
 
+Pentru a configura regulile în Setări, consultați [ghidul utilizatorului pentru regulile de validare](/ro/user-guide/data-model/capabilities/validation-rules).
+
 <Note>
   Regulile de validare sunt aplicate numai în spațiile de lucru în care funcționalitatea este disponibilă.
 </Note>
@@ -54,11 +56,12 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 * `field('name')` citește un câmp, iar `field('company.employees')` citește un câmp printr-o relație many-to-one.
 * `now` reprezintă data și ora curente.
+* `previous('stage')` citește valoarea stocată înainte de actualizare, pentru a restricționa tranzițiile. Este gol atunci când este creată o înregistrare și citește propriile câmpuri ale înregistrării, nu câmpuri printr-o relație.
 * `and`, `or` și `not` combină condiții.
 * `eq`, `notEq`, `gt`, `gte`, `lt` și `lte` compară valori.
 * `add`, `subtract`, `multiply` și `divide` calculează valori.
 * `isIn(field('stage'), ['NEW', 'WON'])` verifică o valoare într-o listă.
-* Funcții precum `isNonEmptyString` și `isDefined`.
+* Funcții precum `isNonEmptyString` și `isDefined`, precum și funcțiile pentru dată `daysSince(date)` (zile întregi de la dată, negative pentru o dată viitoare) și `isInRelativeDateRange(date, direction, amount, unit)`, cu direcția `'PAST'`, `'NEXT'` sau `'THIS'` și unitatea `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` sau `'YEAR'`, precum `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 Constructorul produce un șir simplu, pe care [`twenty app pull`](/ro/developers/extend/apps/operations/cli) îl scrie înapoi. Puteți scrie acel șir direct:
 
@@ -66,7 +69,12 @@ Constructorul produce un șir simplu, pe care [`twenty app pull`](/ro/developers
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Șirurile folosesc `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` și `in [...]`, nu `&&` sau `||`. Textul se introduce între ghilimele simple sau duble.
+Șirurile folosesc `and`, `or`, `not`, `==`, `!=`, `\<`, `\<=`, `>`, `>=`, `+`, `-`, `*`, `/` și `in [...]`, nu `&&` sau `||`. Textul se introduce între ghilimele simple sau duble. O valoare anterioară este scrisă `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
 
 O regulă poate citi câmpurile pe care le declarați și [câmpurile de sistem](/ro/developers/extend/apps/data/system-fields) pe care le pune la dispoziție Twenty, precum `createdAt`. CLI-ul verifică expresiile în raport cu propriile obiecte ale aplicației dvs. Pentru un obiect din afara aplicației dvs., verifică doar sintaxa, iar serverul verifică câmpurile în momentul sincronizării.
 
@@ -83,4 +91,4 @@ O regulă poate citi câmpurile pe care le declarați și [câmpurile de sistem]
 
 O sincronizare păstrează valoarea `isActive` a unei reguli existente, astfel încât o regulă pe care un administrator al spațiului de lucru a dezactivat-o rămâne dezactivată. Doar regulile noi încep ca active.
 
-<PageBanner illustration="dev-contribute" />
+<PageBanner illustration="card-page-validation-rules" />

@@ -3,9 +3,10 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
@@ -15,25 +16,30 @@ const buildFlatFieldMetadata = (
     name: string;
     type: FieldMetadataType;
   },
-): FlatFieldMetadata => flatFieldMetadata as unknown as FlatFieldMetadata;
+): FlatFieldMetadata =>
+  getFlatFieldMetadataMock({
+    universalIdentifier: flatFieldMetadata.id,
+    objectMetadataId: 'person-object-id',
+    ...flatFieldMetadata,
+  });
 
 const buildFlatFieldMetadataMaps = (
   flatFieldMetadatas: FlatFieldMetadata[],
-): FlatEntityMaps<FlatFieldMetadata> =>
-  ({
-    universalIdentifierById: Object.fromEntries(
-      flatFieldMetadatas.map((flatFieldMetadata) => [
-        flatFieldMetadata.id,
-        flatFieldMetadata.id,
-      ]),
-    ),
-    byUniversalIdentifier: Object.fromEntries(
-      flatFieldMetadatas.map((flatFieldMetadata) => [
-        flatFieldMetadata.id,
-        flatFieldMetadata,
-      ]),
-    ),
-  }) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+): FlatEntityMaps<FlatFieldMetadata> => ({
+  universalIdentifierById: Object.fromEntries(
+    flatFieldMetadatas.map((flatFieldMetadata) => [
+      flatFieldMetadata.id,
+      flatFieldMetadata.id,
+    ]),
+  ),
+  byUniversalIdentifier: Object.fromEntries(
+    flatFieldMetadatas.map((flatFieldMetadata) => [
+      flatFieldMetadata.id,
+      flatFieldMetadata,
+    ]),
+  ),
+  universalIdentifiersByApplicationId: {},
+});
 
 describe('buildWorkspaceTableShape', () => {
   const flatFieldMetadatas = [
@@ -71,15 +77,16 @@ describe('buildWorkspaceTableShape', () => {
     }),
   ];
 
-  const flatObjectMetadata = {
+  const flatObjectMetadata = getFlatObjectMetadataMock({
     id: 'person-object-id',
+    universalIdentifier: 'person-object-id',
     nameSingular: 'person',
     applicationUniversalIdentifier:
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     fieldIds: flatFieldMetadatas.map(
       (flatFieldMetadata) => flatFieldMetadata.id,
     ),
-  } as unknown as FlatObjectMetadata;
+  });
 
   const tableShape = buildWorkspaceTableShape({
     workspaceId: WORKSPACE_ID,
@@ -95,11 +102,11 @@ describe('buildWorkspaceTableShape', () => {
   it('should prefix custom object tables with an underscore', () => {
     const customTableShape = buildWorkspaceTableShape({
       workspaceId: WORKSPACE_ID,
-      flatObjectMetadata: {
+      flatObjectMetadata: getFlatObjectMetadataMock({
         ...flatObjectMetadata,
         applicationUniversalIdentifier: 'a-custom-application',
         nameSingular: 'rocket',
-      } as unknown as FlatObjectMetadata,
+      }),
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps(flatFieldMetadatas),
     });
 

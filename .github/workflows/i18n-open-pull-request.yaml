@@ -33,9 +33,10 @@ jobs:
           private-key: ${{ secrets.TWENTY_PR_PRIVATE_KEY }}
           owner: twentyhq
           repositories: twenty
+          permission-contents: write
           permission-pull-requests: write
 
-      - name: Create a pull request
+      - name: Open a pull request or add an app commit to the open one
         env:
           GH_TOKEN: ${{ steps.twenty-pr-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
@@ -45,6 +46,15 @@ jobs:
           OPEN_PRS=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)
           if [ "$OPEN_PRS" = 0 ]; then
             gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
+          else
+            HEAD_SHA=$(gh api "repos/$GH_REPO/git/ref/heads/$BRANCH" --jq .object.sha)
+            TREE_SHA=$(gh api "repos/$GH_REPO/git/commits/$HEAD_SHA" --jq .tree.sha)
+            COMMIT_SHA=$(gh api "repos/$GH_REPO/git/commits" \
+              -f message='chore: run CI on the latest translations' \
+              -f tree="$TREE_SHA" \
+              -f "parents[]=$HEAD_SHA" \
+              --jq .sha)
+            gh api -X PATCH "repos/$GH_REPO/git/refs/heads/$BRANCH" -f sha="$COMMIT_SHA" --silent
           fi
 
       - name: Mint twenty-infra dispatch token

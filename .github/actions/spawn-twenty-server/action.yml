@@ -7,8 +7,9 @@ description: >
     - local: a server built from the monorepo's current files (port 3000). It
       brings up its own postgres + redis via docker, so it works inside any job
       without declaring job-level services.
-  Both sources expose the same server-url / api-key contract so callers never
-  branch on how the server came up.
+  Both sources expose the same server-url / api-key contract and build the CLI
+  from this checkout into TWENTY_CLI, so callers never branch on how the server
+  came up.
 
 inputs:
   source:
@@ -68,11 +69,9 @@ runs:
         done
 
     - name: Install dependencies
-      if: inputs.source == 'local'
       uses: ./.github/actions/yarn-install
 
     - name: Restore server build cache
-      if: inputs.source == 'local'
       uses: ./.github/actions/restore-cache
       with:
         key: ${{ inputs.server-build-cache-key }}
@@ -83,6 +82,13 @@ runs:
       run: |
         npx nx build twenty-shared
         npx nx build twenty-server
+
+    # Without the nx daemon, any later nx build rewrites twenty-shared/dist and crashes a booting worker
+    - name: Build Twenty CLI from checkout
+      shell: bash
+      run: |
+        npx nx build twenty-cli
+        echo "TWENTY_CLI=$GITHUB_WORKSPACE/packages/twenty-cli/dist/cli.cjs" >> "$GITHUB_ENV"
 
     - name: Write server env and create databases
       if: inputs.source == 'local'

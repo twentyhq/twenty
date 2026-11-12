@@ -4,7 +4,7 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { updateNonTerminalCallRecordingState } from 'src/logic-functions/data/update-non-terminal-call-recording-state.util';
 
 export const markCallRecordingNotRecorded = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   {
     callRecordingId,
     failureReason,

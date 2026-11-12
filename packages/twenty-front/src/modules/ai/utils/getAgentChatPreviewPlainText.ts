@@ -1,13 +1,31 @@
 import { isString } from '@sniptt/guards';
+import { isAgentChatAssistantReference } from 'twenty-shared/ai';
 
+import { escapeMarkdownForChatReference } from '@/ai/utils/escapeMarkdownForChatReference';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 // The server cuts the text short, which can leave half a reference at the end
-export const getAgentChatPreviewPlainText = (markdown: string): string =>
+export const getAgentChatPreviewPlainText = ({
+  markdown,
+  assistantDisplayName,
+}: {
+  markdown: string;
+  assistantDisplayName: string;
+}): string =>
   getPlainTextFromMarkdown(
     getChatReferenceSegments(markdown)
-      .map((segment) => (isString(segment) ? segment : segment.displayName))
+      .map((segment) => {
+        if (isString(segment)) {
+          return segment;
+        }
+
+        if (isAgentChatAssistantReference(segment)) {
+          return escapeMarkdownForChatReference(`@${assistantDisplayName}`);
+        }
+
+        return segment.displayName;
+      })
       .join('')
       .replace(/\[\[[^\]]*$/, ''),
   );

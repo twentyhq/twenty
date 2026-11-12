@@ -1,5 +1,3 @@
-import type Stripe from 'stripe';
-
 import { findNextPaymentAttempt } from './find-next-payment-attempt';
 
 const RETRY_AT = 1786363200;
@@ -7,7 +5,7 @@ const RETRY_AT = 1786363200;
 const stripeWithOpenInvoices = (invoices: unknown[]) => {
   const list = jest.fn().mockResolvedValue({ data: invoices });
 
-  return { stripe: { invoices: { list } } as unknown as Stripe, list };
+  return { stripe: { invoices: { list } }, list };
 };
 
 describe('findNextPaymentAttempt', () => {

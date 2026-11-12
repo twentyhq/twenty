@@ -6,7 +6,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
-export const findViews = async ({
+export const findViews = async <TView = ViewEntity>({
   objectMetadataId,
   gqlFields,
   expectToFail,
@@ -15,7 +15,7 @@ export const findViews = async ({
   gqlFields?: string;
   expectToFail?: boolean;
 }): CommonResponseBody<{
-  getViews: ViewEntity[];
+  getViews: TView[];
 }> => {
   const graphqlOperation = findViewsQueryFactory({
     objectMetadataId,

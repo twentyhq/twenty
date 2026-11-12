@@ -74,6 +74,8 @@ export const fromCreateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       rowLevelPermissionPredicateGroupId:
         input.rowLevelPermissionPredicateGroupId ?? null,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
+      rowLevelPermissionRuleId: null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
       positionInRowLevelPermissionPredicateGroup:
         input.positionInRowLevelPermissionPredicateGroup ?? null,
       createdAt,

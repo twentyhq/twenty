@@ -1,0 +1,90 @@
+---
+title: AssistantAvatar
+description: Un personaj asistent cu formă, expresie, culoare, dimensiune și animație inactivă configurabile.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AssistantAvatarReference from '/snippets/ui/generated/components/data-display/assistant-avatar.mdx';
+
+## Prezentare generală
+
+Redă un personaj de asistent dintr-o formă de corp, față, culoare din paletă și dimensiune. Componenta afișează valorile furnizate; aplicația ta gestionează selecția și persistența.
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--display" title="Personajul de asistent lângă numele său" height={100} />
+
+## Utilizare
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AssistantLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <AssistantAvatar shape="circle" face="default" color="blue" size={24} />
+    <Text>Workspace assistant</Text>
+  </Text>
+);
+```
+
+## Opțiuni vizuale
+
+Alege formele independent de expresii și culori.
+
+| Proprietate  | Valori                                                                                     | Implicit   |
+| ------------ | ------------------------------------------------------------------------------------------ | ---------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`   |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `implicit` |
+| `culoare`    | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `albastru` |
+| `dimensiune` | `14`, `16`, `20`, `24`, `40` pixeli                                                        | `24`       |
+| `isAnimated` | `true`, `false`                                                                            | `fals`     |
+
+Corpul și fața folosesc tokenurile de temă ale paletei selectate și urmează tema luminoasă sau întunecată din jur. Setează `size` pentru un personaj pătrat. Atributele native, evenimentele, `className`, `style` și `ref` vizează elementul span exterior; stilurile explicite îi suprascriu dimensiunile și valorile implicite ale paletei.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const CustomAssistant = () => (
+  <AssistantAvatar
+    shape="cloud"
+    face="happy"
+    color="sky"
+    size={40}
+    aria-label="Workspace assistant"
+  />
+);
+```
+
+## Animație în repaus
+
+Setați `isAnimated` pentru a reda bucla de repaus a expresiei selectate. Default clipește și aruncă priviri în lateral, Happy își ridică ochii, Wink închide un ochi, Surprised își mărește ochii, Sleepy afișează un semn de somn, iar Love își face ochii în formă de inimă să pulseze. Corpul rămâne nemișcat.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--idle-faces" title="Animații în repaus pentru fiecare expresie" height={180} />
+
+Animația este dezactivată în mod implicit. Setați `isAnimated={false}` pentru a afișa expresia statică, inclusiv clipirea vizibilă. Când browserul preferă mișcare redusă, componenta afișează expresia statică chiar și atunci când `isAnimated` este activat. Preferința se aplică și dacă se modifică în timp ce personajul este afișat.
+
+Aplicația controlează comutatorul animației. Această proprietate controlează prezentarea în repaus și nu reprezintă ascultarea, vorbirea, gândirea sau altă activitate a asistentului.
+
+## Accesibilitate
+
+Personajul este decorativ atunci când nu are un nume accesibil, ca în exemplul de utilizare etichetat. Pentru un personaj independent, furnizează `aria-label` sau `aria-labelledby`; elementul rădăcină expune apoi rolul de imagine. Corpul și fața rămân ascunse pentru tehnologiile de asistență, astfel încât personajul să fie anunțat o singură dată.
+
+Setează explicit `aria-hidden` atunci când trebuie să suprascrii valoarea implicită bazată pe nume, cum ar fi ascunderea unui personaj cu nume lângă un text vizibil echivalent.
+
+Plasează personajul într-un buton sau link cu nume atunci când însoțește o acțiune. Aplicația gestionează controlul, eticheta și comportamentul acestuia.
+
+## Proprietăți
+
+<AssistantAvatarReference />
+
+<PageBanner illustration="page-cover-assistant-avatar" />

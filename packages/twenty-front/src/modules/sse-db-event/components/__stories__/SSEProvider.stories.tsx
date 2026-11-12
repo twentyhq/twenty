@@ -1,4 +1,5 @@
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
@@ -72,6 +73,10 @@ const meta: Meta<typeof SSEProvider> = {
     const store = jotaiStore;
 
     store.set(currentUserState.atom, mockedUserData);
+    store.set(
+      currentUserWorkspaceState.atom,
+      mockedUserData.currentUserWorkspace,
+    );
     store.set(currentWorkspaceState.atom, mockCurrentWorkspace);
     store.set(isCookieAuthActiveState.atom, true);
     setTestObjectMetadataItemsInMetadataStore(

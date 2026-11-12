@@ -1,5 +1,6 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH } from 'twenty-shared/ai';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 import { assertUnreachable } from 'twenty-shared/utils';
 
@@ -19,6 +20,7 @@ export enum WorkspaceExceptionCode {
   CUSTOM_DOMAIN_NOT_FOUND = 'CUSTOM_DOMAIN_NOT_FOUND',
   APPLICATION_UNINSTALL_IN_PROGRESS = 'APPLICATION_UNINSTALL_IN_PROGRESS',
   AI_MODEL_PIN_NOT_VALID = 'AI_MODEL_PIN_NOT_VALID',
+  AI_CHAT_ASSISTANT_PROFILE_NOT_VALID = 'AI_CHAT_ASSISTANT_PROFILE_NOT_VALID',
   EVENT_LOG_RETENTION_DISABLED = 'EVENT_LOG_RETENTION_DISABLED',
 }
 
@@ -52,6 +54,8 @@ const getWorkspaceExceptionUserFriendlyMessage = (
       return msg`Application cleanup is still in progress. Please try again.`;
     case WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID:
       return msg`This model cannot be used for this tier.`;
+    case WorkspaceExceptionCode.AI_CHAT_ASSISTANT_PROFILE_NOT_VALID:
+      return msg`Enter a name between 1 and ${AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options.`;
     case WorkspaceExceptionCode.EVENT_LOG_RETENTION_DISABLED:
       return msg`Changing log retention requires an Organization subscription.`;
     default:

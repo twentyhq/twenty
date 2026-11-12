@@ -246,9 +246,8 @@ describe('WorkspaceSelectQueryBuilder where', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
 
     expect(() =>
-      queryBuilder.where(
-        new Map([['companyId', 'company-1']]) as unknown as string,
-      ),
+      // @ts-expect-error plain JS callers can pass a condition shape the types forbid
+      queryBuilder.where(new Map([['companyId', 'company-1']])),
     ).toThrow(TwentyOrmException);
   });
 });

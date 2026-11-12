@@ -1,4 +1,4 @@
-import { ErrorCode, type WebClient } from '@slack/web-api';
+import { ErrorCode } from '@slack/web-api';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { type SlackRosterMember } from 'src/logic-functions/types/slack-roster-member.type';
@@ -17,7 +17,7 @@ const buildSlackClient = (
   }
 
   return {
-    slackClient: { users: { list: usersListMock } } as unknown as WebClient,
+    slackClient: { users: { list: usersListMock } },
     usersListMock,
   };
 };
@@ -42,7 +42,7 @@ describe('collectSlackRosterMembers', () => {
       .mockResolvedValue({ members: [{ id: 'U1' }], response_metadata: {} });
 
     const membersPromise = collectSlackRosterMembers({
-      slackClient: { users: { list: usersListMock } } as unknown as WebClient,
+      slackClient: { users: { list: usersListMock } },
       rateLimitRetryBudgetMs: 60_000,
     });
 
@@ -59,7 +59,7 @@ describe('collectSlackRosterMembers', () => {
 
     await expect(
       collectSlackRosterMembers({
-        slackClient: { users: { list: usersListMock } } as unknown as WebClient,
+        slackClient: { users: { list: usersListMock } },
       }),
     ).rejects.toThrow('rate limited, retry in 30 seconds');
     expect(usersListMock).toHaveBeenCalledTimes(1);

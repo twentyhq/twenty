@@ -1,3 +1,4 @@
+import { type DynamicToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -5,29 +6,27 @@ import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-hist
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 
 const dynamicToolPart = (
-  overrides: Record<string, unknown> = {},
-): ExtendedUIMessagePart =>
-  ({
-    type: 'dynamic-tool',
-    toolName: 'unknown_remote_tool',
-    toolCallId: 'call_dyn_1',
-    state: 'output-available',
-    input: { query: 'hello' },
-    output: { ok: true },
-    ...overrides,
-  }) as unknown as ExtendedUIMessagePart;
+  overrides: Pick<
+    DynamicToolUIPart,
+    'providerExecuted' | 'callProviderMetadata'
+  > = {},
+): ExtendedUIMessagePart => ({
+  type: 'dynamic-tool',
+  toolName: 'unknown_remote_tool',
+  toolCallId: 'call_dyn_1',
+  state: 'output-available',
+  input: { query: 'hello' },
+  output: { ok: true },
+  ...overrides,
+});
 
-const staticToolPart = (
-  overrides: Record<string, unknown> = {},
-): ExtendedUIMessagePart =>
-  ({
-    type: 'tool-execute_tool',
-    toolCallId: 'call_static_1',
-    state: 'output-available',
-    input: { name: 'foo' },
-    output: { ok: true },
-    ...overrides,
-  }) as unknown as ExtendedUIMessagePart;
+const staticToolPart = (): ExtendedUIMessagePart => ({
+  type: 'tool-execute_tool',
+  toolCallId: 'call_static_1',
+  state: 'output-available',
+  input: { name: 'foo' },
+  output: { ok: true },
+});
 
 describe('AgentMessagePart mappers — dynamic-tool support', () => {
   it('persists a dynamic-tool part without throwing', () => {
@@ -61,12 +60,14 @@ describe('AgentMessagePart mappers — dynamic-tool support', () => {
   it('defaults a missing tool input to an empty object on persist (issue #21695)', () => {
     const [row] = mapUIMessagePartsToDBParts(
       [
-        staticToolPart({
+        {
+          type: 'tool-execute_tool',
+          toolCallId: 'call_static_1',
           state: 'output-error',
           input: undefined,
           output: undefined,
           errorText: 'Invalid input for tool execute_tool',
-        }),
+        },
       ],
       'message-1',
     );

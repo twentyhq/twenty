@@ -10,6 +10,8 @@ vi.mock('twenty-client-sdk/core', () => ({
   }),
 }));
 
+import { pickSelectedFields } from 'src/__tests__/pick-selected-fields';
+
 import onEmailInteraction from '../on-email-interaction';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
@@ -48,12 +50,28 @@ const setupQueryMock = (
   queryMock.mockImplementation((query) => {
     if (query.messageParticipants) {
       return Promise.resolve({
-        messageParticipants: buildPage(messageParticipants),
+        messageParticipants: buildPage(
+          messageParticipants.map((node) =>
+            pickSelectedFields({
+              record: node,
+              selection: query.messageParticipants.edges.node,
+            }),
+          ),
+        ),
       });
     }
 
     if (query.messages) {
-      return Promise.resolve({ messages: buildPage(messages) });
+      return Promise.resolve({
+        messages: buildPage(
+          messages.map((node) =>
+            pickSelectedFields({
+              record: node,
+              selection: query.messages.edges.node,
+            }),
+          ),
+        ),
+      });
     }
 
     if (query.people) {
@@ -212,6 +230,36 @@ describe('on-email-interaction handler', () => {
         message: { receivedAt: null },
       },
     ]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('ignores a draft email', async () => {
+    setupQueryMock([
+      {
+        messageId: MESSAGE_ID,
+        role: 'FROM',
+        workspaceMemberId: MEMBER_ID,
+        message: { receivedAt: RECEIVED_AT, isDraft: true },
+      },
+    ]);
+
+    await handler(
+      buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),
+    );
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('ignores a draft email without a sender or team member participant', async () => {
+    setupQueryMock(
+      [],
+      [{ id: MESSAGE_ID, receivedAt: RECEIVED_AT, isDraft: true }],
+    );
 
     await handler(
       buildBatch([{ personId: PERSON_ID, messageId: MESSAGE_ID }]),

@@ -9,7 +9,7 @@ export const buildRegistrationManifestUpdateFields = ({
   manifestApplication,
   existingGalleryImages,
 }: {
-  manifestApplication: ApplicationManifest | undefined;
+  manifestApplication: Partial<ApplicationManifest> | undefined;
   existingGalleryImages: ApplicationRegistrationGalleryImage[] | null;
 }) => {
   const displayFields =

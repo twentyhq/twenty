@@ -183,6 +183,18 @@ export const findTestWorkflowVersionId = async ({
   return version?.id;
 };
 
+export const findTestCoreWorkflowId = async (
+  workflow: TestApplicationWorkflow,
+): Promise<string | undefined> => {
+  const [coreWorkflow] = await globalThis.testDataSource.query(
+    `SELECT id FROM core.workflow
+     WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+    [SEED_APPLE_WORKSPACE_ID, workflow.universalIdentifier],
+  );
+
+  return coreWorkflow?.id;
+};
+
 export const countCoreWorkflows = async (
   workflow: TestApplicationWorkflow,
 ): Promise<number> => {

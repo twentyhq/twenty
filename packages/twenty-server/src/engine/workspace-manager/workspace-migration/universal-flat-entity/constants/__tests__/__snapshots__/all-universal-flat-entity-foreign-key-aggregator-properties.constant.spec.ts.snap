@@ -2,7 +2,9 @@
 
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
 {
-  "agent": [],
+  "agent": [
+    "navigationMenuItemUniversalIdentifiers",
+  ],
   "agentChatChannel": [
     "channelRoleUniversalIdentifiers",
     "navigationMenuItemUniversalIdentifiers",
@@ -21,7 +23,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "calendarEndViewUniversalIdentifiers",
     "mainGroupByFieldMetadataViewUniversalIdentifiers",
     "searchFieldMetadataUniversalIdentifiers",
+    "fieldMetadataOptionUniversalIdentifiers",
+    "rowLevelPermissionPredicateUniversalIdentifiers",
+    "relationRowLevelPermissionPredicateUniversalIdentifiers",
+    "workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers",
   ],
+  "fieldMetadataOption": [],
   "fieldPermission": [],
   "frontComponent": [],
   "index": [],
@@ -34,6 +41,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "indexMetadataUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
+    "rowLevelPermissionRuleUniversalIdentifiers",
     "viewUniversalIdentifiers",
     "searchFieldMetadataUniversalIdentifiers",
     "pageLayoutUniversalIdentifiers",
@@ -60,6 +68,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "fieldPermissionUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",
+    "rowLevelPermissionRuleUniversalIdentifiers",
     "agentChatChannelRoleUniversalIdentifiers",
   ],
   "rolePermissionFlag": [],
@@ -69,6 +78,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "childRowLevelPermissionPredicateGroupUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
+  "rowLevelPermissionRule": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
   "skill": [],
@@ -95,7 +105,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "viewGroup": [],
   "viewSort": [],
   "webhook": [],
-  "workflow": [],
+  "workflow": [
+    "navigationMenuItemUniversalIdentifiers",
+  ],
   "workflowVersion": [],
 }
 `;

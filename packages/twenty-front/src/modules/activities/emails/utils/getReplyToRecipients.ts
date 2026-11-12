@@ -9,7 +9,7 @@ export const getReplyToRecipients = ({
   message,
   connectedAccountHandle,
 }: {
-  message: EmailThreadMessageWithSender;
+  message: Pick<EmailThreadMessageWithSender, 'sender' | 'messageParticipants'>;
   connectedAccountHandle: string | null | undefined;
 }): string => {
   const senderHandle = message.sender?.handle ?? '';

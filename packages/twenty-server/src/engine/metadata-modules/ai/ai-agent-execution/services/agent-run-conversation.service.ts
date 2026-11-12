@@ -60,12 +60,16 @@ export class AgentRunConversationService {
         return false;
       }
     } else {
-      await this.conversationWriterService.runInTransaction(
+      await this.conversationWriterService.runInTransaction({
         workspaceId,
-        // two runs starting one keyed conversation can both find it missing
-        (scope) =>
-          scope.upsert('agentChatThread', { id: threadId, title }, ['id']),
-      );
+        threadId,
+        work: (scope) =>
+          scope.upsert({
+            name: 'agentChatThread',
+            values: { id: threadId, title },
+            conflictPaths: ['id'],
+          }),
+      });
     }
 
     return this.streamRecoveryService.tryClaimStream({
@@ -108,9 +112,10 @@ export class AgentRunConversationService {
       return null;
     }
 
-    return this.conversationWriterService.runInTransaction(
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
-      async (scope) => {
+      threadId,
+      work: async (scope) => {
         const turnId = await this.conversationWriterService.insertTurn({
           workspaceId,
           threadId,
@@ -121,24 +126,24 @@ export class AgentRunConversationService {
           scope,
         });
 
-        const takenMessageCount = await scope.update(
-          'agentMessage',
-          {
+        const takenMessageCount = await scope.update({
+          name: 'agentMessage',
+          where: {
             threadId,
             status: AgentMessageStatus.QUEUED,
             ...(isDefined(queuedMessageIds)
               ? { id: In(queuedMessageIds) }
               : {}),
           },
-          {
+          values: {
             status: AgentMessageStatus.SENT,
             turnId,
             processedAt: new Date().toISOString(),
           },
-        );
+        });
 
         if (requiresQueuedMessages && takenMessageCount === 0) {
-          await scope.delete('agentTurn', { id: turnId });
+          await scope.delete({ name: 'agentTurn', where: { id: turnId } });
 
           return null;
         }
@@ -175,7 +180,7 @@ export class AgentRunConversationService {
           hasTakenQueuedMessages: takenMessageCount > 0,
         };
       },
-    );
+    });
   }
 
   private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {

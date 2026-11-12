@@ -16,7 +16,10 @@ const StyledLogo = styled.span`
 `;
 
 type MessageChannelLogoProps = {
-  channel: TimelineThreadChannel | null | undefined;
+  channel:
+    | Pick<TimelineThreadChannel, 'type' | 'provider' | 'applicationId'>
+    | null
+    | undefined;
 };
 
 export const MessageChannelLogo = ({ channel }: MessageChannelLogoProps) => {

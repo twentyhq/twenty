@@ -1,6 +1,6 @@
 import { CHAT_REFERENCE_METADATA_NAME_REGEX } from '@/ai/constants/ChatReferenceMetadataNameRegex';
-import { CHAT_REFERENCE_UUID_REGEX } from '@/ai/constants/ChatReferenceUuidRegex';
 import { type ChatReferenceKind } from '@/ai/types/ChatReferenceKind';
+import { CHAT_REFERENCE_UUID_REGEX } from 'twenty-shared/ai';
 
 export const CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND: Record<
   ChatReferenceKind,

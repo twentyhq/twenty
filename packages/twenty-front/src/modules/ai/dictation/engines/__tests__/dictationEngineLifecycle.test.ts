@@ -25,16 +25,20 @@ const createDeferred = <TValue>() => {
   return { promise, resolve };
 };
 
+type FakeMediaStream = {
+  getTracks: () => { stop: jest.Mock }[];
+};
+
 const createFakeStream = () => {
   const stop = jest.fn();
 
   return {
-    stream: { getTracks: () => [{ stop }] } as unknown as MediaStream,
+    stream: { getTracks: () => [{ stop }] },
     stop,
   };
 };
 
-const mockGetUserMedia = (implementation: () => Promise<MediaStream>) => {
+const mockGetUserMedia = (implementation: () => Promise<FakeMediaStream>) => {
   Object.defineProperty(navigator, 'mediaDevices', {
     value: { getUserMedia: jest.fn(implementation) },
     configurable: true,
@@ -45,8 +49,8 @@ const mockGetUserMedia = (implementation: () => Promise<MediaStream>) => {
 const stubSpeechRecognition = () => {
   const instances: FakeRecognition[] = [];
 
-  (window as SpeechRecognitionTestWindow).SpeechRecognition =
-    function SpeechRecognition(this: FakeRecognition) {
+  Object.defineProperty(window, 'SpeechRecognition', {
+    value: function SpeechRecognition(this: FakeRecognition) {
       let isStarted = false;
 
       this.start = jest.fn(() => {
@@ -67,7 +71,9 @@ const stubSpeechRecognition = () => {
       };
 
       instances.push(this);
-    } as unknown as WebSpeechRecognitionConstructor;
+    },
+    configurable: true,
+  });
 
   return instances;
 };
@@ -81,8 +87,8 @@ const buildResultEvent = ({
 }) =>
   ({
     resultIndex: 0,
-    results: [Object.assign([{ transcript }], { isFinal })],
-  }) as unknown as WebSpeechRecognitionEvent;
+    results: [{ 0: { transcript }, isFinal }],
+  }) satisfies WebSpeechRecognitionEvent;
 
 describe('createWebSpeechDictationEngine', () => {
   let instances: FakeRecognition[] = [];
@@ -119,7 +125,7 @@ describe('createWebSpeechDictationEngine', () => {
   });
 
   it('does not start recognition when stopped during the microphone warm-up', async () => {
-    const deferred = createDeferred<MediaStream>();
+    const deferred = createDeferred<FakeMediaStream>();
     const { stream } = createFakeStream();
 
     mockGetUserMedia(() => deferred.promise);
@@ -135,7 +141,7 @@ describe('createWebSpeechDictationEngine', () => {
   });
 
   it('releases a microphone that arrives after the engine was disposed', async () => {
-    const deferred = createDeferred<MediaStream>();
+    const deferred = createDeferred<FakeMediaStream>();
     const { stream, stop } = createFakeStream();
 
     mockGetUserMedia(() => deferred.promise);
@@ -313,7 +319,7 @@ describe('createWebSpeechDictationEngine', () => {
     await engine.start();
     engine.stop();
 
-    const deferred = createDeferred<MediaStream>();
+    const deferred = createDeferred<FakeMediaStream>();
     const { stream } = createFakeStream();
 
     mockGetUserMedia(() => deferred.promise);

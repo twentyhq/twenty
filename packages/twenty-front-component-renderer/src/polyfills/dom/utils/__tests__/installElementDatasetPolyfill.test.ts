@@ -2,12 +2,11 @@ import { Window } from '@remote-dom/polyfill';
 
 import { installElementDatasetPolyfill } from '../installElementDatasetPolyfill';
 
-const createPolyfillElement = (): HTMLElement => {
+const createPolyfillElement = () => {
   const polyfillWindow = new Window();
 
   installElementDatasetPolyfill(polyfillWindow.Element.prototype);
-
-  return polyfillWindow.document.createElement('div') as unknown as HTMLElement;
+  return polyfillWindow.document.createElement('div');
 };
 
 describe('installElementDatasetPolyfill', () => {
@@ -61,13 +60,11 @@ describe('installElementDatasetPolyfill', () => {
 
   it('should refuse a read on the prototype itself', () => {
     const polyfillWindow = new Window();
-    const elementPrototype = polyfillWindow.Element.prototype as unknown as {
-      dataset: DOMStringMap;
-    };
+    const elementPrototype = polyfillWindow.Element.prototype;
 
     installElementDatasetPolyfill(elementPrototype);
 
-    expect(() => elementPrototype.dataset).toThrow(TypeError);
+    expect(() => Reflect.get(elementPrototype, 'dataset')).toThrow(TypeError);
   });
 
   it('should keep the inherited object behavior for names without a data attribute', () => {

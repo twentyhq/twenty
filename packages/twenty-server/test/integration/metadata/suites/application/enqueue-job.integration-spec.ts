@@ -86,6 +86,11 @@ const ENQUEUE_JOBS = gql`
       logicFunctionUniversalIdentifier
       enqueuedJobsCount
       jobIds
+      jobs {
+        jobId
+        sizeBytes
+      }
+      availableBytes
     }
   }
 `;
@@ -477,6 +482,11 @@ describe('enqueueJob (e2e)', () => {
       logicFunctionUniversalIdentifier,
       enqueuedJobsCount: markerUrls.length,
       jobIds: markerUrls.map(() => expect.any(String)),
+      jobs: markerUrls.map(() => ({
+        jobId: expect.any(String),
+        sizeBytes: expect.any(Number),
+      })),
+      availableBytes: null,
     });
 
     await waitForAllJobsToFinish();

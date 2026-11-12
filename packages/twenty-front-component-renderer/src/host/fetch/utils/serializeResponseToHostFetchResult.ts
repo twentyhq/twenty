@@ -10,7 +10,7 @@ const responseTooLargeError = (): CustomError =>
   );
 
 export const serializeResponseToHostFetchResult = async (
-  response: Response,
+  response: Pick<Response, 'headers' | 'status' | 'statusText' | 'text'>,
 ): Promise<HostFetchResult> => {
   const contentLength = Number(response.headers.get('content-length') ?? 0);
 

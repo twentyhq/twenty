@@ -1,4 +1,3 @@
-import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { groupCommandMenuItemsBySection } from '@/command-menu-item/utils/groupCommandMenuItemsBySection';
 import {
   CommandMenuItemAvailabilityType,
@@ -9,12 +8,11 @@ const buildCommandMenuItem = (
   id: string,
   engineComponentKey: EngineComponentKey,
   availabilityType: CommandMenuItemAvailabilityType,
-) =>
-  ({
-    id,
-    engineComponentKey,
-    availabilityType,
-  }) as unknown as CommandMenuItemDefinition;
+) => ({
+  id,
+  engineComponentKey,
+  availabilityType,
+});
 
 describe('groupCommandMenuItemsBySection', () => {
   it('groups every section, empty ones included', () => {

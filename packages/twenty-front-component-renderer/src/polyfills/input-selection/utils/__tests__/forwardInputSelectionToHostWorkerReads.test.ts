@@ -114,7 +114,9 @@ describe('reading forwarded input selection in the worker', () => {
       shouldReadBeforeConnect: false,
     });
 
-    (remoteControl as unknown as { value: unknown }).value = 1234567;
+    const plainJavaScriptControl: { value: string | number } = remoteControl;
+
+    plainJavaScriptControl.value = 1234567;
 
     expect(remoteControl.selectionStart).toBe(7);
     expect(remoteControl.selectionEnd).toBe(7);

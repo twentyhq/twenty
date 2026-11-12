@@ -13,6 +13,10 @@ import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/u
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
+import {
+  type WorkflowAction,
+  type WorkflowEmptyAction,
+} from '@/workflow/types/Workflow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   EngineComponentKey,
@@ -55,12 +59,20 @@ const REQUIRES_UPDATE =
 const REQUIRES_SOFT_DELETE =
   'noneEquals(selectedRecords, "recordPermissions.canSoftDelete", false)';
 
+const REQUIRES_MANUAL_LAYOUT =
+  'every(selectedRecords, "currentVersion.hasManualLayout")';
+
 const COMMANDS = (
   [
     [EngineComponentKey.TEST_WORKFLOW, 'Test workflow', null],
     [EngineComponentKey.DUPLICATE_WORKFLOW, 'Duplicate', REQUIRES_UPDATE],
     [EngineComponentKey.DEACTIVATE_WORKFLOW, 'Deactivate', REQUIRES_UPDATE],
     [EngineComponentKey.TIDY_UP_WORKFLOW, 'Tidy up', REQUIRES_UPDATE],
+    [
+      EngineComponentKey.SEE_VERSIONS_WORKFLOW,
+      'Manual layout only',
+      REQUIRES_MANUAL_LAYOUT,
+    ],
     [EngineComponentKey.DELETE_RECORDS, 'Delete', REQUIRES_SOFT_DELETE],
   ] as const
 ).map(([engineComponentKey, label, expression], position) => ({
@@ -89,7 +101,35 @@ const CommandButtons = () => {
   ));
 };
 
-const renderWorkflowCommands = (applicationId: string) => {
+const buildEmptyStep = ({
+  id,
+  position,
+}: {
+  id: string;
+  position?: { x: number; y: number };
+}): WorkflowEmptyAction => ({
+  id,
+  name: id,
+  type: 'EMPTY',
+  valid: true,
+  position,
+  settings: {
+    input: {},
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
+});
+
+const renderWorkflowCommands = ({
+  applicationId,
+  steps = [],
+}: {
+  applicationId: string;
+  steps?: WorkflowAction[];
+}) => {
   jest.mocked(useAtomStateValue).mockImplementation((state) => {
     if (state === commandMenuItemsSelector) {
       return COMMANDS;
@@ -112,13 +152,13 @@ const renderWorkflowCommands = (applicationId: string) => {
         name: 'v1',
         status: 'ACTIVE',
         trigger: null,
-        steps: [],
+        steps,
         workflowId: 'workflow',
         createdAt: '2026-09-30T00:00:00.000Z',
         updatedAt: '2026-09-30T00:00:00.000Z',
       },
     },
-  ] as unknown as ReturnType<typeof useCoreWorkflowsWithCurrentVersions>);
+  ]);
 
   return render(
     <CommandMenuContextProviderWithWorkflowEnrichment
@@ -132,6 +172,7 @@ const renderWorkflowCommands = (applicationId: string) => {
         numberOfSelectedRecords: 1,
         selectedRecords: [{ id: 'workflow' }],
         objectMetadataItem: {
+          id: 'workflow-object',
           nameSingular: StandardObjectNameSingular.Workflow,
         },
       }}
@@ -143,7 +184,7 @@ const renderWorkflowCommands = (applicationId: string) => {
 
 describe('workflow command availability', () => {
   it('hides commands that change or delete a workflow installed by an application', () => {
-    renderWorkflowCommands('installed-application');
+    renderWorkflowCommands({ applicationId: 'installed-application' });
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(
@@ -161,12 +202,40 @@ describe('workflow command availability', () => {
   });
 
   it('keeps every command on a workspace workflow', () => {
-    renderWorkflowCommands('workspace-application');
+    renderWorkflowCommands({ applicationId: 'workspace-application' });
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Duplicate' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Deactivate' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Tidy up' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Delete' })).toBeVisible();
+  });
+
+  it('offers manual layout commands once a node has a stored position', () => {
+    renderWorkflowCommands({
+      applicationId: 'workspace-application',
+      steps: [
+        buildEmptyStep({ id: 'first', position: { x: 10, y: 20 } }),
+        buildEmptyStep({ id: 'second' }),
+      ],
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Manual layout only' }),
+    ).toBeVisible();
+  });
+
+  it('hides manual layout commands on an automatically laid out workflow', () => {
+    renderWorkflowCommands({
+      applicationId: 'workspace-application',
+      steps: [
+        buildEmptyStep({ id: 'first' }),
+        buildEmptyStep({ id: 'second' }),
+      ],
+    });
+
+    expect(
+      screen.queryByRole('button', { name: 'Manual layout only' }),
+    ).not.toBeInTheDocument();
   });
 });

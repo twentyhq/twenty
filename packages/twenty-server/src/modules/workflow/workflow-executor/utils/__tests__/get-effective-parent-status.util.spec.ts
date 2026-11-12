@@ -1,37 +1,22 @@
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
+import {
+  createMockCodeStep,
+  createMockIfElseStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const recordStep = {
-  id: 'parent',
-  type: 'RECORD_UPDATE',
-  name: 'parent',
-  nextStepIds: ['child'],
-  settings: { input: {} },
-} as unknown as WorkflowAction;
+const recordStep = createMockCodeStep('parent', ['child']);
 
-const ifElseStep = {
-  id: 'ifElse',
-  type: 'IF_ELSE',
-  name: 'If/Else',
-  nextStepIds: [],
-  settings: {
-    input: {
-      branches: [
-        { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] },
-        { id: 'elseBranch', nextStepIds: ['elseChild'] },
-      ],
-      stepFilterGroups: [],
-      stepFilters: [],
-    },
-  },
-} as unknown as WorkflowAction;
+const ifElseStep = createMockIfElseStep('ifElse', [
+  { id: 'ifBranch', filterGroupId: 'fg', nextStepIds: ['ifChild'] },
+  { id: 'elseBranch', nextStepIds: ['elseChild'] },
+]);
 
 const ifElseStepWithBranchTargetsInNextStepIds = {
   ...ifElseStep,
   nextStepIds: ['ifChild', 'elseChild', 'afterIfElse'],
-} as unknown as WorkflowAction;
+};
 
 describe('getEffectiveParentStatus', () => {
   it('should return the raw status for a non if/else parent', () => {

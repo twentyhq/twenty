@@ -1,7 +1,10 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 const FIELD_ID_TEXT = 'field-text-id';
 const FIELD_ID_DATE_TIME = 'field-date-time-id';
@@ -15,36 +18,36 @@ const mockObjectMetadataItem = {
     {
       id: FIELD_ID_TEXT,
       name: 'companyName',
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       options: null,
     },
     {
       id: FIELD_ID_RELATION,
       name: 'company',
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       options: null,
-      relation: { type: 'MANY_TO_ONE' },
+      relation: { type: RelationType.MANY_TO_ONE },
     },
     {
       id: FIELD_ID_DATE_TIME,
       name: 'createdAt',
-      type: 'DATE_TIME',
+      type: FieldMetadataType.DATE_TIME,
       options: null,
     },
     {
       id: FIELD_ID_ADDRESS,
       name: 'address',
-      type: 'ADDRESS',
+      type: FieldMetadataType.ADDRESS,
       options: null,
     },
     {
       id: FIELD_ID_NUMBER,
       name: 'revenue',
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       options: null,
     },
   ],
-} as unknown as EnrichedObjectMetadataItem;
+};
 
 const createFilter = (
   overrides: Partial<RecordFilter> & Pick<RecordFilter, 'fieldMetadataId'>,
@@ -52,7 +55,7 @@ const createFilter = (
   id: 'filter-id',
   value: '',
   displayValue: '',
-  type: 'TEXT',
+  type: FieldMetadataType.TEXT,
   operand: ViewFilterOperand.CONTAINS,
   label: 'Test',
   ...overrides,
@@ -64,7 +67,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_TEXT,
-          type: 'TEXT',
+          type: FieldMetadataType.TEXT,
           operand: ViewFilterOperand.CONTAINS,
           value: 'Acme',
         }),
@@ -83,7 +86,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_DATE_TIME,
-          type: 'DATE_TIME',
+          type: FieldMetadataType.DATE_TIME,
           operand: ViewFilterOperand.IS_BEFORE,
           value: filterDate.toISOString(),
         }),
@@ -105,7 +108,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_DATE_TIME,
-          type: 'DATE_TIME',
+          type: FieldMetadataType.DATE_TIME,
           operand: ViewFilterOperand.IS,
           value: filterDate.toISOString(),
         }),
@@ -125,7 +128,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_DATE_TIME,
-          type: 'DATE_TIME',
+          type: FieldMetadataType.DATE_TIME,
           operand: ViewFilterOperand.IS_RELATIVE,
           value: 'THIS_QUARTER',
         }),
@@ -145,7 +148,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_ADDRESS,
-          type: 'ADDRESS',
+          type: FieldMetadataType.ADDRESS,
           operand: ViewFilterOperand.CONTAINS,
           value: 'Paris',
           subFieldName: 'addressCity',
@@ -163,7 +166,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_ADDRESS,
-          type: 'ADDRESS',
+          type: FieldMetadataType.ADDRESS,
           operand: ViewFilterOperand.CONTAINS,
           value: 'Paris',
           subFieldName: 'addressCity',
@@ -171,7 +174,7 @@ describe('buildRecordInputFromFilter', () => {
         createFilter({
           id: 'filter-id-2',
           fieldMetadataId: FIELD_ID_ADDRESS,
-          type: 'ADDRESS',
+          type: FieldMetadataType.ADDRESS,
           operand: ViewFilterOperand.CONTAINS,
           value: 'France',
           subFieldName: 'addressCountry',
@@ -192,7 +195,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_UNKNOWN,
-          type: 'TEXT',
+          type: FieldMetadataType.TEXT,
           operand: ViewFilterOperand.CONTAINS,
           value: 'something',
         }),
@@ -209,7 +212,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_TEXT,
-          type: 'TEXT',
+          type: FieldMetadataType.TEXT,
           operand: ViewFilterOperand.IS_EMPTY,
           value: '',
         }),
@@ -226,7 +229,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_NUMBER,
-          type: 'NUMBER',
+          type: FieldMetadataType.NUMBER,
           operand: ViewFilterOperand.IS,
           value: '42',
         }),
@@ -243,7 +246,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_RELATION,
-          type: 'RELATION',
+          type: FieldMetadataType.RELATION,
           operand: ViewFilterOperand.IS,
           value: JSON.stringify({
             isCurrentRecordSelected: true,
@@ -264,7 +267,7 @@ describe('buildRecordInputFromFilter', () => {
       currentRecordFilters: [
         createFilter({
           fieldMetadataId: FIELD_ID_RELATION,
-          type: 'RELATION',
+          type: FieldMetadataType.RELATION,
           operand: ViewFilterOperand.IS,
           value: JSON.stringify({
             isCurrentRecordSelected: true,

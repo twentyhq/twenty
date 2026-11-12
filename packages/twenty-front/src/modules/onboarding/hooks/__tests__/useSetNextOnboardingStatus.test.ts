@@ -9,6 +9,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
+import { ONBOARDING_INVITE_TEAM_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingInviteTeamPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -37,6 +38,7 @@ type RenderHooksOptions = {
   stepHistoryEffect?: OnboardingStepHistoryEffect;
   isBookCallOnboardingStepEnabled?: boolean;
   isBookCallOnboardingStepPending?: boolean;
+  isInviteTeamOnboardingStepPending?: boolean;
   isWorkspaceCreator?: boolean;
 };
 
@@ -50,6 +52,7 @@ const renderHooks = (
     stepHistoryEffect = 'leaveUnchanged',
     isBookCallOnboardingStepEnabled = false,
     isBookCallOnboardingStepPending = false,
+    isInviteTeamOnboardingStepPending = true,
     isWorkspaceCreator = true,
   }: RenderHooksOptions = {},
 ) => {
@@ -97,6 +100,8 @@ const renderHooks = (
         ...mockedUserData.userVars,
         [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]:
           isBookCallOnboardingStepPending,
+        [ONBOARDING_INVITE_TEAM_PENDING_USER_VAR_KEY]:
+          isInviteTeamOnboardingStepPending,
       },
     });
     result.current.setCurrentUserWorkspace(mockedUserData.currentUserWorkspace);
@@ -154,6 +159,18 @@ describe('useSetNextOnboardingStatus', () => {
       renderHooks(OnboardingStatus.PROFILE_CREATION);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should skip the invite step after profile creation when the server did not flag it', () => {
+    const { nextOnboardingStatus } = renderHooks(
+      OnboardingStatus.PROFILE_CREATION,
+      {
+        isInviteTeamOnboardingStepPending: false,
+        isBillingEnabled: true,
+        withSubscription: false,
+      },
+    );
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
   });
 
   it('should complete after profile creation when more than 1 workspaceMember exist', () => {

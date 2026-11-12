@@ -3,7 +3,7 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-type RestrictedFields = Record<
+type FieldRestrictions = Record<
   string,
   { canRead: boolean | null; canUpdate: boolean | null }
 >;
@@ -11,23 +11,28 @@ type RestrictedFields = Record<
 const buildObjectPermissions = (opts: {
   objectMetadataId: string;
   canUpdate?: boolean;
-  restrictedFields?: RestrictedFields;
+  fieldRestrictions?: FieldRestrictions;
 }) => ({
   objectMetadataId: opts.objectMetadataId,
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: opts.canUpdate ?? true,
-  canSoftDeleteObjectRecords: true,
-  canDestroyObjectRecords: true,
-  restrictedFields: opts.restrictedFields ?? {},
-  rowLevelPermissionPredicates: [],
-  rowLevelPermissionPredicateGroups: [],
+  canCreateAllRecords: opts.canUpdate ?? true,
+  canReadAllRecords: true,
+  canUpdateAllRecords: opts.canUpdate ?? true,
+  canSoftDeleteAllRecords: true,
+  canDestroyAllRecords: true,
+  unreadableFields: Object.entries(opts.fieldRestrictions ?? {})
+    .filter(([, { canRead }]) => canRead === false)
+    .map(([fieldMetadataId]) => fieldMetadataId),
+  uneditableFields: Object.entries(opts.fieldRestrictions ?? {})
+    .filter(([, { canUpdate }]) => canUpdate === false)
+    .map(([fieldMetadataId]) => fieldMetadataId),
+  rowLevelRecordsPermissions: null,
 });
 
 const buildObjectPermissionsMap = (opts: {
   sourceId: string;
   targetId: string;
   targetCanUpdate: boolean;
-  targetRestrictedFields?: RestrictedFields;
+  targetFieldRestrictions?: FieldRestrictions;
 }) => ({
   [opts.sourceId]: buildObjectPermissions({
     objectMetadataId: opts.sourceId,
@@ -35,7 +40,7 @@ const buildObjectPermissionsMap = (opts: {
   [opts.targetId]: buildObjectPermissions({
     objectMetadataId: opts.targetId,
     canUpdate: opts.targetCanUpdate,
-    restrictedFields: opts.targetRestrictedFields,
+    fieldRestrictions: opts.targetFieldRestrictions,
   }),
 });
 
@@ -97,7 +102,7 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
           sourceId: sourceObjectMetadataId,
           targetId: targetObjectMetadataId,
           targetCanUpdate: true,
-          targetRestrictedFields: {
+          targetFieldRestrictions: {
             'target-field': { canRead: null, canUpdate: false },
           },
         }),
@@ -113,7 +118,7 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
           sourceId: sourceObjectMetadataId,
           targetId: targetObjectMetadataId,
           targetCanUpdate: true,
-          targetRestrictedFields: {
+          targetFieldRestrictions: {
             'some-other-field': { canRead: null, canUpdate: false },
           },
         }),
@@ -129,7 +134,7 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
           sourceId: sourceObjectMetadataId,
           targetId: targetObjectMetadataId,
           targetCanUpdate: true,
-          targetRestrictedFields: {
+          targetFieldRestrictions: {
             'target-field': { canRead: false, canUpdate: null },
           },
         }),
@@ -180,7 +185,7 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
     } as FieldDefinition<FieldMetadata>;
 
     const buildMorphObjectPermissionsMap = (
-      restrictedFieldsByObjectMetadataId: Record<string, RestrictedFields>,
+      fieldRestrictionsByObjectMetadataId: Record<string, FieldRestrictions>,
     ) =>
       Object.fromEntries(
         [
@@ -190,8 +195,8 @@ describe('isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission', () => {
           objectMetadataId,
           buildObjectPermissions({
             objectMetadataId,
-            restrictedFields:
-              restrictedFieldsByObjectMetadataId[objectMetadataId],
+            fieldRestrictions:
+              fieldRestrictionsByObjectMetadataId[objectMetadataId],
           }),
         ]),
       );

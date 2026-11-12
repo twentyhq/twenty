@@ -21,7 +21,6 @@ import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/a
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { buildAgentChatChannelDeletionLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-deletion-lock-key.util';
 import { buildAgentChatChannelGrantLockKey } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-channel-grant-lock-key.util';
-import { lockAgentChatChannelForThreadWriteOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-channel-for-thread-write-or-throw.util';
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -335,16 +334,16 @@ export const watchThreadEvents = () => {
     'emitDatabaseBatchEvent',
   );
 
-  return {
-    hasEmittedThreadEvent: (threadId: string) =>
-      eventSpy.mock.calls.some(
-        ([batchEvent]) =>
-          batchEvent?.objectMetadataNameSingular === 'agentChatThread' &&
-          batchEvent.events.some(
-            (event) => 'recordId' in event && event.recordId === threadId,
-          ),
-      ),
-  };
+  const findEmittedThreadEvent = (threadId: string) =>
+    eventSpy.mock.calls
+      .flatMap(([batchEvent]) =>
+        batchEvent?.objectMetadataNameSingular === 'agentChatThread'
+          ? batchEvent.events
+          : [],
+      )
+      .find((event) => 'recordId' in event && event.recordId === threadId);
+
+  return { findEmittedThreadEvent };
 };
 
 export const getChannelMetadataService = () =>
@@ -365,13 +364,16 @@ export const deleteChannelBehindStaleCache = async (channelId: string) => {
     }),
   );
 
+  const channelAccessService =
+    getAppProviderByClassName<AgentChatChannelAccessService>(
+      'AgentChatChannelAccessService',
+    );
+
   jest
-    .spyOn(
-      getAppProviderByClassName<AgentChatChannelAccessService>(
-        'AgentChatChannelAccessService',
-      ),
-      'assertChannelAccess',
-    )
+    .spyOn(channelAccessService, 'assertChannelAccess')
+    .mockResolvedValue(staleChannel);
+  jest
+    .spyOn(channelAccessService, 'assertCallerChannelAccessOrThrow')
     .mockResolvedValue(staleChannel);
 };
 
@@ -493,7 +495,10 @@ export const setUpChatChannelTests = () => {
     const queryRunner = await startHeldTransaction();
 
     await acquireAgentChatChannelGrantLocks({
-      manager: queryRunner.manager,
+      transactionScope: {
+        executeRawQuery: (sql, parameters) =>
+          queryRunner.query(sql, parameters),
+      },
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       channelIds: [channelId],
       mode,
@@ -529,11 +534,15 @@ export const setUpChatChannelTests = () => {
   }): Promise<QueryRunner> => {
     const queryRunner = await startHeldTransaction();
 
-    await lockAgentChatChannelForThreadWriteOrThrow({
-      manager: queryRunner.manager,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      channelId,
-    });
+    await queryRunner.query(
+      'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
+      [
+        buildAgentChatChannelDeletionLockKey({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          channelId,
+        }),
+      ],
+    );
     await queryRunner.query(
       `UPDATE ${SCHEMA}."agentChatThread" SET "channelId" = $1 WHERE id = $2`,
       [channelId, threadId],

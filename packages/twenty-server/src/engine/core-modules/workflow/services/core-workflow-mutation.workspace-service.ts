@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
@@ -177,13 +178,6 @@ export class CoreWorkflowMutationWorkspaceService {
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       visibility: sourceCoreWorkflow.visibility,
-    }).catch(async (error: unknown) => {
-      await this.deleteClonedStepResources({
-        workspaceId,
-        clonedSteps: remappedSteps,
-      });
-
-      throw error;
     });
 
     try {
@@ -206,24 +200,6 @@ export class CoreWorkflowMutationWorkspaceService {
       }
 
       throw error;
-    }
-  }
-
-  private async deleteClonedStepResources({
-    workspaceId,
-    clonedSteps,
-  }: {
-    workspaceId: string;
-    clonedSteps: WorkflowAction[];
-  }): Promise<void> {
-    for (const step of clonedSteps) {
-      try {
-        await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
-          { step, workspaceId },
-        );
-      } catch (cleanupError) {
-        this.logger.error(cleanupError);
-      }
     }
   }
 
@@ -251,6 +227,7 @@ export class CoreWorkflowMutationWorkspaceService {
       await this.coreWorkflowListService.findOneById({
         workspaceId,
         userWorkspaceId,
+        callerApplication: undefined,
         coreWorkflowId: duplicatedCoreWorkflowId,
       });
 
@@ -365,24 +342,15 @@ export class CoreWorkflowMutationWorkspaceService {
     }[] = [];
     const clonedStepIdBySourceStepId = new Map<string, string>();
 
-    try {
-      for (const step of steps) {
-        const clonedStep =
-          await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
-            step,
-            workspaceId,
-          });
+    for (const step of steps) {
+      const clonedStep =
+        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+          step,
+          workspaceId,
+        });
 
-        sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
-        clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
-      }
-    } catch (error) {
-      await this.deleteClonedStepResources({
-        workspaceId,
-        clonedSteps: sourceToClonedPairs.map(({ duplicated }) => duplicated),
-      });
-
-      throw error;
+      sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
+      clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
     }
 
     return remapDuplicatedStepDestinations({
@@ -512,6 +480,7 @@ export class CoreWorkflowMutationWorkspaceService {
       universalIdentifier: uuidv4(),
       workspaceWorkflowId: null,
       isSystem: false,
+      jobConfig: DEFAULT_WORKFLOW_JOB_CONFIG,
       visibility: visibility ?? WorkflowVisibility.WORKSPACE,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
@@ -539,6 +508,7 @@ export class CoreWorkflowMutationWorkspaceService {
               ...coreWorkflow,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
+              navigationMenuItemUniversalIdentifiers: [],
             },
           ],
           flatEntityToDelete: [],
@@ -755,6 +725,7 @@ export class CoreWorkflowMutationWorkspaceService {
     return this.coreWorkflowListService.findOneById({
       workspaceId,
       userWorkspaceId,
+      callerApplication: undefined,
       coreWorkflowId,
     });
   }

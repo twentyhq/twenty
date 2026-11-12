@@ -3,8 +3,7 @@ import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type UniversalFlatPermissionFlag } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-permission-flag.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
 const CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER = 'custom-application';
 
@@ -46,11 +45,14 @@ export const buildBuildOptions = ({
   isCallerStandardApp = false,
 }: {
   isCallerStandardApp?: boolean;
-} = {}): WorkspaceMigrationBuilderOptions => ({
+} = {}): WorkspaceMigrationValidationBuildOptions => ({
   isSystemBuild: false,
   applicationUniversalIdentifier: isCallerStandardApp
     ? TWENTY_STANDARD_APPLICATION.universalIdentifier
     : CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  workspaceCustomApplicationUniversalIdentifier:
+    CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+  flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
 });
 
 export const buildCreationArgs = ({
@@ -61,21 +63,14 @@ export const buildCreationArgs = ({
   flatEntityToValidate: UniversalFlatPermissionFlag;
   existingFlags?: UniversalFlatPermissionFlag[];
   isCallerStandardApp?: boolean;
-}): UniversalFlatEntityValidationArgs<
-  typeof ALL_METADATA_NAME.permissionFlag
-> =>
-  ({
-    flatEntityToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPermissionFlagMaps: buildMaps(existingFlags),
-    },
-    buildOptions: buildBuildOptions({ isCallerStandardApp }),
-    workspaceId: 'workspace-id',
-    remainingFlatEntityMapsToValidate: buildMaps([]),
-    additionalCacheDataMaps: {},
-  }) as unknown as UniversalFlatEntityValidationArgs<
-    typeof ALL_METADATA_NAME.permissionFlag
-  >;
+}) => ({
+  flatEntityToValidate,
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+    flatPermissionFlagMaps: buildMaps(existingFlags),
+    flatRolePermissionFlagMaps: { byUniversalIdentifier: {} },
+  },
+  buildOptions: buildBuildOptions({ isCallerStandardApp }),
+});
 
 export const buildUpdateArgs = ({
   universalIdentifier,
@@ -84,20 +79,17 @@ export const buildUpdateArgs = ({
   isCallerStandardApp = false,
 }: {
   universalIdentifier: string;
-  flatEntityUpdate: Partial<Record<keyof UniversalFlatPermissionFlag, unknown>>;
+  flatEntityUpdate: FlatEntityUpdateValidationArgs<
+    typeof ALL_METADATA_NAME.permissionFlag
+  >['flatEntityUpdate'];
   existingFlags?: UniversalFlatPermissionFlag[];
   isCallerStandardApp?: boolean;
-}): FlatEntityUpdateValidationArgs<typeof ALL_METADATA_NAME.permissionFlag> =>
-  ({
-    universalIdentifier,
-    flatEntityUpdate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatPermissionFlagMaps: buildMaps(existingFlags),
-    },
-    buildOptions: buildBuildOptions({ isCallerStandardApp }),
-    workspaceId: 'workspace-id',
-    remainingFlatEntityMapsToValidate: buildMaps([]),
-    additionalCacheDataMaps: {},
-  }) as unknown as FlatEntityUpdateValidationArgs<
-    typeof ALL_METADATA_NAME.permissionFlag
-  >;
+}) => ({
+  universalIdentifier,
+  flatEntityUpdate,
+  optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+    flatPermissionFlagMaps: buildMaps(existingFlags),
+    flatRolePermissionFlagMaps: { byUniversalIdentifier: {} },
+  },
+  buildOptions: buildBuildOptions({ isCallerStandardApp }),
+});

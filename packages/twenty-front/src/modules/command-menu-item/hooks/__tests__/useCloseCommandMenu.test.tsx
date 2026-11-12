@@ -53,11 +53,13 @@ const getWrapper =
           hasAnySoftDeleteFilterOnView: false,
           numberOfSelectedRecords: 0,
           objectPermissions: {
+            canCreateObjectRecords: false,
             canReadObjectRecords: false,
             canUpdateObjectRecords: false,
             canSoftDeleteObjectRecords: false,
             canDestroyObjectRecords: false,
-            restrictedFields: {},
+            unreadableFields: [],
+            uneditableFields: [],
             objectMetadataId: '',
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
@@ -72,6 +74,7 @@ const getWrapper =
           objectMetadataItem: {},
           objectMetadataLabel: '',
           coreObjectName: null,
+          currentView: null,
         },
         isInPreviewMode: false,
       }}

@@ -37,3 +37,4 @@ export type { TabsTabProps } from './Tabs/types/TabsTabProps';
 export type { TabsTabSize } from './Tabs/types/TabsTabSize';
 export type { TabsTabState } from './Tabs/types/TabsTabState';
 export type { TabsTabValue } from './Tabs/types/TabsTabValue';
+export type { TabsVariant } from './Tabs/types/TabsVariant';

@@ -203,7 +203,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             externalBotId: '',
           },
         },
-      } as unknown as HandlerEvent),
+      }),
     );
 
     expect(result).toEqual({
@@ -228,7 +228,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             externalBotId: { before: 'recall-bot-vanished', after: '' },
           },
         },
-      } as unknown as HandlerEvent),
+      }),
     );
 
     expect(result).toEqual({
@@ -259,7 +259,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             'botScheduleAttemptedAt',
             'botScheduleIdempotencyKey',
           ],
-          before: {},
+          before: { id: 'call-recording-1' },
           after: {
             id: 'call-recording-1',
             status: 'SCHEDULED',
@@ -267,7 +267,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             externalBotId: null,
           },
         },
-      } as unknown as HandlerEvent),
+      }),
     );
 
     expect(result).toEqual({
@@ -283,7 +283,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       buildUpdateEvent({
         properties: {
           updatedFields: ['externalBotId'],
-          before: {},
+          before: { id: 'call-recording-1' },
           after: {
             id: 'call-recording-1',
             status: 'SCHEDULED',
@@ -291,7 +291,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             externalBotId: 'recall-bot-1',
           },
         },
-      } as unknown as HandlerEvent),
+      }),
     );
 
     expect(result).toEqual({
@@ -352,7 +352,7 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
             externalBotId: { before: null, after: 'recall-bot-1' },
           },
         },
-      } as unknown as HandlerEvent),
+      }),
     );
 
     expect(result).toEqual({

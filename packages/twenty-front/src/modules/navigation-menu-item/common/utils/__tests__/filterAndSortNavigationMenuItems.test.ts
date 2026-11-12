@@ -31,14 +31,19 @@ describe('filterAndSortNavigationMenuItems', () => {
     isActive: true,
   } as EnrichedObjectMetadataItem;
 
-  const workflowRecordItem = {
+  const workflowRecordItem: NavigationMenuItem = {
     id: 'workflow-favorite-id',
     type: NavigationMenuItemType.RECORD,
     position: 0,
     targetRecordId: 'workflow-record-id',
+    createdAt: '2021-01-01',
+    updatedAt: '2021-01-01',
     targetObjectMetadataId: 'workflow-metadata-id',
-    targetRecordIdentifier: { id: 'workflow-record-id', name: 'My workflow' },
-  } as unknown as NavigationMenuItem;
+    targetRecordIdentifier: {
+      id: 'workflow-record-id',
+      labelIdentifier: 'My workflow',
+    },
+  };
 
   it('keeps native page items with a known key only', () => {
     const workflowsNativePageItem = {
@@ -96,14 +101,19 @@ describe('filterAndSortNavigationMenuItems', () => {
   });
 
   it('keeps other objects record items', () => {
-    const personRecordItem = {
+    const personRecordItem: NavigationMenuItem = {
       id: 'person-favorite-id',
       type: NavigationMenuItemType.RECORD,
       position: 0,
       targetRecordId: 'person-record-id',
+      createdAt: '2021-01-01',
+      updatedAt: '2021-01-01',
       targetObjectMetadataId: 'metadata-id',
-      targetRecordIdentifier: { id: 'person-record-id', name: 'Jane' },
-    } as unknown as NavigationMenuItem;
+      targetRecordIdentifier: {
+        id: 'person-record-id',
+        labelIdentifier: 'Jane',
+      },
+    };
 
     expect(
       filterAndSortNavigationMenuItems(

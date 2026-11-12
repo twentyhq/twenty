@@ -1,5 +1,6 @@
 export const ALL_METADATA_NAME = {
   fieldMetadata: 'fieldMetadata',
+  fieldMetadataOption: 'fieldMetadataOption',
   objectMetadata: 'objectMetadata',
   view: 'view',
   viewField: 'viewField',
@@ -8,6 +9,7 @@ export const ALL_METADATA_NAME = {
   viewSort: 'viewSort',
   rowLevelPermissionPredicate: 'rowLevelPermissionPredicate',
   rowLevelPermissionPredicateGroup: 'rowLevelPermissionPredicateGroup',
+  rowLevelPermissionRule: 'rowLevelPermissionRule',
   viewFilterGroup: 'viewFilterGroup',
   index: 'index',
   logicFunction: 'logicFunction',

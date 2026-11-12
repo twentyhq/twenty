@@ -1,5 +1,3 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
-
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 export const OBJECT_METADATA_READ_ACCESS_POLICY: AccessPolicy = {
@@ -14,5 +12,5 @@ export const OBJECT_METADATA_READ_ACCESS_POLICY: AccessPolicy = {
     oauthClient: true,
     application: true,
   },
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  requiredPermissionFlags: [],
 };

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not } from 'typeorm';
 
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -18,8 +19,10 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-triage-change.type';
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
+import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-caller-auth-context.type';
 import { buildAgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-triage-change.util';
 import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
+import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -46,11 +49,13 @@ export class AgentChatThreadTriageService {
     threadIds,
     action,
     snoozedUntil,
+    isArchivedOnlyIfFollowing,
     ...memberArgs
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
     threadIds: string[];
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
+    isArchivedOnlyIfFollowing?: boolean;
   }): Promise<AgentChatThreadParticipantDTO[]> {
     const change = buildAgentChatThreadTriageChange({ action, snoozedUntil });
     const assignedChannelThreads = isDefined(change)
@@ -63,6 +68,7 @@ export class AgentChatThreadTriageService {
         threadIds,
         action,
         snoozedUntil,
+        isArchivedOnlyIfFollowing,
       });
     }
 
@@ -87,6 +93,7 @@ export class AgentChatThreadTriageService {
       action,
       snoozedUntil,
       writeThread: channelCopyWrite.write,
+      isArchivedOnlyIfFollowing,
     });
 
     await this.emitChannelCopiesUpdated({
@@ -98,16 +105,60 @@ export class AgentChatThreadTriageService {
     return participants;
   }
 
+  // Every member is checked before any write, so a refusal archives for nobody
+  async archiveForMembers({
+    workspaceId,
+    threadId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    const uniqueWorkspaceMemberIds = [...new Set(workspaceMemberIds)];
+
+    for (const workspaceMemberId of uniqueWorkspaceMemberIds) {
+      const readableThreadIds = await this.sharingService.findReadableThreadIds(
+        { workspaceId, workspaceMemberId, threadIds: [threadId] },
+      );
+
+      if (readableThreadIds.length === 0) {
+        throwAgentChatThreadNotFound();
+      }
+    }
+
+    for (const workspaceMemberId of uniqueWorkspaceMemberIds) {
+      await this.updateInboxState({
+        workspaceId,
+        workspaceMemberId,
+        threadIds: [threadId],
+        action: AgentChatInboxAction.ARCHIVE,
+        snoozedUntil: null,
+        isArchivedOnlyIfFollowing: true,
+      });
+    }
+  }
+
   async applyToChannelCopy({
     change,
-    ...args
-  }: AgentChatThreadAccessArgs & {
+    authContext,
+    threadId,
+    isCallerInboxKept = false,
+  }: {
+    authContext: AgentInboxCallerAuthContext;
+    threadId: string;
     change: AgentChatThreadTriageChange;
+    isCallerInboxKept?: boolean;
   }): Promise<void> {
-    const threadBefore = await this.sharingService.getThreadWithAccess({
-      ...args,
-      operationType: 'update',
-    });
+    const workspaceId = authContext.workspace.id;
+    const workspaceMemberId = isUserAuthContext(authContext)
+      ? authContext.workspaceMemberId
+      : null;
+    const threadBefore =
+      await this.sharingService.getCallerWritableThreadOrThrow({
+        authContext,
+        threadId,
+      });
 
     if (!isDefined(threadBefore.channelId)) {
       throw new AiException(
@@ -116,20 +167,32 @@ export class AgentChatThreadTriageService {
       );
     }
 
-    await this.prepareChannelCopyWriteOrThrow({ ...args, change });
+    await this.prepareChannelCopyWriteOrThrow({
+      workspaceId,
+      threadId,
+      change,
+    });
 
     const channelCopyWrite = this.buildChannelCopyWrite({
       change,
-      workspaceMemberId: args.workspaceMemberId,
-      threadIds: [args.threadId],
+      workspaceMemberId,
+      threadIds: [threadId],
       isAssigneeOnly: false,
     });
 
-    if (await this.participantService.isFollowing(args)) {
+    if (
+      !isCallerInboxKept &&
+      isDefined(workspaceMemberId) &&
+      (await this.participantService.isFollowing({
+        workspaceId,
+        workspaceMemberId,
+        threadId,
+      }))
+    ) {
       await this.participantService.updateInboxState({
-        workspaceId: args.workspaceId,
-        workspaceMemberId: args.workspaceMemberId,
-        threadIds: [args.threadId],
+        workspaceId,
+        workspaceMemberId,
+        threadIds: [threadId],
         action: change.action,
         snoozedUntil:
           change.action === AgentChatInboxAction.SNOOZE
@@ -138,13 +201,13 @@ export class AgentChatThreadTriageService {
         writeThread: channelCopyWrite.write,
       });
     } else {
-      await this.threadRepository.query(args.workspaceId, (context) =>
-        channelCopyWrite.write({ ...context, threadId: args.threadId }),
+      await this.threadRepository.query(workspaceId, (context) =>
+        channelCopyWrite.write({ ...context, threadId }),
       );
     }
 
     await this.emitChannelCopiesUpdated({
-      workspaceId: args.workspaceId,
+      workspaceId,
       threadsBefore: [threadBefore],
       threadsAfter: channelCopyWrite.threadsAfter,
     });
@@ -237,7 +300,7 @@ export class AgentChatThreadTriageService {
   private async prepareChannelCopyWriteOrThrow({
     change,
     ...args
-  }: AgentChatThreadAccessArgs & {
+  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
     change: AgentChatThreadTriageChange;
   }): Promise<void> {
     if (change.action !== AgentChatInboxAction.SNOOZE) {
@@ -268,7 +331,7 @@ export class AgentChatThreadTriageService {
     isAssigneeOnly,
   }: {
     change: AgentChatThreadTriageChange;
-    workspaceMemberId: string;
+    workspaceMemberId: string | null;
     threadIds: string[];
     isAssigneeOnly: boolean;
   }): {

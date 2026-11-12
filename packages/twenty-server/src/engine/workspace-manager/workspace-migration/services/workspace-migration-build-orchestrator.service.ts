@@ -35,6 +35,7 @@ import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engi
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationMessagingProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/workspace-migration-messaging-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
+import { WorkspaceMigrationFieldMetadataOptionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/workspace-migration-field-metadata-option-actions-builder.service';
 import { WorkspaceMigrationRelatedRecordPathActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/related-record-path/workspace-migration-related-record-path-actions-builder.service';
 import { WorkspaceMigrationValidationRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/validation-rule/workspace-migration-validation-rule-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
@@ -53,6 +54,7 @@ import { WorkspaceMigrationRolePermissionFlagActionsBuilderService } from 'src/e
 import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-role-target-actions-builder.service';
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
+import { WorkspaceMigrationRowLevelPermissionRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-rule/workspace-migration-row-level-permission-rule-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
 import { WorkspaceMigrationSearchFieldMetadataActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/workspace-migration-search-field-metadata-actions.builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
@@ -160,6 +162,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationPageLayoutTabActionsBuilderService: WorkspaceMigrationPageLayoutTabActionsBuilderService,
     workspaceMigrationRowLevelPermissionPredicateActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    workspaceMigrationRowLevelPermissionRuleActionsBuilderService: WorkspaceMigrationRowLevelPermissionRuleActionsBuilderService,
     workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
     workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
     workspaceMigrationMcpServerActionsBuilderService: WorkspaceMigrationMcpServerActionsBuilderService,
@@ -167,6 +170,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
     workspaceMigrationMessagingProviderActionsBuilderService: WorkspaceMigrationMessagingProviderActionsBuilderService,
     workspaceMigrationTimelineActivityTypeActionsBuilderService: WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
+    workspaceMigrationFieldMetadataOptionActionsBuilderService: WorkspaceMigrationFieldMetadataOptionActionsBuilderService,
     workspaceMigrationRelatedRecordPathActionsBuilderService: WorkspaceMigrationRelatedRecordPathActionsBuilderService,
     workspaceMigrationValidationRuleActionsBuilderService: WorkspaceMigrationValidationRuleActionsBuilderService,
     workspaceMigrationSearchFieldMetadataActionsBuilderService: WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
@@ -233,6 +237,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.rowLevelPermissionPredicateGroup,
         workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.rowLevelPermissionRule,
+        workspaceMigrationRowLevelPermissionRuleActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.rowLevelPermissionPredicate,
@@ -313,6 +321,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.timelineActivityType,
         workspaceMigrationTimelineActivityTypeActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.fieldMetadataOption,
+        workspaceMigrationFieldMetadataOptionActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.relatedRecordPath,
@@ -426,6 +438,8 @@ export class WorkspaceMigrationBuildOrchestratorService {
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
+      fromFlatFieldMetadataMaps:
+        fromToAllFlatEntityMaps.flatFieldMetadataMaps?.from,
     });
 
     mergeOrchestratorFailureReports({

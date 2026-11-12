@@ -17,7 +17,7 @@ export const useFieldsWidgetFields = (
   return useMemo(
     () =>
       isDefined(objectMetadataItem)
-        ? objectMetadataItem.fields.filter(
+        ? objectMetadataItem.readableFields.filter(
             (field) => !hiddenFieldMetadataIdsOrNames.includes(field.name),
           )
         : [],

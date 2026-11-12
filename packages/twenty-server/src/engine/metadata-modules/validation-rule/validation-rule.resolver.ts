@@ -19,24 +19,9 @@ import { UpdateValidationRuleInput } from 'src/engine/metadata-modules/validatio
 import { ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { ValidationRuleService } from 'src/engine/metadata-modules/validation-rule/validation-rule.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { VALIDATION_RULE_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-read-access-policy.constant';
 import { VALIDATION_RULE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/validation-rule/constants/validation-rule-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
-import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
-
-const VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY: AccessPolicy = {
-  authPrincipals: {
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  },
-  requiredPermissionFlags: [],
-};
 
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => ValidationRuleDTO)
@@ -49,7 +34,7 @@ export class ValidationRuleResolver {
   constructor(private readonly validationRuleService: ValidationRuleService) {}
 
   @Query(() => [ValidationRuleDTO])
-  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_READ_ACCESS_POLICY))
   async validationRules(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
     objectMetadataId: string,
@@ -62,7 +47,7 @@ export class ValidationRuleResolver {
   }
 
   @Query(() => [ValidationRuleDTO])
-  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_RESOLVER_READ_ACCESS_POLICY))
+  @UseGuards(AccessPolicyGuard(VALIDATION_RULE_READ_ACCESS_POLICY))
   async validationRulesReadingField(
     @Args('fieldMetadataId', { type: () => UUIDScalarType })
     fieldMetadataId: string,

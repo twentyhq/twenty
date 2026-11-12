@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { checkCreditsBeforeRecallBotJoin } from 'src/logic-functions/flows/check-credits-before-recall-bot-join.util';
@@ -116,7 +115,7 @@ const checkCredits = ({
   now: Date;
 }) =>
   checkCreditsBeforeRecallBotJoin({
-    client: client as unknown as CoreApiClient,
+    client,
     callRecordingId: 'call-recording-1',
     now,
   });

@@ -14,7 +14,7 @@ type CallRecordingStateUpdate = Pick<
 >;
 
 export const updateNonTerminalCallRecordingState = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   {
     callRecordingId,
     data,

@@ -1,15 +1,15 @@
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORY_LABELS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-category-labels.constant';
 import { MESSAGING_GMAIL_FOLDERS_WITH_CATEGORY_EXCLUSIONS } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-folders-with-category-exclusions.constant';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 export const filterGmailMessagesByFolderPolicy = (
   messages: MessageWithParticipants[],
-  messageChannel: Pick<
-    MessageChannelEntity,
-    'messageFolders' | 'messageFolderImportPolicy'
-  >,
+  messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'> & {
+    messageFolders?: Pick<MessageFolderEntity, 'externalId' | 'isSynced'>[];
+  },
 ): MessageWithParticipants[] => {
   const { messageFolders, messageFolderImportPolicy } = messageChannel;
 

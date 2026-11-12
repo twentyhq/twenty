@@ -232,11 +232,20 @@ describe('turnSortsIntoOrderBy', () => {
           isActive: true,
           relation: {
             type: RelationType.MANY_TO_ONE,
+            sourceFieldMetadata: { id: 'source-field-id', name: 'company' },
+            targetFieldMetadata: { id: 'target-field-id', name: 'people' },
+            sourceObjectMetadata: {
+              id: 'person-object-id',
+              nameSingular: 'person',
+              namePlural: 'people',
+            },
             targetObjectMetadata: {
+              id: 'company-object-id',
               nameSingular: 'company',
+              namePlural: 'companies',
             },
           },
-        } as unknown as FieldMetadataItem,
+        },
         {
           id: 'position-field-id',
           universalIdentifier: 'position-field-id',

@@ -2,10 +2,9 @@ import { CHECK_EMAILING_DOMAIN_VERIFICATION_CRON_PATTERN } from 'src/engine/core
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { NON_TERMINAL_EMAILING_DOMAIN_STATUSES } from 'src/engine/core-modules/emailing-domain/constants/non-terminal-emailing-domain-statuses.constant';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
@@ -68,7 +67,7 @@ export class CheckEmailingDomainVerificationCronJob {
 
   private async refreshUnverifiedDomains(): Promise<void> {
     const unverifiedDomains = await this.emailingDomainRepository.find({
-      where: { status: In(NON_TERMINAL_EMAILING_DOMAIN_STATUSES) },
+      where: { status: Not(EmailingDomainStatus.VERIFIED) },
       select: ['id', 'workspaceId', 'domain'],
     });
 

@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
 import { type ApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/types/application-lifecycle-progress-reporter.type';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
+import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
 import { resolveSyncedApplicationIframeMediaPermissions } from 'src/engine/core-modules/application/utils/resolve-synced-application-iframe-media-permissions.util';
@@ -57,6 +58,7 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly applicationUninstallService: ApplicationUninstallService,
+    private readonly applicationGrantRoleService: ApplicationGrantRoleService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -396,6 +398,12 @@ export class ApplicationSyncService {
     }
 
     await progressReporter.reportStepCompleted('UNINSTALL_HOOK');
+
+    // The grant is owned by the workspace custom application, so the deletions below miss it
+    await this.applicationGrantRoleService.deleteGrantRole({
+      workspaceId,
+      applicationId: application.id,
+    });
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
       getMetadataFlatEntityMapsKey,

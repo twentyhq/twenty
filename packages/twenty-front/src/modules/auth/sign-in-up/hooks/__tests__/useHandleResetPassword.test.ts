@@ -10,7 +10,6 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useMutation } from '@apollo/client/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
@@ -21,7 +20,11 @@ jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
-jest.mock('@apollo/client/react');
+const mockUseMutation = jest.fn();
+
+jest.mock('@apollo/client/react', () => ({
+  useMutation: () => mockUseMutation(),
+}));
 jest.mock('@/captcha/hooks/useReadCaptchaToken');
 jest.mock('@/client-config/hooks/useCaptcha');
 
@@ -63,9 +66,7 @@ describe('useHandleResetPassword', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    (useMutation as unknown as jest.Mock).mockReturnValue([
-      emailPasswordResetLinkMock,
-    ]);
+    mockUseMutation.mockReturnValue([emailPasswordResetLinkMock]);
     (useCaptcha as jest.Mock).mockReturnValue({ isCaptchaReady: true });
     (useReadCaptchaToken as jest.Mock).mockReturnValue({
       readCaptchaToken: () => 'mock-captcha-token',

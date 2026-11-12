@@ -38,7 +38,7 @@ export const handleRecallWebhook = async ({
   client,
   body,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   body: RecallWebhookBody;
 }): Promise<RecallWebhookHandlerResult> => {
   if (
@@ -73,7 +73,7 @@ const handleRecallStatusEvent = async ({
   client,
   webhookEvent,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
   const { event, statusCode, statusSubCode } = webhookEvent;
@@ -169,7 +169,7 @@ const queueCallRecordingArtifactsImport = async ({
   client,
   webhookEvent,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   webhookEvent: RecallWebhookEvent;
 }): Promise<RecallWebhookHandlerResult> => {
   const callRecording = await findMatchingCallRecording({
@@ -204,7 +204,7 @@ const findMatchingCallRecording = async ({
   client,
   webhookEvent,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   webhookEvent: RecallWebhookEvent;
 }): Promise<CallRecordingRecord | undefined> => {
   let callRecording: CallRecordingRecord | undefined;

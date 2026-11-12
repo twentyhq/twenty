@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import {
   getFieldUniversalIdentifier,
   type ApplicationManifest,
+  type ConnectionProviderManifest,
   type FieldManifest,
+  type FrontComponentManifest,
+  type LogicFunctionManifest,
   type Manifest,
   type PageLayoutTabManifest,
   type PageLayoutWidgetManifest,
@@ -346,23 +349,29 @@ describe('manifestValidate', () => {
       (lifecycleHookKey) => {
         const logicFunctionId = '550e8400-e29b-41d4-a716-446655440040';
 
-        const logicFunction = {
+        const logicFunction: LogicFunctionManifest = {
           universalIdentifier: logicFunctionId,
           name: lifecycleHookKey,
           sourceHandlerPath: 'src/logic-functions/lifecycle-hook.ts',
           builtHandlerPath: 'dist/lifecycle-hook.js',
           builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
           handlerName: 'handler',
-        } as unknown as Manifest['logicFunctions'][number];
+        };
 
-        const connectionProvider = {
+        const connectionProvider: ConnectionProviderManifest = {
           universalIdentifier: '550e8400-e29b-41d4-a716-446655440041',
           name: 'slack',
           displayName: 'Slack',
           type: 'oauth',
-          oauth: {},
+          oauth: {
+            authorizationEndpoint: 'https://slack.com/oauth/v2/authorize',
+            tokenEndpoint: 'https://slack.com/api/oauth.v2.access',
+            scopes: [],
+            clientIdVariable: 'SLACK_CLIENT_ID',
+            clientSecretVariable: 'SLACK_CLIENT_SECRET',
+          },
           [lifecycleHookKey]: { universalIdentifier: logicFunctionId },
-        } as unknown as NonNullable<Manifest['connectionProviders']>[number];
+        };
 
         const result = manifestValidate({
           ...validManifest,
@@ -505,7 +514,7 @@ describe('manifestValidate', () => {
     it('should not flag a front component referenced via settingsFrontComponent as a duplicate', () => {
       const frontComponentId = '550e8400-e29b-41d4-a716-446655440050';
 
-      const frontComponent = {
+      const frontComponent: FrontComponentManifest = {
         universalIdentifier: frontComponentId,
         name: 'app-settings',
         componentName: 'AppSettings',
@@ -513,7 +522,7 @@ describe('manifestValidate', () => {
         builtComponentPath: 'dist/app-settings.mjs',
         builtComponentChecksum: '00000000-0000-4000-8000-000000000000',
         isHeadless: false,
-      } as unknown as Manifest['frontComponents'][number];
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -572,7 +581,8 @@ describe('manifestValidate', () => {
 
   describe('relation field validation', () => {
     it('should fail when a RELATION field in fields is missing relationType', () => {
-      const relationFieldWithoutSettings = {
+      // @ts-expect-error plain JS authors can omit universalSettings
+      const relationFieldWithoutSettings: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440010',
         type: FieldMetadataType.RELATION,
@@ -582,7 +592,7 @@ describe('manifestValidate', () => {
           '550e8400-e29b-41d4-a716-446655440011',
         relationTargetObjectMetadataUniversalIdentifier:
           '20202020-b374-4779-a561-80086cb2e17f',
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -613,6 +623,7 @@ describe('manifestValidate', () => {
                 name: 'name',
                 label: 'Name',
               },
+              // @ts-expect-error plain JS authors can omit universalSettings
               {
                 universalIdentifier: '550e8400-e29b-41d4-a716-446655440012',
                 type: FieldMetadataType.RELATION,
@@ -622,7 +633,7 @@ describe('manifestValidate', () => {
                   '550e8400-e29b-41d4-a716-446655440013',
                 relationTargetObjectMetadataUniversalIdentifier:
                   '20202020-b374-4779-a561-80086cb2e17f',
-              } as unknown as FieldManifest,
+              },
             ],
           },
         ],
@@ -634,7 +645,7 @@ describe('manifestValidate', () => {
     });
 
     it('should pass when a RELATION field has valid universalSettings with relationType', () => {
-      const validRelationField = {
+      const validRelationField: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440014',
         type: FieldMetadataType.RELATION,
@@ -648,7 +659,7 @@ describe('manifestValidate', () => {
           relationType: RelationType.MANY_TO_ONE,
           joinColumnName: 'companyId',
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -660,7 +671,7 @@ describe('manifestValidate', () => {
     });
 
     it('should fail when a MANY_TO_ONE field is missing joinColumnName', () => {
-      const manyToOneWithoutJoinColumn = {
+      const manyToOneWithoutJoinColumn: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440018',
         type: FieldMetadataType.RELATION,
@@ -673,7 +684,7 @@ describe('manifestValidate', () => {
         universalSettings: {
           relationType: RelationType.MANY_TO_ONE,
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -687,7 +698,7 @@ describe('manifestValidate', () => {
     });
 
     it('should pass when a ONE_TO_MANY field has no joinColumnName', () => {
-      const oneToManyField = {
+      const oneToManyField: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440020',
         type: FieldMetadataType.RELATION,
@@ -700,7 +711,7 @@ describe('manifestValidate', () => {
         universalSettings: {
           relationType: RelationType.ONE_TO_MANY,
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -712,7 +723,7 @@ describe('manifestValidate', () => {
     });
 
     it('should fail when a RELATION field has an invalid relationType', () => {
-      const relationFieldWithBadType = {
+      const relationFieldWithBadType: FieldManifest = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
         universalIdentifier: '550e8400-e29b-41d4-a716-446655440016',
         type: FieldMetadataType.RELATION,
@@ -723,9 +734,10 @@ describe('manifestValidate', () => {
         relationTargetObjectMetadataUniversalIdentifier:
           '20202020-b374-4779-a561-80086cb2e17f',
         universalSettings: {
+          // @ts-expect-error plain JS authors can write any relationType
           relationType: 'INVALID_TYPE',
         },
-      } as unknown as FieldManifest;
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -928,11 +940,15 @@ describe('manifestValidate', () => {
     });
 
     it('should hint at the correct key when the raw aggregateFieldMetadataId was used', () => {
-      const configurationWithRawKey = {
+      const configurationWithRawKey: Extract<
+        PageLayoutWidgetManifest['configuration'],
+        { configurationType: 'AGGREGATE_CHART' }
+      > & { aggregateFieldMetadataId: string } = {
         configurationType: 'AGGREGATE_CHART',
+        aggregateFieldMetadataUniversalIdentifier: null,
         aggregateFieldMetadataId: 'b0a5f0f2-6c2e-4d1c-9d0b-2f8a4c3e1a03',
         aggregateOperation: AggregateOperations.COUNT,
-      } as unknown as PageLayoutWidgetManifest['configuration'];
+      };
 
       const result = manifestValidate({
         ...validManifest,
@@ -956,12 +972,10 @@ describe('manifestValidate', () => {
     });
 
     it('should not crash on a widget with a missing configuration', () => {
-      const nullConfiguration =
-        null as unknown as PageLayoutWidgetManifest['configuration'];
-
       const result = manifestValidate({
         ...validManifest,
-        pageLayoutTabs: [makeGraphWidgetTab(nullConfiguration)],
+        // @ts-expect-error plain JS authors can leave the configuration null
+        pageLayoutTabs: [makeGraphWidgetTab(null)],
       });
 
       expect(result.isValid).toBe(true);

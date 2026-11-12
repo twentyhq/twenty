@@ -75,7 +75,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
 
     expect(selfResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
-    const { hasEmittedThreadEvent } = watchThreadEvents();
+    const { findEmittedThreadEvent } = watchThreadEvents();
 
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
@@ -92,7 +92,12 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
     ]);
     expect((await listChannels()).map(({ id }) => id)).not.toContain(channelId);
     // Moved in SQL, so the move is sent for clients watching the chat
-    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+    expect(findEmittedThreadEvent(threadId)).toMatchObject({
+      properties: {
+        updatedFields: ['channelId'],
+        diff: { channelId: { before: channelId, after: destinationChannelId } },
+      },
+    });
   });
 
   it('refuses chats in a channel while it is being deleted', async () => {
@@ -311,7 +316,7 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
     const channelId = await createChannel();
     const destinationChannelId = await createChannel();
     const threadId = await createThreadInChannel(channelId);
-    const { hasEmittedThreadEvent } = watchThreadEvents();
+    const { findEmittedThreadEvent } = watchThreadEvents();
 
     jest
       .spyOn(getChannelMetadataService(), 'deleteChannel')
@@ -330,7 +335,12 @@ describe('Chat channel deletion and summaries through the authenticated API', ()
       { principalType: 'ROLE', sourceId: destinationChannelId },
     ]);
     expect(await isChannelInCore(channelId)).toBe(true);
-    expect(hasEmittedThreadEvent(threadId)).toBe(true);
+    expect(findEmittedThreadEvent(threadId)).toMatchObject({
+      properties: {
+        updatedFields: ['channelId'],
+        diff: { channelId: { before: channelId, after: destinationChannelId } },
+      },
+    });
 
     await createThreadInChannel(channelId);
   });

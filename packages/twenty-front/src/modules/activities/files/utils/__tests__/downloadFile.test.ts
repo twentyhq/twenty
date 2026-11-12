@@ -7,12 +7,10 @@ jest.mock('file-saver', () => ({
 
 const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
 
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    status: 200,
-    blob: () => Promise.resolve(mockBlob),
-  } as unknown as Response),
-);
+global.fetch = jest.fn().mockResolvedValue({
+  status: 200,
+  blob: () => Promise.resolve(mockBlob),
+});
 
 describe('downloadFile', () => {
   afterEach(() => {

@@ -37,18 +37,28 @@ const StyledTimestamp = styled.span`
 
 const StyledLevelBadge = styled.span<{ level: string }>`
   background: ${({ level }) => {
-    if (level === 'error')
+    if (level === 'error') {
       return themeCssVariables.background.transparent.danger;
-    if (level === 'warn')
+    }
+    if (level === 'warn') {
       return themeCssVariables.background.transparent.orange;
-    if (level === 'info') return themeCssVariables.background.transparent.blue;
+    }
+    if (level === 'info') {
+      return themeCssVariables.background.transparent.blue;
+    }
     return themeCssVariables.background.transparent.light;
   }};
   border-radius: ${themeCssVariables.border.radius.xs};
   color: ${({ level }) => {
-    if (level === 'error') return themeCssVariables.color.red;
-    if (level === 'warn') return themeCssVariables.color.orange;
-    if (level === 'info') return themeCssVariables.color.blue;
+    if (level === 'error') {
+      return themeCssVariables.color.red;
+    }
+    if (level === 'warn') {
+      return themeCssVariables.color.orange;
+    }
+    if (level === 'info') {
+      return themeCssVariables.color.blue;
+    }
     return themeCssVariables.font.color.tertiary;
   }};
   font-size: ${themeCssVariables.font.size.xs};

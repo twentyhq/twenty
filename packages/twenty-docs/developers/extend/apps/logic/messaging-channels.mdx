@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### What the server does for you
 
-**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
+**De-duplication.** `externalId` is the key. Ingesting the same one twice creates nothing and changes nothing, apart from [attachments](#attaching-files) on a message that had none, so a redelivered webhook is safe to replay and a backfill may overlap a live stream. The returned `messageId` is stable across replays. Calls against one channel are serialised, so a redelivery arriving while its original is still being written waits rather than racing it.
 
 **Threading.** Messages sharing a `threadExternalId` land in one Message Thread, which then appears on the Person, Company and Opportunity records of its participants.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 A batch is all-or-nothing, and repeating one `externalId` inside a single batch is rejected — de-duplicate before you send. A message body is capped at 256KB.
+
+### Attaching files
+
+Images, videos, voice notes and other files go in a message's `attachments`. Upload each file first with `uploadMessageAttachment`, which needs the `UPLOAD_FILE` permission flag on your app's role, then pass what it returns:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Each file is stored as an attachment record on the message. The file name's extension decides how the conversation shows the file: images show inline, videos and audio get a player, anything else is a file chip. A message holds at most 20 attachments.
+
+Attachments are stored only while the message has none, so a redelivery never replaces them. Each ingested message reports `hasAttachments`: ingest the text first, then download and upload files only for messages that come back without any, and ingest those messages again with their `attachments`. A file you upload but never attach is not cleaned up, so don't upload for a message that already has attachments.
+
+Attachments follow the channel's `visibility` like the body: unless the conversation is fully shared, other members get an empty list.
 
 ### Linking participants to People
 
@@ -205,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` sets how Twenty lays out the provider's conversations: `'chat'` shows message bubbles grouped by sender, like a messaging app, and `'email'` shows the email thread layout. Without it, app channels keep the chat layout. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Bind a channel to it when you create the channel, or later with `updateMessageChannel` (passing `null` unbinds it):
 
@@ -223,7 +253,7 @@ await createMessageChannel({
 
 The messaging provider must belong to your app and use the connection provider of the channel's account; its connection provider cannot change after the first sync. Changing the send function in a later version applies to every channel bound to the provider.
 
-Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, the text and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
+Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, either the `text` or, for providers whose `conversationStyle` is `'email'`, an `email` block (`to`, `cc`, `bcc`, `subject`, rich text `body`, `inReplyTo`), and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -246,6 +276,8 @@ export const linkedinSendMessageHandler = async ({
 ```
 
 The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
+
+The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Attachments are not sent yet. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 

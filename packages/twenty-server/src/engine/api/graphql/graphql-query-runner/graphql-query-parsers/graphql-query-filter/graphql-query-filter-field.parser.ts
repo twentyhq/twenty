@@ -21,9 +21,9 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
-import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
-import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/record-filter/utils/resolve-filter-key-field-metadata.util';
+import { assertArrayOperatorValueIsNonEmptyArrayOrThrow } from 'src/engine/record-filter/utils/assert-array-operator-value-is-non-empty-array-or-throw.util';
+import { computeWhereConditionParts } from 'src/engine/record-filter/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -86,8 +86,7 @@ export class GraphqlQueryFilterFieldParser {
     outerQueryBuilder: WorkspaceSelectQueryBuilder,
     objectNameSingular: string,
     key: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    filterValue: any,
+    filterValue: Partial<ObjectRecordFilter>,
     isFirst = false,
     useDirectTableReference = false,
   ): void {
@@ -104,7 +103,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      recordsPermissions: outerQueryBuilder.recordsPermissions,
+      recordReadRestrictions: outerQueryBuilder.recordReadRestrictions,
       flatObjectMetadata: this.flatObjectMetadata,
       flatFieldMetadata: fieldMetadata,
     });
@@ -158,7 +157,7 @@ export class GraphqlQueryFilterFieldParser {
       return;
     }
 
-    assertArrayOperatorValueIsNonEmptyArray({ operator, value, key });
+    assertArrayOperatorValueIsNonEmptyArrayOrThrow({ operator, value, key });
 
     const { sql, params } = computeWhereConditionParts({
       operator,
@@ -354,7 +353,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     assertFieldIsReadableOrThrow({
-      recordsPermissions: outerQueryBuilder.recordsPermissions,
+      recordReadRestrictions: outerQueryBuilder.recordReadRestrictions,
       flatObjectMetadata: referencedScope.flatObjectMetadata,
       flatFieldMetadata: referencedFieldMetadata,
     });
@@ -407,8 +406,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     fieldMetadata: OrmFlatFieldMetadata,
     objectNameSingular: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    fieldValue: any,
+    fieldValue: Partial<ObjectRecordFilter>,
     isFirst = false,
     useDirectTableReference = false,
   ): void {
@@ -435,12 +433,9 @@ export class GraphqlQueryFilterFieldParser {
 
       const fullFieldName = `${fieldMetadata.name}${capitalize(subFieldKey)}`;
 
-      const [[operator, value]] = Object.entries(
-        // oxlint-disable-next-line typescript/no-explicit-any
-        subFieldFilter as Record<string, any>,
-      );
+      const [[operator, value]] = Object.entries(subFieldFilter);
 
-      assertArrayOperatorValueIsNonEmptyArray({
+      assertArrayOperatorValueIsNonEmptyArrayOrThrow({
         operator,
         value,
         key: subFieldKey,

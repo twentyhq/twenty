@@ -1,3 +1,4 @@
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -48,11 +49,11 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
+    ApplicationGrantRoleLookupModule,
     AgentChatThreadLifecycleModule,
     AgentChatStreamStateModule,
     AgentChatThreadModule,
@@ -67,7 +68,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     MetricsModule,
     PendingWakeUpModule,
     UserWorkspaceModule,
-    UserRoleModule,
     PermissionsModule,
     SkillModule,
     ToolProviderModule,

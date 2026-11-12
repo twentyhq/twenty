@@ -1,8 +1,10 @@
+import { Test } from '@nestjs/testing';
+
 import { google } from 'googleapis';
 import { WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
@@ -12,7 +14,7 @@ import { GoogleWebhookSubscriptionDriver } from 'src/modules/connected-account/w
 const accessToken = process.env.GOOGLE_DEV_ACCESS_TOKEN ?? '';
 const connectedAccountId = 'dev-connected-account';
 
-const buildDriver = ({
+const buildDriver = async ({
   serverUrl = 'https://twenty-probe.invalid',
   pubSubTopic = 'projects/twenty-auth-dev/topics/gmail',
   token = accessToken,
@@ -25,19 +27,24 @@ const buildDriver = ({
 
   oAuth2Client.setCredentials({ access_token: token });
 
-  const oAuth2ClientProvider = {
-    getClient: async () => oAuth2Client,
-  } as unknown as GoogleOAuth2ClientProvider;
+  const module = await Test.createTestingModule({
+    providers: [
+      GoogleWebhookSubscriptionDriver,
+      {
+        provide: GoogleOAuth2ClientProvider,
+        useValue: { getClient: async () => oAuth2Client },
+      },
+      {
+        provide: TwentyConfigService,
+        useValue: {
+          get: (key: string) =>
+            key === 'MESSAGING_GMAIL_PUBSUB_TOPIC' ? pubSubTopic : serverUrl,
+        },
+      },
+    ],
+  }).compile();
 
-  const twentyConfigService = {
-    get: (key: string) =>
-      key === 'MESSAGING_GMAIL_PUBSUB_TOPIC' ? pubSubTopic : serverUrl,
-  } as unknown as TwentyConfigService;
-
-  return new GoogleWebhookSubscriptionDriver(
-    oAuth2ClientProvider,
-    twentyConfigService,
-  );
+  return module.get(GoogleWebhookSubscriptionDriver);
 };
 
 const expectDriverExceptionCode = async (
@@ -57,7 +64,7 @@ xdescribe('Google dev tests : webhook subscription driver', () => {
 
   it('should map a stopped channel that no longer exists to NOT_FOUND', async () => {
     await expectDriverExceptionCode(
-      buildDriver().deleteSubscription({
+      (await buildDriver()).deleteSubscription({
         connectedAccountId,
         channelType: WebhookSubscriptionChannelType.CALENDAR,
         externalSubscriptionId: '00000000-0000-4000-8000-000000000000',
@@ -70,9 +77,11 @@ xdescribe('Google dev tests : webhook subscription driver', () => {
 
   it('should map a non-https notification url to UNKNOWN', async () => {
     await expectDriverExceptionCode(
-      buildDriver({
-        serverUrl: 'http://insecure.example.com',
-      }).createSubscription(
+      (
+        await buildDriver({
+          serverUrl: 'http://insecure.example.com',
+        })
+      ).createSubscription(
         connectedAccountId,
         WebhookSubscriptionChannelType.CALENDAR,
         'dev',
@@ -83,9 +92,11 @@ xdescribe('Google dev tests : webhook subscription driver', () => {
 
   it('should map a pubsub topic owned by another project to UNKNOWN', async () => {
     await expectDriverExceptionCode(
-      buildDriver({
-        pubSubTopic: 'projects/twenty-probe-nonexistent/topics/nope',
-      }).createSubscription(
+      (
+        await buildDriver({
+          pubSubTopic: 'projects/twenty-probe-nonexistent/topics/nope',
+        })
+      ).createSubscription(
         connectedAccountId,
         WebhookSubscriptionChannelType.MESSAGING,
         'dev',
@@ -96,7 +107,7 @@ xdescribe('Google dev tests : webhook subscription driver', () => {
 
   it('should map an expired access token to INSUFFICIENT_PERMISSIONS', async () => {
     await expectDriverExceptionCode(
-      buildDriver({ token: 'not-a-real-token' }).createSubscription(
+      (await buildDriver({ token: 'not-a-real-token' })).createSubscription(
         connectedAccountId,
         WebhookSubscriptionChannelType.CALENDAR,
         'dev',

@@ -1,0 +1,228 @@
+@use 'sass:math';
+
+$default-duration: 5190ms;
+$happy-duration: 1300ms;
+$wink-duration: 2590ms;
+$surprised-duration: 2250ms;
+$sleepy-duration: 2710ms;
+$love-duration: 1660ms;
+
+.root,
+.eye,
+.wink,
+.sleepSymbol {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.root {
+  display: none;
+}
+
+.eye,
+.wink,
+.sleepSymbol {
+  background-color: var(--assistant-avatar-face-color);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  mask-mode: alpha;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.leftEye {
+  clip-path: inset(0 50% 0 0);
+  transform-origin: 37.5% 50%;
+}
+
+.rightEye,
+.wink {
+  clip-path: inset(0 0 0 50%);
+  transform-origin: 62.5% 50%;
+}
+
+.wink,
+.sleepSymbol {
+  opacity: 0;
+}
+
+.sleepSymbol {
+  transform-origin: 77.50016% 24.00098%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .root {
+    display: block;
+  }
+
+  .root[data-face='default'] .eye {
+    animation-name: defaultIdle;
+    animation-duration: $default-duration;
+  }
+
+  .root[data-face='happy'] .eye {
+    animation-name: happyIdle;
+    animation-duration: $happy-duration;
+  }
+
+  .root[data-face='wink'] {
+    .rightEye {
+      animation-name: winkEye;
+      animation-duration: $wink-duration;
+    }
+
+    .wink {
+      animation-name: winkExpression;
+      animation-duration: $wink-duration;
+    }
+  }
+
+  .root[data-face='surprised'] {
+    .eye {
+      animation-name: surprisedIdle;
+      animation-duration: $surprised-duration;
+    }
+
+    .leftEye {
+      transform-origin: 37% 50%;
+    }
+
+    .rightEye {
+      transform-origin: 63% 50%;
+    }
+  }
+
+  .root[data-face='sleepy'] .sleepSymbol {
+    animation-name: sleepyIdle;
+    animation-duration: $sleepy-duration;
+  }
+
+  .root[data-face='love'] {
+    .eye {
+      animation-name: loveIdle;
+      animation-duration: $love-duration;
+    }
+
+    .leftEye {
+      transform-origin: 36.5% 48.90625%;
+    }
+
+    .rightEye {
+      transform-origin: 63.5% 48.90625%;
+    }
+  }
+}
+
+@keyframes defaultIdle {
+  0%,
+  #{math.percentage(math.div(2200ms, $default-duration))},
+  #{math.percentage(math.div(2420ms, $default-duration))},
+  #{math.percentage(math.div(3820ms, $default-duration))},
+  100% {
+    transform: translateX(0) scaleY(1);
+  }
+
+  #{math.percentage(math.div(2280ms, $default-duration))},
+  #{math.percentage(math.div(2340ms, $default-duration))} {
+    transform: translateX(0) scaleY(0.153846154);
+  }
+
+  #{math.percentage(math.div(4040ms, $default-duration))},
+  #{math.percentage(math.div(4940ms, $default-duration))} {
+    transform: translateX(8%) scaleY(1);
+  }
+}
+
+@keyframes happyIdle {
+  0%,
+  #{math.percentage(math.div(500ms, $happy-duration))},
+  100% {
+    transform: translateY(0);
+  }
+
+  #{math.percentage(math.div(800ms, $happy-duration))},
+  #{math.percentage(math.div(1000ms, $happy-duration))} {
+    transform: translateY(-4.5%);
+  }
+}
+
+@keyframes winkEye {
+  0%,
+  #{math.percentage(math.div(1800ms, $wink-duration))},
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  #{math.percentage(math.div(1920ms, $wink-duration))},
+  #{math.percentage(math.div(2470ms, $wink-duration))} {
+    opacity: 0;
+    transform: scaleY(0.153846154);
+  }
+}
+
+@keyframes winkExpression {
+  0%,
+  #{math.percentage(math.div(1800ms, $wink-duration))},
+  100% {
+    opacity: 0;
+  }
+
+  #{math.percentage(math.div(1920ms, $wink-duration))},
+  #{math.percentage(math.div(2470ms, $wink-duration))} {
+    opacity: 1;
+  }
+}
+
+@keyframes surprisedIdle {
+  0%,
+  #{math.percentage(math.div(1600ms, $surprised-duration))},
+  100% {
+    transform: scale(1);
+  }
+
+  #{math.percentage(math.div(1750ms, $surprised-duration))},
+  #{math.percentage(math.div(2000ms, $surprised-duration))} {
+    transform: scale(1.184210526);
+  }
+}
+
+@keyframes sleepyIdle {
+  0%,
+  #{math.percentage(math.div(300ms, $sleepy-duration))},
+  100% {
+    opacity: 0;
+    transform: translate(-4.75069%, 13.99903%) scale(0.874968, 0.852958);
+  }
+
+  #{math.percentage(math.div(1400ms, $sleepy-duration))},
+  #{math.percentage(math.div(1600ms, $sleepy-duration))} {
+    opacity: 1;
+    transform: translate(0, 0) scale(1, 1);
+  }
+
+  #{math.percentage(math.div(2700ms, $sleepy-duration))} {
+    opacity: 0;
+    transform: translate(4.50026%, -14.49951%) scale(1.093712, 1.088168);
+    animation-timing-function: step-end;
+  }
+}
+
+@keyframes loveIdle {
+  0%,
+  #{math.percentage(math.div(900ms, $love-duration))},
+  #{math.percentage(math.div(1210ms, $love-duration))},
+  #{math.percentage(math.div(1290ms, $love-duration))},
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  #{math.percentage(math.div(1020ms, $love-duration))},
+  #{math.percentage(math.div(1070ms, $love-duration))},
+  #{math.percentage(math.div(1410ms, $love-duration))},
+  #{math.percentage(math.div(1460ms, $love-duration))} {
+    transform: translateY(-0.328125%) scale(1.205882353);
+  }
+}

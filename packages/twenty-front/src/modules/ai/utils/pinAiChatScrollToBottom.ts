@@ -7,7 +7,15 @@ import { AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS } from '@/ai/constants/AiChatSc
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 
 type PinAiChatScrollToBottomParams = {
-  scrollWrapperElement: HTMLElement;
+  scrollWrapperElement: Pick<
+    HTMLElement,
+    | 'scrollHeight'
+    | 'clientHeight'
+    | 'clientWidth'
+    | 'scrollTop'
+    | 'addEventListener'
+    | 'removeEventListener'
+  >;
   onPinningStopped?: () => void;
 };
 

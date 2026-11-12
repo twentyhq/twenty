@@ -30,6 +30,8 @@ export const fromFlatAgentToAgentManifest = ({
     | 'name'
     | 'label'
     | 'icon'
+    | 'avatarColor'
+    | 'avatarShape'
     | 'description'
     | 'prompt'
     | 'modelId'
@@ -44,6 +46,12 @@ export const fromFlatAgentToAgentManifest = ({
   name: flatAgent.name,
   label: flatAgent.label,
   ...(isDefined(flatAgent.icon) ? { icon: flatAgent.icon } : {}),
+  ...(isDefined(flatAgent.avatarColor)
+    ? { avatarColor: flatAgent.avatarColor }
+    : {}),
+  ...(isDefined(flatAgent.avatarShape)
+    ? { avatarShape: flatAgent.avatarShape }
+    : {}),
   ...(isDefined(flatAgent.description)
     ? { description: flatAgent.description }
     : {}),

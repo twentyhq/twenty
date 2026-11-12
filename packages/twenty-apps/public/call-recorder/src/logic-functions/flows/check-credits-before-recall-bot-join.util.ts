@@ -21,7 +21,7 @@ export const checkCreditsBeforeRecallBotJoin = async ({
   callRecordingId,
   now,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   callRecordingId: string;
   now: Date;
 }): Promise<CheckCreditsBeforeRecallBotJoinResult> => {

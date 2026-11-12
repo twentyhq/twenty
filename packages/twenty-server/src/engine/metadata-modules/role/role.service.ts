@@ -93,8 +93,17 @@ export class RoleService {
         },
       );
 
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     return flatRoles.map((flatRole) => {
       const roleDto = fromFlatRoleToRoleDto(flatRole);
+
+      roleDto.isEditable =
+        flatRole.isEditable &&
+        flatRole.applicationId === workspaceCustomFlatApplication.id;
 
       roleDto.permissionFlags = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatRole.rolePermissionFlagIds,
@@ -114,7 +123,22 @@ export class RoleService {
       roleDto.fieldPermissions = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatRole.fieldPermissionIds,
         flatEntityMaps: flatFieldPermissionMaps,
-      }).map(fromFlatFieldPermissionToFieldPermissionDto);
+      })
+        .filter(
+          ({ rowLevelPermissionPredicateGroupId }) =>
+            !isDefined(rowLevelPermissionPredicateGroupId),
+        )
+        .map(fromFlatFieldPermissionToFieldPermissionDto);
+
+      roleDto.rowLevelPermissionFieldPermissions =
+        findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatRole.fieldPermissionIds,
+          flatEntityMaps: flatFieldPermissionMaps,
+        })
+          .filter(({ rowLevelPermissionPredicateGroupId }) =>
+            isDefined(rowLevelPermissionPredicateGroupId),
+          )
+          .map(fromFlatFieldPermissionToFieldPermissionDto);
 
       return roleDto;
     });

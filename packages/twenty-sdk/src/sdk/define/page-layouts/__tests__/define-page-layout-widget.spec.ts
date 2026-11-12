@@ -25,18 +25,15 @@ describe('definePageLayoutWidget', () => {
     expect(result.errors).toEqual([]);
   });
 
-  it('rejects a widget without a tab or a position', () => {
+  it('rejects a widget without a tab', () => {
     const result = definePageLayoutWidget({
       ...WIDGET_CONFIG,
       pageLayoutTabUniversalIdentifier: '',
-      position:
-        undefined as unknown as StandalonePageLayoutWidgetManifest['position'],
     });
 
     expect(result.success).toBe(false);
     expect(result.errors).toEqual([
       'PageLayoutWidget must have a pageLayoutTabUniversalIdentifier when defined standalone (use the universalIdentifier of the tab it is added to)',
-      'PageLayoutWidget must have a position when defined standalone (its tab is not in the manifest, so the layout mode cannot be inferred)',
     ]);
   });
 

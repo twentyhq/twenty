@@ -4,4 +4,5 @@ export type ValidationRuleSyntaxDefinition = {
   name: string;
   signature: string;
   description: MessageDescriptor;
+  insertText?: string;
 };

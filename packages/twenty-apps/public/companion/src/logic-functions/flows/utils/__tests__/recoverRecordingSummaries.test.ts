@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, expect, it, vi } from 'vitest';
 import { kv } from 'twenty-sdk/logic-function';
 
@@ -9,7 +8,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 }));
 const query = vi.fn();
 const mutation = vi.fn();
-const client = { query, mutation } as unknown as CoreApiClient;
+const client = { query, mutation };
 const now = new Date('2026-09-08T10:00:00Z');
 
 beforeEach(() => {

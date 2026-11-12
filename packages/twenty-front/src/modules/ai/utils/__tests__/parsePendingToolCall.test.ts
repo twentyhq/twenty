@@ -20,14 +20,13 @@ const toolPart = ({
   toolName: string;
   input: unknown;
   status?: string;
-}) =>
-  ({
-    type: `tool-${toolName}`,
-    toolCallId: 'call-1',
-    state: 'output-available',
-    input,
-    output: { success: true, result: { status } },
-  }) as unknown as ExtendedUIMessagePart;
+}): ExtendedUIMessagePart => ({
+  type: `tool-${toolName}`,
+  toolCallId: 'call-1',
+  state: 'output-available',
+  input,
+  output: { success: true, result: { status } },
+});
 
 describe('parsePendingToolCall', () => {
   it.each([
@@ -94,7 +93,7 @@ describe('parsePendingToolCall', () => {
       recordId: 'company-id',
       currentValues: { employees: 10 },
     };
-    const part = {
+    const part: ExtendedUIMessagePart = {
       type: 'tool-propose_tool_call',
       toolCallId: 'call-1',
       state: 'output-available',
@@ -104,7 +103,7 @@ describe('parsePendingToolCall', () => {
         summary: proposal.summary,
       },
       output: { success: true, result: { status: 'pending', proposal } },
-    } as unknown as ExtendedUIMessagePart;
+    };
 
     expect(parsePendingToolCall(part)).toEqual({
       toolCallId: 'call-1',

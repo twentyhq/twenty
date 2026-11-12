@@ -86,21 +86,22 @@ export default defineCommandMenuItem({
 
 Acestea reprezintă starea curentă a paginii:
 
-| Variabilă                      | Tip              | Descriere                                                                                       |
-| ------------------------------ | ---------------- | ----------------------------------------------------------------------------------------------- |
-| `pageType`                     | `string`         | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`)                          |
-| `isInSidePanel`                | `boolean`        | Dacă componenta este redată într-un panou lateral                                               |
-| `numberOfSelectedRecords`      | `number`         | Numărul de înregistrări selectate în prezent                                                    |
-| `isSelectAll`                  | `boolean`        | Dacă "select all" este activ                                                                    |
-| `selectedRecords`              | `array`          | Obiectele înregistrărilor selectate                                                             |
-| `favoriteRecordIds`            | `array`          | ID-urile înregistrărilor marcate ca favorite                                                    |
-| `objectPermissions`            | `object`         | Permisiuni pentru tipul de obiect curent                                                        |
-| `targetObjectReadPermissions`  | `object`         | Permisiuni de citire pentru obiectul țintă                                                      |
-| `targetObjectWritePermissions` | `object`         | Permisiuni de scriere pentru obiectul țintă                                                     |
-| `featureFlags`                 | `object`         | Steaguri de caracteristici active                                                               |
-| `objectMetadataItem`           | `object`         | Metadatele tipului de obiect curent                                                             |
-| `coreObjectName`               | `string \| null` | Obiectul de bază al paginii curente (`'workflow'` pe paginile Workflows), în caz contrar `null` |
-| `hasAnySoftDeleteFilterOnView` | `boolean`        | Dacă vizualizarea curentă are un filtru soft-delete                                             |
+| Variabilă                      | Tip              | Descriere                                                                                          |
+| ------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------- |
+| `pageType`                     | `string`         | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`)                             |
+| `isInSidePanel`                | `boolean`        | Dacă componenta este redată într-un panou lateral                                                  |
+| `numberOfSelectedRecords`      | `number`         | Numărul de înregistrări selectate în prezent                                                       |
+| `isSelectAll`                  | `boolean`        | Dacă "select all" este activ                                                                       |
+| `selectedRecords`              | `array`          | Obiectele înregistrărilor selectate                                                                |
+| `favoriteRecordIds`            | `array`          | ID-urile înregistrărilor marcate ca favorite                                                       |
+| `objectPermissions`            | `object`         | Permisiuni pentru tipul de obiect curent                                                           |
+| `targetObjectReadPermissions`  | `object`         | Permisiuni de citire pentru obiectul țintă                                                         |
+| `targetObjectWritePermissions` | `object`         | Permisiuni de scriere pentru obiectul țintă                                                        |
+| `featureFlags`                 | `object`         | Steaguri de caracteristici active                                                                  |
+| `objectMetadataItem`           | `object`         | Metadatele tipului de obiect curent                                                                |
+| `coreObjectName`               | `string \| null` | Obiectul de bază al paginii curente (`'workflow'` pe paginile Workflows), în caz contrar `null`    |
+| `currentView`                  | `object \| null` | Vizualizarea afișată pe o pagină de index, ca `{ id, universalIdentifier }`, în caz contrar `null` |
+| `hasAnySoftDeleteFilterOnView` | `boolean`        | Dacă vizualizarea curentă are un filtru soft-delete                                                |
 
 ### Operatori
 

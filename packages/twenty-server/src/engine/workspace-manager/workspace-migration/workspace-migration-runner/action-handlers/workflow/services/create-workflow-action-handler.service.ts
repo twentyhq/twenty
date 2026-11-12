@@ -40,6 +40,7 @@ export class CreateWorkflowActionHandlerService extends WorkspaceMigrationRunner
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
+        navigationMenuItemIds: [],
         ...emptyUniversalForeignKeyAggregators,
       },
     };

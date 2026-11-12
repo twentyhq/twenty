@@ -12,7 +12,7 @@ export const resolveSlackFileDetails = async ({
   client,
   file,
 }: {
-  client: WebClient;
+  client: { files: Pick<WebClient['files'], 'info'> };
   file: SlackMessageFile;
 }): Promise<ResolvedSlackFileDetails> => {
   if (

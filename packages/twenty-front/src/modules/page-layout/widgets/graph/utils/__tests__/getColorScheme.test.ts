@@ -57,7 +57,7 @@ describe('getColorScheme', () => {
         '#v11',
       ],
     },
-  } as unknown as GraphColorRegistry;
+  };
 
   const alphabeticalRankByKey = new Map([
     ['alpha', 0],

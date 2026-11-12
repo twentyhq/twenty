@@ -15,7 +15,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -53,6 +53,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       flatFieldMetadataMaps,
       commonQueryParser,
       authContext,
+      permissionsPrincipals,
     } = queryRunnerContext;
 
     const readRepository = this.getReadRepository(queryRunnerContext);
@@ -76,9 +77,11 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       const sourceColumnsToSelect = buildDuplicateSourceColumnsToSelect({
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        restrictedFields:
-          readRepository.recordsPermissions.objects[flatObjectMetadata.id]
-            ?.restrictedFields ?? {},
+        unreadableFieldMetadataIds:
+          await this.recordFieldPermissionsReadService.findUnreadableFields({
+            principals: permissionsPrincipals,
+            objectMetadataId: flatObjectMetadata.id,
+          }),
       });
 
       const fetchedRecords = (await existingRecordsQueryBuilder

@@ -13,7 +13,7 @@ const toHeaderRecord = (headers: HeadersInit): Record<string, string> => {
 };
 
 export const getHeadersFromFetchRequestArguments = (
-  input: RequestInfo | URL,
+  input: string | URL | Pick<Request, 'headers'>,
   init: RequestInit | undefined,
 ): Record<string, string> => {
   if (isDefined(init?.headers)) {

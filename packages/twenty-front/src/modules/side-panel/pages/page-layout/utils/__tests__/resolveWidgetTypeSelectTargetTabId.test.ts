@@ -1,21 +1,9 @@
-import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { resolveWidgetTypeSelectTargetTabId } from '@/side-panel/pages/page-layout/utils/resolveWidgetTypeSelectTargetTabId';
-import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
-const makeTab = (id: string, widgetIds: string[] = []): PageLayoutTab =>
-  ({
-    id,
-    applicationId: '',
-    title: id,
-    isActive: true,
-    position: 0,
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-    pageLayoutId: '',
-    widgets: widgetIds.map((wId) => ({ id: wId })),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-  }) as unknown as PageLayoutTab;
+const makeTab = (id: string, widgetIds: string[] = []) => ({
+  id,
+  widgets: widgetIds.map((widgetId) => ({ id: widgetId })),
+});
 
 describe('resolveWidgetTypeSelectTargetTabId', () => {
   it('should return the tab containing the editing widget', () => {

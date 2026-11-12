@@ -63,8 +63,9 @@ describe('agent history workspace metadata', () => {
       if (
         !isMorphOrRelationFlatFieldMetadata(field) ||
         !historyObjectIds.includes(field.objectMetadataUniversalIdentifier)
-      )
+      ) {
         continue;
+      }
       expect(
         validateMorphOrRelationFlatFieldOnDelete({
           universalFlatFieldMetadata: {

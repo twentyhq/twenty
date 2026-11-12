@@ -24,7 +24,7 @@ type CalendarEventNode = {
 };
 
 export const fetchCalendarEventsByFilter = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   filter: Record<string, unknown>,
 ): Promise<CalendarEventRecord[]> => {
   const calendarEventNodes = await fetchAllNodes<CalendarEventNode>(

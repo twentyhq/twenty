@@ -56,6 +56,12 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     // the return-path subdomain is configured by Resend at domain creation
   }
 
+  async retryVerification(input: EmailingDomainResourceInput): Promise<void> {
+    this.logger.log(
+      `Resend re-verifies ${input.domain} on every verifyDomain call, nothing to retry`,
+    );
+  }
+
   async verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult> {

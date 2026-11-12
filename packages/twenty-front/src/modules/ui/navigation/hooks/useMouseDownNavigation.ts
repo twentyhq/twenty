@@ -23,7 +23,9 @@ export const useMouseDownNavigation = ({
   const navigate = useNavigate();
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     if (isNavigationModifierPressed(event)) {
       onBeforeNavigation?.();
@@ -48,7 +50,9 @@ export const useMouseDownNavigation = ({
   };
 
   const handleMouseDown = (event: MouseEvent<HTMLElement>) => {
-    if (disabled || triggerEvent === 'CLICK') return;
+    if (disabled || triggerEvent === 'CLICK') {
+      return;
+    }
 
     if (isNavigationModifierPressed(event)) {
       return;

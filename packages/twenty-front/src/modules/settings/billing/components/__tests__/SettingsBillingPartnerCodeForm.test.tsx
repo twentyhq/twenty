@@ -2,7 +2,7 @@ import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -41,21 +41,12 @@ const buildPartnerCodeMock = ({
   },
 });
 
-const renderForm = ({
-  mocks,
-  variant = 'settings',
-}: {
-  mocks: MockedResponse[];
-  variant?: 'onboarding' | 'settings';
-}) =>
+const renderForm = ({ mocks }: { mocks: MockedResponse[] }) =>
   render(
     <JotaiProvider store={createStore()}>
       <MockedProvider mocks={mocks}>
         <I18nProvider i18n={i18n}>
-          <SettingsBillingPartnerCodeForm
-            instanceId="partner-code-test"
-            variant={variant}
-          />
+          <SettingsBillingPartnerCodeForm />
         </I18nProvider>
       </MockedProvider>
     </JotaiProvider>,
@@ -129,81 +120,6 @@ describe('SettingsBillingPartnerCodeForm', () => {
     ).toBeInTheDocument();
   });
 
-  it('should keep the onboarding field behind a link until asked for', async () => {
-    renderForm({
-      mocks: [buildPartnerCodeMock({ partnerCode: null, isEditable: true })],
-      variant: 'onboarding',
-    });
-
-    await userEvent.click(
-      await screen.findByRole('button', {
-        name: 'Referred by a Twenty partner? Add their code',
-      }),
-    );
-
-    expect(await screen.findByLabelText('Partner code')).toBeEnabled();
-  });
-
-  it('should show nothing in onboarding when a referral link set the code', async () => {
-    const partnerCodeResult = jest.fn(
-      () =>
-        buildPartnerCodeMock({ partnerCode: 'northwind', isEditable: false })
-          .result,
-    );
-
-    const { container } = renderForm({
-      mocks: [
-        {
-          request: { query: BillingPartnerCodeDocument },
-          result: partnerCodeResult,
-        },
-      ],
-      variant: 'onboarding',
-    });
-
-    await waitFor(() => expect(partnerCodeResult).toHaveBeenCalledTimes(1));
-    await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
-  it('should keep a code applied during onboarding visible', async () => {
-    renderForm({
-      mocks: [
-        buildPartnerCodeMock({ partnerCode: null, isEditable: true }),
-        {
-          request: {
-            query: SetBillingPartnerCodeDocument,
-            variables: { partnerCode: 'ACME' },
-          },
-          result: {
-            data: {
-              setBillingPartnerCode: {
-                __typename: 'BillingPartnerCode',
-                partnerCode: 'acme',
-                isEditable: false,
-              },
-            },
-          },
-        },
-        buildPartnerCodeMock({ partnerCode: 'acme', isEditable: false }),
-      ],
-      variant: 'onboarding',
-    });
-
-    await userEvent.click(
-      await screen.findByRole('button', {
-        name: 'Referred by a Twenty partner? Add their code',
-      }),
-    );
-    await userEvent.type(await screen.findByLabelText('Partner code'), 'ACME');
-    await userEvent.click(screen.getByRole('button', { name: 'Apply' }));
-
-    await waitFor(() =>
-      expect(screen.getByDisplayValue('ACME')).toBeDisabled(),
-    );
-  });
-
   it('should lock a code that is already set', async () => {
     renderForm({
       mocks: [
@@ -215,5 +131,18 @@ describe('SettingsBillingPartnerCodeForm', () => {
     expect(
       screen.queryByRole('button', { name: 'Apply' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('should explain that codes are trial only once the trial is over', async () => {
+    renderForm({
+      mocks: [buildPartnerCodeMock({ partnerCode: null, isEditable: false })],
+    });
+
+    expect(
+      await screen.findByText(
+        'Partner codes can only be added during the free trial.',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText('Partner code')).not.toBeInTheDocument();
   });
 });

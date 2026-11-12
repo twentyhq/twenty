@@ -1,9 +1,10 @@
+import { Test } from '@nestjs/testing';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
-import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 type FakeRow = {
   id: string;
@@ -35,8 +36,11 @@ const buildFakeDataSource = (
     return new RegExp(`^${expr}$`).test(value);
   };
 
-  const fakeDataSource = {
-    query: jest.fn(async (sql: string, params?: unknown[]) => {
+  const fakeDataSource = new DataSource({ type: 'postgres' });
+
+  fakeDataSource.query = jest
+    .fn()
+    .mockImplementation(async (sql: string, params?: unknown[]) => {
       queryCallCount++;
 
       if (sql.includes('SELECT id')) {
@@ -81,8 +85,7 @@ const buildFakeDataSource = (
       }
 
       return;
-    }),
-  } as unknown as DataSource;
+    });
 
   return {
     dataSource: fakeDataSource,
@@ -91,26 +94,31 @@ const buildFakeDataSource = (
   };
 };
 
-const buildFakeTokenEncryptionService =
-  (): ConnectedAccountTokenEncryptionService =>
+const buildFakeTokenEncryptionService = () => ({
+  encrypt: jest.fn(
     ({
-      encrypt: jest.fn(
-        ({
-          plaintext,
-          workspaceId,
-        }: {
-          plaintext: string;
-          workspaceId: string;
-        }): string => wrapAsV2(plaintext, workspaceId),
-      ),
-    }) as unknown as ConnectedAccountTokenEncryptionService;
+      plaintext,
+      workspaceId,
+    }: {
+      plaintext: string;
+      workspaceId: string;
+    }): string => wrapAsV2(plaintext, workspaceId),
+  ),
+});
 
-const buildCommand = (): {
+const buildCommand = async (): Promise<{
   command: EncryptConnectedAccountTokensSlowInstanceCommand;
-} => {
-  const command = new EncryptConnectedAccountTokensSlowInstanceCommand(
-    buildFakeTokenEncryptionService(),
-  );
+}> => {
+  const module = await Test.createTestingModule({
+    providers: [
+      EncryptConnectedAccountTokensSlowInstanceCommand,
+      {
+        provide: ConnectedAccountTokenEncryptionService,
+        useValue: buildFakeTokenEncryptionService(),
+      },
+    ],
+  }).compile();
+  const command = module.get(EncryptConnectedAccountTokensSlowInstanceCommand);
 
   return { command };
 };
@@ -143,7 +151,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         },
       ]);
 
-      await buildCommand().command.runDataMigration(dataSource);
+      await (await buildCommand()).command.runDataMigration(dataSource);
 
       expect(rows()).toEqual([
         {
@@ -184,7 +192,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         },
       ]);
 
-      await buildCommand().command.runDataMigration(dataSource);
+      await (await buildCommand()).command.runDataMigration(dataSource);
 
       expect(rows()).toEqual([
         {
@@ -208,7 +216,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         },
       ]);
 
-      const { command } = buildCommand();
+      const { command } = await buildCommand();
 
       const expectedFinalState = [
         {
@@ -240,7 +248,7 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         { batchSize: 500 },
       );
 
-      await buildCommand().command.runDataMigration(dataSource);
+      await (await buildCommand()).command.runDataMigration(dataSource);
 
       expect(
         rows().every((row) =>

@@ -88,7 +88,8 @@
                     "pages": [
                       "user-guide/data-model/capabilities/objects",
                       "user-guide/data-model/capabilities/fields",
-                      "user-guide/data-model/capabilities/relation-fields"
+                      "user-guide/data-model/capabilities/relation-fields",
+                      "user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -630,6 +631,7 @@
                       {
                         "group": "Data display",
                         "pages": [
+                          "ui/components/data-display/assistant-avatar",
                           "ui/components/data-display/avatar-group",
                           "ui/components/data-display/command-block",
                           "ui/components/data-display/details-row",
@@ -1200,7 +1202,8 @@
                     "pages": [
                       "ar/user-guide/data-model/capabilities/objects",
                       "ar/user-guide/data-model/capabilities/fields",
-                      "ar/user-guide/data-model/capabilities/relation-fields"
+                      "ar/user-guide/data-model/capabilities/relation-fields",
+                      "ar/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -1742,6 +1745,7 @@
                       {
                         "group": "عرض البيانات",
                         "pages": [
+                          "ar/ui/components/data-display/assistant-avatar",
                           "ar/ui/components/data-display/avatar-group",
                           "ar/ui/components/data-display/command-block",
                           "ar/ui/components/data-display/details-row",
@@ -2764,7 +2768,8 @@
                     "pages": [
                       "es/user-guide/data-model/capabilities/objects",
                       "es/user-guide/data-model/capabilities/fields",
-                      "es/user-guide/data-model/capabilities/relation-fields"
+                      "es/user-guide/data-model/capabilities/relation-fields",
+                      "es/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -3306,6 +3311,7 @@
                       {
                         "group": "Visualización de datos",
                         "pages": [
+                          "es/ui/components/data-display/assistant-avatar",
                           "es/ui/components/data-display/avatar-group",
                           "es/ui/components/data-display/command-block",
                           "es/ui/components/data-display/details-row",
@@ -3424,7 +3430,8 @@
                     "pages": [
                       "it/user-guide/data-model/capabilities/objects",
                       "it/user-guide/data-model/capabilities/fields",
-                      "it/user-guide/data-model/capabilities/relation-fields"
+                      "it/user-guide/data-model/capabilities/relation-fields",
+                      "it/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -3966,6 +3973,7 @@
                       {
                         "group": "Visualizzazione dati",
                         "pages": [
+                          "it/ui/components/data-display/assistant-avatar",
                           "it/ui/components/data-display/avatar-group",
                           "it/ui/components/data-display/command-block",
                           "it/ui/components/data-display/details-row",
@@ -5440,7 +5448,8 @@
                     "pages": [
                       "ro/user-guide/data-model/capabilities/objects",
                       "ro/user-guide/data-model/capabilities/fields",
-                      "ro/user-guide/data-model/capabilities/relation-fields"
+                      "ro/user-guide/data-model/capabilities/relation-fields",
+                      "ro/user-guide/data-model/capabilities/validation-rules"
                     ]
                   },
                   {
@@ -5982,6 +5991,7 @@
                       {
                         "group": "Afișarea datelor",
                         "pages": [
+                          "ro/ui/components/data-display/assistant-avatar",
                           "ro/ui/components/data-display/avatar-group",
                           "ro/ui/components/data-display/command-block",
                           "ro/ui/components/data-display/details-row",

@@ -116,7 +116,7 @@ export const TAB_PROPS = {
       msg({ message: `Conversations`, context: 'pageLayoutTab.title' }),
     ),
     position: 65,
-    icon: 'IconMessage',
+    icon: 'IconInbox',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   chat: {
@@ -237,13 +237,6 @@ export const WIDGET_PROPS = {
       msg({ message: `Task`, context: 'pageLayoutWidget.title' }),
     ),
     type: WidgetType.FIELD_RICH_TEXT,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
-  workflow: {
-    title: i18nLabel(
-      msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.WORKFLOW,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   messageCampaign: {

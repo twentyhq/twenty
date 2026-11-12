@@ -18,7 +18,7 @@ export type MessageInteraction = {
 
 type MessageParticipantNode = Participant & {
   messageId?: string | null;
-  message?: { receivedAt: string | null } | null;
+  message?: { receivedAt: string | null; isDraft?: boolean | null } | null;
 };
 
 const collectSenderAndTeamMemberParticipants = async (
@@ -54,7 +54,7 @@ const collectSenderAndTeamMemberParticipants = async (
                 messageId: true,
                 role: true,
                 workspaceMemberId: true,
-                message: { receivedAt: true },
+                message: { receivedAt: true, isDraft: true },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -98,15 +98,15 @@ const collectReceivedAtByMessageId = async (
       client.query({
         messages: {
           __args: { filter: { id: { in: ids } }, first: PAGE_SIZE },
-          edges: { node: { id: true, receivedAt: true } },
+          edges: { node: { id: true, receivedAt: true, isDraft: true } },
         },
       }),
     );
 
     for (const edge of messages?.edges ?? []) {
-      const { id, receivedAt } = edge.node;
+      const { id, receivedAt, isDraft } = edge.node;
 
-      if (id && receivedAt) {
+      if (id && receivedAt && !isDraft) {
         receivedAtByMessageId.set(id, receivedAt);
       }
     }
@@ -126,9 +126,10 @@ export const collectMessageInteractions = async (
   const interactionByMessageId = new Map<string, MessageInteraction>();
 
   for (const [messageId, participants] of participantsByMessageId) {
-    const receivedAt = participants[0]?.message?.receivedAt ?? null;
+    const message = participants[0]?.message;
+    const receivedAt = message?.receivedAt ?? null;
 
-    if (!receivedAt) {
+    if (!receivedAt || message?.isDraft) {
       continue;
     }
 

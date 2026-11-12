@@ -1,62 +1,53 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 
 const ASSIGNEE_ID = 'e1c3f8a0-0000-4000-8000-000000000000';
 
-const assigneeFlatFieldMetadata = {
+const TASK_OBJECT_METADATA_ID = 'task-object-metadata-id';
+
+const assigneeFlatFieldMetadata = getFlatFieldMetadataMock({
   id: 'assignee-field-metadata-id',
+  objectMetadataId: TASK_OBJECT_METADATA_ID,
   universalIdentifier: 'assignee-field-universal-identifier',
   name: 'assignee',
   type: FieldMetadataType.RELATION,
   settings: { relationType: RelationType.MANY_TO_ONE },
   relationTargetObjectMetadataId: 'workspace-member-object-metadata-id',
-} satisfies Partial<FlatFieldMetadata<FieldMetadataType.RELATION>>;
+});
 
-const titleFlatFieldMetadata = {
+const titleFlatFieldMetadata = getFlatFieldMetadataMock({
   id: 'title-field-metadata-id',
+  objectMetadataId: TASK_OBJECT_METADATA_ID,
   universalIdentifier: 'title-field-universal-identifier',
   name: 'title',
   type: FieldMetadataType.TEXT,
-} satisfies Partial<FlatFieldMetadata<FieldMetadataType.TEXT>>;
+});
 
-const taskFlatObjectMetadata = {
-  id: 'task-object-metadata-id',
+const taskFlatObjectMetadata = getFlatObjectMetadataMock({
+  id: TASK_OBJECT_METADATA_ID,
   universalIdentifier: 'task-object-universal-identifier',
   nameSingular: 'task',
   namePlural: 'tasks',
   fieldIds: [assigneeFlatFieldMetadata.id, titleFlatFieldMetadata.id],
-} satisfies Partial<FlatObjectMetadata>;
-
-const buildFlatEntityMaps = (
-  flatEntities: { id: string; universalIdentifier: string }[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    flatEntities.map((flatEntity) => [
-      flatEntity.universalIdentifier,
-      flatEntity,
-    ]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    flatEntities.map((flatEntity) => [
-      flatEntity.id,
-      flatEntity.universalIdentifier,
-    ]),
-  ),
-  universalIdentifiersByApplicationId: {},
 });
 
-const objectMetadataInfo = {
+const objectMetadataInfo: ObjectMetadataInfo = {
   flatObjectMetadata: taskFlatObjectMetadata,
-  flatFieldMetadataMaps: buildFlatEntityMaps([
-    assigneeFlatFieldMetadata,
-    titleFlatFieldMetadata,
-  ]),
-  flatObjectMetadataMaps: buildFlatEntityMaps([taskFlatObjectMetadata]),
-} as unknown as ObjectMetadataInfo;
+  flatFieldMetadataMaps: addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: [assigneeFlatFieldMetadata, titleFlatFieldMetadata],
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  }),
+  flatObjectMetadataMaps: addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities: [taskFlatObjectMetadata],
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  }),
+};
 
 const format = (record: Record<string, unknown>) =>
   formatWorkflowRecordRelationFields(record, objectMetadataInfo)

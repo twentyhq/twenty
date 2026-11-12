@@ -5,7 +5,7 @@ import { createFrontComponentSandboxMessageHandler } from '../createFrontCompone
 
 const createHandlerHarness = () => {
   const contentWindow = { postMessage: jest.fn() };
-  const sandboxIframe = { contentWindow } as unknown as HTMLIFrameElement;
+  const sandboxIframe = { contentWindow };
   const workerMessagePort = {} as MessagePort;
   const onSandboxError = jest.fn();
 
@@ -19,7 +19,7 @@ const createHandlerHarness = () => {
     handleSandboxMessage({
       source: contentWindow,
       data,
-    } as unknown as MessageEvent);
+    });
 
   return {
     contentWindow,
@@ -92,7 +92,7 @@ describe('createFrontComponentSandboxMessageHandler', () => {
     handleSandboxMessage({
       source: {},
       data: { type: FRONT_COMPONENT_SANDBOX_MESSAGE_TYPE.READY },
-    } as unknown as MessageEvent);
+    });
 
     expect(contentWindow.postMessage).not.toHaveBeenCalled();
     expect(onSandboxError).not.toHaveBeenCalled();

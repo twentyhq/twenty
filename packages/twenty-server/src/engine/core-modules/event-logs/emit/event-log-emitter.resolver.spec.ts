@@ -10,7 +10,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { EventLogEmitterResolver } from './event-log-emitter.resolver';
 
 import { EventLogEmitterService } from './event-log-emitter.service';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 describe('EventLogEmitterResolver', () => {
   let resolver: EventLogEmitterResolver;

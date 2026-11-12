@@ -1,5 +1,4 @@
 import { type JSONSchema7 } from 'json-schema';
-import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 
 import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-filter.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
@@ -8,16 +7,16 @@ import { buildObjectJsonSchema } from 'src/engine/core-modules/record-crud/utils
 
 export const generateBulkDeleteToolInputSchema = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
 }): JSONSchema7 => {
   const definitions: JsonSchemaDefinitions = {};
 
   const { reference: filterReference } = generateRecordFilterJsonSchema({
     objectMetadata,
-    restrictedFields,
+    unreadableFieldMetadataIds,
     definitions,
   });
 

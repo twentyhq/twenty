@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BlocklistScope } from 'twenty-shared/types';
 
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -8,8 +9,7 @@ const context: BlocklistMutationContext = {
   workspaceId: 'workspace-id',
   workspaceMemberId: 'caller-member-id',
   userWorkspaceId: 'user-workspace-id',
-  applicationId: undefined,
-  agentId: undefined,
+  authContext: {} as WorkspaceAuthContext,
 };
 
 type ExistingRecord = Pick<

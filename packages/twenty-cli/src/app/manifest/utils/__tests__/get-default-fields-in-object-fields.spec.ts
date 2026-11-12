@@ -2,30 +2,32 @@ import { isEngineDerivedLabelIdentifier } from '../../../../../../twenty-sdk/src
 import { getDefaultFieldsInObjectFields } from '@/app/manifest/utils/get-default-fields-in-object-fields';
 import { type ObjectConfig } from '@/app/manifest/types/object-config.type';
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { describe, expect, it } from 'vitest';
 
 const APP_UID = '11111111-1111-4111-8111-111111111111';
 const OBJECT_UID = '22222222-2222-4222-8222-222222222222';
 const RELATION_FIELD_UID = '33333333-3333-4333-8333-333333333333';
 
-const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig =>
-  ({
-    universalIdentifier: OBJECT_UID,
-    nameSingular: 'petCareAgreement',
-    namePlural: 'petCareAgreements',
-    labelSingular: 'Pet care agreement',
-    labelPlural: 'Pet care agreements',
-    fields: [
-      {
-        universalIdentifier: RELATION_FIELD_UID,
-        name: 'pet',
-        label: 'Pet',
-        type: FieldMetadataType.RELATION,
-      },
-    ],
-    ...overrides,
-  }) as unknown as ObjectConfig;
+const buildObjectConfig = (overrides: Partial<ObjectConfig>): ObjectConfig => ({
+  universalIdentifier: OBJECT_UID,
+  nameSingular: 'petCareAgreement',
+  namePlural: 'petCareAgreements',
+  labelSingular: 'Pet care agreement',
+  labelPlural: 'Pet care agreements',
+  fields: [
+    {
+      universalIdentifier: RELATION_FIELD_UID,
+      name: 'pet',
+      label: 'Pet',
+      type: FieldMetadataType.RELATION,
+      relationTargetFieldMetadataUniversalIdentifier: 'pet-target-field',
+      relationTargetObjectMetadataUniversalIdentifier: 'pet-target-object',
+      universalSettings: { relationType: RelationType.MANY_TO_ONE },
+    },
+  ],
+  ...overrides,
+});
 
 describe('getDefaultFieldsInObjectFields', () => {
   it.each([
@@ -98,7 +100,7 @@ describe('getDefaultFieldsInObjectFields', () => {
             type: FieldMetadataType.TEXT,
           },
         ],
-      } as unknown as Partial<ObjectConfig>),
+      }),
       applicationUniversalIdentifier: APP_UID,
     });
 

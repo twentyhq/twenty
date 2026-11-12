@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -13,6 +14,7 @@ import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
 const updateAgentInputSchema = z.object({
   id: z.uuid().describe('Id of the agent to update'),
@@ -36,7 +38,10 @@ const updateAgentInputSchema = z.object({
 @DefineTool({
   name: 'update_agent',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Update an AI agent. Only the fields you pass are changed.
 
 To pause an agent without deleting it, set isActive to false on its triggers. Confirm changes to the role or triggers with the user first.`,
@@ -48,6 +53,7 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly manageableAgentService: ManageableAgentService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {
     super();
   }
@@ -62,7 +68,15 @@ export class UpdateAgentTool extends BaseTool<typeof updateAgentInputSchema> {
     });
 
     if (isDefined(parameters.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(parameters.modelId);
+      const aiDataPolicy =
+        await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+          context.workspaceId,
+        );
+
+      this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+        modelId: parameters.modelId,
+        aiDataPolicy,
+      });
     }
 
     const agent = await this.agentService.updateOneAgent({

@@ -8,7 +8,12 @@ const APPLICATION_ID = '20202020-1111-0000-0000-000000000001';
 const OTHER_APPLICATION_ID = '20202020-1111-0000-0000-000000000002';
 
 const buildFlatApplicationMaps = (
-  applications: Array<Partial<FlatApplication> & { id: string }>,
+  applications: Array<
+    Omit<Partial<FlatApplication>, 'billing'> & {
+      id: string;
+      billing?: unknown;
+    }
+  >,
 ): FlatApplicationCacheMaps => ({
   byId: Object.fromEntries(
     applications.map((application) => [
@@ -37,7 +42,7 @@ const collectOne = (charge: unknown) =>
   collectDeclaredRecurringCharges({
     flatApplicationMaps: buildFlatApplicationMaps([
       { id: APPLICATION_ID, billing: { recurring: { fee: charge } } },
-    ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
+    ]),
   });
 
 describe('collectDeclaredRecurringCharges', () => {
@@ -194,7 +199,7 @@ describe('collectDeclaredRecurringCharges', () => {
       collectDeclaredRecurringCharges({
         flatApplicationMaps: buildFlatApplicationMaps([
           { id: APPLICATION_ID, billing: { recurring: [PLATFORM_FEE] } },
-        ] as unknown as Array<Partial<FlatApplication> & { id: string }>),
+        ]),
       });
 
     expect(declaredCharges).toEqual([]);

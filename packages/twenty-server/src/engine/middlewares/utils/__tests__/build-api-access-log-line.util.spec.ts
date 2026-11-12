@@ -1,5 +1,4 @@
-import { type Request, type Response } from 'express';
-
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { buildApiAccessLogLine } from 'src/engine/middlewares/utils/build-api-access-log-line.util';
 import { type RequestTraceContext } from 'src/engine/utils/compute-request-trace-context.util';
 
@@ -43,7 +42,7 @@ describe('buildApiAccessLogLine', () => {
     durationMs = 12,
     traceContext,
   }: {
-    request?: Partial<Request>;
+    request?: Partial<Parameters<typeof buildApiAccessLogLine>[0]['request']>;
     statusCode?: number;
     writableEnded?: boolean;
     durationMs?: number;
@@ -55,8 +54,8 @@ describe('buildApiAccessLogLine', () => {
         originalUrl: '/rest/people/ba91bdfb?depth=1',
         headers: {},
         ...request,
-      } as unknown as Request,
-      response: { statusCode, writableEnded } as unknown as Response,
+      },
+      response: { statusCode, writableEnded },
       durationMs,
       traceContext,
     });
@@ -91,8 +90,8 @@ describe('buildApiAccessLogLine', () => {
       request: {
         user: { id: 'user-id' },
         workspaceId: 'workspace-id',
-        authProvider: 'password',
-      } as unknown as Partial<Request>,
+        authProvider: AuthProviderEnum.Password,
+      },
     });
 
     expect(line).toContain('actor=user');
@@ -105,12 +104,12 @@ describe('buildApiAccessLogLine', () => {
     const line = build({
       request: {
         user: { id: 'impersonated-user-id' },
-        authProvider: 'impersonation',
+        authProvider: AuthProviderEnum.Impersonation,
         impersonationContext: {
           impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
           impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
         },
-      } as unknown as Partial<Request>,
+      },
     });
 
     expect(line).toContain('actor_id=impersonated-user-id');

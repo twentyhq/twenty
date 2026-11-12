@@ -173,8 +173,9 @@ describe('getTriggerDefaultLabel', () => {
         settings: {
           outputSchema: {},
         },
-      } as unknown as WorkflowTrigger;
+      };
 
+      // @ts-expect-error workflow versions are stored as JSON
       expect(() => getTriggerDefaultLabel(trigger)).toThrow(
         'Unknown trigger type',
       );

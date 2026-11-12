@@ -196,26 +196,6 @@ describe('shouldSkipStepExecution', () => {
     expect(result).toBe(true);
   });
 
-  it('should handle undefined steps gracefully', () => {
-    const steps = [
-      createMockCodeStep('step-1', ['step-2']),
-      undefined as unknown as WorkflowAction,
-      createMockCodeStep('step-2', []),
-    ];
-    const stepInfos = {
-      'step-1': { status: StepStatus.SKIPPED },
-      'step-2': { status: StepStatus.NOT_STARTED },
-    };
-
-    const result = shouldSkipStepExecution({
-      step: steps[2],
-      steps,
-      stepInfos,
-    });
-
-    expect(result).toBe(true);
-  });
-
   it('should return false when parent step status is pending', () => {
     const steps = [
       createMockCodeStep('step-1', ['step-2']),

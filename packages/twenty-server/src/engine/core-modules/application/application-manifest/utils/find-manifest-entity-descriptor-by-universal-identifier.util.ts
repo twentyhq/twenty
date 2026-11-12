@@ -296,6 +296,14 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  rowLevelPermissionRule: {
+    entityKind: 'row-level permission rule',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  fieldMetadataOption: {
+    entityKind: 'field option',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
   relatedRecordPath: {
     entityKind: 'related record path',
     getCandidates: (manifest) =>

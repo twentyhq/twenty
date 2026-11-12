@@ -1,5 +1,4 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { getCallRecordingCharge } from 'src/logic-functions/flows/utils/getCallRecordingCharge';
 
 const { charge, ownedUpload, provider } = vi.hoisted(() => ({
@@ -15,7 +14,7 @@ vi.mock('src/logic-functions/recall-api/utils/getRecallRecording', () => ({
   getRecallRecording: provider,
 }));
 const query = vi.fn();
-const client = { query } as unknown as CoreApiClient;
+const client = { query };
 const run = () =>
   getCallRecordingCharge(client, { callRecordingId: 'recording-1' });
 

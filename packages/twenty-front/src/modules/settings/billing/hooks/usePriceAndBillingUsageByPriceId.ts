@@ -27,16 +27,18 @@ export const usePriceAndBillingUsageByPriceId = () => {
         p.stripePriceId === priceId,
     ) as BillingPriceLicensed | undefined;
 
-    if (isDefined(licensed))
+    if (isDefined(licensed)) {
       return { price: licensed, billingUsage: BillingUsageType.LICENSED };
+    }
 
     const metered = allBillingPrices.find(
       (p) =>
         p.priceUsageType === BillingUsageType.METERED &&
         p.stripePriceId === priceId,
     ) as BillingPriceMetered | undefined;
-    if (isDefined(metered))
+    if (isDefined(metered)) {
       return { price: metered, billingUsage: BillingUsageType.METERED };
+    }
 
     throw new Error(doNotTranslate('Price not found'));
   };

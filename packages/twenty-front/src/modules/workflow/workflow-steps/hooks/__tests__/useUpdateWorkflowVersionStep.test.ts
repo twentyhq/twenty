@@ -41,7 +41,9 @@ jest.mock('@apollo/client/react', () => ({
     _document: unknown,
     options: { onError?: (error: Error) => void },
   ) => {
-    if (options.onError) mockOnCoreError = options.onError;
+    if (options.onError) {
+      mockOnCoreError = options.onError;
+    }
     return [mockMutate];
   },
 }));

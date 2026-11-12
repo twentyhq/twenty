@@ -58,7 +58,10 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   identity,
 }: {
   client: CoreApiClient;
-  slackClient: WebClient;
+  slackClient: {
+    auth: Pick<WebClient['auth'], 'test'>;
+    users: Pick<WebClient['users'], 'info'>;
+  };
   slackConnectionId: string | undefined;
   identity: SlackUserIdentity | undefined;
 }): Promise<string | undefined> => {

@@ -5,7 +5,7 @@ import { asRecord } from 'src/logic-functions/utils/asRecord';
 const SUMMARY_RECOVERY_CURSOR_KEY = 'companion-summary-recovery-cursor';
 
 export const recoverRecordingSummaries = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   now: Date,
 ): Promise<void> => {
   const staleBefore = new Date(now.getTime() - 5 * 60_000).toISOString();

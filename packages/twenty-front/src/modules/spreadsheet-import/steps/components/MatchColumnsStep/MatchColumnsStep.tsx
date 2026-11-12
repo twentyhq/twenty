@@ -128,9 +128,8 @@ export const MatchColumnsStep = ({
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
               return setColumn(column);
-            } else {
-              return column;
             }
+            return column;
           }),
         );
       }

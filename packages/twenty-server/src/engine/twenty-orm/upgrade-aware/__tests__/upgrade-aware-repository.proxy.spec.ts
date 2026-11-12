@@ -3,8 +3,7 @@ import 'reflect-metadata';
 import { Test } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { type DataSource, type Repository, type UpdateResult } from 'typeorm';
-import { type EntityMetadata } from 'typeorm/metadata/EntityMetadata';
+import { type Repository, type UpdateResult } from 'typeorm';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -29,11 +28,11 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
       givenTableName: 'unavailableEntity',
       schema: 'core',
       columns: [],
-    } as unknown as EntityMetadata;
+    };
 
     const dataSource = {
       entityMetadatas: [metadata],
-    } as unknown as DataSource;
+    };
 
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -88,7 +87,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         .fn()
         .mockReturnValue(new Set(['introducedColumn'])),
       isEntityAvailable: jest.fn().mockReturnValue(true),
-    } as unknown as UpgradeAwareRepositoryState;
+    };
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: EntityWithHiddenColumn,
@@ -123,7 +122,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
           .fn()
           .mockReturnValue(new Set(hiddenColumnPropertyNames)),
         isEntityAvailable: jest.fn().mockReturnValue(true),
-      } as unknown as UpgradeAwareRepositoryState;
+      };
 
       return {
         update,
@@ -187,7 +186,7 @@ describe('wrapRepositoryWithUpgradeAwareProxy', () => {
         .fn()
         .mockReturnValue(new Set(['introducedColumn'])),
       isEntityAvailable: jest.fn().mockReturnValue(true),
-    } as unknown as UpgradeAwareRepositoryState;
+    };
     const wrapped = wrapRepositoryWithUpgradeAwareProxy({
       repository,
       entityClass: EntityWithHiddenColumn,

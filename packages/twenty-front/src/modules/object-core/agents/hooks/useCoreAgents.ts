@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
@@ -11,6 +11,7 @@ import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetad
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 export const CORE_AGENTS_TABLE_ID = 'coreAgents';
 
@@ -34,9 +35,13 @@ export const useCoreAgents = ({
   );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
-  const { data, loading, error } = useQuery(FindManyAgentsDocument, {
+  const { data, loading, error, refetch } = useQuery(FindManyAgentsDocument, {
     fetchPolicy: 'cache-and-network',
   });
+
+  const refetchCoreAgents = useCallback(() => {
+    void refetch().catch(logError);
+  }, [refetch]);
 
   const listedAgents = useMemo(
     () =>
@@ -62,6 +67,7 @@ export const useCoreAgents = ({
 
   return {
     coreAgents,
+    refetchCoreAgents,
     isInitialLoading: loading && !isDefined(data),
     error,
   };

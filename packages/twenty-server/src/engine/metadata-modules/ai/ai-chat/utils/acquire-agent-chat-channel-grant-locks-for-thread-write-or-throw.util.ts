@@ -1,17 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager } from 'typeorm';
 
 import { AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-grant-lock-timeout-ms.constant';
 import { acquireAgentChatChannelGrantLocks } from 'src/engine/metadata-modules/ai/ai-chat/utils/acquire-agent-chat-channel-grant-locks.util';
 import { isLockNotAvailableError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-lock-not-available-error.util';
 import { throwAgentChatChannelBusy } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-channel-busy.util';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export const acquireAgentChatChannelGrantLocksForThreadWriteOrThrow = async ({
-  manager,
+  transactionScope,
   workspaceId,
   channelIds,
 }: {
-  manager: Pick<EntityManager, 'query'>;
+  transactionScope: Pick<WorkspaceTransactionScope, 'executeRawQuery'>;
   workspaceId: string;
   channelIds: (string | null | undefined)[];
 }): Promise<void> => {
@@ -19,12 +19,13 @@ export const acquireAgentChatChannelGrantLocksForThreadWriteOrThrow = async ({
     return;
   }
 
-  await manager.query(`SELECT set_config('lock_timeout', $1, true)`, [
-    `${AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS}ms`,
-  ]);
+  await transactionScope.executeRawQuery(
+    `SELECT set_config('lock_timeout', $1, true)`,
+    [`${AGENT_CHAT_CHANNEL_GRANT_LOCK_TIMEOUT_MS}ms`],
+  );
 
   await acquireAgentChatChannelGrantLocks({
-    manager,
+    transactionScope,
     workspaceId,
     channelIds,
     mode: 'shared',

@@ -36,6 +36,7 @@ type LearnToolsPayload = {
     inputSchema?: Record<string, unknown>;
   }>;
   notFound: string[];
+  suggestions?: Record<string, string[]>;
   message: string;
 };
 
@@ -119,6 +120,52 @@ const learnToolSchema = async (
 };
 
 describe('MCP tool execution (integration)', () => {
+  describe('learn_tools with names it cannot learn', () => {
+    const learnTools = async (toolNames: string[]) =>
+      parseToolPayload<LearnToolsPayload>(
+        await callMcpTool('learn_tools', {
+          toolNames,
+          aspects: ['description'],
+        }),
+      );
+
+    it('should report a misspelled name under notFound with the closest match', async () => {
+      const misspelledToolName = 'create_one_noteTarget';
+
+      const payload = await learnTools([
+        TOOL_NAMES.createNote,
+        misspelledToolName,
+      ]);
+
+      expect(payload.tools.map((tool) => tool.name)).toEqual([
+        TOOL_NAMES.createNote,
+      ]);
+      expect(payload.notFound).toEqual([misspelledToolName]);
+      expect(payload.suggestions?.[misspelledToolName]).toContain(
+        TOOL_NAMES.createNoteTarget,
+      );
+    });
+
+    it('should report an excluded tool under notFound and never suggest it', async () => {
+      const excludedToolName = 'http_request';
+      const misspelledExcludedToolName = 'http_requests';
+
+      const payload = await learnTools([
+        excludedToolName,
+        misspelledExcludedToolName,
+      ]);
+
+      expect(payload.tools).toEqual([]);
+      expect(payload.notFound).toEqual([
+        excludedToolName,
+        misspelledExcludedToolName,
+      ]);
+      expect(Object.values(payload.suggestions ?? {}).flat()).not.toContain(
+        excludedToolName,
+      );
+    });
+  });
+
   describe('create_note_target (morph relation join)', () => {
     let createdCompanyId: string | undefined;
     let createdNoteId: string | undefined;
@@ -154,7 +201,9 @@ describe('MCP tool execution (integration)', () => {
       const resolveProperty = (
         prop: { type?: string; format?: string; $ref?: string } | undefined,
       ) => {
-        if (!prop) return undefined;
+        if (!prop) {
+          return undefined;
+        }
         if (prop.$ref && schema.$defs) {
           const defKey = prop.$ref.replace('#/$defs/', '');
 

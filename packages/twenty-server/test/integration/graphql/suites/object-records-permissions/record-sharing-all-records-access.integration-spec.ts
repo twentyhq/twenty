@@ -29,8 +29,9 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
-import { type RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { type RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -57,15 +58,18 @@ const SET_PRIVATE = parse(
 describe('Access to all records and ownership transfer', () => {
   let objectMetadataId: string;
   let shares: RecordShareStorageService;
+  let recordPermissionReadRepository: RecordPermissionReadRepository;
 
   const target = (recordId: string) => ({ objectMetadataId, recordId });
 
-  const setRecordSharingEnabled = (value: boolean) =>
-    updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value,
-      expectToFail: false,
-    });
+  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+    for (const featureFlag of [
+      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+    ]) {
+      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+    }
+  };
 
   const setShare = ({
     recordId,
@@ -110,7 +114,7 @@ describe('Access to all records and ownership transfer', () => {
 
   const findMemberGrants = async (workspaceMemberId: string) =>
     (
-      await shares.findByRecordIds({
+      await recordPermissionReadRepository.findRecordShares({
         workspaceId,
         objectMetadataId,
         recordIds: [RESTRICTED_RECORD_ID, SHARED_RECORD_ID],
@@ -131,6 +135,10 @@ describe('Access to all records and ownership transfer', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
+    recordPermissionReadRepository =
+      getAppProviderByClassName<RecordPermissionReadRepository>(
+        'RecordPermissionReadRepository',
+      );
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -152,7 +160,7 @@ describe('Access to all records and ownership transfer', () => {
         isLabelSyncedWithName: false,
       },
     });
-    await setRecordSharingEnabled(true);
+    await setRecordSharingAndPrivateRecordsEnabled(true);
   });
 
   const makeRecordsPublic = () =>
@@ -205,7 +213,7 @@ describe('Access to all records and ownership transfer', () => {
 
   afterAll(async () => {
     await makeRecordsPublic();
-    await setRecordSharingEnabled(false);
+    await setRecordSharingAndPrivateRecordsEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -297,18 +305,26 @@ describe('Access to all records and ownership transfer', () => {
   });
 
   it('should keep private records private while record sharing is off', async () => {
-    await setRecordSharingEnabled(false);
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
 
     try {
       expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
         RESTRICTED_RECORD_ID,
       );
     } finally {
-      await setRecordSharingEnabled(true);
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
     }
   });
 
-  it('should hand the records a removed member managed to the custodian', async () => {
+  it('should hand the records a removed member managed to the successor', async () => {
     await setShare({
       recordId: SHARED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
@@ -352,9 +368,9 @@ describe('Access to all records and ownership transfer', () => {
     });
 
     try {
-      await getAppProviderByClassName<RecordShareOwnershipTransferService>(
-        'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      await getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.PHIL }),
@@ -378,19 +394,20 @@ describe('Access to all records and ownership transfer', () => {
         await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
       ).toEqual([]);
 
-      const chatThreadShares = await shares.findByRecordIds({
-        workspaceId,
-        objectMetadataId: chatThreadObjectMetadataId,
-        recordIds: [privateChatThreadId],
-      });
+      const chatThreadShares =
+        await recordPermissionReadRepository.findRecordShares({
+          workspaceId,
+          objectMetadataId: chatThreadObjectMetadataId,
+          recordIds: [privateChatThreadId],
+        });
 
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
 
-      await getAppProviderByClassName<RecordShareOwnershipTransferService>(
-        'RecordShareOwnershipTransferService',
-      ).transferRecordSharesToCustodian({
+      await getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
+      ).transferRecordSharesToSuccessor({
         removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
           UserWorkspaceEntity,
         ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.JONY }),

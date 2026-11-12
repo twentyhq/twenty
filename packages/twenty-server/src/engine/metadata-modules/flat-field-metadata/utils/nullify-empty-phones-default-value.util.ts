@@ -1,7 +1,7 @@
 import { type FieldMetadataDefaultValueForAnyType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-array-field-value.util';
+import { isNullEquivalentArrayFieldValue } from 'src/engine/record-filter/utils/is-null-equivalent-array-field-value.util';
 
 import { isNullEquivalentTextDefaultValue } from './is-null-equivalent-text-default-value.util';
 

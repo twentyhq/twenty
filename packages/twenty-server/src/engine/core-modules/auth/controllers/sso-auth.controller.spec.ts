@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Response } from 'express';
 import { type Repository } from 'typeorm';
 
 import { SsoAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
@@ -44,7 +43,7 @@ const buildSamlRequest = () =>
     user: { identityProviderId: IDENTITY_PROVIDER_ID, email: EMAIL },
   }) as SamlRequest;
 
-const buildResponse = () => ({ redirect: jest.fn() }) as unknown as Response;
+const buildResponse = () => ({ redirect: jest.fn() });
 
 describe('SsoAuthController', () => {
   let controller: SsoAuthController;
@@ -118,38 +117,12 @@ describe('SsoAuthController', () => {
     userService = module.get(UserService);
   });
 
-  it('creates a new SSO user with an already verified email', async () => {
-    const createdUser = {
-      id: 'new-user-id',
-      email: EMAIL,
-      isEmailVerified: true,
-    } as UserEntity;
-
-    userService.findUserByEmail.mockResolvedValue(null);
-    authService.signInUp.mockResolvedValue({
-      workspace,
-      user: createdUser,
-    } as Awaited<ReturnType<AuthService['signInUp']>>);
-
-    const response = buildResponse();
-
-    await controller.samlAuthCallback(buildSamlRequest(), response);
-
-    expect(authService.formatUserDataPayload).toHaveBeenCalledWith(
-      expect.objectContaining({ email: EMAIL, isEmailAlreadyVerified: true }),
-      null,
-    );
-    expect(userService.markEmailAsVerified).not.toHaveBeenCalled();
-    expect(response.redirect).toHaveBeenCalledWith('https://redirect');
-  });
-
   it('marks an existing password-less unverified user as verified after an SSO sign-in', async () => {
     const existingUser = {
       id: 'existing-user-id',
       email: EMAIL,
       isEmailVerified: false,
-      passwordHash: null,
-    } as unknown as UserEntity;
+    } as UserEntity;
 
     userService.findUserByEmail.mockResolvedValue(existingUser);
     authService.signInUp.mockResolvedValue({

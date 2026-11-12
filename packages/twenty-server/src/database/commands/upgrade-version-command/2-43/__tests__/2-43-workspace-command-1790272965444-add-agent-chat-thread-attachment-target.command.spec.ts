@@ -1,11 +1,12 @@
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { AddAgentChatThreadAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790272965444-add-agent-chat-thread-attachment-target.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
@@ -52,7 +53,7 @@ const buildExistingMetadata = ({
   return existing;
 };
 
-const buildCommand = ({
+const buildCommand = async ({
   hasAttachmentTarget = false,
   hasAgentChatThread = true,
   migrationStatus = 'success',
@@ -64,29 +65,43 @@ const buildCommand = ({
   const validateBuildAndRunLegacyWorkspaceMigration = jest
     .fn()
     .mockResolvedValue({ status: migrationStatus });
-  const command = new AddAgentChatThreadAttachmentTargetCommand(
-    {} as WorkspaceIteratorService,
-    {
-      findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-        .fn()
-        .mockResolvedValue({
-          twentyStandardFlatApplication: {
-            id: APPLICATION_ID,
-            universalIdentifier: APPLICATION_ID,
-          },
-        }),
-    } as unknown as ApplicationService,
-    {
-      getOrRecompute: jest
-        .fn()
-        .mockResolvedValue(
-          buildExistingMetadata({ hasAttachmentTarget, hasAgentChatThread }),
-        ),
-    } as unknown as WorkspaceCacheService,
-    {
-      validateBuildAndRunLegacyWorkspaceMigration,
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-  );
+  const module = await Test.createTestingModule({
+    providers: [
+      AddAgentChatThreadAttachmentTargetCommand,
+      { provide: WorkspaceIteratorService, useValue: {} },
+      {
+        provide: ApplicationService,
+        useValue: {
+          findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+            .fn()
+            .mockResolvedValue({
+              twentyStandardFlatApplication: {
+                id: APPLICATION_ID,
+                universalIdentifier: APPLICATION_ID,
+              },
+            }),
+        },
+      },
+      {
+        provide: WorkspaceCacheService,
+        useValue: {
+          getOrRecompute: jest.fn().mockResolvedValue(
+            buildExistingMetadata({
+              hasAttachmentTarget,
+              hasAgentChatThread,
+            }),
+          ),
+        },
+      },
+      {
+        provide: WorkspaceMigrationValidateBuildAndRunService,
+        useValue: {
+          validateBuildAndRunLegacyWorkspaceMigration,
+        },
+      },
+    ],
+  }).compile();
+  const command = module.get(AddAgentChatThreadAttachmentTargetCommand);
 
   return { command, validateBuildAndRunLegacyWorkspaceMigration };
 };
@@ -105,7 +120,7 @@ const run = (
 describe('AddAgentChatThreadAttachmentTargetCommand', () => {
   it('creates both relation sides and the attachment index', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand();
+      await buildCommand();
 
     await run(command);
 
@@ -130,7 +145,7 @@ describe('AddAgentChatThreadAttachmentTargetCommand', () => {
 
   it('does nothing when the target already exists', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand({ hasAttachmentTarget: true });
+      await buildCommand({ hasAttachmentTarget: true });
 
     await run(command);
 
@@ -139,7 +154,7 @@ describe('AddAgentChatThreadAttachmentTargetCommand', () => {
 
   it('skips workspaces whose chat history is not provisioned yet', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand({ hasAgentChatThread: false });
+      await buildCommand({ hasAgentChatThread: false });
 
     await run(command);
 
@@ -148,7 +163,7 @@ describe('AddAgentChatThreadAttachmentTargetCommand', () => {
 
   it('does not migrate on a dry run', async () => {
     const { command, validateBuildAndRunLegacyWorkspaceMigration } =
-      buildCommand();
+      await buildCommand();
 
     await run(command, { dryRun: true });
 
@@ -156,7 +171,7 @@ describe('AddAgentChatThreadAttachmentTargetCommand', () => {
   });
 
   it('throws when the migration fails', async () => {
-    const { command } = buildCommand({ migrationStatus: 'fail' });
+    const { command } = await buildCommand({ migrationStatus: 'fail' });
 
     await expect(run(command)).rejects.toThrow(
       'Failed to create the agent chat thread attachment target',

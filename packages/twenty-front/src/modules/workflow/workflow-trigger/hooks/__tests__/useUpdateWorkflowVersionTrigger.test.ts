@@ -88,19 +88,39 @@ describe('useUpdateWorkflowVersionTrigger', () => {
   });
 
   it('marks for recomputation for all trigger types', async () => {
-    const triggerTypes = ['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'];
-
-    for (const triggerType of triggerTypes) {
-      mockMarkStepForRecomputation.mockClear();
-
-      const testTrigger = {
-        name: `${triggerType} Trigger`,
-        type: triggerType,
+    const testTriggers: WorkflowTrigger[] = [
+      {
+        name: 'DATABASE_EVENT Trigger',
+        type: 'DATABASE_EVENT',
+        settings: { eventName: 'company.created', outputSchema: {} },
+        nextStepIds: [],
+      },
+      {
+        name: 'MANUAL Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+      },
+      {
+        name: 'CRON Trigger',
+        type: 'CRON',
+        settings: { type: 'CUSTOM', pattern: '0 0 * * *', outputSchema: {} },
+        nextStepIds: [],
+      },
+      {
+        name: 'WEBHOOK Trigger',
+        type: 'WEBHOOK',
         settings: {
+          httpMethod: 'GET',
+          authentication: null,
           outputSchema: {},
         },
         nextStepIds: [],
-      } as unknown as WorkflowTrigger;
+      },
+    ];
+
+    for (const testTrigger of testTriggers) {
+      mockMarkStepForRecomputation.mockClear();
 
       const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
         wrapper: Wrapper,

@@ -97,6 +97,10 @@ export const objectMetadataLabel = createExpressionOnlyPlaceholder(
   'objectMetadataLabel',
 ) as CommandMenuContextApi['objectMetadataLabel'];
 
+export const currentView = createExpressionOnlyPlaceholder(
+  'currentView',
+) as CommandMenuContextApi['currentView'];
+
 export const isDefined = createExpressionOnlyPlaceholder('isDefined') as (
   value: unknown,
 ) => boolean;

@@ -44,7 +44,10 @@ export const filterMorphRelationDuplicateFieldMetadataEvents = ({
   flatFieldMetadataMaps,
 }: {
   events: MetadataEvent[];
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): MetadataEvent[] => {
   const eventsWithoutTargetFields = events.filter(
     (event) => !isDefined(getMorphRelationTargetFromEvent(event)),

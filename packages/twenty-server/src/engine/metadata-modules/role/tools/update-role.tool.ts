@@ -7,7 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ROLE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-write-access-policy.constant';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { rolePermissionsSchema } from 'src/engine/metadata-modules/role/tools/schemas/role-permissions.schema';
 import { toRoleSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 
@@ -35,7 +35,7 @@ export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
 
   constructor(
     private readonly roleService: RoleService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {
     super();
   }
@@ -50,7 +50,9 @@ export class UpdateRoleTool extends BaseTool<typeof updateRoleInputSchema> {
         id: input.roleId,
         update: input.update,
       },
-      actingRoleIds: await this.permissionsService.getRoleIds(authContext),
+      actingRoleIds: await this.rolePermissionsService.findRoleIds({
+        authContext: authContext,
+      }),
     });
 
     return {

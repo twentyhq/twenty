@@ -168,7 +168,7 @@ export class ApiKeyRoleService {
     );
 
     return {
-      roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
+      roleToAssignIsSameAsCurrentRole: isDefined(existingRoleTarget),
     };
   }
 

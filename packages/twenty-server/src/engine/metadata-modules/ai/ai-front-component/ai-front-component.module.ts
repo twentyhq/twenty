@@ -1,3 +1,4 @@
+import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -26,6 +27,7 @@ import { AiFrontComponentToolService } from 'src/engine/metadata-modules/ai/ai-f
     FrontComponentModule,
     ApplicationModule,
     ApplicationPackageModule,
+    SdkClientModule,
     CacheLockModule,
     PermissionsModule,
     FeatureFlagModule,

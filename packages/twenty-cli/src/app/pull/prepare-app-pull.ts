@@ -3,8 +3,9 @@ import { join } from 'node:path';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { PULL_BASE_FILE_PATH } from '@/app/constants/pull-base-file-path.constant';
-import { parsePullDependencyFiles } from '@/app/pull/parse-pull-dependency-files';
+import { parsePullFiles } from '@/app/pull/parse-pull-files';
 import { assertPullPaths } from '@/app/pull/assert-pull-paths';
+import { toPullManifest } from '@/app/pull/to-pull-manifest';
 import { normalizePullTarget } from '@/app/pull/normalize-pull-target';
 import { type PullAppOptions } from '@/app/pull/types';
 import { readApplicationIdentity } from '@/app/source/read-application-identity';
@@ -19,14 +20,15 @@ export const prepareAppPull = async ({
 
   const normalizedTarget = normalizePullTarget(target);
 
-  const dependencyFiles = parsePullDependencyFiles(applicationExport.files);
+  const files = parsePullFiles({
+    value: applicationExport.files,
+    frontComponents:
+      toPullManifest(applicationExport.manifest).frontComponents ?? [],
+  });
 
   await assertPullPaths({
     appPath,
-    relativePaths: [
-      PULL_BASE_FILE_PATH,
-      ...dependencyFiles.map((file) => file.path),
-    ],
+    relativePaths: [PULL_BASE_FILE_PATH, ...files.map((file) => file.path)],
   });
 
   const packageJson: unknown = JSON.parse(
@@ -50,5 +52,8 @@ export const prepareAppPull = async ({
   }
   signal.throwIfAborted();
 
-  return { applicationExport, target: normalizedTarget };
+  return {
+    applicationExport: { ...applicationExport, files },
+    target: normalizedTarget,
+  };
 };

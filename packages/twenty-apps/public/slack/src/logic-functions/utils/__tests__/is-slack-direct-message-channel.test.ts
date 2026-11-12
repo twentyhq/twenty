@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { isSlackDirectMessageChannel } from 'src/logic-functions/utils/is-slack-direct-message-channel';
@@ -7,7 +6,7 @@ const conversationsInfoMock = vi.fn();
 
 const client = {
   conversations: { info: conversationsInfoMock },
-} as unknown as WebClient;
+};
 
 const SLACK_CHANNEL_ID = 'D0123456789';
 

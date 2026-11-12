@@ -107,7 +107,7 @@ describe('formatWorkspaceMigrationRunnerExecutionErrors', () => {
   it('stringifies a non-Error rejection value', () => {
     expect(
       formatWorkspaceMigrationRunnerExecutionErrors({
-        metadata: 'plain string rejection' as unknown as Error,
+        metadata: 'plain string rejection',
       }),
     ).toBe('[metadata] plain string rejection');
   });

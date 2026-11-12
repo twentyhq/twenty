@@ -37,6 +37,12 @@ const METADATA_TOOL_NAMES = [
   ...VALIDATION_RULE_TOOL_NAMES,
 ];
 
+const METADATA_READ_TOOL_NAMES = [
+  'get_object_metadata',
+  'get_field_metadata',
+  'get_validation_rules',
+];
+
 const OBJECT_NAME_PREFIX = 'mcpMetadataTools';
 const PET_NAME_SINGULAR = `${OBJECT_NAME_PREFIX}Pet`;
 const PET_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Pets`;
@@ -570,14 +576,50 @@ describe('MCP metadata tools (integration)', () => {
     { caller: 'a member', token: APPLE_JONY_MEMBER_ACCESS_TOKEN },
     { caller: 'a guest', token: APPLE_PHIL_GUEST_ACCESS_TOKEN },
   ])('for $caller without DATA_MODEL', ({ token }) => {
-    it('should not list the metadata category', async () => {
+    it('should list only the read tools of the metadata category', async () => {
       const catalog = await getMcpToolCatalog({ token });
 
-      expect(catalog[ToolCategory.METADATA]).toBeUndefined();
-      expect(Object.keys(catalog)).not.toHaveLength(0);
+      expect(
+        catalog[ToolCategory.METADATA].map(({ name }) => name).sort(),
+      ).toEqual([...METADATA_READ_TOOL_NAMES].sort());
     });
 
-    it.each(METADATA_TOOL_NAMES)('should refuse %s', async (toolName) => {
+    it('should run the read tools', async () => {
+      const [company] =
+        (
+          await runMetadataTool<{ objects: ObjectSummary[] }>({
+            toolName: 'get_object_metadata',
+            toolArguments: { objectName: 'company' },
+            token,
+          })
+        )?.objects ?? [];
+
+      expect(company).toMatchObject({ nameSingular: 'company' });
+
+      expect(
+        (
+          await runMetadataTool<{ fields: FieldSummary[] }>({
+            toolName: 'get_field_metadata',
+            toolArguments: { objectName: 'company' },
+            token,
+          })
+        )?.fields.map(({ name }) => name),
+      ).toContain('name');
+
+      expect(
+        await runMetadataTool({
+          toolName: 'get_validation_rules',
+          toolArguments: { objectName: 'company' },
+          token,
+        }),
+      ).toEqual(expect.any(Array));
+    });
+
+    it.each(
+      METADATA_TOOL_NAMES.filter(
+        (toolName) => !METADATA_READ_TOOL_NAMES.includes(toolName),
+      ),
+    )('should refuse %s', async (toolName) => {
       expect(
         await runFailingMetadataTool({ toolName, toolArguments: {}, token }),
       ).toMatchObject({

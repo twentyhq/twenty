@@ -47,6 +47,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
+  rowLevelPermissionRule: {},
   viewFilterGroup: {},
   viewSort: {},
   frontComponent: {
@@ -58,6 +59,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   connectionProvider: {},
   messagingProvider: {},
   timelineActivityType: {},
+  fieldMetadataOption: {},
   relatedRecordPath: {},
   validationRule: {},
   searchFieldMetadata: {},

@@ -7,7 +7,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import {
   type ColumnNameProcessor,
   processFieldMetadataForColumnNameMapping,
-} from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/process-field-metadata-for-column-name-mapping.util';
 
 export function getFieldMetadataIdToColumnNamesMap(
   flatObjectMetadata: FlatObjectMetadata,

@@ -10,12 +10,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
 
     ...aggregatedOrchestratorActionsReport.index.delete,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.create,
     ...aggregatedOrchestratorActionsReport.objectMetadata.update,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.create,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.create,
+    ...aggregatedOrchestratorActionsReport.fieldMetadataOption.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
 
@@ -76,6 +79,10 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.objectPermission.delete,
     ...aggregatedOrchestratorActionsReport.objectPermission.create,
     ...aggregatedOrchestratorActionsReport.objectPermission.update,
+
+    // Field permissions and predicate groups point to rules, so rules exist before either is written
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.create,
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.update,
 
     ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
@@ -147,6 +154,7 @@ export const computeOrderedMigrationActions = (
     // Predicates and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionRule.delete,
 
     ...aggregatedOrchestratorActionsReport.mcpServer.delete,
 

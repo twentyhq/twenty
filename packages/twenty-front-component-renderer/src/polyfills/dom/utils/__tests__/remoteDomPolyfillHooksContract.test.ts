@@ -1,11 +1,11 @@
 import { HOOKS, type Hooks, Window } from '@remote-dom/polyfill';
 
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+
 const createHookRecorder = () => {
   const polyfillWindow = new Window();
   const calls: { name: keyof Hooks; args: unknown[] }[] = [];
-  const hooks = (polyfillWindow as unknown as Record<symbol, Partial<Hooks>>)[
-    HOOKS
-  ];
+  const hooks = polyfillWindow[HOOKS];
 
   const recordedHookNames: (keyof Hooks)[] = [
     'createElement',
@@ -24,7 +24,7 @@ const createHookRecorder = () => {
   }
 
   return {
-    document: polyfillWindow.document as unknown as Document,
+    document: polyfillWindow.document,
     callsNamed: (hookName: keyof Hooks) =>
       calls.filter((call) => call.name === hookName),
     clearCalls: () => {
@@ -39,20 +39,15 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     const polyfillWindow = new Window();
 
     expect(typeof HOOKS).toBe('symbol');
-    expect(
-      typeof (polyfillWindow as unknown as Record<symbol, unknown>)[HOOKS],
-    ).toBe('object');
+    expect(typeof polyfillWindow[HOOKS]).toBe('object');
   });
 
   it('still ships MutationObserver without an observe method', () => {
     const polyfillWindow = new Window();
 
-    expect(
-      polyfillWindow.MutationObserver.prototype as unknown as Record<
-        string,
-        unknown
-      >,
-    ).not.toHaveProperty('observe');
+    expect(polyfillWindow.MutationObserver.prototype).not.toHaveProperty(
+      'observe',
+    );
   });
 
   it('calls createElement when an element is created', () => {
@@ -161,13 +156,10 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
   ])(
     'still ships %s without %s, which the worker polyfills install itself',
     (className, methodName) => {
-      const polyfillWindow = new Window() as unknown as Record<
-        string,
-        { prototype: Record<string, unknown> }
-      >;
+      const polyfillWindow = toGlobalScopeRecord(new Window());
 
-      expect(polyfillWindow[className].prototype).not.toHaveProperty(
-        methodName,
+      expect(polyfillWindow[className]).not.toHaveProperty(
+        `prototype.${methodName}`,
       );
     },
   );

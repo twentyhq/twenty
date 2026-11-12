@@ -1,13 +1,12 @@
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { Test } from '@nestjs/testing';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { SimplifyStandardTaskNoteLayoutsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788299312343-simplify-standard-task-note-layouts.command';
-import {
-  computeStandardTaskNoteLayoutMigrationOperations,
-  type StandardTaskNoteLayoutMigrationOperations,
-} from 'src/database/commands/upgrade-version-command/2-38/utils/compute-standard-task-note-layout-migration-operations.util';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeStandardTaskNoteLayoutMigrationOperations } from 'src/database/commands/upgrade-version-command/2-38/utils/compute-standard-task-note-layout-migration-operations.util';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 jest.mock(
   'src/database/commands/upgrade-version-command/2-38/utils/compute-standard-task-note-layout-migration-operations.util',
@@ -26,13 +25,13 @@ const MIGRATION_OPERATIONS = {
   skippedLayouts: [],
   viewFieldGroupsToDelete: [{ universalIdentifier: 'group' }],
   viewFieldsToDelete: [{ universalIdentifier: 'field' }],
-} as unknown as StandardTaskNoteLayoutMigrationOperations;
+};
 
 describe('SimplifyStandardTaskNoteLayoutsCommand', () => {
   let command: SimplifyStandardTaskNoteLayoutsCommand;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     computeOperationsMock.mockReturnValue(MIGRATION_OPERATIONS);
@@ -40,23 +39,36 @@ describe('SimplifyStandardTaskNoteLayoutsCommand', () => {
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    command = new SimplifyStandardTaskNoteLayoutsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: STANDARD_APPLICATION,
-          }),
-      } as unknown as ApplicationService,
-      {
-        getOrRecompute: jest.fn().mockResolvedValue({}),
-      } as unknown as WorkspaceCacheService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        SimplifyStandardTaskNoteLayoutsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: STANDARD_APPLICATION,
+              }),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({}),
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(SimplifyStandardTaskNoteLayoutsCommand);
   });
 
   const runOnWorkspace = (dryRun = false) =>

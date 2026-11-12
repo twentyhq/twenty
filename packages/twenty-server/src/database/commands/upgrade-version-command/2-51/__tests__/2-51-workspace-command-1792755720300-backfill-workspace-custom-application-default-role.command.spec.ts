@@ -1,13 +1,15 @@
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { Test } from '@nestjs/testing';
+
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillWorkspaceCustomApplicationDefaultRoleCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-workspace-command-1792755720300-backfill-workspace-custom-application-default-role.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   WORKSPACE_CUSTOM_APPLICATION_ROLE_LABEL,
   WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/engine/core-modules/application/constants/workspace-custom-application-role.constant';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const CUSTOM_APPLICATION_ID = '20202020-0000-4000-8000-0000000000a2';
@@ -40,7 +42,7 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
         WORKSPACE_CUSTOM_APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
     );
 
-  beforeEach(() => {
+  beforeEach(async () => {
     customApplicationDefaultRoleId = null;
     roles = [buildExistingRole('Admin'), buildExistingRole('Member')];
     migrationCalls = [];
@@ -53,7 +55,7 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
           ),
         },
       })),
-    } as unknown as WorkspaceCacheService;
+    };
 
     const applicationService = {
       findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest.fn(
@@ -70,7 +72,7 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
           customApplicationDefaultRoleId = defaultRoleId;
         },
       ),
-    } as unknown as ApplicationService;
+    };
 
     const workspaceMigrationValidateBuildAndRunService = {
       validateBuildAndRunWorkspaceMigration: jest.fn(
@@ -85,14 +87,21 @@ describe('BackfillWorkspaceCustomApplicationDefaultRoleCommand', () => {
           return { status: 'success' };
         },
       ),
-    } as unknown as WorkspaceMigrationValidateBuildAndRunService;
+    };
 
-    command = new BackfillWorkspaceCustomApplicationDefaultRoleCommand(
-      {} as WorkspaceIteratorService,
-      workspaceCacheService,
-      applicationService,
-      workspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillWorkspaceCustomApplicationDefaultRoleCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        { provide: WorkspaceCacheService, useValue: workspaceCacheService },
+        { provide: ApplicationService, useValue: applicationService },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: workspaceMigrationValidateBuildAndRunService,
+        },
+      ],
+    }).compile();
+    command = module.get(BackfillWorkspaceCustomApplicationDefaultRoleCommand);
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
   });

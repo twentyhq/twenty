@@ -82,16 +82,36 @@ const startCapturedGesture = ({
   return capturedGestureListeners;
 };
 
-const createNativePointerEvent = (
-  overrides: Partial<Record<string, unknown>>,
-) =>
-  ({
+const createNativePointerEvent = (overrides: Partial<PointerEvent>): Event => {
+  const nativePointerEvent = {
     type: 'pointermove',
     pointerId: 1,
     isTrusted: true,
     target: document.body,
+    bubbles: true,
+    cancelBubble: false,
+    cancelable: true,
+    composed: true,
+    currentTarget: null,
+    defaultPrevented: false,
+    eventPhase: Event.NONE,
+    returnValue: true,
+    srcElement: document.body,
+    timeStamp: 0,
+    NONE: Event.NONE,
+    CAPTURING_PHASE: Event.CAPTURING_PHASE,
+    AT_TARGET: Event.AT_TARGET,
+    BUBBLING_PHASE: Event.BUBBLING_PHASE,
+    composedPath: jest.fn(),
+    initEvent: jest.fn(),
+    preventDefault: jest.fn(),
+    stopImmediatePropagation: jest.fn(),
+    stopPropagation: jest.fn(),
     ...overrides,
-  }) as unknown as PointerEvent;
+  };
+
+  return nativePointerEvent;
+};
 
 describe('createHostPointerCaptureController', () => {
   afterEach(() => {

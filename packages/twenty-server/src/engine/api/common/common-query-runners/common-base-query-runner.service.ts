@@ -20,7 +20,7 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
-import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { buildApplicationApiRateLimitedLogEntry } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-entry.util';
 import { buildApplicationApiRateLimitedLogLine } from 'src/engine/api/common/common-query-runners/utils/build-application-api-rate-limited-log-line.util';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
@@ -71,7 +71,8 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
+import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 @Injectable()
 export abstract class CommonBaseQueryRunnerService<
@@ -114,6 +115,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
+  @Inject()
+  protected readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -285,8 +288,8 @@ export abstract class CommonBaseQueryRunnerService<
           select: addTimelineActivityObjectColumnsToSelect({
             select: processedArgs.selectedFieldsResult.select,
             flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
-            recordsPermissions:
-              extendedQueryRunnerContext.repository.recordsPermissions,
+            recordReadRestrictions:
+              extendedQueryRunnerContext.recordReadRestrictions,
             flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
             flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
           }),
@@ -306,8 +309,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       transactionScope: queryRunnerContext.transactionScope,
-      recordsPermissions:
-        extendedQueryRunnerContext.repository.recordsPermissions,
+      recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
     });
   }
 
@@ -319,7 +321,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     transactionScope,
-    recordsPermissions,
+    recordReadRestrictions,
   }: {
     results: Output;
     operationName: CommonQueryNames;
@@ -328,7 +330,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
-    recordsPermissions: RoleRecordsPermissions;
+    recordReadRestrictions: RecordReadRestrictions;
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult(
       results,
@@ -344,7 +346,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       authContext,
-      recordsPermissions,
+      recordReadRestrictions,
     });
 
     const executePostQueryHooks = () =>
@@ -383,6 +385,8 @@ export abstract class CommonBaseQueryRunnerService<
       authContext: context.authContext,
       repository,
       featureFlagsMap: context.featureFlagsMap,
+      permissionsPrincipals: context.permissionsPrincipals,
+      recordReadRestrictions: context.recordReadRestrictions,
     };
   }
 
@@ -455,7 +459,7 @@ export abstract class CommonBaseQueryRunnerService<
         : data;
 
     const { selectQueryBuilder, rowLevelPermissionsApplied } =
-      buildMutationQueryBuilder({
+      await buildMutationQueryBuilder({
         repository: writeRepository,
         alias,
         filter,

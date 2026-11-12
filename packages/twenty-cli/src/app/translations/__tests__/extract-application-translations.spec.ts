@@ -11,14 +11,35 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { type Manifest } from 'twenty-shared/application';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
+import { EMPTY_MANIFEST } from '@/__tests__/utils/empty-manifest';
 import { extractApplicationTranslations } from '@/app/translations/extract-application-translations';
 
-const MANIFEST = {
-  objects: [{ labelSingular: 'Invoice', labelPlural: 'Invoices' }],
-  fields: [{ label: 'Invoice' }],
-} as unknown as Manifest;
+const MANIFEST: Manifest = {
+  ...EMPTY_MANIFEST,
+  objects: [
+    {
+      universalIdentifier: 'invoice',
+      nameSingular: 'invoice',
+      namePlural: 'invoices',
+      labelSingular: 'Invoice',
+      labelPlural: 'Invoices',
+      labelIdentifierFieldMetadataUniversalIdentifier: 'invoice-name',
+      fields: [],
+    },
+  ],
+  fields: [
+    {
+      universalIdentifier: 'invoice-field',
+      objectUniversalIdentifier: 'invoice',
+      name: 'invoice',
+      label: 'Invoice',
+      type: FieldMetadataType.TEXT,
+    },
+  ],
+};
 
 describe('extractApplicationTranslations', () => {
   let appPath: string;

@@ -27,7 +27,9 @@ export const useSwitchToNewAiChat = ({
       store.set(agentChatNewThreadChannelIdState.atom, null);
     }
 
-    selectAiChatThread(store.get(newAiChatThreadIdState.atom));
+    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+
+    selectAiChatThread(newAiChatThreadId);
 
     const shouldNavigateToChatPage = shouldOpenInFullPage && !isOnInboxPage;
 
@@ -40,6 +42,8 @@ export const useSwitchToNewAiChat = ({
     }
 
     store.set(shouldFocusChatEditorState.atom, true);
+
+    return newAiChatThreadId;
   };
 
   return { switchToNewChat };

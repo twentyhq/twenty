@@ -9,7 +9,10 @@ export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
   [GettingStartedStepActionKey.CONNECT_MAILBOX]: [
     PermissionFlagType.CONNECTED_ACCOUNTS,
   ],
-  [GettingStartedStepActionKey.IMPORT_DATA]: [PermissionFlagType.IMPORT_CSV],
+  [GettingStartedStepActionKey.IMPORT_DATA]: [
+    PermissionFlagType.IMPORT_CSV,
+    PermissionFlagType.AI,
+  ],
   [GettingStartedStepActionKey.CUSTOMIZE_DATA_MODEL]: [
     PermissionFlagType.DATA_MODEL,
     PermissionFlagType.AI,
@@ -18,6 +21,10 @@ export const GETTING_STARTED_STEP_PERMISSION_FLAGS: Record<
   [GettingStartedStepActionKey.INVITE_TEAM]: [
     PermissionFlagType.WORKSPACE_MEMBERS,
   ],
+  [GettingStartedStepActionKey.BOOK_CALL]: [PermissionFlagType.WORKSPACE],
   [GettingStartedStepActionKey.HANDOVER_DEALS]: [PermissionFlagType.WORKFLOWS],
-  [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [PermissionFlagType.AI],
+  [GettingStartedStepActionKey.FOLLOW_UP_DEALS]: [
+    PermissionFlagType.WORKFLOWS,
+    PermissionFlagType.AI,
+  ],
 };

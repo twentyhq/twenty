@@ -5,9 +5,12 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { convertChartFilterToGqlOperationFilter } from 'src/modules/dashboard/chart-data/utils/convert-chart-filter-to-gql-operation-filter.util';
 
 const userTimezone = 'Europe/Paris';
@@ -36,7 +39,7 @@ const buildOwnerFieldMetadata = ({
   relationTargetFieldMetadataId?: string | null;
   relationTargetObjectMetadataId?: string | null;
 }) =>
-  ({
+  getFlatFieldMetadataMock({
     id,
     name,
     universalIdentifier,
@@ -47,7 +50,7 @@ const buildOwnerFieldMetadata = ({
     relationTargetObjectMetadataId,
     settings: { relationType: RelationType.MANY_TO_ONE },
     universalSettings: { relationType: RelationType.MANY_TO_ONE },
-  }) as unknown as FlatFieldMetadata;
+  });
 
 const ownerHeadFieldMetadata = buildOwnerFieldMetadata({
   id: 'owner-head-field-id',
@@ -78,7 +81,7 @@ const buildPetsFieldMetadata = ({
   id: string;
   objectMetadataId: string;
 }) =>
-  ({
+  getFlatFieldMetadataMock({
     id,
     name: 'pets',
     universalIdentifier: `${id}-universal-id`,
@@ -86,29 +89,17 @@ const buildPetsFieldMetadata = ({
     objectMetadataId,
     relationTargetObjectMetadataId: 'pet-object-id',
     settings: { relationType: RelationType.ONE_TO_MANY },
-  }) as unknown as FlatFieldMetadata;
+  });
 
-const toFlatEntityMaps = <
-  TFlatEntity extends { id: string; universalIdentifier: string },
->(
+const buildFlatEntityMaps = <TFlatEntity extends SyncableFlatEntity>(
   flatEntities: TFlatEntity[],
-) => ({
-  byUniversalIdentifier: Object.fromEntries(
-    flatEntities.map((flatEntity) => [
-      flatEntity.universalIdentifier,
-      flatEntity,
-    ]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    flatEntities.map((flatEntity) => [
-      flatEntity.id,
-      flatEntity.universalIdentifier,
-    ]),
-  ),
-  universalIdentifiersByApplicationId: {},
-});
+) =>
+  addAllFlatEntitiesToFlatEntityMaps({
+    flatEntities,
+    flatEntityMaps: createEmptyFlatEntityMaps(),
+  });
 
-const flatFieldMetadataMaps = toFlatEntityMaps([
+const flatFieldMetadataMaps = buildFlatEntityMaps([
   createdByFieldMetadata,
   ownerHeadFieldMetadata,
   ownerCompanyFieldMetadata,
@@ -121,10 +112,10 @@ const flatFieldMetadataMaps = toFlatEntityMaps([
     id: 'person-pets-field-id',
     objectMetadataId: 'person-object-id',
   }),
-]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+]);
 
 const objectMetadatas = [
-  {
+  getFlatObjectMetadataMock({
     id: 'pet-object-id',
     universalIdentifier: 'pet-universal-id',
     nameSingular: 'pet',
@@ -134,26 +125,24 @@ const objectMetadatas = [
       ownerCompanyFieldMetadata.id,
       ownerPersonFieldMetadata.id,
     ],
-  },
-  {
+  }),
+  getFlatObjectMetadataMock({
     id: 'company-object-id',
     universalIdentifier: 'company-universal-id',
     nameSingular: 'company',
     namePlural: 'companies',
     fieldIds: ['company-pets-field-id'],
-  },
-  {
+  }),
+  getFlatObjectMetadataMock({
     id: 'person-object-id',
     universalIdentifier: 'person-universal-id',
     nameSingular: 'person',
     namePlural: 'people',
     fieldIds: ['person-pets-field-id'],
-  },
+  }),
 ];
 
-const flatObjectMetadataMaps = toFlatEntityMaps(
-  objectMetadatas,
-) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+const flatObjectMetadataMaps = buildFlatEntityMaps(objectMetadatas);
 
 describe('convertChartFilterToGqlOperationFilter', () => {
   it('returns an empty filter when no filter is provided', () => {

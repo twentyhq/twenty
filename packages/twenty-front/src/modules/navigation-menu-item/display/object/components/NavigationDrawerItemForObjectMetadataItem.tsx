@@ -7,7 +7,6 @@ import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { getObjectDrawerItemNavigationPath } from '@/navigation-menu-item/display/object/utils/getObjectDrawerItemNavigationPath';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
-import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
@@ -25,7 +24,10 @@ import {
   StandardObjectNameSingular,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -65,10 +67,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
-  const canReadObjectRecords = getObjectPermissionsForObject(
-    objectPermissionsByObjectMetadataId,
-    objectMetadataItem.id,
-  ).canReadObjectRecords;
+  const canReadSomeRecords = canAccessThroughAllRecordsOrRlsPermission({
+    objectRecordsPermissions: getObjectPermissionsForObject(
+      objectPermissionsByObjectMetadataId,
+      objectMetadataItem.id,
+    ),
+    operationType: 'read',
+  });
 
   const { getIcon } = useIcons();
   const objectNavItemColor = getObjectColorWithFallback(objectMetadataItem);
@@ -125,7 +130,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const needsInaccessibleRecordPlaceholder =
     isLayoutCustomizationModeEnabled &&
     isRecord &&
-    !canReadObjectRecords &&
+    !canReadSomeRecords &&
     !isNonEmptyString(primaryLabel.trim());
 
   const label = needsInaccessibleRecordPlaceholder ? t`Record` : primaryLabel;
@@ -162,23 +167,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         )
       : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
-  const isCoreWorkflowsIndexItem = isCoreWorkflowsObjectNavigationMenuItem({
-    navigationMenuItemType: navigationMenuItem?.type,
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
-  const objectSecondaryLabel = isViewWithResolvedView
+  const secondaryLabel = isViewWithResolvedView
     ? objectMetadataItem.labelPlural
     : isRecord
       ? objectMetadataItem.labelSingular
       : undefined;
 
-  const secondaryLabel = isCoreWorkflowsIndexItem
-    ? t`System`
-    : objectSecondaryLabel;
-
   const showInaccessibleLock =
-    isLayoutCustomizationModeEnabled && !canReadObjectRecords;
+    isLayoutCustomizationModeEnabled && !canReadSomeRecords;
 
   return (
     <NavigationDrawerItem

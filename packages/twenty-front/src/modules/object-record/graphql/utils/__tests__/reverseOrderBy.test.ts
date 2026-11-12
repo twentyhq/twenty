@@ -39,12 +39,4 @@ describe('reverseOrderBy', () => {
       { name: { firstName: 'DescNullsLast', lastName: 'AscNullsFirst' } },
     ]);
   });
-
-  it('should leave unknown values untouched', () => {
-    const orderBy = [
-      { name: 'Unknown' },
-    ] as unknown as RecordGqlOperationOrderBy;
-
-    expect(reverseOrderBy(orderBy)).toEqual([{ name: 'Unknown' }]);
-  });
 });

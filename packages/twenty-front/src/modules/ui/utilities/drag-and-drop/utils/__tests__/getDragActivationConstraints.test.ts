@@ -2,8 +2,7 @@ import { PointerActivationConstraints } from '@dnd-kit/dom';
 
 import { getDragActivationConstraints } from '@/ui/utilities/drag-and-drop/utils/getDragActivationConstraints';
 
-const createPointerEvent = (pointerType: string) =>
-  ({ pointerType }) as unknown as PointerEvent;
+const createPointerEvent = (pointerType: string) => ({ pointerType });
 
 describe('getDragActivationConstraints', () => {
   it('should require a press and hold when the pointer is a touch', () => {

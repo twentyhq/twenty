@@ -17,10 +17,6 @@ export const WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION = {
     name: doNotTranslate('Add an Action'),
     hasNextStepIds: false,
     stepId: EMPTY_NODE_ID,
-    position: {
-      x: 0,
-      y: 0,
-    },
   },
   position: {
     x: 0,

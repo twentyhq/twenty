@@ -4,7 +4,7 @@ import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effec
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const deleteRecordFromCache = ({
   objectMetadataItem,
@@ -18,10 +18,7 @@ export const deleteRecordFromCache = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   recordToDestroy: ObjectRecord;
   cache: ApolloCache;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: ({
     partialRecords,
   }: {

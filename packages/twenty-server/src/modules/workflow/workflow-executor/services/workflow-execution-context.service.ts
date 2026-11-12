@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldActorSource } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -15,7 +15,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -26,6 +26,7 @@ import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/typ
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { getWorkflowUsageSpenderId } from 'src/modules/workflow/workflow-executor/utils/get-workflow-usage-spender-id.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -35,7 +36,7 @@ export class WorkflowExecutionContextService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly permissionsService: PermissionsService,
+    private readonly rolePermissionsService: RolePermissionsService,
   ) {}
 
   async getExecutionContext(
@@ -68,8 +69,8 @@ export class WorkflowExecutionContextService {
     ]);
 
     if (
-      this.getRunApplicationId(workflowRun, flatWorkflowMaps) ===
-      workspace.workspaceCustomApplicationId
+      this.getRunWorkflowOrThrow({ workflowRun, flatWorkflowMaps })
+        .applicationId === workspace.workspaceCustomApplicationId
     ) {
       return null;
     }
@@ -111,15 +112,27 @@ export class WorkflowExecutionContextService {
     workflowRun: WorkflowRunWorkspaceEntity,
     workspace: FlatWorkspace,
   ): Promise<WorkflowExecutionContext> {
-    const { flatApplicationMaps, flatWorkflowMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-        'flatWorkflowMaps',
-      ]);
+    const {
+      flatApplicationMaps,
+      flatWorkflowMaps,
+      flatRoleTargetByApplicationIdMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspace.id, [
+      'flatApplicationMaps',
+      'flatWorkflowMaps',
+      'flatRoleTargetByApplicationIdMaps',
+    ]);
+
+    const workflow = this.getRunWorkflowOrThrow({
+      workflowRun,
+      flatWorkflowMaps,
+    });
 
     const application = resolveWorkflowRunApplicationOrThrow({
-      applicationId: this.getRunApplicationId(workflowRun, flatWorkflowMaps),
+      applicationId: workflow.applicationId,
       applicationsById: flatApplicationMaps.byId,
+      workspaceId: workspace.id,
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      flatRoleTargetByApplicationIdMaps,
     });
 
     const isActingOnBehalfOfUser =
@@ -134,9 +147,11 @@ export class WorkflowExecutionContextService {
         })
       : buildApplicationAuthContext({ workspace, application });
 
-    const roleIds = await this.permissionsService.getRoleIds(authContext);
-
-    if (roleIds.length === 0) {
+    if (
+      !isNonEmptyArray(
+        await this.rolePermissionsService.findRoleIds({ authContext }),
+      )
+    ) {
       throw new WorkflowStepExecutorException(
         'No role is left to run this step with',
         WorkflowStepExecutorExceptionCode.FORBIDDEN,
@@ -148,15 +163,17 @@ export class WorkflowExecutionContextService {
       initiator: workflowRun.createdBy,
       authContext,
       application,
-      workflowId:
-        workflowRun.workflowId ?? workflowRun.coreWorkflowId ?? undefined,
+      workflowId: getWorkflowUsageSpenderId(workflow),
     };
   }
 
-  private getRunApplicationId(
-    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>,
-    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>,
-  ): string {
+  private getRunWorkflowOrThrow({
+    workflowRun,
+    flatWorkflowMaps,
+  }: {
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>;
+    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>;
+  }): FlatWorkflow {
     const workflow = isDefined(workflowRun.coreWorkflowId)
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: workflowRun.coreWorkflowId,
@@ -171,7 +188,7 @@ export class WorkflowExecutionContextService {
       );
     }
 
-    return workflow.applicationId;
+    return workflow;
   }
 
   private async buildMemberAuthContext({

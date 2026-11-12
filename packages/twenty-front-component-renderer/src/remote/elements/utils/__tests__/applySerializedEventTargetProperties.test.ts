@@ -17,9 +17,7 @@ const applySelectedFile = ({
   });
 
 const createSelectedFileInput = () => {
-  const input = document.createElement(
-    'html-input',
-  ) as unknown as HTMLInputElement;
+  const input: HTMLInputElement = document.createElement('html-input');
   const file = new File(['image'], 'profile.png', { type: 'image/png' });
   input.type = 'file';
   applySelectedFile({ input, file });

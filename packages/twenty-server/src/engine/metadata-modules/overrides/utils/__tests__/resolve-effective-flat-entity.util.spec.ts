@@ -9,7 +9,7 @@ const flatView = {
   icon: 'IconList',
   isActive: true,
   position: 0,
-  overrides: null as unknown,
+  overrides: null,
 };
 
 describe('resolveEffectiveFlatEntity', () => {

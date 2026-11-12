@@ -61,11 +61,12 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type WorkspaceCacheOrDerivedCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 const RECORD_EXPORT_PERMISSION_CACHE_KEYS: WorkspaceCacheOrDerivedCacheKeyName[] =
@@ -93,8 +94,9 @@ export class RecordExportWorkspaceService {
 
   constructor(
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordExportQueryService: RecordExportQueryService,
     private readonly userSessionCookieService: UserSessionCookieService,
@@ -509,16 +511,9 @@ export class RecordExportWorkspaceService {
     }
 
     if (
-      !(await this.permissionsService.userHasWorkspaceSettingPermission({
-        workspaceId: authContext.workspace.id,
-        ...(isApiKeyAuthContext(authContext)
-          ? { apiKeyId: authContext.apiKey.id, userWorkspaceId: undefined }
-          : { userWorkspaceId: authContext.userWorkspaceId }),
-        applicationId: isUserAuthContext(authContext)
-          ? authContext.application?.id
-          : undefined,
-        agentId: undefined,
-        setting: PermissionFlagType.EXPORT_CSV,
+      !(await this.settingPermissionsService.hasPermissionFlag({
+        authContext,
+        permissionFlag: PermissionFlagType.EXPORT_CSV,
       }))
     ) {
       throw new ForbiddenException(
@@ -660,17 +655,16 @@ export class RecordExportWorkspaceService {
         RECORD_EXPORT_PERMISSION_CACHE_KEYS,
       );
 
-    if (!isDefined(applicationId)) {
-      return permissionsHash;
-    }
+    const { flatApplication, grantRoleId } =
+      await this.applicationGrantRoleLookupService.findApplicationAndGrantRoleIdOrThrow(
+        { workspaceId, applicationId },
+      );
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-    const application = flatApplicationMaps.byId[applicationId];
-
-    return computeRecordExportPermissionsHash({ permissionsHash, application });
+    return computeRecordExportPermissionsHash({
+      permissionsHash,
+      application: flatApplication,
+      grantRoleId,
+    });
   }
 
   async assertPermissionsUnchanged(

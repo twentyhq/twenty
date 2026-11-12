@@ -4,9 +4,9 @@ import {
   buildColumn,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { type CompiledStatement } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { type CompiledStatement } from 'src/engine/workspace-query-executor/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/role/constants/no-role-records-permissions.constant';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 
 describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
   const buildShape = (
@@ -167,7 +167,7 @@ describe('WorkspaceSelectQueryBuilder timeline messaging parity', () => {
           return rows;
         },
       },
-      recordsPermissions: NO_ROLE_RECORDS_PERMISSIONS,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
       tableShapeByObjectMetadataId: (objectMetadataId) =>
         shapeByObjectMetadataId[objectMetadataId],
       onBeforeExecute: () => undefined,

@@ -1,3 +1,4 @@
+import { Test } from '@nestjs/testing';
 import {
   SYSTEM_VIEW_KEYS,
   getSystemRecordPageLayoutUniversalIdentifier,
@@ -10,13 +11,13 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437482000-backfill-record-page.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
@@ -137,7 +138,7 @@ describe('BackfillRecordPageCommand', () => {
   let getOrRecomputeMock: jest.Mock;
   let validateBuildAndRunLegacyWorkspaceMigrationMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     computeStandardMapsMock.mockReturnValue(buildStandardMaps());
@@ -147,29 +148,43 @@ describe('BackfillRecordPageCommand', () => {
       .fn()
       .mockResolvedValue({ status: 'success' });
 
-    command = new BackfillRecordPageCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              id: '20202020-0000-4000-8000-00000000ad1d',
-              universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-            workspaceCustomFlatApplication: {
-              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunLegacyWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillRecordPageCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  id: '20202020-0000-4000-8000-00000000ad1d',
+                  universalIdentifier:
+                    STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+                workspaceCustomFlatApplication: {
+                  universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunLegacyWorkspaceMigrationMock,
+          },
+        },
+      ],
+    }).compile();
+    command = module.get(BackfillRecordPageCommand);
   });
 
   const mockWorkspaceCache = ({

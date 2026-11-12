@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 18:13\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -4749,10 +4749,10 @@ msgstr "الملف التعريفي للعميل المثالي"
 msgid "Identity"
 msgstr "الهوية"
 
-#. js-lingui-id: 02Xy0V
+#. js-lingui-id: 9JU/6K
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr "إذا كانت هذه أول مساحة عمل لهم على Twenty ولم يُضبط عليها رمز شريك بعد، فيمكنهم إدخال رمزك في الإعدادات → الفوترة أثناء تجربتهم المجانية. خلال 30 يومًا من الدفعة الأولى، يمكنهم أيضًا أن يطلبوا منا إضافته. بمجرد حفظ رمز في مساحة عمل، لا يمكن تغييره."
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "إذا كانت هذه أول مساحة عمل لهم على Twenty ولم يتم تعيين رمز شريك عليها بعد، فيمكنهم إدخال رمزك في صفحة /settings/partner ضمن مساحة عملهم أثناء الفترة التجريبية المجانية. خلال 30 يومًا من أول دفعة، يمكنهم أيضًا أن يطلبوا منا إضافته. بمجرد حفظ رمز في مساحة عمل، لا يمكن تغييره."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts

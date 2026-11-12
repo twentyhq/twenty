@@ -4,17 +4,15 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
 import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
-import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentGeometryTrackerEffect } from '../FrontComponentGeometryTrackerEffect';
 
 (
   globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
 ).IS_REACT_ACT_ENVIRONMENT = true;
 
-const createStubThread = () =>
-  ({
-    imports: { pushGeometryUpdates: jest.fn().mockResolvedValue(undefined) },
-  }) as unknown as FrontComponentThread;
+const createStubThread = () => ({
+  imports: { pushGeometryUpdates: jest.fn().mockResolvedValue(undefined) },
+});
 
 describe('FrontComponentGeometryTrackerEffect', () => {
   let container: HTMLDivElement;

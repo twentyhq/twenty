@@ -107,7 +107,7 @@ export const linkedinInboundHandler = async (payload: LinkedinWebhookPayload) =>
 
 ### Cosa fa il server per te
 
-**Deduplicazione.** `externalId` è la chiave. L'acquisizione due volte dello stesso messaggio non crea né modifica nulla, quindi è sicuro riprodurre un webhook riconsegnato e un recupero dati può sovrapporsi a un flusso in tempo reale. Il `messageId` restituito è stabile tra le riproduzioni. Le chiamate a un canale vengono serializzate, quindi una riconsegna che arriva mentre l'originale è ancora in fase di scrittura attende invece di entrare in competizione con esso.
+**Deduplicazione.** `externalId` è la chiave. L'acquisizione dello stesso elemento due volte non crea né modifica nulla, a eccezione degli [allegati](#attaching-files) in un messaggio che non ne aveva, quindi è sicuro riprodurre un webhook riconsegnato e un backfill può sovrapporsi a un flusso in tempo reale. Il `messageId` restituito è stabile tra le riproduzioni. Le chiamate a un canale vengono serializzate, quindi una riconsegna che arriva mentre l'originale è ancora in fase di scrittura attende invece di entrare in competizione con esso.
 
 **Threading.** I messaggi che condividono un `threadExternalId` confluiscono in un unico Thread di messaggi, che appare quindi nei record Persona, Azienda e Opportunità dei relativi partecipanti.
 
@@ -128,6 +128,33 @@ for (const page of chunk(allHistoricalMessages, 100)) {
 ```
 
 Un batch è tutto o niente e la ripetizione di un `externalId` all'interno di un singolo batch viene rifiutata — deduplica prima dell'invio. Il corpo di un messaggio è limitato a 256KB.
+
+### Allegare file
+
+Immagini, video, note vocali e altri file vengono inseriti negli `attachments` di un messaggio. Carica prima ogni file con `uploadMessageAttachment`, che richiede il flag di autorizzazione `UPLOAD_FILE` nel ruolo della tua app, quindi passa ciò che restituisce:
+
+```ts
+import {
+  ingestMessages,
+  uploadMessageAttachment,
+} from 'twenty-sdk/logic-function';
+
+const photo = await uploadMessageAttachment({
+  filename: 'photo.jpg',
+  content: await downloadFromProvider(event.attachmentId),
+});
+
+await ingestMessages({
+  messageChannelId: channel.id,
+  messages: [{ ...message, attachments: [photo] }],
+});
+```
+
+Ogni file viene memorizzato come record di allegato nel messaggio. L'estensione del nome del file determina come la conversazione mostra il file: le immagini vengono visualizzate in linea, i video e l'audio hanno un lettore, tutto il resto è un chip di file. Un messaggio può contenere al massimo 20 allegati.
+
+Gli allegati vengono archiviati solo quando il messaggio non ne contiene, quindi una nuova consegna non li sostituisce mai. Ogni messaggio acquisito riporta `hasAttachments`: acquisisci prima il testo, quindi scarica e carica i file solo per i messaggi restituiti senza alcun allegato e acquisisci nuovamente tali messaggi con i relativi `attachments`. Un file che carichi ma non alleghi mai non viene eliminato, quindi non caricare file per un messaggio che contiene già allegati.
+
+Gli allegati seguono la `visibility` del canale come il corpo del messaggio: a meno che la conversazione non sia completamente condivisa, gli altri membri ricevono un elenco vuoto.
 
 ### Collegamento dei partecipanti alle Persone
 
@@ -205,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` imposta il modo in cui Twenty dispone le conversazioni del provider: `'chat'` mostra bolle di messaggi raggruppate per mittente, come un'app di messaggistica, e `'email'` mostra il layout del thread email. Senza di esso, i canali dell'app mantengono il layout della chat. Richiede `"engines": { "twenty": ">=2.58.0" }`.
 
 Associalo a un canale quando crei il canale o in seguito con `updateMessageChannel` (il passaggio di `null` annulla l'associazione):
 
@@ -223,7 +253,7 @@ await createMessageChannel({
 
 Il provider di messaggistica deve appartenere alla tua app e utilizzare il provider di connessione dell'account del canale; il relativo provider di connessione non può cambiare dopo la prima sincronizzazione. La modifica della funzione di invio in una versione successiva si applica a ogni canale associato al provider.
 
-Le risposte vengono inviate con la mutazione `sendAppChannelMessage`, che accetta il canale, il thread, il testo e un `idempotencyKey` (un UUID generato dal client per ogni risposta e riutilizzato quando la ritenta) ed esegue la funzione del provider:
+Le risposte vengono inviate con la mutation `sendAppChannelMessage`, che accetta il canale, il thread, `text` oppure, per i provider il cui `conversationStyle` è `'email'`, un blocco `email` (`to`, `cc`, `bcc`, `subject`, `body` in rich text, `inReplyTo`), e un `idempotencyKey` (un UUID che il client genera per ogni risposta e riutilizza quando la ritenta), ed esegue la funzione del provider:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -246,6 +276,8 @@ export const linkedinSendMessageHandler = async ({
 ```
 
 Il payload contiene `messagingProviderName`, il `threadExternalId` della conversazione così come è stato importato, il `text`, l'`idempotencyKey` e i `recipients`: i partecipanti all'ultimo messaggio del thread diversi dall'identificativo del canale stesso, in modo che non venga inviato alcun messaggio a chi ha partecipato solo a uno scambio precedente. Preferisci la conversazione del provider ai `recipients` quando la sua API invia a un ID conversazione. Restituisce l'ID del provider per il messaggio inviato come `externalId`.
+
+Il `conversationStyle` del payload corrisponde a quello del provider (`'chat'` quando non ne dichiara alcuno). Con `'email'` (ad esempio un'app che sincronizza Outlook o Gmail), i membri rispondono invece con il compositore di email e il payload contiene anche un blocco `email`: l'`subject`, il corpo in rich text compilato in `html`, i destinatari `cc` e `bcc` e `inReplyToExternalId`, l'`externalId` del messaggio a cui si sta rispondendo quando Twenty lo conosce. `recipients` sono quindi gli indirizzi `To` scelti dal membro e `text` è la versione in testo normale del corpo. Gli allegati non vengono ancora inviati. Richiede `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty registra quindi la risposta nel thread come messaggio in uscita dal canale, con gli stessi destinatari, così viene visualizzata immediatamente. Quando il tuo webhook recapita in seguito lo stesso messaggio, la sua importazione con quell'`externalId` non cambia nulla.
 

@@ -193,3 +193,24 @@ it('does not pin creation outside an object context', () => {
     }),
   ).toEqual([pageCommand, ...globalCreationCommands]);
 });
+
+it('keeps creation commands scoped to a core object, which global creation cannot replace', () => {
+  const createWorkflowCommand = {
+    ...legacyCreationCommand,
+    id: 'create-workflow',
+    availabilityCoreObjectName: 'workflow',
+    position: 1,
+  };
+
+  expect(
+    mergeGlobalRecordCreationCommandMenuItems({
+      commandMenuItems: [createWorkflowCommand, pageCommand],
+      globalRecordCreationCommandMenuItems,
+      shouldDisplayGlobalRecordCreationCommands: true,
+    }),
+  ).toEqual([
+    createWorkflowCommand,
+    pageCommand,
+    ...globalRecordCreationCommandMenuItems,
+  ]);
+});

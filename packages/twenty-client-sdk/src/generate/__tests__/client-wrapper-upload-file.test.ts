@@ -58,7 +58,7 @@ const createFetchMock = ({
 } = {}) => {
   const capturedRequests: CapturedRequest[] = [];
 
-  const fetchMock = vi.fn(
+  const fetchMock = vi.fn<typeof globalThis.fetch>(
     async (url: string | URL | Request, requestInit?: RequestInit) => {
       capturedRequests.push({ url: String(url), requestInit });
 
@@ -99,10 +99,10 @@ describe('Generated client wrapper uploadFile', () => {
   let TwentyClass: GeneratedClientClass;
   let cleanup: () => Promise<void>;
 
-  const createClient = (fetchMock: ReturnType<typeof vi.fn>) =>
+  const createClient = (fetchMock: typeof globalThis.fetch) =>
     new TwentyClass({
       url: CLIENT_URL,
-      fetch: fetchMock as unknown as typeof globalThis.fetch,
+      fetch: fetchMock,
     });
 
   const uploadInvoice = (

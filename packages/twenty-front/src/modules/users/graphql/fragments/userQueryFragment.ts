@@ -41,12 +41,16 @@ export const USER_QUERY_FRAGMENT = gql`
       isImpersonating
       objectRecordsPermissions {
         objectMetadataId
+        canCreateAllRecords
         canReadAllRecords
         canUpdateAllRecords
         canSoftDeleteAllRecords
         canDestroyAllRecords
-        restrictedFields
+        unreadableFields
+        uneditableFields
         rowLevelRecordsPermissions {
+          ruleId
+          canCreateRecords
           canReadRecords
           canUpdateRecords
           canSoftDeleteRecords
@@ -57,6 +61,8 @@ export const USER_QUERY_FRAGMENT = gql`
           predicateGroups {
             ...RowLevelPermissionPredicateGroupFragment
           }
+          unreadableFields
+          uneditableFields
         }
       }
       twoFactorAuthenticationMethodSummary {
@@ -131,12 +137,24 @@ export const USER_QUERY_FRAGMENT = gql`
         ...RoleFragment
       }
       aiChatModelTier
+      aiChatAssistantProfile {
+        displayName
+        avatarShape
+        avatarColor
+        avatarFace
+        isAvatarAnimated
+      }
       aiChatDirectMessageAssistantMode
       aiChatInboxAssistantMode
       aiAgentModelTier
       isAutoModelSelectionEnabled
       aiModelIdByTier
       aiAdditionalInstructions
+      aiDataPolicy {
+        requiredDataResidencyRegion
+        isZeroDataRetentionRequired
+        isProductImprovementDataSharingEnabled
+      }
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

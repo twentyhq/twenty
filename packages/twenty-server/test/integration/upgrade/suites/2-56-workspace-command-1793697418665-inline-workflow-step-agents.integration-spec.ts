@@ -37,10 +37,7 @@ import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
-import {
-  type AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -183,7 +180,7 @@ const scriptModelAnsweringASummary = (): ModelCall[] => {
       modelId: TEST_AI_MODEL_ID,
       sdkPackage: '@ai-sdk/openai',
       model,
-    } as unknown as RegisteredAiModel);
+    });
 
   return calls;
 };
@@ -196,7 +193,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   let conversationalWorkflow: LegacyAiStepWorkflow;
   let seededSystemAgentIds: string[];
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowIds: string[] = [];
+  const workspaceWorkflowVersionIds: string[] = [];
   const agentIds: string[] = [];
 
   const runCommand = () =>
@@ -321,7 +318,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowIds.push(workspaceWorkflowId);
+    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
 
     const [step] = await readCoreSteps(coreWorkflowVersionId);
 
@@ -444,9 +441,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    for (const workspaceWorkflowId of workspaceWorkflowIds) {
-      await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-    }
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
 
     const remainingAgents: { id: string }[] = await global.testDataSource.query(
       `SELECT id FROM core."agent" WHERE id = ANY($1::uuid[])`,

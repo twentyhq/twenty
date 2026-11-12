@@ -16,14 +16,14 @@ if (!personObjectMetadataItem) {
 
 const objectPermissionsByObjectMetadataId = {
   [personObjectMetadataItem.id]: {
-    canReadObjectRecords: true,
-    canUpdateObjectRecords: true,
-    canSoftDeleteObjectRecords: true,
-    canDestroyObjectRecords: true,
-    objectMetadataId: personObjectMetadataItem.id,
-    restrictedFields: {},
-    rowLevelPermissionPredicates: [],
-    rowLevelPermissionPredicateGroups: [],
+    canCreateAllRecords: true,
+    canReadAllRecords: true,
+    canUpdateAllRecords: true,
+    canSoftDeleteAllRecords: true,
+    canDestroyAllRecords: true,
+    unreadableFields: [],
+    uneditableFields: [],
+    rowLevelRecordsPermissions: null,
   },
 };
 

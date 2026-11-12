@@ -5,12 +5,23 @@ import { createHostFetchEnforcingPolicy } from '../createHostFetchEnforcingPolic
 
 const originalFetch = globalThis.fetch;
 
-const createFakeResponse = () => ({
+const createFakeResponse = (): Response => ({
   ok: true,
   status: 200,
   statusText: 'OK',
-  headers: new Map([['content-type', 'application/json']]),
+  type: 'basic',
+  url: '',
+  redirected: false,
+  body: null,
+  bodyUsed: false,
+  headers: new Headers({ 'content-type': 'application/json' }),
   text: async () => 'response-body',
+  arrayBuffer: jest.fn(),
+  blob: jest.fn(),
+  bytes: jest.fn(),
+  clone: jest.fn(),
+  formData: jest.fn(),
+  json: jest.fn(),
 });
 
 const getForwardedRequestInit = (fetchSpy: jest.Mock): RequestInit =>
@@ -23,7 +34,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should reject requests to origins that are not allowlisted', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const hostFetch = createHostFetchEnforcingPolicy({
       allowedOrigins: ['https://api.twenty.test'],
@@ -46,7 +57,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should uppercase lowercase methods and default to GET', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const hostFetch = createHostFetchEnforcingPolicy({
       allowedOrigins: ['https://api.twenty.test'],
@@ -69,7 +80,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should forward allowlisted requests without ambient credentials', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const hostFetch = createHostFetchEnforcingPolicy({
       allowedOrigins: ['https://api.twenty.test'],
@@ -98,7 +109,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should send page cookies without the session opt-in for page-origin requests', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const pageOrigin = window.location.origin;
     const hostFetch = createHostFetchEnforcingPolicy({
@@ -124,7 +135,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should send page cookies when following file storage redirects', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const componentUrl = `${window.location.origin}/rest/front-components/component-id`;
     const hostFetch = createHostFetchEnforcingPolicy({
@@ -153,7 +164,7 @@ describe('createHostFetchEnforcingPolicy', () => {
     ],
   ])('should not send page cookies for %s', async (_description, path) => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const pageOrigin = window.location.origin;
     const hostFetch = createHostFetchEnforcingPolicy({
@@ -167,7 +178,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should refuse redirects by default', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const hostFetch = createHostFetchEnforcingPolicy({
       allowedOrigins: ['https://api.twenty.test'],
@@ -193,7 +204,7 @@ describe('createHostFetchEnforcingPolicy', () => {
 
   it('should follow file storage redirects only for GET requests to redirectable urls', async () => {
     const fetchSpy = jest.fn(async () => createFakeResponse());
-    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
 
     const componentUrl =
       'https://api.twenty.test/rest/front-components/component-id';

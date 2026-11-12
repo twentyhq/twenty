@@ -134,6 +134,22 @@ describe('Campaign lifecycle tools through MCP (integration)', () => {
     });
   });
 
+  it.each(['preview_campaign_send', 'send_campaign'])(
+    'should not offer %s to an API key, which acts for no workspace member',
+    async (toolName) => {
+      const output = await executeToolThroughMcp({
+        toolName,
+        toolArguments: { campaignId },
+        token: API_KEY_ACCESS_TOKEN,
+      });
+
+      expect(output).toMatchObject({
+        success: false,
+        message: `Tool "${toolName}" not found`,
+      });
+    },
+  );
+
   it('should refuse to send when the approved recipient count no longer matches', async () => {
     const output = await executeToolThroughMcp({
       toolName: 'send_campaign',

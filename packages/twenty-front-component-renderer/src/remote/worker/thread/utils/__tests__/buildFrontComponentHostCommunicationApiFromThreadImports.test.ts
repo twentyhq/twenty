@@ -1,24 +1,22 @@
-import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '../buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '../handleCommandConfirmationModalResult';
 
-const createHostThreadImportsStub = () =>
-  ({
-    navigate: jest.fn(),
-    requestAccessTokenRefresh: jest.fn(),
-    openSidePanelPage: jest.fn(),
-    openCommandConfirmationModal: jest.fn(async () => {}),
-    unmountFrontComponent: jest.fn(),
-    enqueueSnackbar: jest.fn(),
-    closeSidePanel: jest.fn(),
-    updateProgress: jest.fn(),
-    copyToClipboard: jest.fn(),
-    uploadFile: jest.fn(),
-    storageSet: jest.fn(),
-    storageDelete: jest.fn(),
-    storageClear: jest.fn(),
-    hostFetch: jest.fn(),
-  }) as unknown as FrontComponentHostThreadExports;
+const createHostThreadImportsStub = (): FrontComponentHostCommunicationApi => ({
+  navigate: jest.fn(),
+  requestAccessTokenRefresh: jest.fn(),
+  openSidePanelPage: jest.fn(),
+  openCommandConfirmationModal: jest.fn(async () => {}),
+  unmountFrontComponent: jest.fn(),
+  enqueueSnackbar: jest.fn(),
+  closeSidePanel: jest.fn(),
+  updateProgress: jest.fn(),
+  copyToClipboard: jest.fn(),
+  uploadFile: jest.fn(),
+  storageSet: jest.fn(),
+  storageDelete: jest.fn(),
+  storageClear: jest.fn(),
+});
 
 describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
   afterEach(async () => {

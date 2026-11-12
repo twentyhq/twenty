@@ -197,13 +197,13 @@ const findPersonObjectId = async () => {
 const findPersonViewsWithChildren = async (
   personObjectId: string,
 ): Promise<ViewWithChildren[]> => {
-  const { data } = await findViews({
+  const { data } = await findViews<ViewWithChildren>({
     objectMetadataId: personObjectId,
     gqlFields: VIEW_WITH_CHILDREN_GQL_FIELDS,
     expectToFail: false,
   });
 
-  return (data?.getViews ?? []) as unknown as ViewWithChildren[];
+  return data?.getViews ?? [];
 };
 
 const findReparentViews = async (personObjectId: string) => {

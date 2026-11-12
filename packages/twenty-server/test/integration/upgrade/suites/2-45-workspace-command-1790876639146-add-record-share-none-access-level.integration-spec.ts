@@ -12,7 +12,8 @@ import {
 } from 'twenty-shared/types';
 
 import { type AddRecordShareNoneAccessLevelCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876639146-add-record-share-none-access-level.command';
-import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { type RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
+import { type RecordShareStorageService } from 'src/engine/permissions/internal/record-share/services/record-share-storage.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -29,6 +30,7 @@ describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCo
   let command: AddRecordShareNoneAccessLevelCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let shares: RecordShareStorageService;
+  let recordPermissionReadRepository: RecordPermissionReadRepository;
 
   const run = (
     direction: 'up' | 'down',
@@ -78,7 +80,7 @@ describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCo
     });
 
   const findRestrictions = () =>
-    shares.findByRecordIds({
+    recordPermissionReadRepository.findRecordShares({
       workspaceId,
       objectMetadataId: OBJECT_METADATA_ID,
       recordIds: [RECORD_ID],
@@ -94,6 +96,10 @@ describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCo
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
+    recordPermissionReadRepository =
+      getAppProviderByClassName<RecordPermissionReadRepository>(
+        'RecordPermissionReadRepository',
+      );
   });
 
   afterAll(async () => {

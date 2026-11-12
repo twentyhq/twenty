@@ -66,6 +66,8 @@ Punti chiave:
 * `prompt` è il prompt di sistema che definisce il comportamento dell'agente.
 * `description` (opzionale) fornisce contesto su ciò che fa l'agente.
 * `icon` (opzionale) imposta l'icona visualizzata nell'UI.
+* `avatarColor` (facoltativo) imposta il colore dell'avatar dell'agente: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` o `gray`. Omettilo per ottenere un colore scelto dall'ID dell'agente.
+* `avatarShape` (facoltativo) imposta la forma dell'avatar dell'agente: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` o `hexagon`. Il valore predefinito è `circle`.
 * `modelId` (opzionale) sostituisce il modello di IA predefinito utilizzato dall'agente.
 * `responseFormat` (facoltativo) imposta il formato di output predefinito dell'agente. Per il testo in formato libero, il valore predefinito è `{ type: 'text' }`. Usa `{ type: 'json', schema }` per forzare un output JSON strutturato. Una chiamata a `runAgent()` o un passaggio AI di un workflow può richiedere un formato diverso, che ha la precedenza.
 * `roleUniversalIdentifier` (facoltativo) associa l'agente a un ruolo definito dalla tua app. Quel ruolo non deve concedere più del ruolo dell'applicazione, altrimenti la build non riesce; vedi [Ruoli degli agenti](/it/developers/extend/apps/config/roles#agent-roles).

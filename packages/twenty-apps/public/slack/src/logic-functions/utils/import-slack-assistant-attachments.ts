@@ -64,7 +64,7 @@ export const importSlackAssistantAttachments = async ({
   connectionId,
   deadlineAtMs,
 }: {
-  client: WebClient | undefined;
+  client: { files: Pick<WebClient['files'], 'info'> } | undefined;
   files: SlackMessageFile[] | undefined;
   botToken: string | undefined;
   connectionId: string | undefined;

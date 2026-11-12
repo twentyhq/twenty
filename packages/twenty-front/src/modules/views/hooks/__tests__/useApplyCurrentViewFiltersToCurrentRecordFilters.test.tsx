@@ -41,7 +41,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
   const allCompaniesViewData = mockedViews.find(
     (v) => v.name === 'All Companies',
   )!;
-  const allCompaniesView = allCompaniesViewData as unknown as View;
+  const allCompaniesView: View = allCompaniesViewData;
 
   const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 

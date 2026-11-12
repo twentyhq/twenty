@@ -67,7 +67,9 @@ export const SettingsAccountsConfiguration = () => {
   };
 
   const handleAddAccount = async () => {
-    if (!connectedAccountId) return;
+    if (!connectedAccountId) {
+      return;
+    }
 
     await startChannelSyncMutation({
       variables: {

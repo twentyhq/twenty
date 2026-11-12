@@ -3,16 +3,9 @@ import { type ToolUIPart } from 'ai';
 import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 
 const buildToolPart = (
-  state: string,
+  state: ToolUIPart['state'],
   output: Record<string, unknown> | undefined,
-): ToolUIPart =>
-  ({
-    type: 'tool-find_many_companies',
-    toolCallId: 'call_1',
-    state,
-    input: {},
-    output,
-  }) as unknown as ToolUIPart;
+): Pick<ToolUIPart, 'state' | 'output'> => ({ state, output });
 
 const recordReference = {
   objectNameSingular: 'company',

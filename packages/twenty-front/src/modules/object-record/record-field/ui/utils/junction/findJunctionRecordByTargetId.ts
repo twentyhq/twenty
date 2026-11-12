@@ -3,7 +3,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 type FindJunctionRecordByTargetIdArgs = {
-  junctionRecords: ObjectRecord[];
+  junctionRecords: (ObjectRecord | undefined)[];
   targetRecordId: string;
   targetFieldName: string;
 };

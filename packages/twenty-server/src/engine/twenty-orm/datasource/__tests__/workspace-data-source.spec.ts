@@ -1,5 +1,7 @@
-import { type Pool } from 'pg';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { DataSource } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -11,9 +13,16 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 const PET_OBJECT_METADATA_ID = 'pet-object-id';
+
+const DISABLED_FEATURE_FLAGS_MAP = Object.values(FeatureFlagKey).reduce<
+  Record<string, boolean>
+>((featureFlagsMap, featureFlagKey) => {
+  featureFlagsMap[featureFlagKey] = false;
+
+  return featureFlagsMap;
+}, {});
 
 const buildFlatEntityMaps = <T extends SyncableFlatEntity>(
   flatEntities: T[],
@@ -52,10 +61,10 @@ const buildFlatObjectMetadataMaps = (nameSingular: string) =>
     }),
   ]);
 
-const buildPool = () =>
-  ({
-    query: jest.fn().mockResolvedValue({ rows: [{ value: 3 }] }),
-  }) as unknown as Pool;
+const buildPool = () => ({
+  connect: jest.fn(),
+  query: jest.fn().mockResolvedValue({ rows: [{ value: 3 }] }),
+});
 
 const sumPetColumn = ({
   pool,
@@ -63,7 +72,7 @@ const sumPetColumn = ({
   flatFieldMetadataMaps,
   columnName,
 }: {
-  pool: Pool;
+  pool: ReturnType<typeof buildPool>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   columnName: string;
@@ -74,20 +83,48 @@ const sumPetColumn = ({
       workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatIndexMaps: createEmptyFlatEntityMaps(),
       objectIdByNameSingular: { pet: PET_OBJECT_METADATA_ID },
-      featureFlagsMap: {},
-    } as unknown as WorkspaceInternalContext,
+      featureFlagsMap: DISABLED_FEATURE_FLAGS_MAP,
+      billingEntitlements: {},
+      eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
+      permissionsPrincipals: undefined,
+      recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
+      recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
+      recordFieldPermissions: {
+        findFieldsHiddenOnMatchingRecords: jest.fn(),
+      },
+      recordAccessGroupWrite: {
+        isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+        isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+        findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+        recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+      },
+      recordAccessGroupQueue: { queueRecompute: jest.fn() },
+      recordStock: {
+        assertRecordStockAvailable: jest.fn(),
+        acquireRecordStock: jest.fn(),
+        releaseRecordStock: jest.fn(),
+      },
+      coreDataSource: new DataSource({ type: 'postgres' }),
+    },
     authContext: {} as WorkspaceAuthContext,
   })
     .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);
 
-const expectSingleQueryContaining = (pool: Pool, sqlFragment: string) => {
+const expectSingleQueryContaining = ({
+  pool,
+  sqlFragment,
+}: {
+  pool: ReturnType<typeof buildPool>;
+  sqlFragment: string;
+}) => {
   expect(pool.query).toHaveBeenCalledTimes(1);
   expect(pool.query).toHaveBeenCalledWith(
     expect.objectContaining({ text: expect.stringContaining(sqlFragment) }),
   );
-  jest.mocked(pool.query).mockClear();
+  pool.query.mockClear();
 };
 
 describe('WorkspaceDataSource', () => {
@@ -101,7 +138,7 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps: buildFlatFieldMetadataMaps('weight'),
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"weight"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"weight"' });
 
     const renamedSum = await sumPetColumn({
       pool,
@@ -110,7 +147,7 @@ describe('WorkspaceDataSource', () => {
       columnName: 'weightInKg',
     });
 
-    expectSingleQueryContaining(pool, '"weightInKg"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"weightInKg"' });
     expect(renamedSum).toBe(3);
   });
 
@@ -124,7 +161,7 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps,
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"_pet"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"_pet"' });
 
     await sumPetColumn({
       pool,
@@ -132,6 +169,6 @@ describe('WorkspaceDataSource', () => {
       flatFieldMetadataMaps,
       columnName: 'weight',
     });
-    expectSingleQueryContaining(pool, '"_animal"');
+    expectSingleQueryContaining({ pool, sqlFragment: '"_animal"' });
   });
 });

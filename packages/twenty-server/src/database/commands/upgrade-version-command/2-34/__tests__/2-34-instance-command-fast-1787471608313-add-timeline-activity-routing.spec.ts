@@ -1,10 +1,12 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { AddTimelineActivityRoutingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608313-add-timeline-activity-routing';
 
 describe('AddTimelineActivityRoutingFastInstanceCommand', () => {
   const query = jest.fn();
-  const queryRunner = { query } as unknown as QueryRunner;
+  const queryRunner = new DataSource({ type: 'postgres' }).createQueryRunner();
+
+  queryRunner.query = query;
   const command = new AddTimelineActivityRoutingFastInstanceCommand();
 
   beforeEach(() => {

@@ -17,23 +17,24 @@ const EXECUTION_ERROR_LABELS = [
   'workspaceSchema',
 ] as const satisfies readonly (keyof WorkspaceMigrationRunnerExecutionErrors)[];
 
+type ExecutionErrorLabel = (typeof EXECUTION_ERROR_LABELS)[number];
+
 type ExecutionErrorEntry = {
-  label: (typeof EXECUTION_ERROR_LABELS)[number];
-  error: Error;
+  label: ExecutionErrorLabel;
+  error: unknown;
 };
 
 const getPostgresDriverError = (
-  error: Error,
+  error: unknown,
 ): { code?: string; detail?: string } | undefined =>
   error instanceof QueryFailedError
     ? (error.driverError as { code?: string; detail?: string } | undefined)
     : undefined;
 
-const isTransactionAbortedError = (error: Error): boolean =>
+const isTransactionAbortedError = (error: unknown): boolean =>
   getPostgresDriverError(error)?.code === POSTGRES_TRANSACTION_ABORTED_CODE;
 
-const formatSingleExecutionError = (error: Error): string => {
-  // Rejection reasons are typed as Error but nothing guarantees it at runtime.
+const formatSingleExecutionError = (error: unknown): string => {
   const baseMessage = error instanceof Error ? error.message : String(error);
   const driverError = getPostgresDriverError(error);
   const driverErrorParts = [
@@ -47,7 +48,7 @@ const formatSingleExecutionError = (error: Error): string => {
 };
 
 export const formatWorkspaceMigrationRunnerExecutionErrors = (
-  errors: WorkspaceMigrationRunnerExecutionErrors,
+  errors: Partial<Record<ExecutionErrorLabel, unknown>>,
 ): string | undefined => {
   const entries = EXECUTION_ERROR_LABELS.map((label) => ({
     label,

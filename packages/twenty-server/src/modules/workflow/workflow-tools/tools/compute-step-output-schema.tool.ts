@@ -43,6 +43,7 @@ export const createComputeStepOutputSchemaTool = (
           {
             workspaceId: context.workspaceId,
             userWorkspaceId: context.userWorkspaceId,
+            callerApplication: undefined,
             coreWorkflowVersionId: parameters.coreWorkflowVersionId,
           },
         );

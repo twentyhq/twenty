@@ -3,11 +3,11 @@ import { z } from 'zod';
 import {
   AI_EVALUATION_QUESTION_TYPES,
   AI_MODEL_EFFORTS,
-  DATA_RESIDENCY_KEYS,
+  DATA_RESIDENCIES,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
+import { AI_MODEL_KINDS } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.constant';
 import { aiModelBenchmarkSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.schema';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
@@ -32,7 +32,7 @@ export const aiProviderModelConfigSchema = z
     // unset means the provider default only
     efforts: z.array(z.enum(AI_MODEL_EFFORTS)).nonempty().optional(),
     // contractual per route, so undefined means unasserted rather than false; per model since one Bedrock provider serves eu.* and global.*
-    dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
+    dataResidency: z.enum(DATA_RESIDENCIES).optional(),
     zeroDataRetention: z.boolean().optional(),
     benchmark: aiModelBenchmarkSchema.optional(),
     benchmarkByEffort: z

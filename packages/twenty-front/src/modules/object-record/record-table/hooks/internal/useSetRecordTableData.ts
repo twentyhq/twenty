@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import {
   NO_RECORD_GROUP_FAMILY_KEY,
@@ -48,6 +50,16 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorCallbackState(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordTableId,
+  );
+
+  const activeRecordGroupTabId = useAtomComponentSelectorCallbackState(
+    activeRecordGroupTabIdComponentSelector,
+    recordTableId,
+  );
+
   const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
@@ -86,7 +98,13 @@ export const useSetRecordTableData = ({
           )
         : store.get(recordIndexAllRecordIdsSelector);
 
-      const isAllRowsSelected = store.get(hasUserSelectedAllRecords);
+      const isRecordGroupHiddenByTabs =
+        store.get(isRecordGroupTabsDisplayed) &&
+        isDefined(currentRecordGroupId) &&
+        currentRecordGroupId !== store.get(activeRecordGroupTabId);
+
+      const isAllRowsSelected =
+        store.get(hasUserSelectedAllRecords) && !isRecordGroupHiddenByTabs;
 
       const recordIds = records.map((record) => record.id);
 
@@ -118,6 +136,8 @@ export const useSetRecordTableData = ({
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRecords,
+      isRecordGroupTabsDisplayed,
+      activeRecordGroupTabId,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,

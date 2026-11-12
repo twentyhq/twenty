@@ -7,7 +7,7 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 describe('NavigationMenuItem creation should succeed', () => {
-  let createdNavigationMenuItemId: string;
+  let createdNavigationMenuItemId: string | undefined;
   let companyObjectMetadataId: string;
   let personObjectMetadataId: string;
   let validUserWorkspaceId: string | null;
@@ -58,7 +58,7 @@ describe('NavigationMenuItem creation should succeed', () => {
         expectToFail: false,
         input: { id: createdNavigationMenuItemId },
       });
-      createdNavigationMenuItemId = undefined as unknown as string;
+      createdNavigationMenuItemId = undefined;
     }
     if (createdFolderId) {
       await deleteNavigationMenuItem({

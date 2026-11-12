@@ -3,13 +3,43 @@ import { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
 
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 
-const buildToolPart = (state: string): ToolUIPart =>
-  ({
-    type: 'tool-find_many_companies',
-    toolCallId: 'call_1',
-    state,
-    input: {},
-  }) as unknown as ToolUIPart;
+const BASE_TOOL_PART = {
+  type: 'tool-find_many_companies',
+  toolCallId: 'call_1',
+  input: {},
+} as const;
+
+const TOOL_PART_BY_STATE: Record<ToolUIPart['state'], ToolUIPart> = {
+  'input-streaming': { ...BASE_TOOL_PART, state: 'input-streaming' },
+  'input-available': { ...BASE_TOOL_PART, state: 'input-available' },
+  'approval-requested': {
+    ...BASE_TOOL_PART,
+    state: 'approval-requested',
+    approval: { id: 'approval_1' },
+  },
+  'approval-responded': {
+    ...BASE_TOOL_PART,
+    state: 'approval-responded',
+    approval: { id: 'approval_1', approved: true },
+  },
+  'output-available': {
+    ...BASE_TOOL_PART,
+    state: 'output-available',
+    output: {},
+  },
+  'output-denied': {
+    ...BASE_TOOL_PART,
+    state: 'output-denied',
+    approval: { id: 'approval_1', approved: false },
+  },
+  'output-error': {
+    ...BASE_TOOL_PART,
+    state: 'output-error',
+    errorText: 'error',
+  },
+};
+
+const buildToolPart = (state: ToolUIPart['state']) => TOOL_PART_BY_STATE[state];
 
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
@@ -44,7 +74,7 @@ describe('shouldToolPartRenderStandalone', () => {
   });
 
   describe('an app widget', () => {
-    it.each([
+    it.each<ToolUIPart['state']>([
       'input-available',
       'approval-requested',
       'approval-responded',

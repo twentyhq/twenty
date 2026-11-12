@@ -3,6 +3,9 @@ import { type CardRootProps } from '../src/primitives/surfaces/Card/types/CardRo
 export const CARD_PROP_DESCRIPTIONS = {
   children: 'Card sections or other content.',
   fullWidth: 'Sets the card width to 100% of its container.',
+  borderStyle: 'Use a solid or dashed outer border.',
+  isSelected:
+    'Highlights the outer border. Supply the matching accessible selection state on the interactive owner.',
   variant:
     'default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider.',
   backgroundColor:

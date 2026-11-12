@@ -11,7 +11,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { Injectable } from '@nestjs/common';
 import { type TextUIPart } from 'ai';
 
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  type ExtendedUIMessage,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -111,12 +114,14 @@ export class AgentChatStreamingService {
     workspaceMemberId,
     workspace,
     modelId,
+    browsingContext,
   }: {
     threadId: string;
     userWorkspaceId: string;
     workspaceMemberId: string;
-    workspace: WorkspaceEntity;
+    workspace: Pick<WorkspaceEntity, 'id'>;
     modelId?: string;
+    browsingContext?: BrowsingContextType | null;
   }): Promise<{ streamId: string; messageId: string | null; turnId: string }> {
     const workspaceId = workspace.id;
     const thread = await this.threadService.getWritableThread({
@@ -175,6 +180,7 @@ export class AgentChatStreamingService {
         }
 
         await this.agentChatService.deleteAssistantMessagesForTurn({
+          threadId,
           turnId,
           workspaceId,
         });
@@ -188,6 +194,7 @@ export class AgentChatStreamingService {
           modelId,
           turnId,
           messageId: message?.id,
+          browsingContext,
         });
 
         return { streamId, messageId: message?.id ?? null, turnId };
@@ -317,7 +324,7 @@ export class AgentChatStreamingService {
     const [thread, messages] = await Promise.all([
       this.threadRepository.findOneOrFail(workspaceId, {
         where: { id: threadId },
-        select: ['id', 'title', 'conversationSize'],
+        select: ['id', 'title', 'conversationType', 'conversationSize'],
       }),
       this.loadMessagesFromDB(threadId, workspaceId, workspaceMemberId),
     ]);
@@ -339,7 +346,10 @@ export class AgentChatStreamingService {
             ?.parts.find((part): part is TextUIPart => part.type === 'text')
             ?.text ??
           '',
-        hasTitle: isNonEmptyString(thread.title),
+        hasTitle:
+          thread.conversationType ===
+            AgentChatThreadConversationType.DIRECT_MESSAGE ||
+          isNonEmptyString(thread.title),
         conversationSizeTokens: thread.conversationSize,
       },
       {
@@ -393,16 +403,17 @@ export class AgentChatStreamingService {
           threadId,
           messageId: message.id,
         });
-        const authorization = await this.actorService.authorize({
-          workspaceId,
-          threadId,
-          sender,
-        });
+        const { authContext } =
+          await this.actorService.resolveAuthorizedConversation({
+            workspaceId,
+            threadId,
+            sender,
+          });
 
         return {
           message,
           userWorkspaceId: sender.userWorkspaceId,
-          workspaceMemberId: authorization.authContext.workspaceMemberId,
+          workspaceMemberId: authContext.workspaceMemberId,
         };
       } catch (error) {
         // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker

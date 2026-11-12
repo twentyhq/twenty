@@ -1,5 +1,4 @@
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
-import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
@@ -9,11 +8,16 @@ const createMessage = (
 ): MessageWithParticipants =>
   ({ externalId, labelIds }) as MessageWithParticipants;
 
-const createFolder = (
-  externalId: string,
-  isSynced: boolean,
-): MessageFolderEntity =>
-  ({ externalId, isSynced }) as unknown as MessageFolderEntity;
+const createFolder = ({
+  externalId,
+  isSynced,
+}: {
+  externalId: string;
+  isSynced: boolean;
+}) => ({
+  externalId,
+  isSynced,
+});
 
 describe('filterGmailMessagesByFolderPolicy', () => {
   describe('ALL_FOLDERS policy', () => {
@@ -25,7 +29,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('INBOX', true)],
+        messageFolders: [createFolder({ externalId: 'INBOX', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
       });
 
@@ -52,11 +56,11 @@ describe('filterGmailMessagesByFolderPolicy', () => {
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
         messageFolders: [
-          createFolder('INBOX', false),
-          createFolder('SENT', false),
-          createFolder('IMPORTANT', false),
-          createFolder(CRM_LABEL, true),
-          createFolder(DEALS_LABEL, true),
+          createFolder({ externalId: 'INBOX', isSynced: false }),
+          createFolder({ externalId: 'SENT', isSynced: false }),
+          createFolder({ externalId: 'IMPORTANT', isSynced: false }),
+          createFolder({ externalId: CRM_LABEL, isSynced: true }),
+          createFolder({ externalId: DEALS_LABEL, isSynced: true }),
         ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
@@ -74,7 +78,9 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder(CRM_LABEL, true)],
+        messageFolders: [
+          createFolder({ externalId: CRM_LABEL, isSynced: true }),
+        ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -93,7 +99,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('INBOX', true)],
+        messageFolders: [createFolder({ externalId: 'INBOX', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -107,7 +113,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('INBOX', true)],
+        messageFolders: [createFolder({ externalId: 'INBOX', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -121,7 +127,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('SENT', true)],
+        messageFolders: [createFolder({ externalId: 'SENT', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -135,7 +141,9 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('IMPORTANT', true)],
+        messageFolders: [
+          createFolder({ externalId: 'IMPORTANT', isSynced: true }),
+        ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -152,7 +160,9 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('STARRED', true)],
+        messageFolders: [
+          createFolder({ externalId: 'STARRED', isSynced: true }),
+        ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -172,8 +182,8 @@ describe('filterGmailMessagesByFolderPolicy', () => {
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
         messageFolders: [
-          createFolder('INBOX', true),
-          createFolder(SALES_LABEL, true),
+          createFolder({ externalId: 'INBOX', isSynced: true }),
+          createFolder({ externalId: SALES_LABEL, isSynced: true }),
         ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
@@ -190,10 +200,10 @@ describe('filterGmailMessagesByFolderPolicy', () => {
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
         messageFolders: [
-          createFolder('INBOX', true),
-          createFolder(SALES_LABEL, true),
-          createFolder('TRASH', false),
-          createFolder('SPAM', false),
+          createFolder({ externalId: 'INBOX', isSynced: true }),
+          createFolder({ externalId: SALES_LABEL, isSynced: true }),
+          createFolder({ externalId: 'TRASH', isSynced: false }),
+          createFolder({ externalId: 'SPAM', isSynced: false }),
         ],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
@@ -211,7 +221,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       ];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('INBOX', true)],
+        messageFolders: [createFolder({ externalId: 'INBOX', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 
@@ -222,7 +232,7 @@ describe('filterGmailMessagesByFolderPolicy', () => {
       const messages = [createMessage('1', [])];
 
       const result = filterGmailMessagesByFolderPolicy(messages, {
-        messageFolders: [createFolder('INBOX', true)],
+        messageFolders: [createFolder({ externalId: 'INBOX', isSynced: true })],
         messageFolderImportPolicy: MessageFolderImportPolicy.SELECTED_FOLDERS,
       });
 

@@ -1,3 +1,4 @@
+import { TEST_BAR_CHART_CONFIGURATION } from '~/testing/mock-data/widget-configurations';
 import { getManualSortOrderFromConfig } from '@/side-panel/pages/page-layout/utils/getManualSortOrderFromConfig';
 import {
   WidgetConfigurationType,
@@ -37,10 +38,9 @@ describe('getManualSortOrderFromConfig', () => {
 
     it('should return undefined for wrong typename', () => {
       const config = {
-        __typename: 'BarChartConfiguration',
-        configurationType: WidgetConfigurationType.BAR_CHART,
+        ...TEST_BAR_CHART_CONFIGURATION,
         manualSortOrder: ['a', 'b', 'c'],
-      } as unknown as BarChartConfiguration;
+      };
 
       expect(getManualSortOrderFromConfig(config)).toBeUndefined();
     });

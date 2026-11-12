@@ -105,13 +105,13 @@ export function AffiliateProgramTermsDocument() {
         </li>
         <li>
           <strong>Code added after sign-up:</strong> if no partner is attributed
-          yet, the customer can enter your code in Settings &rarr; Billing
-          during their free trial. Twenty refuses the code if the customer
-          created a Twenty workspace before. Within 30 days of their first
-          payment, the customer (or you, on their behalf) can also ask us to add
-          it. Either way, you earn from the first invoice. After 30 days, only
-          Twenty can attach a code, at its discretion; you then earn from the
-          next invoice only.
+          yet, the customer can enter your code on the /settings/partner page of
+          their workspace during their free trial. Twenty refuses the code if
+          the customer created a Twenty workspace before. Within 30 days of
+          their first payment, the customer (or you, on their behalf) can also
+          ask us to add it. Either way, you earn from the first invoice. After
+          30 days, only Twenty can attach a code, at its discretion; you then
+          earn from the next invoice only.
         </li>
       </ul>
       <p>

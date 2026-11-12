@@ -17,7 +17,9 @@ export const useGraphWidgetTooltipFloating = (
   tooltipOffsetFromAnchorInPx: number,
 ) => {
   const virtualElement = useMemo(() => {
-    if (!isDefined(referenceElement)) return null;
+    if (!isDefined(referenceElement)) {
+      return null;
+    }
     if (referenceElement instanceof Element) {
       return createVirtualElementFromSVGElement(referenceElement);
     }

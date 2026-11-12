@@ -6,8 +6,8 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const triggerDetachRelationOptimisticEffect = ({
   cache,
@@ -27,10 +27,7 @@ export const triggerDetachRelationOptimisticEffect = ({
   fieldNameOnTargetRecord: string;
   targetRecordId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
   upsertRecordsInStore: (props: { partialRecords: ObjectRecord[] }) => void;
 }) => {
   const targetRecordTypeName = capitalize(

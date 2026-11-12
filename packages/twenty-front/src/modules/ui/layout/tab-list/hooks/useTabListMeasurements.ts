@@ -5,15 +5,16 @@ import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimens
 import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
 
-type UseTabListMeasurementsOptions = {
-  visibleTabs: SingleTabProps[];
+type UseTabListMeasurementsOptions<TTab extends Pick<SingleTabProps, 'id'>> = {
+  visibleTabs: TTab[];
   hasAddButton?: boolean;
   rightPadding?: number;
+  horizontalPadding?: number;
 };
 
-type UseTabListMeasurementsResult = {
+type UseTabListMeasurementsResult<TTab extends Pick<SingleTabProps, 'id'>> = {
   visibleTabCount: number;
-  hiddenTabs: SingleTabProps[];
+  hiddenTabs: TTab[];
   hiddenTabsCount: number;
   hasHiddenTabs: boolean;
   onTabWidthChange: (tabId: string) => (dimensions: TabListDimensions) => void;
@@ -22,11 +23,14 @@ type UseTabListMeasurementsResult = {
   onAddButtonWidthChange: (dimensions: TabListDimensions) => void;
 };
 
-export const useTabListMeasurements = ({
+export const useTabListMeasurements = <
+  TTab extends Pick<SingleTabProps, 'id'>,
+>({
   visibleTabs,
   hasAddButton = false,
   rightPadding = 0,
-}: UseTabListMeasurementsOptions): UseTabListMeasurementsResult => {
+  horizontalPadding,
+}: UseTabListMeasurementsOptions<TTab>): UseTabListMeasurementsResult<TTab> => {
   const [tabWidthsById, setTabWidthsById] = useState<TabWidthsById>({});
   const [containerWidth, setContainerWidth] = useState(0);
   const [moreButtonWidth, setMoreButtonWidth] = useState(0);
@@ -40,6 +44,7 @@ export const useTabListMeasurements = ({
       moreButtonWidth,
       addButtonWidth: hasAddButton ? addButtonWidth : 0,
       rightPadding,
+      horizontalPadding,
     });
   }, [
     visibleTabs,
@@ -49,6 +54,7 @@ export const useTabListMeasurements = ({
     addButtonWidth,
     hasAddButton,
     rightPadding,
+    horizontalPadding,
   ]);
 
   const hiddenTabs = useMemo(() => {

@@ -1,3 +1,4 @@
+import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { AgentChatMemberMessagePlacement } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-member-message-placement.enum';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790605326331-link-chat-message-senders-to-workspace-members.command';
@@ -26,17 +27,20 @@ import { computeFlatIndexFieldColumnNames } from 'src/engine/workspace-manager/w
 import { WorkspaceSchemaIndexManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-index-manager.service';
 import { updateAgentChatThreadUsage } from 'src/engine/metadata-modules/ai/ai-chat/utils/update-agent-chat-thread-usage.util';
 import { Logger } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace-data-source';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceSchemaTableManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/services/workspace-schema-table-manager.service';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { DataSource, IsNull, type Repository } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 import { Pool } from 'pg';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -105,20 +109,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         flatObjectMetadataMaps: metadata.flatObjectMetadataMaps,
         flatFieldMetadataMaps: metadata.flatFieldMetadataMaps,
         flatIndexMaps: metadata.flatIndexMaps,
-        flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-        flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
         objectIdByNameSingular: buildObjectIdByNameMaps(
           metadata.flatObjectMetadataMaps,
         ).idByNameSingular,
         featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
         billingEntitlements: {},
-        userWorkspaceRoleMap: {},
-        apiKeyRoleMap: {},
-        rolesPermissions: {},
-        flatRoleTargetByAgentIdMaps: {},
-        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
-        roleIdsWithAllRecordsAccess: [],
+        permissionsPrincipals: undefined,
+        recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
+        recordPermissions: {} as never,
+        recordFieldPermissions: {
+          findFieldsHiddenOnMatchingRecords: jest.fn(),
+        },
+        recordAccessGroupWrite: {
+          isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+          isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+          findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+          recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+        },
+        recordAccessGroupQueue: { queueRecompute: jest.fn() },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -137,17 +146,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         },
       };
       const workspaceDataSource = new WorkspaceDataSource(options);
+      const executeInWorkspaceContext = async <TResult>(
+        work: () => Promise<TResult>,
+      ) =>
+        withWorkspaceContext(
+          {
+            ...options.internalContext,
+            authContext: options.authContext,
+          },
+          work,
+        );
       return {
-        executeInWorkspaceContext: async <TResult>(
-          work: () => Promise<TResult>,
+        executeInWorkspaceContext,
+        executeTransactionInWorkspaceContext: <TResult>(
+          work: (
+            transactionScope: WorkspaceTransactionScope,
+          ) => Promise<TResult>,
         ) =>
-          withWorkspaceContext(
-            {
-              ...options.internalContext,
-              authContext: options.authContext,
-              permissionsPerRoleId: {},
-            },
-            work,
+          executeInWorkspaceContext(() =>
+            workspaceDataSource.transaction(work),
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
@@ -202,7 +219,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         workspaceId: string;
         threadId: string;
       }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-      getAuthContext: jest.fn().mockResolvedValue({
+      getAuthContextOrThrow: jest.fn().mockResolvedValue({
         userWorkspaceId: OWNER_ID,
         workspaceMemberId: MEMBER_ID,
       }),
@@ -212,8 +229,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
     };
     const conversationWriter = new AgentConversationWriterService(
-      turns as never,
-      new AgentHistoryTransactionService(orm as never),
+      new AgentHistoryTransactionService(orm as never, {
+        findDirectMessagePairOfThread: jest.fn().mockResolvedValue(null),
+        makeConversationRecordsPrivateToPair: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+        deletePairSharesOfConversationRecords: jest
+          .fn()
+          .mockRejectedValue(
+            new Error('DM identity is disabled for the migration fixture'),
+          ),
+      }),
       {
         getOrRecompute: async () => ({
           flatWorkspaceMemberMaps: {
@@ -235,6 +263,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       {} as never,
       {} as never,
       {} as never,
+      {} as never,
+      {} as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>
@@ -250,7 +280,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
-      new AgentChatQueueService(turns, messageRepository, conversationWriter);
+      new AgentChatQueueService(messageRepository, conversationWriter);
 
     const createActorService = (messageRepository: typeof messages) =>
       new AgentChatActorService(
@@ -264,21 +294,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           }),
         } as never,
         {} as never,
+        {} as never,
       );
 
     beforeAll(async () => {
       jest.useRealTimers();
       Logger.overrideLogger(false);
-      if (new URL(DATABASE_URL!).pathname !== '/agent_history_migration_test')
+      if (new URL(DATABASE_URL!).pathname !== '/agent_history_migration_test') {
         throw new Error(
           'Use the isolated agent_history_migration_test database',
         );
+      }
       await dataSource.initialize();
       await dataSource.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
     });
     afterAll(async () => {
       await pool.end();
-      if (dataSource.isInitialized) await dataSource.destroy();
+      if (dataSource.isInitialized) {
+        await dataSource.destroy();
+      }
     });
 
     beforeEach(async () => {
@@ -291,7 +325,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await dataSource.query(
         `CREATE TABLE core."keyValuePair" ("key" text, "workspaceId" uuid, "userId" uuid, "applicationId" uuid, "type" text, "value" jsonb, "updatedAt" timestamptz DEFAULT now()); CREATE UNIQUE INDEX state_key ON core."keyValuePair" ("key", "workspaceId") WHERE "userId" IS NULL AND "applicationId" IS NULL`,
       );
-      for (const ddl of AGENT_HISTORY_TEST_SCHEMA) await dataSource.query(ddl);
+      for (const ddl of AGENT_HISTORY_TEST_SCHEMA) {
+        await dataSource.query(ddl);
+      }
       const senderRunner = dataSource.createQueryRunner();
       try {
         await senderRunner.connect();
@@ -371,8 +407,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             !ACTIVE_AGENT_HISTORY_TABLES.some(
               (table) => table.name === object.nameSingular,
             )
-          )
+          ) {
             continue;
+          }
           await new WorkspaceSchemaIndexManagerService().createIndex({
             queryRunner: runner,
             schemaName: SCHEMA,
@@ -559,8 +596,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 1
-          )
+          ) {
             throw new Error('Injected process failure');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(
@@ -723,6 +761,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
           conversationWriter.upsertAssistantMessage({
+            agentId: null,
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,
@@ -1172,10 +1211,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 5
-          )
+          ) {
             await runner.query(
               `UPDATE "${SCHEMA}"."agentChatThread" SET title = 'corrupted'`,
             );
+          }
         });
       await expect(
         migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' }),
@@ -1300,12 +1340,25 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
               [where.id],
             )
           )[0],
-      } as unknown as Repository<WorkspaceEntity>;
-      const chat = new AdminPanelChatService(
-        workspaceRepository,
-        threads,
-        messages,
-      );
+      };
+      const module = await Test.createTestingModule({
+        providers: [
+          AdminPanelChatService,
+          {
+            provide: getRepositoryToken(WorkspaceEntity),
+            useValue: workspaceRepository,
+          },
+          {
+            provide: getAgentHistoryRepositoryToken('agentChatThread'),
+            useValue: threads,
+          },
+          {
+            provide: getAgentHistoryRepositoryToken('agentMessage'),
+            useValue: messages,
+          },
+        ],
+      }).compile();
+      const chat = module.get(AdminPanelChatService);
       expect(
         await chat.getChatThreadMessages({
           workspaceId: WORKSPACE_ID,
@@ -1403,8 +1456,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 1
-          )
+          ) {
             throw new Error('crash');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(
@@ -1414,7 +1468,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const failAbort = jest
         .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
-          if (!state.migration) throw new Error('abort interrupted');
+          if (!state.migration) {
+            throw new Error('abort interrupted');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(

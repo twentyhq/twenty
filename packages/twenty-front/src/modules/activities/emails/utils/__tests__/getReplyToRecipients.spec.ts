@@ -16,7 +16,7 @@ const buildParticipant = (
 
 const buildMessage = (
   participants: EmailThreadMessageParticipant[],
-): EmailThreadMessageWithSender => {
+): Pick<EmailThreadMessageWithSender, 'sender' | 'messageParticipants'> => {
   const sender =
     participants.find(
       (participant) => participant.role === MessageParticipantRole.FROM,
@@ -25,7 +25,7 @@ const buildMessage = (
   return {
     sender,
     messageParticipants: participants,
-  } as unknown as EmailThreadMessageWithSender;
+  };
 };
 
 const CONNECTED_ACCOUNT_HANDLE = 'me@company.com';

@@ -44,7 +44,7 @@ export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
 // preloaded or native tools. Native tools are exposed to the model directly
 // via the top-level ToolSet passed to streamText, not through this meta-tool.
 export const createExecuteToolTool = (
-  toolRegistry: ToolRegistryService,
+  toolRegistry: Pick<ToolRegistryService, 'resolveAndExecute'>,
   context: ToolContext,
   options?: {
     isToolAllowed?: (toolName: string) => boolean;

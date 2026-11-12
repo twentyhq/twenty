@@ -1,8 +1,5 @@
 import { type JSONSchema7 } from 'json-schema';
-import {
-  compositeTypeDefinitions,
-  type RestrictedFieldsPermissions,
-} from 'twenty-shared/types';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import {
   isDefined,
   shouldExcludeFieldFromAgentToolSchema,
@@ -26,11 +23,11 @@ const ORDER_BY_DIRECTION_JSON_SCHEMA: JSONSchema7 = {
 // resolver accepts for this object
 export const generateRecordOrderByJsonSchema = ({
   objectMetadata,
-  restrictedFields,
+  unreadableFieldMetadataIds,
   definitions,
 }: {
   objectMetadata: Pick<ObjectMetadataForToolSchema, 'fields'>;
-  restrictedFields?: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds?: ReadonlySet<string>;
   definitions: JsonSchemaDefinitions;
 }): JSONSchema7 => {
   const direction = referenceJsonSchemaDefinition({
@@ -50,7 +47,7 @@ export const generateRecordOrderByJsonSchema = ({
         isSystem: false,
         excludeId: false,
       }) ||
-      restrictedFields?.[field.id]?.canRead === false
+      unreadableFieldMetadataIds?.has(field.id)
     ) {
       continue;
     }

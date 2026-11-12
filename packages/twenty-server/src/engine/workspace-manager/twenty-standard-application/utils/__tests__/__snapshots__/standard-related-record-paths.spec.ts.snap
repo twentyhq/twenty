@@ -23,8 +23,6 @@ exports[`Standard related record paths declares the standard paths and their inh
   "person.timelineActivities inherent",
   "task.attachments inherent",
   "task.timelineActivities inherent",
-  "workflow.attachments inherent",
-  "workflow.timelineActivities inherent",
   "workflowRun.timelineActivities inherent",
   "workflowVersion.timelineActivities inherent",
 ]

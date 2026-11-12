@@ -12,6 +12,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -142,6 +143,9 @@ export class ApplicationDTO {
 
   @Field(() => [ApplicationVariableEntityDTO])
   applicationVariables?: ApplicationVariableEntityDTO[];
+
+  @Field(() => ApplicationContentDTO, { nullable: true })
+  content?: ApplicationContentDTO;
 
   @IsOptional()
   @Field(() => ApplicationRegistrationSummaryDTO, { nullable: true })

@@ -5,7 +5,7 @@
     "url": "git+https://github.com/twentyhq/twenty.git",
     "directory": "packages/twenty-sdk"
   },
-  "version": "2.56.0",
+  "version": "2.59.0",
   "sideEffects": false,
   "files": [
     "dist",
@@ -88,7 +88,7 @@
   "engines": {
     "node": "^24.5.0 || ^26.5.1",
     "yarn": "^4.0.2",
-    "twenty": ">=2.49.0"
+    "twenty": ">=2.57.0"
   },
   "typesVersions": {
     "*": {

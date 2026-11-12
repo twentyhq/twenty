@@ -1,6 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { installEventConstructorPolyfills } from '../installEventConstructorPolyfills';
 
@@ -17,12 +18,13 @@ const createInstalledScope = () => {
   };
 
   installEventConstructorPolyfills({ globalScope });
+  const document = toDomWindow(polyfillWindow).document;
 
   return {
     globalScope,
     polyfillWindow,
     polyfillWindowRecord: toGlobalScopeRecord(polyfillWindow),
-    document: polyfillWindow.document as unknown as Document,
+    document,
   };
 };
 

@@ -1,6 +1,11 @@
 import { computeSettingsNavigationDisplayFieldRestore } from 'src/database/commands/upgrade-version-command/2-37/utils/compute-settings-navigation-display-field-restore.util';
+import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { NAVIGATION_INTERPOLATED_ICON, NAVIGATION_INTERPOLATED_LABEL, NAVIGATION_INTERPOLATED_SHORT_LABEL } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
+import {
+  NAVIGATION_INTERPOLATED_ICON,
+  NAVIGATION_INTERPOLATED_LABEL,
+  NAVIGATION_INTERPOLATED_SHORT_LABEL,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
@@ -10,7 +15,12 @@ const NOW = '2026-08-27T00:00:00.000Z';
 const GO_TO_SETTINGS = STANDARD_COMMAND_MENU_ITEMS.goToSettings;
 
 const buildFlatCommandMenuItem = (
-  overrides: Partial<FlatCommandMenuItem> & Pick<FlatCommandMenuItem, 'id'>,
+  overrides: Partial<Omit<FlatCommandMenuItem, 'payload'>> &
+    Pick<FlatCommandMenuItem, 'id'> & {
+      payload?:
+        | FlatCommandMenuItem['payload']
+        | ObjectMetadataCommandMenuItemPayload;
+    },
 ): FlatCommandMenuItem =>
   ({
     universalIdentifier: overrides.id,
@@ -81,7 +91,7 @@ describe('computeSettingsNavigationDisplayFieldRestore', () => {
           id: 'command-1',
           payload: {
             objectMetadataItemId: 'object-1',
-          } as unknown as FlatCommandMenuItem['payload'],
+          },
         }),
       ]),
       now: NOW,

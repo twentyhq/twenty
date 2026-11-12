@@ -1,11 +1,26 @@
 import { BASIC_FAILING_STRING_EDGE_CASE_INPUTS } from 'test/constants/basic-failing-string-edge-case-inputs.constant';
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/field-metadata-enum-successful-and-failing-test-cases.type';
 import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case.type';
+import { type MalformedFieldOptionInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import {
   type FieldMetadataComplexOption,
   type TagColor,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
+
+const OPTION_WITHOUT_LABEL: MalformedFieldOptionInput = {
+  label: undefined,
+  value: 'OPTION_1',
+  color: 'green',
+  position: 1,
+};
+
+const OPTION_WITHOUT_VALUE: MalformedFieldOptionInput = {
+  label: 'Option 1',
+  value: undefined,
+  color: 'green',
+  position: 1,
+};
 
 const stringFields: (keyof FieldMetadataComplexOption)[] = [
   'id',
@@ -182,14 +197,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
         title: 'should fail with undefined option label',
         context: {
           input: {
-            options: [
-              {
-                label: undefined as unknown as string,
-                value: 'OPTION_1',
-                color: 'green',
-                position: 1,
-              },
-            ],
+            options: [OPTION_WITHOUT_LABEL],
           },
         },
       },
@@ -229,14 +237,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
         title: 'should fail with undefined option value',
         context: {
           input: {
-            options: [
-              {
-                label: 'Option 1',
-                value: undefined as unknown as string,
-                color: 'green',
-                position: 1,
-              },
-            ],
+            options: [OPTION_WITHOUT_VALUE],
           },
         },
       },

@@ -11,7 +11,7 @@ export const useCanUploadAttachmentFiles = (
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetableObject.targetObjectNameSingular,
   });
-  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
+  const { canUpdateSomeRecords } = useCanUpdateObjectRecords(
     targetableObject.targetObjectNameSingular,
   );
 
@@ -21,7 +21,7 @@ export const useCanUploadAttachmentFiles = (
 
   return {
     canUploadFiles:
-      canUpdateObjectRecords &&
+      canUpdateSomeRecords &&
       hasUploadPermission &&
       !isObjectMetadataReadOnly({ objectMetadataItem }),
   };

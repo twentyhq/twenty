@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ComputedSeries, type LineSeries } from '@nivo/line';
 
 type ComputeLineAreaPathParams = {
-  currentSeries: ComputedSeries<LineSeries>;
-  previousStackedSeries?: ComputedSeries<LineSeries> | null;
+  currentSeries: Pick<ComputedSeries<LineSeries>, 'data'>;
+  previousStackedSeries?: Pick<ComputedSeries<LineSeries>, 'data'> | null;
   baseline: number;
   curve?: CurveFactory;
 };

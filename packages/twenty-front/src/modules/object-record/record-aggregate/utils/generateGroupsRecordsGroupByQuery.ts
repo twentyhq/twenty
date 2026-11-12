@@ -4,7 +4,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import {
-  type ObjectPermissions,
+  type ObjectRecordsPermissions,
   type RecordGqlFields,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
@@ -20,10 +20,7 @@ export const generateGroupsRecordsGroupByQuery = ({
   objectMetadataItem: EnrichedObjectMetadataItem;
   recordGqlFields: RecordGqlFields;
   computeReferences?: boolean;
-  objectPermissionsByObjectMetadataId: Record<
-    string,
-    ObjectPermissions & { objectMetadataId: string }
-  >;
+  objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 }) => {
   const capitalizedSingular = capitalize(objectMetadataItem.nameSingular);
   const queryName = `${capitalize(objectMetadataItem.namePlural)}GroupByRecords`;

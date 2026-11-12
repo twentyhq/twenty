@@ -36,7 +36,7 @@ export const importCallRecordingArtifacts = async ({
   client,
   request,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query' | 'mutation'>;
   request: CallRecordingArtifactsImportRequest;
 }): Promise<ImportCallRecordingArtifactsResult> => {
   let callRecording = await findCallRecordingForArtifactsImport(
@@ -127,7 +127,7 @@ export const importCallRecordingArtifacts = async ({
 };
 
 const findCallRecordingForArtifactsImport = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   callRecordingId: string,
 ): Promise<CallRecordingForArtifactsImport | undefined> => {
   const queryResult = await client.query({

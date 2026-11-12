@@ -9,7 +9,9 @@ export const findActiveFlatFieldMetadataById = (
   fieldId: string | null | undefined,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ): FlatFieldMetadata | null => {
-  if (!isDefined(fieldId)) return null;
+  if (!isDefined(fieldId)) {
+    return null;
+  }
 
   const field = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldId,

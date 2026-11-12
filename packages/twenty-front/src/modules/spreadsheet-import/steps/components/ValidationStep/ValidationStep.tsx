@@ -129,9 +129,9 @@ export const ValidationStep = ({
       [],
     ),
   );
-  const [selectedRows, setSelectedRows] = useState<
-    ReadonlySet<number | string>
-  >(new Set());
+  const [selectedRows, setSelectedRows] = useState<ReadonlySet<string>>(
+    new Set(),
+  );
   const [filterByErrors, setFilterByErrors] = useState(false);
 
   const updateData = useCallback(
@@ -193,7 +193,9 @@ export const ValidationStep = ({
                 column.key === 'select-row',
             ).length > 0;
 
-          if (!hasBeenImported) return null;
+          if (!hasBeenImported) {
+            return null;
+          }
           return column;
         })
         .filter(isDefined),
@@ -329,7 +331,7 @@ export const ValidationStep = ({
                 onRowsChange={updateRow}
                 columns={columns}
                 selectedRows={selectedRows}
-                onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
+                onSelectedRowsChange={setSelectedRows}
                 renderers={{
                   noRowsFallback: (
                     <StyledNoRowsContainer>

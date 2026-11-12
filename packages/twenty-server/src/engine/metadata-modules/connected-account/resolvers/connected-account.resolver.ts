@@ -6,9 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -116,14 +114,11 @@ export class ConnectedAccountResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO> {
     await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,
-      applicationId: application?.id,
-      agentId: undefined,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({
@@ -143,14 +138,11 @@ export class ConnectedAccountResolver {
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO> {
     await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,
-      applicationId: application?.id,
-      agentId: undefined,
     });
 
     const disconnected = await this.connectedAccountMetadataService.disconnect({

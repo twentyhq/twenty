@@ -1,4 +1,3 @@
-import { type WebClient } from '@slack/web-api';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveSlackUserLinkTarget } from 'src/logic-functions/utils/resolve-slack-user-link-target';
@@ -13,7 +12,7 @@ const lookupByEmailMock = vi.fn();
 
 const slackClient = {
   users: { info: userInfoMock, lookupByEmail: lookupByEmailMock },
-} as unknown as WebClient;
+};
 
 const buildSlackUser = (overrides: Record<string, unknown> = {}) => ({
   id: SLACK_USER_ID,

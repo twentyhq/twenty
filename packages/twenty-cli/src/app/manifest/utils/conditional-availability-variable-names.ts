@@ -16,6 +16,7 @@ export const CONDITIONAL_AVAILABILITY_VARIABLE_NAMES = [
   'canAccessFullAdminPanel',
   'objectMetadataItem',
   'objectMetadataLabel',
+  'currentView',
   'isDefined',
   'isNonEmptyString',
   'includes',

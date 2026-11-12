@@ -1,26 +1,29 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { getLegacyNavigationCommandUniversalIdentifier } from 'src/database/commands/upgrade-version-command/utils/build-legacy-navigation-flat-command-menu-item.util';
 import { ReownObjectNavigationCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-38/2-38-workspace-command-1788166853000-reown-object-navigation-command-menu-items.command';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
-const APPLICATION_UNIVERSAL_IDENTIFIER =
-  '20202020-0000-4000-8000-0000000000ad';
+const APPLICATION_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000ad';
 const OBJECT_ID = '20202020-0000-4000-8000-0000000000b1';
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 
-const DERIVED_UNIVERSAL_IDENTIFIER = getSystemNavigationCommandMenuItemUniversalIdentifier({
-  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
-});
+const DERIVED_UNIVERSAL_IDENTIFIER =
+  getSystemNavigationCommandMenuItemUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  });
 
-const LEGACY_UNIVERSAL_IDENTIFIER = getLegacyNavigationCommandUniversalIdentifier(
-  OBJECT_UNIVERSAL_IDENTIFIER,
-);
+const LEGACY_UNIVERSAL_IDENTIFIER =
+  getLegacyNavigationCommandUniversalIdentifier(OBJECT_UNIVERSAL_IDENTIFIER);
 
 type WorkspaceCommandMenuItem = {
   id: string;
@@ -38,7 +41,8 @@ const buildFlatCommandMenuItem = (
   engineComponentKey: EngineComponentKey.NAVIGATION,
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   payload: { objectMetadataItemId: OBJECT_ID },
-  navigationTargetObjectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  navigationTargetObjectMetadataUniversalIdentifier:
+    OBJECT_UNIVERSAL_IDENTIFIER,
   isSystemSideEffect: true,
   ...commandMenuItem,
 });
@@ -62,7 +66,7 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
   let invalidateCacheMock: jest.Mock;
   let commandMenuItemUpdateMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -82,16 +86,29 @@ describe('ReownObjectNavigationCommandMenuItemsCommand', () => {
       },
     };
 
-    command = new ReownObjectNavigationCommandMenuItemsCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        invalidateCache: invalidateCacheMock,
-      } as unknown as WorkspaceMigrationRunnerService,
-      commandMenuItemRepositoryMock as never,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        ReownObjectNavigationCommandMenuItemsCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: {
+            invalidateCache: invalidateCacheMock,
+          },
+        },
+        {
+          provide: getRepositoryToken(CommandMenuItemEntity),
+          useValue: commandMenuItemRepositoryMock,
+        },
+      ],
+    }).compile();
+    command = module.get(ReownObjectNavigationCommandMenuItemsCommand);
   });
 
   const mockWorkspaceCache = (

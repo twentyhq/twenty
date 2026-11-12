@@ -24,7 +24,10 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { isNonEmptyString } from '@sniptt/guards';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { AppPath } from 'twenty-shared/types';
-import { getAppPath } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  getAppPath,
+} from 'twenty-shared/utils';
 
 type RecordTableWidgetProviderProps = PropsWithChildren<{
   objectNameSingular: string;
@@ -131,7 +134,12 @@ export const RecordTableWidgetProvider = ({
     ],
   );
 
-  if (!objectPermissions.canReadObjectRecords) {
+  if (
+    !canAccessThroughAllRecordsOrRlsPermission({
+      objectRecordsPermissions: objectPermissions,
+      operationType: 'read',
+    })
+  ) {
     return null;
   }
 

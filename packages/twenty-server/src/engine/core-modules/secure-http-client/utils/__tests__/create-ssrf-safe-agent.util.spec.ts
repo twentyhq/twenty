@@ -1,18 +1,15 @@
-import { EventEmitter } from 'events';
 import * as http from 'http';
 import * as https from 'https';
-import { type Socket } from 'net';
+import { Socket } from 'net';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 
-const createMockSocket = (): Socket & { destroy: jest.Mock } => {
-  const emitter = new EventEmitter();
+const createMockSocket = (): Socket => {
+  const socket = new Socket();
 
-  return Object.assign(emitter, {
-    destroy: jest.fn(),
-    connecting: false,
-    writable: true,
-  }) as unknown as Socket & { destroy: jest.Mock };
+  jest.spyOn(socket, 'destroy').mockReturnThis();
+
+  return socket;
 };
 
 describe('createSsrfSafeAgent', () => {

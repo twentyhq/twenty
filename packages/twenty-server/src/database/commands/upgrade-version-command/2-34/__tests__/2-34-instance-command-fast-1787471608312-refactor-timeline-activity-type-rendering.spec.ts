@@ -1,11 +1,14 @@
-import { type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { RefactorTimelineActivityTypeRenderingFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-instance-command-fast-1787471608312-refactor-timeline-activity-type-rendering';
 
 describe('RefactorTimelineActivityTypeRenderingFastInstanceCommand', () => {
   const query = jest.fn();
-  const queryRunner = { query } as unknown as QueryRunner;
-  const command = new RefactorTimelineActivityTypeRenderingFastInstanceCommand();
+  const queryRunner = new DataSource({ type: 'postgres' }).createQueryRunner();
+
+  queryRunner.query = query;
+  const command =
+    new RefactorTimelineActivityTypeRenderingFastInstanceCommand();
 
   beforeEach(() => {
     query.mockReset();

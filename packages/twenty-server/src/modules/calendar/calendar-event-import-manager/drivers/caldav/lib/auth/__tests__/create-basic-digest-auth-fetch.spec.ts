@@ -2,13 +2,15 @@ import { createBasicDigestAuthFetch } from 'src/modules/calendar/calendar-event-
 
 const mockFetch = (handle: (init?: RequestInit) => Response) => {
   const calls: (RequestInit | undefined)[] = [];
-  const fn = jest.fn(async (_input, init) => {
-    calls.push(init);
+  const fn = jest.fn<ReturnType<typeof fetch>, Parameters<typeof fetch>>(
+    async (_input, init) => {
+      calls.push(init);
 
-    return handle(init);
-  });
+      return handle(init);
+    },
+  );
 
-  return { calls, fn: fn as unknown as typeof fetch };
+  return { calls, fn };
 };
 
 const digest401 = () =>
@@ -37,12 +39,15 @@ describe('createBasicDigestAuthFetch', () => {
   });
 
   it('upgrades to Digest on 401 and routes the retry through the supplied fetch, never globalThis.fetch', async () => {
-    const forbiddenGlobal = jest.fn(async () => {
+    const forbiddenGlobal = jest.fn<
+      ReturnType<typeof fetch>,
+      Parameters<typeof fetch>
+    >(async () => {
       throw new Error('globalThis.fetch must not be called');
     });
     const original = globalThis.fetch;
 
-    globalThis.fetch = forbiddenGlobal as unknown as typeof fetch;
+    globalThis.fetch = forbiddenGlobal;
 
     try {
       const { calls, fn } = mockFetch((init) =>

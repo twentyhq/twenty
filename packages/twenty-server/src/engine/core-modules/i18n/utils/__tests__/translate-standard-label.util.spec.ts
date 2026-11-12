@@ -1,5 +1,3 @@
-import { type I18n } from '@lingui/core';
-
 import { generateMessageId } from 'twenty-shared/i18n';
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
 
@@ -10,13 +8,13 @@ const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
 >;
 
 describe('translateStandardLabel', () => {
-  let mockI18n: jest.Mocked<I18n>;
+  let mockI18n: { _: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockI18n = {
       _: jest.fn(),
-    } as unknown as jest.Mocked<I18n>;
+    };
   });
 
   it('should return the source value when it is empty', () => {

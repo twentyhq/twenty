@@ -5,6 +5,8 @@ exports[`registry-derived override property maps derives the overridable propert
   "agent": [
     "label",
     "icon",
+    "avatarColor",
+    "avatarShape",
     "description",
     "prompt",
     "modelId",
@@ -35,6 +37,12 @@ exports[`registry-derived override property maps derives the overridable propert
     "icon",
     "isActive",
     "label",
+  ],
+  "fieldMetadataOption": [
+    "label",
+    "color",
+    "position",
+    "isActive",
   ],
   "fieldPermission": [],
   "frontComponent": [],
@@ -76,6 +84,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
+  "rowLevelPermissionRule": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
   "skill": [
@@ -107,6 +116,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "visibility",
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",
+    "shouldDisplayGroupsAsTabs",
     "kanbanColumnWidth",
     "groupLoadLimit",
     "isActive",

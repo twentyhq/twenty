@@ -1,9 +1,9 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
 import { render } from '@testing-library/react';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const mockRecordFormFieldInput = jest.fn((_: unknown) => null);
 
@@ -14,18 +14,15 @@ jest.mock(
   }),
 );
 
-const currencyFieldMetadataItem = {
-  id: 'amount-field-id',
-  name: 'amount',
-  label: 'Amount',
-  type: FieldMetadataType.CURRENCY,
-  defaultValue: { amountMicros: null, currencyCode: "'USD'" },
-} as unknown as FieldMetadataItem;
+const objectMetadataItem = getMockObjectMetadataItemOrThrow('opportunity');
 
-const objectMetadataItem = {
-  id: 'opportunity-object-id',
-  nameSingular: 'opportunity',
-} as unknown as EnrichedObjectMetadataItem;
+const currencyFieldMetadataItem: FieldMetadataItem = {
+  ...getMockFieldMetadataItemOrThrow({
+    objectMetadataItem,
+    fieldName: 'amount',
+  }),
+  defaultValue: { amountMicros: null, currencyCode: "'USD'" },
+};
 
 const renderInputs = (
   draftRecord: Record<string, unknown>,

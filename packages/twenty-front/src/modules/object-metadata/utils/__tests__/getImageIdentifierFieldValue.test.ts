@@ -8,8 +8,11 @@ const buildFieldMetadataItem = (
   name = 'imageField',
 ): FieldMetadataItem => ({ name, type }) as FieldMetadataItem;
 
-const buildRecord = (value: unknown, name = 'imageField'): ObjectRecord =>
-  ({ id: 'record-id', [name]: value }) as unknown as ObjectRecord;
+const buildRecord = (value: unknown, name = 'imageField'): ObjectRecord => ({
+  __typename: 'Company',
+  id: 'record-id',
+  [name]: value,
+});
 
 describe('getImageIdentifierFieldValue', () => {
   it('returns null when the image identifier field metadata item is undefined', () => {

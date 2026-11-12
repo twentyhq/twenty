@@ -31,7 +31,7 @@ export class DeleteNavigationMenuItemTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, application, agentId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof deleteNavigationMenuItemInputSchema
   >): Promise<ToolOutput> {
@@ -40,8 +40,6 @@ export class DeleteNavigationMenuItemTool extends BaseTool<
         id: input.id,
         workspaceId,
         authUserWorkspaceId: userWorkspaceId,
-        authApplicationId: application?.id,
-        authAgentId: agentId,
       });
 
       return {

@@ -7,7 +7,7 @@ import { type SyncableCallRecording } from 'src/logic-functions/types/SyncableCa
 import { updateCallRecording } from 'src/logic-functions/data/utils/updateCallRecording';
 
 export const hydrateDesktopRecordingTimestamps = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query' | 'mutation'>,
   recording: SyncableCallRecording,
 ): Promise<void> => {
   if (

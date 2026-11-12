@@ -13,7 +13,7 @@ import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/acce
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { getRequestOrThrowWhenUnauthenticated } from 'src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util';
-import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
+import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
 
 export const AccessPolicyGuard = (
   accessPolicy: AccessPolicy,

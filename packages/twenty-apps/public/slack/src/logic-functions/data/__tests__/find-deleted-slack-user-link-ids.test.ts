@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findDeletedSlackUserLinkIds } from 'src/logic-functions/data/find-deleted-slack-user-link-ids';
@@ -21,7 +20,7 @@ const buildClient = (pages: { ids: string[]; endCursor?: string }[]) => {
   }
 
   return {
-    client: { query: queryMock } as unknown as CoreApiClient,
+    client: { query: queryMock },
     queryMock,
   };
 };

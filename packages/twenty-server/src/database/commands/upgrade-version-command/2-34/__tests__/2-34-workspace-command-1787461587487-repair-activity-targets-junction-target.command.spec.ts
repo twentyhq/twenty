@@ -1,12 +1,13 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { RepairActivityTargetsJunctionTargetCommand } from 'src/database/commands/upgrade-version-command/2-34/2-34-workspace-command-1787461587487-repair-activity-targets-junction-target.command';
 import { invalidateFieldMetadataCache } from 'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 jest.mock(
   'src/database/commands/upgrade-version-command/utils/invalidate-field-metadata-cache.util',
@@ -88,13 +89,13 @@ const LEGACY_NOTE_TARGET_PERSON_FIELD_METADATA = buildFieldMetadata({
 });
 
 describe('RepairActivityTargetsJunctionTargetCommand', () => {
-  const workspaceMigrationRunnerService = {} as WorkspaceMigrationRunnerService;
+  const workspaceMigrationRunnerService = {};
   let command: RepairActivityTargetsJunctionTargetCommand;
   let findMock: jest.Mock;
   let findOneMock: jest.Mock;
   let updateMock: jest.Mock;
 
-  const initializeCommand = ({
+  const initializeCommand = async ({
     activeFieldMetadatas,
     lockedJunctionRelationFieldMetadatas,
   }: {
@@ -131,13 +132,23 @@ describe('RepairActivityTargetsJunctionTargetCommand', () => {
             }),
         ),
       },
-    } as unknown as Repository<FieldMetadataEntity>;
+    };
 
-    command = new RepairActivityTargetsJunctionTargetCommand(
-      {} as WorkspaceIteratorService,
-      workspaceMigrationRunnerService,
-      fieldMetadataRepository,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        RepairActivityTargetsJunctionTargetCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: workspaceMigrationRunnerService,
+        },
+        {
+          provide: getRepositoryToken(FieldMetadataEntity),
+          useValue: fieldMetadataRepository,
+        },
+      ],
+    }).compile();
+    command = module.get(RepairActivityTargetsJunctionTargetCommand);
   };
 
   beforeEach(() => {
@@ -145,7 +156,7 @@ describe('RepairActivityTargetsJunctionTargetCommand', () => {
   });
 
   it('repairs note and task junctions that only have custom morph targets', async () => {
-    initializeCommand({
+    await initializeCommand({
       activeFieldMetadatas: [
         NOTE_TARGETS_FIELD_METADATA,
         TASK_TARGETS_FIELD_METADATA,
@@ -204,7 +215,7 @@ describe('RepairActivityTargetsJunctionTargetCommand', () => {
       },
     });
 
-    initializeCommand({
+    await initializeCommand({
       activeFieldMetadatas: [
         noteTargetsFieldMetadata,
         LEGACY_NOTE_TARGET_PERSON_FIELD_METADATA,
@@ -224,7 +235,7 @@ describe('RepairActivityTargetsJunctionTargetCommand', () => {
   });
 
   it('reports repairs without writing during a dry run', async () => {
-    initializeCommand({
+    await initializeCommand({
       activeFieldMetadatas: [
         NOTE_TARGETS_FIELD_METADATA,
         CUSTOM_NOTE_TARGET_FIELD_METADATA,
@@ -249,7 +260,7 @@ describe('RepairActivityTargetsJunctionTargetCommand', () => {
       morphId: '20202020-0000-0000-0000-000000000012',
     });
 
-    initializeCommand({
+    await initializeCommand({
       activeFieldMetadatas: [
         NOTE_TARGETS_FIELD_METADATA,
         unrelatedMorphFieldMetadata,

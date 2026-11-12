@@ -82,6 +82,7 @@ import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.typ
 import { IMPERSONATION_DENIAL_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant';
 import { IMPERSONATION_DENIAL_LOG_MESSAGE_BY_REASON } from 'src/engine/core-modules/impersonation/constants/impersonation-denial-log-message-by-reason.constant';
 import { ImpersonationAuthorizationService } from 'src/engine/core-modules/impersonation/services/impersonation-authorization.service';
+import { SsoGraphqlApiExceptionFilter } from 'src/engine/core-modules/sso/filters/sso-graphql-api-exception.filter';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
 import { TwoFactorAuthenticationRecoveryCodeRedemptionDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-redemption.dto';
 import { TwoFactorAuthenticationRecoveryCodeVerificationInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-code-verification.input';
@@ -115,6 +116,7 @@ import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-log
 import { GetAuthTokensFromSsoExchangeTokenInput } from './dto/get-auth-tokens-from-sso-exchange-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
 import { SignUpInNewWorkspaceInput } from './dto/sign-up-in-new-workspace.input';
+import { SignUpWithoutWorkspaceInput } from './dto/sign-up-without-workspace.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { UserCredentialsInput } from './dto/user-credentials.input';
 import { CheckUserExistDTO } from './dto/user-exists.dto';
@@ -156,6 +158,7 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
   EmailVerificationExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
   WorkspaceGraphqlApiExceptionFilter,
+  SsoGraphqlApiExceptionFilter,
   FileUploadGraphqlApiExceptionFilter,
   ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -501,7 +504,7 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    const { provisioningUri } =
+    const { provisioningUri, isTwoFactorAuthenticationReset } =
       await this.twoFactorAuthenticationRecoveryService.redeemRecoveryCode({
         userId: user.id,
         userEmail: email,
@@ -510,7 +513,7 @@ export class AuthResolver {
       });
 
     if (isDefined(provisioningUri)) {
-      return { tokens: null, provisioningUri };
+      return { tokens: null, provisioningUri, isTwoFactorAuthenticationReset };
     }
 
     await this.loginTokenService.consumeLoginTokenOrThrow(loginTokenPayload);
@@ -527,14 +530,18 @@ export class AuthResolver {
       origin: 'sign_in',
     });
 
-    return { tokens: authTokens.tokens, provisioningUri: null };
+    return {
+      tokens: authTokens.tokens,
+      provisioningUri: null,
+      isTwoFactorAuthenticationReset,
+    };
   }
 
   @Mutation(() => AvailableWorkspacesAndAccessTokensDTO)
   @UseGuards(CaptchaGuard, PublicEndpointGuard, NoPermissionGuard)
   @AllowSuspendedWorkspace()
   async signUp(
-    @Args() signUpInput: UserCredentialsInput,
+    @Args() signUpInput: SignUpWithoutWorkspaceInput,
     @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
     const user = await this.signInUpService.signUpWithoutWorkspace(
@@ -559,6 +566,7 @@ export class AuthResolver {
       workspace: undefined,
       locale: signUpInput.locale ?? SOURCE_LOCALE,
       verifyEmailRedirectPath: signUpInput.verifyEmailRedirectPath,
+      affiliatePartnerName: signUpInput.affiliatePartnerName,
       verificationTrigger: EmailVerificationTrigger.SIGN_UP,
     });
 
@@ -714,7 +722,7 @@ export class AuthResolver {
       {
         displayName: input?.displayName,
         subdomain: input?.subdomain,
-        partner: input?.partner,
+        affiliatePartnerName: input?.affiliatePartnerName,
       },
     );
 

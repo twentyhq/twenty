@@ -1,9 +1,9 @@
 import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/thread/utils/createOpenCommandConfirmationModalAdapter';
 import { type WorkerFrontComponentHostCommunicationApi } from '@/types/WorkerFrontComponentHostCommunicationApi';
-import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
+import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 
 export const buildFrontComponentHostCommunicationApiFromThreadImports = (
-  hostThreadImports: FrontComponentHostThreadExports,
+  hostThreadImports: FrontComponentHostCommunicationApi,
 ): Required<WorkerFrontComponentHostCommunicationApi> => ({
   navigate: hostThreadImports.navigate,
   requestAccessTokenRefresh: hostThreadImports.requestAccessTokenRefresh,

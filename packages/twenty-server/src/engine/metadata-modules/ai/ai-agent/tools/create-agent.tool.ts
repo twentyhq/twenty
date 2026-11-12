@@ -2,6 +2,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   ToolCategory,
 } from 'twenty-shared/ai';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -14,6 +15,7 @@ import { agentTriggersSchema } from 'src/engine/metadata-modules/ai/ai-agent/too
 import { toAgentSummary } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-summary.util';
 import { toAgentTriggers } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/to-agent-triggers.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
 
 const createAgentInputSchema = z.object({
   label: z.string().min(1).describe('Display name of the agent'),
@@ -46,7 +48,10 @@ const createAgentInputSchema = z.object({
 @DefineTool({
   name: 'create_agent',
   category: ToolCategory.AGENT,
-  accessPolicy: AGENT_WRITE_ACCESS_POLICY,
+  accessPolicy: {
+    ...AGENT_WRITE_ACCESS_POLICY,
+    requiredFeatureFlags: [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED],
+  },
   description: `Create an AI agent that works on its own: it wakes up on its triggers (record events or a schedule) and acts with the tools its role allows, for example posting a note, updating records or sending a summary.
 
 Before creating it, present the plan to the user (prompt, role, triggers) and get their confirmation, since the agent keeps running after this conversation.
@@ -59,6 +64,7 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
   constructor(
     private readonly agentService: AgentService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly workspaceAiDataPolicyService: WorkspaceAiDataPolicyService,
   ) {
     super();
   }
@@ -70,7 +76,15 @@ export class CreateAgentTool extends BaseTool<typeof createAgentInputSchema> {
     const modelId =
       parameters.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
 
-    this.aiModelRegistryService.validateModelAvailability(modelId);
+    const aiDataPolicy =
+      await this.workspaceAiDataPolicyService.getAiDataPolicyOrThrow(
+        workspaceId,
+      );
+
+    this.aiModelRegistryService.validateModelAvailabilityOrThrow({
+      modelId,
+      aiDataPolicy,
+    });
 
     const agent = await this.agentService.createOneAgent(
       {

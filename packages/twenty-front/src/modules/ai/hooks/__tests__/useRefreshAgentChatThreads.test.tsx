@@ -1,6 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { atom, createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -9,8 +11,13 @@ import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatT
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
 const mockApolloCoreClient = { query: queryMock };
@@ -29,6 +36,7 @@ const chatObjectMetadataItemAtom = atom<unknown>({
 
 jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   objectMetadataItemFamilySelector: {
+    type: 'FamilySelector',
     selectorFamily: () => chatObjectMetadataItemAtom,
   },
 }));
@@ -72,7 +80,15 @@ const buildPage = (
   },
 });
 
-const buildStore = () => createStore();
+const buildStore = () => {
+  const store = createStore();
+
+  store.set(currentUserWorkspaceState.atom, {
+    permissionFlags: [PermissionFlagType.AI],
+  } as never);
+
+  return store;
+};
 
 const getWrapper = (store: ReturnType<typeof createStore>) =>
   function Wrapper({ children }: { children: ReactNode }) {
@@ -230,6 +246,80 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)[0]).not.toHaveProperty(
       'participants',
     );
+  });
+
+  it('loads a favorite outside the page without changing the main pagination', async () => {
+    const store = buildStore();
+    const favoriteThread = {
+      ...buildThread('favorite-thread', 'An outdated pair name'),
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+      directMessageFirstWorkspaceMemberId: 'member-1',
+      directMessageSecondWorkspaceMemberId: 'member-2',
+    };
+
+    store.set(metadataStoreState.atomFamily('navigationMenuItems'), {
+      current: [
+        {
+          id: 'favorite-navigation-item',
+          type: NavigationMenuItemType.RECORD,
+          userWorkspaceId: 'user-workspace-id',
+          targetObjectMetadataId: 'chat-object',
+          targetRecordId: favoriteThread.id,
+          targetRecordIdentifier: {
+            id: favoriteThread.id,
+            labelIdentifier: 'An outdated pair name',
+          },
+          position: 0,
+        },
+      ],
+      draft: [],
+      status: 'up-to-date',
+    });
+    queryMock
+      .mockResolvedValueOnce(
+        buildPage([buildThread('recent-thread', 'Recent chat')], {
+          hasNextPage: true,
+          endCursor: 'recent-page-cursor',
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([favoriteThread], { endCursor: 'favorite-page-cursor' }),
+      );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(queryMock).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          filter: expect.objectContaining({
+            and: expect.arrayContaining([{ id: { in: ['favorite-thread'] } }]),
+          }),
+          lastCursor: null,
+        }),
+      }),
+    );
+    expect(
+      store.get(
+        agentChatThreadRecordFamilySelector.selectorFamily('favorite-thread'),
+      ),
+    ).toMatchObject(favoriteThread);
+    expect(store.get(agentChatFavoriteThreadsSelector.atom)).toMatchObject([
+      {
+        id: 'favorite-thread',
+        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+        directMessageFirstWorkspaceMemberId: 'member-1',
+        directMessageSecondWorkspaceMemberId: 'member-2',
+      },
+    ]);
+    expect(store.get(agentChatThreadListState.atom)).toEqual({
+      threadIds: ['recent-thread'],
+      hasNextPage: true,
+      endCursor: 'recent-page-cursor',
+    });
   });
 
   it('appends the next page after the loaded chats', async () => {

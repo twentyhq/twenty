@@ -6,4 +6,13 @@
   &[data-orientation='horizontal'] {
     flex-direction: row;
   }
+
+  &[data-layout='grid'] {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(var(--tw-radio-group-min-column-width), 100%), 1fr)
+    );
+    width: 100%;
+  }
 }

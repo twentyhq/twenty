@@ -32,7 +32,9 @@ import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentCh
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { agentChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/agentChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
@@ -57,6 +59,7 @@ import {
   markWorkspaceCreditsAvailable,
   markWorkspaceCreditsExhausted,
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
@@ -99,6 +102,9 @@ export const useAgentChat = () => {
     const threadId =
       store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
     const isNewChat = threadId === newAiChatThreadId;
+    const isDirectMessage = store.get(
+      agentChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
+    );
     const isSendingMessageAtom =
       agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
 
@@ -125,17 +131,20 @@ export const useAgentChat = () => {
     const currentWorkspaceMemberId = store.get(
       currentWorkspaceMemberState.atom,
     )?.id;
-    const participantMentions = getParticipantMentionsFromSerializedDocument(
-      serializedContentToSend,
-    ).filter(
-      ({ workspaceMemberId }) => workspaceMemberId !== currentWorkspaceMemberId,
-    );
+    const participantMentions = isDirectMessage
+      ? []
+      : getParticipantMentionsFromSerializedDocument(
+          serializedContentToSend,
+        ).filter(
+          ({ workspaceMemberId }) =>
+            workspaceMemberId !== currentWorkspaceMemberId,
+        );
     const isAssistantMentioned =
       isAgentChatAssistantMentionedInSerializedDocument(
         serializedContentToSend,
       );
     const channelId = isNewChat
-      ? (store.get(agentChatNewThreadChannelIdState.atom) ?? undefined)
+      ? store.get(agentChatNewThreadChannelIdState.atom)
       : undefined;
     const initialRecipients = getAgentChatInitialRecipients({
       recipientWorkspaceMemberIds:
@@ -169,7 +178,7 @@ export const useAgentChat = () => {
 
     const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
-    if (agentChatSelectedFiles.length > 0) {
+    if (!isDirectMessage && agentChatSelectedFiles.length > 0) {
       enqueueToast({
         status: 'error',
         children: t`Wait for the attachments to finish uploading.`,
@@ -178,7 +187,9 @@ export const useAgentChat = () => {
       return;
     }
 
-    const agentChatUploadedFiles = store.get(agentChatUploadedFilesState.atom);
+    const agentChatUploadedFiles = isDirectMessage
+      ? []
+      : store.get(agentChatUploadedFilesState.atom);
 
     // Selects the new chat when the composer wrote to it before the chat list loaded
     setCurrentAiChatThread(threadId);
@@ -204,7 +215,17 @@ export const useAgentChat = () => {
     const browsingContextToSend = isBrowsingContextChanged
       ? browsingContext
       : null;
-    const messageId = v4();
+    const fileIds = agentChatUploadedFiles.map(({ fileId }) => fileId);
+    const unconfirmedFirstMessageAtom =
+      agentChatUnconfirmedFirstMessageFamilyState.atomFamily(threadId);
+    const unconfirmedFirstMessage = isNewChat
+      ? store.get(unconfirmedFirstMessageAtom)
+      : null;
+    const messageId =
+      unconfirmedFirstMessage?.text === contentToSend &&
+      isDeeplyEqual(unconfirmedFirstMessage.fileIds, fileIds)
+        ? unconfirmedFirstMessage.messageId
+        : v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticRestore = applyOptimisticRestore({
       threadId,
@@ -251,7 +272,9 @@ export const useAgentChat = () => {
       filename: file.filename,
     }));
 
-    setAgentChatUploadedFiles([]);
+    if (!isDirectMessage) {
+      setAgentChatUploadedFiles([]);
+    }
 
     store.set(isSendingMessageAtom, true);
 
@@ -262,8 +285,8 @@ export const useAgentChat = () => {
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContextToSend,
-          modelId: modelIdForRequest,
+          browsingContext: isDirectMessage ? null : browsingContextToSend,
+          modelId: isDirectMessage ? undefined : modelIdForRequest,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
           mentionedWorkspaceMemberIds:
@@ -304,11 +327,13 @@ export const useAgentChat = () => {
       }
 
       // Filed after the send: a failed send restores the draft, so the retry files it.
-      getConversationTargetsFromSerializedDocument(
-        serializedContentToSend,
-      ).forEach((conversationTarget) => {
-        void attachChatThreadToRecord({ threadId, ...conversationTarget });
-      });
+      if (!isDirectMessage) {
+        for (const conversationTarget of getConversationTargetsFromSerializedDocument(
+          serializedContentToSend,
+        )) {
+          void attachChatThreadToRecord({ threadId, ...conversationTarget });
+        }
+      }
       void warnAboutParticipantMentionsNotAdded({
         threadId,
         participantMentions,
@@ -331,6 +356,7 @@ export const useAgentChat = () => {
         await refreshAgentChatThreadPermissions([threadId]);
         store.set(newAiChatThreadIdState.atom, v4());
         store.set(agentChatNewThreadChannelIdState.atom, null);
+        store.set(unconfirmedFirstMessageAtom, null);
 
         if (isDefined(newInboxChatRecipients)) {
           store.set(
@@ -347,6 +373,14 @@ export const useAgentChat = () => {
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (error) {
       rollbackOptimisticRestore();
+
+      if (isNewChat) {
+        store.set(unconfirmedFirstMessageAtom, {
+          messageId,
+          text: contentToSend,
+          fileIds,
+        });
+      }
 
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,

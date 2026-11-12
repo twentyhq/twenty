@@ -1,3 +1,4 @@
+import { ONBOARDING_INVITE_TEAM_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingInviteTeamPendingUserVarKey';
 import { getIsLastOnboardingStep } from '@/onboarding/utils/getIsLastOnboardingStep';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 import {
@@ -72,6 +73,29 @@ describe('getIsLastOnboardingStep', () => {
         }),
       ),
     ).toBe(true);
+  });
+
+  it('should treat profile creation as the last step when the invite step was not offered', () => {
+    expect(
+      getIsLastOnboardingStep(
+        buildArgs({ onboardingStatus: OnboardingStatus.PROFILE_CREATION }),
+      ),
+    ).toBe(true);
+  });
+
+  it('should not treat profile creation as the last step when the invite step was offered', () => {
+    expect(
+      getIsLastOnboardingStep({
+        ...buildArgs({ onboardingStatus: OnboardingStatus.PROFILE_CREATION }),
+        currentUser: {
+          ...mockedUserData,
+          onboardingStatus: OnboardingStatus.PROFILE_CREATION,
+          userVars: {
+            [ONBOARDING_INVITE_TEAM_PENDING_USER_VAR_KEY]: true,
+          },
+        },
+      }),
+    ).toBe(false);
   });
 
   it('should not treat an intermediate step as the last one', () => {

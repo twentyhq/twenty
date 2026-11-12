@@ -8,37 +8,30 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 export class AppConnectionAccessService {
-  constructor(private readonly permissionsService: PermissionsService) {}
+  constructor(
+    private readonly settingPermissionsService: SettingPermissionsService,
+  ) {}
 
   async validateCallerCanManageConnection({
     isWorkspaceShared,
     workspaceId,
     userWorkspaceId,
-    apiKeyId,
-    applicationId,
-    agentId,
   }: {
     isWorkspaceShared: boolean;
     workspaceId: string;
-    userWorkspaceId?: string;
-    apiKeyId?: string;
-    applicationId?: string;
-    agentId?: string;
+    userWorkspaceId: string;
   }): Promise<void> {
     const hasPermission =
-      await this.permissionsService.userHasWorkspaceSettingPermission({
-        userWorkspaceId,
+      await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
         workspaceId,
-        setting: isWorkspaceShared
+        userWorkspaceId,
+        permissionFlag: isWorkspaceShared
           ? PermissionFlagType.APPLICATIONS
           : PermissionFlagType.CONNECTED_ACCOUNTS,
-        apiKeyId,
-        applicationId,
-        agentId,
       });
 
     if (hasPermission) {

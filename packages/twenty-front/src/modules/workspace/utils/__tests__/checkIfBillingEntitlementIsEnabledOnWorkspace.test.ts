@@ -4,11 +4,9 @@ import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const makeWorkspace = (
   billingEntitlements?: Array<{ key: BillingEntitlementKey; value: boolean }>,
-): CurrentWorkspace =>
-  ({
-    id: 'workspace-1',
-    billingEntitlements,
-  }) as unknown as CurrentWorkspace;
+): Partial<Pick<CurrentWorkspace, 'billingEntitlements'>> => ({
+  billingEntitlements,
+});
 
 describe('checkIfBillingEntitlementIsEnabledOnWorkspace', () => {
   it('should return true when the entitlement is enabled', () => {

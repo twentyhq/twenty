@@ -15,7 +15,7 @@ import { getGroupByConnectionTypename, isDefined } from 'twenty-shared/utils';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 type TriggerUpdateGroupByQueriesOptimisticEffectArgs = {
-  cache: ApolloCache;
+  cache: Pick<ApolloCache, 'modify'>;
   objectMetadataItem: EnrichedObjectMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   operation: 'create' | 'update' | 'delete';
@@ -153,7 +153,7 @@ export const triggerUpdateGroupByQueriesOptimisticEffect = ({
 
             for (let i = 0; i < groupByFieldNames.length; i++) {
               const fieldName = groupByFieldNames[i];
-              let recordValue = record[fieldName];
+              const recordValue = record[fieldName];
 
               if (!isDefined(recordValue)) {
                 break;

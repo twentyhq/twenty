@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
 import { getDesktopCompanionAgenda } from 'src/logic-functions/flows/utils/getDesktopCompanionAgenda';
@@ -13,7 +12,7 @@ vi.mock('src/logic-functions/data/utils/getCurrentWorkspaceId', () => ({
   getCurrentWorkspaceId: () => 'workspace-1',
 }));
 const query = vi.fn();
-const client = { query } as unknown as CoreApiClient;
+const client = { query };
 const page = (nodes: object[]) => ({
   edges: nodes.map((node) => ({ node })),
   pageInfo: { hasNextPage: false, endCursor: null },

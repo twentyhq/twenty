@@ -4,7 +4,7 @@ export async function findNextPaymentAttempt({
   stripe,
   subscriptionId,
 }: {
-  stripe: Stripe;
+  stripe: { invoices: Pick<Stripe['invoices'], 'list'> };
   subscriptionId: string;
 }): Promise<number | null> {
   const openInvoices = await stripe.invoices.list({

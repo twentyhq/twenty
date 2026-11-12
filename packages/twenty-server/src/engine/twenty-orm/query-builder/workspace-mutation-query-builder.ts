@@ -4,13 +4,13 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
+import { type QueryExecutor } from 'src/engine/workspace-query-executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
   createRowToEntityMapper,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
+import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-twenty-orm-statement.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
 import {
   buildMutationStatement,
@@ -89,7 +89,7 @@ export class WorkspaceMutationQueryBuilder {
 
   getQueryAndParameters(): [string, unknown[]] {
     const { sql, parameters } = this.buildStatement();
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
 
     return [compiled.text, compiled.values];
   }
@@ -100,7 +100,7 @@ export class WorkspaceMutationQueryBuilder {
 
   async execute(): Promise<MutationResult> {
     const { sql, parameters } = this.buildStatement();
-    const compiled = compileNamedParameters(sql, parameters);
+    const compiled = compileTwentyOrmStatement({ sql, parameters });
     const rows = await this.context.executor.execute(compiled);
 
     const columnNameByResultAlias = buildColumnNameByResultAlias(

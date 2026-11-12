@@ -9,6 +9,8 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { decodeCursor, encodeCursor, encodeCursorData } from '../cursors.util';
 
 const buildMockField = (
@@ -17,7 +19,7 @@ const buildMockField = (
   type: FieldMetadataType,
   overrides: Partial<FlatFieldMetadata> = {},
 ): FlatFieldMetadata =>
-  ({
+  getFlatFieldMetadataMock({
     id,
     universalIdentifier: id,
     name,
@@ -28,14 +30,13 @@ const buildMockField = (
     label: name,
     isNullable: true,
     isLabelSyncedWithName: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: '2024-01-01T00:00:00.000Z',
+    updatedAt: '2024-01-01T00:00:00.000Z',
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
-    applicationId: null,
-  }) as unknown as FlatFieldMetadata;
+  });
 
 const nameField = buildMockField('name-id', 'name', FieldMetadataType.TEXT);
 const fullNameField = buildMockField(
@@ -72,7 +73,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   universalIdentifiersByApplicationId: {},
 };
 
-const flatObjectMetadata: FlatObjectMetadata = {
+const flatObjectMetadata: FlatObjectMetadata = getFlatObjectMetadataMock({
   id: 'obj-id',
   universalIdentifier: 'obj-id',
   workspaceId: 'ws-id',
@@ -87,13 +88,12 @@ const flatObjectMetadata: FlatObjectMetadata = {
   isAuditLogged: false,
   isSearchable: false,
   icon: 'Icon123',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
   fieldIds: ['name-id', 'fullname-id', 'company-id', 'owner-id'],
   indexMetadataIds: [],
   viewIds: [],
-  applicationId: null,
-} as unknown as FlatObjectMetadata;
+});
 
 const callEncodeCursor = (
   record: Record<string, unknown>,
@@ -258,12 +258,12 @@ describe('encodeCursor', () => {
 
   it('should nest composite target values of a relation orderBy', () => {
     const record = { id: 'abc' };
-    const orderBy = [
+    const orderBy: Parameters<typeof encodeCursor>[0]['order'] = [
       {
         company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
       },
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
-    ] as unknown as Parameters<typeof encodeCursor>[0]['order'];
+    ];
 
     const decoded = decodeCursor(
       encodeCursor({

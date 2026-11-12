@@ -6,28 +6,25 @@ import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permiss
 
 const FLAG_UNIVERSAL_IDENTIFIER = '00000000-0000-0000-0000-000000000001';
 
-const buildRolePermissionFlag = (
-  overrides: Partial<FlatRolePermissionFlag> = {},
-): FlatRolePermissionFlag =>
-  ({
-    id: '00000000-0000-0000-0000-000000000101',
-    universalIdentifier: '00000000-0000-0000-0000-000000000101',
-    permissionFlagId: FLAG_UNIVERSAL_IDENTIFIER,
-    permissionFlagUniversalIdentifier: FLAG_UNIVERSAL_IDENTIFIER,
-    roleUniversalIdentifier: '00000000-0000-0000-0000-000000000201',
-    workspaceId: 'workspace-id',
-    applicationId: '00000000-0000-0000-0000-000000000aaa',
-    applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000aaa',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    ...overrides,
-  }) as unknown as FlatRolePermissionFlag;
+const buildRolePermissionFlag = (): FlatRolePermissionFlag => ({
+  id: '00000000-0000-0000-0000-000000000101',
+  universalIdentifier: '00000000-0000-0000-0000-000000000101',
+  permissionFlagId: FLAG_UNIVERSAL_IDENTIFIER,
+  roleId: '00000000-0000-0000-0000-000000000201',
+  permissionFlagUniversalIdentifier: FLAG_UNIVERSAL_IDENTIFIER,
+  roleUniversalIdentifier: '00000000-0000-0000-0000-000000000201',
+  workspaceId: 'workspace-id',
+  applicationId: '00000000-0000-0000-0000-000000000aaa',
+  applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000aaa',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
 
 const buildRolePermissionFlagMaps = (
   rolePermissionFlags: FlatRolePermissionFlag[] = [],
 ): FlatEntityMaps<FlatRolePermissionFlag> => {
-  const maps =
-    createEmptyFlatEntityMaps() as unknown as FlatEntityMaps<FlatRolePermissionFlag>;
+  const maps: FlatEntityMaps<FlatRolePermissionFlag> =
+    createEmptyFlatEntityMaps();
 
   for (const rolePermissionFlag of rolePermissionFlags) {
     maps.byUniversalIdentifier[rolePermissionFlag.universalIdentifier] =
@@ -40,24 +37,20 @@ const buildRolePermissionFlagMaps = (
 const buildArgs = (args: {
   rolePermissionFlags: FlatRolePermissionFlag[];
   deletedFlagUniversalIdentifiers: string[];
-}) =>
-  ({
-    optimisticUniversalFlatMaps: {
-      flatRolePermissionFlagMaps: buildRolePermissionFlagMaps(
-        args.rolePermissionFlags,
-      ),
-    },
-    deletedPermissionFlagActions: args.deletedFlagUniversalIdentifiers.map(
-      (universalIdentifier) => ({
-        type: 'delete',
-        metadataName: 'permissionFlag',
-        universalIdentifier,
-        flatEntity: { universalIdentifier, key: 'MANAGE_INVOICES' },
-      }),
+}): Parameters<typeof validatePermissionFlagNotInUseCrossEntity>[0] => ({
+  optimisticUniversalFlatMaps: {
+    flatRolePermissionFlagMaps: buildRolePermissionFlagMaps(
+      args.rolePermissionFlags,
     ),
-  }) as unknown as Parameters<
-    typeof validatePermissionFlagNotInUseCrossEntity
-  >[0];
+  },
+  deletedPermissionFlagActions: args.deletedFlagUniversalIdentifiers.map(
+    (universalIdentifier) => ({
+      type: 'delete',
+      metadataName: 'permissionFlag',
+      universalIdentifier,
+    }),
+  ),
+});
 
 describe('validatePermissionFlagNotInUseCrossEntity', () => {
   it('returns no error when no permission flag is being deleted', () => {

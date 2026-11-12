@@ -29,6 +29,8 @@ import { type FlatMessagingProviderMaps } from 'src/engine/metadata-modules/flat
 import { type FlatMessagingProvider } from 'src/engine/metadata-modules/flat-messaging-provider/types/flat-messaging-provider.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
 import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
@@ -90,6 +92,17 @@ import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/t
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { type NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
+import { type FlatRowLevelPermissionRuleMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule-maps.type';
+import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
+import { type UniversalFlatRowLevelPermissionRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-rule.type';
+import {
+  type FlatCreateRowLevelPermissionRuleAction,
+  type FlatDeleteRowLevelPermissionRuleAction,
+  type FlatUpdateRowLevelPermissionRuleAction,
+  type UniversalCreateRowLevelPermissionRuleAction,
+  type UniversalDeleteRowLevelPermissionRuleAction,
+  type UniversalUpdateRowLevelPermissionRuleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-rule/types/workspace-migration-row-level-permission-rule-action.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
@@ -99,6 +112,7 @@ import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -170,6 +184,14 @@ import {
   type UniversalDeleteTimelineActivityTypeAction,
   type UniversalUpdateTimelineActivityTypeAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
+import {
+  type FlatCreateFieldMetadataOptionAction,
+  type FlatDeleteFieldMetadataOptionAction,
+  type FlatUpdateFieldMetadataOptionAction,
+  type UniversalCreateFieldMetadataOptionAction,
+  type UniversalDeleteFieldMetadataOptionAction,
+  type UniversalUpdateFieldMetadataOptionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/types/workspace-migration-field-metadata-option-action.type';
 import {
   type FlatCreateRelatedRecordPathAction,
   type FlatDeleteRelatedRecordPathAction,
@@ -596,6 +618,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatRowLevelPermissionPredicateGroup;
     universalFlatEntity: UniversalFlatRowLevelPermissionPredicateGroup;
     entity: MetadataEntity<'rowLevelPermissionPredicateGroup'>;
+  };
+  rowLevelPermissionRule: {
+    flatEntityMaps: FlatRowLevelPermissionRuleMaps;
+    universalActions: {
+      create: UniversalCreateRowLevelPermissionRuleAction;
+      update: UniversalUpdateRowLevelPermissionRuleAction;
+      delete: UniversalDeleteRowLevelPermissionRuleAction;
+    };
+    flatActions: {
+      create: FlatCreateRowLevelPermissionRuleAction;
+      update: FlatUpdateRowLevelPermissionRuleAction;
+      delete: FlatDeleteRowLevelPermissionRuleAction;
+    };
+    flatEntity: FlatRowLevelPermissionRule;
+    universalFlatEntity: UniversalFlatRowLevelPermissionRule;
+    entity: MetadataEntity<'rowLevelPermissionRule'>;
   };
   viewFilterGroup: {
     flatEntityMaps: FlatViewFilterGroupMaps;
@@ -1044,6 +1082,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  fieldMetadataOption: {
+    flatEntityMaps: FlatFieldMetadataOptionMaps;
+    universalActions: {
+      create: UniversalCreateFieldMetadataOptionAction;
+      update: UniversalUpdateFieldMetadataOptionAction;
+      delete: UniversalDeleteFieldMetadataOptionAction;
+    };
+    flatActions: {
+      create: FlatCreateFieldMetadataOptionAction;
+      update: FlatUpdateFieldMetadataOptionAction;
+      delete: FlatDeleteFieldMetadataOptionAction;
+    };
+    flatEntity: FlatFieldMetadataOption;
+    universalFlatEntity: UniversalFlatFieldMetadataOption;
+    entity: MetadataEntity<'fieldMetadataOption'>;
   };
   relatedRecordPath: {
     flatEntityMaps: FlatRelatedRecordPathMaps;

@@ -1,22 +1,22 @@
 import { randomUUID } from 'node:crypto';
 
-import { isArray } from '@sniptt/guards';
 import { configureChatParticipationModels } from 'test/integration/ai/utils/configure-chat-participation-models.util';
 import { createChatParticipationTestContext } from 'test/integration/ai/utils/create-chat-participation-test-context.util';
 import { runWithRejectedChatWrite } from 'test/integration/ai/utils/run-with-rejected-chat-write.util';
 import { sendChatParticipationMessage } from 'test/integration/graphql/utils/send-chat-participation-message.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { type AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -46,10 +46,6 @@ describe('Chat message participation with real storage', () => {
       const threadId = await context.createThread(false);
       const messageId = randomUUID();
 
-      await context.setConversationType({
-        threadId,
-        conversationType: 'DIRECT_MESSAGE',
-      });
       const response = await runWithRejectedChatWrite({
         workspaceId: context.workspaceId,
         threadId,
@@ -91,10 +87,6 @@ describe('Chat message participation with real storage', () => {
   it('keeps Ada participation unchanged when a legacy chat send fails preflight', async () => {
     const threadId = await context.createThread(false);
 
-    await context.setConversationType({
-      threadId,
-      conversationType: 'DIRECT_MESSAGE',
-    });
     await context.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId: context.workspaceId,
       featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -163,6 +155,136 @@ describe('Chat message participation with real storage', () => {
     );
   });
 
+  it('replays a first message stored before its send failed with the revised choices', async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    const retried = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+      isAssistantParticipant: false,
+      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: null,
+      recipientParticipantWorkspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ],
+    });
+    expect(
+      await context.chatService.getMessagesForThread({
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        threadId,
+      }),
+    ).toEqual([expect.objectContaining({ id: messageId })]);
+    expect(
+      await global.testDataSource.query(
+        `SELECT id FROM "${context.schema}"."agentTurn" WHERE "threadId" = $1`,
+        [threadId],
+      ),
+    ).toHaveLength(1);
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      false,
+    );
+    expect(await context.readParticipants(threadId)).toContainEqual(
+      expect.objectContaining({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      }),
+    );
+  });
+
+  it("restarts Ada's failed reply when a stored first message is sent again", async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    const retried = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: expect.any(String),
+    });
+    await waitForAllJobsToFinish();
+    expect(
+      await context.chatService.getMessagesForThread({
+        workspaceId: context.workspaceId,
+        workspaceMemberId: context.workspaceMemberId,
+        threadId,
+      }),
+    ).toEqual([
+      expect.objectContaining({ id: messageId }),
+      expect.objectContaining({ role: AgentMessageRole.ASSISTANT }),
+    ]);
+  });
+
+  it('returns a stored first message sent again after a later message without revising its choices', async () => {
+    configureChatParticipationModels();
+    const threadId = context.registerThread();
+    const messageId = randomUUID();
+    const streamingService =
+      getAppProviderByClassName<AgentChatStreamingService>(
+        'AgentChatStreamingService',
+      );
+
+    jest
+      .spyOn(streamingService, 'enqueueStreamJob')
+      .mockRejectedValueOnce(new Error('Queue unavailable'));
+
+    const failed = await sendChatParticipationMessage({ threadId, messageId });
+
+    expect(failed.body.errors).toBeDefined();
+
+    await context.saveMessage({ threadId });
+
+    const retried = await sendChatParticipationMessage({
+      threadId,
+      messageId,
+      isAssistantParticipant: false,
+    });
+
+    expect(retried.body.errors).toBeUndefined();
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      messageId,
+      queued: false,
+      streamId: null,
+    });
+    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
+      true,
+    );
+  });
+
   it('delivers valid initial recipients when sharing with a mentioned member fails', async () => {
     const threadId = await context.createThread();
     const messageId = randomUUID();
@@ -215,7 +337,7 @@ describe('Chat message participation with real storage', () => {
     );
   });
 
-  it('mentions a participant created by an inbox action after delivery read the missing row', async () => {
+  it('mentions a participant created by an earlier inbox action', async () => {
     const threadId = await context.createThread();
     const participantService =
       getAppProviderByClassName<AgentChatThreadParticipantService>(
@@ -223,9 +345,6 @@ describe('Chat message participation with real storage', () => {
       );
     const emitter = getAppProviderByClassName<WorkspaceEventEmitter>(
       'WorkspaceEventEmitter',
-    );
-    const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
-      'WorkspaceOrmManager',
     );
     const recipientWorkspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JONY;
 
@@ -240,51 +359,16 @@ describe('Chat message participation with real storage', () => {
       });
     }
 
-    const participantRepository =
-      await workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-            'agentChatThreadParticipant',
-          ),
-        await context.sharingService.getAuthContext(context),
-      );
-    const repositoryPrototype: WorkspaceRepository = Object.getPrototypeOf(
-      participantRepository,
-    );
     const emit = jest.spyOn(emitter, 'emitDatabaseBatchEvent');
-    const insert = repositoryPrototype.insert;
-    let concurrentParticipantId: string | undefined;
+    const [archivedParticipant] = await participantService.updateInboxState({
+      workspaceId: context.workspaceId,
+      workspaceMemberId: recipientWorkspaceMemberId,
+      threadIds: [threadId],
+      action: AgentChatInboxAction.ARCHIVE,
+      snoozedUntil: null,
+    });
 
-    jest
-      .spyOn(repositoryPrototype, 'insert')
-      .mockImplementation(async function (
-        this: WorkspaceRepository,
-        ...insertArgs
-      ) {
-        const [values] = insertArgs;
-        const records = isArray(values) ? values : [values];
-        const includesRecipient = records.some(
-          (record) =>
-            record.threadId === threadId &&
-            record.workspaceMemberId === recipientWorkspaceMemberId,
-        );
-
-        if (isDefined(concurrentParticipantId) || !includesRecipient) {
-          return insert.apply(this, insertArgs);
-        }
-
-        const [participant] = await participantService.updateInboxState({
-          workspaceId: context.workspaceId,
-          workspaceMemberId: recipientWorkspaceMemberId,
-          threadIds: [threadId],
-          action: AgentChatInboxAction.ARCHIVE,
-          snoozedUntil: null,
-        });
-
-        concurrentParticipantId = participant.id;
-
-        return insert.apply(this, insertArgs);
-      });
+    assertIsDefinedOrThrow(archivedParticipant);
 
     const response = await sendChatParticipationMessage({
       threadId,
@@ -299,7 +383,6 @@ describe('Chat message participation with real storage', () => {
     expect(
       response.body.data.sendChatMessage.mentionedParticipantWorkspaceMemberIds,
     ).toEqual([recipientWorkspaceMemberId, WORKSPACE_MEMBER_DATA_SEED_IDS.TIM]);
-    assertIsDefinedOrThrow(concurrentParticipantId);
 
     const participants = await global.testDataSource.query<
       AgentChatThreadParticipantRow[]
@@ -334,7 +417,7 @@ describe('Chat message participation with real storage', () => {
         .map(([event]) => event?.action);
 
       expect(actions).toEqual(
-        participant.id === concurrentParticipantId
+        participant.id === archivedParticipant.id
           ? [DatabaseEventAction.CREATED, DatabaseEventAction.UPDATED]
           : [DatabaseEventAction.CREATED],
       );
@@ -346,15 +429,12 @@ describe('Chat message participation with real storage', () => {
     const firstMessageId = randomUUID();
     const secondMessageId = randomUUID();
 
-    await context.setConversationType({
-      threadId,
-      conversationType: 'DIRECT_MESSAGE',
-    });
     const firstResponse = await sendChatParticipationMessage({
       threadId,
       messageId: firstMessageId,
       isAssistantMentioned: true,
       shouldAssistantReply: false,
+      recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
 
     expect(firstResponse.body.errors).toBeUndefined();
@@ -362,7 +442,7 @@ describe('Chat message participation with real storage', () => {
       true,
     );
     await context.setAssistantModes({
-      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
+      aiChatInboxAssistantMode: AiChatAssistantMode.NEVER,
     });
     const secondResponse = await sendChatParticipationMessage({
       threadId,

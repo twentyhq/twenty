@@ -25,12 +25,14 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCompleteRecordUpdate } from '@/object-record/record-form/hooks/useCompleteRecordUpdate';
 import { buildMorphRelationUpdateInput } from '@/object-record/record-field/ui/meta-types/input/utils/buildMorphRelationUpdateInput';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
@@ -71,6 +73,9 @@ export const usePersistField = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { updateOneRecord } = useUpdateOneRecord();
+  const { completeRecordUpdate } = useCompleteRecordUpdate({
+    objectMetadataItem,
+  });
 
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -196,13 +201,22 @@ export const usePersistField = ({
             return;
           }
 
-          const newRecord = await updateOneRecord({
-            objectNameSingular: objectMetadataItem.nameSingular,
-            idToUpdate: recordId,
-            updateOneRecordInput: {
+          const completedUpdateInput = await completeRecordUpdate({
+            recordId,
+            updateInput: {
               [getForeignKeyNameFromRelationFieldName(fieldName)]:
                 valueToPersist?.id ?? null,
             },
+          });
+
+          if (!isDefined(completedUpdateInput)) {
+            return;
+          }
+
+          const newRecord = await updateOneRecord({
+            objectNameSingular: objectMetadataItem.nameSingular,
+            idToUpdate: recordId,
+            updateOneRecordInput: completedUpdateInput,
           });
 
           upsertRecordsInStore({
@@ -240,10 +254,19 @@ export const usePersistField = ({
               targetObjectMetadataId: valueToPersist?.objectMetadataId,
             });
 
+          const completedUpdateInput = await completeRecordUpdate({
+            recordId,
+            updateInput,
+          });
+
+          if (!isDefined(completedUpdateInput)) {
+            return;
+          }
+
           const newRecord = await updateOneRecord({
             objectNameSingular: objectMetadataItem.nameSingular,
             idToUpdate: recordId,
-            updateOneRecordInput: updateInput,
+            updateOneRecordInput: completedUpdateInput,
           });
 
           const morphForeignKeyGqlFields: Record<string, true> = {};
@@ -270,18 +293,32 @@ export const usePersistField = ({
           return;
         }
 
+        const recordFieldSelector = recordStoreFamilySelector.selectorFamily({
+          recordId,
+          fieldName,
+        });
+
+        const recordBeforeUpdate =
+          store.get(recordStoreFamilyState.atomFamily(recordId)) ?? undefined;
+
+        store.set(recordFieldSelector, valueToPersist);
+
+        const completedUpdateInput = await completeRecordUpdate({
+          recordId,
+          updateInput: { [fieldName]: valueToPersist },
+          recordBeforeUpdate,
+        });
+
+        if (!isDefined(completedUpdateInput)) {
+          store.set(recordFieldSelector, currentValue);
+          return;
+        }
+
         updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
-          updateOneRecordInput: {
-            [fieldName]: valueToPersist,
-          },
+          updateOneRecordInput: completedUpdateInput,
         });
-
-        store.set(
-          recordStoreFamilySelector.selectorFamily({ recordId, fieldName }),
-          valueToPersist,
-        );
       } else {
         throw new Error(
           doNotTranslate(
@@ -300,6 +337,7 @@ export const usePersistField = ({
       store,
       updateOneRecord,
       upsertRecordsInStore,
+      completeRecordUpdate,
     ],
   );
 

@@ -139,15 +139,12 @@ describe('useIncrementalFetchAndMutateRecords', () => {
       } as any),
     );
 
-    const abortMock = jest.fn();
+    const abortedController = new AbortController();
+    abortedController.abort();
 
-    jest.spyOn(global, 'AbortController').mockImplementation(
-      () =>
-        ({
-          signal: { aborted: true } as unknown as AbortSignal,
-          abort: abortMock,
-        }) as unknown as AbortController,
-    );
+    jest
+      .spyOn(global, 'AbortController')
+      .mockImplementation(() => abortedController);
 
     await result.current.incrementalFetchAndMutate(jest.fn());
 

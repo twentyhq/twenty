@@ -6,7 +6,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 type GetTabLayoutModeParams = {
-  tab: PageLayoutTab | undefined;
+  tab: Pick<PageLayoutTab, 'layoutMode'> | undefined;
   pageLayoutType: PageLayoutType;
 };
 

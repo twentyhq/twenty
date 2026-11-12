@@ -3,16 +3,12 @@ import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta
 
 describe('createPhonesFromFieldValue test suite', () => {
   it('should return an empty array if fieldValue is undefined', () => {
-    const result = createPhonesFromFieldValue(
-      undefined as unknown as FieldPhonesValue,
-    );
+    const result = createPhonesFromFieldValue(undefined);
     expect(result).toEqual([]);
   });
 
   it('should return an empty array if fieldValue is null', () => {
-    const result = createPhonesFromFieldValue(
-      null as unknown as FieldPhonesValue,
-    );
+    const result = createPhonesFromFieldValue(null);
     expect(result).toEqual([]);
   });
 

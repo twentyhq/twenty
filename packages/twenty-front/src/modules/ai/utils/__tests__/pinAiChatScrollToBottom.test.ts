@@ -5,13 +5,6 @@ import { pinAiChatScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
 
 const FRAME_DURATION_IN_MS = 16;
 
-type FakeScrollWrapperElement = HTMLElement & {
-  scrollHeight: number;
-  clientHeight: number;
-  clientWidth: number;
-  scrollTop: number;
-};
-
 let currentTimeInMs = 0;
 let nextFrameId = 0;
 let pendingFrameCallbacksById: Map<number, FrameRequestCallback>;
@@ -31,7 +24,7 @@ const buildScrollWrapperElement = () => {
     removeEventListener: (eventName: string) => {
       listenersByEventName.delete(eventName);
     },
-  } as unknown as FakeScrollWrapperElement;
+  };
 };
 
 const advanceOneFrame = () => {

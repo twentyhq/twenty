@@ -4,7 +4,9 @@ export const removeSecretFromWebhookRecord = (
   isWebhookEvent: boolean,
   // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> | undefined => {
-  if (!isWebhookEvent || !record) return record;
+  if (!isWebhookEvent || !record) {
+    return record;
+  }
 
   const { secret: _secret, ...sanitizedRecord } = record;
 

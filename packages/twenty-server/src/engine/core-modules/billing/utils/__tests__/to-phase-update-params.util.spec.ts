@@ -18,13 +18,27 @@ const buildPhase = (
     ...phase,
   }) as Stripe.SubscriptionSchedule.Phase;
 
+const buildPhaseItem = (
+  item: Pick<Stripe.SubscriptionSchedule.Phase.Item, 'price'> &
+    Partial<Stripe.SubscriptionSchedule.Phase.Item>,
+): Stripe.SubscriptionSchedule.Phase.Item => ({
+  billing_thresholds: null,
+  discounts: [],
+  metadata: null,
+  plan: 'plan_id',
+  ...item,
+});
+
 describe('toPhaseUpdateParams', () => {
   it('normalizes a price object reference to its id', () => {
     const phase = toPhaseUpdateParams(
       buildPhase({
         items: [
-          { price: { id: 'price_base' }, quantity: 3 },
-        ] as unknown as Stripe.SubscriptionSchedule.Phase['items'],
+          buildPhaseItem({
+            price: { id: 'price_base', object: 'price', deleted: true },
+            quantity: 3,
+          }),
+        ],
       }),
     );
 
@@ -35,8 +49,8 @@ describe('toPhaseUpdateParams', () => {
     const phase = toPhaseUpdateParams(
       buildPhase({
         items: [
-          { price: 'price_metered', quantity: null },
-        ] as unknown as Stripe.SubscriptionSchedule.Phase['items'],
+          buildPhaseItem({ price: 'price_metered', quantity: undefined }),
+        ],
       }),
     );
 

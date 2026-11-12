@@ -7,6 +7,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "label",
       "icon",
+      "avatarColor",
+      "avatarShape",
       "description",
       "prompt",
       "modelId",
@@ -126,13 +128,28 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "disabledFieldPermissionActions",
     ],
   },
+  "fieldMetadataOption": {
+    "propertiesToCompare": [
+      "value",
+      "label",
+      "color",
+      "position",
+      "isActive",
+      "overrides",
+    ],
+    "propertiesToStringify": [
+      "overrides",
+    ],
+  },
   "fieldPermission": {
     "propertiesToCompare": [
       "roleUniversalIdentifier",
       "objectMetadataUniversalIdentifier",
       "fieldMetadataUniversalIdentifier",
+      "rowLevelPermissionPredicateGroupUniversalIdentifier",
       "canReadFieldValue",
       "canUpdateFieldValue",
+      "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },
@@ -181,6 +198,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
+      "jobConfig",
       "builtHandlerPath",
     ],
     "propertiesToStringify": [
@@ -190,6 +208,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
+      "jobConfig",
     ],
   },
   "mcpServer": {
@@ -210,6 +229,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "displayName",
       "connectionProviderUniversalIdentifier",
       "sendMessageLogicFunctionUniversalIdentifier",
+      "conversationStyle",
     ],
     "propertiesToStringify": [],
   },
@@ -257,6 +277,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "roleUniversalIdentifier",
       "objectMetadataUniversalIdentifier",
       "canReadObjectRecords",
+      "canCreateObjectRecords",
       "canUpdateObjectRecords",
       "canSoftDeleteObjectRecords",
       "canDestroyObjectRecords",
@@ -339,6 +360,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "canAccessAllTools",
       "canAccessAllAgentChatChannels",
       "canReadAllObjectRecords",
+      "canCreateAllObjectRecords",
       "canUpdateAllObjectRecords",
       "canSoftDeleteAllObjectRecords",
       "canDestroyAllObjectRecords",
@@ -377,6 +399,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workspaceMemberFieldMetadataUniversalIdentifier",
       "workspaceMemberSubFieldName",
       "deletedAt",
+      "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "value",
@@ -387,11 +410,23 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "logicalOperator",
       "positionInRowLevelPermissionPredicateGroup",
       "canReadRecords",
+      "canCreateRecords",
       "canUpdateRecords",
       "canSoftDeleteRecords",
       "canDestroyRecords",
       "parentRowLevelPermissionPredicateGroupUniversalIdentifier",
       "deletedAt",
+      "rowLevelPermissionRuleUniversalIdentifier",
+    ],
+    "propertiesToStringify": [],
+  },
+  "rowLevelPermissionRule": {
+    "propertiesToCompare": [
+      "canReadRecords",
+      "canCreateRecords",
+      "canUpdateRecords",
+      "canSoftDeleteRecords",
+      "canDestroyRecords",
     ],
     "propertiesToStringify": [],
   },
@@ -480,6 +515,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "visibility",
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
+      "shouldDisplayGroupsAsTabs",
       "kanbanColumnWidth",
       "groupLoadLimit",
       "isActive",
@@ -578,6 +614,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflow": {
     "propertiesToCompare": [
+      "jobConfig",
       "versionDefinitionHash",
       "name",
       "isSystem",
@@ -585,7 +622,9 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "jobConfig",
+    ],
   },
   "workflowVersion": {
     "propertiesToCompare": [

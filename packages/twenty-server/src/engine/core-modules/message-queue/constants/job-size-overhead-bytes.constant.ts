@@ -1,0 +1,1 @@
+export const JOB_SIZE_OVERHEAD_BYTES = 1024;

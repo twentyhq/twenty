@@ -67,6 +67,7 @@ export const StandalonePageCommandMenu = () => {
       objectMetadataItem: {},
       objectMetadataLabel: '',
       coreObjectName: null,
+      currentView: null,
     };
   }, [
     currentWorkspace?.featureFlags,

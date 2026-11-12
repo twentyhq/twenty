@@ -14,13 +14,14 @@ const stubAudioContext = ({
       : Promise.resolve(),
   );
 
-  (window as AudioContextTestWindow).AudioContext = function AudioContext(
-    this: Record<string, unknown>,
-  ) {
-    this.state = 'suspended';
-    this.resume = resume;
-    this.close = close;
-  } as unknown as typeof AudioContext;
+  Object.defineProperty(window, 'AudioContext', {
+    value: function AudioContext(this: Record<string, unknown>) {
+      this.state = 'suspended';
+      this.resume = resume;
+      this.close = close;
+    },
+    configurable: true,
+  });
 
   return { close, resume };
 };

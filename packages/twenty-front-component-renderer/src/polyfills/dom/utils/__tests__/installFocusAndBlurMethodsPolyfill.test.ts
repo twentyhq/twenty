@@ -6,6 +6,7 @@ import {
 } from '@remote-dom/core/elements';
 
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
+import { toDomWindow } from '@/testing/toDomWindow';
 
 import { createWorkerActiveElementStore } from '../createWorkerActiveElementStore';
 import { createWorkerFocusTransport } from '../createWorkerFocusTransport';
@@ -29,8 +30,7 @@ const createPolyfillDocument = (): Document => {
     documentTarget: polyfillWindow.document,
     activeElementStore,
   });
-
-  return polyfillWindow.document as unknown as Document;
+  return toDomWindow(polyfillWindow).document;
 };
 
 describe('installFocusAndBlurMethodsPolyfill', () => {
@@ -136,7 +136,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     const activeElementStore = createWorkerActiveElementStore();
     const focusTransport = createWorkerFocusTransport();
     const connection = { mutate: jest.fn(), call: jest.fn() };
-    const document = polyfillWindow.document as unknown as Document;
+    const document = toDomWindow(polyfillWindow).document;
     const container = document.createElement('div');
     const button = document.createElement('button');
     const removeChild = jest.fn(({ node }: { node: Node }) =>
@@ -144,7 +144,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     );
 
     polyfillWindow[HOOKS].removeChild = (_parent, node) =>
-      removeChild({ node: node as unknown as Node });
+      removeChild({ node });
     installActiveElementDetachmentHook({
       hooks: polyfillWindow[HOOKS],
       activeElementStore,
@@ -299,8 +299,7 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
       resolveFocusVisibleElement: () =>
         activeElementStore.getFocusVisibleElement(),
     });
-
-    const document = polyfillWindow.document as unknown as Document;
+    const document = toDomWindow(polyfillWindow).document;
     const container = document.createElement('div');
     const button = document.createElement('button');
 

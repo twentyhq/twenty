@@ -56,7 +56,7 @@ export const buildMcpServerInstructions = ({
       ? `Non-CRUD tools:`
       : `Non-CRUD tools — use learn_tools for schemas:`,
     `  ACTION:           ${actionToolNames.join(' | ')}`,
-    `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
+    `  WORKFLOW:         list_workflows | create_complete_workflow | create/update/delete_workflow_version_step | activate/deactivate_workflow_version | run_workflow_version | list_workflow_runs | get_workflow_run | get_workflow_current_version`,
     `  METADATA:         get/create/update/delete_object_metadata | get/create/update/delete_field_metadata`,
     `                     Both GET tools return system items as compact summaries by default — keep that default for listing/inspecting; only set includeFullSystemObjects / includeFullSystemFields=true when you specifically need a system item's full configuration`,
     `  VIEW:             get_views | get_view_query_parameters | create/update/delete_view | manage view fields, filters, sorts`,

@@ -7,12 +7,12 @@ const SESSION_KEYS_TO_CLEAR = [
   'ai/agentChatDraftsByThreadIdState',
   'companyEnrichmentState',
   'personEnrichmentState',
+  'currentUserWorkspaceState:v2',
   'locale',
   'currentUserState',
   'currentWorkspaceState',
   'currentWorkspaceMemberState',
   'currentUserWorkspaceState',
-  'currentUserWorkspaceState:v2',
 ];
 
 export const clearSessionLocalStorageKeys = () => {

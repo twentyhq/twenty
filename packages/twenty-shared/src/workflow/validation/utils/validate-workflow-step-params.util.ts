@@ -83,6 +83,18 @@ export const validateWorkflowStepParams = ({
         stepId: step.id,
       });
     }
+
+    if (
+      parsedStep.type === WorkflowActionType.UPDATE_RECORD &&
+      parsedStep.settings.input.fieldsToUpdate.length === 0
+    ) {
+      issues.push({
+        severity: 'error',
+        code: 'UPDATE_RECORD_MISSING_FIELDS_TO_UPDATE',
+        message: `Step "${step.name ?? step.id}" has no field to update: list the fields to write in settings.input.fieldsToUpdate, with their values in objectRecord.`,
+        stepId: step.id,
+      });
+    }
   }
 
   return issues;

@@ -26,10 +26,12 @@ export const usePreviewRecord = ({
   const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
   let recordGqlFields: RecordGqlFields | undefined = undefined;
-  if (objectNameSingular === StandardObjectNameSingular.NoteTarget)
+  if (objectNameSingular === StandardObjectNameSingular.NoteTarget) {
     recordGqlFields = { id: true, note: true };
-  if (objectNameSingular === StandardObjectNameSingular.TaskTarget)
+  }
+  if (objectNameSingular === StandardObjectNameSingular.TaskTarget) {
     recordGqlFields = { id: true, task: true };
+  }
 
   const { records } = useFindManyRecords({
     objectNameSingular,
@@ -38,7 +40,9 @@ export const usePreviewRecord = ({
     skip,
   });
 
-  if (skip) return null;
+  if (skip) {
+    return null;
+  }
 
   const [firstRecord] = records;
 

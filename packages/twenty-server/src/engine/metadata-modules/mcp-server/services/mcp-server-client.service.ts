@@ -5,7 +5,11 @@ import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
-import { type Tool } from '@modelcontextprotocol/sdk/types.js';
+import {
+  type CallToolResult,
+  CallToolResultSchema,
+  type Tool,
+} from '@modelcontextprotocol/sdk/types.js';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -22,6 +26,7 @@ import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-acco
 
 const MCP_CLIENT_INFO = { name: 'twenty', version: '1.0.0' };
 const LIST_TOOLS_TIMEOUT_MS = 20_000;
+const CALL_TOOL_TIMEOUT_MS = 60_000;
 const LIST_TOOLS_MAX_PAGES = 10;
 
 type McpServerTarget = Pick<
@@ -40,12 +45,61 @@ export class McpServerClientService {
   ) {}
 
   // One deadline spans the handshake and every page: the sync runs inside a mutation.
-  async listTools(target: McpServerTarget): Promise<Tool[]> {
+  async listTools({
+    target,
+    timeoutMs = LIST_TOOLS_TIMEOUT_MS,
+  }: {
+    target: McpServerTarget;
+    timeoutMs?: number;
+  }): Promise<Tool[]> {
+    return this.withConnectedClient({
+      target,
+      timeoutMs,
+      run: ({ client, signal }) => this.listToolPages({ client, signal }),
+    });
+  }
+
+  async callTool({
+    target,
+    toolName,
+    toolArguments,
+  }: {
+    target: McpServerTarget;
+    toolName: string;
+    toolArguments: Record<string, unknown>;
+  }): Promise<CallToolResult> {
+    return this.withConnectedClient({
+      target,
+      timeoutMs: CALL_TOOL_TIMEOUT_MS,
+      run: ({ client, signal }) =>
+        client.request(
+          {
+            method: 'tools/call',
+            params: { name: toolName, arguments: toolArguments },
+          },
+          CallToolResultSchema,
+          { signal },
+        ),
+    });
+  }
+
+  private async withConnectedClient<TResult>({
+    target,
+    timeoutMs,
+    run,
+  }: {
+    target: McpServerTarget;
+    timeoutMs: number;
+    run: (connection: {
+      client: Client;
+      signal: AbortSignal;
+    }) => Promise<TResult>;
+  }): Promise<TResult> {
     const accessToken = await this.resolveAccessToken(target);
-    const signal = AbortSignal.timeout(LIST_TOOLS_TIMEOUT_MS);
+    const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: this.buildFetch(target.workspaceId),
+      fetch: this.buildFetch({ workspaceId: target.workspaceId, timeoutMs }),
       requestInit: isDefined(accessToken)
         ? { headers: { Authorization: `Bearer ${accessToken}` } }
         : undefined,
@@ -54,7 +108,7 @@ export class McpServerClientService {
     try {
       await client.connect(transport, { signal });
 
-      return await this.listToolPages({ client, signal });
+      return await run({ client, signal });
     } finally {
       await client.close().catch(() => undefined);
     }
@@ -95,10 +149,16 @@ export class McpServerClientService {
   }
 
   // The SDK reads SSE from a WHATWG Response, which the axios client yields whatever globalThis.fetch is.
-  private buildFetch(workspaceId: string): FetchLike {
+  private buildFetch({
+    workspaceId,
+    timeoutMs,
+  }: {
+    workspaceId: string;
+    timeoutMs: number;
+  }): FetchLike {
     const axiosFetch = buildAxiosFetch(
       this.secureHttpClientService.getHttpClient(
-        { timeout: LIST_TOOLS_TIMEOUT_MS },
+        { timeout: timeoutMs },
         { workspaceId, source: 'mcp-server' },
       ),
     );
@@ -106,11 +166,18 @@ export class McpServerClientService {
     return (url, init) => axiosFetch(url.toString(), init);
   }
 
-  private async resolveAccessToken({
+  async canCallerConnect(target: McpServerTarget): Promise<boolean> {
+    return (
+      !isDefined(target.connectionProviderId) ||
+      isDefined(await this.findUsableConnectedAccount(target))
+    );
+  }
+
+  private async findUsableConnectedAccount({
     connectionProviderId,
     workspaceId,
     userWorkspaceId,
-  }: McpServerTarget): Promise<string | null> {
+  }: McpServerTarget): Promise<ConnectedAccountEntity | null> {
     if (!isDefined(connectionProviderId)) {
       return null;
     }
@@ -121,7 +188,8 @@ export class McpServerClientService {
       archivedAt: IsNull(),
       authFailedAt: IsNull(),
     };
-    const connectedAccount = await this.connectedAccountRepository.findOne({
+
+    return this.connectedAccountRepository.findOne({
       where: isDefined(userWorkspaceId)
         ? buildConnectedAccountUsableByCallerWhere({
             baseWhere,
@@ -130,6 +198,18 @@ export class McpServerClientService {
         : { ...baseWhere, scope: 'WORKSPACE' },
       order: { createdAt: 'ASC' },
     });
+  }
+
+  private async resolveAccessToken(
+    target: McpServerTarget,
+  ): Promise<string | null> {
+    const { connectionProviderId, workspaceId } = target;
+
+    if (!isDefined(connectionProviderId)) {
+      return null;
+    }
+
+    const connectedAccount = await this.findUsableConnectedAccount(target);
 
     if (!isDefined(connectedAccount)) {
       throw new McpServerException(

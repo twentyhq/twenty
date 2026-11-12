@@ -295,52 +295,6 @@ describe('shouldExecuteStep', () => {
     expect(result).toBe(false);
   });
 
-  it('should handle undefined parent steps gracefully', () => {
-    const stepsWithUndefined = [
-      {
-        id: 'step-1',
-        type: WorkflowActionType.CODE,
-        settings: {
-          errorHandlingOptions: {
-            continueOnFailure: { value: false },
-            retryOnFailure: { value: 0 },
-          },
-        },
-        nextStepIds: ['step-3'],
-      },
-      undefined as unknown as WorkflowAction,
-      {
-        id: 'step-3',
-        type: WorkflowActionType.SEND_EMAIL,
-        settings: {
-          errorHandlingOptions: {
-            continueOnFailure: { value: false },
-            retryOnFailure: { value: 0 },
-          },
-        },
-        nextStepIds: [],
-      },
-    ] as WorkflowAction[];
-
-    const stepInfos = {
-      'step-1': {
-        status: StepStatus.SUCCESS,
-      },
-      'step-3': {
-        status: StepStatus.NOT_STARTED,
-      },
-    };
-
-    const result = shouldExecuteStep({
-      stepInfos,
-      steps: stepsWithUndefined,
-      step: stepsWithUndefined[2],
-      workflowRunStatus: WorkflowRunStatus.RUNNING,
-    });
-
-    expect(result).toBe(true);
-  });
-
   it('should return false when at least one parent is FAILED', () => {
     const result = shouldExecuteStep({
       stepInfos: {

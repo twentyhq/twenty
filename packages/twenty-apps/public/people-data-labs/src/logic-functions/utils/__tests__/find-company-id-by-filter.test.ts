@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findCompanyIdByFilter } from 'src/logic-functions/utils/find-company-id-by-filter';
@@ -8,7 +7,7 @@ describe('findCompanyIdByFilter', () => {
     const query = vi.fn(() =>
       Promise.resolve({ companies: { edges: [{ node: { id: 'co-1' } }] } }),
     );
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
     const filter = { pdlId: { eq: 'pdl-co-1' } };
 
     const result = await findCompanyIdByFilter({ client, filter });
@@ -24,7 +23,7 @@ describe('findCompanyIdByFilter', () => {
 
   it('returns undefined when there are no matches', async () => {
     const query = vi.fn(() => Promise.resolve({ companies: { edges: [] } }));
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(
       await findCompanyIdByFilter({ client, filter: { name: { eq: 'Acme' } } }),
@@ -33,7 +32,7 @@ describe('findCompanyIdByFilter', () => {
 
   it('returns undefined when the companies connection is absent', async () => {
     const query = vi.fn(() => Promise.resolve({}));
-    const client = { query } as unknown as CoreApiClient;
+    const client = { query };
 
     expect(
       await findCompanyIdByFilter({ client, filter: { name: { eq: 'Acme' } } }),

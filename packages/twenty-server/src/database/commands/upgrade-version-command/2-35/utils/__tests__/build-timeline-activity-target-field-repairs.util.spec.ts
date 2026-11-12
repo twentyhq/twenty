@@ -2,7 +2,9 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { buildTimelineActivityTargetFieldRepairs } from 'src/database/commands/upgrade-version-command/2-35/utils/build-timeline-activity-target-field-repairs.util';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const TIMELINE_ACTIVITY_OBJECT_ID = 'timeline-activity-object-id';
 const TARGET_MORPH_ID =
@@ -42,28 +44,29 @@ const buildArgs = ({
     ),
     flatObjectMetadataMaps: {
       byUniversalIdentifier: {
-        [STANDARD_OBJECTS.timelineActivity.universalIdentifier]: {
-          id: TIMELINE_ACTIVITY_OBJECT_ID,
-          universalIdentifier:
-            STANDARD_OBJECTS.timelineActivity.universalIdentifier,
-          applicationUniversalIdentifier: 'app-uid',
-          nameSingular: 'timelineActivity',
-          namePlural: 'timelineActivities',
-          isCustom: false,
-          fieldIds: fields.map(({ name }) => `field-${name}`),
-          indexMetadataIds: [
-            ...indexKeys.map((key) => `index-${key}`),
-            ...orphanedIndexIds,
-          ],
-        },
+        [STANDARD_OBJECTS.timelineActivity.universalIdentifier]:
+          getFlatObjectMetadataMock({
+            id: TIMELINE_ACTIVITY_OBJECT_ID,
+            universalIdentifier:
+              STANDARD_OBJECTS.timelineActivity.universalIdentifier,
+            applicationUniversalIdentifier: 'app-uid',
+            nameSingular: 'timelineActivity',
+            namePlural: 'timelineActivities',
+            isCustom: false,
+            fieldIds: fields.map(({ name }) => `field-${name}`),
+            indexMetadataIds: [
+              ...indexKeys.map((key) => `index-${key}`),
+              ...orphanedIndexIds,
+            ],
+          }),
         ...Object.fromEntries(
           entries(targetObjectNameSingularByKey).map(([key, nameSingular]) => [
             `object-uid-${key}`,
-            {
+            getFlatObjectMetadataMock({
               id: `object-${key}`,
               universalIdentifier: `object-uid-${key}`,
               nameSingular,
-            },
+            }),
           ]),
         ),
       },
@@ -83,7 +86,7 @@ const buildArgs = ({
       byUniversalIdentifier: Object.fromEntries(
         fields.map((field) => [
           `field-uid-${field.name}`,
-          {
+          getFlatFieldMetadataMock<FieldMetadataType.MORPH_RELATION>({
             id: `field-${field.name}`,
             universalIdentifier: `field-uid-${field.name}`,
             applicationUniversalIdentifier: 'app-uid',
@@ -99,7 +102,7 @@ const buildArgs = ({
               relationType: field.relationType ?? RelationType.MANY_TO_ONE,
               joinColumnName: `${field.name}Id`,
             },
-          },
+          }),
         ]),
       ),
       universalIdentifierById: Object.fromEntries(
@@ -111,8 +114,10 @@ const buildArgs = ({
       byUniversalIdentifier: Object.fromEntries(
         entries(indexedFieldNamesByIndexKey).map(([key, fieldNames]) => [
           `index-uid-${key}`,
-          {
+          getFlatIndexMetadataMock({
             id: `index-${key}`,
+            objectMetadataUniversalIdentifier:
+              STANDARD_OBJECTS.timelineActivity.universalIdentifier,
             universalIdentifier: `index-uid-${key}`,
             applicationUniversalIdentifier: 'app-uid',
             objectMetadataId: TIMELINE_ACTIVITY_OBJECT_ID,
@@ -120,16 +125,24 @@ const buildArgs = ({
             isUnique: false,
             indexWhereClause: null,
             flatIndexFieldMetadatas: fieldNames.map((name, order) => ({
+              id: `index-field-${key}-${name}`,
+              workspaceId: 'workspace-id',
+              indexMetadataId: `index-${key}`,
+              createdAt: '2026-01-01T00:00:00.000Z',
+              updatedAt: '2026-01-01T00:00:00.000Z',
               fieldMetadataId: `field-${name}`,
               order,
               subFieldName: null,
             })),
             universalFlatIndexFieldMetadatas: fieldNames.map((name, order) => ({
+              indexMetadataUniversalIdentifier: `index-uid-${key}`,
+              createdAt: '2026-01-01T00:00:00.000Z',
+              updatedAt: '2026-01-01T00:00:00.000Z',
               fieldMetadataUniversalIdentifier: `field-uid-${name}`,
               order,
               subFieldName: null,
             })),
-          },
+          }),
         ]),
       ),
       universalIdentifierById: Object.fromEntries(
@@ -137,10 +150,7 @@ const buildArgs = ({
       ),
       universalIdentifiersByApplicationId: {},
     },
-  } as unknown as Parameters<
-    typeof buildTimelineActivityTargetFieldRepairs
-  >[0] &
-    Pick<AllFlatEntityMaps, 'flatObjectMetadataMaps'>;
+  };
 };
 
 const staleField = {

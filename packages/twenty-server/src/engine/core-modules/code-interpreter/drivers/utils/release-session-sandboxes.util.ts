@@ -2,7 +2,7 @@ import { type Sandbox } from '@e2b/code-interpreter';
 
 import { SESSION_SANDBOX_METADATA_KEY } from 'src/engine/core-modules/code-interpreter/constants/session-sandbox-metadata-key.constant';
 
-type SandboxApi = typeof Sandbox;
+type SandboxApi = Pick<typeof Sandbox, 'list' | 'kill'>;
 
 // Kills every sandbox tagged for a session — used when a conversation is deleted.
 export const releaseSessionSandboxes = async (

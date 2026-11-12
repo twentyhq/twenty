@@ -1,0 +1,90 @@
+---
+title: Avatar del asistente
+description: Un personaje asistente con forma, expresión, color, tamaño y animación inactiva configurables.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AssistantAvatarReference from '/snippets/ui/generated/components/data-display/assistant-avatar.mdx';
+
+## Resumen
+
+Renderiza un personaje de asistente a partir de una forma de cuerpo, cara, color de paleta y tamaño. El componente muestra los valores proporcionados; tu aplicación gestiona la selección y la persistencia.
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--display" title="Personaje de asistente junto a su nombre" height={100} />
+
+## "Uso"
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AssistantLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <AssistantAvatar shape="circle" face="default" color="blue" size={24} />
+    <Text>Workspace assistant</Text>
+  </Text>
+);
+```
+
+## Opciones visuales
+
+Elige formas independientemente de las expresiones y los colores.
+
+| Propiedad    | Valores                                                                                    | Predeterminado   |
+| ------------ | ------------------------------------------------------------------------------------------ | ---------------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`         |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `predeterminado` |
+| `color`      | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `azul`           |
+| `tamaño`     | `14`, `16`, `20`, `24`, `40` píxeles                                                       | `24`             |
+| `isAnimated` | `true`, `false`                                                                            | `falso`          |
+
+El cuerpo y la cara usan los tokens de tema de la paleta seleccionada y siguen el tema claro u oscuro circundante. Establece `size` para un personaje cuadrado. Los atributos nativos, los eventos, `className`, `style` y `ref` se aplican al span exterior; los estilos explícitos anulan sus dimensiones y los valores predeterminados de la paleta.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const CustomAssistant = () => (
+  <AssistantAvatar
+    shape="cloud"
+    face="happy"
+    color="sky"
+    size={40}
+    aria-label="Workspace assistant"
+  />
+);
+```
+
+## Animación inactiva
+
+Establece `isAnimated` para reproducir el bucle inactivo de la expresión seleccionada. Predeterminado parpadea y mira de reojo, Feliz levanta los ojos, Guiño cierra un ojo, Sorprendido abre mucho los ojos, Somnoliento muestra una marca de sueño flotante y Amor hace palpitar sus ojos de corazón. El cuerpo permanece inmóvil.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed storyId="ui-components-data-display-assistantavatar--idle-faces" title="Animaciones inactivas para cada expresión" height={180} />
+
+La animación está desactivada de forma predeterminada. Establece `isAnimated={false}` para mostrar la expresión estática, incluido el guiño visible. Cuando el navegador prefiere movimiento reducido, el componente muestra la expresión estática incluso cuando `isAnimated` está habilitado. La preferencia también se aplica si cambia mientras se muestra el personaje.
+
+La aplicación controla el interruptor de animación. Esta propiedad controla la presentación inactiva y no representa la actividad de escucha, habla, pensamiento u otra actividad del asistente.
+
+## Accesibilidad
+
+El personaje es decorativo cuando no tiene un nombre accesible, como en el ejemplo de uso etiquetado. Para un personaje independiente, proporciona `aria-label` o `aria-labelledby`; la raíz expone entonces el rol de imagen. El cuerpo y la cara permanecen ocultos para la tecnología de asistencia para que el personaje se anuncie una sola vez.
+
+Establece `aria-hidden` explícitamente cuando necesites anular el valor predeterminado basado en el nombre, por ejemplo, para ocultar un personaje con nombre junto a texto visible equivalente.
+
+Coloca el personaje dentro de un botón o enlace con nombre cuando acompañe una acción. La aplicación gestiona el control, su etiqueta y su comportamiento.
+
+## "Props"
+
+<AssistantAvatarReference />
+
+<PageBanner illustration="page-cover-assistant-avatar" />

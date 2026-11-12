@@ -47,7 +47,7 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
   const allCompaniesViewData = mockedViews.find(
     (v) => v.name === 'All Companies',
   )!;
-  const allCompaniesView = allCompaniesViewData as unknown as View;
+  const allCompaniesView: View = allCompaniesViewData;
 
   const mockGqlViewFilterGroup: Omit<GqlViewFilterGroup, 'workspaceId'> = {
     __typename: 'ViewFilterGroup',

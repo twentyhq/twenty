@@ -61,7 +61,10 @@ describe('fromFlatObjectMetadataToObjectManifest', () => {
       targetTableName: 'DEPRECATED',
       isLabelSyncedWithName: true,
       isSearchable: false,
-      disabledObjectPermissionActions: ['canUpdateObjectRecords'],
+      disabledObjectPermissionActions: [
+        'canUpdateObjectRecords',
+        'canCreateObjectRecords',
+      ],
       openRecordIn: ObjectOpenRecordIn.SIDE_PANEL,
       labelIdentifierFieldMetadataUniversalIdentifier: LABEL_FIELD_UID,
       imageIdentifierFieldMetadataUniversalIdentifier: null,

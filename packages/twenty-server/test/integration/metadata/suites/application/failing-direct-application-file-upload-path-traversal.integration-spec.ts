@@ -151,7 +151,7 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   },
   {
     title:
-      'when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock)',
+      'when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock/.gz)',
     context: {
       applicationUniversalIdentifier: TEST_APP_ID,
       fileFolder: 'Dependencies',

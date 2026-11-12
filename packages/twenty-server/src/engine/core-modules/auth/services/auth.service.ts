@@ -76,7 +76,7 @@ import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/w
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -94,7 +94,7 @@ export class AuthService {
     private readonly authSsoService: AuthSsoService,
     private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
-    private readonly permissionsService: PermissionsService,
+    private readonly settingPermissionsService: SettingPermissionsService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserEntity)
@@ -361,12 +361,10 @@ export class AuthService {
       return false;
     }
 
-    return await this.permissionsService.userHasWorkspaceSettingPermission({
-      userWorkspaceId: userWorkspace.id,
+    return await this.settingPermissionsService.userWorkspaceHasPermissionFlag({
       workspaceId: workspace.id,
-      setting: PermissionFlagType.SSO_BYPASS,
-      applicationId: undefined,
-      agentId: undefined,
+      userWorkspaceId: userWorkspace.id,
+      permissionFlag: PermissionFlagType.SSO_BYPASS,
     });
   }
 

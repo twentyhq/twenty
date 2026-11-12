@@ -3,7 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { findRelationPathsToPerson } from 'src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util';
 
@@ -58,53 +60,57 @@ const buildGraphFixtures = (
     }
   }
 
-  const flatObjectMetadataMaps = {
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {},
     universalIdentifierById: {},
-  } as unknown as FlatEntityMaps<FlatObjectMetadata>;
+    universalIdentifiersByApplicationId: {},
+  };
 
-  const flatFieldMetadataMaps = {
+  const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: {},
     universalIdentifierById: {},
-  } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+    universalIdentifiersByApplicationId: {},
+  };
 
   for (const [objectNameSingular, relationSpecs] of Object.entries(
     specsByObjectNameSingular,
   )) {
-    flatObjectMetadataMaps.byUniversalIdentifier[objectNameSingular] = {
-      id: objectNameSingular,
-      universalIdentifier: objectNameSingular,
-      nameSingular: objectNameSingular,
-      namePlural: `${objectNameSingular}s`,
-      isSystem: systemObjectNames.includes(objectNameSingular),
-      fieldIds: relationSpecs.map((spec) =>
-        fieldId(objectNameSingular, spec.fieldName),
-      ),
-    } as unknown as FlatObjectMetadata;
+    flatObjectMetadataMaps.byUniversalIdentifier[objectNameSingular] =
+      getFlatObjectMetadataMock({
+        id: objectNameSingular,
+        universalIdentifier: objectNameSingular,
+        nameSingular: objectNameSingular,
+        namePlural: `${objectNameSingular}s`,
+        isSystem: systemObjectNames.includes(objectNameSingular),
+        fieldIds: relationSpecs.map((spec) =>
+          fieldId(objectNameSingular, spec.fieldName),
+        ),
+      });
     flatObjectMetadataMaps.universalIdentifierById[objectNameSingular] =
       objectNameSingular;
 
     for (const spec of relationSpecs) {
       const id = fieldId(objectNameSingular, spec.fieldName);
 
-      flatFieldMetadataMaps.byUniversalIdentifier[id] = {
-        id,
-        universalIdentifier: id,
-        name: spec.fieldName,
-        objectMetadataId: objectNameSingular,
-        type: isDefined(spec.morphId)
-          ? FieldMetadataType.MORPH_RELATION
-          : FieldMetadataType.RELATION,
-        morphId: spec.morphId ?? null,
-        isActive: true,
-        isSystem: false,
-        relationTargetFieldMetadataId: fieldId(
-          spec.targetObjectNameSingular,
-          spec.inverseFieldName,
-        ),
-        settings: { relationType: spec.relationType },
-        universalSettings: { relationType: spec.relationType },
-      } as unknown as FlatFieldMetadata;
+      flatFieldMetadataMaps.byUniversalIdentifier[id] =
+        getFlatFieldMetadataMock({
+          id,
+          universalIdentifier: id,
+          name: spec.fieldName,
+          objectMetadataId: objectNameSingular,
+          type: isDefined(spec.morphId)
+            ? FieldMetadataType.MORPH_RELATION
+            : FieldMetadataType.RELATION,
+          morphId: spec.morphId ?? null,
+          isActive: true,
+          isSystem: false,
+          relationTargetFieldMetadataId: fieldId(
+            spec.targetObjectNameSingular,
+            spec.inverseFieldName,
+          ),
+          settings: { relationType: spec.relationType },
+          universalSettings: { relationType: spec.relationType },
+        });
       flatFieldMetadataMaps.universalIdentifierById[id] = id;
     }
   }

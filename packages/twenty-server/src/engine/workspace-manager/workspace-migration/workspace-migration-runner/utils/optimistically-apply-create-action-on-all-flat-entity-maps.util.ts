@@ -65,6 +65,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'viewSort':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
+    case 'rowLevelPermissionRule':
     case 'viewFilterGroup':
     case 'index':
     case 'logicFunction':
@@ -94,6 +95,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({

@@ -1,6 +1,4 @@
 import { findLogicFunctionsTriggeredByEventName } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/find-logic-functions-triggered-by-event-name';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type FlatLogicFunctionMaps } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function-maps.type';
 
 const buildLogicFunction = ({
   id,
@@ -10,22 +8,19 @@ const buildLogicFunction = ({
   id: string;
   triggerEventName?: string;
   deletedAt?: string | null;
-}) =>
-  ({
-    id,
-    deletedAt,
-    databaseEventTriggerSettings: triggerEventName
-      ? { eventName: triggerEventName }
-      : null,
-  }) as unknown as FlatLogicFunction;
+}) => ({
+  id,
+  deletedAt,
+  databaseEventTriggerSettings: triggerEventName
+    ? { eventName: triggerEventName }
+    : null,
+});
 
 const findTriggeredLogicFunctionIds = (
-  logicFunctions: FlatLogicFunction[],
+  logicFunctions: ReturnType<typeof buildLogicFunction>[],
   eventName: string,
 ) => {
-  const flatLogicFunctionMaps: FlatLogicFunctionMaps = {
-    universalIdentifierById: {},
-    universalIdentifiersByApplicationId: {},
+  const flatLogicFunctionMaps = {
     byUniversalIdentifier: Object.fromEntries(
       logicFunctions.map((logicFunction) => [logicFunction.id, logicFunction]),
     ),

@@ -1,5 +1,4 @@
 import { beforeEach, expect, it, vi } from 'vitest';
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/utils/completeAndChargeCallRecording';
 
 const { charge, prepare } = vi.hoisted(() => ({
@@ -26,7 +25,7 @@ it('charges only the worker that completes the recording', async () => {
     .fn()
     .mockResolvedValueOnce({ updateCallRecordings: [{ id: 'recording-1' }] })
     .mockResolvedValue({ updateCallRecordings: [] });
-  const client = { mutation } as unknown as CoreApiClient;
+  const client = { query: vi.fn(), mutation };
   expect(
     await completeAndChargeCallRecording(client, { id: 'recording-1' }),
   ).toBe(true);
@@ -41,7 +40,7 @@ it('does not replay a charge after an ambiguous failure', async () => {
     .fn()
     .mockResolvedValueOnce({ updateCallRecordings: [{ id: 'recording-1' }] })
     .mockResolvedValue({ updateCallRecordings: [] });
-  const client = { mutation } as unknown as CoreApiClient;
+  const client = { query: vi.fn(), mutation };
   charge.mockRejectedValueOnce(new Error('billing offline'));
   await expect(
     completeAndChargeCallRecording(client, { id: 'recording-1' }),
@@ -54,9 +53,12 @@ it('leaves the completion fence untouched when provider validation fails', async
   const mutation = vi.fn();
   prepare.mockRejectedValue(new Error('duration unavailable'));
   await expect(
-    completeAndChargeCallRecording({ mutation } as unknown as CoreApiClient, {
-      id: 'recording-1',
-    }),
+    completeAndChargeCallRecording(
+      { query: vi.fn(), mutation },
+      {
+        id: 'recording-1',
+      },
+    ),
   ).rejects.toThrow('duration unavailable');
   expect(mutation).not.toHaveBeenCalled();
   expect(charge).not.toHaveBeenCalled();

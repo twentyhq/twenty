@@ -1,3 +1,5 @@
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 import {
   SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
@@ -6,12 +8,13 @@ import {
 import { FieldMetadataType, ViewKey } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { DemoteAndBackfillApplicationIndexViewCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-workspace-command-1785255690000-demote-and-backfill-application-index-view.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 
 const WORKSPACE_ID = '20202020-0000-4000-8000-000000000001';
 const STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -24,7 +27,8 @@ const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000cc';
 
 const DERIVED_VIEW_UNIVERSAL_IDENTIFIER = getSystemViewUniversalIdentifier({
-  objectMetadataApplicationUniversalIdentifier: EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectMetadataApplicationUniversalIdentifier:
+    EXTERNAL_APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
   viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
@@ -82,7 +86,7 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
   let viewUpdateMock: jest.Mock;
   let validateBuildAndRunWorkspaceMigrationMock: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     getOrRecomputeMock = jest.fn();
@@ -96,32 +100,52 @@ describe('DemoteAndBackfillApplicationIndexViewCommand', () => {
       update: viewUpdateMock,
     };
 
-    command = new DemoteAndBackfillApplicationIndexViewCommand(
-      {} as WorkspaceIteratorService,
-      {
-        getOrRecompute: getOrRecomputeMock,
-      } as unknown as WorkspaceCacheService,
-      {
-        invalidateCache: invalidateCacheMock,
-      } as unknown as WorkspaceMigrationRunnerService,
-      {
-        findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
-          .fn()
-          .mockResolvedValue({
-            twentyStandardFlatApplication: {
-              universalIdentifier: STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-            workspaceCustomFlatApplication: {
-              universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-            },
-          }),
-      } as unknown as ApplicationService,
-      {
-        validateBuildAndRunLegacyWorkspaceMigration:
-          validateBuildAndRunWorkspaceMigrationMock,
-      } as unknown as WorkspaceMigrationValidateBuildAndRunService,
-      viewRepositoryMock as never,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        DemoteAndBackfillApplicationIndexViewCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: getOrRecomputeMock,
+          },
+        },
+        {
+          provide: WorkspaceMigrationRunnerService,
+          useValue: {
+            invalidateCache: invalidateCacheMock,
+          },
+        },
+        {
+          provide: ApplicationService,
+          useValue: {
+            findWorkspaceTwentyStandardAndCustomApplicationOrThrow: jest
+              .fn()
+              .mockResolvedValue({
+                twentyStandardFlatApplication: {
+                  universalIdentifier:
+                    STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+                workspaceCustomFlatApplication: {
+                  universalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+                },
+              }),
+          },
+        },
+        {
+          provide: WorkspaceMigrationValidateBuildAndRunService,
+          useValue: {
+            validateBuildAndRunLegacyWorkspaceMigration:
+              validateBuildAndRunWorkspaceMigrationMock,
+          },
+        },
+        {
+          provide: getRepositoryToken(ViewEntity),
+          useValue: viewRepositoryMock,
+        },
+      ],
+    }).compile();
+    command = module.get(DemoteAndBackfillApplicationIndexViewCommand);
   });
 
   const mockWorkspaceCache = ({

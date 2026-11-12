@@ -1,6 +1,7 @@
 import { Window } from '@remote-dom/polyfill';
 
 import { reportErrorToPolyfillWindow } from '@/polyfills/utils/reportErrorToPolyfillWindow';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
 type ReportedErrorEvent = {
   message: string;
@@ -9,8 +10,7 @@ type ReportedErrorEvent = {
   preventDefault: () => void;
 };
 
-const createPolyfillWindow = () =>
-  new Window() as unknown as Record<string, unknown>;
+const createPolyfillWindow = () => toGlobalScopeRecord(new Window());
 
 const listenForErrorEvents = (
   polyfillWindow: Record<string, unknown>,

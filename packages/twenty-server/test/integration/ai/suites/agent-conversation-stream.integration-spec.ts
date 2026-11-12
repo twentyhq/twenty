@@ -16,8 +16,18 @@ import {
   buildAgentExecutionResult,
   mockAgentRunTurns,
 } from 'test/utils/mock-agent-run-turns.util';
+import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -136,12 +146,18 @@ describe('Agent conversations read by their application (integration)', () => {
         threadId,
         turnId: runId,
         role: 'user',
+        agentId: null,
+        senderApplicationId: application.id,
+        isBuiltInAssistant: false,
         parts: [{ type: 'text', textContent: 'When does Acme renew?' }],
       },
       {
         threadId,
         turnId: runId,
         role: 'assistant',
+        agentId: application.agentId,
+        senderApplicationId: null,
+        isBuiltInAssistant: false,
         parts: [
           { type: 'step-start', textContent: '' },
           { type: 'text', textContent: 'Acme renews in May' },
@@ -152,6 +168,134 @@ describe('Agent conversations read by their application (integration)', () => {
       chunks: [],
       maxSeq: 0,
     });
+  });
+
+  it('keeps a built-in reply distinct from its application sender and execution actor', async () => {
+    const writer = getAppProviderByClassName<AgentConversationWriterService>(
+      'AgentConversationWriterService',
+    );
+    const recorder = getAppProviderByClassName<AgentTurnRecorderService>(
+      'AgentTurnRecorderService',
+    );
+    const threadKey = randomUUID();
+    const threadId = buildAgentRunThreadId({
+      applicationId: application.id,
+      agentId: application.agentId,
+      threadKey,
+    });
+    const streamId = randomUUID();
+    const createdBy = {
+      source: FieldActorSource.WORKFLOW,
+      name: 'Renewal workflow',
+      workspaceMemberId: null,
+      context: { applicationId: application.id },
+    };
+
+    threadIds.push(threadId);
+
+    await writer.runInTransaction({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      work: (scope) =>
+        scope.insert({
+          name: 'agentChatThread',
+          values: {
+            id: threadId,
+            title: 'Built-in assistant identity',
+            activeStreamId: streamId,
+          },
+        }),
+    });
+
+    const turnId = await writer.insertTurn({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      agentId: null,
+      status: AgentTurnStatus.RUNNING,
+      createdBy,
+    });
+
+    expect(
+      await recorder.markRunning({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        turnId,
+        createdBy: { ...createdBy, source: FieldActorSource.APPLICATION },
+        isBuiltInAssistant: true,
+        streamClaim: { threadId, streamId },
+      }),
+    ).toBe(true);
+    expect(
+      (
+        await global.app
+          .get<string, AgentHistoryRepository<AgentTurnWorkspaceEntity>>(
+            getAgentHistoryRepositoryToken('agentTurn'),
+            { strict: false },
+          )
+          .findOne(SEED_APPLE_WORKSPACE_ID, { where: { id: turnId } })
+      )?.createdBy,
+    ).toEqual({
+      ...createdBy,
+      context: { ...createdBy.context, isBuiltInAssistant: true },
+    });
+
+    await writer.insertMessage({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      turnId,
+      agentId: null,
+      role: AgentMessageRole.USER,
+      senderUserWorkspaceId: null,
+      senderApplicationId: application.id,
+      parts: [{ type: 'text', text: 'Please summarize the renewal.' }],
+    });
+    await writer.upsertAssistantMessage({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      id: randomUUID(),
+      threadId,
+      turnId,
+      agentId: null,
+      parts: [{ type: 'text', text: 'Ada summarized the renewal.' }],
+    });
+    await writer.runInTransaction({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      work: (scope) =>
+        scope.update({
+          name: 'agentChatThread',
+          where: { id: threadId },
+          values: { activeStreamId: null },
+        }),
+    });
+
+    const response = await makeMetadataApiRequest(
+      agentConversationHistoryQueryFactory({
+        agentUniversalIdentifier,
+        threadKey,
+      }),
+      applicationToken,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.chatMessages).toEqual([
+      {
+        threadId,
+        turnId,
+        role: 'user',
+        agentId: null,
+        senderApplicationId: application.id,
+        isBuiltInAssistant: false,
+        parts: [{ type: 'text', textContent: 'Please summarize the renewal.' }],
+      },
+      {
+        threadId,
+        turnId,
+        role: 'assistant',
+        agentId: null,
+        senderApplicationId: null,
+        isBuiltInAssistant: true,
+        parts: [{ type: 'text', textContent: 'Ada summarized the renewal.' }],
+      },
+    ]);
   });
 
   it('reads a conversation before its first run as empty', async () => {

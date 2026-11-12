@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Not } from 'typeorm';
 
 import { AgentChatAssistantPolicyService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-assistant-policy.service';
@@ -15,6 +15,7 @@ import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 @Injectable()
 export class AgentChatAssistantParticipationService {
@@ -32,6 +33,8 @@ export class AgentChatAssistantParticipationService {
     workspaceMemberId,
     thread,
     isInitialMessage: providedIsInitialMessage,
+    isUncommittedThread = false,
+    transactionScope,
     isAssistantMentioned = false,
     isInitialAssistantParticipant,
     isReplyRequested = true,
@@ -43,6 +46,8 @@ export class AgentChatAssistantParticipationService {
     thread: AgentChatThreadWorkspaceEntity;
     isInitialMessage?: boolean;
     isReplyRequested?: boolean;
+    isUncommittedThread?: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<AgentChatAssistantParticipation> {
     await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
 
@@ -57,13 +62,14 @@ export class AgentChatAssistantParticipationService {
         workspaceId,
         workspaceMemberId,
         threadId: thread.id,
+        transactionScope,
         memberIds: [
           ...mentionedWorkspaceMemberIds,
           ...(isInitialMessage ? recipientWorkspaceMemberIds : []),
         ],
       });
     const assistantMessageDecision =
-      await this.assistantPolicyService.resolveAssistantMessageDecision({
+      await this.assistantPolicyService.resolveAssistantMessageDecisionOrThrow({
         workspaceId,
         thread,
         candidateWorkspaceMemberIds: [
@@ -74,6 +80,10 @@ export class AgentChatAssistantParticipationService {
         isInitialAssistantParticipant,
         isInitialMessage,
         isReplyRequested,
+        isUncommittedThread,
+        hasRequestedRecipients:
+          isNonEmptyArray(recipientWorkspaceMemberIds) ||
+          isNonEmptyArray(mentionedWorkspaceMemberIds),
       });
 
     return { ...assistantMessageDecision, isInitialMessage };
@@ -104,14 +114,14 @@ export class AgentChatAssistantParticipationService {
     const persistParticipationWithinTransaction = async (
       transactionScope: AgentHistoryTransactionScope,
     ) => {
-      const updatedThreadCount = await transactionScope.update(
-        'agentChatThread',
-        {
+      const updatedThreadCount = await transactionScope.update({
+        name: 'agentChatThread',
+        where: {
           id: thread.id,
           isAssistantParticipant: !isAssistantParticipant,
         },
-        { isAssistantParticipant },
-      );
+        values: { isAssistantParticipant },
+      });
 
       if (updatedThreadCount > 0 && shouldEmitEvent) {
         transactionScope.afterCommit(() =>
@@ -129,9 +139,10 @@ export class AgentChatAssistantParticipationService {
       return;
     }
 
-    await this.conversationWriterService.runInTransaction(
+    await this.conversationWriterService.runInTransaction({
       workspaceId,
-      persistParticipationWithinTransaction,
-    );
+      threadId: thread.id,
+      work: persistParticipationWithinTransaction,
+    });
   }
 }

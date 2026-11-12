@@ -4,7 +4,7 @@ import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-eve
 import { fetchCalendarEventsByFilter } from 'src/logic-functions/data/fetch-calendar-events-by-filter.util';
 
 export const fetchCalendarEventsByStartsAtValues = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   startsAtValues: string[],
 ): Promise<CalendarEventRecord[]> => {
   const uniqueStartsAtValues = [...new Set(startsAtValues)].sort();

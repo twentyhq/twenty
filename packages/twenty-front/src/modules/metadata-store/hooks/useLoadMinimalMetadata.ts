@@ -66,6 +66,18 @@ export const useLoadMinimalMetadata = () => {
       }
     }
 
+    // Views cached before ViewFragment selected universalIdentifier keep a
+    // matching hash, so they would never be refetched otherwise
+    const cachedViews = store.get(metadataStoreState.atomFamily('views'))
+      .current as FlatView[];
+
+    if (
+      !staleEntityKeys.includes('views') &&
+      cachedViews.some((view) => !isDefined(view.universalIdentifier))
+    ) {
+      staleEntityKeys.push('views');
+    }
+
     const objectsEntry = store.get(
       metadataStoreState.atomFamily('objectMetadataItems'),
     );

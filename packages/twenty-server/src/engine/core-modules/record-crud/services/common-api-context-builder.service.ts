@@ -16,9 +16,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -26,14 +26,15 @@ export type CommonApiContext = {
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  recordsPermissions: RoleRecordsPermissions;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
 };
 
 @Injectable()
 export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
   ) {}
 
   async build({
@@ -88,16 +89,21 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const recordsPermissions =
-      await this.recordAccessPolicyService.getRecordsPermissionsOrThrow(
-        authContext,
+    const principals =
+      await this.principalPermissionsReadService.resolvePermissionsPrincipalsOrThrow(
+        {
+          authContext,
+        },
       );
 
-    const restrictedFields =
-      recordsPermissions.objects[flatObjectMetadata.id]?.restrictedFields ?? {};
+    const unreadableFieldMetadataIds =
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectedFields = buildFieldSelection({
-      restrictedFields,
+      unreadableFieldMetadataIds,
       flatObjectMetadata,
       flatFields: findManyFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityIds: flatObjectMetadata.fieldIds,
@@ -118,7 +124,7 @@ export class CommonApiContextBuilderService {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      recordsPermissions,
+      unreadableFieldMetadataIds,
     };
   }
 }

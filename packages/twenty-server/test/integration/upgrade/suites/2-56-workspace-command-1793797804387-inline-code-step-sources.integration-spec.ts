@@ -50,6 +50,9 @@ const SOURCE = `export const main = async (params: { name: string }) => ({
 const OVERSIZED_SOURCE = `${SOURCE}
 // ${'x'.repeat(CODE_STEP_SOURCE_MAX_LENGTH)}`;
 
+const NUL_SOURCE = `${SOURCE}
+// \0`;
+
 type CodeStep = {
   id: string;
   type: string;
@@ -81,10 +84,11 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   let legacyWorkflow: LegacyCodeStepWorkflow;
   let missingFunctionWorkflow: LegacyCodeStepWorkflow;
   let oversizedWorkflow: LegacyCodeStepWorkflow;
+  let nulSourceWorkflow: LegacyCodeStepWorkflow;
   let unreadableSourceWorkflow: LegacyCodeStepWorkflow;
   let otherApplicationWorkflow: LegacyCodeStepWorkflow;
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowIds: string[] = [];
+  const workspaceWorkflowVersionIds: string[] = [];
   const logicFunctionIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -152,7 +156,9 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
   };
 
   // the oversized source is over the test app's 100kb JSON body limit, so it is written to storage directly
-  const createOversizedLogicFunction = async (): Promise<string> => {
+  const createLogicFunctionWithStoredSource = async (
+    source: string,
+  ): Promise<string> => {
     const logicFunctionId = await createLogicFunction();
     const { sourceHandlerPath, applicationUniversalIdentifier } =
       await findSourceLocation(logicFunctionId);
@@ -164,7 +170,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: sourceHandlerPath,
-      stream: Readable.from(Buffer.from(OVERSIZED_SOURCE)),
+      stream: Readable.from(Buffer.from(source)),
       mimeType: 'text/plain',
     });
 
@@ -299,7 +305,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowIds.push(workspaceWorkflowId);
+    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
 
     const [step] = await readSteps({
       schema: 'core',
@@ -331,7 +337,12 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     });
     oversizedWorkflow = await createLegacyCodeStepWorkflow({
       name: 'Greet with oversized code',
-      logicFunctionId: await createOversizedLogicFunction(),
+      logicFunctionId:
+        await createLogicFunctionWithStoredSource(OVERSIZED_SOURCE),
+    });
+    nulSourceWorkflow = await createLegacyCodeStepWorkflow({
+      name: 'Greet with NUL code',
+      logicFunctionId: await createLogicFunctionWithStoredSource(NUL_SOURCE),
     });
     unreadableSourceWorkflow = await createLegacyCodeStepWorkflow({
       name: 'Greet with unreadable code',
@@ -350,9 +361,7 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    for (const workspaceWorkflowId of workspaceWorkflowIds) {
-      await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-    }
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
 
     for (const logicFunctionId of logicFunctionIds) {
       if (await logicFunctionExists(logicFunctionId)) {
@@ -453,6 +462,21 @@ describe('2-56 workspace command - inline code step sources (integration)', () =
         workflowVersionId: oversizedWorkflow.workspaceWorkflowVersionId,
       }),
     ).toEqual([oversizedWorkflow.step]);
+  });
+
+  it('leaves a step whose source contains a NUL character untouched', async () => {
+    expect(
+      await readSteps({
+        schema: 'core',
+        workflowVersionId: nulSourceWorkflow.coreWorkflowVersionId,
+      }),
+    ).toEqual([nulSourceWorkflow.step]);
+    expect(
+      await readSteps({
+        schema: SCHEMA,
+        workflowVersionId: nulSourceWorkflow.workspaceWorkflowVersionId,
+      }),
+    ).toEqual([nulSourceWorkflow.step]);
   });
 
   it('leaves a step whose function exists but whose source cannot be read untouched', async () => {

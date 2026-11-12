@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
@@ -21,11 +22,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 type AiChatThreadActionsDropdownProps = {
   thread: {
     id: string;
     title?: string | null;
+    conversationType?: AgentChatThreadRecord['conversationType'];
     deletedAt?: string | null;
     lastActivityAt?: string | null;
   };
@@ -67,6 +70,10 @@ export const AiChatThreadActionsDropdown = ({
 
   const canUpdate = isDefined(permissions) && permissions.canUpdate;
   const isDeleted = isDefined(thread.deletedAt);
+  const canRename =
+    canUpdate &&
+    !isDeleted &&
+    thread.conversationType !== AgentChatThreadConversationType.DIRECT_MESSAGE;
 
   const handleRename = (event: MouseEvent) => {
     event.stopPropagation();
@@ -128,7 +135,7 @@ export const AiChatThreadActionsDropdown = ({
                     {t`Detach`}
                   </Dropdown.ActionItem>
                 )}
-                {canUpdate && !isDeleted && (
+                {canRename && (
                   <Dropdown.ActionItem
                     startIcon={<IconPencil />}
                     onClick={handleRename}

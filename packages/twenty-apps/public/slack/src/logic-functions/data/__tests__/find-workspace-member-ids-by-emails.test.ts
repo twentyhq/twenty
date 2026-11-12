@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findWorkspaceMemberIdsByEmails } from 'src/logic-functions/data/find-workspace-member-ids-by-emails';
@@ -24,7 +23,7 @@ const buildClient = (
   }
 
   return {
-    client: { query: queryMock } as unknown as CoreApiClient,
+    client: { query: queryMock },
     queryMock,
   };
 };

@@ -40,6 +40,31 @@ describe('maskStreamChunkOfTurnActedByOthers', () => {
     ]);
   });
 
+  it('preserves public author identity while masking private stream metadata', () => {
+    expect(
+      maskStreamChunkOfTurnActedByOthers({
+        type: 'start',
+        messageId: 'message-id',
+        messageMetadata: {
+          agentId: null,
+          isBuiltInAssistant: true,
+          turnId: 'turn-id',
+          startedAt: '2026-11-06T10:00:00.000Z',
+          usage: { inputCredits: 12 },
+          model: { contextWindowTokens: 120000 },
+        },
+      }),
+    ).toEqual({
+      type: 'start',
+      messageId: 'message-id',
+      messageMetadata: {
+        agentId: null,
+        isBuiltInAssistant: true,
+        turnId: 'turn-id',
+      },
+    });
+  });
+
   it('drops the usage the reply carries as metadata', () => {
     expect(
       [

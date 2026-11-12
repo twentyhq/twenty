@@ -134,11 +134,11 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     }
   }
 
-  addListener(listener: WorkerMediaQueryListener): void {
+  addListener(listener: WorkerMediaQueryListener | null): void {
     this.addEventListener(CHANGE_EVENT_TYPE, listener as EventListener);
   }
 
-  removeListener(listener: WorkerMediaQueryListener): void {
+  removeListener(listener: WorkerMediaQueryListener | null): void {
     this.removeEventListener(CHANGE_EVENT_TYPE, listener as EventListener);
   }
 

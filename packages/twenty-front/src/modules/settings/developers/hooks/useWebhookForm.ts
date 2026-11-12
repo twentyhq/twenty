@@ -79,7 +79,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
-      if (!webhook) return;
+      if (!webhook) {
+        return;
+      }
 
       const baseOperations = webhook?.operations?.length
         ? parseOperationsFromStrings(webhook.operations)

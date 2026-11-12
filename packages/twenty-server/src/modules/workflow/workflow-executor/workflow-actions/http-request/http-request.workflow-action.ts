@@ -3,12 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { isWorkflowHttpRequestAction } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/guards/is-workflow-http-request-action.guard';
 import { type WorkflowHttpRequestActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-input.type';
 import { buildHttpRequestStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/utils/build-http-request-step-log.util';
@@ -36,6 +38,18 @@ export class HttpRequestWorkflowAction extends ToolBackedWorkflowAction<Workflow
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }
+  }
+
+  protected override async buildToolExecutionContext(
+    runInfo: WorkflowRunInfo,
+    stepId: string,
+  ): Promise<ToolExecutionContext> {
+    return {
+      workspaceId: runInfo.workspaceId,
+      workflowRunId: runInfo.workflowRunId,
+      workflowStepId: stepId,
+      outboundRequestSource: 'workflow-http',
+    };
   }
 
   protected buildStepLog({

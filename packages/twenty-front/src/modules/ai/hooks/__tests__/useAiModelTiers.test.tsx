@@ -68,11 +68,36 @@ const models = [
 ];
 
 const instanceTiers = [
-  { tier: AiModelTier.extraFast, modelId: 'openai/luna' },
-  { tier: AiModelTier.fast, modelId: 'openai/luna' },
-  { tier: AiModelTier.balanced, modelId: 'openai/terra' },
-  { tier: AiModelTier.smart, modelId: 'openai/sol' },
-  { tier: AiModelTier.extraSmart, modelId: 'openai/missing' },
+  {
+    tier: AiModelTier.extraFast,
+    modelId: 'openai/luna',
+    requiredDataResidencyRegion: null,
+    isZeroDataRetentionRequired: false,
+  },
+  {
+    tier: AiModelTier.fast,
+    modelId: 'openai/luna',
+    requiredDataResidencyRegion: null,
+    isZeroDataRetentionRequired: false,
+  },
+  {
+    tier: AiModelTier.balanced,
+    modelId: 'openai/terra',
+    requiredDataResidencyRegion: null,
+    isZeroDataRetentionRequired: false,
+  },
+  {
+    tier: AiModelTier.smart,
+    modelId: 'openai/sol',
+    requiredDataResidencyRegion: null,
+    isZeroDataRetentionRequired: false,
+  },
+  {
+    tier: AiModelTier.extraSmart,
+    modelId: 'openai/missing',
+    requiredDataResidencyRegion: null,
+    isZeroDataRetentionRequired: false,
+  },
 ];
 
 const renderHooks = () =>

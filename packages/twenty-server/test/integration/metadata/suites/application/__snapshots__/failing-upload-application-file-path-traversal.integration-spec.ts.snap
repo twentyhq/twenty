@@ -93,14 +93,14 @@ exports[`Upload application file should fail when filePath has an invalid extens
 }
 `;
 
-exports[`Upload application file should fail when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock) 1`] = `
+exports[`Upload application file should fail when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock/.gz) 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Invalid file extension. Allowed extensions: .json, .lock",
+  "message": "Invalid file extension. Allowed extensions: .json, .lock, .gz",
   "name": "UserInputError",
 }
 `;

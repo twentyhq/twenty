@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 18:13\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -4747,10 +4747,10 @@ msgstr "ICP"
 msgid "Identity"
 msgstr "아이덴티티"
 
-#. js-lingui-id: 02Xy0V
+#. js-lingui-id: 9JU/6K
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr "첫 번째 Twenty 워크스페이스이고 아직 파트너 코드가 설정되지 않은 경우, 무료 체험 기간 동안 설정 → 청구에서 귀하의 코드를 입력할 수 있습니다. 첫 결제 후 30일 이내에 추가해 달라고 요청할 수도 있습니다. 워크스페이스에 코드가 저장되면 변경할 수 없습니다."
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "첫 번째 Twenty 워크스페이스이고 아직 파트너 코드가 설정되지 않은 경우, 무료 체험 기간 동안 해당 워크스페이스의 /settings/partner 페이지에서 귀하의 코드를 입력할 수 있습니다. 첫 결제 후 30일 이내에는 추가해 달라고 요청할 수도 있습니다. 워크스페이스에 코드가 저장되면 변경할 수 없습니다."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts

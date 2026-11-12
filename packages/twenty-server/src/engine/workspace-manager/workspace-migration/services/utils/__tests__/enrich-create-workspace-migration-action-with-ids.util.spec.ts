@@ -1,3 +1,8 @@
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { buildUniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/utils/__tests__/build-universal-flat-page-layout-tab.test-util';
 import { enrichCreateWorkspaceMigrationActionsWithIds } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { type UniversalCreateFieldAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { type UniversalCreatePageLayoutTabAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-tab/types/workspace-migration-page-layout-tab-action.type';
@@ -15,20 +20,28 @@ const buildCreateFieldAction = ({
   fieldUniversalIdentifier: string;
   relatedFieldUniversalIdentifier?: string;
   junctionTargetFieldUniversalIdentifier?: string;
-}): UniversalCreateFieldAction =>
-  ({
-    type: 'create',
-    metadataName: 'fieldMetadata',
-    flatEntity: {
-      universalIdentifier: fieldUniversalIdentifier,
-      universalSettings: junctionTargetFieldUniversalIdentifier
-        ? { junctionTargetFieldUniversalIdentifier }
-        : undefined,
-    },
-    relatedUniversalFlatFieldMetadata: relatedFieldUniversalIdentifier
-      ? { universalIdentifier: relatedFieldUniversalIdentifier }
-      : undefined,
-  }) as unknown as UniversalCreateFieldAction;
+}): UniversalCreateFieldAction => ({
+  type: 'create',
+  metadataName: 'fieldMetadata',
+  flatEntity: getFlatFieldMetadataMock({
+    universalIdentifier: fieldUniversalIdentifier,
+    objectMetadataId: 'object-metadata-id',
+    type: FieldMetadataType.RELATION,
+    universalSettings: isDefined(junctionTargetFieldUniversalIdentifier)
+      ? {
+          relationType: RelationType.ONE_TO_MANY,
+          junctionTargetFieldUniversalIdentifier,
+        }
+      : null,
+  }),
+  relatedUniversalFlatFieldMetadata: isDefined(relatedFieldUniversalIdentifier)
+    ? getFlatFieldMetadataMock({
+        universalIdentifier: relatedFieldUniversalIdentifier,
+        objectMetadataId: 'object-metadata-id',
+        type: FieldMetadataType.RELATION,
+      })
+    : undefined,
+});
 
 const buildCreatePageLayoutTabAction = ({
   tabUniversalIdentifier,
@@ -36,23 +49,21 @@ const buildCreatePageLayoutTabAction = ({
 }: {
   tabUniversalIdentifier: string;
   pageLayoutUniversalIdentifier: string;
-}): UniversalCreatePageLayoutTabAction =>
-  ({
-    type: 'create',
-    metadataName: 'pageLayoutTab',
-    flatEntity: {
-      universalIdentifier: tabUniversalIdentifier,
-      pageLayoutUniversalIdentifier,
-    },
-  }) as unknown as UniversalCreatePageLayoutTabAction;
+}): UniversalCreatePageLayoutTabAction => ({
+  type: 'create',
+  metadataName: 'pageLayoutTab',
+  flatEntity: buildUniversalFlatPageLayoutTab({
+    universalIdentifier: tabUniversalIdentifier,
+    pageLayoutUniversalIdentifier,
+  }),
+});
 
 const buildWorkspaceMigration = (
   actions: SpecMigrationAction[],
-): WorkspaceMigration =>
-  ({
-    applicationUniversalIdentifier: 'app',
-    actions,
-  }) as unknown as WorkspaceMigration;
+): WorkspaceMigration => ({
+  applicationUniversalIdentifier: 'app',
+  actions,
+});
 
 describe('enrichCreateWorkspaceMigrationActionsWithIds', () => {
   it('should assign an id to a create field action that has none', () => {

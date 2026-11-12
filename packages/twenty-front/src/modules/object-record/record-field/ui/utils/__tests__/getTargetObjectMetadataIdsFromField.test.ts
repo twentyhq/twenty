@@ -33,7 +33,7 @@ describe('getTargetObjectMetadataIdsFromField', () => {
       relation: {
         targetObjectMetadata: {},
       },
-    } as unknown as FieldMetadataItem;
+    };
 
     expect(getTargetObjectMetadataIdsFromField(field)).toEqual([]);
   });
@@ -60,7 +60,7 @@ describe('getTargetObjectMetadataIdsFromField', () => {
         { targetObjectMetadata: { id: 'target-1' } },
         { targetObjectMetadata: {} },
       ],
-    } as unknown as FieldMetadataItem;
+    };
 
     expect(getTargetObjectMetadataIdsFromField(field)).toEqual(['target-1']);
   });

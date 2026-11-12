@@ -3,6 +3,7 @@ import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 
+import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { MentionSuggestion } from '@/mention/extensions/MentionSuggestion';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 
@@ -52,13 +53,7 @@ describe('MentionSuggestion', () => {
   });
 
   it('should add ProseMirror plugins', () => {
-    const plugins = editor.state.plugins;
-    const hasSuggestionPlugin = plugins.some(
-      (plugin) =>
-        (plugin as unknown as { key: string }).key === 'mention-suggestion$',
-    );
-
-    expect(hasSuggestionPlugin).toBe(true);
+    expect(MENTION_SUGGESTION_PLUGIN_KEY.get(editor.state)).toBeDefined();
   });
 
   it('should accept @ character in editor content', () => {

@@ -1,24 +1,26 @@
-import { type ExecutionContext } from '@nestjs/common';
+import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
+import { Test } from '@nestjs/testing';
 
-import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/cloudflare/guards/cloudflare-secret.guard';
 
 const buildMockContext = (headers: Record<string, unknown>) =>
-  ({
-    switchToHttp: () => ({
-      getRequest: () => ({ headers }),
-    }),
-  }) as unknown as ExecutionContext;
+  new ExecutionContextHost([{ headers }]);
 
 describe('CloudflareSecretMatchGuard.canActivate', () => {
   let guard: CloudflareSecretMatchGuard;
   let twentyConfigService: TwentyConfigService;
 
-  beforeEach(() => {
-    twentyConfigService = {
-      get: jest.fn(),
-    } as unknown as TwentyConfigService;
-    guard = new CloudflareSecretMatchGuard(twentyConfigService);
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        CloudflareSecretMatchGuard,
+        { provide: TwentyConfigService, useValue: { get: jest.fn() } },
+      ],
+    }).compile();
+
+    guard = module.get(CloudflareSecretMatchGuard);
+    twentyConfigService = module.get(TwentyConfigService);
   });
 
   it('should return true when the webhook secret matches', () => {

@@ -17,7 +17,9 @@ export const useLegendItemToggle = ({
 
   const toggleLegendItem = useCallback(
     (itemId: string) => {
-      if (!isInteractive) return;
+      if (!isInteractive) {
+        return;
+      }
 
       setGraphWidgetHiddenLegendIds((previousHiddenIds) => {
         const hasStaleIds = previousHiddenIds.some(

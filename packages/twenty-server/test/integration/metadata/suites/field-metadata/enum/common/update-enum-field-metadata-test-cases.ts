@@ -1,7 +1,6 @@
 import { MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/multi-select-operation-agnostic-test-cases';
 import { SELECT_OPERATION_AGNOSTIC_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/select-operation-agnostic-test-cases';
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/field-metadata-enum-successful-and-failing-test-cases.type';
-import { type FieldMetadataComplexOption } from 'twenty-shared/types';
 
 import { type EnumFieldMetadataUnionType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
@@ -19,7 +18,7 @@ export const UPDATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<
         context: {
           input: {
             defaultValue: ["'OPTION_42'"],
-            options: undefined as unknown as FieldMetadataComplexOption[],
+            options: undefined,
           },
         },
       },
@@ -31,7 +30,7 @@ export const UPDATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<
         context: {
           input: {
             defaultValue: ["'OPTION_2'"],
-            options: undefined as unknown as FieldMetadataComplexOption[],
+            options: undefined,
           },
           expectedOptions: [
             {
@@ -59,7 +58,7 @@ export const UPDATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<
         context: {
           input: {
             defaultValue: "'OPTION_42'",
-            options: undefined as unknown as FieldMetadataComplexOption[],
+            options: undefined,
           },
         },
       },
@@ -71,7 +70,7 @@ export const UPDATE_ENUM_FIELD_METADATA_TEST_CASES: Partial<
         context: {
           input: {
             defaultValue: "'OPTION_2'",
-            options: undefined as unknown as FieldMetadataComplexOption[],
+            options: undefined,
           },
           expectedOptions: [
             {

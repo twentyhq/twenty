@@ -30,7 +30,10 @@ export type {
 } from './CallRecordingTranscript';
 export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
 export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
-export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export type {
+  CommandMenuCurrentView,
+  CommandMenuContextApi,
+} from './CommandMenuContextApi';
 export type { CommandMenuCoreObjectName } from './CommandMenuCoreObjectName';
 export { COMMAND_MENU_CORE_OBJECT_NAMES } from './CommandMenuCoreObjectName';
 export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
@@ -200,8 +203,9 @@ export type {
 } from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
+export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
+export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';
-export type { ObjectsPermissions } from './ObjectsPermissions';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
@@ -263,6 +267,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export type { RecordExportColumn } from './RecordExportColumn';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
+export { RecordFilterOperand } from './RecordFilterOperand';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type { RecordGqlFields } from './RecordGqlFields';
 export type {
@@ -313,8 +318,6 @@ export { RelationOnDeleteAction } from './RelationOnDeleteAction';
 export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RemoveSuffix } from './RemoveSuffix';
-export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
-export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
 export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
 export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';
@@ -323,6 +326,7 @@ export type {
   RelationPredicateValue,
   RowLevelPermissionPredicateValue,
 } from './RowLevelPermissionPredicateValue';
+export type { RowLevelRecordsPermissions } from './RowLevelRecordsPermissions';
 export type { SerializedRelation } from './SerializedRelation';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation';
 export { ServerFileFolder } from './ServerFileFolder';
@@ -342,6 +346,7 @@ export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrate
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleDatabaseEventAction } from './ValidationRuleDatabaseEventAction';
 export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
 export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';

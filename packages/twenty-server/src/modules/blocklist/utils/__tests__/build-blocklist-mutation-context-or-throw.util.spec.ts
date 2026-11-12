@@ -19,27 +19,14 @@ const buildUserAuthContext = (application?: {
   }) as UserWorkspaceAuthContext;
 
 describe('buildBlocklistMutationContextOrThrow', () => {
-  it('should carry the application acting for the member', () => {
-    expect(
-      buildBlocklistMutationContextOrThrow(
-        buildUserAuthContext({ id: APPLICATION_ID }),
-      ),
-    ).toEqual({
-      workspaceId: WORKSPACE_ID,
-      userWorkspaceId: USER_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_ID,
-      applicationId: APPLICATION_ID,
-    });
-  });
+  it('should carry the auth context of the member', () => {
+    const authContext = buildUserAuthContext({ id: APPLICATION_ID });
 
-  it('should leave the application undefined for a session', () => {
-    expect(
-      buildBlocklistMutationContextOrThrow(buildUserAuthContext()),
-    ).toEqual({
+    expect(buildBlocklistMutationContextOrThrow(authContext)).toEqual({
       workspaceId: WORKSPACE_ID,
       userWorkspaceId: USER_WORKSPACE_ID,
       workspaceMemberId: WORKSPACE_MEMBER_ID,
-      applicationId: undefined,
+      authContext,
     });
   });
 

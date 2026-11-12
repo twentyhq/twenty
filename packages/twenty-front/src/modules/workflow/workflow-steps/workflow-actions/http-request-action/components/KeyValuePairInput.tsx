@@ -6,6 +6,7 @@ import { isAutoSetHeaderKey } from '@/workflow/workflow-steps/workflow-actions/h
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -88,7 +89,7 @@ export const KeyValuePairInput = ({
     if (
       index === pairs.length - 1 &&
       (field === 'key' || field === 'value') &&
-      Boolean(newValue.trim())
+      isNonEmptyString(newValue.trim())
     ) {
       newPairs.push({ id: v4(), key: '', value: '', isAutoSet: false });
     }

@@ -5,7 +5,6 @@ import {
 import {
   FieldMetadataType,
   RelationType,
-  type RestrictedFieldsPermissions,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isMorphRelationHead } from 'twenty-shared/utils';
@@ -34,12 +33,12 @@ type SelectableFieldsStructured = Record<
 >;
 
 export const buildFieldSelection = ({
-  restrictedFields,
+  unreadableFieldMetadataIds,
   flatObjectMetadata,
   flatFields,
   onlyUseLabelIdentifierFieldsInRelations = false,
 }: {
-  restrictedFields: RestrictedFieldsPermissions;
+  unreadableFieldMetadataIds: ReadonlySet<string>;
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
     | 'fieldIds'
@@ -54,7 +53,7 @@ export const buildFieldSelection = ({
 
   for (const flatField of flatFields) {
     if (
-      restrictedFields[flatField.id]?.canRead === false ||
+      unreadableFieldMetadataIds.has(flatField.id) ||
       isMorphRelationHead(flatField)
     ) {
       continue;

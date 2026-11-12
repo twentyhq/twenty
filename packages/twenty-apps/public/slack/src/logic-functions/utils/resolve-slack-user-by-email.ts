@@ -13,7 +13,7 @@ export type ResolvedSlackUser = {
 const USERS_NOT_FOUND_ERROR_CODE = 'users_not_found';
 
 export const resolveSlackUserByEmail = async (
-  slackClient: WebClient,
+  slackClient: { users: Pick<WebClient['users'], 'lookupByEmail'> },
   email: string,
 ): Promise<ResolvedSlackUser | undefined> => {
   let result;

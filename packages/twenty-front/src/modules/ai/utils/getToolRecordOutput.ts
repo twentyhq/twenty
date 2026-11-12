@@ -18,7 +18,7 @@ const EMPTY_TOOL_RECORD_OUTPUT = {
 } satisfies z.infer<typeof toolRecordOutputSchema>;
 
 export const getToolRecordOutput = (
-  toolPart: ToolUIPart | DynamicToolUIPart,
+  toolPart: Pick<ToolUIPart | DynamicToolUIPart, 'state' | 'output'>,
 ) => {
   if (toolPart.state !== 'output-available') {
     return EMPTY_TOOL_RECORD_OUTPUT;

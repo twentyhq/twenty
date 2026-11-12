@@ -61,7 +61,7 @@ describe('calculateValueRangeFromBarChartKeys (essential cases)', () => {
     const data: BarChartDatum[] = [
       { category: 'A', v1: 10, v2: NaN },
       { category: 'B', v1: 20, v2: 30 },
-      { category: 'C', v1: undefined as unknown as number },
+      { category: 'C' },
     ];
     const keys = ['v1', 'v2'];
 

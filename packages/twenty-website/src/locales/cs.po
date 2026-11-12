@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-11-04 18:13\n"
+"PO-Revision-Date: 2026-11-05 14:16\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -4749,10 +4749,10 @@ msgstr "ICP"
 msgid "Identity"
 msgstr "Identita"
 
-#. js-lingui-id: 02Xy0V
+#. js-lingui-id: 9JU/6K
 #: src/sections/faq/affiliate-program-faq.data.ts
-msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours in Settings → Billing during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
-msgstr "Pokud je to jejich první Twenty workspace a zatím na něm není nastaven žádný partnerský kód, mohou během bezplatného zkušebního období zadat váš v Nastavení → Fakturace. Do 30 dnů od první platby nás také mohou požádat o jeho přidání. Jakmile je kód ve workspace uložen, nelze ho změnit."
+msgid "If it's their first Twenty workspace and no partner code is set on it yet, they can enter yours on the /settings/partner page of their workspace during their free trial. Within 30 days of the first payment, they can also ask us to add it. Once a code is saved on a workspace, it can't be changed."
+msgstr "Pokud je to jejich první pracovní prostor Twenty a ještě na něm není nastaven žádný partnerský kód, mohou během bezplatného zkušebního období zadat váš kód na stránce /settings/partner svého pracovního prostoru. Do 30 dnů od první platby nás také mohou požádat, abychom ho přidali. Jakmile je kód uložen v pracovním prostoru, nelze ho změnit."
 
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts

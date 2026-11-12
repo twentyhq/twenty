@@ -124,7 +124,7 @@ describe('extractJsonPath', () => {
 
 describe('boundValue', () => {
   it('truncates arrays beyond maxItems with a marker', () => {
-    const result = boundValue([1, 2, 3, 4, 5], 2, 5) as unknown[];
+    const result = boundValue([1, 2, 3, 4, 5], 2, 5);
 
     expect(result).toEqual([1, 2, '... (3 more items)']);
   });

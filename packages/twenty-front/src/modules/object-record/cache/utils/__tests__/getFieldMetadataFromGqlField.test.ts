@@ -3,30 +3,43 @@ import { RelationType } from 'twenty-shared/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getFieldMetadataFromGqlField } from '@/object-record/cache/utils/getFieldMetadataFromGqlField';
 
+const BASE_FIELD_METADATA_ITEM = {
+  id: 'field-id',
+  universalIdentifier: 'field-id',
+  label: 'Field',
+  createdAt: '2021-01-01',
+  updatedAt: '2021-01-01',
+};
+
 const objectMetadataItemGenerator = (relationType: RelationType) => {
   return {
     nameSingular: 'opportunity',
     namePlural: 'opportunities',
     fields: [
       {
+        ...BASE_FIELD_METADATA_ITEM,
         name: 'owner',
         type: FieldMetadataType.MORPH_RELATION,
         morphRelations: [
           {
             type: relationType,
             targetObjectMetadata: {
+              id: 'target-object-id',
               nameSingular: 'company',
               namePlural: 'companies',
             },
             targetFieldMetadata: {
+              id: 'target-field-id',
               name: 'ownedBy',
               type: FieldMetadataType.RELATION,
             },
             sourceFieldMetadata: {
+              id: 'source-field-id',
               name: 'owner',
               type: FieldMetadataType.MORPH_RELATION,
             },
             sourceObjectMetadata: {
+              id: 'source-object-id',
               nameSingular: 'opportunity',
               namePlural: 'opportunities',
             },
@@ -34,24 +47,28 @@ const objectMetadataItemGenerator = (relationType: RelationType) => {
           {
             type: relationType,
             targetObjectMetadata: {
+              id: 'target-object-id',
               nameSingular: 'person',
               namePlural: 'people',
             },
             targetFieldMetadata: {
+              id: 'target-field-id',
               name: 'ownedBy',
               type: FieldMetadataType.RELATION,
             },
             sourceFieldMetadata: {
+              id: 'source-field-id',
               name: 'owner',
               type: FieldMetadataType.MORPH_RELATION,
             },
             sourceObjectMetadata: {
+              id: 'source-object-id',
               nameSingular: 'opportunity',
               namePlural: 'opportunities',
             },
           },
         ],
-      } as unknown as FieldMetadataItem,
+      },
     ],
   };
 };
@@ -61,9 +78,10 @@ describe('getFieldMetadataFromGqlField', () => {
     const objectMetadataItem = {
       fields: [
         {
+          ...BASE_FIELD_METADATA_ITEM,
           name: 'name',
           type: FieldMetadataType.FULL_NAME,
-        } as unknown as FieldMetadataItem,
+        },
       ],
     };
 
@@ -105,9 +123,10 @@ describe('getFieldMetadataFromGqlField', () => {
     const objectMetadataItem = {
       fields: [
         {
+          ...BASE_FIELD_METADATA_ITEM,
           name: 'name',
           type: FieldMetadataType.TEXT,
-        } as unknown as FieldMetadataItem,
+        },
       ],
     };
 

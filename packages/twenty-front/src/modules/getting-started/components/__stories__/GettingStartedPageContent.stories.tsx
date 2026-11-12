@@ -5,19 +5,28 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
+import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
+import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
+import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import {
   FeatureFlagKey,
+  FindManyMarketplaceAppsDocument,
   GettingStartedProgressDocument,
   type GettingStartedProgressQuery,
   GettingStartedStepActionKey,
@@ -185,6 +194,63 @@ export const Trial: Story = {
   },
 };
 
+export const MailboxStep: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isGoogleMessagingEnabledState.atom, true);
+    jotaiStore.set(isMicrosoftMessagingEnabledState.atom, true);
+
+    return () => {
+      jotaiStore.set(isGoogleMessagingEnabledState.atom, false);
+      jotaiStore.set(isMicrosoftMessagingEnabledState.atom, false);
+    };
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: { data: { gettingStartedProgress: TRIAL_PROGRESS } },
+      },
+      {
+        request: { query: GET_MY_CONNECTED_ACCOUNTS },
+        maxUsageCount: Infinity,
+        result: { data: { myConnectedAccounts: [] } },
+      },
+      {
+        request: { query: GET_MY_MESSAGE_CHANNELS },
+        maxUsageCount: Infinity,
+        result: { data: { myMessageChannels: [] } },
+      },
+      {
+        request: { query: GET_MY_CALENDAR_CHANNELS },
+        maxUsageCount: Infinity,
+        result: { data: { myCalendarChannels: [] } },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const mailboxStepCard = await canvas.findByRole('region', {
+      name: 'Import your contacts',
+    });
+
+    await expect(
+      await within(mailboxStepCard).findByText('Dylan Field'),
+    ).toBeVisible();
+    await expect(
+      within(mailboxStepCard).getByText(
+        'Teammates see who you talk to, not what you write.',
+      ),
+    ).toBeVisible();
+    await expect(
+      within(mailboxStepCard).getByRole('button', {
+        name: 'Continue with Google',
+      }),
+    ).toBeVisible();
+  },
+};
+
 export const AllDone: Story = {
   parameters: {
     apolloMocks: [
@@ -206,9 +272,289 @@ export const AllDone: Story = {
     ],
   },
   play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const mailboxStepCard = await canvas.findByRole('region', {
+      name: 'Mailbox connected',
+    });
+
+    await waitFor(() => expect(mailboxStepCard).toBeVisible());
+  },
+};
+
+export const DoneStepWithoutThread: Story = {
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: {
+          data: {
+            gettingStartedProgress: {
+              ...TRIAL_PROGRESS,
+              completedStepActionKeys: [
+                GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+              ],
+              selectedStepActionKey:
+                GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+            },
+          },
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const followUpStepCard = await canvas.findByRole('region', {
+      name: 'Deal follow-ups on track',
+    });
+
     await expect(
-      await within(canvasElement).findByText('All steps done'),
+      within(followUpStepCard).queryByRole('button', {
+        name: 'Continue thread',
+      }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(followUpStepCard).getByRole('button', { name: 'Next' }),
     ).toBeVisible();
+    await expect(
+      within(followUpStepCard).queryByRole('group', {
+        name: 'Follow-up instructions',
+      }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const COMPLETED_NEXT_STEP_PROGRESS: GettingStartedProgressQuery['gettingStartedProgress'] =
+  {
+    ...TRIAL_PROGRESS,
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  };
+
+export const CompletedNextStep: Story = {
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: {
+          data: { gettingStartedProgress: COMPLETED_NEXT_STEP_PROGRESS },
+        },
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => ({
+          data: {
+            updateGettingStarted: {
+              ...COMPLETED_NEXT_STEP_PROGRESS,
+              selectedStepActionKey: input.selectedStepActionKey ?? null,
+            },
+          },
+        }),
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      within(
+        await canvas.findByRole('navigation', {
+          name: 'Getting started steps',
+        }),
+      ).getByRole('button', { name: 'Next step' }),
+    );
+    const handoverStepCard = await canvas.findByRole('region', {
+      name: 'Handover ready',
+    });
+
+    await waitFor(() => expect(handoverStepCard).toBeVisible());
+  },
+};
+
+const FOLLOW_UP_DEALS_CHAT_THREAD_ID = '20202020-3a7e-4c1d-8b2f-5e9d0c6a1b47';
+
+const DONE_STEP_CHAT_THREADS = [
+  {
+    actionKey: GettingStartedStepActionKey.IMPORT_DATA,
+    chatThreadId: '20202020-8d1c-4b5e-9a3f-6c2e1b7d4f90',
+  },
+  {
+    actionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    chatThreadId: FOLLOW_UP_DEALS_CHAT_THREAD_ID,
+  },
+];
+
+let doneStepsProgress: GettingStartedProgressQuery['gettingStartedProgress'] =
+  TRIAL_PROGRESS;
+
+const createDoneStepsProgress =
+  (): GettingStartedProgressQuery['gettingStartedProgress'] => ({
+    ...TRIAL_PROGRESS,
+    steps: mockGettingStartedStepDefinitions.map((stepDefinition) => ({
+      ...stepDefinition,
+      doneChatThreadId:
+        DONE_STEP_CHAT_THREADS.find(
+          ({ actionKey }) => actionKey === stepDefinition.actionKey,
+        )?.chatThreadId ?? null,
+    })),
+    completedStepActionKeys: [
+      GettingStartedStepActionKey.CONNECT_MAILBOX,
+      GettingStartedStepActionKey.IMPORT_DATA,
+      GettingStartedStepActionKey.INSTALL_APP,
+      GettingStartedStepActionKey.INVITE_TEAM,
+      GettingStartedStepActionKey.HANDOVER_DEALS,
+      GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+    ],
+    selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+  });
+
+const FEATURED_MARKETPLACE_APPS_MOCK: MockedResponse = {
+  request: { query: FindManyMarketplaceAppsDocument },
+  maxUsageCount: Infinity,
+  result: {
+    data: {
+      findManyMarketplaceApps: [
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+          name: 'Slack',
+          description: 'Get notified in Slack.',
+        },
+        {
+          id: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.FATHOM,
+          name: 'Fathom',
+          description: 'Log your meeting notes.',
+        },
+      ].map((marketplaceApp) => ({
+        __typename: 'MarketplaceApp',
+        ...marketplaceApp,
+        author: 'Twenty',
+        category: 'Communication',
+        logoUrl: null,
+        sourcePackage: null,
+        isListed: true,
+      })),
+    },
+  },
+};
+
+export const DoneSteps: Story = {
+  beforeEach: () => {
+    doneStepsProgress = createDoneStepsProgress();
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...TRIALING_WORKSPACE,
+      installedApplications: [
+        {
+          ...CUSTOM_WORKSPACE_APPLICATION_MOCK,
+          name: 'Slack',
+          universalIdentifier: TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.SLACK,
+        },
+      ],
+    });
+  },
+  parameters: {
+    apolloMocks: [
+      WORKFLOW_PREVIEWS_MOCK,
+      FEATURED_MARKETPLACE_APPS_MOCK,
+      {
+        request: { query: GettingStartedProgressDocument },
+        maxUsageCount: Infinity,
+        result: () => ({
+          data: { gettingStartedProgress: doneStepsProgress },
+        }),
+      },
+      {
+        request: { query: UpdateGettingStartedDocument, variables: () => true },
+        maxUsageCount: Infinity,
+        result: ({ input }: UpdateGettingStartedMutationVariables) => {
+          doneStepsProgress = {
+            ...doneStepsProgress,
+            selectedStepActionKey:
+              input.selectedStepActionKey ??
+              doneStepsProgress.selectedStepActionKey,
+          };
+
+          return { data: { updateGettingStarted: doneStepsProgress } };
+        },
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Invite more' }),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('textbox', { name: 'Teammate email 1' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(
+      within(
+        canvas.getByRole('region', { name: 'Invitations sent' }),
+      ).getByRole('button', { name: 'Next' }),
+    );
+    await waitFor(() =>
+      expect(
+        canvas.getByRole('region', { name: 'Handover ready' }),
+      ).toBeVisible(),
+    );
+
+    const steps = canvas.getByRole('navigation', {
+      name: 'Getting started steps',
+    });
+
+    for (const { stepTitle, doneTitle, doneButtonName } of [
+      {
+        stepTitle: 'Import your data',
+        doneTitle: 'Data imported',
+        doneButtonName: 'Continue thread',
+      },
+      {
+        stepTitle: 'Hand over won deals',
+        doneTitle: 'Handover ready',
+        doneButtonName: 'Go to workflow',
+      },
+      {
+        stepTitle: 'Follow up on closing deals',
+        doneTitle: 'Deal follow-ups on track',
+        doneButtonName: 'Continue thread',
+      },
+    ]) {
+      await userEvent.click(
+        within(steps).getByRole('button', { name: stepTitle }),
+      );
+
+      const doneStepCard = await canvas.findByRole('region', {
+        name: doneTitle,
+      });
+
+      await waitFor(() =>
+        expect(
+          within(doneStepCard).getByRole('button', { name: doneButtonName }),
+        ).toBeVisible(),
+      );
+    }
+
+    const followUpStepCard = await canvas.findByRole('region', {
+      name: 'Deal follow-ups on track',
+    });
+
+    await userEvent.click(
+      within(followUpStepCard).getByRole('button', { name: 'Continue thread' }),
+    );
+
+    await waitFor(() =>
+      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+        FOLLOW_UP_DEALS_CHAT_THREAD_ID,
+      ),
+    );
   },
 };
 

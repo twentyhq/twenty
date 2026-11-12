@@ -121,6 +121,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
+    case 'rowLevelPermissionRule':
     case 'viewFilterGroup':
     case 'logicFunction':
     case 'viewFilter':
@@ -149,6 +150,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'fieldMetadataOption':
     case 'relatedRecordPath':
     case 'validationRule':
     case 'searchFieldMetadata': {

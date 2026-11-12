@@ -8,11 +8,10 @@ const buildUpdateEvent = ({
 }: {
   recordId: string;
   updatedFields: string[];
-}) =>
-  ({
-    recordId,
-    properties: { before: {}, after: {}, updatedFields, diff: {} },
-  }) as unknown as ObjectRecordEvent;
+}): ObjectRecordEvent => ({
+  recordId,
+  properties: { before: {}, after: {}, updatedFields, diff: {} },
+});
 
 describe('doesEventMatchPendingWakeUp', () => {
   it('matches any record when the condition names none', () => {

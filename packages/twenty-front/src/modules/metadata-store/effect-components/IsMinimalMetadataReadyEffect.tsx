@@ -1,5 +1,6 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -13,6 +14,7 @@ import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
 export const IsMinimalMetadataReadyEffect = () => {
   const isLogged = useIsLogged();
   const currentUser = useAtomStateValue(currentUserState);
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const metadataStoreObjectMetadataItems = useAtomFamilyStateValue(
     metadataStoreState,
@@ -54,8 +56,15 @@ export const IsMinimalMetadataReadyEffect = () => {
       return;
     }
 
+    // A value cached by 2.55 has no records permissions, and missing permissions default to allow.
+    const areRecordsPermissionsLoaded = isDefined(
+      currentUserWorkspace?.objectRecordsPermissions,
+    );
+
     const isReady =
-      isDefined(currentUser) && (!hasProvisionedWorkspace || areViewsLoaded);
+      isDefined(currentUser) &&
+      (!hasProvisionedWorkspace ||
+        (areViewsLoaded && areRecordsPermissionsLoaded));
 
     if (isReady) {
       setIsMinimalMetadataReady(true);
@@ -63,6 +72,7 @@ export const IsMinimalMetadataReadyEffect = () => {
   }, [
     isLogged,
     currentUser,
+    currentUserWorkspace,
     currentWorkspace,
     metadataStoreObjectMetadataItems.status,
     metadataStoreFieldMetadataItems.status,

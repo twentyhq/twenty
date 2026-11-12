@@ -35,16 +35,15 @@ const fromFindRecordsOrderBy = ({
   resolvers,
 }: {
   orderBy: Record<string, unknown>;
-  resolvers: WorkflowManifestInverseReferenceResolvers;
+  resolvers: Pick<WorkflowManifestInverseReferenceResolvers, 'fieldReference'>;
 }) => {
-  const { gqlOperationOrderBy: _gqlOperationOrderBy, ...rest } = orderBy;
+  if (!isDefined(orderBy.recordSorts)) {
+    return {};
+  }
 
-  return isDefined(rest.recordSorts)
-    ? {
-        ...rest,
-        recordSorts: toArray(rest.recordSorts).map(resolvers.fieldReference),
-      }
-    : rest;
+  return {
+    recordSorts: toArray(orderBy.recordSorts).map(resolvers.fieldReference),
+  };
 };
 
 const fromFindRecordsFilter = ({
@@ -278,11 +277,9 @@ const fromActionInput = ({
 
 export const fromWorkflowActionToWorkflowStepManifest = ({
   action,
-  index,
   references,
 }: {
   action: WorkflowAction;
-  index: number;
   references: WorkflowManifestReferences;
 }): { manifest: WorkflowStepManifest } | { reason: string } => {
   const resolvers = buildWorkflowManifestInverseReferenceResolvers(references);
@@ -305,9 +302,6 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
         action.settings.errorHandlingOptions,
       )
     : undefined;
-  const position = isDefined(action.position)
-    ? { x: action.position.x, y: action.position.y }
-    : null;
   const expectedOutputSchema =
     'expectedOutputSchema' in action.settings
       ? action.settings.expectedOutputSchema
@@ -320,7 +314,9 @@ export const fromWorkflowActionToWorkflowStepManifest = ({
       ? { logicFunctionUniversalIdentifier }
       : {}),
     nextStepIds: action.nextStepIds ?? [],
-    ...(isEqual(position, { x: 0, y: (index + 1) * 180 }) ? {} : { position }),
+    ...(isDefined(action.position)
+      ? { position: { x: action.position.x, y: action.position.y } }
+      : {}),
     input,
   } as WorkflowStepManifest;
   const isDefaultOutputSchema = isEqual(

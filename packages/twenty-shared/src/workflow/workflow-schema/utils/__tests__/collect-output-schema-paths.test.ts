@@ -37,7 +37,8 @@ describe('collectOutputSchemaPaths', () => {
   });
 
   it('should not throw when a non-leaf node has a null value', () => {
-    const schemaWithNullNode = {
+    const schemaWithNullNode: BaseOutputSchemaV2 = {
+      // @ts-expect-error persisted schemas can hold a null node
       data: {
         isLeaf: false,
         type: 'object',
@@ -50,7 +51,7 @@ describe('collectOutputSchemaPaths', () => {
         label: 'id',
         value: '1',
       },
-    } as unknown as BaseOutputSchemaV2;
+    };
 
     expect(collectOutputSchemaPaths(schemaWithNullNode)).toEqual([
       'data',

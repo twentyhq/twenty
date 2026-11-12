@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -19,11 +20,8 @@ type FailingTestCases = EachTestingContext<
     createdObjectMetadataPersonId: string;
     createdObjectMetadataOpportunityId: string;
     createdObjectMetadataCompanyId: string;
-  }) => Omit<
-    CreateFieldInput,
-    'morphRelationsCreationPayload' | 'workspaceId'
-  > &
-    Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
+  }) => CreateOneFieldFactoryInput &
+    Required<Pick<CreateOneFieldFactoryInput, 'morphRelationsCreationPayload'>>
 >[];
 
 const morphCreationPayloadMalformedFailingTestCases: FailingTestCases = [
@@ -309,7 +307,7 @@ const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
           targetFieldIcon: 'Icon123',
           targetFieldLabel: 'test',
           targetObjectMetadataId: createdObjectMetadataOpportunityId,
-          type: undefined as unknown as RelationType,
+          type: undefined,
         },
       ],
     }),

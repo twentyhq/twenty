@@ -1,10 +1,11 @@
-import { type Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test } from '@nestjs/testing';
 
-import { type WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
+import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { BackfillWorkspaceCustomApplicationRegistrationCommand } from 'src/database/commands/upgrade-version-command/2-19/2-19-workspace-command-1782853718000-backfill-workspace-custom-application-registration.command';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const WORKSPACE_ID = '20202020-0000-0000-0000-000000000001';
 const CUSTOM_APPLICATION_ID = '20202020-0000-0000-0000-0000000000a1';
@@ -16,7 +17,7 @@ describe('BackfillWorkspaceCustomApplicationRegistrationCommand', () => {
   let createRegistration: jest.Mock;
   let updateApplication: jest.Mock;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
 
     workspaceFindOne = jest.fn();
@@ -26,21 +27,31 @@ describe('BackfillWorkspaceCustomApplicationRegistrationCommand', () => {
 
     const workspaceRepository = {
       findOne: workspaceFindOne,
-    } as unknown as Repository<WorkspaceEntity>;
+    };
     const applicationRepository = {
       findOne: applicationFindOne,
-    } as unknown as Repository<ApplicationEntity>;
+    };
     const applicationService = {
       createWorkspaceCustomApplicationRegistration: createRegistration,
       update: updateApplication,
-    } as unknown as ApplicationService;
+    };
 
-    command = new BackfillWorkspaceCustomApplicationRegistrationCommand(
-      {} as WorkspaceIteratorService,
-      workspaceRepository,
-      applicationRepository,
-      applicationService,
-    );
+    const module = await Test.createTestingModule({
+      providers: [
+        BackfillWorkspaceCustomApplicationRegistrationCommand,
+        { provide: WorkspaceIteratorService, useValue: {} },
+        {
+          provide: getRepositoryToken(WorkspaceEntity),
+          useValue: workspaceRepository,
+        },
+        {
+          provide: getRepositoryToken(ApplicationEntity),
+          useValue: applicationRepository,
+        },
+        { provide: ApplicationService, useValue: applicationService },
+      ],
+    }).compile();
+    command = module.get(BackfillWorkspaceCustomApplicationRegistrationCommand);
 
     jest.spyOn(command['logger'], 'log').mockImplementation();
   });

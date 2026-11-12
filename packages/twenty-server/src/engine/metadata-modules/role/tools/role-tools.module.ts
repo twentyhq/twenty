@@ -12,12 +12,12 @@ import { UpsertObjectPermissionsTool } from 'src/engine/metadata-modules/role/to
 import { UpsertRowLevelPermissionRulesTool } from 'src/engine/metadata-modules/role/tools/upsert-row-level-permission-rules.tool';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
+import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 
 @Module({
   imports: [
     RoleModule,
-    UserRoleModule,
+    RoleAssignmentModule,
     ObjectPermissionModule,
     RowLevelPermissionModule,
     ApplicationModule,

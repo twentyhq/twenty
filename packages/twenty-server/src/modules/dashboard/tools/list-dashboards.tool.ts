@@ -16,7 +16,12 @@ const listDashboardsSchema = z.object({
 });
 
 export const createListDashboardsTool = (
-  deps: Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
+  deps: {
+    workspaceOrmManager: Pick<
+      DashboardToolDependencies['workspaceOrmManager'],
+      'executeInWorkspaceContext' | 'getRepository'
+    >;
+  },
   context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'list_dashboards' as const,

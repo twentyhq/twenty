@@ -9,7 +9,7 @@ const universalFlatPageLayoutWidget = {
   isActive: true,
   pageLayoutTabUniversalIdentifier: 'tab-1',
   position: { index: 0 },
-  universalOverrides: null as unknown,
+  universalOverrides: null,
 };
 
 describe('resolveEffectiveUniversalFlatEntity', () => {

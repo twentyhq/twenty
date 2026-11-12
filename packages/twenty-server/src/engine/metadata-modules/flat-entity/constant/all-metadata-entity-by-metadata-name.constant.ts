@@ -27,6 +27,7 @@ import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permi
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
@@ -38,6 +39,7 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
+import { FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
 import { RelatedRecordPathEntity } from 'src/engine/metadata-modules/related-record-path/entities/related-record-path.entity';
 import { ValidationRuleEntity } from 'src/engine/metadata-modules/validation-rule/entities/validation-rule.entity';
 import { TimelineActivityTypeEntity } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
@@ -53,6 +55,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   rowLevelPermissionPredicate: RowLevelPermissionPredicateEntity,
   pageLayoutWidget: PageLayoutWidgetEntity,
   rowLevelPermissionPredicateGroup: RowLevelPermissionPredicateGroupEntity,
+  rowLevelPermissionRule: RowLevelPermissionRuleEntity,
   view: ViewEntity,
   index: IndexMetadataEntity,
   pageLayoutTab: PageLayoutTabEntity,
@@ -79,6 +82,7 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   searchFieldMetadata: SearchFieldMetadataEntity,
   timelineActivityType: TimelineActivityTypeEntity,
   settingsMenuItem: SettingsMenuItemEntity,
+  fieldMetadataOption: FieldMetadataOptionEntity,
   relatedRecordPath: RelatedRecordPathEntity,
   validationRule: ValidationRuleEntity,
   workflow: WorkflowEntity,

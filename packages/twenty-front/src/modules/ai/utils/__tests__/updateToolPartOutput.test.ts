@@ -2,7 +2,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
 
-const messages = [
+const messages: ExtendedUIMessage[] = [
   {
     id: 'assistant-1',
     role: 'assistant',
@@ -22,7 +22,7 @@ const messages = [
     role: 'assistant',
     parts: [{ type: 'text', text: 'Untouched' }],
   },
-] as unknown as ExtendedUIMessage[];
+];
 
 describe('updateToolPartOutput', () => {
   it('replaces the output of the matching tool call only', () => {

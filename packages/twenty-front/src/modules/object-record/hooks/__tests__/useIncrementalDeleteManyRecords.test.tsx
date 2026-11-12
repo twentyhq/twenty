@@ -1,3 +1,4 @@
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { useRemoveNavigationMenuItemByTargetRecordId } from '@/navigation-menu-item/common/hooks/useRemoveNavigationMenuItemByTargetRecordId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -80,10 +81,12 @@ describe('useIncrementalDeleteManyRecords', () => {
     mockUseObjectMetadataItem.mockReturnValue({ objectMetadataItem });
 
     mockMutate.mockResolvedValue({});
-    mockUseApolloCoreClient.mockReturnValue({
-      mutate: mockMutate,
-      cache: {},
-    } as unknown as ReturnType<typeof useApolloCoreClient>);
+    const apolloCoreClient = new ApolloClient({
+      cache: new InMemoryCache(),
+      link: ApolloLink.empty(),
+    });
+    jest.spyOn(apolloCoreClient, 'mutate').mockImplementation(mockMutate);
+    mockUseApolloCoreClient.mockReturnValue(apolloCoreClient);
 
     mockUseIncrementalFetchAndMutateRecords.mockReturnValue({
       incrementalFetchAndMutate: mockIncrementalFetchAndMutate,

@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 
 @Injectable()
 export class ConnectedAccountOwnershipTransferService {
   constructor(
-    private readonly userRoleService: UserRoleService,
+    private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -17,23 +17,23 @@ export class ConnectedAccountOwnershipTransferService {
   // instead of leaving them orphaned against a userWorkspaceId that's about
   // to be deleted. Every path that removes a member from a workspace while
   // it stays active must call this before deleting the userWorkspace.
-  async transferConnectedAccountsOwnershipToCustodian({
+  async transferConnectedAccountsOwnershipToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
     removedUserWorkspace: UserWorkspaceEntity;
     actingUserWorkspaceId?: string;
   }) {
-    const custodianUserWorkspace =
-      await this.userRoleService.resolveCustodianUserWorkspace({
+    const successorUserWorkspace =
+      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });
 
-    if (isDefined(custodianUserWorkspace)) {
+    if (isDefined(successorUserWorkspace)) {
       await this.connectedAccountMetadataService.transferOwnership({
         fromUserWorkspaceId: removedUserWorkspace.id,
-        toUserWorkspaceId: custodianUserWorkspace.id,
+        toUserWorkspaceId: successorUserWorkspace.id,
         workspaceId: removedUserWorkspace.workspaceId,
       });
     }

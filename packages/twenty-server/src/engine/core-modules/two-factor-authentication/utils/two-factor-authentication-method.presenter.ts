@@ -4,9 +4,13 @@ import { type TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-mo
 import { type TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 
 export function buildTwoFactorAuthenticationMethodSummary(
-  methods: TwoFactorAuthenticationMethodEntity[] | undefined,
+  methods:
+    | Pick<TwoFactorAuthenticationMethodEntity, 'id' | 'status' | 'strategy'>[]
+    | undefined,
 ): TwoFactorAuthenticationMethodSummaryDTO[] | undefined {
-  if (!isDefined(methods)) return undefined;
+  if (!isDefined(methods)) {
+    return undefined;
+  }
 
   return methods.map((method) => ({
     twoFactorAuthenticationMethodId: method.id,

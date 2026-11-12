@@ -1,4 +1,6 @@
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { RecordListRecordGroupSection } from '@/object-record/record-list/components/RecordListRecordGroupSection';
@@ -7,6 +9,7 @@ import { RecordListRecordsEffect } from '@/object-record/record-list/components/
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { isRecordListGroupSectionToggledComponentState } from '@/object-record/record-list/states/isRecordListGroupSectionToggledComponentState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,6 +34,22 @@ export const RecordListRecordGroup = () => {
     currentRecordGroupId,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+  );
+
+  const activeRecordGroupTabId = useAtomComponentSelectorValue(
+    activeRecordGroupTabIdComponentSelector,
+  );
+
+  const isSectionDisplayed = isRecordGroupTabsDisplayed
+    ? activeRecordGroupTabId === currentRecordGroupId
+    : !shouldHideRecordGroup;
+
+  const areRecordsDisplayed =
+    (isRecordGroupTabsDisplayed || isRecordListGroupSectionToggled) &&
+    !isDefined(error);
+
   return (
     <>
       <RecordListRecordsEffect
@@ -38,10 +57,10 @@ export const RecordListRecordGroup = () => {
         loading={loading}
         error={error}
       />
-      {!shouldHideRecordGroup && (
+      {isSectionDisplayed && (
         <StyledSection>
-          <RecordListRecordGroupSection />
-          {isRecordListGroupSectionToggled && !isDefined(error) && (
+          {!isRecordGroupTabsDisplayed && <RecordListRecordGroupSection />}
+          {areRecordsDisplayed && (
             <RecordListRecords
               records={records}
               loading={loading}

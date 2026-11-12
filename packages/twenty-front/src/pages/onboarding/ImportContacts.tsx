@@ -28,6 +28,8 @@ const StyledMiddle = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  max-width: 100%;
+  width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
 const StyledFooter = styled.div`
@@ -73,7 +75,9 @@ export const ImportContacts = ({
       <OnboardingStepAnimatedItem index={2}>
         <StyledMiddle>
           <OnboardingTrustBadges />
-          <OnboardingImportPreview />
+          <OnboardingImportPreview
+            privacyNote={t`Only you will be able to see your emails and events`}
+          />
         </StyledMiddle>
       </OnboardingStepAnimatedItem>
 

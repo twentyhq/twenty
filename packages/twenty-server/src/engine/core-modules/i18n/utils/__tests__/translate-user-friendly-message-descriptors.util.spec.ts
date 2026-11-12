@@ -1,4 +1,4 @@
-import { type I18n, type MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from '@lingui/core';
 
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
@@ -8,8 +8,12 @@ const buildDescriptor = (id: string): MessageDescriptor => ({
 });
 
 const i18nMock = {
-  _: (descriptor: MessageDescriptor) => `tr:${descriptor.id}`,
-} as unknown as I18n;
+  _: jest
+    .fn()
+    .mockImplementation(
+      (descriptor: MessageDescriptor) => `tr:${descriptor.id}`,
+    ),
+};
 
 describe('translateUserFriendlyMessageDescriptors', () => {
   it('translates a top-level userFriendlyMessage descriptor to a string', () => {

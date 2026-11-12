@@ -68,7 +68,7 @@ const MEETING_BODY = JSON.stringify({
   },
 });
 
-const ROUTE_PAYLOAD = {
+const ROUTE_PAYLOAD: Parameters<typeof fathomWebhookHandler>[0] = {
   queryStringParameters: {
     [FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER]: 'connection-1',
   },
@@ -77,8 +77,13 @@ const ROUTE_PAYLOAD = {
     'webhook-timestamp': '1787220000',
     'webhook-signature': 'v1,signature',
   },
+  pathParameters: {},
+  body: null,
   rawBody: MEETING_BODY,
-} as unknown as Parameters<typeof fathomWebhookHandler>[0];
+  isBase64Encoded: false,
+  requestContext: { http: { method: 'POST', path: '/webhooks/fathom' } },
+  userWorkspaceId: null,
+};
 
 const mockDeletedCallRecordingIds = (callRecordingIds: string[]) =>
   mocks.query.mockResolvedValue({

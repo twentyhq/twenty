@@ -143,6 +143,8 @@ export const DOCUMENTATION_PATHS = {
   UI_ACCESSIBILITY: '/ui/accessibility',
   UI_COMPONENTS_CODE_EDITOR_CODE_EDITOR:
     '/ui/components/code-editor/code-editor',
+  UI_COMPONENTS_DATA_DISPLAY_ASSISTANT_AVATAR:
+    '/ui/components/data-display/assistant-avatar',
   UI_COMPONENTS_DATA_DISPLAY_AVATAR_GROUP:
     '/ui/components/data-display/avatar-group',
   UI_COMPONENTS_DATA_DISPLAY_COMMAND_BLOCK:
@@ -329,6 +331,8 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/data-model/capabilities/objects',
   USER_GUIDE_DATA_MODEL_CAPABILITIES_RELATION_FIELDS:
     '/user-guide/data-model/capabilities/relation-fields',
+  USER_GUIDE_DATA_MODEL_CAPABILITIES_VALIDATION_RULES:
+    '/user-guide/data-model/capabilities/validation-rules',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_FIELDS:
     '/user-guide/data-model/how-tos/create-custom-fields',
   USER_GUIDE_DATA_MODEL_HOW_TOS_CREATE_CUSTOM_OBJECTS:

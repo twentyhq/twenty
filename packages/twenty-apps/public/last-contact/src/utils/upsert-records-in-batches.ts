@@ -13,7 +13,7 @@ export type UpsertMutationName =
 export type RecordUpsert = { id: string } & Record<string, string | null>;
 
 export const upsertRecordsInBatches = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   mutationName: UpsertMutationName,
   records: RecordUpsert[],
 ): Promise<void> => {

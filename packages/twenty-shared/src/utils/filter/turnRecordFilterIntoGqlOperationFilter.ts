@@ -4,7 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import {
   FieldActorSource,
   FieldMetadataType,
-  ViewFilterOperand as RecordFilterOperand,
+  RecordFilterOperand,
   type ActorFilter,
   type AddressFilter,
   type ArrayFilter,

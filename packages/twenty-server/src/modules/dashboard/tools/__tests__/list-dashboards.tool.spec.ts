@@ -1,6 +1,5 @@
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
-import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
 const AUTH_CONTEXT = {
@@ -22,7 +21,7 @@ const buildDeps = () => {
           .mockImplementation(async (fn) => fn()),
         getRepository,
       },
-    } as unknown as Pick<DashboardToolDependencies, 'workspaceOrmManager'>,
+    },
   };
 };
 

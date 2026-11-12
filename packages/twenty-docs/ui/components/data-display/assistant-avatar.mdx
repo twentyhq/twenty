@@ -1,0 +1,98 @@
+---
+title: AssistantAvatar
+description: An assistant character with configurable shape, expression, color, size, and idle animation.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AssistantAvatarReference from '/snippets/ui/generated/components/data-display/assistant-avatar.mdx';
+
+## Overview
+
+Render an assistant character from a body shape, face, palette color, and size. The component displays the supplied values; your application owns selection and persistence.
+
+<StoryEmbed
+  storyId="ui-components-data-display-assistantavatar--display"
+  title="Assistant character beside its name"
+  height={100}
+/>
+
+## Usage
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AssistantLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <AssistantAvatar shape="circle" face="default" color="blue" size={24} />
+    <Text>Workspace assistant</Text>
+  </Text>
+);
+```
+
+## Visual options
+
+Choose shapes independently from expressions and colors.
+
+| Prop         | Values                                                                                     | Default   |
+| ------------ | ------------------------------------------------------------------------------------------ | --------- |
+| `shape`      | `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem`, `hexagon` | `circle`  |
+| `face`       | `default`, `happy`, `wink`, `surprised`, `sleepy`, `love`                                  | `default` |
+| `color`      | `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `gray`   | `blue`    |
+| `size`       | `14`, `16`, `20`, `24`, `40` pixels                                                        | `24`      |
+| `isAnimated` | `true`, `false`                                                                            | `false`   |
+
+The body and face use the selected palette's theme tokens and follow the surrounding light or dark theme. Set `size` for a square character. Native attributes, events, `className`, `style`, and `ref` target the outer span; explicit styles override its dimensions and palette defaults.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const CustomAssistant = () => (
+  <AssistantAvatar
+    shape="cloud"
+    face="happy"
+    color="sky"
+    size={40}
+    aria-label="Workspace assistant"
+  />
+);
+```
+
+## Idle animation
+
+Set `isAnimated` to play the selected expression's idle loop. Default blinks and glances sideways, Happy lifts its eyes, Wink closes one eye, Surprised widens its eyes, Sleepy floats a sleep mark, and Love pulses its heart eyes. The body stays still.
+
+```tsx
+import { AssistantAvatar } from 'twenty-ui/components/data-display';
+
+export const AnimatedAssistant = () => (
+  <AssistantAvatar face="happy" isAnimated aria-label="Workspace assistant" />
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-data-display-assistantavatar--idle-faces"
+  title="Idle animations for each expression"
+  height={180}
+/>
+
+Animation is off by default. Set `isAnimated={false}` to display the static expression, including the visible wink. When the browser prefers reduced motion, the component displays the static expression even when `isAnimated` is enabled. The preference also applies if it changes while the character is displayed.
+
+The application owns the animation toggle. This prop controls idle presentation and does not represent listening, speaking, thinking, or other assistant activity.
+
+## Accessibility
+
+The character is decorative when it has no accessible name, as in the labeled Usage example. For a standalone character, supply `aria-label` or `aria-labelledby`; the root then exposes the image role. The body and face stay hidden from assistive technology so the character is announced once.
+
+Set `aria-hidden` explicitly when you need to override the name-based default, such as hiding a named character beside equivalent visible text.
+
+Place the character inside a named button or link when it accompanies an action. The application owns the control, its label, and its behavior.
+
+## Props
+
+<AssistantAvatarReference />
+
+<PageBanner illustration="page-cover-assistant-avatar" />

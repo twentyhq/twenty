@@ -20,7 +20,9 @@ export const useFullScreenModal = ({
     children: React.ReactNode,
     isOpen: boolean,
   ) => {
-    if (!isOpen) return null;
+    if (!isOpen) {
+      return null;
+    }
 
     return createPortal(
       <FullScreenModal

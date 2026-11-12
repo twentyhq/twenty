@@ -10,13 +10,13 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 
-export const findPageLayoutWidgets = async ({
+export const findPageLayoutWidgets = async <TWidget = PageLayoutWidgetDTO>({
   input,
   gqlFields,
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<FindPageLayoutWidgetsFactoryInput>): CommonResponseBody<{
-  getPageLayoutWidgets: PageLayoutWidgetDTO[];
+  getPageLayoutWidgets: TWidget[];
 }> => {
   const graphqlOperation = findPageLayoutWidgetsQueryFactory({
     input,

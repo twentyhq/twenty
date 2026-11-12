@@ -10,18 +10,20 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[1]} 0;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
-  svg {
-    margin-top: 1px;
-  }
+const StyledIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing['0.5']};
+  line-height: ${themeCssVariables.spacing[6]};
   min-width: 0;
 `;
 
@@ -46,7 +48,9 @@ export const AiChatAskStatusRow = ({
 
   return (
     <StyledContainer>
-      <Icon size={theme.icon.size.sm} />
+      <StyledIconContainer>
+        <Icon size={theme.icon.size.sm} />
+      </StyledIconContainer>
       <StyledContent>
         {isShimmering ? (
           <ShimmeringText>{messageElement}</ShimmeringText>

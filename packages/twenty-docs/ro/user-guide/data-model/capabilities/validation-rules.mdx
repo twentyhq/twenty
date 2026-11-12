@@ -1,0 +1,123 @@
+---
+title: Reguli de validare
+description: Stabiliți condițiile pe care înregistrările trebuie să le îndeplinească înainte de a putea fi salvate.
+---
+
+import { PageBanner } from '/snippets/page-banner.mdx';
+
+## Ce sunt regulile de validare?
+
+O regulă de validare este o condiție care trebuie să fie adevărată înainte ca o înregistrare să poată fi creată sau actualizată. Dacă condiția este falsă, Twenty blochează salvarea și afișează un mesaj care explică ce trebuie modificat.
+
+Folosește reguli pentru a solicita informații la momentul potrivit, cum ar fi o valoare înainte ca o oportunitate să devină client, sau pentru a preveni valori inconsecvente, cum ar fi o dată de încheiere anterioară unei date de început.
+
+<Note>
+  Regulile de validare sunt disponibile în planul **Organization**. Ai nevoie de permisiunea
+  de a edita modelul de date pentru a le gestiona.
+</Note>
+
+## Creează o regulă de validare
+
+1. Accesează **Setări → Model de date** și selectează obiectul pe care vrei să îl configurezi.
+2. Deschide fila **Setări**, găsește **Reguli de validare** și fă clic pe **Adaugă o regulă**.
+3. Dă regulii un nume și, opțional, o descriere care să îi explice scopul.
+4. Scrie o **Condiție**. Începe să tastezi un nume de câmp sau o funcție și selectează sugestii din panoul de asistență.
+5. Sub **Eroare**, introdu un **Mesaj** care le spune utilizatorilor cum să corecteze înregistrarea. Folosește **Afișează în** pentru a o atașa la un anumit câmp sau selectează **Întreaga înregistrare**.
+6. Verifică **Previzualizarea** pentru a vedea cum se comportă condiția pentru înregistrările existente.
+7. Fă clic pe **Activează** pentru a începe să aplici regula.
+
+Regulile noi rămân inactive până le activezi. O regulă are nevoie de un nume, de o condiție validă și de un mesaj de eroare înainte de a putea fi activată.
+
+### Previzualizează regula
+
+Previzualizarea folosește până la trei înregistrări recente din obiectul selectat. Folosește săgețile pentru a te deplasa între ele și a verifica valorile utilizate de condiție.
+
+| Status     | Semnificație                                                                           |
+| ---------- | -------------------------------------------------------------------------------------- |
+| **Valid**  | Înregistrarea îndeplinește condiția.                                                   |
+| **Blocat** | Înregistrarea nu îndeplinește condiția. Previzualizarea afișează și mesajul de eroare. |
+| **Eroare** | Condiția nu a putut fi evaluată. Verifică detaliile erorii și ajustează expresia.      |
+
+Previzualizarea unei reguli nu modifică nicio înregistrare. Dacă obiectul nu are încă înregistrări, creează câteva pentru a încerca previzualizarea.
+
+## Scrie o condiție
+
+Scrie condiția care permite salvarea. De exemplu, `employees > 0` permite salvarea unei companii doar atunci când numărul său de angajați este mai mare decât zero.
+
+Folosește nume de câmpuri precum `employees`, în loc de etichete de afișare precum **Angajați**. Selectarea unui câmp din asistent inserează referința corectă.
+
+| Sintaxă                                                              | Folosiți                                      |
+| -------------------------------------------------------------------- | --------------------------------------------- |
+| `==`, `!=`, `\<`, `\<=`, `>`, `>=` | Compară valori.                               |
+| `and`, `or`, `not`                                                   | Combină sau neagă condiții.                   |
+| `+`, `-`, `*`, `/`                                                   | Calculează valori.                            |
+| `stage in ['NEW', 'CUSTOMER']`                                       | Verifică dacă o valoare se află într-o listă. |
+| `true`, `false`                                                      | Compară câmpuri booleene.                     |
+| `acum`                                                               | Folosește data și ora salvării.               |
+
+Puneți textul între ghilimele simple sau duble și utilizați paranteze pentru a grupa condițiile. Utilizați `and` și `or` în loc de `&&` și `||`.
+
+### Verificați valorile lipsă
+
+| Funcție                       | Folosiți                                                                                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isEmpty(value)`              | Verificați dacă există o valoare lipsă, text gol, o listă goală sau un câmp compus gol.                                                      |
+| `isDefined(value)`            | Verificați dacă este setată o valoare. Textul gol este considerat în continuare definit.                                                     |
+| `isNonEmptyString(value)`     | Verificați dacă o valoare este text cu cel puțin un caracter.                                                                                |
+| `includes(listOrText, value)` | Verificați dacă o listă conține o valoare sau dacă un text conține un șir secundar. Potrivirea textului ține cont de majuscule și minuscule. |
+| `arrayLength(list)`           | Obțineți numărul de elemente dintr-o listă.                                                                                                  |
+
+Pentru a face obligatoriu un câmp, utilizați `not isEmpty(fieldName)`. Acest lucru funcționează și pentru câmpuri compuse, cum ar fi e-mailurile și adresele.
+
+### Comparați datele
+
+| Funcție                                                | Folosiți                                                                                                                                                                                                                                                |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `daysSince(date)`                                      | Obține numărul de zile de la o dată până astăzi, în UTC. O dată din viitor produce un număr negativ.                                                                                                                                                    |
+| `isInRelativeDateRange(date, direction, amount, unit)` | Verifică dacă o dată se încadrează într-o perioadă calculată de astăzi, în UTC. `direction` este `"PAST"`, `"NEXT"` sau `"THIS"`, iar `unit` este `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` sau `"YEAR"`. `"PAST"` și `"NEXT"` exclud perioada curentă. |
+
+De exemplu, `daysSince(closeDate) >= 0 and daysSince(closeDate) \<= 30` permite o salvare numai la data de închidere sau în cele 30 de zile de după aceasta.
+
+### Faceți referire la câmpuri compuse și asociate
+
+Utilizați un punct pentru a citi o parte a unui câmp compus, cum ar fi `name.firstName` sau `amount.amountMicros`. De asemenea, puteți citi un câmp printr-o relație de tip mulți-la-unu, cum ar fi `company.name` pentru o persoană. Selectați câmpuri din asistent pentru a găsi căile disponibile.
+
+Sumele monetare sunt stocate în micros: o unitate monetară este egală cu `1000000` micros. De exemplu, `amount.amountMicros >= 100000000` necesită o sumă de cel puțin 100 în moneda înregistrării.
+
+Pentru câmpurile de selecție, comparați valoarea stocată a opțiunii, cum ar fi `'CUSTOMER'`, nu eticheta sa afișată. Verificați exemplele din asistent pentru valorile disponibile în câmpul dvs.
+
+## Reguli exemplificative
+
+Adaptați numele câmpurilor și valorile opțiunilor la modelul dvs. de date. Câmpurile `startDate`, `endDate` și `tags` de mai jos sunt exemple de câmpuri personalizate.
+
+| Obiectiv                                                                 | Condiție                                                               | Mesaj de eroare sugerat                                                                    |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Solicitați un nume de companie                                           | `not isEmpty(name)`                                                    | Introduceți un nume de companie.                                                           |
+| Solicitați o sumă pozitivă atunci când o oportunitate ajunge la Customer | `stage != 'CUSTOMER' or amount.amountMicros > 0`                       | Introduceți o sumă mai mare decât zero înainte de a muta această oportunitate la Customer. |
+| Solicitați ca o persoană să fie asociată cu o companie                   | `isDefined(company)`                                                   | Selectați o companie pentru această persoană.                                              |
+| Solicitați ca data de încheiere să fie la sau după data de început       | `isDefined(startDate) and isDefined(endDate) and endDate >= startDate` | Introduceți o dată de început și o dată de încheiere la sau după aceasta.                  |
+| Solicitați cel puțin o etichetă                                          | `arrayLength(tags) > 0`                                                | Adăugați cel puțin o etichetă.                                                             |
+
+Exemplul cu oportunitatea utilizează `or` pentru a face condițională cerința privind suma: celelalte etape pot fi salvate fără o sumă.
+
+## Când sunt verificate regulile
+
+Regulile active sunt verificate atunci când înregistrările sunt create sau actualizate, inclusiv pentru modificările efectuate prin API, importuri și Workflows. O înregistrare trebuie să respecte toate regulile active ale obiectului său pentru a putea fi salvată.
+
+Activarea unei reguli nu modifică înregistrările existente. O înregistrare care nu respectă noua condiție trebuie corectată la următoarea salvare.
+
+O condiție care citește o înregistrare asociată este evaluată atunci când este salvată înregistrarea căreia îi aparține regula. Editarea numai a înregistrării asociate nu o verifică din nou.
+
+## Editați, dezactivați sau ștergeți o regulă
+
+Reveniți la **Setări → Model de date → obiectul dvs. → Setări → Reguli de validare**, apoi faceți clic pe regulă.
+
+* **Editare:** Actualizați condiția sau mesajul, verificați previzualizarea și faceți clic pe **Salvare**. Pentru o regulă inactivă, acest buton este **Activare**.
+* **Dezactivare:** În **Zona periculoasă**, faceți clic pe **Dezactivare** pentru a opri aplicarea regulii, păstrând configurația acesteia. Faceți clic pe **Activare** pentru a o aplica din nou.
+* **Ștergere:** În **Zona periculoasă**, faceți clic pe **Ștergere** și confirmați pentru a elimina definitiv regula. Înregistrările existente nu sunt modificate.
+
+Dezactivarea sau ștergerea unui câmp utilizat într-o condiție dezactivează și regulile care îl citesc. Revizuiți acele reguli înainte de a le activa din nou.
+
+Pentru a defini reguli de validare într-o aplicație, consultați [ghidul pentru dezvoltatori](/ro/developers/extend/apps/data/validation-rules).
+
+<PageBanner illustration="card-page-validation-rules" />

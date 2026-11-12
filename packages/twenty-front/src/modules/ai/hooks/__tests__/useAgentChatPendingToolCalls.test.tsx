@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { type ExtendedUIMessage } from 'twenty-shared/ai';
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -16,7 +16,10 @@ const key = { threadId: 'thread-id' };
 
 const QUESTIONS = [{ header: 'Plan', question: 'Which plan?', options: [] }];
 
-const questionsCall = (toolCallId: string, status: string) => ({
+const questionsCall = (
+  toolCallId: string,
+  status: string,
+): ExtendedUIMessagePart => ({
   type: 'tool-ask_questions',
   toolCallId,
   state: 'output-available',
@@ -43,7 +46,7 @@ describe('useAgentChatPendingToolCalls', () => {
           questionsCall('call-2', 'pending'),
         ],
       },
-    ] as unknown as ExtendedUIMessage[]);
+    ]);
   });
 
   it('waits on every call still pending, in the order they were made', () => {

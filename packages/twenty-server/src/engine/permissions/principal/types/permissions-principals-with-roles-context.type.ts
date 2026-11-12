@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
@@ -9,7 +9,7 @@ import {
   type PermissionsRolePrincipal,
   type PermissionsWebhookPrincipal,
   type PermissionsWorkspaceMemberPrincipal,
-} from 'src/engine/permissions/principal/types/permissions-principal.type';
+} from 'src/engine/permissions/internal/principal/types/permissions-principal.type';
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
@@ -34,5 +34,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 };

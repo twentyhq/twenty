@@ -3,9 +3,12 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { CreateFileUploadDocument } from '~/generated-metadata/graphql';
@@ -38,6 +41,9 @@ const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [createFileUploadMock],
 });
 
+const DIRECT_MESSAGE_THREAD_ID = '20202020-0000-4000-8000-000000000001';
+const NEW_THREAD_ID = '20202020-0000-4000-8000-000000000002';
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MetadataAndApolloMocksWrapper>
     <I18nProvider i18n={i18n}>
@@ -48,7 +54,18 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useAiChatFileUpload', () => {
-  it('aborts the upload of a file removed from the selection', async () => {
+  it('uploads after leaving a DM and aborts files removed from the selection', async () => {
+    const previousThreadId = jotaiStore.get(currentAiChatThreadState.atom);
+    const directMessageAtom = recordStoreFamilyState.atomFamily(
+      DIRECT_MESSAGE_THREAD_ID,
+    );
+    const previousDirectMessage = jotaiStore.get(directMessageAtom);
+    jotaiStore.set(directMessageAtom, {
+      id: DIRECT_MESSAGE_THREAD_ID,
+      __typename: 'AgentChatThread',
+      conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+    });
+    jotaiStore.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
     const { result } = renderHook(() => useAiChatFileUpload(), {
       wrapper: Wrapper,
     });
@@ -58,18 +75,24 @@ describe('useAiChatFileUpload', () => {
       [],
     );
 
-    act(() => {
-      upload = result.current.uploadFiles([file]);
-    });
+    try {
+      act(() => {
+        jotaiStore.set(currentAiChatThreadState.atom, NEW_THREAD_ID);
+        upload = result.current.uploadFiles([file]);
+      });
 
-    await waitFor(() => expect(putFile).toHaveBeenCalled());
+      await waitFor(() => expect(putFile).toHaveBeenCalled());
 
-    await act(async () => {
-      jotaiStore.set(agentChatSelectedFilesState.atom, []);
-      await upload;
-    });
+      await act(async () => {
+        jotaiStore.set(agentChatSelectedFilesState.atom, []);
+        await upload;
+      });
 
-    expect(putFile.mock.calls[0][1]?.signal?.aborted).toBe(true);
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+      expect(putFile.mock.calls[0][1]?.signal?.aborted).toBe(true);
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    } finally {
+      jotaiStore.set(currentAiChatThreadState.atom, previousThreadId);
+      jotaiStore.set(directMessageAtom, previousDirectMessage);
+    }
   });
 });

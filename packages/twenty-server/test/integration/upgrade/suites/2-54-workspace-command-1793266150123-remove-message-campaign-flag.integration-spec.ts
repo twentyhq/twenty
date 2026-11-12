@@ -66,7 +66,8 @@ describe('2-54 workspace command - remove message campaign flag (integration)', 
       )
       .map(({ universalIdentifier }) => universalIdentifier);
 
-    expect(flaggedUniversalIdentifiers).toHaveLength(11);
+    // The two duplicate commands read the create permission since 2.57, so this down leaves them alone
+    expect(flaggedUniversalIdentifiers).toHaveLength(9);
     expect(
       commandMenuItemsAfterDown.filter(
         ({ universalIdentifier }) =>

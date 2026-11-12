@@ -29,11 +29,10 @@ export const setSubColumn = (
       matchedOptions: options as SpreadsheetMatchedOptions[],
       type: SpreadsheetColumnType.matchedSelectOptions,
     };
-  } else {
-    return {
-      ...oldColumn,
-      matchedOptions: options as SpreadsheetMatchedOptions[],
-      type: SpreadsheetColumnType.matchedSelect,
-    };
   }
+  return {
+    ...oldColumn,
+    matchedOptions: options as SpreadsheetMatchedOptions[],
+    type: SpreadsheetColumnType.matchedSelect,
+  };
 };

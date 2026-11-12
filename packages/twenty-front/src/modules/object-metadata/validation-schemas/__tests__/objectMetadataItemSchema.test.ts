@@ -20,8 +20,9 @@ describe('objectMetadataItemSchema', () => {
         (item) => item.nameSingular === 'company',
       );
     expect(validObjectMetadataItem).not.toBeUndefined();
-    if (validObjectMetadataItem === undefined)
+    if (validObjectMetadataItem === undefined) {
       throw new Error('Should never occur');
+    }
 
     const result = objectMetadataItemSchema.safeParse({
       ...validObjectMetadataItem,

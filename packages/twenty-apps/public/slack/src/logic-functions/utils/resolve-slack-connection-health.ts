@@ -30,9 +30,9 @@ type SlackTeamClaimLookup =
   | { isReadable: true; claimedWorkspaceId: string | null }
   | { isReadable: false };
 
-const probeSlackAuth = async (
-  slackClient: WebClient,
-): Promise<SlackAuthProbe> => {
+const probeSlackAuth = async (slackClient: {
+  auth: Pick<WebClient['auth'], 'test'>;
+}): Promise<SlackAuthProbe> => {
   try {
     const authResult = await slackClient.auth.test();
 
@@ -80,7 +80,7 @@ export const resolveSlackConnectionHealth = async ({
   slackClient,
   connectionId,
 }: {
-  slackClient: WebClient;
+  slackClient: { auth: Pick<WebClient['auth'], 'test'> };
   connectionId: string;
 }): Promise<SlackConnectionHealthReport> => {
   const authProbe = await probeSlackAuth(slackClient);

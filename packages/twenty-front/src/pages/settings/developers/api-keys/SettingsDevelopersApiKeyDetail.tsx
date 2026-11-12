@@ -112,7 +112,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
 
   const handleRoleChange = async (roleId: string) => {
-    if (!apiKey?.id || !isNonEmptyString(roleId)) return;
+    if (!apiKey?.id || !isNonEmptyString(roleId)) {
+      return;
+    }
 
     setIsLoading(true);
     try {

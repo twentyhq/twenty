@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type FetchMessageObject, type ImapFlow } from 'imapflow';
+import {
+  type FetchMessageObject,
+  type ImapFlow,
+  type MessageStructureObject,
+} from 'imapflow';
 import PostalMime, { type Email as ParsedEmail } from 'postal-mime';
 
 export type MessageParseResult = {
@@ -8,6 +12,7 @@ export type MessageParseResult = {
   parsed: ParsedEmail | null;
   flags?: Set<string>;
   internalDate?: Date | string;
+  bodyStructure?: MessageStructureObject;
   error?: Error;
 };
 
@@ -42,7 +47,13 @@ export class ImapMessageParserService {
 
       const messages = await client.fetchAll(
         uidSet,
-        { uid: true, source: true, flags: true, internalDate: true },
+        {
+          uid: true,
+          source: true,
+          flags: true,
+          internalDate: true,
+          bodyStructure: true,
+        },
         { uid: true },
       );
 
@@ -82,7 +93,7 @@ export class ImapMessageParserService {
   private async parseMessage(
     message: FetchMessageObject,
   ): Promise<MessageParseResult> {
-    const { uid, source, flags, internalDate } = message;
+    const { uid, source, flags, internalDate, bodyStructure } = message;
 
     if (!source) {
       this.logger.debug(`No source content for message UID ${uid}`);
@@ -93,7 +104,7 @@ export class ImapMessageParserService {
     try {
       const parsed = await PostalMime.parse(source);
 
-      return { uid, parsed, flags, internalDate };
+      return { uid, parsed, flags, internalDate, bodyStructure };
     } catch (error) {
       this.logger.error(`Failed to parse message UID ${uid}: ${error.message}`);
 
