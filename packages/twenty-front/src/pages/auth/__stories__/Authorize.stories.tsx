@@ -137,7 +137,10 @@ export const VerifiedClient: Story = {
       timeout: 5000,
     });
     await canvas.findByText(
-      'Registered with Twenty as the official Twenty CLI. Only continue if you started this connection from Twenty CLI.',
+      'Registered with Twenty as the official Twenty CLI',
+    );
+    await canvas.findByText(
+      'Only continue if you started this connection from Twenty CLI.',
     );
   },
 };

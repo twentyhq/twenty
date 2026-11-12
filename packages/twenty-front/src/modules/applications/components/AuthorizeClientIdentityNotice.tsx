@@ -6,15 +6,27 @@ import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledVerifiedNotice = styled.div`
-  align-items: flex-start;
   display: flex;
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledVerifiedLine = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledVerifiedIcon = styled.span`
   color: ${themeCssVariables.color.green};
   display: flex;
+`;
+
+// Wraps inside the card without widening it: the card sizes itself to its content.
+const StyledReminder = styled.div`
+  min-width: 100%;
+  width: 0;
 `;
 
 const StyledWarningContainer = styled.div`
@@ -37,15 +49,21 @@ export const AuthorizeClientIdentityNotice = ({
   if (isVerified) {
     return (
       <StyledVerifiedNotice>
-        <StyledVerifiedIcon>
-          <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
-        </StyledVerifiedIcon>
-        <Text size="sm" color="secondary">
-          <Trans>
-            Registered with Twenty as the official {appName}. Only continue if
-            you started this connection from {appName}.
-          </Trans>
-        </Text>
+        <StyledVerifiedLine>
+          <StyledVerifiedIcon>
+            <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
+          </StyledVerifiedIcon>
+          <Text size="sm" color="secondary">
+            <Trans>Registered with Twenty as the official {appName}</Trans>
+          </Text>
+        </StyledVerifiedLine>
+        <StyledReminder>
+          <Text size="sm" color="tertiary">
+            <Trans>
+              Only continue if you started this connection from {appName}.
+            </Trans>
+          </Text>
+        </StyledReminder>
       </StyledVerifiedNotice>
     );
   }

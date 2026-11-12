@@ -10,6 +10,7 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
 import { getKnownOAuthClientLogoUrl } from '@/applications/utils/getKnownOAuthClientLogoUrl';
+import { getVerifiedOAuthClientLogoUrl } from '@/applications/utils/getVerifiedOAuthClientLogoUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
@@ -297,7 +298,9 @@ export const Authorize = () => {
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
   const redirectHost = getUrlSafely(redirectUrl)?.host;
   const appLogoUrl =
-    applicationRegistration.logoUrl ?? getKnownOAuthClientLogoUrl(redirectHost);
+    applicationRegistration.logoUrl ??
+    getVerifiedOAuthClientLogoUrl(applicationRegistration) ??
+    getKnownOAuthClientLogoUrl(redirectHost);
   const workspaceName = currentWorkspace?.displayName;
 
   return (
