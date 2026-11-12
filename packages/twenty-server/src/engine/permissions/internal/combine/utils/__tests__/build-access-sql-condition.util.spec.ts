@@ -16,7 +16,7 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { buildPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-sql-condition.util';
+import { buildAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-access-sql-condition.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -32,6 +32,7 @@ jest.mock(
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
 const FULL_ACCESS_ROLE_ID = 'role-1';
+const ROLE_WITH_RLS_RULE_ID = 'role-with-rls-rule';
 const ROLE_WITHOUT_PERMISSION_ID = 'role-without-permission';
 const NOTE_FILTER = { title: { eq: 'restricted' } };
 
@@ -60,6 +61,27 @@ const fullAccess: ObjectRecordsPermissions = {
   unreadableFields: [],
   uneditableFields: [],
 };
+const accessThroughRlsRule: ObjectRecordsPermissions = {
+  ...fullAccess,
+  canReadAllRecords: false,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
+  rowLevelRecordsPermissions: [
+    {
+      ruleId: 'rule-id',
+      canCreateRecords: true,
+      canReadRecords: true,
+      canUpdateRecords: true,
+      canSoftDeleteRecords: true,
+      canDestroyRecords: true,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields: [],
+    },
+  ],
+};
 const fullAccessByObjectId = {
   ...NO_ROLE_RECORDS_PERMISSIONS,
   objects: Object.fromEntries(
@@ -76,16 +98,25 @@ const metadataMaps: PermissionsMetadataMaps = {
   rolesPermissions: {
     [FULL_ACCESS_ROLE_ID]: fullAccessByObjectId,
     [APPLICATION_ROLE_ID]: fullAccessByObjectId,
+    [ROLE_WITH_RLS_RULE_ID]: {
+      ...NO_ROLE_RECORDS_PERMISSIONS,
+      objects: Object.fromEntries(
+        ['note', 'person', 'company'].map((objectMetadataId) => [
+          objectMetadataId,
+          accessThroughRlsRule,
+        ]),
+      ),
+    },
   },
   featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
 };
 const buildSQLCondition = (
   request: Omit<
-    Parameters<typeof buildPermissionsSQLCondition>[0],
+    Parameters<typeof buildAccessSQLCondition>[0],
     'recordShareTableExpression'
   >,
 ) =>
-  buildPermissionsSQLCondition({
+  buildAccessSQLCondition({
     ...request,
     recordShareTableExpression: '"workspace"."recordShare"',
   });
@@ -120,6 +151,15 @@ const readEverything: PermissionsPrincipalsWithRolesContext = {
     workspaceMemberId: 'member-1',
   },
   applicationPrincipal: { type: 'customApplication' },
+};
+
+const readThroughRlsRule: PermissionsPrincipalsWithRolesContext = {
+  ...readEverything,
+  mainPrincipal: {
+    type: 'workspaceMember',
+    roleId: ROLE_WITH_RLS_RULE_ID,
+    workspaceMemberId: 'member-1',
+  },
 };
 
 const owningApplication: PermissionsPrincipalsWithRolesContext = {
@@ -179,7 +219,7 @@ const gatedSql = ({
   return policy.kind === 'gated' ? policy.sqlCondition.sql : '';
 };
 
-describe('buildPermissionsSQLCondition', () => {
+describe('buildAccessSQLCondition', () => {
   beforeEach(() => {
     (renderRowLevelPermissionFilterToSql as jest.Mock).mockImplementation(
       ({ tableAlias }: { tableAlias: string }) => ({
@@ -399,7 +439,7 @@ describe('buildPermissionsSQLCondition', () => {
 
     it('lets a named grant bypass the row filter of the role', () => {
       (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
-      const policy = buildForCompany(readEverything);
+      const policy = buildForCompany(readThroughRlsRule);
 
       if (policy.kind !== 'gated') {
         throw new Error('Expected a grant gate');
@@ -456,7 +496,7 @@ describe('buildPermissionsSQLCondition', () => {
   it('lets a share on a private by default object bypass the row filter of the role with record sharing off', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const sql = gatedSql({
-      principals: readEverything,
+      principals: readThroughRlsRule,
       flatObjectMetadata: person,
     });
 
@@ -468,7 +508,7 @@ describe('buildPermissionsSQLCondition', () => {
   it('checks the role rule through the caller access groups when given', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const policy = buildSQLConditionOutcome({
-      principals: readEverything,
+      principals: readThroughRlsRule,
       metadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
@@ -491,7 +531,7 @@ describe('buildPermissionsSQLCondition', () => {
   it('also grants the records holding a group inherited through a related record path', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
     const policy = buildSQLConditionOutcome({
-      principals: readEverything,
+      principals: readThroughRlsRule,
       metadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
@@ -515,7 +555,7 @@ describe('buildPermissionsSQLCondition', () => {
     (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
 
     expect(
-      gatedSql({ principals: readEverything, flatObjectMetadata: person }),
+      gatedSql({ principals: readThroughRlsRule, flatObjectMetadata: person }),
     ).not.toContain('_accessGroupIds');
   });
 
@@ -674,7 +714,7 @@ describe('buildPermissionsSQLCondition', () => {
     it('grants a private record to its creator outside the row filter of the role', () => {
       (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
       const policy = buildSQLConditionOutcome({
-        principals: readEverything,
+        principals: readThroughRlsRule,
         metadataMaps: {
           ...creatorMetadataMaps,
           featureFlagsMap: metadataMaps.featureFlagsMap,

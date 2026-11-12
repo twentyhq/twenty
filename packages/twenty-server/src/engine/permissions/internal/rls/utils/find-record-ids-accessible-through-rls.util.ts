@@ -1,0 +1,46 @@
+/* @license Enterprise */
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { arePrivateRecordsExcludedFromAllRecordsAndRls } from 'src/engine/permissions/internal/private-record/utils/are-private-records-excluded-from-all-records-and-rls.util';
+import { findRecordIdsByPrivacy } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-by-privacy.util';
+import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
+import { findRecordsMatchingRecordFilter } from 'src/engine/permissions/internal/rls/utils/find-records-matching-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
+
+export const findRecordIdsAccessibleThroughRls = async (
+  request: PermissionsRowAccessEvaluationRequest,
+): Promise<string[]> => {
+  if (!canRlsAccessOperation(request)) {
+    return [];
+  }
+
+  const rlsRuleRecordFilter = resolveRlsRuleRecordFilter(request);
+
+  if (!isDefined(rlsRuleRecordFilter)) {
+    return [];
+  }
+
+  const matchingRecords = await findRecordsMatchingRecordFilter({
+    records: request.records,
+    recordFilter: rlsRuleRecordFilter,
+    flatObjectMetadata: request.flatObjectMetadata,
+    metadataMaps: request.metadataMaps,
+    findRelationJoinValues: request.context.findRelationJoinValues,
+    shouldIgnoreSoftDeleteDefaultFilter:
+      request.context.shouldIgnoreSoftDeleteDefaultFilter,
+  });
+  const recordIds = matchingRecords.map((record) => record.id);
+
+  if (!arePrivateRecordsExcludedFromAllRecordsAndRls(request)) {
+    return recordIds;
+  }
+
+  return findRecordIdsByPrivacy({
+    recordIds,
+    flatObjectMetadata: request.flatObjectMetadata,
+    context: request.context,
+    isPrivate: false,
+  });
+};

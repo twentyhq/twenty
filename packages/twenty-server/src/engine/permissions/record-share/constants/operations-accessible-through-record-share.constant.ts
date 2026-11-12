@@ -3,7 +3,7 @@
 import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 
-export const OPERATIONS_GRANTABLE_BY_RECORD_SHARE: {
+export const OPERATIONS_ACCESSIBLE_THROUGH_RECORD_SHARE: {
   operationType: ObjectRecordsOperationType;
   objectPermissionAction: ObjectPermissionAction;
 }[] = [

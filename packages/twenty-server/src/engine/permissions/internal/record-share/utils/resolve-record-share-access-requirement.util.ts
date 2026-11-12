@@ -5,10 +5,10 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalsShareKeys } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-share-keys.util';
-import { canRecordShareGrantOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-grant-operation.util';
+import { canRecordShareAccessOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-access-operation.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/internal/record-share/utils/resolve-required-record-share-access-levels.util';
 
-export const resolvePermissionsShareGrant = (
+export const resolveRecordShareAccessRequirement = (
   request: PermissionsRowAccessRequest,
 ):
   | {
@@ -24,7 +24,7 @@ export const resolvePermissionsShareGrant = (
   if (
     !isNonEmptyArray(principalIds) ||
     !isNonEmptyArray(accessLevels) ||
-    !canRecordShareGrantOperation({
+    !canRecordShareAccessOperation({
       flatObjectMetadata: request.flatObjectMetadata,
       featureFlagsMap: request.metadataMaps.featureFlagsMap,
       operationType: request.operationType,

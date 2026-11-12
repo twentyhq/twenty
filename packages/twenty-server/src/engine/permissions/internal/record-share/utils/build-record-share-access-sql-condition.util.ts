@@ -5,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { buildRecordShareSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-record-share-sql-condition.util';
-import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
+import { resolveRecordShareAccessRequirement } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-access-requirement.util';
 
-export const buildPermissionsShareSQLCondition = (
+export const buildRecordShareAccessSQLCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SQLCondition | undefined => {
-  const shareGrant = resolvePermissionsShareGrant(request);
+  const shareGrant = resolveRecordShareAccessRequirement(request);
 
   if (!isDefined(shareGrant)) {
     return undefined;

@@ -18,7 +18,7 @@ import {
   type RowAccessEvaluationContext,
   type RowAccessRecord,
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
+import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
@@ -101,6 +101,25 @@ const fullAccess: ObjectRecordsPermissions = {
   uneditableFields: [],
 };
 
+const accessThroughRlsRule: ObjectRecordsPermissions = {
+  ...fullAccess,
+  canReadAllRecords: false,
+  rowLevelRecordsPermissions: [
+    {
+      ruleId: 'rule-id',
+      canCreateRecords: false,
+      canReadRecords: true,
+      canUpdateRecords: false,
+      canSoftDeleteRecords: false,
+      canDestroyRecords: false,
+      predicates: [],
+      predicateGroups: [],
+      unreadableFields: [],
+      uneditableFields: [],
+    },
+  ],
+};
+
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { type: 'role', roleId: MEMBER_ROLE_ID },
@@ -127,10 +146,14 @@ const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
   applicationPrincipal: { type: 'customApplication' },
 };
 
-const filterByStatus = (status: string) =>
+let isRoleRestrictedByRlsRule = false;
+
+const filterByStatus = (status: string) => {
+  isRoleRestrictedByRlsRule = true;
   jest
     .mocked(resolveRlsRuleRecordFilter)
     .mockReturnValue({ status: { eq: status } });
+};
 
 const buildContext = (): RowAccessEvaluationContext => ({
   shouldIgnoreSoftDeleteDefaultFilter: false,
@@ -157,7 +180,7 @@ const findGranted = ({
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>
-  findGrantedRecordIds({
+  findAccessibleRecordIds({
     principals,
     metadataMaps: {
       flatFieldMetadataMaps,
@@ -165,7 +188,11 @@ const findGranted = ({
       rolesPermissions: {
         [MEMBER_ROLE_ID]: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
-          objects: { [flatObjectMetadata.id]: fullAccess },
+          objects: {
+            [flatObjectMetadata.id]: isRoleRestrictedByRlsRule
+              ? accessThroughRlsRule
+              : fullAccess,
+          },
         },
       },
       featureFlagsMap: Object.fromEntries(
@@ -178,8 +205,9 @@ const findGranted = ({
     context,
   });
 
-describe('findGrantedRecordIds', () => {
+describe('findAccessibleRecordIds', () => {
   beforeEach(() => {
+    isRoleRestrictedByRlsRule = false;
     jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 

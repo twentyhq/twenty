@@ -220,7 +220,7 @@ export class RecordSharingReadService {
       isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsReadService.canAllRecordsOrRowLevelPermissionsGrantOperation(
+      (await this.recordPermissionsReadService.canAllRecordsOrRlsAccessOperation(
         {
           principals:
             await this.principalPermissionsReadService.resolvePermissionsPrincipals(
