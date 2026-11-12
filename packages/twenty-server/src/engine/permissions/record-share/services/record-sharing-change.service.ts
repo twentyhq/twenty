@@ -88,11 +88,13 @@ export class RecordSharingChangeService {
 
           if (
             !isWritable ||
-            !(await this.recordPermissionsReadService.canRoleAccessSomeRecords({
-              operationType: 'update',
-              principals,
-              objectMetadataId: args.objectMetadataId,
-            }))
+            !(await this.recordPermissionsReadService.canAllRecordsOrRowLevelPermissionsGrantOperation(
+              {
+                operationType: 'update',
+                principals,
+                objectMetadataId: args.objectMetadataId,
+              },
+            ))
           ) {
             throw new NotFoundError('Record not found');
           }

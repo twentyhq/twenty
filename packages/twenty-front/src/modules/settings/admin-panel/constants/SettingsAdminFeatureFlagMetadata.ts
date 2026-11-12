@@ -68,6 +68,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
   },
+  [FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED]: {
+    label: msg`Permission tables`,
+    description: msg`Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created.`,
+  },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
     description: msg`Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes.`,

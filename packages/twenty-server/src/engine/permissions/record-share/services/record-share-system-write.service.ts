@@ -26,7 +26,7 @@ import { CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME } from 'src/engine/permissio
 import { buildWorkspaceTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-workspace-table-expression.util';
 import { hasCreatedByField } from 'src/engine/permissions/internal/record-permission-repository/utils/has-created-by-field.util';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -215,7 +215,7 @@ export class RecordShareSystemWriteService {
 
     const objectsWithCreator = flatObjectMetadatas.filter(
       (flatObjectMetadata) =>
-        !isPermissionStorageObject(flatObjectMetadata) &&
+        !temporaryExcludePermissionStorageObject(flatObjectMetadata) &&
         hasCreatedByField({ flatObjectMetadata, flatFieldMetadataMaps }),
     );
 
