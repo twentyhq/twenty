@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
-import { ConnectionProviderOAuthClientResolverService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-client-resolver.service';
+import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-client/connection-provider-oauth-client.service';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
@@ -47,7 +47,7 @@ export class ConnectionProviderOAuthFlowService {
 
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
-    private readonly oauthClientResolverService: ConnectionProviderOAuthClientResolverService,
+    private readonly oauthClientService: ConnectionProviderOAuthClientService,
     private readonly authorizationStateService: ConnectionProviderAuthorizationStateService,
     private readonly connectedAccountService: ConnectionProviderConnectedAccountService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -71,11 +71,10 @@ export class ConnectionProviderOAuthFlowService {
         authorizationArgs.reconnectingConnectedAccountId,
     });
 
-    const client =
-      await this.oauthClientResolverService.resolveForAuthorization({
-        provider: connectionProvider,
-        workspaceId,
-      });
+    const client = await this.oauthClientService.resolveForAuthorization({
+      provider: connectionProvider,
+      workspaceId,
+    });
     const codeVerifier = client.shouldUsePkce ? generatePkceVerifier() : null;
 
     const state = await this.authorizationStateService.sign({
@@ -150,9 +149,10 @@ export class ConnectionProviderOAuthFlowService {
       statePayload,
       browserNonces: callbackArgs.browserNonces,
     });
-    const client = await this.oauthClientResolverService.resolveForTokenRequest(
-      { provider, workspaceId: statePayload.workspaceId },
-    );
+    const client = await this.oauthClientService.resolveForTokenRequest({
+      provider,
+      workspaceId: statePayload.workspaceId,
+    });
 
     if (
       client.clientId !== flowSecrets.clientId ||
@@ -240,7 +240,7 @@ export class ConnectionProviderOAuthFlowService {
         codeVerifier,
       });
     } catch (error) {
-      await this.oauthClientResolverService.forgetClientIfRejected({
+      await this.oauthClientService.forgetClientIfRejected({
         provider,
         workspaceId,
         client,

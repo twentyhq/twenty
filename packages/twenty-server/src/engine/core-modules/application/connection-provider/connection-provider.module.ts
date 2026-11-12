@@ -9,11 +9,12 @@ import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/app
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
-import { ConnectionProviderOAuthClientResolverService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-client-resolver.service';
+import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-client/connection-provider-oauth-client.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderOAuthClientEntity } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/entities/connection-provider-oauth-client.entity';
 import { ConnectionProviderDiscoveredOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-discovered-oauth-client.service';
-import { ConnectionProviderOAuthDiscoveryService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery.service';
+import { DiscoveredOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/discovered-oauth-client.driver';
+import { ManifestOAuthClientDriver } from 'src/engine/core-modules/application/connection-provider/oauth-client/drivers/manifest-oauth-client.driver';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -58,8 +59,9 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     provideWorkspaceScopedRepository(ConnectionProviderEntity),
     provideWorkspaceScopedRepository(ConnectionProviderOAuthClientEntity),
     ConnectionProviderDiscoveredOAuthClientService,
-    ConnectionProviderOAuthDiscoveryService,
-    ConnectionProviderOAuthClientResolverService,
+    DiscoveredOAuthClientDriver,
+    ManifestOAuthClientDriver,
+    ConnectionProviderOAuthClientService,
     AppConnectionAccessService,
     ConnectionProviderService,
     ConnectionProviderAuthorizationStateService,
@@ -73,7 +75,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
   ],
   exports: [
     ConnectionProviderService,
-    ConnectionProviderOAuthClientResolverService,
+    ConnectionProviderOAuthClientService,
     ConnectionProviderAuthorizationStateService,
     ConnectionProviderOAuthFlowService,
     ConnectionProviderCustomFlowService,

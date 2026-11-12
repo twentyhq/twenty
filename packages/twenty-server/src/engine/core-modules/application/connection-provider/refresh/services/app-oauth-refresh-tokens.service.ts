@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
-import { ConnectionProviderOAuthClientResolverService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-client-resolver.service';
+import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-client/connection-provider-oauth-client.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
@@ -23,7 +23,7 @@ export class AppOAuthRefreshAccessTokenService {
 
   constructor(
     private readonly connectionProviderService: ConnectionProviderService,
-    private readonly oauthClientResolverService: ConnectionProviderOAuthClientResolverService,
+    private readonly oauthClientService: ConnectionProviderOAuthClientService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -60,7 +60,7 @@ export class AppOAuthRefreshAccessTokenService {
         accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
       };
     } catch (error) {
-      await this.oauthClientResolverService.forgetClientIfRejected({
+      await this.oauthClientService.forgetClientIfRejected({
         provider,
         workspaceId: connectedAccount.workspaceId,
         client,
@@ -105,11 +105,10 @@ export class AppOAuthRefreshAccessTokenService {
         );
       }
 
-      const client =
-        await this.oauthClientResolverService.resolveForTokenRequest({
-          provider,
-          workspaceId,
-        });
+      const client = await this.oauthClientService.resolveForTokenRequest({
+        provider,
+        workspaceId,
+      });
 
       return { provider, client };
     } catch (error) {

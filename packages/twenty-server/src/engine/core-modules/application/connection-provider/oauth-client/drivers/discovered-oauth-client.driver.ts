@@ -25,6 +25,10 @@ import {
   ConnectionProviderDiscoveredOAuthClientService,
   type OAuthDiscoveryClientToSave,
 } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-discovered-oauth-client.service';
+import {
+  type OAuthClientDriver,
+  type OAuthClientDriverArgs,
+} from 'src/engine/core-modules/application/connection-provider/oauth-client/types/oauth-client-driver.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
@@ -32,14 +36,17 @@ import { isStoredOAuthClientUsable } from 'src/engine/core-modules/application/c
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { resolveTokenEndpointAuthMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/resolve-token-endpoint-auth-method.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
-import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
+import {
+  assertOAuthDiscoveryProvider,
+  type OAuthDiscoveryConnectionProvider,
+} from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS = 15_000;
 
-export type DiscoveryTarget = {
+type DiscoveryTarget = {
   provider: Pick<
     OAuthDiscoveryConnectionProvider,
     'id' | 'oauthDiscoveryConfig'
@@ -48,16 +55,17 @@ export type DiscoveryTarget = {
 };
 
 @Injectable()
-export class ConnectionProviderOAuthDiscoveryService {
+export class DiscoveredOAuthClientDriver implements OAuthClientDriver {
   constructor(
     private readonly discoveredOAuthClientService: ConnectionProviderDiscoveredOAuthClientService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async resolveClientForAuthorization(
-    target: DiscoveryTarget,
+  async resolveForAuthorization(
+    args: OAuthClientDriverArgs,
   ): Promise<ResolvedOAuthClient> {
+    const target = this.toDiscoveryTarget(args);
     const fetchFunction = this.buildFetch(target.workspaceId);
     const { resourceMetadataUrl, scope } = await this.probeResource({
       target,
@@ -94,9 +102,10 @@ export class ConnectionProviderOAuthDiscoveryService {
     return this.toResolvedClient({ storedClient, scope });
   }
 
-  async resolveClientForTokenRequest(
-    target: DiscoveryTarget,
+  async resolveForTokenRequest(
+    args: OAuthClientDriverArgs,
   ): Promise<ResolvedOAuthClient> {
+    const target = this.toDiscoveryTarget(args);
     const storedClient =
       await this.discoveredOAuthClientService.findStoredClientOrThrow({
         connectionProviderId: target.provider.id,
@@ -107,17 +116,25 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   async forgetRejectedClient({
-    target,
     clientId,
-  }: {
-    target: DiscoveryTarget;
-    clientId: string;
-  }): Promise<void> {
+    ...args
+  }: OAuthClientDriverArgs & { clientId: string }): Promise<void> {
+    const target = this.toDiscoveryTarget(args);
+
     await this.discoveredOAuthClientService.deleteClient({
       connectionProviderId: target.provider.id,
       workspaceId: target.workspaceId,
       clientId,
     });
+  }
+
+  private toDiscoveryTarget({
+    provider,
+    workspaceId,
+  }: OAuthClientDriverArgs): DiscoveryTarget {
+    assertOAuthDiscoveryProvider(provider);
+
+    return { provider, workspaceId };
   }
 
   private canReuseStoredClient({
