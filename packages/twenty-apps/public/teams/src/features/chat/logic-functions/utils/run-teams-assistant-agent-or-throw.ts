@@ -1,12 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type RunAgentInput, runAgent } from 'twenty-sdk/logic-function';
+import { runAgent } from 'twenty-sdk/logic-function';
 
 import { TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
 import { type TeamsAssistantTurn } from 'src/features/chat/logic-functions/types/teams-assistant-turn.type';
-
-type TeamsAssistantAgentMessage = NonNullable<
-  RunAgentInput['messages']
->[number];
+import { buildTeamsAssistantMessages } from 'src/features/chat/logic-functions/utils/build-teams-assistant-messages';
 
 const hasResponseText = (result: object): result is { response: string } =>
   'response' in result && typeof result.response === 'string';
@@ -15,11 +12,13 @@ export const runTeamsAssistantAgentOrThrow = async ({
   requestText,
   history,
   workspaceMemberId,
+  workspaceBaseUrl,
   deadlineAtMs,
 }: {
   requestText: string;
   history: TeamsAssistantTurn[];
   workspaceMemberId: string;
+  workspaceBaseUrl: string | undefined;
   deadlineAtMs: number;
 }): Promise<string> => {
   if (deadlineAtMs <= Date.now()) {
@@ -41,16 +40,13 @@ export const runTeamsAssistantAgentOrThrow = async ({
       runAgent({
         agentUniversalIdentifier: TEAMS_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
         runAsWorkspaceMemberId: workspaceMemberId,
-        messages: [
-          ...history.flatMap((turn): TeamsAssistantAgentMessage[] => [
-            { role: 'user', content: turn.requestText },
-            { role: 'assistant', content: turn.responseText },
-          ]),
-          {
-            role: 'user',
-            content: `You are acting as workspace member ${workspaceMemberId}, with that member's own permissions. "Me", "my" and "mine" refer to that member.\n\nRequest from Teams:\n${requestText}`,
-          },
-        ],
+        messages: buildTeamsAssistantMessages({
+          requestText,
+          history,
+          workspaceMemberId,
+          workspaceBaseUrl,
+          timeoutSeconds: Math.ceil((deadlineAtMs - Date.now()) / 1000),
+        }),
       }),
       deadline,
     ]);

@@ -11,6 +11,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
 const INPUT = {
   requestText: 'how many open deals does Acme have?',
   workspaceMemberId: 'workspace-member-1',
+  workspaceBaseUrl: 'https://acme.twenty.com',
   history: [],
 };
 

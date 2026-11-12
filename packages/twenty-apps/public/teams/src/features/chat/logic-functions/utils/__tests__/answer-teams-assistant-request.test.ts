@@ -45,6 +45,13 @@ vi.mock(
 );
 
 vi.mock(
+  'src/features/chat/logic-functions/utils/fetch-workspace-base-url',
+  () => ({
+    fetchWorkspaceBaseUrl: vi.fn().mockResolvedValue('https://acme.twenty.com'),
+  }),
+);
+
+vi.mock(
   'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw',
   () => ({
     getTeamsConnectorAccessTokenOrThrow: vi.fn().mockResolvedValue('token'),
@@ -111,6 +118,7 @@ describe('answerTeamsAssistantRequest', () => {
       expect.objectContaining({
         requestText: REQUEST.requestText,
         workspaceMemberId: 'workspace-member-1',
+        workspaceBaseUrl: 'https://acme.twenty.com',
       }),
     );
     expect(finishedTexts()).toEqual(['Acme has 3 open deals.']);
