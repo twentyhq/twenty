@@ -81,15 +81,22 @@ const NOT_CHARGED: JobMemoryAdmission = {
   availableBytes: null,
 };
 
+const GLOBAL_MEMORY_GROUP_KEY = 'global';
+
 const WORKSPACE_GROUP_KEY_PREFIX = buildWorkspaceGroupKey('');
 const APPLICATION_GROUP_KEY_PREFIX = buildApplicationGroupKey('');
 
-export const getChargedGroupKeys = (groupKeys: string[]): string[] =>
-  groupKeys.filter(
+export const getChargedGroupKeys = (groupKeys: string[]): string[] => {
+  const chargedGroupKeys = groupKeys.filter(
     (groupKey) =>
       groupKey.startsWith(WORKSPACE_GROUP_KEY_PREFIX) ||
       groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX),
   );
+
+  return chargedGroupKeys.length > 0
+    ? [...new Set([...chargedGroupKeys, GLOBAL_MEMORY_GROUP_KEY])]
+    : [];
+};
 
 export class JobMemoryLimiter {
   private readonly logger = new Logger(JobMemoryLimiter.name);
@@ -343,7 +350,9 @@ export class JobMemoryLimiter {
       client,
       pattern: `${usedKeyPrefix}*`,
     })) {
-      usedKeys.add(usedKey);
+      if (usedKey !== `${usedKeyPrefix}${GLOBAL_MEMORY_GROUP_KEY}`) {
+        usedKeys.add(usedKey);
+      }
     }
 
     const usages: GroupKeyMemoryUsage[] = [];
@@ -493,6 +502,10 @@ export class JobMemoryLimiter {
   }
 
   private getShare(groupKey: string): number {
+    if (groupKey === GLOBAL_MEMORY_GROUP_KEY) {
+      return 1;
+    }
+
     if (groupKey.startsWith(APPLICATION_GROUP_KEY_PREFIX)) {
       return this.options.twentyConfigService.get(
         'JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER',

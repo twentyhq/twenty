@@ -71,6 +71,12 @@ local limits = {}
 for keyIndex = 1, keyCount do
   local limit = math.max(0, math.floor(shares[keyIndex] * (capacity - (usedMemory - used[keyIndex]))))
 
+  -- Reserve a shared budget even while other producers use the same INFO snapshot.
+  -- Already resident jobs are counted conservatively until their charges are released.
+  if string.sub(KEYS[2 * keyIndex - 1], -7) == ':global' then
+    limit = math.max(0, capacity - usedMemory)
+  end
+
   limits[keyIndex] = limit
 
   if requested[keyIndex] > 0 and used[keyIndex] + requested[keyIndex] > limit then

@@ -493,8 +493,8 @@ describe('JobMemoryLimiter', () => {
       expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(300);
 
       expect(await limiter.reconcile(QUEUE)).toEqual({
-        releasedCount: 2,
-        releasedBytes: 600,
+        releasedCount: 3,
+        releasedBytes: 900,
       });
       expect(await readUsedBytes({ redis, groupKey: WORKSPACE_1 })).toBe(0);
       expect(await readUsedBytes({ redis, groupKey: APPLICATION })).toBe(0);
