@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
 import {
   type AgentManifest,
+  type NormalizedRoleManifest,
+  normalizeRoleManifestRecordsPermissions,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -13,11 +15,17 @@ const AGENT_ROLE_UNIVERSAL_IDENTIFIER = 'agent-role';
 const CUSTOM_OBJECT_UNIVERSAL_IDENTIFIER = 'custom-object';
 const PERSON_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.person.universalIdentifier;
 
-const buildRole = (overrides: Partial<RoleManifest> = {}): RoleManifest => ({
-  universalIdentifier: AGENT_ROLE_UNIVERSAL_IDENTIFIER,
-  label: 'Agent role',
-  ...overrides,
-});
+const buildRole = (
+  overrides: Partial<RoleManifest> = {},
+): NormalizedRoleManifest =>
+  normalizeRoleManifestRecordsPermissions({
+    role: {
+      universalIdentifier: AGENT_ROLE_UNIVERSAL_IDENTIFIER,
+      label: 'Agent role',
+      ...overrides,
+    },
+    applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
+  });
 
 const applicationRole = buildRole({
   universalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,

@@ -4,8 +4,8 @@ import {
   type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
+  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type DeprecatedRowLevelPermissionPredicateManifest,
   type PageLayoutManifest,
   type NormalizedPageLayoutTabManifest,
   type NormalizedPageLayoutWidgetManifest,
@@ -20,6 +20,7 @@ import {
   type SkillManifest,
   type ViewSortManifest,
   type WorkflowManifest,
+  normalizeRoleManifestRecordsPermissions,
 } from 'twenty-shared/application';
 import {
   AggregateOperations,
@@ -308,7 +309,7 @@ const ROW_LEVEL_PERMISSION_PREDICATE_UID =
   'bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc';
 const ROW_LEVEL_PERMISSION_RULE_UID = 'bdbdbdbd-bdbd-4dbd-8dbd-bdbdbdbdbdbd';
 
-const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicateGroupManifest =
+const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: DeprecatedRowLevelPermissionPredicateGroupManifest =
   {
     universalIdentifier: ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
     objectUniversalIdentifier: OBJECT_UID,
@@ -318,7 +319,7 @@ const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicate
     position: 1,
   };
 
-const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManifest =
+const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: DeprecatedRowLevelPermissionPredicateManifest =
   {
     universalIdentifier: ROW_LEVEL_PERMISSION_PREDICATE_UID,
     objectUniversalIdentifier: OBJECT_UID,
@@ -725,7 +726,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
     emittedProperties: Object.keys(
       fromFlatRoleToRoleManifest({
         flatRole: fromRoleManifestToUniversalFlatRole({
-          roleManifest: ROLE_MANIFEST,
+          roleManifest: normalizeRoleManifestRecordsPermissions({
+            role: ROLE_MANIFEST,
+            applicationUniversalIdentifier: APP_UID,
+          }),
           applicationUniversalIdentifier: APP_UID,
           now: NOW,
         }),
@@ -785,7 +789,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
     emittedProperties: Object.keys(
       fromFlatRoleToRoleManifest({
         flatRole: fromRoleManifestToUniversalFlatRole({
-          roleManifest: ROLE_MANIFEST,
+          roleManifest: normalizeRoleManifestRecordsPermissions({
+            role: ROLE_MANIFEST,
+            applicationUniversalIdentifier: APP_UID,
+          }),
           applicationUniversalIdentifier: APP_UID,
           now: NOW,
         }),

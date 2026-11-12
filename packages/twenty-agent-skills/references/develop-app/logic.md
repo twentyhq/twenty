@@ -117,7 +117,7 @@ for await (const event of streamConversation({ ...conversation, signal })) {
 - An all-records grant wins over a rule. When the role grants an operation for every object, set the object's `can…AllRecords` to `false` for the operations its rules restrict; `defineRole` warns about a shadowed rule.
 - A rule with `unreadableFields` or `uneditableFields` needs at least one predicate group.
 - `canReadAllObjectRecords` and its siblings, `objectPermissions`, `fieldPermissions`, `rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` on a role are deprecated. They still build, with a warning, and are converted to `recordsPermissions`.
-- An app with roles is built to require `"engines": { "twenty": ">=2.59.0" }`: older servers ignore `recordsPermissions`.
+- Servers older than 2.59 ignore `recordsPermissions`: declare `"engines": { "twenty": ">=2.59.0" }` when the app must not install on them.
 
 ## AI Generate
 

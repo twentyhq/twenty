@@ -1,7 +1,7 @@
 import {
-  type RoleManifest,
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
+  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type DeprecatedRowLevelPermissionPredicateManifest,
+  type NormalizedRoleManifest,
 } from '@/application/roleManifestType';
 import { flattenRowLevelPermissionRuleManifests } from '@/application/utils/flattenRowLevelPermissionRuleManifests';
 import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
@@ -9,27 +9,12 @@ import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRe
 export const getRowLevelPermissionPredicatesFromRoleManifest = ({
   role,
 }: {
-  role: Pick<
-    RoleManifest,
-    | 'recordsPermissions'
-    | 'rowLevelPermissionPredicateGroups'
-    | 'rowLevelPermissionPredicates'
-  >;
+  role: Pick<NormalizedRoleManifest, 'recordsPermissions'>;
 }): {
-  predicateGroups: RowLevelPermissionPredicateGroupManifest[];
-  predicates: RowLevelPermissionPredicateManifest[];
-} => {
-  const { predicateGroups, predicates } =
-    flattenRowLevelPermissionRuleManifests({
-      rules: getRecordsPermissionsFromRoleManifest({ role })
-        .rowLevelPermissionRules,
-    });
-
-  return {
-    predicateGroups: [
-      ...(role.rowLevelPermissionPredicateGroups ?? []),
-      ...predicateGroups,
-    ],
-    predicates: [...(role.rowLevelPermissionPredicates ?? []), ...predicates],
-  };
-};
+  predicateGroups: DeprecatedRowLevelPermissionPredicateGroupManifest[];
+  predicates: DeprecatedRowLevelPermissionPredicateManifest[];
+} =>
+  flattenRowLevelPermissionRuleManifests({
+    rules: getRecordsPermissionsFromRoleManifest({ role })
+      .rowLevelPermissionRules,
+  });

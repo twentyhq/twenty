@@ -2,7 +2,7 @@ import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import {
   getObjectPermissionUniversalIdentifier,
   normalizeRoleManifestRecordsPermissions,
-  type RoleManifest,
+  type NormalizedRoleManifest,
 } from 'twenty-shared/application';
 
 export const fromRoleConfigToRoleManifest = ({
@@ -11,7 +11,7 @@ export const fromRoleConfigToRoleManifest = ({
 }: {
   roleConfig: RoleConfig;
   applicationUniversalIdentifier: string;
-}): RoleManifest => {
+}): NormalizedRoleManifest => {
   const { recordsPermissions, ...role } =
     normalizeRoleManifestRecordsPermissions({
       role: roleConfig,

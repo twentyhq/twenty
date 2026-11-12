@@ -10,33 +10,35 @@ import {
   type RowLevelPermissionPredicateValue,
 } from '@/types';
 
-export type ObjectPermissionManifest = Partial<SyncableEntityOptions> &
-  ObjectPermissionGrant;
+export type DeprecatedObjectPermissionManifest =
+  Partial<SyncableEntityOptions> & ObjectPermissionGrant;
 
-export type FieldPermissionManifest = Partial<SyncableEntityOptions> &
+export type DeprecatedFieldPermissionManifest = Partial<SyncableEntityOptions> &
   FieldPermissionGrant;
 
-export type RowLevelPermissionPredicateGroupManifest = SyncableEntityOptions & {
-  objectUniversalIdentifier: string;
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
-  parentPredicateGroupUniversalIdentifier?: string | null;
-  position?: number | null;
-};
+export type DeprecatedRowLevelPermissionPredicateGroupManifest =
+  SyncableEntityOptions & {
+    objectUniversalIdentifier: string;
+    logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
+    parentPredicateGroupUniversalIdentifier?: string | null;
+    position?: number | null;
+  };
 
-export type RowLevelPermissionPredicateManifest = SyncableEntityOptions & {
-  objectUniversalIdentifier: string;
-  fieldUniversalIdentifier: string;
-  operand: RowLevelPermissionPredicateOperand;
-  value?: RowLevelPermissionPredicateValue | null;
-  subFieldName?: string | null;
-  workspaceMemberFieldUniversalIdentifier?: string | null;
-  workspaceMemberSubFieldName?: string | null;
-  predicateGroupUniversalIdentifier?: string | null;
-  position?: number | null;
-};
+export type DeprecatedRowLevelPermissionPredicateManifest =
+  SyncableEntityOptions & {
+    objectUniversalIdentifier: string;
+    fieldUniversalIdentifier: string;
+    operand: RowLevelPermissionPredicateOperand;
+    value?: RowLevelPermissionPredicateValue | null;
+    subFieldName?: string | null;
+    workspaceMemberFieldUniversalIdentifier?: string | null;
+    workspaceMemberSubFieldName?: string | null;
+    predicateGroupUniversalIdentifier?: string | null;
+    position?: number | null;
+  };
 
 export type RowLevelPermissionRulePredicateManifest = Omit<
-  RowLevelPermissionPredicateManifest,
+  DeprecatedRowLevelPermissionPredicateManifest,
   'objectUniversalIdentifier' | 'predicateGroupUniversalIdentifier'
 >;
 
@@ -101,13 +103,13 @@ export type DeprecatedRoleRecordsPermissionsManifest = {
   /** @deprecated Use recordsPermissions.canDestroyAllRecords */
   canDestroyAllObjectRecords?: boolean;
   /** @deprecated Use recordsPermissions.objects */
-  objectPermissions?: ObjectPermissionManifest[];
+  objectPermissions?: DeprecatedObjectPermissionManifest[];
   /** @deprecated Use unreadableFields and uneditableFields in recordsPermissions.objects */
-  fieldPermissions?: FieldPermissionManifest[];
+  fieldPermissions?: DeprecatedFieldPermissionManifest[];
   /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
-  rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
+  rowLevelPermissionPredicates?: DeprecatedRowLevelPermissionPredicateManifest[];
   /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
-  rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];
+  rowLevelPermissionPredicateGroups?: DeprecatedRowLevelPermissionPredicateGroupManifest[];
 };
 
 export const DEPRECATED_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS = [

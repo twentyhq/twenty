@@ -254,10 +254,10 @@ export type { RecordEventTriggerManifestSettings } from './recordEventTriggerMan
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
-  ObjectPermissionManifest,
-  FieldPermissionManifest,
-  RowLevelPermissionPredicateGroupManifest,
-  RowLevelPermissionPredicateManifest,
+  DeprecatedObjectPermissionManifest,
+  DeprecatedFieldPermissionManifest,
+  DeprecatedRowLevelPermissionPredicateGroupManifest,
+  DeprecatedRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,

@@ -124,7 +124,11 @@ const buildFlatRole = (
 ): FlatRole =>
   withIds(
     fromRoleManifestToUniversalFlatRole({
-      roleManifest: { universalIdentifier, label },
+      roleManifest: {
+        universalIdentifier,
+        label,
+        recordsPermissions: { objects: [] },
+      },
       applicationUniversalIdentifier: APP_UID,
       now: NOW,
     }),

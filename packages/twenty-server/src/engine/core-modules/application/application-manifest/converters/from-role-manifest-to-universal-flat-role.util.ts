@@ -1,7 +1,4 @@
-import {
-  getRecordsPermissionsFromRoleManifest,
-  type RoleManifest,
-} from 'twenty-shared/application';
+import { type NormalizedRoleManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
@@ -10,13 +7,11 @@ export const fromRoleManifestToUniversalFlatRole = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  roleManifest: RoleManifest;
+  roleManifest: NormalizedRoleManifest;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatRole => {
-  const recordsPermissions = getRecordsPermissionsFromRoleManifest({
-    role: roleManifest,
-  });
+  const { recordsPermissions } = roleManifest;
 
   return {
     universalIdentifier: roleManifest.universalIdentifier,
@@ -28,14 +23,16 @@ export const fromRoleManifestToUniversalFlatRole = ({
     canAccessAllTools: roleManifest.canAccessAllTools ?? false,
     canAccessAllAgentChatChannels:
       roleManifest.canAccessAllAgentChatChannels ?? false,
-    canReadAllObjectRecords: recordsPermissions.canReadAllObjectRecords,
+    canReadAllObjectRecords: recordsPermissions.canReadAllRecords ?? false,
     canCreateAllObjectRecords:
-      roleManifest.recordsPermissions?.canCreateAllRecords ??
-      recordsPermissions.canUpdateAllObjectRecords,
-    canUpdateAllObjectRecords: recordsPermissions.canUpdateAllObjectRecords,
+      recordsPermissions.canCreateAllRecords ??
+      recordsPermissions.canUpdateAllRecords ??
+      false,
+    canUpdateAllObjectRecords: recordsPermissions.canUpdateAllRecords ?? false,
     canSoftDeleteAllObjectRecords:
-      recordsPermissions.canSoftDeleteAllObjectRecords,
-    canDestroyAllObjectRecords: recordsPermissions.canDestroyAllObjectRecords,
+      recordsPermissions.canSoftDeleteAllRecords ?? false,
+    canDestroyAllObjectRecords:
+      recordsPermissions.canDestroyAllRecords ?? false,
     isEditable: true,
     canBeAssignedToUsers: roleManifest.canBeAssignedToUsers ?? true,
     canBeAssignedToAgents: roleManifest.canBeAssignedToAgents ?? true,

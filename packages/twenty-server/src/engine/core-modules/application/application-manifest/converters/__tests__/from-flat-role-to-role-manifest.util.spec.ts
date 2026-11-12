@@ -1,4 +1,5 @@
 import {
+  normalizeRoleManifestRecordsPermissions,
   type ObjectRecordsPermissionsManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
@@ -45,7 +46,10 @@ const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
 
 const forward = (roleManifest: RoleManifest) =>
   fromRoleManifestToUniversalFlatRole({
-    roleManifest,
+    roleManifest: normalizeRoleManifestRecordsPermissions({
+      role: roleManifest,
+      applicationUniversalIdentifier: APP_UID,
+    }),
     applicationUniversalIdentifier: APP_UID,
     now: NOW,
   });

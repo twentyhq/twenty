@@ -6,6 +6,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
+  normalizeRoleManifestRecordsPermissions,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
@@ -360,7 +361,11 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
-    for (const roleManifest of manifest.roles) {
+    for (const role of manifest.roles) {
+      const roleManifest = normalizeRoleManifestRecordsPermissions({
+        role,
+        applicationUniversalIdentifier,
+      });
       const universalFlatRole = fromRoleManifestToUniversalFlatRole({
         roleManifest,
         applicationUniversalIdentifier,

@@ -1,7 +1,7 @@
 import {
   nestRowLevelPermissionRuleManifests,
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
+  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type DeprecatedRowLevelPermissionPredicateManifest,
   type RowLevelPermissionRuleManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -70,8 +70,8 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
     string,
     {
       rules: RowLevelPermissionRuleManifest[];
-      predicateGroups: RowLevelPermissionPredicateGroupManifest[];
-      predicates: RowLevelPermissionPredicateManifest[];
+      predicateGroups: DeprecatedRowLevelPermissionPredicateGroupManifest[];
+      predicates: DeprecatedRowLevelPermissionPredicateManifest[];
     }
   >;
   coverage: ApplicationExportCoverageEntry[];
@@ -172,11 +172,13 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 
   const predicateGroupsByRoleUniversalIdentifier = new Map<
     string,
-    (RowLevelPermissionPredicateGroupManifest & RowLevelPermissionRuleLink)[]
+    (DeprecatedRowLevelPermissionPredicateGroupManifest &
+      RowLevelPermissionRuleLink)[]
   >();
   const predicatesByRoleUniversalIdentifier = new Map<
     string,
-    (RowLevelPermissionPredicateManifest & RowLevelPermissionRuleLink)[]
+    (DeprecatedRowLevelPermissionPredicateManifest &
+      RowLevelPermissionRuleLink)[]
   >();
   const exportedRuleUniversalIdentifiers = new Set<string>();
   const addExportedRuleUniversalIdentifier = ({

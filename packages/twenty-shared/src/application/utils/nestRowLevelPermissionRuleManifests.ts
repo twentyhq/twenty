@@ -1,6 +1,6 @@
 import {
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
+  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type DeprecatedRowLevelPermissionPredicateManifest,
   type RowLevelPermissionRuleManifest,
   type RowLevelPermissionRulePredicateGroupManifest,
   type RowLevelPermissionRulePredicateManifest,
@@ -11,10 +11,10 @@ type NullableRowLevelPermissionRuleLink = {
   rowLevelPermissionRuleUniversalIdentifier: string | null;
 };
 
-type FlatPredicateGroup = RowLevelPermissionPredicateGroupManifest &
+type FlatPredicateGroup = DeprecatedRowLevelPermissionPredicateGroupManifest &
   NullableRowLevelPermissionRuleLink;
 
-type FlatPredicate = RowLevelPermissionPredicateManifest &
+type FlatPredicate = DeprecatedRowLevelPermissionPredicateManifest &
   NullableRowLevelPermissionRuleLink;
 
 const withoutRuleLink = <TManifest extends NullableRowLevelPermissionRuleLink>({
@@ -36,8 +36,8 @@ export const nestRowLevelPermissionRuleManifests = ({
   predicates: FlatPredicate[];
 }): {
   rules: RowLevelPermissionRuleManifest[];
-  predicateGroups: RowLevelPermissionPredicateGroupManifest[];
-  predicates: RowLevelPermissionPredicateManifest[];
+  predicateGroups: DeprecatedRowLevelPermissionPredicateGroupManifest[];
+  predicates: DeprecatedRowLevelPermissionPredicateManifest[];
 } => {
   const ruleUniversalIdentifiers = new Set(
     rules.map(({ universalIdentifier }) => universalIdentifier),

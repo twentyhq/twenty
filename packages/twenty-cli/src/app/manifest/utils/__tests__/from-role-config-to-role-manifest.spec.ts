@@ -129,7 +129,7 @@ describe('fromRoleConfigToRoleManifest', () => {
       ],
     });
 
-    expect(manifest.rowLevelPermissionPredicates).toBeUndefined();
+    expect(manifest).not.toHaveProperty('rowLevelPermissionPredicates');
     expect(manifest.recordsPermissions?.objects).toMatchObject([
       {
         objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,

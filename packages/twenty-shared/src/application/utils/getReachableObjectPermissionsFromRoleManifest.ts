@@ -1,4 +1,4 @@
-import { type RoleManifest } from '@/application/roleManifestType';
+import { type NormalizedRoleManifest } from '@/application/roleManifestType';
 import {
   type EffectiveObjectPermissions,
   getEffectiveObjectPermissionsFromRoleManifest,
@@ -9,7 +9,7 @@ export const getReachableObjectPermissionsFromRoleManifest = ({
   role,
   objectUniversalIdentifier,
 }: {
-  role: RoleManifest;
+  role: NormalizedRoleManifest;
   objectUniversalIdentifier: string;
 }): EffectiveObjectPermissions => {
   const recordsPermissions = getRecordsPermissionsFromRoleManifest({ role });

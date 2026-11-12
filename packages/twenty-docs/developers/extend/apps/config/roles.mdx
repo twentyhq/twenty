@@ -211,10 +211,8 @@ export default defineRole({
 ```
 
 <Note>
-  Servers older than Twenty 2.59 do not read `recordsPermissions`. An app with roles is therefore
-  built to require Twenty `>=2.59.0`: when `engines.twenty` in `package.json` is missing the build
-  sets it, and when it allows older servers the build narrows it and prints a warning asking you to
-  raise it.
+  Servers older than Twenty 2.59 do not read `recordsPermissions`: declare `engines.twenty` as
+  `>=2.59.0` in `package.json` when your app must not install on them.
 </Note>
 
 ### Deprecated properties

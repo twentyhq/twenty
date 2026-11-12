@@ -9,7 +9,6 @@ import {
 } from '@/app/source/extract-define-entity';
 import { extractManifestFromFile } from '@/app/source/extract-manifest-from-file';
 import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field-option-ids';
-import { resolveRequiredServerVersionRange } from '@/app/manifest/resolve-required-server-version-range';
 import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-config-to-role-manifest';
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
@@ -59,7 +58,7 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
-  type RoleManifest,
+  type NormalizedRoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -114,7 +113,7 @@ export const buildManifest = async (
   const indexes: IndexManifest[] = [];
   const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
-  const roles: RoleManifest[] = [];
+  const roles: NormalizedRoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];
@@ -713,14 +712,6 @@ export const buildManifest = async (
     );
   }
 
-  const { requiredServerVersionRange, warnings: serverVersionWarnings } =
-    resolveRequiredServerVersionRange({
-      engineVersionRange: getEngineVersionRange(appPath),
-      hasRoles: roles.length > 0,
-    });
-
-  warnings.push(...serverVersionWarnings);
-
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier
       ? (() => {
@@ -739,7 +730,7 @@ export const buildManifest = async (
             aboutDescription: readmeContent,
             yarnLockChecksum: null,
             packageJsonChecksum: '',
-            requiredServerVersionRange,
+            requiredServerVersionRange: getEngineVersionRange(appPath),
             ...(postInstallLogicFunctions.length >= 1
               ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
               : {}),

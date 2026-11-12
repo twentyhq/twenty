@@ -59,10 +59,10 @@ export type PageLayoutWidgetVerticalListPosition =
 export type PermissionFlagConfig = LooseEnumValues<StrictPermissionFlagConfig>;
 export type PermissionFlagManifest =
   LooseEnumValues<SharedApplication.PermissionFlagManifest>;
-export type RowLevelPermissionPredicateGroupManifest =
-  LooseEnumValues<SharedApplication.RowLevelPermissionPredicateGroupManifest>;
-export type RowLevelPermissionPredicateManifest =
-  LooseEnumValues<SharedApplication.RowLevelPermissionPredicateManifest>;
+export type DeprecatedRowLevelPermissionPredicateGroupManifest =
+  LooseEnumValues<SharedApplication.DeprecatedRowLevelPermissionPredicateGroupManifest>;
+export type DeprecatedRowLevelPermissionPredicateManifest =
+  LooseEnumValues<SharedApplication.DeprecatedRowLevelPermissionPredicateManifest>;
 export type RoleRecordsPermissionsManifest =
   LooseEnumValues<SharedApplication.RoleRecordsPermissionsManifest>;
 export type ObjectRecordsPermissionsManifest =

@@ -1,4 +1,4 @@
-import { type RowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
+import { type DeprecatedRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
@@ -9,7 +9,7 @@ export const fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevel
     applicationUniversalIdentifier,
     now,
   }: {
-    rowLevelPermissionPredicateGroupManifest: RowLevelPermissionPredicateGroupManifest;
+    rowLevelPermissionPredicateGroupManifest: DeprecatedRowLevelPermissionPredicateGroupManifest;
     roleUniversalIdentifier: string;
     applicationUniversalIdentifier: string;
     now: string;

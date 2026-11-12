@@ -1,86 +1,68 @@
 import {
-  type FieldPermissionManifest,
-  type ObjectPermissionManifest,
-  type RoleManifest,
+  type NormalizedRoleManifest,
   type RowLevelPermissionRuleManifest,
 } from '@/application/roleManifestType';
+import {
+  type FieldPermissionGrant,
+  type ObjectPermissionGrant,
+} from '@/application/rolePermissionGrantsSchema';
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ObjectRecordsPermissionGrants } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
-
-type RoleManifestRecordsPermissions = Pick<
-  RoleManifest,
-  | 'recordsPermissions'
-  | 'canReadAllObjectRecords'
-  | 'canUpdateAllObjectRecords'
-  | 'canSoftDeleteAllObjectRecords'
-  | 'canDestroyAllObjectRecords'
-  | 'objectPermissions'
-  | 'fieldPermissions'
->;
 
 export const getRecordsPermissionsFromRoleManifest = ({
   role,
 }: {
-  role: RoleManifestRecordsPermissions;
+  role: Pick<NormalizedRoleManifest, 'recordsPermissions'>;
 }): Omit<Required<ObjectRecordsPermissionGrants>, 'objectPermissions'> & {
-  objectPermissions: ObjectPermissionManifest[];
-  fieldPermissions: FieldPermissionManifest[];
+  objectPermissions: (Partial<SyncableEntityOptions> & ObjectPermissionGrant)[];
+  fieldPermissions: (Partial<SyncableEntityOptions> & FieldPermissionGrant)[];
   rowLevelPermissionRules: RowLevelPermissionRuleManifest[];
 } => {
-  const recordsPermissions = role.recordsPermissions ?? {};
-  const objects = recordsPermissions.objects ?? [];
+  const { objects, ...allRecordsPermissions } = role.recordsPermissions;
 
   return {
-    canReadAllObjectRecords:
-      recordsPermissions.canReadAllRecords ??
-      role.canReadAllObjectRecords ??
-      false,
+    canReadAllObjectRecords: allRecordsPermissions.canReadAllRecords ?? false,
     canUpdateAllObjectRecords:
-      recordsPermissions.canUpdateAllRecords ??
-      role.canUpdateAllObjectRecords ??
-      false,
+      allRecordsPermissions.canUpdateAllRecords ?? false,
     canSoftDeleteAllObjectRecords:
-      recordsPermissions.canSoftDeleteAllRecords ??
-      role.canSoftDeleteAllObjectRecords ??
-      false,
+      allRecordsPermissions.canSoftDeleteAllRecords ?? false,
     canDestroyAllObjectRecords:
-      recordsPermissions.canDestroyAllRecords ??
-      role.canDestroyAllObjectRecords ??
-      false,
-    objectPermissions: [
-      ...(role.objectPermissions ?? []),
-      ...objects.map((objectRecordsPermissions) => ({
-        universalIdentifier: objectRecordsPermissions.universalIdentifier,
-        objectUniversalIdentifier:
-          objectRecordsPermissions.objectUniversalIdentifier,
-        canReadObjectRecords: objectRecordsPermissions.canReadAllRecords,
-        canUpdateObjectRecords: objectRecordsPermissions.canUpdateAllRecords,
-        canSoftDeleteObjectRecords:
-          objectRecordsPermissions.canSoftDeleteAllRecords,
-        canDestroyObjectRecords: objectRecordsPermissions.canDestroyAllRecords,
-      })),
-    ],
-    fieldPermissions: [
-      ...(role.fieldPermissions ?? []),
-      ...objects.flatMap(
-        ({
-          objectUniversalIdentifier,
-          unreadableFields = [],
-          uneditableFields = [],
-        }) =>
-          [...new Set([...unreadableFields, ...uneditableFields])].map(
-            (fieldUniversalIdentifier) => ({
-              objectUniversalIdentifier,
-              fieldUniversalIdentifier,
-              ...(unreadableFields.includes(fieldUniversalIdentifier)
-                ? { canReadFieldValue: false }
-                : {}),
-              ...(uneditableFields.includes(fieldUniversalIdentifier)
-                ? { canUpdateFieldValue: false }
-                : {}),
-            }),
-          ),
-      ),
-    ],
+      allRecordsPermissions.canDestroyAllRecords ?? false,
+    objectPermissions: objects.map((objectRecordsPermissions) => ({
+      universalIdentifier: objectRecordsPermissions.universalIdentifier,
+      objectUniversalIdentifier:
+        objectRecordsPermissions.objectUniversalIdentifier,
+      canReadObjectRecords: objectRecordsPermissions.canReadAllRecords,
+      canUpdateObjectRecords: objectRecordsPermissions.canUpdateAllRecords,
+      canSoftDeleteObjectRecords:
+        objectRecordsPermissions.canSoftDeleteAllRecords,
+      canDestroyObjectRecords: objectRecordsPermissions.canDestroyAllRecords,
+    })),
+    fieldPermissions: objects.flatMap(
+      ({
+        objectUniversalIdentifier,
+        unreadableFields = [],
+        uneditableFields = [],
+        fieldPermissionIdentifiers = [],
+      }) =>
+        [...new Set([...unreadableFields, ...uneditableFields])].map(
+          (fieldUniversalIdentifier) => ({
+            universalIdentifier: fieldPermissionIdentifiers.find(
+              (fieldPermissionIdentifier) =>
+                fieldPermissionIdentifier.fieldUniversalIdentifier ===
+                fieldUniversalIdentifier,
+            )?.universalIdentifier,
+            objectUniversalIdentifier,
+            fieldUniversalIdentifier,
+            ...(unreadableFields.includes(fieldUniversalIdentifier)
+              ? { canReadFieldValue: false }
+              : {}),
+            ...(uneditableFields.includes(fieldUniversalIdentifier)
+              ? { canUpdateFieldValue: false }
+              : {}),
+          }),
+        ),
+    ),
     rowLevelPermissionRules: objects.flatMap(
       ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>
         rowLevelRecordsPermissions.map((rowLevelRecordsPermissions) => ({

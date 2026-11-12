@@ -1,6 +1,6 @@
 import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
 import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
-import { type RoleManifest } from '@/application/roleManifestType';
+import { type NormalizedRoleManifest } from '@/application/roleManifestType';
 import { ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
 import { getReachableObjectPermissionsFromRoleManifest } from '@/application/utils/getReachableObjectPermissionsFromRoleManifest';
@@ -28,8 +28,8 @@ const getRoleLevelGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: NormalizedRoleManifest;
+  superset: NormalizedRoleManifest;
 }): RoleManifestGrant[] => [
   ...OBJECT_PERMISSION_ACTIONS.filter((action) => {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
@@ -55,8 +55,8 @@ const getPermissionFlagGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: NormalizedRoleManifest;
+  superset: NormalizedRoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => {
   const toolFlagUniversalIdentifiers = new Set([
@@ -90,8 +90,8 @@ const getObjectGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: NormalizedRoleManifest;
+  superset: NormalizedRoleManifest;
 }): RoleManifestGrant[] => {
   const roleRecordsPermissions = getRecordsPermissionsFromRoleManifest({
     role,
@@ -106,9 +106,6 @@ const getObjectGrantsNotCoveredBy = ({
       ...roleRecordsPermissions.rowLevelPermissionRules,
       ...supersetRecordsPermissions.rowLevelPermissionRules,
     ].map((permission) => permission.objectUniversalIdentifier),
-    ...(superset.rowLevelPermissionPredicates ?? []).map(
-      (predicate) => predicate.objectUniversalIdentifier,
-    ),
   ]);
 
   return [...objectUniversalIdentifiers].flatMap(
@@ -165,8 +162,8 @@ const getFieldGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: NormalizedRoleManifest;
+  superset: NormalizedRoleManifest;
 }): RoleManifestGrant[] =>
   getRecordsPermissionsFromRoleManifest({
     role: superset,
@@ -226,8 +223,8 @@ export const getRoleManifestGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: RoleManifest;
-  superset: RoleManifest;
+  role: NormalizedRoleManifest;
+  superset: NormalizedRoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => [
   ...getRoleLevelGrantsNotCoveredBy({ role, superset }),

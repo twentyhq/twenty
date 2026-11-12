@@ -1,11 +1,11 @@
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 import {
   type AllRecordsPermissionsManifest,
-  type FieldPermissionManifest,
+  type DeprecatedFieldPermissionManifest,
   type NormalizedRoleManifest,
   type ObjectRecordsPermissionsManifest,
   type RoleManifest,
-  type RowLevelPermissionPredicateGroupManifest,
+  type DeprecatedRowLevelPermissionPredicateGroupManifest,
   type RowLevelPermissionRuleManifest,
 } from '@/application/roleManifestType';
 import { nestRowLevelPermissionRuleManifests } from '@/application/utils/nestRowLevelPermissionRuleManifests';
@@ -40,7 +40,7 @@ const findTopLevelPredicateGroupUniversalIdentifier = ({
   predicateGroupUniversalIdentifier: string;
   predicateGroupByUniversalIdentifier: Map<
     string,
-    RowLevelPermissionPredicateGroupManifest
+    DeprecatedRowLevelPermissionPredicateGroupManifest
   >;
 }): string => {
   const visitedUniversalIdentifiers = new Set<string>();
@@ -68,7 +68,7 @@ const addFieldPermissionToObject = ({
   fieldPermission,
 }: {
   object: ObjectRecordsPermissionsManifest;
-  fieldPermission: FieldPermissionManifest;
+  fieldPermission: DeprecatedFieldPermissionManifest;
 }): ObjectRecordsPermissionsManifest => {
   const { fieldUniversalIdentifier, universalIdentifier } = fieldPermission;
   const unreadableFields =
@@ -96,6 +96,7 @@ const addFieldPermissionToObject = ({
   };
 };
 
+// TODO: remove with the deprecated role properties once applications declare recordsPermissions
 export const normalizeRoleManifestRecordsPermissions = ({
   role,
   applicationUniversalIdentifier,

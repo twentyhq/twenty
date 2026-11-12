@@ -1,4 +1,7 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  normalizeRoleManifestRecordsPermissions,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -18,11 +21,10 @@ const convert = (
   roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
 ) =>
   fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
-    roleManifest: {
-      universalIdentifier: 'role',
-      label: 'Role',
-      ...roleManifest,
-    },
+    roleManifest: normalizeRoleManifestRecordsPermissions({
+      role: { universalIdentifier: 'role', label: 'Role', ...roleManifest },
+      applicationUniversalIdentifier: APPLICATION,
+    }),
     applicationUniversalIdentifier: APPLICATION,
     now: NOW,
   });

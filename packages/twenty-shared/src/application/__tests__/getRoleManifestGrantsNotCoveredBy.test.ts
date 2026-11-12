@@ -1,4 +1,8 @@
-import { type RoleManifest } from '@/application/roleManifestType';
+import {
+  type NormalizedRoleManifest,
+  type RoleManifest,
+} from '@/application/roleManifestType';
+import { normalizeRoleManifestRecordsPermissions } from '@/application/utils/normalizeRoleManifestRecordsPermissions';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
 import { SystemPermissionFlag } from '@/constants';
 import {
@@ -10,11 +14,13 @@ const PERSON = 'object-person';
 const COMPANY = 'object-company';
 const EMAIL_FIELD = 'field-email';
 
-const buildRole = (overrides: Partial<RoleManifest> = {}): RoleManifest => ({
-  universalIdentifier: 'role',
-  label: 'Role',
-  ...overrides,
-});
+const buildRole = (
+  overrides: Partial<RoleManifest> = {},
+): NormalizedRoleManifest =>
+  normalizeRoleManifestRecordsPermissions({
+    role: { universalIdentifier: 'role', label: 'Role', ...overrides },
+    applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
+  });
 
 describe('getRoleManifestGrantsNotCoveredBy', () => {
   it('returns nothing when the superset covers the role', () => {
@@ -362,25 +368,11 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
                 {
                   universalIdentifier: 'role-rule',
                   canReadRecords: true,
-                  predicateGroups: (
-                    restrictedRole.rowLevelPermissionPredicateGroups ?? []
-                  ).map(({ universalIdentifier, logicalOperator }) => ({
-                    universalIdentifier,
-                    logicalOperator,
-                    predicates: (
-                      restrictedRole.rowLevelPermissionPredicates ?? []
-                    ).map(
-                      ({
-                        universalIdentifier,
-                        fieldUniversalIdentifier,
-                        operand,
-                      }) => ({
-                        universalIdentifier,
-                        fieldUniversalIdentifier,
-                        operand,
-                      }),
-                    ),
-                  })),
+                  predicateGroups: restrictedRole.recordsPermissions.objects
+                    .flatMap(
+                      (object) => object.rowLevelRecordsPermissions ?? [],
+                    )
+                    .flatMap((rule) => rule.predicateGroups ?? []),
                 },
               ],
             },
