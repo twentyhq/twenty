@@ -421,7 +421,10 @@ export class CoreWorkflowMutationWorkspaceService {
         },
       });
     } catch (error) {
-      if (!this.isWorkflowOwnershipConditionNotMet(error)) {
+      const ownershipConditionNotMetException =
+        this.findWorkflowOwnershipConditionNotMetException(error);
+
+      if (!isDefined(ownershipConditionNotMetException)) {
         throw error;
       }
 
@@ -438,7 +441,8 @@ export class CoreWorkflowMutationWorkspaceService {
         `Core workflow '${coreWorkflowId}' can only have its visibility changed by its creator`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Only the person who created this workflow can change who sees it`,
+          userFriendlyMessage:
+            ownershipConditionNotMetException.userFriendlyMessage,
         },
       );
     }
@@ -452,18 +456,24 @@ export class CoreWorkflowMutationWorkspaceService {
     }
   }
 
-  private isWorkflowOwnershipConditionNotMet(error: unknown): boolean {
+  private findWorkflowOwnershipConditionNotMetException(
+    error: unknown,
+  ): CoreWorkflowMetadataException | undefined {
     if (!(error instanceof WorkspaceMigrationRunnerException)) {
-      return false;
+      return undefined;
     }
 
     const metadataError = error.errors?.metadata;
 
-    return (
+    if (
       metadataError instanceof CoreWorkflowMetadataException &&
       metadataError.code ===
         CoreWorkflowMetadataExceptionCode.WORKFLOW_OWNERSHIP_CONDITION_NOT_MET
-    );
+    ) {
+      return metadataError;
+    }
+
+    return undefined;
   }
 
   private async syncCommandMenuItemLabelFromCore({
