@@ -3142,6 +3142,7 @@ type LoginToken {
 type MarketplaceApp {
   author: String!
   category: String!
+  connectUrl: String
   description: String!
   id: String!
   isListed: Boolean!
@@ -3155,6 +3156,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  connectUrl: String
   content: ApplicationContent
   defaultRoleUniversalIdentifier: String
   description: String

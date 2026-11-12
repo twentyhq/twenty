@@ -6518,6 +6518,9 @@ export default {
             "category": [
                 4
             ],
+            "connectUrl": [
+                4
+            ],
             "description": [
                 4
             ],
@@ -6551,6 +6554,9 @@ export default {
                 1
             ],
             "category": [
+                4
+            ],
+            "connectUrl": [
                 4
             ],
             "content": [

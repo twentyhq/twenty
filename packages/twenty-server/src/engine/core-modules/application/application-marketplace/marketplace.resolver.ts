@@ -2,6 +2,13 @@ import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
+import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
+import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
+import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
@@ -40,6 +47,7 @@ const MARKETPLACE_READ_ACCESS_POLICY: AccessPolicy = {
 export class MarketplaceResolver {
   constructor(
     private readonly marketplaceQueryService: MarketplaceQueryService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -54,9 +62,21 @@ export class MarketplaceResolver {
     })
     universalIdentifiers?: string[],
   ): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps({
-      universalIdentifiers,
-    });
+    const frontBaseUrl = this.domainServerConfigService.getBaseUrl();
+    const builtInApps = MARKETPLACE_BUILT_IN_APPLICATIONS.filter(
+      ({ universalIdentifier }) =>
+        !isNonEmptyArray(universalIdentifiers) ||
+        universalIdentifiers.includes(universalIdentifier),
+    ).map((builtInApplication) =>
+      toMarketplaceBuiltInAppDTO({ builtInApplication, frontBaseUrl }),
+    );
+
+    const catalogApps =
+      await this.marketplaceQueryService.findManyMarketplaceApps({
+        universalIdentifiers,
+      });
+
+    return [...builtInApps, ...catalogApps];
   }
 
   @Query(() => MarketplaceAppDetailDTO)
@@ -64,6 +84,16 @@ export class MarketplaceResolver {
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
+    const builtInApplication =
+      findMarketplaceBuiltInApplication(universalIdentifier);
+
+    if (isDefined(builtInApplication)) {
+      return toMarketplaceBuiltInAppDetailDTO({
+        builtInApplication,
+        frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
+      });
+    }
+
     return this.marketplaceQueryService.findMarketplaceAppDetail(
       universalIdentifier,
     );

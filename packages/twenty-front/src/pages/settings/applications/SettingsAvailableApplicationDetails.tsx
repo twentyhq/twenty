@@ -13,11 +13,13 @@ import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
+import { SettingsMarketplaceAppConnectButton } from '@/settings/applications/components/SettingsMarketplaceAppConnectButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -250,7 +252,13 @@ export const SettingsAvailableApplicationDetails = () => {
           ) : undefined
         }
         actionButton={
-          isDefined(detail) ? (
+          !isDefined(detail) ? undefined : isNonEmptyString(
+              detail.connectUrl,
+            ) ? (
+            <SettingsMarketplaceAppConnectButton
+              connectUrl={detail.connectUrl}
+            />
+          ) : (
             <SettingsApplicationActionButton
               installedApplicationId={application?.id}
               canInstallMarketplaceApps={canInstallMarketplaceApps}
@@ -258,7 +266,7 @@ export const SettingsAvailableApplicationDetails = () => {
               isInstalling={isInstalling}
               installProgress={installProgress}
             />
-          ) : undefined
+          )
         }
       >
         <SettingsPageContainer overflow="visible">
