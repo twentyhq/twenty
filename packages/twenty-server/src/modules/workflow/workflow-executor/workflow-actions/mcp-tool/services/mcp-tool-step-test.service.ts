@@ -1,27 +1,45 @@
 import { Injectable } from '@nestjs/common';
 
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type TestMcpToolStepDTO } from 'src/engine/core-modules/workflow/dtos/test-mcp-tool-step.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { McpServerToolCallService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-call.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { removeNullToolArguments } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/utils/remove-null-tool-arguments.util';
+import {
+  type McpServerToolLookup,
+  McpToolCallService,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-call.service';
+
+const LOOKUP_FAILURES: Record<
+  Exclude<McpServerToolLookup['status'], 'found'>,
+  {
+    code: WorkflowVersionStepExceptionCode;
+    userFriendlyMessage: MessageDescriptor;
+  }
+> = {
+  server_not_found: {
+    code: WorkflowVersionStepExceptionCode.NOT_FOUND,
+    userFriendlyMessage: msg`This MCP server is not available to this workflow.`,
+  },
+  server_inactive: {
+    code: WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+    userFriendlyMessage: msg`This MCP server is inactive. Activate it before testing its tools.`,
+  },
+  tool_not_found: {
+    code: WorkflowVersionStepExceptionCode.NOT_FOUND,
+    userFriendlyMessage: msg`This tool is no longer offered by its MCP server.`,
+  },
+};
 
 @Injectable()
 export class McpToolStepTestService {
-  constructor(
-    private readonly mcpServerToolCallService: McpServerToolCallService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-  ) {}
+  constructor(private readonly mcpToolCallService: McpToolCallService) {}
 
   async testTool({
     mcpServerId,
@@ -38,20 +56,24 @@ export class McpToolStepTestService {
     callingApplication: FlatApplication | undefined;
     userWorkspaceId: string;
   }): Promise<TestMcpToolStepDTO> {
-    const { flatMcpServerMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatMcpServerMaps'] },
-      );
-    const mcpServer = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: mcpServerId,
-      flatEntityMaps: flatMcpServerMaps,
+    const lookup = await this.mcpToolCallService.findServerTool({
+      workspaceId,
+      mcpServerId,
+      toolName,
     });
 
+    if (lookup.status !== 'found') {
+      const { code, userFriendlyMessage } = LOOKUP_FAILURES[lookup.status];
+
+      throw new WorkflowVersionStepException(lookup.message, code, {
+        userFriendlyMessage,
+      });
+    }
+
     if (
-      !isDefined(mcpServer) ||
       !canCallerReachApplication({
         callingApplication,
-        applicationId: mcpServer.applicationId,
+        applicationId: lookup.mcpServer.applicationId,
         operation: 'trigger',
         workspaceCustomApplicationId,
       })
@@ -65,48 +87,23 @@ export class McpToolStepTestService {
       );
     }
 
-    if (!mcpServer.isActive) {
-      throw new WorkflowVersionStepException(
-        `MCP server ${mcpServer.label} is inactive`,
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        {
-          userFriendlyMessage: msg`This MCP server is inactive. Activate it before testing its tools.`,
-        },
-      );
-    }
-
-    const tool = mcpServer.tools.find(
-      (candidate) => candidate.name === toolName,
-    );
-
-    if (!isDefined(tool)) {
-      throw new WorkflowVersionStepException(
-        `MCP server ${mcpServer.label} no longer offers the tool ${toolName}`,
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-        {
-          userFriendlyMessage: msg`This tool is no longer offered by its MCP server.`,
-        },
-      );
-    }
-
-    const filledToolArguments = removeNullToolArguments({
-      value: toolArguments ?? {},
-      schema: tool.inputSchema,
-    });
-
-    const { output } = await this.mcpServerToolCallService.callTool({
-      mcpServer,
-      toolName,
-      toolArguments: isPlainObject(filledToolArguments)
-        ? filledToolArguments
-        : {},
+    const callResult = await this.mcpToolCallService.callTool({
+      mcpServer: lookup.mcpServer,
+      tool: lookup.tool,
+      toolArguments: toolArguments ?? {},
       userWorkspaceId,
     });
 
-    if (!output.success) {
-      return { success: false, error: output.error ?? output.message };
+    switch (callResult.status) {
+      case 'invalid_arguments':
+        throw new WorkflowVersionStepException(
+          callResult.message,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      case 'failed':
+        return { success: false, error: callResult.error };
+      case 'succeeded':
+        return { success: true, result: callResult.result };
     }
-
-    return { success: true, result: output.result ?? {} };
   }
 }

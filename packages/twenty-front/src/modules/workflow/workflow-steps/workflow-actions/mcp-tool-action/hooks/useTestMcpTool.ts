@@ -2,14 +2,13 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
-import { convertFlatVariablesToNestedContext } from '@/workflow/workflow-steps/utils/convertFlatVariablesToNestedContext';
 import { TEST_MCP_TOOL_STEP } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/graphql/mutations/testMcpToolStep';
 import { mcpToolTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/states/mcpToolTestDataFamilyState';
 import { type McpToolTestData } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/McpToolTestData';
+import { resolveMcpToolTestArguments } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArguments';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isPlainObject, resolveInput } from 'twenty-shared/utils';
 import { type JsonObject } from 'type-fest';
 import {
   type TestMcpToolStepMutation,
@@ -38,22 +37,6 @@ export const useTestMcpTool = (actionId: string) => {
     setMcpToolTestData((previousTestData) => ({ ...previousTestData, output }));
   };
 
-  const setTestVariableValue = ({
-    variablePath,
-    value,
-  }: {
-    variablePath: string;
-    value: string;
-  }) => {
-    setMcpToolTestData((previousTestData) => ({
-      ...previousTestData,
-      variableValues: {
-        ...previousTestData.variableValues,
-        [variablePath]: value,
-      },
-    }));
-  };
-
   const testMcpTool = async ({
     mcpServerId,
     toolName,
@@ -68,24 +51,22 @@ export const useTestMcpTool = (actionId: string) => {
     setIsTesting(true);
 
     try {
-      const toolArguments = resolveInput(
-        structuredClone(toolInput),
-        convertFlatVariablesToNestedContext(mcpToolTestData.variableValues),
-      );
-
       const { data } = await testMcpToolStep({
         variables: {
           input: {
             mcpServerId,
             toolName,
-            toolArguments: isPlainObject(toolArguments) ? toolArguments : {},
+            toolArguments: resolveMcpToolTestArguments({
+              toolInput,
+              variableValues: mcpToolTestData.variableValues,
+            }),
           },
         },
       });
 
       const testResult = data?.testMcpToolStep;
 
-      if (testResult?.success !== true) {
+      if (!testResult?.success) {
         setOutput({
           status: 'error',
           error: testResult?.error ?? t`The tool call failed`,
@@ -114,5 +95,5 @@ export const useTestMcpTool = (actionId: string) => {
     }
   };
 
-  return { testMcpTool, setTestVariableValue, isTesting, mcpToolTestData };
+  return { testMcpTool, isTesting, mcpToolTestData };
 };

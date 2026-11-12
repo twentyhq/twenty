@@ -41,14 +41,12 @@ export const testMcpToolStep = async ({
     token,
   );
 
-  if (expectToFail === true) {
+  if (expectToFail) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Testing an MCP tool step should have failed but did not',
     });
-  }
-
-  if (expectToFail === false) {
+  } else {
     warnIfErrorButNotExpectedToFail({
       response,
       errorMessage: 'Testing an MCP tool step has failed but should not',

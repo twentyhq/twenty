@@ -1,5 +1,3 @@
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { WorkflowStepTestVariableInput } from '@/workflow/workflow-steps/components/WorkflowStepTestVariableInput';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
@@ -18,16 +16,8 @@ export const HttpRequestTestVariableInput = ({
   readonly,
 }: HttpRequestTestVariableInputProps) => {
   const { t } = useLingui();
-  const httpRequestTestData = useAtomFamilyStateValue(
-    httpRequestTestDataFamilyState,
-    actionId,
-  );
-  const setHttpRequestTestData = useSetAtomFamilyState(
-    httpRequestTestDataFamilyState,
-    actionId,
-  );
   const mockStep: WorkflowStep = {
-    id: 'test-step',
+    id: actionId,
     name: t`Test Step`,
     type: 'HTTP_REQUEST',
     valid: true,
@@ -44,14 +34,8 @@ export const HttpRequestTestVariableInput = ({
   return (
     <WorkflowStepTestVariableInput
       step={mockStep}
-      variableValues={httpRequestTestData.variableValues}
+      testDataFamilyState={httpRequestTestDataFamilyState}
       readonly={readonly}
-      onVariableChange={({ variablePath, value }) =>
-        setHttpRequestTestData((prev) => ({
-          ...prev,
-          variableValues: { ...prev.variableValues, [variablePath]: value },
-        }))
-      }
     />
   );
 };

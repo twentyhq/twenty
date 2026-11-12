@@ -1,5 +1,8 @@
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { type FamilyState } from '@/ui/utilities/state/jotai/types/FamilyState';
 import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { styled } from '@linaria/react';
@@ -12,25 +15,40 @@ const StyledVariableInputsContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type WorkflowStepTestVariableInputProps = {
+type StepTestData = { variableValues: { [variablePath: string]: string } };
+
+type WorkflowStepTestVariableInputProps<TTestData extends StepTestData> = {
   step: WorkflowStep;
-  variableValues: { [variablePath: string]: string };
-  onVariableChange: (change: { variablePath: string; value: string }) => void;
+  testDataFamilyState: FamilyState<TTestData, string>;
   readonly?: boolean;
 };
 
-export const WorkflowStepTestVariableInput = ({
+export const WorkflowStepTestVariableInput = <TTestData extends StepTestData>({
   step,
-  variableValues,
-  onVariableChange,
+  testDataFamilyState,
   readonly,
-}: WorkflowStepTestVariableInputProps) => {
+}: WorkflowStepTestVariableInputProps<TTestData>) => {
   const { t } = useLingui();
+  const { variableValues } = useAtomFamilyStateValue(
+    testDataFamilyState,
+    step.id,
+  );
+  const setTestData = useSetAtomFamilyState(testDataFamilyState, step.id);
   const variablePaths = Array.from(getWorkflowVariablesUsedInStep({ step }));
 
   if (variablePaths.length === 0) {
     return null;
   }
+
+  const setVariableValue = (variablePath: string, value: string | null) => {
+    setTestData((previousTestData) => ({
+      ...previousTestData,
+      variableValues: {
+        ...previousTestData.variableValues,
+        [variablePath]: value ?? '',
+      },
+    }));
+  };
 
   return (
     <FormFieldInputContainer>
@@ -42,9 +60,7 @@ export const WorkflowStepTestVariableInput = ({
             placeholder={t`Enter test value`}
             readonly={readonly}
             defaultValue={variableValues[variablePath] ?? ''}
-            onChange={(value) =>
-              onVariableChange({ variablePath, value: value ?? '' })
-            }
+            onChange={(value) => setVariableValue(variablePath, value)}
           />
         ))}
       </StyledVariableInputsContainer>

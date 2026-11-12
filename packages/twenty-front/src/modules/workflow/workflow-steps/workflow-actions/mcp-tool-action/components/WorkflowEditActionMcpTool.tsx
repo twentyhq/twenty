@@ -6,6 +6,7 @@ import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
+import { WorkflowExpectedOutputBodyInput } from '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -15,21 +16,24 @@ import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 import { useMcpToolStepForm } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useMcpToolStepForm';
-import { McpToolExpectedOutputAdvancedSection } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolExpectedOutputAdvancedSection';
 import { McpToolTestResult } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult';
 import { WORKFLOW_MCP_TOOL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/constants/WorkflowMcpToolTabListComponentId';
+import { mcpToolTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/states/mcpToolTestDataFamilyState';
 import { useTestMcpTool } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool';
 import { type WorkflowMcpToolTabId } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/WorkflowMcpToolTabId';
 import { isMcpToolSafeToTestWithoutConfirmation } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/isMcpToolSafeToTestWithoutConfirmation';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { isObject } from '@sniptt/guards';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
-import { IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
+import { IconChevronDown, IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SETTINGS_TAB_ID: WorkflowMcpToolTabId = 'settings';
@@ -39,6 +43,25 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledAdvancedSection = styled.div`
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledAdvancedChevron = styled.span`
+  display: flex;
+
+  [data-panel-open] & {
+    transform: rotate(180deg);
+  }
+`;
+
+const StyledAdvancedPanelContent = styled.div`
+  width: 100%;
 `;
 
 const StyledTabListContainer = styled.div`
@@ -78,8 +101,8 @@ export const WorkflowEditActionMcpTool = ({
   );
   const { openDialog } = useDialog();
   const testConfirmationDialogId = `mcp-tool-test-confirmation-${action.id}`;
-  const { testMcpTool, setTestVariableValue, isTesting, mcpToolTestData } =
-    useTestMcpTool(action.id);
+  const { testMcpTool, isTesting, mcpToolTestData } = useTestMcpTool(action.id);
+  const [isAdvancedSectionOpen, setIsAdvancedSectionOpen] = useState(false);
 
   const { mcpServerId, toolName } = settings.input;
   const mcpServer = mcpServers.find(
@@ -159,14 +182,24 @@ export const WorkflowEditActionMcpTool = ({
     { id: TEST_TAB_ID, title: t`Test`, Icon: IconPlayerPlay },
   ];
 
+  const footerActions = isTestTabActive
+    ? [
+        <WorkflowStepCmdEnterButton
+          key="test"
+          title={t`Test`}
+          onClick={handleTestClick}
+          disabled={isTesting || !isDefined(tool)}
+        />,
+      ]
+    : [];
+
   const stepBody = (
     <WorkflowStepBody>
       {isTestTabActive ? (
         <StyledContainer>
           <WorkflowStepTestVariableInput
             step={{ ...action, settings }}
-            variableValues={mcpToolTestData.variableValues}
-            onVariableChange={setTestVariableValue}
+            testDataFamilyState={mcpToolTestDataFamilyState}
           />
           <McpToolTestResult
             output={mcpToolTestData.output}
@@ -206,11 +239,35 @@ export const WorkflowEditActionMcpTool = ({
               description={t`The tool runs without arguments.`}
             />
           )}
-          <McpToolExpectedOutputAdvancedSection
-            expectedOutputSchema={settings.expectedOutputSchema}
-            onChange={handleExpectedOutputBodyChange}
-            readonly={actionOptions.readonly}
-          />
+          <Collapsible.Root
+            open={isAdvancedSectionOpen}
+            onOpenChange={setIsAdvancedSectionOpen}
+            render={<StyledAdvancedSection />}
+          >
+            <Collapsible.Trigger
+              render={
+                <Button
+                  variant="link"
+                  endIcon={
+                    <StyledAdvancedChevron>
+                      <IconChevronDown size={14} />
+                    </StyledAdvancedChevron>
+                  }
+                />
+              }
+            >
+              {t`Advanced`}
+            </Collapsible.Trigger>
+            <Collapsible.Panel>
+              <StyledAdvancedPanelContent>
+                <WorkflowExpectedOutputBodyInput
+                  defaultValue={settings.expectedOutputSchema}
+                  onChange={handleExpectedOutputBodyChange}
+                  readonly={actionOptions.readonly}
+                />
+              </StyledAdvancedPanelContent>
+            </Collapsible.Panel>
+          </Collapsible.Root>
         </StyledContainer>
       )}
     </WorkflowStepBody>
@@ -241,18 +298,7 @@ export const WorkflowEditActionMcpTool = ({
       {!actionOptions.readonly && (
         <WorkflowStepFooter
           stepId={action.id}
-          additionalActions={
-            isTestTabActive
-              ? [
-                  <WorkflowStepCmdEnterButton
-                    key="test"
-                    title={t`Test`}
-                    onClick={handleTestClick}
-                    disabled={isTesting || !isDefined(tool)}
-                  />,
-                ]
-              : []
-          }
+          additionalActions={footerActions}
         />
       )}
       <ConfirmationDialog
