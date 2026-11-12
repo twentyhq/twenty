@@ -39,6 +39,7 @@ import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/age
 import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
@@ -367,6 +368,12 @@ export const useAgentChat = () => {
           store.set(lastSentBrowsingContextAtom, browsingContext);
         }
       } else {
+        store.set(
+          agentChatIsAwaitingPersistedRefetchFamilyState.atomFamily({
+            threadId,
+          }),
+          true,
+        );
         store.set(isAwaitingFirstChunkAtom, false);
       }
 

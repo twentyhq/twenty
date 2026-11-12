@@ -2,6 +2,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
+import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
 import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
 import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
@@ -35,6 +36,7 @@ export const AiChatMessageAuthorHeader = ({
           avatar={<AiChatMessageAuthorAvatar author={resolvedAuthor} />}
           name={resolvedAuthor.name}
           createdAt={createdAt}
+          receipt={<AiChatMessageReceipt messageId={messageId} />}
         />
       )}
     </AiChatMessageAuthorResolver>
