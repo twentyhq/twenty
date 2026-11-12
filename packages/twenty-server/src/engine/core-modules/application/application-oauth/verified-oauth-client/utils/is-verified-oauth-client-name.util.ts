@@ -1,6 +1,5 @@
 import { VERIFIED_OAUTH_CLIENTS } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/constants/verified-oauth-clients.constant';
 
-// Best effort against look-alike spellings; lookalike letters from other scripts are not folded.
 const normalizeClientName = (name: string): string =>
   name
     .normalize('NFKC')
