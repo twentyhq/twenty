@@ -6,7 +6,7 @@ import {
 
 const OBJECT_METADATA_ITEM = {
   fields: [{ id: 'deleted-at-field', label: 'Deleted at' }],
-} as Parameters<typeof getRowLevelPermissionRuleLabel>[0]['objectMetadataItem'];
+};
 
 const buildPredicate = (
   overrides: Partial<RowLevelPermissionPredicate>,

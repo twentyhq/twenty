@@ -1,4 +1,4 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { t } from '@lingui/core/macro';
@@ -22,10 +22,9 @@ const getPredicateValueLabel = ({
     | 'value'
     | 'operand'
   >;
-  workspaceMemberObjectMetadataItem?: Pick<
-    EnrichedObjectMetadataItem,
-    'fields'
-  >;
+  workspaceMemberObjectMetadataItem?: {
+    fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
+  };
 }) => {
   if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
     const workspaceMemberField = workspaceMemberObjectMetadataItem?.fields.find(
@@ -72,11 +71,10 @@ export const getRowLevelPermissionRuleLabel = ({
   workspaceMemberObjectMetadataItem,
 }: {
   predicates: RowLevelPermissionPredicate[];
-  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
-  workspaceMemberObjectMetadataItem?: Pick<
-    EnrichedObjectMetadataItem,
-    'fields'
-  >;
+  objectMetadataItem: { fields: Pick<FieldMetadataItem, 'id' | 'label'>[] };
+  workspaceMemberObjectMetadataItem?: {
+    fields: Pick<FieldMetadataItem, 'id' | 'name' | 'label'>[];
+  };
 }) => {
   const [firstPredicate, ...otherPredicates] = predicates;
 
