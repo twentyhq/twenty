@@ -52,7 +52,7 @@ export class AccessGroupReadService {
         objectRecordsPermissions:
           rolesPermissions[mainPrincipal.roleId]?.objects[objectMetadataId],
         operationTypes: [operationType],
-        workspaceMembers: await this.findCallerWorkspaceMembers(principals),
+        workspaceMembers: await this.findPrincipalsWorkspaceMembers(principals),
         flatFieldMetadataMaps,
         isRelationHopEnabled: isRlsRelationHopEnabled(featureFlagsMap),
       }),
@@ -76,7 +76,7 @@ export class AccessGroupReadService {
       workspaceId,
       accessGroups: buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
         request,
-        workspaceMembers: await this.findCallerWorkspaceMembers(
+        workspaceMembers: await this.findPrincipalsWorkspaceMembers(
           request.principals,
         ),
         flatFieldMetadataMaps,
@@ -84,7 +84,7 @@ export class AccessGroupReadService {
     });
   }
 
-  private async findCallerWorkspaceMembers({
+  private async findPrincipalsWorkspaceMembers({
     workspaceId,
     mainPrincipal,
   }: Pick<

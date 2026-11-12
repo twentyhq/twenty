@@ -352,7 +352,7 @@ export class RecordPermissionsReadService {
       principalsAccessGroupCompactIds,
       principalsRelatedRecordPathAccessGroupCompactIds,
     ] = await Promise.all([
-      this.findCallerAccessGroupCompactIds(objectAccessRequest),
+      this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
       this.accessGroupReadService.findPrincipalsRelatedRecordPathCompactIds(
         objectAccessRequest,
       ),
@@ -385,7 +385,7 @@ export class RecordPermissionsReadService {
     ]);
   }
 
-  private async findCallerAccessGroupCompactIds(
+  private async findPrincipalsAccessGroupCompactIds(
     objectAccessRequest: PermissionsObjectAccessRequest,
   ): Promise<number[] | undefined> {
     if (

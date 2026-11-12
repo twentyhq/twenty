@@ -75,7 +75,7 @@ const salesMember: PermissionsPrincipalsWithRolesContext = {
   applicationPrincipal: { type: 'customApplication' },
 };
 
-const buildCallerAccessGroupObjectMetadataIds = ({
+const buildPrincipalsAccessGroupObjectMetadataIds = ({
   isCompanyAttachmentsPathInherent = false,
   objectNamesWithRlsRule = ['company'],
   isAccessGroupsEnabled = true,
@@ -144,12 +144,12 @@ const limitedByManagerRole: PermissionsPrincipalsWithRolesContext = {
 
 describe('buildPrincipalsRelatedRecordPathAccessGroupsOrThrow', () => {
   it('should hold the groups of the caller on the source object of a path', () => {
-    expect(buildCallerAccessGroupObjectMetadataIds()).toEqual(['company']);
+    expect(buildPrincipalsAccessGroupObjectMetadataIds()).toEqual(['company']);
   });
 
   it('should also hold the groups reaching the source of an inherent path', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({
+      buildPrincipalsAccessGroupObjectMetadataIds({
         isCompanyAttachmentsPathInherent: true,
         objectNamesWithRlsRule: ['opportunity'],
       }),
@@ -158,7 +158,7 @@ describe('buildPrincipalsRelatedRecordPathAccessGroupsOrThrow', () => {
 
   it('should not go past the source of a regular path', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({
+      buildPrincipalsAccessGroupObjectMetadataIds({
         objectNamesWithRlsRule: ['company', 'opportunity'],
       }),
     ).toEqual(['company']);
@@ -166,25 +166,29 @@ describe('buildPrincipalsRelatedRecordPathAccessGroupsOrThrow', () => {
 
   it('should hold no group when no RLS rule restricts the source object', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({ objectNamesWithRlsRule: [] }),
+      buildPrincipalsAccessGroupObjectMetadataIds({
+        objectNamesWithRlsRule: [],
+      }),
     ).toEqual([]);
   });
 
   it('should hold no group when access groups are disabled', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({ isAccessGroupsEnabled: false }),
+      buildPrincipalsAccessGroupObjectMetadataIds({
+        isAccessGroupsEnabled: false,
+      }),
     ).toEqual([]);
   });
 
   it('should hold no group for a creation', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({ operationType: 'create' }),
+      buildPrincipalsAccessGroupObjectMetadataIds({ operationType: 'create' }),
     ).toEqual([]);
   });
 
   it('should hold no group when a limiting role does not reach every source record', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({
+      buildPrincipalsAccessGroupObjectMetadataIds({
         principals: limitedByManagerRole,
       }),
     ).toEqual([]);
@@ -192,7 +196,7 @@ describe('buildPrincipalsRelatedRecordPathAccessGroupsOrThrow', () => {
 
   it('should not go past an inherent source a limiting role does not fully reach', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({
+      buildPrincipalsAccessGroupObjectMetadataIds({
         isCompanyAttachmentsPathInherent: true,
         objectNamesWithRlsRule: ['company'],
         principals: limitedByManagerRole,
