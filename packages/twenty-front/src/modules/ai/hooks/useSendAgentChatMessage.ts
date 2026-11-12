@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client/react';
+import { isUndefined } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -102,11 +103,10 @@ export const useSendAgentChatMessage = () => {
       const lastSentBrowsingContextAtom =
         agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
       const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
-      const isBrowsingContextChanged =
-        lastSentBrowsingContext === undefined
-          ? browsingContext !== null
-          : JSON.stringify(browsingContext) !==
-            JSON.stringify(lastSentBrowsingContext);
+      const isBrowsingContextChanged = isUndefined(lastSentBrowsingContext)
+        ? isDefined(browsingContext)
+        : JSON.stringify(browsingContext) !==
+          JSON.stringify(lastSentBrowsingContext);
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
@@ -211,7 +211,7 @@ export const useSendAgentChatMessage = () => {
         });
 
         const isAssistantReplying =
-          data?.sendChatMessage.queued === true ||
+          data?.sendChatMessage.queued ||
           isDefined(data?.sendChatMessage.streamId);
 
         if (isAssistantReplying) {
@@ -248,7 +248,7 @@ export const useSendAgentChatMessage = () => {
           ],
         }).catch(logError);
 
-        if (data?.sendChatMessage.queued === true) {
+        if (data?.sendChatMessage.queued) {
           removeOptimisticUserMessage();
         }
 
