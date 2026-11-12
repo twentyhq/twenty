@@ -25,6 +25,7 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { findForeignFieldMetadataOptionsCollidingWithApplicationOptions } from 'src/engine/core-modules/application/application-manifest/utils/find-foreign-field-metadata-options-colliding-with-application-options.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -278,7 +279,7 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
-    const allFlatEntityOperationRecordByMetadataName =
+    const fromToFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
         toAllUniversalFlatEntityMaps,
@@ -291,6 +292,45 @@ export class ApplicationManifestMigrationService {
             ownerFlatApplication.universalIdentifier,
         },
       });
+
+    const collidingForeignFlatFieldMetadataOptions =
+      findForeignFieldMetadataOptionsCollidingWithApplicationOptions({
+        existingFlatFieldMetadataOptionMaps:
+          existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+        toFlatFieldMetadataOptionMaps:
+          toAllUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+        applicationUniversalIdentifier:
+          ownerFlatApplication.universalIdentifier,
+      });
+
+    const fromToFieldMetadataOptionOperationRecord =
+      fromToFlatEntityOperationRecordByMetadataName.fieldMetadataOption;
+
+    const allFlatEntityOperationRecordByMetadataName =
+      collidingForeignFlatFieldMetadataOptions.length === 0
+        ? fromToFlatEntityOperationRecordByMetadataName
+        : {
+            ...fromToFlatEntityOperationRecordByMetadataName,
+            fieldMetadataOption: {
+              flatEntityToCreate:
+                fromToFieldMetadataOptionOperationRecord?.flatEntityToCreate ??
+                {},
+              flatEntityToUpdate:
+                fromToFieldMetadataOptionOperationRecord?.flatEntityToUpdate ??
+                {},
+              flatEntityToDelete: {
+                ...fromToFieldMetadataOptionOperationRecord?.flatEntityToDelete,
+                ...Object.fromEntries(
+                  collidingForeignFlatFieldMetadataOptions.map(
+                    (flatFieldMetadataOption) => [
+                      flatFieldMetadataOption.universalIdentifier,
+                      flatFieldMetadataOption,
+                    ],
+                  ),
+                ),
+              },
+            },
+          };
 
     const connectionProviderIdsToDelete = Object.values(
       allFlatEntityOperationRecordByMetadataName.connectionProvider
