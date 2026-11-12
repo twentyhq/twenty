@@ -1,17 +1,21 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { type CoreAgentRunSummary } from '@/object-core/agents/types/CoreAgentRunSummary';
 import { type CoreAgentTableRow } from '@/object-core/agents/types/CoreAgentTableRow';
 import { getCoreAgentRunStatusLabelAndColor } from '@/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor';
 
-export const buildCoreAgentTableRows = ({
+type CoreAgentRunFields = Pick<
+  CoreAgentTableRow,
+  'recentRuns' | 'lastRunAt' | 'runCountLast14Days'
+>;
+
+export const buildCoreAgentTableRows = <TCoreAgent extends { id: string }>({
   coreAgents,
   runSummaries,
 }: {
-  coreAgents: CoreAgent[];
+  coreAgents: TCoreAgent[];
   runSummaries: CoreAgentRunSummary[] | null;
-}): CoreAgentTableRow[] => {
+}): (TCoreAgent & CoreAgentRunFields)[] => {
   const runSummaryByAgentId = new Map(
     (runSummaries ?? []).map((runSummary) => [runSummary.agentId, runSummary]),
   );

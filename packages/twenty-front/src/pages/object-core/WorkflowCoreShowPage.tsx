@@ -88,7 +88,7 @@ const CoreWorkflowShowContent = ({
   const canReadWorkflowRuns = useCanReadWorkflowRuns();
   const runInsights = useCoreWorkflowRunInsights({
     coreWorkflowId,
-    skip: !canReadWorkflowRuns,
+    shouldSkip: !canReadWorkflowRuns,
   });
   const isLoadingInitialRunInsights =
     runInsights.loading && !isDefined(runInsights.insights);

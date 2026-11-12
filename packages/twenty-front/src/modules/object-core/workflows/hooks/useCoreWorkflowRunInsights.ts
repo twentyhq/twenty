@@ -7,10 +7,10 @@ import { GetCoreWorkflowRunInsightsDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowRunInsights = ({
   coreWorkflowId,
-  skip,
+  shouldSkip,
 }: {
   coreWorkflowId: string;
-  skip: boolean;
+  shouldSkip: boolean;
 }) => {
   const apolloCoreClient = useApolloCoreClient();
   const { userTimezone } = useUserTimezone();
@@ -21,15 +21,15 @@ export const useCoreWorkflowRunInsights = ({
       client: apolloCoreClient,
       variables: { coreWorkflowId, timeZone: userTimezone },
       fetchPolicy: 'cache-and-network',
-      skip,
+      skip: shouldSkip,
     },
   );
 
   useListenToCoreWorkflowRunEvents({
-    coreWorkflowIds: skip ? [] : [coreWorkflowId],
+    coreWorkflowIds: shouldSkip ? [] : [coreWorkflowId],
     queryId: `core-workflow-run-insights-${coreWorkflowId}`,
     onRunsChanged: () => {
-      if (!skip) {
+      if (!shouldSkip) {
         void refetch();
       }
     },

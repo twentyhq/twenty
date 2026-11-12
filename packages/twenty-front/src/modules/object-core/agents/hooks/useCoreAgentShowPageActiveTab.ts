@@ -39,9 +39,8 @@ export const useCoreAgentShowPageActiveTab = ({
     ...(isTurnsTabAvailable ? [CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS] : []),
   ];
 
-  // Overview has nothing to show without runs
   const defaultTabId =
-    hasRunsOnLoad === true && canReadCoreAgentRuns
+    hasRunsOnLoad && canReadCoreAgentRuns
       ? CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS;
 

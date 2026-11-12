@@ -31,7 +31,7 @@ const StyledPanelGrid = styled.div`
 
 type CoreObjectRunInsightsOverviewProps = {
   hasInsights: boolean;
-  loading: boolean;
+  isLoading: boolean;
   hasError: boolean;
   stats: { title: string; value: string; suffix?: string }[];
   panels: { title: string; content: ReactNode }[];
@@ -39,14 +39,14 @@ type CoreObjectRunInsightsOverviewProps = {
 
 export const CoreObjectRunInsightsOverview = ({
   hasInsights,
-  loading,
+  isLoading,
   hasError,
   stats,
   panels,
 }: CoreObjectRunInsightsOverviewProps) => {
   const { t } = useLingui();
 
-  if (!hasInsights && loading) {
+  if (!hasInsights && isLoading) {
     return (
       <StyledOverview>
         <SkeletonLine height={96} />

@@ -11,14 +11,14 @@ import { formatDuration } from '~/utils/format/formatDuration';
 type CoreWorkflowOverviewTabProps = {
   coreWorkflowId: string;
   insights: CoreWorkflowRunInsights | null;
-  loading: boolean;
+  isLoading: boolean;
   hasError: boolean;
 };
 
 export const CoreWorkflowOverviewTab = ({
   coreWorkflowId,
   insights,
-  loading,
+  isLoading,
   hasError,
 }: CoreWorkflowOverviewTabProps) => {
   const { t } = useLingui();
@@ -28,7 +28,7 @@ export const CoreWorkflowOverviewTab = ({
     return (
       <CoreObjectRunInsightsOverview
         hasInsights={false}
-        loading={loading}
+        isLoading={isLoading}
         hasError={hasError}
         stats={[]}
         panels={[]}
@@ -48,7 +48,7 @@ export const CoreWorkflowOverviewTab = ({
   return (
     <CoreObjectRunInsightsOverview
       hasInsights
-      loading={loading}
+      isLoading={isLoading}
       hasError={hasError}
       stats={[
         {

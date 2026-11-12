@@ -36,11 +36,9 @@ export const useCoreWorkflowShowPageActiveTab = ({
       ]
     : [CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW];
 
-  // Overview has nothing to show without runs and a requested version is opened to see its flow
+  // A requested version is opened to see its flow
   const defaultTabId =
-    hasRunsOnLoad === true &&
-    canReadWorkflowRuns &&
-    !isDefined(requestedVersionId)
+    hasRunsOnLoad && canReadWorkflowRuns && !isDefined(requestedVersionId)
       ? CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
       : CORE_WORKFLOW_SHOW_PAGE_TABS.TAB_IDS.FLOW;
 

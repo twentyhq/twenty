@@ -18,75 +18,76 @@ const StyledTabContent = styled.div`
 type CoreAgentOverviewTabProps = {
   agentId: string;
   insights: CoreAgentRunInsights | null;
-  loading: boolean;
+  isLoading: boolean;
   hasError: boolean;
 };
 
 export const CoreAgentOverviewTab = ({
   agentId,
   insights,
-  loading,
+  isLoading,
   hasError,
 }: CoreAgentOverviewTabProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
+  if (!isDefined(insights)) {
+    return (
+      <StyledTabContent>
+        <CoreObjectRunInsightsOverview
+          hasInsights={false}
+          isLoading={isLoading}
+          hasError={hasError}
+          stats={[]}
+          panels={[]}
+        />
+      </StyledTabContent>
+    );
+  }
+
   return (
     <StyledTabContent>
       <CoreObjectRunInsightsOverview
-        hasInsights={isDefined(insights)}
-        loading={loading}
+        hasInsights
+        isLoading={isLoading}
         hasError={hasError}
-        stats={
-          isDefined(insights)
-            ? [
-                {
-                  title: t`Runs · 14d`,
-                  value: formatNumber(insights.runCount),
-                },
-                {
-                  title: t`Credits · 14d`,
-                  value: formatNumber(insights.credits, { decimals: 2 }),
-                },
-                {
-                  title: t`Tokens · 14d`,
-                  value: formatNumber(insights.tokenCount, {
-                    abbreviate: true,
-                  }),
-                },
-                {
-                  title: t`Avg duration`,
-                  value: isDefined(insights.averageDurationInMs)
-                    ? formatDuration(Math.round(insights.averageDurationInMs))
-                    : '-',
-                },
-              ]
-            : []
-        }
-        panels={
-          isDefined(insights)
-            ? [
-                {
-                  title: t`Runs per day`,
-                  content: (
-                    <CoreObjectRunsPerDayChart
-                      chartInstanceId={`core-agent-runs-per-day-${agentId}`}
-                      dailyRunCounts={insights.dailyRunCounts}
-                    />
-                  ),
-                },
-                {
-                  title: t`Credits per day`,
-                  content: (
-                    <CoreAgentCreditsPerDayChart
-                      agentId={agentId}
-                      dailyRunCounts={insights.dailyRunCounts}
-                    />
-                  ),
-                },
-              ]
-            : []
-        }
+        stats={[
+          { title: t`Runs · 14d`, value: formatNumber(insights.runCount) },
+          {
+            title: t`Credits · 14d`,
+            value: formatNumber(insights.credits, { decimals: 2 }),
+          },
+          {
+            title: t`Tokens · 14d`,
+            value: formatNumber(insights.tokenCount, { abbreviate: true }),
+          },
+          {
+            title: t`Avg duration`,
+            value: isDefined(insights.averageDurationInMs)
+              ? formatDuration(Math.round(insights.averageDurationInMs))
+              : '-',
+          },
+        ]}
+        panels={[
+          {
+            title: t`Runs per day`,
+            content: (
+              <CoreObjectRunsPerDayChart
+                chartInstanceId={`core-agent-runs-per-day-${agentId}`}
+                dailyRunCounts={insights.dailyRunCounts}
+              />
+            ),
+          },
+          {
+            title: t`Credits per day`,
+            content: (
+              <CoreAgentCreditsPerDayChart
+                agentId={agentId}
+                dailyRunCounts={insights.dailyRunCounts}
+              />
+            ),
+          },
+        ]}
       />
     </StyledTabContent>
   );

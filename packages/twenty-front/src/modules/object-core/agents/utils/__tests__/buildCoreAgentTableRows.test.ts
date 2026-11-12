@@ -1,8 +1,7 @@
-import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { buildCoreAgentTableRows } from '@/object-core/agents/utils/buildCoreAgentTableRows';
 import { AgentTurnStatus } from '~/generated-metadata/graphql';
 
-const buildCoreAgent = (id: string) => ({ id }) as CoreAgent;
+const buildCoreAgent = (id: string) => ({ id });
 
 describe('buildCoreAgentTableRows', () => {
   it('uses the most recent run as the last run', () => {

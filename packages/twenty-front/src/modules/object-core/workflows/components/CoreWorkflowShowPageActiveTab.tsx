@@ -44,7 +44,7 @@ export const CoreWorkflowShowPageActiveTab = ({
         <CoreWorkflowOverviewTab
           coreWorkflowId={coreWorkflowId}
           insights={runInsights}
-          loading={isLoadingRunInsights}
+          isLoading={isLoadingRunInsights}
           hasError={hasRunInsightsError}
         />
       </StyledTabContent>

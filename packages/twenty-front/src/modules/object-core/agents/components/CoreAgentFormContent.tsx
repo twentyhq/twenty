@@ -209,7 +209,7 @@ export const CoreAgentFormContent = ({
           <CoreAgentOverviewTab
             agentId={agent.id}
             insights={runInsights}
-            loading={isLoadingRunInsights}
+            isLoading={isLoadingRunInsights}
             hasError={hasRunInsightsError}
           />
         ) : activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS ? (
