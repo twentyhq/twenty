@@ -28,10 +28,13 @@ const groupByFieldMetadataItem = getMockFieldMetadataItemOrThrow({
   fieldName: 'name',
 });
 
-const getWrapper = (
-  recordGroupId: string,
-  { shouldDisplayGroupsAsTabs = false } = {},
-) => {
+const getWrapper = ({
+  recordGroupId,
+  shouldDisplayGroupsAsTabs = false,
+}: {
+  recordGroupId: string;
+  shouldDisplayGroupsAsTabs?: boolean;
+}) => {
   const JestMetadataAndApolloMocksWrapper =
     getJestMetadataAndApolloMocksWrapper({
       onInitializeJotaiStore: (store) => {
@@ -95,7 +98,7 @@ describe('useFindManyRecordIndexTableParams', () => {
   it('should query a record group with the view group load limit', () => {
     const { result } = renderHook(
       () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
-      { wrapper: getWrapper(RECORD_GROUP_ID) },
+      { wrapper: getWrapper({ recordGroupId: RECORD_GROUP_ID }) },
     );
 
     expect(result.current.limit).toBe(50);
@@ -105,7 +108,8 @@ describe('useFindManyRecordIndexTableParams', () => {
     const { result } = renderHook(
       () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
       {
-        wrapper: getWrapper(RECORD_GROUP_ID, {
+        wrapper: getWrapper({
+          recordGroupId: RECORD_GROUP_ID,
           shouldDisplayGroupsAsTabs: true,
         }),
       },
@@ -117,7 +121,7 @@ describe('useFindManyRecordIndexTableParams', () => {
   it('should not set a limit outside a record group', () => {
     const { result } = renderHook(
       () => useFindManyRecordIndexTableParams('company', INSTANCE_ID),
-      { wrapper: getWrapper('unknown-record-group-id') },
+      { wrapper: getWrapper({ recordGroupId: 'unknown-record-group-id' }) },
     );
 
     expect(result.current).not.toHaveProperty('limit');
