@@ -8,7 +8,10 @@ import {
   type RecordShareAccessLevel,
   type ObjectRecord,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -212,7 +215,7 @@ export class RecordPermissionsReadService {
     return new Set(
       roleIds.filter(
         (roleId) =>
-          !canReachSomeRecords({
+          !canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions:
               getPermissionsPrincipalsRecordsPermissions({
                 principals: buildRolePermissionsPrincipals({

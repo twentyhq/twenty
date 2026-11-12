@@ -6,7 +6,7 @@ import {
   type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import {
-  canReachAllRecords,
+  canAccessThroughAllRecordsPermission,
   isDefined,
   isRowLevelRecordsPermissionsRuleGrantingOperation,
 } from 'twenty-shared/utils';
@@ -48,7 +48,10 @@ export const buildRoleAccessGroupsOrThrow = ({
   }
 
   const isReachingAllRecords = operationTypes.some((operationType) =>
-    canReachAllRecords({ objectRecordsPermissions, operationType }),
+    canAccessThroughAllRecordsPermission({
+      objectRecordsPermissions,
+      operationType,
+    }),
   );
   const rowLevelPermissionRules = (
     objectRecordsPermissions.rowLevelRecordsPermissions ?? []

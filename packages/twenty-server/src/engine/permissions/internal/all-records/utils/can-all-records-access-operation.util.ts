@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { canReachAllRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsPermission } from 'twenty-shared/utils';
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
@@ -12,7 +12,7 @@ export const canAllRecordsAccessOperation = ({
   flatObjectMetadata,
   operationType,
 }: PermissionsObjectAccessRequest): boolean =>
-  canReachAllRecords({
+  canAccessThroughAllRecordsPermission({
     objectRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
       principals,
       metadataMaps,

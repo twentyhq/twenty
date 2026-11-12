@@ -1,6 +1,9 @@
 /* @license Enterprise */
 
-import { canReachAllRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
@@ -33,7 +36,7 @@ export const areLimitingRolesReachingAllRecords = ({
   });
 
   return limitingObjectRecordsPermissions.every((objectRecordsPermissions) =>
-    canReachAllRecords({
+    canAccessThroughAllRecordsPermission({
       objectRecordsPermissions,
       operationType: enforcedOperationType,
     }),

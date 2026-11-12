@@ -1,10 +1,9 @@
 import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
 import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
-import { canReachAllRecords } from '@/utils/canReachAllRecords';
-import { isDefined } from '@/utils/validation/isDefined';
 import { isRowLevelRecordsPermissionsRuleGrantingOperation } from '@/utils/isRowLevelRecordsPermissionsRuleGrantingOperation';
+import { isDefined } from '@/utils/validation/isDefined';
 
-const canReachRowLevelRecords = ({
+export const canAccessThroughRlsPermission = ({
   rowLevelRecordsPermissions,
   operationType,
 }: {
@@ -19,18 +18,3 @@ const canReachRowLevelRecords = ({
     isRowLevelRecordsPermissionsRuleGrantingOperation({ rule, operationType }),
   );
 };
-
-export const canReachSomeRecords = ({
-  objectRecordsPermissions,
-  operationType,
-}: {
-  objectRecordsPermissions: ObjectRecordsPermissions | undefined;
-  operationType: ObjectRecordsOperationType;
-}): boolean =>
-  isDefined(objectRecordsPermissions) &&
-  (canReachAllRecords({ objectRecordsPermissions, operationType }) ||
-    canReachRowLevelRecords({
-      rowLevelRecordsPermissions:
-        objectRecordsPermissions.rowLevelRecordsPermissions,
-      operationType,
-    }));

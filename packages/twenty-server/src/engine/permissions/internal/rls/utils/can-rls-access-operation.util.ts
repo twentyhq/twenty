@@ -1,6 +1,9 @@
 /* @license Enterprise */
 
-import { canReachAllRecords, canReachSomeRecords } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsPermission,
+  canAccessThroughRlsPermission,
+} from 'twenty-shared/utils';
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
@@ -22,12 +25,13 @@ export const canRlsAccessOperation = ({
   });
 
   return (
-    !canReachAllRecords({
+    !canAccessThroughAllRecordsPermission({
       objectRecordsPermissions,
       operationType: enforcedOperationType,
     }) &&
-    canReachSomeRecords({
-      objectRecordsPermissions,
+    canAccessThroughRlsPermission({
+      rowLevelRecordsPermissions:
+        objectRecordsPermissions?.rowLevelRecordsPermissions,
       operationType: enforcedOperationType,
     })
   );
