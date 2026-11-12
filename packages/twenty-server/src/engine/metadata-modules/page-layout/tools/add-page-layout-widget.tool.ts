@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -9,6 +10,10 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { PAGE_LAYOUT_TOOL_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout/tools/constants/page-layout-tool-access-policy.constant';
 import { PageLayoutToolService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
+import {
+  PageLayoutWidgetException,
+  PageLayoutWidgetExceptionCode,
+} from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import {
   widgetPositionSchema,
   widgetConfigurationSchema,
@@ -103,7 +108,11 @@ export class AddPageLayoutWidgetTool extends BaseTool<
       const { configuration } = widgetWithMetadataIds;
 
       if (!isDefined(configuration)) {
-        throw new Error('Widget configuration is required');
+        throw new PageLayoutWidgetException(
+          'Widget configuration is required',
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          { userFriendlyMessage: msg`Widget configuration is required.` },
+        );
       }
 
       const widget = await this.pageLayoutWidgetService.create({

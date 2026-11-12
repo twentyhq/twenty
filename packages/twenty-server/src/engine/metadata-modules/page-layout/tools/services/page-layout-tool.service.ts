@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { type PageLayoutWidgetPosition } from 'twenty-shared/types';
 import {
@@ -79,6 +80,9 @@ export class PageLayoutToolService {
       throw new PageLayoutWidgetException(
         'Choose an active tab and a widget position matching its layout mode',
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        {
+          userFriendlyMessage: msg`Choose an active tab and a widget position matching its layout mode.`,
+        },
       );
     }
 
@@ -106,6 +110,7 @@ export class PageLayoutToolService {
       throw new PageLayoutWidgetException(
         `Frontend component "${configuration.frontComponentId}" does not exist`,
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        { userFriendlyMessage: msg`Frontend component not found.` },
       );
     }
 
@@ -119,6 +124,9 @@ export class PageLayoutToolService {
       throw new PageLayoutWidgetException(
         `Frontend component "${frontComponent.name}" is not available on this page layout`,
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        {
+          userFriendlyMessage: msg`This frontend component is not available on this page layout.`,
+        },
       );
     }
   }

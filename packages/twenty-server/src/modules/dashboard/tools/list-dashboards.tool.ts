@@ -16,10 +16,10 @@ const listDashboardsSchema = z.object({
 });
 
 export const createListDashboardsTool = ({
-  deps,
+  dependencies,
   context,
 }: {
-  deps: {
+  dependencies: {
     workspaceOrmManager: Pick<
       PageLayoutToolDependencies['workspaceOrmManager'],
       'executeInWorkspaceContext' | 'getRepository'
@@ -35,11 +35,15 @@ export const createListDashboardsTool = ({
       const limit = parameters.limit ?? 20;
 
       const dashboards =
-        await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const repo = deps.workspaceOrmManager.getRepository('dashboard');
+        await dependencies.workspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const repo =
+              dependencies.workspaceOrmManager.getRepository('dashboard');
 
-          return repo.find({ take: limit, order: { position: 'ASC' } });
-        }, context.authContext);
+            return repo.find({ take: limit, order: { position: 'ASC' } });
+          },
+          context.authContext,
+        );
 
       const dashboardList = dashboards.map((d) => ({
         id: d.id,

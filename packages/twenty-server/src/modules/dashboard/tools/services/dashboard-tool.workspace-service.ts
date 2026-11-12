@@ -61,7 +61,7 @@ export class DashboardToolWorkspaceService {
       contextWithPermissions,
     );
     const listDashboards = createListDashboardsTool({
-      deps: dependencies,
+      dependencies,
       context: contextWithPermissions,
     });
     const getDashboard = createGetDashboardTool(

@@ -288,11 +288,15 @@ describe('Manifest sync - front component widgetAvailability', () => {
     let pageLayoutId: string;
     let pageLayoutTabId: string;
     let companyObjectMetadataId: string;
-    const context = {
+    const getContext = async () => ({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       userId: USER_DATA_SEED_IDS.JANE,
       userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-    };
+      authContext: await resolveWorkspaceMemberAuthContext({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      }),
+    });
     const executeTool = async ({
       name,
       arguments: toolArguments,
@@ -302,13 +306,7 @@ describe('Manifest sync - front component widgetAvailability', () => {
     }) =>
       getAppProviderByClassName<ToolRegistryService>(
         'ToolRegistryService',
-      ).resolveAndExecute(name, toolArguments, {
-        ...context,
-        authContext: await resolveWorkspaceMemberAuthContext({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        }),
-      });
+      ).resolveAndExecute(name, toolArguments, await getContext());
 
     beforeEach(async () => {
       companyObjectMetadataId = await findCompanyObjectMetadataId();
@@ -337,16 +335,9 @@ describe('Manifest sync - front component widgetAvailability', () => {
     it('exposes each page-layout tool once alongside the existing dashboard tools', async () => {
       const catalog = await getAppProviderByClassName<ToolRegistryService>(
         'ToolRegistryService',
-      ).getCatalog(
-        {
-          ...context,
-          authContext: await resolveWorkspaceMemberAuthContext({
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          }),
-        },
-        { categories: [ToolCategory.PAGE_LAYOUT] },
-      );
+      ).getCatalog(await getContext(), {
+        categories: [ToolCategory.PAGE_LAYOUT],
+      });
       expect(catalog.map(({ name }) => name).sort()).toEqual([
         'add_page_layout_tab',
         'add_page_layout_widget',
@@ -360,7 +351,7 @@ describe('Manifest sync - front component widgetAvailability', () => {
       ]);
     });
 
-    it('does not execute placement without layout permission', async () => {
+    it('allows reading layouts but denies placement without layout permission', async () => {
       const permissions = getAppProviderByClassName<SettingPermissionsService>(
         'SettingPermissionsService',
       );
@@ -373,6 +364,19 @@ describe('Manifest sync - front component widgetAvailability', () => {
             : hasPermissionFlag(input),
         );
       try {
+        expect(
+          await executeTool({
+            name: 'list_record_page_layouts',
+            arguments: { objectName: 'company' },
+          }),
+        ).toMatchObject({
+          success: true,
+          result: {
+            layouts: expect.arrayContaining([
+              expect.objectContaining({ id: pageLayoutId }),
+            ]),
+          },
+        });
         expect(
           await executeTool({
             name: 'place_front_component',
