@@ -27,13 +27,12 @@ export const useAgentChatInboxShownThreads = () => {
       : agentChatVisibleThreadsSelector,
   );
 
-  const isLoading =
-    isThreadListLoading ||
-    (isChannelView
-      ? !isDefined(agentChatShownChannelThreadList)
-      : !isDefined(
-          agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus],
-        ));
+  const isShownListLoaded = isChannelView
+    ? isDefined(agentChatShownChannelThreadList)
+    : isDefined(
+        agentChatThreadList?.filterStatusPages?.[agentChatThreadFilterStatus],
+      );
+  const isLoading = isThreadListLoading || !isShownListLoaded;
 
   return { threads, isLoading };
 };

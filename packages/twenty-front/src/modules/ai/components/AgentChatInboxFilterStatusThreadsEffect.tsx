@@ -32,7 +32,13 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
     let retryTimeout: ReturnType<typeof setTimeout> | undefined;
 
     // A failed or twice-raced first page would otherwise leave the tab without pages
-    const loadFirstPage = async (attempt: number, retryDelayInMs: number) => {
+    const loadFirstPage = async ({
+      attempt,
+      retryDelayInMs,
+    }: {
+      attempt: number;
+      retryDelayInMs: number;
+    }) => {
       await refreshAgentChatThreadsInFilterStatus(agentChatThreadFilterStatus);
 
       if (
@@ -48,15 +54,19 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
       }
 
       retryTimeout = setTimeout(
-        () => void loadFirstPage(attempt + 1, retryDelayInMs * 2),
+        () =>
+          void loadFirstPage({
+            attempt: attempt + 1,
+            retryDelayInMs: retryDelayInMs * 2,
+          }),
         retryDelayInMs,
       );
     };
 
-    void loadFirstPage(
-      1,
-      AGENT_CHAT_INBOX_FILTER_STATUS_INITIAL_RETRY_DELAY_IN_MS,
-    );
+    void loadFirstPage({
+      attempt: 1,
+      retryDelayInMs: AGENT_CHAT_INBOX_FILTER_STATUS_INITIAL_RETRY_DELAY_IN_MS,
+    });
 
     return () => {
       isCancelled = true;
