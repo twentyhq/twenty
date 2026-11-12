@@ -17,6 +17,7 @@ import {
   resourceUrlFromServerUrl,
 } from '@modelcontextprotocol/sdk/shared/auth-utils.js';
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
+import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
@@ -139,10 +140,7 @@ export class ConnectionProviderOAuthDiscoveryService {
     storedClient: OAuthDiscoveryStoredClient;
     discoveryState: OAuthDiscoveryState;
   }): Promise<OAuthDiscoveryStoredClient> {
-    if (
-      JSON.stringify(storedClient.discoveryState) ===
-      JSON.stringify(discoveryState)
-    ) {
+    if (isEqual(storedClient.discoveryState, discoveryState)) {
       return storedClient;
     }
 
