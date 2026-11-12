@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
@@ -11,10 +12,12 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 export const agentChatThreadsLoadingSelector = createAtomSelector<boolean>({
   key: 'agentChatThreadsLoadingSelector',
   get: ({ get }) =>
-    get(
-      agentChatThreadListFamilyState,
-      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-    ) === null &&
+    !isDefined(
+      get(
+        agentChatThreadListFamilyState,
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+    ) &&
     get(permissionFlagMapSelector)[PermissionFlagType.AI] &&
     get(currentWorkspaceState)?.activationStatus !==
       WorkspaceActivationStatus.SUSPENDED,

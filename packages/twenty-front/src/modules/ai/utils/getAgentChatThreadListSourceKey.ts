@@ -7,8 +7,8 @@ export const getAgentChatThreadListSourceKey = (
   switch (source.type) {
     case 'recent':
       return 'recent';
-    case 'inboxTab':
-      return `inboxTab:${source.filterStatus}`;
+    case 'presetFilter':
+      return `presetFilter:${source.filterStatus}`;
     case 'channel':
       return `channel:${getAgentChatChannelViewKey(source.channelView)}`;
   }

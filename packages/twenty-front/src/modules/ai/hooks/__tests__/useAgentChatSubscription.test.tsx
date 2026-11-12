@@ -18,7 +18,7 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const refreshAgentChatThreads = jest.fn();
+const loadAgentChatThreadList = jest.fn();
 const mockRefreshPermissions = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   useRefreshAgentChatThreadPermissions: () => ({
@@ -29,7 +29,7 @@ const subscribe = jest.fn();
 const disconnect = jest.fn();
 jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
   useLoadAgentChatThreadList: () => ({
-    loadAgentChatThreadList: refreshAgentChatThreads,
+    loadAgentChatThreadList,
   }),
 }));
 const refreshAiChatUsage = jest.fn();
@@ -91,7 +91,7 @@ describe('Shared conversation access revocation', () => {
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(1);
     act(heartbeat);
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
-    expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+    expect(loadAgentChatThreadList).not.toHaveBeenCalled();
     unmount();
     act(heartbeat);
     expect(mockRefreshPermissions).toHaveBeenCalledTimes(2);
@@ -112,7 +112,7 @@ describe('Shared conversation access revocation', () => {
       expect(jotaiStore.get(fetchedAtom)).toEqual([]);
       expect(jotaiStore.get(queuedAtom)).toEqual([]);
       expect(jotaiStore.get(errorAtom)).toMatchObject({ code: 'NOT_FOUND' });
-      expect(refreshAgentChatThreads).toHaveBeenCalledTimes(1);
+      expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
       expect(disconnect).toHaveBeenCalledTimes(1);
       unmount();
       expect(disconnect).toHaveBeenCalledTimes(1);
@@ -220,7 +220,7 @@ describe('Shared conversation access revocation', () => {
       expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
       expect(jotaiStore.get(fetchedAtom)).toHaveLength(1);
       expect(jotaiStore.get(queuedAtom)).toHaveLength(1);
-      expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+      expect(loadAgentChatThreadList).not.toHaveBeenCalled();
       expect(disconnect).not.toHaveBeenCalled();
     },
   );
@@ -242,7 +242,7 @@ describe('Shared conversation access revocation', () => {
     renderHook(() => useAgentChatSubscription('thread'), { wrapper: Wrapper });
     act(() => subscribe.mock.calls[0][1].error(new Error('offline')));
     expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
-    expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+    expect(loadAgentChatThreadList).not.toHaveBeenCalled();
   });
 });
 

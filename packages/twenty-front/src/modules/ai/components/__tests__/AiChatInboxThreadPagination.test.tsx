@@ -30,8 +30,8 @@ jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
   useLoadAgentChatThreadList: () => ({ loadAgentChatThreadList }),
 }));
 
-const ACTIVE_TAB_SOURCE: AgentChatThreadListSource = {
-  type: 'inboxTab',
+const ACTIVE_PRESET_FILTER_SOURCE: AgentChatThreadListSource = {
+  type: 'presetFilter',
   filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
 };
 
@@ -48,7 +48,7 @@ const renderPagination = ({
 }) => {
   jotaiStore.set(
     agentChatThreadListFamilyState.atomFamily(
-      getAgentChatThreadListSourceKey(ACTIVE_TAB_SOURCE),
+      getAgentChatThreadListSourceKey(ACTIVE_PRESET_FILTER_SOURCE),
     ),
     {
       threadIds: THREADS.map(({ id }) => id),
@@ -116,7 +116,7 @@ describe('AiChatInboxThreadPagination', () => {
     expect(onThreadSelect).toHaveBeenCalledWith('thread-3');
     expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
     expect(loadAgentChatThreadList).toHaveBeenCalledWith({
-      source: ACTIVE_TAB_SOURCE,
+      source: ACTIVE_PRESET_FILTER_SOURCE,
       mode: 'fetch-more',
     });
   });
@@ -135,7 +135,7 @@ describe('AiChatInboxThreadPagination', () => {
     expect(onThreadSelect).not.toHaveBeenCalled();
     expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
     expect(loadAgentChatThreadList).toHaveBeenCalledWith({
-      source: ACTIVE_TAB_SOURCE,
+      source: ACTIVE_PRESET_FILTER_SOURCE,
       mode: 'fetch-more',
     });
   });

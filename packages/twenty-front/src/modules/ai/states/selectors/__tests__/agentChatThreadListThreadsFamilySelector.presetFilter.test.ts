@@ -192,14 +192,14 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   return store
     .get(
       agentChatThreadListThreadsFamilySelector.selectorFamily({
-        type: 'inboxTab',
+        type: 'presetFilter',
         filterStatus,
       }),
     )
     .map(({ id }) => id);
 };
 
-describe('agentChatThreadListThreadsFamilySelector for an inbox tab', () => {
+describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,

@@ -46,7 +46,7 @@ export const useLeaveRemovedAiChatThread = () => {
       sortChatThreadsByLastActivityDesc(
         store.get(
           agentChatThreadListThreadsFamilySelector.selectorFamily({
-            type: 'inboxTab',
+            type: 'presetFilter',
             filterStatus: store.get(agentChatThreadFilterStatusState.atom),
           }),
         ),

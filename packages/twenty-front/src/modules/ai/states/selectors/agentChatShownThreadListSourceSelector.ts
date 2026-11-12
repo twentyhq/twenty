@@ -15,7 +15,7 @@ export const agentChatShownThreadListSourceSelector =
       return isDefined(channelView)
         ? { type: 'channel', channelView }
         : {
-            type: 'inboxTab',
+            type: 'presetFilter',
             filterStatus: get(agentChatThreadFilterStatusState),
           };
     },

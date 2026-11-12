@@ -150,7 +150,7 @@ export const useLoadAgentChatThreadList = () => {
       const page = await fetchAgentChatThreadsPage({
         lastCursor,
         threadIdFilter:
-          source.type === 'inboxTab' && isDefined(workspaceMemberId)
+          source.type === 'presetFilter' && isDefined(workspaceMemberId)
             ? {
                 and: [
                   { deletedAt: { is: 'NULL' } },
@@ -189,7 +189,7 @@ export const useLoadAgentChatThreadList = () => {
       const isFetchMore = mode === 'fetch-more';
 
       if (
-        (source.type === 'inboxTab' && !isDefined(workspaceMemberId)) ||
+        (source.type === 'presetFilter' && !isDefined(workspaceMemberId)) ||
         (isFetchMore && !listBeforeRequest?.hasNextPage)
       ) {
         return undefined;

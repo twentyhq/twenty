@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
@@ -26,6 +27,6 @@ export const useAgentChatThreadList = (source: AgentChatThreadListSource) => {
   return {
     threads: sortedThreads,
     agentChatThreadList,
-    loading: agentChatThreadList === null,
+    loading: !isDefined(agentChatThreadList),
   };
 };
