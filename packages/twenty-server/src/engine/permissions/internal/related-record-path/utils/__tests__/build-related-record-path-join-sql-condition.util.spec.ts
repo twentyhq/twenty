@@ -11,8 +11,8 @@ import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-rel
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import {
   type BuildEntrySQLCondition,
-  buildRelatedRecordPathsSQLCondition,
-} from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
+  buildRelatedRecordPathJoinSQLCondition,
+} from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-join-sql-condition.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -186,20 +186,20 @@ const buildAttachmentCondition = ({
   disabledObjectNames?: string[];
   privateObjectNames?: string[];
 }) =>
-  buildRelatedRecordPathsSQLCondition({
+  buildRelatedRecordPathJoinSQLCondition({
     workspaceId: WORKSPACE_ID,
     flatObjectMetadata: attachment,
     tableAlias: 'attachment',
     metadataMaps: buildMetadataMaps(metadataMapsArgs),
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
-    canRelatedRecordPathsReachObject: (flatObjectMetadata) =>
+    canRelatedRecordPathExtendAccessToObject: (flatObjectMetadata) =>
       !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
     isRecordPrivacyApplicable: (flatObjectMetadata) =>
       privateObjectNames.includes(flatObjectMetadata.nameSingular),
     isUncorrelated,
   });
 
-describe('buildRelatedRecordPathsSQLCondition', () => {
+describe('buildRelatedRecordPathJoinSQLCondition', () => {
   it('returns the entry condition when no path leads to the object', () => {
     expect(
       buildAttachmentCondition({
@@ -393,7 +393,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
       { ...fields[0], isActive: false };
 
     expect(
-      buildRelatedRecordPathsSQLCondition({
+      buildRelatedRecordPathJoinSQLCondition({
         workspaceId: WORKSPACE_ID,
         flatObjectMetadata: attachment,
         tableAlias: 'attachment',
@@ -401,7 +401,7 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
         buildEntrySQLCondition: buildEntrySQLConditionFrom({
           company: true,
         }),
-        canRelatedRecordPathsReachObject: () => true,
+        canRelatedRecordPathExtendAccessToObject: () => true,
         isRecordPrivacyApplicable: () => false,
       }),
     ).toBe(false);

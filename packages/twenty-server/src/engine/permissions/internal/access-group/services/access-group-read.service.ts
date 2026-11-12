@@ -9,7 +9,7 @@ import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/interna
 import { buildCallerRelatedRecordPathAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-caller-related-record-path-access-groups-or-throw.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { canRelatedRecordPathGrantOperation } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-grant-operation.util';
+import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { isPermissionMainPrincipalWorkspaceMember } from 'src/engine/permissions/internal/principal/utils/is-permission-main-principal-workspace-member.util';
 import { AccessGroupReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/access-group-read.repository';
@@ -63,7 +63,7 @@ export class AccessGroupReadService {
   async findCallerRelatedRecordPathCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
-    if (!canRelatedRecordPathGrantOperation(request)) {
+    if (!canRelatedRecordPathExtendAccess(request)) {
       return [];
     }
 
