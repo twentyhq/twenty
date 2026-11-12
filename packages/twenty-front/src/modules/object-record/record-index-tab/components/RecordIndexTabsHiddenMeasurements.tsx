@@ -35,7 +35,9 @@ export const RecordIndexTabsHiddenMeasurements = ({
         onDimensionChange={onTabWidthChange(recordIndexTabItem.id)}
       >
         <TabButton
-          badge={<RecordIndexTabCount recordIndexTabItem={recordIndexTabItem} />}
+          badge={
+            <RecordIndexTabCount recordIndexTabItem={recordIndexTabItem} />
+          }
         >
           <RecordIndexTabChip recordIndexTabItem={recordIndexTabItem} />
         </TabButton>
