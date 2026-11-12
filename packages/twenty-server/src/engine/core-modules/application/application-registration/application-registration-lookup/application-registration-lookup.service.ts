@@ -52,6 +52,18 @@ export class ApplicationRegistrationLookupService {
     });
   }
 
+  async findOAuthRedirectUrisByUniversalIdentifier(
+    universalIdentifier: string,
+  ): Promise<string[]> {
+    const applicationRegistration =
+      await this.applicationRegistrationRepository.findOne({
+        select: ['oAuthRedirectUris'],
+        where: { universalIdentifier },
+      });
+
+    return applicationRegistration?.oAuthRedirectUris ?? [];
+  }
+
   async findOneOwnedByWorkspaceOrThrow({
     universalIdentifier,
     workspaceId,

@@ -439,12 +439,13 @@ describe('OAuth (integration)', () => {
       expect(res.body.expires_in).toBeGreaterThan(0);
     });
 
-    it.each([
+    describe.each([
       ApplicationRegistrationSourceType.OAUTH_ONLY,
       ApplicationRegistrationSourceType.LOCAL,
-    ])(
-      'should expose meta-tools to ChatGPT using a %s registration on the unchanged MCP URL',
-      async (sourceType) => {
+    ])('ChatGPT MCP with a %s registration', (sourceType) => {
+      let token: string;
+
+      beforeAll(async () => {
         const redirectUri =
           'https://chatgpt.com/connector_platform_oauth_redirect';
         const chatGptRegistration = await insertRegistration(ds, {
@@ -475,8 +476,10 @@ describe('OAuth (integration)', () => {
 
         assertIsDefinedOrThrow(installedApplication);
         createdEntityIds.applications.push(installedApplication.id);
+        token = tokenResponse.body.access_token;
+      });
 
-        const token: string = tokenResponse.body.access_token;
+      it('should expose meta-tools on the unchanged MCP URL', async () => {
         const { status, body } = await listMcpTools({ token });
 
         expect(status).toBe(200);
@@ -492,7 +495,9 @@ describe('OAuth (integration)', () => {
           ]),
         );
         expect(toolNames).not.toContain('find_many_companies');
+      });
 
+      it('should accept legacy direct calls while the meta catalog is reviewed', async () => {
         const legacyCallResponse = await request(baseUrl)
           .post('/mcp')
           .set('Authorization', `Bearer ${token}`)
@@ -510,13 +515,15 @@ describe('OAuth (integration)', () => {
 
         expect(legacyCallResponse.body.error).toBeUndefined();
         expect(legacyCallResponse.body.result).toBeDefined();
+      });
 
+      it('should honor explicit direct mode', async () => {
         const directToolNames = await listDirectModeMcpToolNames({ token });
 
         expect(directToolNames).toContain('list_object_metadata_names');
         expect(directToolNames).not.toContain('execute_tool');
-      },
-    );
+      });
+    });
 
     it('should reject a reused authorization code', async () => {
       const code = await createAuthorizationCode(

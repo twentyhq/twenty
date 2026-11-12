@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { settings } from 'src/engine/constants/settings';
 
 export const buildMcpServerInstructions = ({
@@ -44,7 +46,7 @@ export const buildMcpServerInstructions = ({
           `  get_tool_catalog(categories)        — fallback discovery, only when you do not know which tool exists. Pass ONE category, never call it unfiltered`,
         ]),
     ``,
-    ...(isDirectMode && skillNames
+    ...(isDirectMode && isNonEmptyString(skillNames)
       ? [`Available skills: ${skillNames}.`, ``]
       : []),
     `CRUD tool name grammar — construct names directly without prior discovery:`,
