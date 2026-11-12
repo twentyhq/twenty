@@ -21356,6 +21356,11 @@ msgstr ""
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Alleen applicaties die naar npm zijn gepubliceerd, kunnen op deze manier worden geclaimd."
 
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr ""
+
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
@@ -24045,6 +24050,11 @@ msgstr "Registreer externe MCP-servers in de instellingen voor ontwikkelaars en 
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Geregistreerd als ontwikkelinstantie. Deze instantie wordt niet gefactureerd."
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr ""
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -29409,6 +29419,11 @@ msgstr "Deze agent deelt zijn rol met andere leden of agenten. Wijzig de toegang
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Deze agent deelt zijn rol met andere leden of agenten. Wijzig de tools in Instellingen > Rollen."
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr ""
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

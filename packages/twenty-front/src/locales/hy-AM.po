@@ -21356,6 +21356,11 @@ msgstr ""
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Միայն npm-ում հրապարակված հավելվածների սեփականությունն է հնարավոր այս կերպ ստանձնել։"
 
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr ""
+
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
@@ -24045,6 +24050,11 @@ msgstr "Գրանցեք արտաքին MCP սպասարկիչները Մշակո�
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Գրանցվել է որպես development instance։ Այս instance-ի համար լրացուցիչ վճարում չի գանձվի։"
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr ""
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -29407,6 +29417,11 @@ msgstr "Այս գործակալը կիսում է իր դերը այլ անդա�
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Այս գործակալը կիսում է իր դերը այլ անդամների կամ գործակալների հետ։ Փոխեք դրա գործիքները Կարգավորումներ > Դերեր բաժնում։"
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr ""
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

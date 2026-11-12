@@ -21356,6 +21356,11 @@ msgstr ""
 msgid "Only applications published to npm can be claimed this way."
 msgstr "只有发布到 npm 的应用程序才能通过此方式认领。"
 
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr ""
+
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
@@ -24045,6 +24050,11 @@ msgstr "在开发者设置中注册外部 MCP 服务器，并将其工具提供�
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "已注册为开发实例。此实例不会产生计费。"
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr ""
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -29407,6 +29417,11 @@ msgstr "此代理与其他成员或代理共享其角色。请在设置 > 角色
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "此代理与其他成员或代理共享其角色。请在设置 > 角色中更改其工具。"
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr ""
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx

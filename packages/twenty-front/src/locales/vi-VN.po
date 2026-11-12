@@ -21356,6 +21356,11 @@ msgstr ""
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Chỉ những ứng dụng được phát hành lên npm mới có thể được yêu cầu quyền sở hữu theo cách này."
 
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr ""
+
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
@@ -24045,6 +24050,11 @@ msgstr "Đăng ký các máy chủ MCP bên ngoài trong phần cài đặt Nhà
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Đã đăng ký làm môi trường phát triển. Môi trường này sẽ không bị tính phí."
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr ""
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -29407,6 +29417,11 @@ msgstr "Tác nhân này dùng chung vai trò với các thành viên hoặc tác
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Tác nhân này dùng chung vai trò với các thành viên hoặc tác nhân khác. Hãy thay đổi công cụ của tác nhân trong Cài đặt > Vai trò."
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr ""
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
