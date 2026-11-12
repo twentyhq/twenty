@@ -220,8 +220,9 @@ export TWENTY_PROXY_HEADERS="CF-Access-Client-Id: $CLIENT_ID
 CF-Access-Client-Secret: $CLIENT_SECRET"
 ```
 
-Proxy headers are only sent to the API URL of the selected connection, never to
-other hosts such as upload URLs. They cannot replace headers the CLI sets itself,
+Proxy headers are only sent to the host of the selected connection's API URL,
+including app uploads that the server receives itself, and never to other hosts
+such as pre-signed storage URLs. They cannot replace headers the CLI sets itself,
 including `Authorization`; proxies that need their own bearer token, such as
 Google IAP, accept it in `Proxy-Authorization`. Proxy settings are only read from
 `~/.twenty/config.json`, the environment and command options, never from an app
