@@ -40,6 +40,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   FeatureFlagKey,
+  FindChatMessageAgentDocument,
   PermissionFlagType,
   SendChatMessageDocument,
 } from '~/generated-metadata/graphql';
@@ -732,6 +733,47 @@ describe('useAgentChat', () => {
       'Can you take Stripe?',
     );
     expect(jotaiStore.get(quotedMessageIdAtom)).toBeNull();
+  });
+
+  it('sends the quoted agent name even when the preview has not loaded it', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Thanks'),
+      },
+      sendChatMessageOutcomes: ['sent'],
+      isAiChatInboxEnabled: true,
+    });
+    jotaiStore.set(
+      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      [
+        {
+          id: 'agent-message',
+          role: 'assistant',
+          parts: [{ type: 'text', text: 'Three deals are at risk.' }],
+          metadata: { agentId: 'deal-desk-agent' },
+        },
+      ],
+    );
+    jotaiStore.set(
+      agentChatQuotedMessageIdFamilyState.atomFamily({ threadId: THREAD_ID }),
+      'agent-message',
+    );
+    const originalQuery = result.current.apolloClient.query.bind(
+      result.current.apolloClient,
+    );
+    jest
+      .spyOn(result.current.apolloClient, 'query')
+      .mockImplementation((options) =>
+        options.query === FindChatMessageAgentDocument
+          ? Promise.resolve({
+              data: { findOneAgent: { label: 'Deal Desk' } },
+            } as never)
+          : originalQuery(options),
+      );
+
+    await send(result);
+
+    expect(sentMessageVariables.mock.calls[0][0].text).toContain('Deal Desk');
   });
 
   it('keeps a quote picked while a failed send was in flight', async () => {

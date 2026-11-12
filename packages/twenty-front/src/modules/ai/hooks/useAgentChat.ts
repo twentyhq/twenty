@@ -145,12 +145,19 @@ export const useAgentChat = () => {
       }),
     );
     const quotedAgentId = quotedMessage?.metadata?.agentId;
-    // the composer preview has already loaded the agent, so its name is cached
-    const quotedAgentName = isDefined(quotedAgentId)
-      ? (apolloClient.cache.readQuery({
+    // the quote is stored as text, so resolve the agent name before sending rather than persist the placeholder
+    const quotedAgentQuery = isDefined(quotedAgentId)
+      ? {
           query: FindChatMessageAgentDocument,
           variables: { id: quotedAgentId },
-        })?.findOneAgent.label ?? undefined)
+        }
+      : undefined;
+    const quotedAgentName = isDefined(quotedAgentQuery)
+      ? (apolloClient.cache.readQuery(quotedAgentQuery)?.findOneAgent.label ??
+        (await apolloClient
+          .query(quotedAgentQuery)
+          .then(({ data }) => data?.findOneAgent.label ?? undefined)
+          .catch(() => undefined)))
       : undefined;
     const quotedMessageSource = isDefined(quotedMessage)
       ? getAgentChatMessageQuoteSource({
