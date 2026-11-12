@@ -1,19 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  OAuthError,
-  ServerError,
-  TemporarilyUnavailableError,
-  TooManyRequestsError,
-} from '@modelcontextprotocol/sdk/server/auth/errors.js';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderOAuthClientResolverService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-client-resolver.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { ConnectionProviderOAuthDiscoveryTokenService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-discovery-token.service';
-import { assertOAuthDiscoveryProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
-import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/connection-provider/utils/exchange-refresh-token-for-token.util';
 import { OAuthTokenEndpointError } from 'src/engine/core-modules/application/connection-provider/utils/post-oauth-token-request.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -31,7 +23,7 @@ export class AppOAuthRefreshAccessTokenService {
 
   constructor(
     private readonly connectionProviderService: ConnectionProviderService,
-    private readonly oauthDiscoveryTokenService: ConnectionProviderOAuthDiscoveryTokenService,
+    private readonly oauthClientResolverService: ConnectionProviderOAuthClientResolverService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -46,27 +38,17 @@ export class AppOAuthRefreshAccessTokenService {
       );
     }
 
-    const provider = await this.findProvider({
+    const { provider, client } = await this.resolveClient({
       connectionProviderId: connectedAccount.connectionProviderId,
       workspaceId: connectedAccount.workspaceId,
     });
 
-    if (provider.type !== 'oauth' && provider.type !== 'oauth-discovery') {
-      throw new ConnectedAccountRefreshAccessTokenException(
-        `Connection provider ${provider.id} of type ${provider.type} cannot refresh tokens`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
-      );
-    }
-
     try {
-      const tokenResponse =
-        provider.type === 'oauth-discovery'
-          ? await this.refreshOAuthDiscoveryTokens({
-              provider,
-              workspaceId: connectedAccount.workspaceId,
-              refreshToken,
-            })
-          : await this.refreshOAuthTokens({ provider, refreshToken });
+      const tokenResponse = await exchangeRefreshTokenForToken({
+        fetchFn: this.secureHttpClientService.createSsrfSafeFetch(),
+        client,
+        refreshToken,
+      });
 
       return {
         accessToken: tokenResponse.accessToken,
@@ -78,123 +60,69 @@ export class AppOAuthRefreshAccessTokenService {
         accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
       };
     } catch (error) {
-      if (error instanceof ConnectedAccountRefreshAccessTokenException) {
-        throw error;
-      }
+      await this.oauthClientResolverService.forgetClientIfRejected({
+        provider,
+        workspaceId: connectedAccount.workspaceId,
+        client,
+        error,
+      });
 
       this.logger.warn(
         `App OAuth refresh failed for connected account ${connectedAccount.id}: ${(error as Error).message}`,
       );
 
+      // Only 4xx token-endpoint responses (esp. invalid_grant) imply the
+      // user must reconnect — 5xx and transport errors stay transient.
+      const isTransient =
+        !(error instanceof OAuthTokenEndpointError) || error.status >= 500;
+
       throw new ConnectedAccountRefreshAccessTokenException(
         `App OAuth refresh failed: ${(error as Error).message}`,
-        this.isTransientRefreshError(error)
+        isTransient
           ? ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR
           : ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       );
     }
   }
 
-  private async refreshOAuthTokens({
-    provider,
-    refreshToken,
-  }: {
-    provider: ConnectionProviderEntity;
-    refreshToken: PlaintextString;
-  }) {
-    assertOAuthProvider(provider);
-
-    const { clientId, clientSecret } =
-      await this.resolveClientCredentials(provider);
-
-    return exchangeRefreshTokenForToken({
-      fetchFn: this.secureHttpClientService.createSsrfSafeFetch(),
-      tokenEndpoint: provider.oauthConfig.tokenEndpoint,
-      clientId,
-      clientSecret,
-      refreshToken,
-      contentType: provider.oauthConfig.tokenRequestContentType,
-    });
-  }
-
-  private async refreshOAuthDiscoveryTokens({
-    provider,
-    workspaceId,
-    refreshToken,
-  }: {
-    provider: ConnectionProviderEntity;
-    workspaceId: string;
-    refreshToken: PlaintextString;
-  }) {
-    assertOAuthDiscoveryProvider(provider);
-
-    try {
-      return await this.oauthDiscoveryTokenService.refreshTokens({
-        provider,
-        workspaceId,
-        refreshToken,
-      });
-    } catch (error) {
-      if (error instanceof ConnectionProviderException) {
-        throw new ConnectedAccountRefreshAccessTokenException(
-          error.message,
-          ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
-        );
-      }
-
-      throw error;
-    }
-  }
-
-  private isTransientRefreshError(error: unknown): boolean {
-    if (error instanceof OAuthTokenEndpointError) {
-      return error.status >= 500;
-    }
-
-    if (error instanceof OAuthError) {
-      return (
-        error instanceof ServerError ||
-        error instanceof TemporarilyUnavailableError ||
-        error instanceof TooManyRequestsError
-      );
-    }
-
-    return true;
-  }
-
-  private async findProvider({
+  private async resolveClient({
     connectionProviderId,
     workspaceId,
   }: {
     connectionProviderId: string;
     workspaceId: string;
-  }): Promise<ConnectionProviderEntity> {
+  }) {
     try {
-      return await this.connectionProviderService.findOneByIdOrThrow({
+      const provider = await this.connectionProviderService.findOneByIdOrThrow({
         id: connectionProviderId,
         workspaceId,
       });
-    } catch (error) {
-      throw this.toProviderNotSupportedError(error);
-    }
-  }
 
-  private async resolveClientCredentials(provider: ConnectionProviderEntity) {
-    try {
-      return await this.connectionProviderService.getClientCredentials(
-        provider,
-      );
-    } catch (error) {
-      throw this.toProviderNotSupportedError(error);
-    }
-  }
-
-  private toProviderNotSupportedError(error: unknown): unknown {
-    return error instanceof ConnectionProviderException
-      ? new ConnectedAccountRefreshAccessTokenException(
-          error.message,
+      if (provider.type !== 'oauth' && provider.type !== 'oauth-discovery') {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          `Connection provider ${provider.id} of type ${provider.type} cannot refresh tokens`,
           ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
-        )
-      : error;
+        );
+      }
+
+      const client =
+        await this.oauthClientResolverService.resolveForTokenRequest({
+          provider,
+          workspaceId,
+        });
+
+      return { provider, client };
+    } catch (error) {
+      if (error instanceof ConnectionProviderException) {
+        throw new ConnectedAccountRefreshAccessTokenException(
+          error.message,
+          error.code === ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED
+            ? ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN
+            : ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
+        );
+      }
+
+      throw error;
+    }
   }
 }

@@ -91,6 +91,13 @@ describe('app connection OAuth discovery flow', () => {
 
         tokenRequests.push(params);
 
+        if (params.get('code') === 'rejected-client-code') {
+          return HttpResponse.json(
+            { error: 'invalid_client' },
+            { status: 401 },
+          );
+        }
+
         return HttpResponse.json({
           access_token: `access-${params.get('code')}`,
           refresh_token: `refresh-${params.get('code')}`,
@@ -313,6 +320,18 @@ describe('app connection OAuth discovery flow', () => {
     );
     expect(registrationCount).toBe(1);
     expect(await readStoredClients()).toHaveLength(1);
+  });
+
+  it('forgets the stored client once the token endpoint rejects it', async () => {
+    const state = getState(await authorize());
+
+    const redirect = await callback(state, 'rejected-client-code');
+
+    expect(redirect.searchParams.get('errorMessage')).toEqual(
+      expect.any(String),
+    );
+    expect(await readStoredClients()).toHaveLength(0);
+    expect(await readAccounts()).toHaveLength(0);
   });
 
   it('refuses a callback whose flow secrets were already consumed', async () => {

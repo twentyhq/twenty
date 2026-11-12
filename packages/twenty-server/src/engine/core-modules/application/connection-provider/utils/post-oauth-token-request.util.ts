@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/application';
 
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
@@ -12,11 +13,22 @@ export class OAuthTokenEndpointError extends Error {
   constructor(
     message: string,
     public readonly status: number,
+    public readonly errorCode: string | null,
   ) {
     super(message);
     this.name = 'OAuthTokenEndpointError';
   }
 }
+
+const readOAuthErrorCode = (text: string): string | null => {
+  try {
+    const { error } = JSON.parse(text);
+
+    return isNonEmptyString(error) ? error : null;
+  } catch {
+    return null;
+  }
+};
 
 export const postOAuthTokenRequest = async (args: {
   fetchFn: FetchFn;
@@ -46,6 +58,7 @@ export const postOAuthTokenRequest = async (args: {
     throw new OAuthTokenEndpointError(
       `Token endpoint responded with ${response.status}: ${text.slice(0, 500)}`,
       response.status,
+      readOAuthErrorCode(text),
     );
   }
 
