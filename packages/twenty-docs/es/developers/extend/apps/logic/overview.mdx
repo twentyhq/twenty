@@ -71,13 +71,13 @@ La **capa de lógica** de una app de Twenty es el código que *se ejecuta* — c
 
 Una función de lógica selecciona uno o más disparadores: cada entrada a continuación es un campo independiente en `defineLogicFunction()`:
 
-| Disparador                      | Cuándo se ejecuta                                               | Configuración                   |
-| ------------------------------- | --------------------------------------------------------------- | ------------------------------- |
-| **Ruta HTTP**                   | Una solicitud llega a tu endpoint `/s/\<path>` | `httpRouteTriggerSettings`      |
-| **Cron**                        | Coincide una expresión CRON                                     | `cronTriggerSettings`           |
-| **Evento de base de datos**     | Se crea, actualiza o elimina un registro del espacio de trabajo | `databaseEventTriggerSettings`  |
-| **Herramienta de IA**           | Una funcionalidad de IA de Twenty decide llamar a tu función    | `toolTriggerSettings`           |
-| **Acción del Flujo de Trabajo** | Un paso de flujo de trabajo invoca tu función                   | `workflowActionTriggerSettings` |
+| Disparador                      | Cuándo se ejecuta                                               | Configuración                                  |
+| ------------------------------- | --------------------------------------------------------------- | ---------------------------------------------- |
+| **Ruta HTTP**                   | Una solicitud llega a tu endpoint `/s/\<path>` | `httpRouteTriggerSettings`                     |
+| **Cron**                        | Coincide una expresión CRON                                     | `cronTriggerSettings`                          |
+| **Evento de base de datos**     | Se crea, actualiza o elimina un registro del espacio de trabajo | `eventTriggerSettings` con `on: 'recordEvent'` |
+| **Herramienta de IA**           | Una funcionalidad de IA de Twenty decide llamar a tu función    | `toolTriggerSettings`                          |
+| **Acción del Flujo de Trabajo** | Un paso de flujo de trabajo invoca tu función                   | `workflowActionTriggerSettings`                |
 
 Las funciones se ejecutan en un entorno aislado en procesos independientes de Node.js y acceden al espacio de trabajo a través de un cliente de API tipado con un ámbito limitado al rol declarado en [`defineApplication()`](/es/developers/extend/apps/config/application).
 

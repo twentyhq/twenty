@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -61,8 +64,7 @@ Tipos de desencadenadores disponibles:
 Para invocar una función de lógica activada por una ruta desde un componente de frontend (headless), consulta [Llamar a una función de lógica](/es/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Ejecuta tu función en un horario usando una expresión CRON.
-* **databaseEvent**: Se ejecuta en eventos del ciclo de vida de objetos del espacio de trabajo. Cuando la operación del evento es `updated`, se pueden especificar campos específicos que se deben escuchar en la matriz `updatedFields`. Si se deja sin definir o vacío, cualquier actualización activará la función. Una `condition` lo limita a los registros que cumplen una expresión de regla.
-> p. ej. `person.updated`, `*.created`, `company.*`
+* **databaseEvent**: Se ejecuta cuando se crean, actualizan, eliminan, destruyen, restauran o insertan o actualizan registros de un objeto. Puede limitarlo a las actualizaciones de algunos campos y a los registros que cumplen una condición. Consulte las [cargas útiles de eventos de base de datos](#database-event-trigger-payload).
 * **serverRoute**: expone una única ruta HTTP con ámbito de registro. Una función de **resolver** (declarada con `serverRouteTriggerSettings`) se ejecuta en el espacio de trabajo propietario y devuelve una `Response` síncrona o el espacio de trabajo de destino Y la función de lógica de destino para poner en cola; en la ruta de encolado, la plataforma confirma con `202` y ejecuta ese **destino** en la cola de workers. Consulta [Disparador de ruta de servidor](#server-route-trigger).
 
 <Note>
@@ -433,19 +435,29 @@ Para eliminaciones lógicas (soft deletes), `.deleted` sigue la estructura de es
 Para eliminaciones permanentes, usa `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` filtra qué eventos de actualización
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` filtra qué eventos de actualización
   activan la función. `event.properties.updatedFields` te indica qué campos
   realmente cambiaron en el evento actual.
 </Note>
 
-`databaseEventTriggerSettings` acepta:
+`eventTriggerSettings` con `on: 'recordEvent'` acepta:
 
-| Propiedad       | Descripción                                                                                                                                                                                                                                                                                                                                                            |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | Evento que se debe escuchar, como `person.updated`. Admite `*` para el nombre del objeto, la operación o ambos.                                                                                                                                                                                                                                                        |
-| `updatedFields` | Lista opcional de nombres de campos. En los eventos `.updated` y `.upserted`, solo los cambios que afectan a uno de ellos activan la función.                                                                                                                                                                                                                          |
-| `condición`     | [Expresión de regla](/es/user-guide/data-model/capabilities/validation-rules#write-a-condition) opcional que el registro debe cumplir, como `stage == 'CUSTOMER'`. `anterior.\<field>` lee el registro antes de una actualización. Lee los propios campos del registro; una relación de varios a uno es su campo de id (`companyId`), no `company.name`. |
-| `batchMode`     | Booleano opcional. Cuando es `true`, se llama al manejador una vez por cada lote de registros en lugar de una vez por cada registro. El servidor decide cuántos registros contiene un lote, hasta un máximo de 200.                                                                                                                                                    |
+| Propiedad                          | Descripción                                                                                                                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `en`                               | `'recordEvent'`: el disparador escucha eventos de registros.                                                                                                                                                                                      |
+| `objectUniversalIdentifier`        | Objeto opcional que se va a escuchar. Omítalo para escuchar todos los objetos.                                                                                                                                                                    |
+| `acción`                           | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted` o `*` para todos ellos.                                                                                                                                                      |
+| `watchedFieldUniversalIdentifiers` | Lista opcional de campos del objeto. En las actualizaciones y los upserts, solo los cambios que afecten a uno de ellos activan la función. No se pueden enumerar las relaciones con muchos registros.                                             |
+| `condición`                        | [Expresión de regla](/es/user-guide/data-model/capabilities/validation-rules#write-a-condition) opcional que debe cumplir el registro. `anterior.\<field>` lo lee antes de una actualización. Requiere `objectUniversalIdentifier`. |
+| `batchMode`                        | Booleano opcional. Cuando es `true`, se llama al manejador una vez por cada lote de registros en lugar de una vez por cada registro. El servidor decide cuántos registros contiene un lote, hasta un máximo de 200.                               |
+
+La compilación falla cuando se desconoce un objeto o campo, o cuando la condición lee un campo que el objeto no tiene. Una condición lee los propios campos del registro; una relación de varios a uno se lee mediante su id, como `companyId`.
+
+<Note>
+  La anterior `databaseEventTriggerSettings`, con `eventName` (como
+  `person.updated` o `*.created`) y `updatedFields` (nombres de campos), todavía se
+  acepta, pero se eliminará en una versión futura. Establezca uno de los dos, no ambos.
+</Note>
 
 Ejemplo de evento de creación:
 
@@ -483,11 +495,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 Ejecutar solo en actualizaciones de correo electrónico:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+Activar solo cuando una oportunidad pase a la etapa de cliente:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -516,8 +549,11 @@ Una escritura masiva emite muchos eventos a la vez: por ejemplo, importar un buz
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -546,7 +582,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   Escribe el manejador para iterar sobre `events` independientemente de su longitud.
 </Note>
 
-Los eventos se agrupan por el usuario que los provocó antes de crear los lotes, por lo que cada llamada abarca un único actor y `context.workspaceMemberId` mantiene su significado. El filtrado de `updatedFields` se aplica antes de crear los lotes, por lo que un lote solo contiene los registros que solicitaste.
+Los eventos se agrupan por el usuario que los provocó antes de crear los lotes, por lo que cada llamada abarca un único actor y `context.workspaceMemberId` mantiene su significado. El filtrado de campos y condiciones se aplica antes de la agrupación en lotes, por lo que un lote solo contiene los registros que solicitó.
 
 Sin `batchMode`, el manejador sigue recibiendo un `DatabaseEventPayload` por registro.
 
@@ -631,7 +667,7 @@ Las funciones lógicas pueden exponerse en dos ámbitos, cada uno con su propio 
 * **`toolTriggerSettings`** — hace que la función sea descubrible por las funciones de IA de Twenty (chat, MCP, llamadas a funciones). Usa el JSON Schema estándar, el formato que los LLM entienden de forma nativa.
 * **`workflowActionTriggerSettings`** — hace que la función aparezca como un paso en el constructor visual de flujos de trabajo. Usa el `InputSchema` completo de Twenty para que el constructor pueda renderizar editores de campos adecuados, selectores de variables y etiquetas.
 
-Una función puede optar por una, por la otra o por ambas. Se ubican junto a `cronTriggerSettings`, `databaseEventTriggerSettings` y `httpRouteTriggerSettings` — mismo patrón, misma estructura.
+Una función puede optar por una, por la otra o por ambas. Se ubican junto a `cronTriggerSettings`, `eventTriggerSettings` y `httpRouteTriggerSettings` — mismo patrón, misma estructura.
 
 <Note>
   **Relación con la acción Code del flujo de trabajo.** La acción integrada **Code** en

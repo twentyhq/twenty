@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -61,8 +64,7 @@ Tipi di trigger disponibili:
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
-* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione. Una `condition` lo limita ai record che soddisfano un'espressione di regola.
-> ad es. `person.updated`, `*.created`, `company.*`
+* **databaseEvent**: viene eseguito quando i record di un oggetto vengono creati, aggiornati, eliminati, distrutti, ripristinati o sottoposti a upsert. Puoi limitarlo agli aggiornamenti di alcuni campi e ai record che soddisfano una condizione. Vedi [Payload degli eventi del database](#database-event-trigger-payload).
 * **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce una `Response` sincrona, oppure il workspace di destinazione e la funzione logica di destinazione da mettere in coda; nel percorso di messa in coda la piattaforma conferma con `202` ed esegue tale **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
 
 <Note>
@@ -432,19 +434,29 @@ Per le eliminazioni logiche, `.deleted` segue la struttura in stile aggiornament
 Per le eliminazioni permanenti, usa `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` filtra quali eventi di aggiornamento
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` filtra quali eventi di aggiornamento
   attivano la funzione. `event.properties.updatedFields` indica quali campi
   sono effettivamente cambiati nell'evento corrente.
 </Note>
 
-`databaseEventTriggerSettings` accetta:
+`eventTriggerSettings` con `on: 'recordEvent'` accetta:
 
-| Proprietà       | Descrizione                                                                                                                                                                                                                                                                                                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `eventName`     | Evento da ascoltare, ad esempio `person.updated`. Supporta `*` per il nome dell'oggetto, l'operazione o entrambi.                                                                                                                                                                                                                                                              |
-| `updatedFields` | Elenco facoltativo di nomi di campo. Negli eventi `.updated` e `.upserted`, solo le modifiche che interessano uno di essi attivano la funzione.                                                                                                                                                                                                                                |
-| `condizione`    | Espressione di [regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare, ad esempio `stage == 'CUSTOMER'`. `precedente.\<field>` legge il record prima di un aggiornamento. Legge i campi del record stesso; una relazione molti-a-uno è il suo campo ID (`companyId`), non `company.name`. |
-| `batchMode`     | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                                                                                                                                                 |
+| Proprietà                          | Descrizione                                                                                                                                                                                                                                                 |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `on`                               | `'recordEvent'`: il trigger resta in ascolto degli eventi dei record.                                                                                                                                                                                       |
+| `objectUniversalIdentifier`        | Oggetto facoltativo su cui restare in ascolto. Ometterlo per restare in ascolto su ogni oggetto.                                                                                                                                                            |
+| `azione`                           | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted` o `*` per tutti.                                                                                                                                                                       |
+| `watchedFieldUniversalIdentifiers` | Elenco facoltativo dei campi dell'oggetto. In caso di aggiornamenti e upsert, solo le modifiche che interessano uno di essi attivano la funzione. Le relazioni con molti record non possono essere elencate.                                                |
+| `condizione`                       | [Espressione di regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare. `precedente.\<field>` lo legge prima di un aggiornamento. Richiede `objectUniversalIdentifier`. |
+| `batchMode`                        | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                              |
+
+La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge i campi del record stesso; una relazione molti-a-uno viene letta tramite il relativo id, ad esempio `companyId`.
+
+<Note>
+  Il precedente `databaseEventTriggerSettings`, con `eventName` (ad esempio
+  `person.updated` o `*.created`) e `updatedFields` (nomi dei campi), è ancora
+  accettato, ma verrà rimosso in una versione futura. Impostane uno dei due, non entrambi.
+</Note>
 
 Esempio di evento "created":
 
@@ -482,11 +494,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 Attiva solo sugli aggiornamenti dell'email:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+Attiva solo quando un'opportunità passa alla fase cliente:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -515,8 +548,11 @@ Una scrittura in blocco genera molti eventi contemporaneamente: l'importazione d
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -545,7 +581,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   Scrivi l'handler in modo che esegua il ciclo su `events`, indipendentemente dalla sua lunghezza.
 </Note>
 
-Gli eventi vengono raggruppati in base all'utente che li ha causati prima di essere inseriti in batch, quindi ogni chiamata riguarda un singolo attore e `context.workspaceMemberId` mantiene il proprio significato. Il filtro `updatedFields` viene applicato prima del raggruppamento in batch, quindi un batch contiene solo i record richiesti.
+Gli eventi vengono raggruppati in base all'utente che li ha causati prima di essere inseriti in batch, quindi ogni chiamata riguarda un singolo attore e `context.workspaceMemberId` mantiene il proprio significato. Il filtraggio dei campi e delle condizioni viene applicato prima del raggruppamento in batch, quindi un batch contiene solo i record richiesti.
 
 Senza `batchMode`, l'handler continua a ricevere un `DatabaseEventPayload` per record.
 
@@ -630,7 +666,7 @@ Le funzioni logiche possono essere esposte su due superfici, ciascuna con il pro
 * **`toolTriggerSettings`** — rende la funzione individuabile dalle funzionalità di IA di Twenty (chat, MCP, function calling). Usa lo standard JSON Schema, il formato che gli LLM comprendono nativamente.
 * **`workflowActionTriggerSettings`** — fa apparire la funzione come un passaggio nel builder visivo dei flussi di lavoro. Usa il ricco `InputSchema` di Twenty affinché il builder possa visualizzare correttamente editor di campi, selettori di variabili ed etichette.
 
-Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `databaseEventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
+Una funzione può optare per uno, l'altro o entrambi. Si affiancano a `cronTriggerSettings`, `eventTriggerSettings` e `httpRouteTriggerSettings` — stesso schema, stessa struttura.
 
 <Note>
   **Relazione con l'azione Code del workflow.** L'azione **Code** incorporata nel
