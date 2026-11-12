@@ -6,29 +6,25 @@ export const getAgentChatNewThreadDirectMessageWorkspaceMemberId = ({
   channelId,
   recipientWorkspaceMemberIds,
   mentionedWorkspaceMemberIds,
-  currentWorkspaceMemberId,
 }: {
   isAssistantParticipant: boolean;
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
   recipientWorkspaceMemberIds: string[];
   mentionedWorkspaceMemberIds: string[];
-  currentWorkspaceMemberId: string | undefined;
 }): string | undefined => {
   if (isAssistantParticipant || isAssistantMentioned || isDefined(channelId)) {
     return undefined;
   }
 
-  const otherWorkspaceMemberIds = [
+  const addressedWorkspaceMemberIds = [
     ...new Set([
       ...recipientWorkspaceMemberIds,
       ...mentionedWorkspaceMemberIds,
     ]),
-  ].filter(
-    (workspaceMemberId) => workspaceMemberId !== currentWorkspaceMemberId,
-  );
+  ];
 
-  return otherWorkspaceMemberIds.length === 1
-    ? otherWorkspaceMemberIds[0]
+  return addressedWorkspaceMemberIds.length === 1
+    ? addressedWorkspaceMemberIds[0]
     : undefined;
 };

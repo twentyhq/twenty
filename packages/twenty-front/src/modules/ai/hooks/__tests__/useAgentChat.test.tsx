@@ -60,20 +60,9 @@ jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
   useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
-const loadAgentChatThread = jest.fn(async (threadId: string) => {
-  const directMessageThread = {
-    id: threadId,
-    __typename: 'AgentChatThread',
-    conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-  };
-
-  jotaiStore.set(
-    recordStoreFamilyState.atomFamily(threadId),
-    directMessageThread,
-  );
-
-  return directMessageThread;
-});
+const loadAgentChatThread = jest.fn(async (threadId: string) => ({
+  id: threadId,
+}));
 
 jest.mock('@/ai/hooks/useLoadAgentChatThread', () => ({
   useLoadAgentChatThread: () => ({ loadAgentChatThread }),
@@ -632,10 +621,14 @@ describe('useAgentChat', () => {
     ).toEqual(recipients);
   });
 
-  it('sends a new chat to one person without Ada or a channel in their direct message', async () => {
+  it('sends a new chat to one person in their direct message and keeps both drafts', async () => {
+    const directMessageDraft =
+      serializePlainTextAsAdvancedTextEditorDocument('Unsent');
+    const laterEdit = serializePlainTextAsAdvancedTextEditorDocument('Later');
     const result = renderAgentChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+        [DIRECT_MESSAGE_THREAD_ID]: directMessageDraft,
       },
       sendChatMessageOutcomes: ['sent'],
       isAiChatInboxEnabled: true,
@@ -645,8 +638,29 @@ describe('useAgentChat', () => {
         recipientWorkspaceMemberIds: [RECIPIENT_ID],
       },
     });
+    const releaseOpenDirectMessage = holdNextMutation(
+      result.current.apolloClient,
+    );
 
-    await send(result);
+    let pendingSend: Promise<void> | undefined;
+
+    await act(async () => {
+      pendingSend = result.current.handleSendMessage();
+    });
+
+    expect(readPersistedDrafts()[THREAD_ID]).toBe('');
+
+    act(() => {
+      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+        ...drafts,
+        [THREAD_ID]: laterEdit,
+      }));
+    });
+    releaseOpenDirectMessage();
+
+    await act(async () => {
+      await pendingSend;
+    });
 
     expect(loadAgentChatThread).toHaveBeenCalledWith(DIRECT_MESSAGE_THREAD_ID);
     expect(sentMessageVariables).toHaveBeenCalledTimes(1);
@@ -662,14 +676,103 @@ describe('useAgentChat', () => {
     );
     expect(result.current.currentAiChatThread).toBe(DIRECT_MESSAGE_THREAD_ID);
     expect(readPersistedDrafts()).toEqual({
-      [THREAD_ID]: '',
-      [DIRECT_MESSAGE_THREAD_ID]: '',
+      [THREAD_ID]: laterEdit,
+      [DIRECT_MESSAGE_THREAD_ID]: directMessageDraft,
     });
     expect(
       jotaiStore.get(
         agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual(AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
+  });
+
+  it('restores the new chat draft when its direct message cannot be opened', async () => {
+    const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
+    const result = renderAgentChat({
+      persistedDrafts: { [THREAD_ID]: draft },
+      sendChatMessageOutcomes: [],
+      isAiChatInboxEnabled: true,
+      isDirectMessageIdentityEnabled: true,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+    });
+    const restoreEditorContent = jest.fn();
+
+    window.addEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+    loadAgentChatThread.mockRejectedValueOnce(new Error('Network error'));
+
+    await send(result);
+
+    window.removeEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+
+    expect(sentMessageVariables).not.toHaveBeenCalled();
+    expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });
+    expect(restoreEditorContent).toHaveBeenLastCalledWith(
+      expect.objectContaining({ detail: { content: draft } }),
+    );
+    expect(result.current.currentAiChatThread).toBe(THREAD_ID);
+  });
+
+  it('leaves the chat opened meanwhile alone when the direct message send fails', async () => {
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
+      },
+      sendChatMessageOutcomes: ['failed'],
+      isAiChatInboxEnabled: true,
+      isDirectMessageIdentityEnabled: true,
+      newThreadRecipients: {
+        isAssistantParticipant: false,
+        recipientWorkspaceMemberIds: [RECIPIENT_ID],
+      },
+    });
+    const restoreEditorContent = jest.fn();
+    const releaseOpenDirectMessage = holdNextMutation(
+      result.current.apolloClient,
+    );
+
+    window.addEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+
+    let pendingSend: Promise<void> | undefined;
+
+    await act(async () => {
+      pendingSend = result.current.handleSendMessage();
+    });
+
+    act(() => {
+      jotaiStore.set(currentAiChatThreadState.atom, EXISTING_THREAD_ID);
+    });
+    releaseOpenDirectMessage();
+
+    await act(async () => {
+      await pendingSend;
+    });
+
+    window.removeEventListener(
+      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      restoreEditorContent,
+    );
+
+    expect(sentMessageVariables).toHaveBeenCalledWith(
+      expect.objectContaining({ threadId: DIRECT_MESSAGE_THREAD_ID }),
+    );
+    expect(result.current.currentAiChatThread).toBe(EXISTING_THREAD_ID);
+    expect(restoreEditorContent).toHaveBeenCalledTimes(1);
+    expect(restoreEditorContent).toHaveBeenCalledWith(
+      expect.objectContaining({ detail: { content: '' } }),
+    );
+    expect(readPersistedDrafts()[DIRECT_MESSAGE_THREAD_ID]).toContain('Hello');
   });
 
   it('keeps a new chat to one person as a draft while it has attachments', async () => {

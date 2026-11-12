@@ -6,11 +6,10 @@ const ONE_PERSON_WITHOUT_ADA = {
   channelId: null,
   recipientWorkspaceMemberIds: ['jane'],
   mentionedWorkspaceMemberIds: [],
-  currentWorkspaceMemberId: 'me',
 };
 
 describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
-  it('returns the only other person when Ada and channels are left out', () => {
+  it('returns the only person addressed when Ada and channels are left out', () => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId(
         ONE_PERSON_WITHOUT_ADA,
@@ -22,7 +21,7 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
-        mentionedWorkspaceMemberIds: ['jane', 'me'],
+        mentionedWorkspaceMemberIds: ['jane'],
       }),
     ).toBe('jane');
   });
@@ -42,7 +41,6 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
     ['Ada is mentioned', { isAssistantMentioned: true }],
     ['a channel is picked', { channelId: 'channel' }],
     ['two people are addressed', { mentionedWorkspaceMemberIds: ['bob'] }],
-    ['nobody else is addressed', { recipientWorkspaceMemberIds: ['me'] }],
   ])('returns nothing when %s', (_, overrides) => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId({
