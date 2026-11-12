@@ -1,10 +1,8 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-const byId = (first: { id: string }, second: { id: string }) =>
-  first.id.localeCompare(second.id);
 
 // The server derives rules and their ids, and syncing a rule edit reorders these lists
 const withoutServerDerivedRuleFields = (
@@ -18,13 +16,13 @@ const withoutServerDerivedRuleFields = (
       ...predicate,
       relationFieldMetadataId: predicate.relationFieldMetadataId ?? null,
     }))
-    .sort(byId),
+    .sort(sortByProperty('id')),
   rowLevelPermissionPredicateGroups: role.rowLevelPermissionPredicateGroups
     ?.map(
       ({ rowLevelPermissionRuleId: _ruleId, ...predicateGroup }) =>
         predicateGroup,
     )
-    .sort(byId),
+    .sort(sortByProperty('id')),
 });
 
 // Draft field permissions carry temporary ids and cleared entries the server does not return

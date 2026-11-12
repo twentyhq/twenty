@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
-// Edited items keep their place so a rule does not jump below the others while it is edited
+import { isDefined } from 'twenty-shared/utils';
+
 export const replaceRuleItemsKeepingOrder = <TItem extends { id: string }>({
   previousItems,
   nextRuleItems,
@@ -23,7 +24,7 @@ export const replaceRuleItemsKeepingOrder = <TItem extends { id: string }>({
 
       const nextRuleItem = nextRuleItemById.get(item.id);
 
-      return nextRuleItem === undefined ? [] : [nextRuleItem];
+      return isDefined(nextRuleItem) ? [nextRuleItem] : [];
     }),
     ...nextRuleItems.filter(({ id }) => !previousItemIds.has(id)),
   ];
