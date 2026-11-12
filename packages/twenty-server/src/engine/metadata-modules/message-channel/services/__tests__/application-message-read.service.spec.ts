@@ -35,6 +35,7 @@ describe('ApplicationMessageReadService', () => {
   const buildService = ({
     messageChannel = {
       id: MESSAGE_CHANNEL_ID,
+      isSyncEnabled: true,
       connectedAccountId: CONNECTED_ACCOUNT_ID,
       messagingProviderUniversalIdentifier:
         MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
@@ -44,12 +45,12 @@ describe('ApplicationMessageReadService', () => {
       connectionProviderId: CONNECTION_PROVIDER_ID,
     },
     marker = MARKER,
-    cachedThrottle = undefined,
+    isThrottled = undefined,
   }: {
     messageChannel?: object | null;
     ownedConnectedAccount?: object | null;
     marker?: typeof MARKER | null;
-    cachedThrottle?: boolean;
+    isThrottled?: boolean;
   } = {}) => {
     const messageChannelRepository = {
       findOne: jest.fn().mockResolvedValue(messageChannel),
@@ -69,7 +70,7 @@ describe('ApplicationMessageReadService', () => {
       ),
     };
     const cacheStorageService = {
-      setIfAbsent: jest.fn().mockResolvedValue(cachedThrottle !== true),
+      setIfAbsent: jest.fn().mockResolvedValue(!isThrottled),
       del: jest.fn().mockResolvedValue(undefined),
     };
 
@@ -165,7 +166,7 @@ describe('ApplicationMessageReadService', () => {
 
   it('skips a thread already marked as read moments ago', async () => {
     const { service, messagingProviderThreadReadMarkerService } = buildService({
-      cachedThrottle: true,
+      isThrottled: true,
     });
 
     await service.markThreadAsRead(MARK_AS_READ_ARGS);
@@ -186,6 +187,40 @@ describe('ApplicationMessageReadService', () => {
       true,
       30 * 1000,
     );
+  });
+
+  it('does nothing on a channel whose sync is disabled', async () => {
+    const { service, messagingProviderThreadReadMarkerService } = buildService({
+      messageChannel: {
+        id: MESSAGE_CHANNEL_ID,
+        isSyncEnabled: false,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        messagingProviderUniversalIdentifier:
+          MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
+      },
+    });
+
+    await service.markThreadAsRead(MARK_AS_READ_ARGS);
+
+    expect(
+      messagingProviderThreadReadMarkerService.markAsReadOrThrow,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('does nothing for an archived connected account', async () => {
+    const { service, messagingProviderThreadReadMarkerService } = buildService({
+      ownedConnectedAccount: {
+        id: CONNECTED_ACCOUNT_ID,
+        connectionProviderId: CONNECTION_PROVIDER_ID,
+        archivedAt: new Date(),
+      },
+    });
+
+    await service.markThreadAsRead(MARK_AS_READ_ARGS);
+
+    expect(
+      messagingProviderThreadReadMarkerService.markAsReadOrThrow,
+    ).not.toHaveBeenCalled();
   });
 
   it('does nothing when the thread has no message in the channel', async () => {

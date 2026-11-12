@@ -59,6 +59,10 @@ export class ApplicationMessageReadService {
       );
     }
 
+    if (!messageChannel.isSyncEnabled) {
+      return;
+    }
+
     // Upstream read state belongs to the account owner, not to members it is shared with.
     const ownedConnectedAccount =
       await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
@@ -69,7 +73,8 @@ export class ApplicationMessageReadService {
 
     if (
       !isDefined(ownedConnectedAccount) ||
-      !isDefined(ownedConnectedAccount.connectionProviderId)
+      !isDefined(ownedConnectedAccount.connectionProviderId) ||
+      isDefined(ownedConnectedAccount.archivedAt)
     ) {
       return;
     }
