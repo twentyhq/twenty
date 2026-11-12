@@ -1076,6 +1076,39 @@ export class BullMQDriver
     };
   }
 
+  async removeJob(queueName: MessageQueue, jobId: string): Promise<boolean> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job)) {
+      return false;
+    }
+
+    const { memoryGroupKeys, memorySizeBytes }: BullMQJobsOptions = job.opts;
+    const chargedJob = isNonEmptyArray(memoryGroupKeys)
+      ? { queueName, jobId, groupKeys: memoryGroupKeys }
+      : undefined;
+
+    // Released while the job exists, so a re-enqueue of its id is deduplicated, not admitted on this charge
+    if (isDefined(chargedJob)) {
+      await this.jobMemoryLimiter.release(chargedJob);
+    }
+
+    try {
+      await job.remove();
+    } catch (error) {
+      if (isDefined(chargedJob) && isDefined(memorySizeBytes)) {
+        await this.jobMemoryLimiter.restore({
+          ...chargedJob,
+          sizeBytes: memorySizeBytes,
+        });
+      }
+
+      throw error;
+    }
+
+    return true;
+  }
+
   async getJobs<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobIds: string[],

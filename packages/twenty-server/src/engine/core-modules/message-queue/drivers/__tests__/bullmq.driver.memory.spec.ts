@@ -720,4 +720,91 @@ describe('BullMQDriver job memory scenarios', () => {
       });
     });
   });
+
+  describe('S18: an administrator deletes one of the waiting jobs of A', () => {
+    const buildDeletedJob = (
+      harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    ) =>
+      harness.buildApplicationJob({
+        label: 'A1',
+        workspaceId: 'A',
+        payloadBytes: 2_000,
+        jobId: 'deleted-id',
+      });
+
+    it('the job is removed and its workspace and application charges are released', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      await expect(harness.removeJob('deleted-id')).resolves.toBe(true);
+
+      expect(harness.storedJobIds()).toEqual([]);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+
+    it('a locked job is kept with its charges', async () => {
+      const harness = await createMemoryHarness();
+      const {
+        jobs: [lockedJob],
+      } = await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      harness.lockJob('deleted-id');
+
+      await expect(harness.removeJob('deleted-id')).rejects.toThrow(
+        'Job deleted-id is locked',
+      );
+      expect(harness.storedJobIds()).toEqual(['deleted-id']);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        lockedJob.sizeBytes,
+      );
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(
+        lockedJob.sizeBytes,
+      );
+    });
+
+    it('a locked job that finishes during the deletion is not charged back', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+      harness.lockJob('deleted-id');
+      harness.onBeforeRemove(() => harness.markFinished('deleted-id'));
+
+      await expect(harness.removeJob('deleted-id')).rejects.toThrow(
+        'Job deleted-id is locked',
+      );
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+
+    it('an unknown job is reported as not removed', async () => {
+      const harness = await createMemoryHarness();
+
+      await expect(harness.removeJob('unknown-id')).resolves.toBe(false);
+    });
+
+    it('the same id enqueued again during the deletion is charged once it is added back', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+      harness.onBeforeRemove(async () => {
+        await harness.enqueueBulk([buildDeletedJob(harness)]);
+      });
+
+      await harness.removeJob('deleted-id');
+      harness.onBeforeRemove(async () => undefined);
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+
+      const {
+        jobs: [replacementJob],
+      } = await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      expect(harness.storedJobIds()).toEqual(['deleted-id']);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        replacementJob.sizeBytes,
+      );
+    });
+  });
 });
