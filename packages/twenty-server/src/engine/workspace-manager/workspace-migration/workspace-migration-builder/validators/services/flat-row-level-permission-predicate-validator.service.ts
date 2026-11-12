@@ -16,6 +16,8 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
+  isFieldMetadataArrayKind,
+  isFilterValueExpectedAsArray,
   isMorphRelationHead,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
@@ -133,6 +135,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
         fieldMetadata,
         operand: flatPredicateToValidate.operand,
+        subFieldName: flatPredicateToValidate.subFieldName,
         workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
           workspaceMemberFieldMetadataUniversalIdentifier:
             flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
@@ -377,6 +380,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
         fieldMetadata,
         operand: updatedPredicate.operand,
+        subFieldName: updatedPredicate.subFieldName,
         workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
           workspaceMemberFieldMetadataUniversalIdentifier:
             updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
@@ -629,11 +633,13 @@ export class FlatRowLevelPermissionPredicateValidatorService {
   private getWorkspaceMemberFieldError({
     fieldMetadata,
     operand,
+    subFieldName,
     workspaceMemberFieldMetadata,
     workspaceMemberFieldMetadataUniversalIdentifier,
   }: {
     fieldMetadata: UniversalFlatFieldMetadata;
     operand: RowLevelPermissionPredicateOperand;
+    subFieldName: string | null | undefined;
     workspaceMemberFieldMetadata: UniversalFlatFieldMetadata | undefined;
     workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
   }) {
@@ -659,6 +665,27 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         message: t`Field "${workspaceMemberFieldName}" is not a field of the workspaceMember object, the predicate would never apply`,
         userFriendlyMessage: msg`This field does not belong to the workspace member object`,
+      };
+    }
+
+    const recordFilterOperand = mapRLSOperandToRecordFilterOperand(operand);
+
+    if (
+      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) &&
+      isRecordFilterOperandExpectingValue(recordFilterOperand) &&
+      !isFilterValueExpectedAsArray({
+        filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+        operand: recordFilterOperand,
+        subFieldName,
+      })
+    ) {
+      const fieldName = fieldMetadata.name;
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${fieldName}" takes a single value with operand "${operand}", it cannot be compared to the list held by workspace member field "${workspaceMemberFieldName}"`,
+        userFriendlyMessage: msg`This field cannot be compared to a list of values`,
       };
     }
 

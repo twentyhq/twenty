@@ -1,13 +1,22 @@
-import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Logger,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderFlowRedirectService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-redirect.service';
 import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -16,7 +25,12 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
+import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -32,14 +46,30 @@ export class ConnectionProviderOAuthController {
     private readonly oauthProviderFlowService: ConnectionProviderOAuthFlowService,
     private readonly customFlowService: ConnectionProviderCustomFlowService,
     private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
+    private readonly flowCookieService: ConnectionProviderFlowCookieService,
     private readonly transientTokenService: TransientTokenService,
+    private readonly userSessionCookieService: UserSessionCookieService,
+    private readonly userSessionService: UserSessionService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Public: the transient token carries workspace and user context
+  @Get('client-metadata.json')
+  clientMetadata(@Res() res: Response) {
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    res.set('Cache-Control', 'public, max-age=3600');
+
+    return res.json({
+      client_id: buildOAuthDiscoveryClientMetadataUrl(serverUrl),
+      ...buildOAuthDiscoveryClientMetadata(serverUrl),
+    });
+  }
+
+  // Public: the transient token carries workspace and user context, the session cookie proves whose browser this is
   @Get('authorize')
   async authorize(
     @Query('applicationId') applicationId: string,
@@ -48,6 +78,7 @@ export class ConnectionProviderOAuthController {
     @Query('reconnectingConnectedAccountId')
     reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
     // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
@@ -81,6 +112,8 @@ export class ConnectionProviderOAuthController {
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
       }
+
+      await this.assertBrowserSignedInAsOrThrow({ request: req, userId });
 
       const provider =
         await this.oauthProviderService.findOneByApplicationAndName({
@@ -126,9 +159,13 @@ export class ConnectionProviderOAuthController {
       }
 
       const { authorizationUrl } =
-        await this.oauthProviderFlowService.startAuthorizationFlow(
-          authorizationArgs,
-        );
+        await this.oauthProviderFlowService.startAuthorizationFlow({
+          ...authorizationArgs,
+          browserNonce: this.flowCookieService.attachBrowserNonce({
+            request: req,
+            response: res,
+          }),
+        });
 
       return res.redirect(authorizationUrl);
     } catch (error) {
@@ -153,8 +190,11 @@ export class ConnectionProviderOAuthController {
     @Query('state') state: string,
     @Query('error') errorParam: string | undefined,
     @Query('error_description') errorDescription: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ) {
+    const browserNonces = this.flowCookieService.readBrowserNonces(req);
+
     if (errorParam) {
       return this.flowRedirectService.redirectToErrorFromState({
         res,
@@ -180,6 +220,7 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
           state,
+          browserNonces,
         });
 
       return await this.flowRedirectService.redirectToConnectedApplication({
@@ -194,6 +235,28 @@ export class ConnectionProviderOAuthController {
         state,
         error,
       });
+    }
+  }
+
+  // The transient token travels in a link: without this, a member could start their own sign-in in someone else's browser
+  private async assertBrowserSignedInAsOrThrow({
+    request,
+    userId,
+  }: {
+    request: Request;
+    userId: string;
+  }): Promise<void> {
+    const sessionToken =
+      this.userSessionCookieService.extractSessionTokenFromRequest(request);
+    const session = isDefined(sessionToken)
+      ? await this.userSessionService.resolveSession(sessionToken)
+      : null;
+
+    if (session?.payload.userId !== userId) {
+      throw new ConnectionProviderException(
+        'App connection sign-in must start in a browser signed in as the requesting user',
+        ConnectionProviderExceptionCode.FORBIDDEN,
+      );
     }
   }
 }

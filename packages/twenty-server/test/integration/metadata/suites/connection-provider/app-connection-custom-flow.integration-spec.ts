@@ -6,6 +6,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
@@ -74,13 +75,15 @@ describe('app connection custom flow', () => {
 
     expect(transient.errors).toBeUndefined();
 
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(await buildSignedInBrowserHeaders({ transientToken }))
       .query({
         applicationId: provider.applicationId,
         providerName: provider.name,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
         reconnectingConnectedAccountId,
       });
 

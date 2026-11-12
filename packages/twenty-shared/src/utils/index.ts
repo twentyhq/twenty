@@ -206,6 +206,7 @@ export {
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
 export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { isFilterValueExpectedAsArray } from './filter/utils/validation-schemas/isFilterValueExpectedAsArray';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,

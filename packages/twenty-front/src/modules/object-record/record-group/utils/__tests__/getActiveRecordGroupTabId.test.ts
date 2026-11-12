@@ -11,20 +11,29 @@ describe('getActiveRecordGroupTabId', () => {
     ).toBe('replied');
   });
 
-  it('should fall back to the All tab when nothing is selected', () => {
+  it('should fall back to the first visible group when nothing is selected', () => {
     expect(
       getActiveRecordGroupTabId({
         selectedRecordGroupId: null,
         visibleRecordGroupIds: ['contacted', 'replied'],
       }),
-    ).toBe(ALL_RECORD_GROUPS_TAB_ID);
+    ).toBe('contacted');
   });
 
-  it('should fall back to the All tab when the selected group was hidden', () => {
+  it('should fall back to the first visible group when the selected group was hidden', () => {
     expect(
       getActiveRecordGroupTabId({
         selectedRecordGroupId: 'not-now',
         visibleRecordGroupIds: ['contacted', 'replied'],
+      }),
+    ).toBe('contacted');
+  });
+
+  it('should fall back to the All tab when no group is visible', () => {
+    expect(
+      getActiveRecordGroupTabId({
+        selectedRecordGroupId: null,
+        visibleRecordGroupIds: [],
       }),
     ).toBe(ALL_RECORD_GROUPS_TAB_ID);
   });
