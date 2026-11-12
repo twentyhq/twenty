@@ -16,7 +16,7 @@ import { type SendAppMessageAttachment } from 'src/types/send-app-message-attach
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
-// servers before 2.57 send no attachments field
+// servers before 2.59 send no attachments field
 type SendAppMessagePayloadWithAttachments = SendAppMessagePayload & {
   attachments?: SendAppMessageAttachment[];
 };
