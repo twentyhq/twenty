@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_APP_ID = 'd1b2c3d4-0001-4000-a000-0000000000e1';
@@ -115,6 +116,38 @@ const findSelectFieldId = async (): Promise<string> => {
   return id;
 };
 
+const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+
+const findSubjectTableName = async (): Promise<string> => {
+  const [{ table_name: tableName }] = await globalThis.testDataSource.query(
+    `SELECT table_name FROM information_schema.tables
+      WHERE table_schema = $1 AND table_name ILIKE '%workspaceEditedOptionsSubject'`,
+    [WORKSPACE_SCHEMA],
+  );
+
+  return tableName;
+};
+
+const createSubjectWithStatus = async (status: string): Promise<string> => {
+  const [{ id }] = await globalThis.testDataSource.query(
+    `INSERT INTO "${WORKSPACE_SCHEMA}"."${await findSubjectTableName()}" (status, "createdByName", "updatedByName")
+      VALUES ($1, 'Test', 'Test') RETURNING id`,
+    [status],
+  );
+
+  return id;
+};
+
+const findSubjectStatus = async (id: string): Promise<string | null> => {
+  const [{ status }] = await globalThis.testDataSource.query(
+    `SELECT status FROM "${WORKSPACE_SCHEMA}"."${await findSubjectTableName()}"
+      WHERE id = $1`,
+    [id],
+  );
+
+  return status;
+};
+
 describe('Sync application after a workspace edit re-keyed its field options', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -194,6 +227,8 @@ describe('Sync application after a workspace edit re-keyed its field options', (
       ),
     ).toBe(true);
 
+    const closedSubjectId = await createSubjectWithStatus('CLOSED');
+
     const { errors } = await syncApplication({
       manifest,
       expectToFail: false,
@@ -201,6 +236,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
 
     expect(errors).toBeUndefined();
     expect(await findSelectFieldOptionRows()).toEqual(APP_OPTION_ROWS);
+    expect(await findSubjectStatus(closedSubjectId)).toBe('CLOSED');
   }, 60000);
 
   it('replaces a workspace option whose value a later version of the app ships', async () => {
@@ -214,6 +250,8 @@ describe('Sync application after a workspace edit re-keyed its field options', (
       ...APP_OPTION_ROWS,
       { value: 'ARCHIVED', isOwnedByTestApp: false },
     ]);
+
+    const archivedSubjectId = await createSubjectWithStatus('ARCHIVED');
 
     const { errors } = await syncApplication({
       manifest: buildManifest([
@@ -241,5 +279,6 @@ describe('Sync application after a workspace edit re-keyed its field options', (
         isOwnedByTestApp: true,
       },
     ]);
+    expect(await findSubjectStatus(archivedSubjectId)).toBe('ARCHIVED');
   }, 60000);
 });
