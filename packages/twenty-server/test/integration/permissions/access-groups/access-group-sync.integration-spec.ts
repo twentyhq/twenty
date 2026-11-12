@@ -1,10 +1,9 @@
-import gql from 'graphql-tag';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
@@ -19,7 +18,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
-import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
+import { type AccessGroupPropagationProgressDTO } from 'src/engine/permissions/dtos/access-group-propagation-progress.dto';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -193,22 +192,12 @@ describe('access group sync (integration)', () => {
   });
 });
 
-const readProgress = async (): Promise<
-  AccessGroupPropagationProgress | undefined
-> => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      query AccessGroupPropagationProgress {
-        accessGroupPropagationProgress {
-          totalRecordCount
-          remainingRecordCount
-          isInProgress
-        }
-      }
-    `,
+const readProgress = async (): Promise<AccessGroupPropagationProgressDTO> => {
+  const { data } = await findAccessGroupPropagationProgress({
+    expectToFail: false,
   });
 
-  return response.body.data?.accessGroupPropagationProgress;
+  return data.accessGroupPropagationProgress;
 };
 
 describe('access group propagation progress (integration)', () => {
@@ -340,9 +329,9 @@ describe('access group propagation progress (integration)', () => {
 
       const progress = await readProgress();
 
-      expect(progress?.totalRecordCount).toBeGreaterThanOrEqual(personCount);
-      expect(progress?.remainingRecordCount).toBe(progress?.totalRecordCount);
-      expect(progress?.isInProgress).toBe(true);
+      expect(progress.totalRecordCount).toBeGreaterThanOrEqual(personCount);
+      expect(progress.remainingRecordCount).toBe(progress.totalRecordCount);
+      expect(progress.isInProgress).toBe(true);
     } finally {
       resumeCompute();
     }
