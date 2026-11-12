@@ -5,7 +5,7 @@ import { GOOGLE_CALENDAR_RESOURCE_EMAIL_DOMAIN } from 'src/modules/calendar/cale
 export const isGoogleCalendarResourceAttendee = (
   attendee: calendarV3.Schema$EventAttendee,
 ): boolean =>
-  attendee.resource === true ||
+  attendee.resource ||
   (attendee.email ?? '')
     .toLowerCase()
     .endsWith(GOOGLE_CALENDAR_RESOURCE_EMAIL_DOMAIN);
