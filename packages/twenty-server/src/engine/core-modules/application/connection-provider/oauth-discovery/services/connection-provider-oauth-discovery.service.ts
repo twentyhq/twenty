@@ -173,15 +173,21 @@ export class ConnectionProviderOAuthDiscoveryService {
     });
     const authorizationServerUrl =
       resourceMetadata?.authorization_servers?.[0] ?? resourceUrl;
+    const authorizationServerMetadata =
+      await discoverAuthorizationServerMetadata(authorizationServerUrl, {
+        fetchFn,
+      });
 
+    // jsonb drops undefined keys, so the stored state must compare equal to a fresh one
     return {
       authorizationServerUrl,
-      authorizationServerMetadata: await discoverAuthorizationServerMetadata(
-        authorizationServerUrl,
-        { fetchFn },
-      ),
-      resourceMetadata,
-      resourceMetadataUrl: resourceMetadataUrl?.toString(),
+      ...(isDefined(authorizationServerMetadata) && {
+        authorizationServerMetadata,
+      }),
+      ...(isDefined(resourceMetadata) && { resourceMetadata }),
+      ...(isDefined(resourceMetadataUrl) && {
+        resourceMetadataUrl: resourceMetadataUrl.toString(),
+      }),
     };
   }
 
