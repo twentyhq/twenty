@@ -3,6 +3,8 @@
 import { findRecordIdsAccessibleThroughAllRecords } from 'src/engine/permissions/internal/all-records/utils/find-record-ids-accessible-through-all-records.util';
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { resolveRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-row-access-outcome.util';
+import { arePrivateRecordsExcludedFromAllRecordsAndRls } from 'src/engine/permissions/internal/private-record/utils/are-private-records-excluded-from-all-records-and-rls.util';
+import { findRecordIdsByPrivacy } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-by-privacy.util';
 import { findRecordIdsAccessibleThroughPrivateRecord } from 'src/engine/permissions/internal/private-record/utils/find-record-ids-accessible-through-private-record.util';
 import { findRecordIdsAccessibleThroughRecordShare } from 'src/engine/permissions/internal/record-share/utils/find-record-ids-accessible-through-record-share.util';
 import { findRecordIdsAccessibleThroughRls } from 'src/engine/permissions/internal/rls/utils/find-record-ids-accessible-through-rls.util';
@@ -21,10 +23,22 @@ export const findAccessibleRecordIds = async (
     return new Set(records.map((record) => record.id));
   }
 
-  const allRecordsOrRlsAccessibleRecordIds = new Set([
-    ...(await findRecordIdsAccessibleThroughAllRecords(request)),
-    ...(await findRecordIdsAccessibleThroughRls(request)),
-  ]);
+  const allRecordsOrRlsRecordIds = [
+    ...new Set([
+      ...findRecordIdsAccessibleThroughAllRecords(request),
+      ...(await findRecordIdsAccessibleThroughRls(request)),
+    ]),
+  ];
+  const allRecordsOrRlsAccessibleRecordIds = new Set(
+    arePrivateRecordsExcludedFromAllRecordsAndRls(request)
+      ? await findRecordIdsByPrivacy({
+          recordIds: allRecordsOrRlsRecordIds,
+          flatObjectMetadata: request.flatObjectMetadata,
+          context: request.context,
+          isPrivate: false,
+        })
+      : allRecordsOrRlsRecordIds,
+  );
   const remainingRecords = records.filter(
     (record) => !allRecordsOrRlsAccessibleRecordIds.has(record.id),
   );

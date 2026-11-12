@@ -3,9 +3,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { arePrivateRecordsExcludedFromAllRecordsAndRls } from 'src/engine/permissions/internal/private-record/utils/are-private-records-excluded-from-all-records-and-rls.util';
-import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
-import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-record-access-groups-sql-condition.util';
 import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
@@ -46,21 +43,5 @@ export const buildRlsAccessSQLCondition = (
 
   const rlsRulesSQLCondition = buildRlsRulesSQLCondition(request);
 
-  if (!isDefined(rlsRulesSQLCondition)) {
-    return false;
-  }
-
-  if (!arePrivateRecordsExcludedFromAllRecordsAndRls(request)) {
-    return rlsRulesSQLCondition;
-  }
-
-  return combineSQLConditions({
-    sqlConditions: [
-      rlsRulesSQLCondition,
-      buildRecordPrivacySQLCondition({
-        tableAlias: request.tableAlias,
-        isPrivate: false,
-      }),
-    ],
-  });
+  return rlsRulesSQLCondition ?? false;
 };

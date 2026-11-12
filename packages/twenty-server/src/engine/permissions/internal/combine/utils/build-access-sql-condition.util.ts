@@ -6,16 +6,14 @@ import { buildAllRecordsAccessSQLCondition } from 'src/engine/permissions/intern
 import { buildRlsAccessSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-access-sql-condition.util';
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
+import { arePrivateRecordsExcludedFromAllRecordsAndRls } from 'src/engine/permissions/internal/private-record/utils/are-private-records-excluded-from-all-records-and-rls.util';
+import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
+import { combineSQLConditionOutcomesWithAnd } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-and.util';
+import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { resolveRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-row-access-outcome.util';
 import { buildPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-access-sql-condition.util';
 import { buildPermissionsRelatedRecordPathSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-permissions-related-record-path-sql-condition.util';
 import { buildRecordShareAccessSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-record-share-access-sql-condition.util';
-
-const combineWithOr = (sqlConditions: SQLCondition[]): SQLCondition =>
-  sqlConditions.length === 1
-    ? sqlConditions[0]
-    : combineSQLConditions({ sqlConditions, operator: 'OR' });
 
 export const buildAccessSQLCondition = ({
   tableAlias,
@@ -33,20 +31,23 @@ export const buildAccessSQLCondition = ({
     return outcome;
   }
 
-  const allRecordsSQLCondition = buildAllRecordsAccessSQLCondition(sqlRequest);
+  const allRecordsOrRlsSQLCondition = combineSQLConditionOutcomesWithOr([
+    buildAllRecordsAccessSQLCondition(sqlRequest),
+    buildRlsAccessSQLCondition(sqlRequest),
+  ]);
 
-  if (allRecordsSQLCondition === true) {
-    return true;
-  }
-
-  const rlsSQLCondition = buildRlsAccessSQLCondition(sqlRequest);
-  const sqlConditions = [
-    allRecordsSQLCondition === false ? undefined : allRecordsSQLCondition,
-    rlsSQLCondition === false ? undefined : rlsSQLCondition,
-    buildRecordShareAccessSQLCondition(sqlRequest),
-    buildPrivateRecordAccessSQLCondition(sqlRequest),
-    buildPermissionsRelatedRecordPathSQLCondition(sqlRequest),
-  ].filter(isDefined);
-
-  return sqlConditions.length === 0 ? false : combineWithOr(sqlConditions);
+  return combineSQLConditionOutcomesWithOr([
+    arePrivateRecordsExcludedFromAllRecordsAndRls(sqlRequest)
+      ? combineSQLConditionOutcomesWithAnd([
+          allRecordsOrRlsSQLCondition,
+          buildRecordPrivacySQLCondition({
+            tableAlias: sqlRequest.tableAlias,
+            isPrivate: false,
+          }),
+        ])
+      : allRecordsOrRlsSQLCondition,
+    buildRecordShareAccessSQLCondition(sqlRequest) ?? false,
+    buildPrivateRecordAccessSQLCondition(sqlRequest) ?? false,
+    buildPermissionsRelatedRecordPathSQLCondition(sqlRequest) ?? false,
+  ]);
 };
