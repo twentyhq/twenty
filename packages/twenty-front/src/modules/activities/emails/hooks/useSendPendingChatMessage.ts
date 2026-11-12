@@ -7,7 +7,7 @@ import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppCh
 import { useUploadEmailAttachment } from '@/activities/emails/hooks/useUploadEmailAttachment';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 
-type SendPendingChatMessageArgs = {
+type SendPendingChatMessageArguments = {
   messageChannelId: string;
   messageThreadId: string;
   pendingMessage: PendingChatMessage;
@@ -52,7 +52,7 @@ export const useSendPendingChatMessage = () => {
     messageChannelId,
     messageThreadId,
     pendingMessage,
-  }: SendPendingChatMessageArgs) => {
+  }: SendPendingChatMessageArguments) => {
     const attachments = await uploadAttachmentsOrThrow(pendingMessage);
 
     const sentMessage = await sendAppChannelMessage({
