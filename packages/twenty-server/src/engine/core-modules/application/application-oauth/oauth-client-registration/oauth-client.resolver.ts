@@ -9,6 +9,8 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
+import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
+import { isVerifiedOAuthClientName } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-name.util';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
@@ -46,6 +48,7 @@ export class OAuthClientResolver {
 
     if (resolvedClient.kind === 'registeredClient') {
       const { registration } = resolvedClient;
+      const isVerified = isVerifiedOAuthClientRegistration(registration);
 
       return {
         id: registration.id,
@@ -56,6 +59,9 @@ export class OAuthClientResolver {
           ),
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
+        isVerified,
+        isClaimingVerifiedClientName:
+          !isVerified && isVerifiedOAuthClientName(registration.name),
       };
     }
 
@@ -69,6 +75,8 @@ export class OAuthClientResolver {
       logoUrl: logo,
       websiteUrl: null,
       oAuthScopes: [...ALL_OAUTH_SCOPES],
+      isVerified: false,
+      isClaimingVerifiedClientName: isVerifiedOAuthClientName(name),
     };
   }
 }

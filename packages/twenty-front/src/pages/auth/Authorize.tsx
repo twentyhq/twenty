@@ -8,6 +8,7 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { AuthorizeClientIdentityNotice } from '@/applications/components/AuthorizeClientIdentityNotice';
 import { getKnownOAuthClientLogoUrl } from '@/applications/utils/getKnownOAuthClientLogoUrl';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -196,7 +197,7 @@ export const Authorize = () => {
   const shouldRedirectToNotFound =
     !isDefined(clientId) ||
     !isDefined(redirectUrl) ||
-    (!loading && !isDefined(applicationRegistration));
+    (!loading && !isDefined(queryError) && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {
@@ -322,6 +323,13 @@ export const Authorize = () => {
               <Trans>Connect {appName} to your account</Trans>
             )}
           </StyledOAuthTitle>
+          <AuthorizeClientIdentityNotice
+            appName={appName}
+            isVerified={applicationRegistration.isVerified}
+            isClaimingVerifiedClientName={
+              applicationRegistration.isClaimingVerifiedClientName
+            }
+          />
           {requestedScopes.length > 0 && (
             <StyledPermissionSection>
               <StyledPermissionIntro>
