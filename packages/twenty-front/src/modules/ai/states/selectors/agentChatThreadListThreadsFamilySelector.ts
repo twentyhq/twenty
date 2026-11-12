@@ -52,19 +52,23 @@ export const agentChatThreadListThreadsFamilySelector =
             thread.id,
           );
 
-          return source.type === 'channel'
-            ? isAgentChatThreadInChannelView({
-                thread,
-                channelView: source.channelView,
-                currentWorkspaceMemberId,
-                isMentioned: inboxStatus.isMentioned,
-              })
-            : !isDefined(thread.deletedAt) &&
-                isAgentChatThreadInFilterStatus({
-                  thread,
-                  inboxStatus,
-                  filterStatus: source.filterStatus,
-                });
+          if (source.type === 'channel') {
+            return isAgentChatThreadInChannelView({
+              thread,
+              channelView: source.channelView,
+              currentWorkspaceMemberId,
+              isMentioned: inboxStatus.isMentioned,
+            });
+          }
+
+          return (
+            !isDefined(thread.deletedAt) &&
+            isAgentChatThreadInFilterStatus({
+              thread,
+              inboxStatus,
+              filterStatus: source.filterStatus,
+            })
+          );
         });
 
         return filterAgentChatThreadsWithinLoadedPages({

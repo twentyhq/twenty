@@ -87,6 +87,10 @@ const buildPage = (
   },
 });
 
+const RECENT_THREAD_LIST_ATOM = agentChatThreadListFamilyState.atomFamily(
+  getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+);
+
 const buildStore = () => {
   const store = createStore();
 
@@ -162,13 +166,7 @@ describe('useLoadAgentChatThreadList', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      ),
-    ).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
       endCursor: 'end',
@@ -348,13 +346,7 @@ describe('useLoadAgentChatThreadList', () => {
         directMessageSecondWorkspaceMemberId: 'member-2',
       },
     ]);
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      ),
-    ).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['recent-thread'],
       hasNextPage: true,
       endCursor: 'recent-page-cursor',
@@ -386,13 +378,7 @@ describe('useLoadAgentChatThreadList', () => {
         variables: expect.objectContaining({ lastCursor: 'page-1' }),
       }),
     );
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      ),
-    ).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['thread-1', 'thread-2'],
       hasNextPage: false,
       endCursor: 'page-2',
@@ -407,17 +393,12 @@ describe('useLoadAgentChatThreadList', () => {
 
   it('drops chats the server no longer lists', async () => {
     const store = buildStore();
-    store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-      ),
-      {
-        threadIds: ['thread-1', 'thread-2'],
-        hasNextPage: false,
-        endCursor: null,
-        lastLoadedActivityAt: null,
-      },
-    );
+    store.set(RECENT_THREAD_LIST_ATOM, {
+      threadIds: ['thread-1', 'thread-2'],
+      hasNextPage: false,
+      endCursor: null,
+      lastLoadedActivityAt: null,
+    });
     queryMock.mockResolvedValue(
       buildPage([buildThread('thread-1', 'Refreshed title')]),
     );
@@ -427,13 +408,7 @@ describe('useLoadAgentChatThreadList', () => {
       await result.current.refreshAgentChatThreads();
     });
 
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      )?.threadIds,
-    ).toEqual(['thread-1']);
+    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual(['thread-1']);
   });
 
   it('leaves the list unloaded so initialization can retry a failed request', async () => {
@@ -445,28 +420,17 @@ describe('useLoadAgentChatThreadList', () => {
       await result.current.refreshAgentChatThreads();
     });
 
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      ),
-    ).toBeNull();
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
   });
 
   it('adds a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
     const store = buildStore();
-    store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-      ),
-      {
-        threadIds: ['thread-1'],
-        hasNextPage: true,
-        endCursor: 'page-1',
-        lastLoadedActivityAt: null,
-      },
-    );
+    store.set(RECENT_THREAD_LIST_ATOM, {
+      threadIds: ['thread-1'],
+      hasNextPage: true,
+      endCursor: 'page-1',
+      lastLoadedActivityAt: null,
+    });
     const result = renderRefresh(store);
 
     queryMock.mockResolvedValueOnce(
@@ -486,13 +450,10 @@ describe('useLoadAgentChatThreadList', () => {
         }),
       }),
     );
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      )?.threadIds,
-    ).toEqual(['old-thread', 'thread-1']);
+    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual([
+      'old-thread',
+      'thread-1',
+    ]);
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {

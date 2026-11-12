@@ -28,11 +28,12 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const currentAiChatThreadData = useAtomStateValue(
     currentAiChatThreadDataSelector,
   );
-  const areAgentChatThreadsLoaded =
+  const areAgentChatThreadsLoaded = isDefined(
     useAtomFamilyStateValue(
       agentChatThreadListFamilyState,
       getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-    ) !== null;
+    ),
+  );
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
   const { loadAgentChatThread } = useLoadAgentChatThread();
   const { switchToNewChat } = useSwitchToNewAiChat({

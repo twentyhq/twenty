@@ -26,6 +26,7 @@ import {
   type AgentChatThreadParticipantFieldsFragment,
   GetAgentChatChannelThreadIdsDocument,
 } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 type AgentChatThreadRecordsPage = {
   threads: AgentChatThreadRecord[];
@@ -110,7 +111,11 @@ export const useLoadAgentChatThreadList = () => {
               },
               fetchPolicy: 'network-only',
             })
-            .catch(() => undefined)
+            .catch((error) => {
+              logError(error);
+
+              return undefined;
+            })
         )?.data?.agentChatChannelThreadIds;
 
         if (!isDefined(idsPage)) {
@@ -258,6 +263,14 @@ export const useLoadAgentChatThreadList = () => {
       ]);
 
       const lastPageThreadId = page.threadIds.at(-1);
+      const lastPageThread = isDefined(lastPageThreadId)
+        ? (page.threads.find(({ id }) => id === lastPageThreadId) ??
+          store.get(
+            agentChatThreadRecordFamilySelector.selectorFamily(
+              lastPageThreadId,
+            ),
+          ))
+        : undefined;
 
       store.set(listAtom, {
         threadIds: mergeAgentChatThreadListIds({
@@ -269,11 +282,7 @@ export const useLoadAgentChatThreadList = () => {
         hasNextPage: page.hasNextPage,
         endCursor: page.endCursor,
         lastLoadedActivityAt: isDefined(lastPageThreadId)
-          ? (store.get(
-              agentChatThreadRecordFamilySelector.selectorFamily(
-                lastPageThreadId,
-              ),
-            )?.lastActivityAt ?? null)
+          ? (lastPageThread?.lastActivityAt ?? null)
           : (listBeforeRequest?.lastLoadedActivityAt ?? null),
       });
 
