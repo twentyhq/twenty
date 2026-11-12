@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import isEqual from 'lodash.isequal';
 import {
