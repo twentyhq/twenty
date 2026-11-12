@@ -147,6 +147,8 @@ export default meta;
 type Story = StoryObj<typeof RecordGroupTabs>;
 
 export const SelectsAGroup: Story = {
+  // Wide enough that the last tab never collapses into the more dropdown
+  parameters: { container: { width: 800 } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -165,8 +167,16 @@ export const SelectsAGroup: Story = {
 
     await userEvent.click(allTab);
 
-    expect(allTab).toHaveAttribute('aria-selected', 'true');
-    expect(contactedTab).toHaveAttribute('aria-selected', 'false');
+    await waitFor(() => {
+      expect(canvas.getByRole('tab', { name: /All/ })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      );
+    });
+    expect(canvas.getByRole('tab', { name: /Contacted/ })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
   },
 };
 
