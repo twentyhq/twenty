@@ -122,9 +122,16 @@ export class AccessGroupPropagationProgressService {
       jobData.workspaceId,
     );
 
+    const computeId = buildRecordAccessGroupComputeId(jobData);
+
     await this.cacheStorageService.setRemove(pendingComputeIdsCacheKey, [
-      buildRecordAccessGroupComputeId(jobData),
+      computeId,
     ]);
+    // A finished compute scheduled again while the propagation still runs has to be counted again
+    await this.cacheStorageService.setRemove(
+      this.buildPlannedComputeIdsCacheKey(jobData.workspaceId),
+      [computeId],
+    );
 
     if (
       (await this.cacheStorageService.getSetLength(
