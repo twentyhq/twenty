@@ -6,6 +6,7 @@ import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permission
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
+import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
@@ -17,27 +18,6 @@ export type BuildEntrySQLCondition = (args: {
   tableAlias: string;
 }) => SQLCondition | boolean;
 
-const combineWithOr = (
-  sqlConditions: (SQLCondition | boolean)[],
-): SQLCondition | boolean => {
-  if (sqlConditions.some((sqlCondition) => sqlCondition === true)) {
-    return true;
-  }
-
-  const definedSQLConditions = sqlConditions.filter(
-    (sqlCondition): sqlCondition is SQLCondition => sqlCondition !== false,
-  );
-
-  if (definedSQLConditions.length <= 1) {
-    return definedSQLConditions[0] ?? false;
-  }
-
-  return combineSQLConditions({
-    sqlConditions: definedSQLConditions,
-    operator: 'OR',
-  });
-};
-
 export const buildRelatedRecordPathsSQLCondition = ({
   workspaceId,
   flatObjectMetadata,
@@ -46,6 +26,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
   buildEntrySQLCondition,
   canRelatedRecordPathsReachObject,
   isRecordPrivacyApplicable,
+  isUncorrelated = false,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
@@ -58,6 +39,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
   isRecordPrivacyApplicable: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
+  isUncorrelated?: boolean;
 }): SQLCondition | boolean => {
   const resolvedRelatedRecordPaths = areRecordAccessGroupsEnabled({
     featureFlagsMap: metadataMaps.featureFlagsMap,
@@ -100,8 +82,11 @@ export const buildRelatedRecordPathsSQLCondition = ({
       hopTableAliases,
       targetTableAlias,
     });
+    const lastHopIndex = hopTableAliases.length - 1;
     const whereConditions = hopTableAliases.flatMap((hopTableAlias, index) => [
-      joinConditions[index],
+      ...(isUncorrelated && index === lastHopIndex
+        ? []
+        : [joinConditions[index]]),
       `${escapeIdentifier(hopTableAlias)}."deletedAt" IS NULL`,
     ]);
 
@@ -109,8 +94,13 @@ export const buildRelatedRecordPathsSQLCondition = ({
       whereConditions.push(`(${sourceSQLCondition.sql})`);
     }
 
+    const fromAndWhere = `FROM ${fromExpressions.join(', ')} WHERE ${whereConditions.join(' AND ')}`;
+    const lastHop = resolvedPath.hops[lastHopIndex];
+
     return {
-      sql: `EXISTS (SELECT 1 FROM ${fromExpressions.join(', ')} WHERE ${whereConditions.join(' AND ')})`,
+      sql: isUncorrelated
+        ? `${escapeIdentifier(targetTableAlias)}.${escapeIdentifier(lastHop.targetColumnName)} IN (SELECT ${escapeIdentifier(hopTableAliases[lastHopIndex])}.${escapeIdentifier(lastHop.sourceColumnName)} ${fromAndWhere})`
+        : `EXISTS (SELECT 1 ${fromAndWhere})`,
       parameters:
         sourceSQLCondition === true ? {} : sourceSQLCondition.parameters,
     };
@@ -143,7 +133,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
       flatObjectMetadata.id,
     ]);
 
-    const pathsSQLCondition = combineWithOr(
+    const pathsSQLCondition = combineSQLConditionOutcomesWithOr(
       findRelatedRecordPathsFeedingAccessGroups({
         rolesPermissions: metadataMaps.rolesPermissions,
         resolvedRelatedRecordPaths,
@@ -161,10 +151,13 @@ export const buildRelatedRecordPathsSQLCondition = ({
       typeof pathsSQLCondition === 'boolean' ||
       !isRecordPrivacyApplicable(flatObjectMetadata)
     ) {
-      return combineWithOr([entrySQLCondition, pathsSQLCondition]);
+      return combineSQLConditionOutcomesWithOr([
+        entrySQLCondition,
+        pathsSQLCondition,
+      ]);
     }
 
-    return combineWithOr([
+    return combineSQLConditionOutcomesWithOr([
       entrySQLCondition,
       combineSQLConditions({
         sqlConditions: [

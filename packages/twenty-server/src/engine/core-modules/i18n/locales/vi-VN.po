@@ -9399,6 +9399,12 @@ msgstr "Không có đầu vào nào được cung cấp trong bước biểu m�
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Không có hộp thư nào được kết nối cho thao tác này. Hãy kết nối một hộp thư trong Cài đặt."
 
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "Không quá {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} đường dẫn bản ghi liên quan vốn có có thể nối tiếp nhau"
+
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."

@@ -2623,6 +2623,7 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
+    stopGenerate: Scalars['Boolean']
     stopImpersonation: StopImpersonation
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
@@ -4308,7 +4309,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDA
 
 export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
-export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
+export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'MCP_TOOL' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -7431,6 +7432,7 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    stopGenerate?: { __args: {input: StopGenerateInput} }
     stopImpersonation?: StopImpersonationGenqlSelection
     switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
@@ -8638,6 +8640,8 @@ export interface StartWorkspaceSetupChatResultGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StopGenerateInput {runId: Scalars['UUID']}
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
@@ -13694,6 +13698,7 @@ export const enumWorkflowActionType = {
    IF_ELSE: 'IF_ELSE' as const,
    ITERATOR: 'ITERATOR' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   MCP_TOOL: 'MCP_TOOL' as const,
    PICK_RECORD: 'PICK_RECORD' as const,
    SEND_CHAT_MESSAGE: 'SEND_CHAT_MESSAGE' as const,
    SEND_EMAIL: 'SEND_EMAIL' as const,

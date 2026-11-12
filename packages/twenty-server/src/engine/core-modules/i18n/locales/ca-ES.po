@@ -9399,6 +9399,12 @@ msgstr "No s'ha proporcionat cap entrada en el pas del formulari"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "No hi ha cap bústia de correu connectada per a aquesta acció. Connecteu-ne una a Configuració."
 
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "No es poden encadenar més de {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} rutes de registres relacionats inherents"
+
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."

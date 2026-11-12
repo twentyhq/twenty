@@ -18169,6 +18169,7 @@ msgstr ""
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr ""
 
@@ -18191,6 +18192,11 @@ msgstr ""
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
+msgstr ""
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
 msgstr ""
 
 #. js-lingui-id: upbzgm
@@ -20034,6 +20040,11 @@ msgstr ""
 #. js-lingui-id: LVdJ+2
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
+msgstr ""
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
 msgstr ""
 
 #. js-lingui-id: sIaDsH
@@ -28893,6 +28904,11 @@ msgstr ""
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr ""
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr ""
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -29013,6 +29029,11 @@ msgstr ""
 #. js-lingui-id: hKKMk0
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
+msgstr ""
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
 msgstr ""
 
 #. js-lingui-id: 9q0gnf
@@ -29630,6 +29651,11 @@ msgstr ""
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr ""
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr ""
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -30030,6 +30056,11 @@ msgstr ""
 #. js-lingui-id: RO68oO
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
+msgstr ""
+
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
 msgstr ""
 
 #. js-lingui-id: xdA/+p

@@ -18210,6 +18210,7 @@ msgstr "الحد الأقصى للقيم"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18233,6 +18234,11 @@ msgstr "خادم MCP"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "خوادم MCP"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "خوادم MCP غير متاحة"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20076,6 +20082,11 @@ msgstr "لا يوجد إدخال"
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "لا توجد حقول إدخال لهذا الإجراء"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "لا توجد حقول إدخال لهذه الأداة"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28934,6 +28945,11 @@ msgstr "شهادة خادم البريد غير صالحة"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "تعذر تحميل السوق. تحقق من اتصالك وحاول مرة أخرى."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "تعذر تحميل خوادم MCP، لذا لا يمكن تعديل هذه الخطوة الآن."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -29055,6 +29071,11 @@ msgstr "سيتم تمرير السجلات المحددة (حتى {maxRecordsFor
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "البريد الإلكتروني المشترك الذي تريد استخدامه."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "تعمل الأداة دون وسيطات."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29671,6 +29692,11 @@ msgstr "هذا النطاق الفرعي محجوز"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "سيتم استرجاع {0} رصيدًا من مساحة العمل هذه فورًا. لا يمكن التراجع عن الإلغاء."
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "لم يعد خادم MCP الخاص بها يوفر هذه الأداة. زامن أدوات الخادم أو اختر أداة أخرى."
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -30072,6 +30098,11 @@ msgstr "تم حذف الأداة"
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "تفاصيل الأداة: {displayMessage}"
+
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "لم يتم العثور على الأداة"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

@@ -9399,6 +9399,12 @@ msgstr "ورودی‌ای در مرحله فرم ارائه نشده است"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "هیچ صندوق پستی‌ای برای این اقدام متصل نیست. یکی را در تنظیمات متصل کنید."
 
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "حداکثر {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} مسیر رکورد مرتبط ذاتی می‌توانند پشت سر هم قرار گیرند"
+
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."

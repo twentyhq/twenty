@@ -176,9 +176,9 @@ describe('buildCallerRelatedRecordPathAccessGroupsOrThrow', () => {
     ).toEqual([]);
   });
 
-  it('should hold no group for a write', () => {
+  it('should hold no group for a creation', () => {
     expect(
-      buildCallerAccessGroupObjectMetadataIds({ operationType: 'update' }),
+      buildCallerAccessGroupObjectMetadataIds({ operationType: 'create' }),
     ).toEqual([]);
   });
 

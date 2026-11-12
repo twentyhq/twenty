@@ -9401,6 +9401,12 @@ msgstr "Ingen inmatning tillhandahålls i formulärsteget"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Ingen postlåda är ansluten för den här åtgärden. Anslut en i Inställningar."
 
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "Högst {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inbyggda relaterade postsökvägar kan följa på varandra"
+
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."

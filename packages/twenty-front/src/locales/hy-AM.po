@@ -18210,6 +18210,7 @@ msgstr "Առավելագույն արժեքներ"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18233,6 +18234,11 @@ msgstr "MCP սպասարկիչ"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP սպասարկիչներ"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP սերվերները հասանելի չեն"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20076,6 +20082,11 @@ msgstr "Մուտք չկա"
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "Այս գործողության համար մուտքագրման դաշտեր չկան"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "Այս գործիքի համար մուտքագրման դաշտեր չկան"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -28934,6 +28945,11 @@ msgstr "Փոստի սերվերի վկայագիրը անվավեր է"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "Չհաջողվեց բեռնել marketplace-ը։ Ստուգեք ձեր կապը և կրկին փորձեք։"
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "Չհաջողվեց բեռնել MCP սերվերները, ուստի այս քայլն այժմ հնարավոր չէ խմբագրել։"
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -29055,6 +29071,11 @@ msgstr "Ընտրված գրառումները (մինչև {maxRecordsFormatted})
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Այն ընդհանուր էլ. փոստի հասցեն, որը ցանկանում եք օգտագործել։"
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "Գործիքը գործարկվում է առանց արգումենտների։"
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29671,6 +29692,11 @@ msgstr "Այս ենթադոմեյնը վերապահված է"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "Սա անմիջապես հետ է վերցնում այս աշխատանքային տարածքից {0} կրեդիտ։ Չեղարկումը ետ տանել հնարավոր չէ։"
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "Այս գործիքն այլևս չի առաջարկվում իր MCP սերվերի կողմից։ Համաժամեցրեք սերվերի գործիքները կամ ընտրեք մեկ այլ գործիք։"
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -30072,6 +30098,11 @@ msgstr "Գործիքը ջնջվեց"
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
 msgstr "Գործիքի մանրամասներ՝ {displayMessage}"
+
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Գործիքը չի գտնվել"
 
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx

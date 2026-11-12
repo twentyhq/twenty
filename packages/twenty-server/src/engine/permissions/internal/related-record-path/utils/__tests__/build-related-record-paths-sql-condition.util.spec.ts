@@ -178,8 +178,10 @@ const buildAttachmentCondition = ({
   entryByObject,
   disabledObjectNames = [],
   privateObjectNames = [],
+  isUncorrelated,
   ...metadataMapsArgs
 }: Parameters<typeof buildMetadataMaps>[0] & {
+  isUncorrelated?: boolean;
   entryByObject: Record<string, boolean | 'owned'>;
   disabledObjectNames?: string[];
   privateObjectNames?: string[];
@@ -194,6 +196,7 @@ const buildAttachmentCondition = ({
       !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
     isRecordPrivacyApplicable: (flatObjectMetadata) =>
       privateObjectNames.includes(flatObjectMetadata.nameSingular),
+    isUncorrelated,
   });
 
 describe('buildRelatedRecordPathsSQLCondition', () => {
@@ -206,6 +209,19 @@ describe('buildRelatedRecordPathsSQLCondition', () => {
     ).toEqual({
       sql: '"attachment"."ownerId" = :attachmentOwner',
       parameters: { attachmentOwner: 'member-id' },
+    });
+  });
+
+  it('reads the reachable source records once when asked for an uncorrelated condition', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [companyAttachmentsPath],
+        entryByObject: { company: 'owned' },
+        isUncorrelated: true,
+      }),
+    ).toEqual({
+      sql: `"attachment"."targetCompanyId" IN (SELECT "related_record_path_0"."id" FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner))`,
+      parameters: { related_record_path_0Owner: 'member-id' },
     });
   });
 
