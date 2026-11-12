@@ -230,6 +230,23 @@ describe('convertBulkTextToOptions', () => {
       ).toEqual(currentOptions);
     });
 
+    it('renames a kept option when a new label would get its value', () => {
+      const { isActive: _isActive, ...activeLostOption } = lostOption;
+
+      expect(
+        convertBulkTextToOptions(
+          'New\nScreening\nPartner\nLost!',
+          currentOptions,
+          applicationOptionIds,
+        ),
+      ).toEqual([
+        newOption,
+        screeningOption,
+        partnerOption,
+        { ...activeLostOption, label: 'Lost!' },
+      ]);
+    });
+
     it('reactivates an inactive option whose label is listed again', () => {
       const { isActive: _isActive, ...activeLostOption } = lostOption;
 

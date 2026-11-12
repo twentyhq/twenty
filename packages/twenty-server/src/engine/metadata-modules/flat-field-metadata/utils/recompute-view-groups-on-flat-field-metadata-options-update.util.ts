@@ -79,13 +79,21 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
       ),
   );
 
-  const remainingFlatViewGroups = flatViewGroups.filter(
-    (flatViewGroup) =>
-      !flatViewGroupsToDelete.some(
-        (flatViewGroupToDelete) =>
-          flatViewGroupToDelete.id === flatViewGroup.id,
-      ),
-  );
+  const remainingFlatViewGroups = flatViewGroups
+    .filter(
+      (flatViewGroup) =>
+        !flatViewGroupsToDelete.some(
+          (flatViewGroupToDelete) =>
+            flatViewGroupToDelete.id === flatViewGroup.id,
+        ),
+    )
+    .map(
+      (flatViewGroup) =>
+        flatViewGroupsToUpdate.find(
+          (flatViewGroupToUpdate) =>
+            flatViewGroupToUpdate.id === flatViewGroup.id,
+        ) ?? flatViewGroup,
+    );
 
   const viewGroupsByViewUniversalIdentifier =
     reduceFlatViewGroupsByViewUniversalIdentifier({
