@@ -2,8 +2,7 @@ import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-perm
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
-// A grant equal to the all-objects one stays inherited, so it keeps following that setting.
-// Without See, changes are denied explicitly: inheriting one later would fail server validation.
+// Without See, changes are denied explicitly: inheriting one later would fail server validation
 export const getObjectPermissionOverrideGrants = ({
   role,
   grantedKeys,
@@ -19,7 +18,7 @@ export const getObjectPermissionOverrideGrants = ({
 }): Record<SettingsRoleObjectPermissionKey, boolean | null> => {
   const isReadDeniedByOverride =
     !grantedKeys.includes('canReadObjectRecords') &&
-    role.canReadAllObjectRecords === true;
+    role.canReadAllObjectRecords;
 
   const getGrant = (key: SettingsRoleObjectPermissionKey) => {
     const isGranted = grantedKeys.includes(key);

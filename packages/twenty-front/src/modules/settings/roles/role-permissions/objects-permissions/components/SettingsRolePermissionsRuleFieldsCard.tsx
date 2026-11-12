@@ -33,8 +33,8 @@ export const SettingsRolePermissionsRuleFieldsCard = ({
       (predicateGroup) => predicateGroup.id === ruleRootGroupId,
     );
 
-  const canRuleRead = rootPredicateGroup?.canReadRecords === true;
-  const canRuleUpdate = rootPredicateGroup?.canUpdateRecords === true;
+  const canRuleRead = rootPredicateGroup?.canReadRecords ?? false;
+  const canRuleUpdate = rootPredicateGroup?.canUpdateRecords ?? false;
 
   return (
     <StyledSettingsSelectGroup controlWidth={RULE_FIELDS_SELECT_WIDTH}>

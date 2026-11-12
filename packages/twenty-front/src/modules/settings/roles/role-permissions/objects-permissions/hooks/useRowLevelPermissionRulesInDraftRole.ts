@@ -1,8 +1,8 @@
+import { isInPredicateGroups } from '@/settings/roles/role-permissions/objects-permissions/utils/isInPredicateGroups';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from '~/generated-metadata/graphql';
 
@@ -83,20 +83,20 @@ export const useRowLevelPermissionRulesInDraftRole = (roleId: string) => {
           (predicateGroup) => !deletedPredicateGroupIds.has(predicateGroup.id),
         ),
         fieldPermissions: currentSettingsDraftRole.fieldPermissions?.filter(
-          (fieldPermission) =>
-            !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) ||
-            !deletedPredicateGroupIds.has(
-              fieldPermission.rowLevelPermissionPredicateGroupId,
-            ),
+          ({ rowLevelPermissionPredicateGroupId }) =>
+            !isInPredicateGroups({
+              rowLevelPermissionPredicateGroupId,
+              predicateGroupIds: deletedPredicateGroupIds,
+            }),
         ),
         rowLevelPermissionPredicates: (
           currentSettingsDraftRole.rowLevelPermissionPredicates ?? []
         ).filter(
-          (predicate) =>
-            !isDefined(predicate.rowLevelPermissionPredicateGroupId) ||
-            !deletedPredicateGroupIds.has(
-              predicate.rowLevelPermissionPredicateGroupId,
-            ),
+          ({ rowLevelPermissionPredicateGroupId }) =>
+            !isInPredicateGroups({
+              rowLevelPermissionPredicateGroupId,
+              predicateGroupIds: deletedPredicateGroupIds,
+            }),
         ),
       };
     });
