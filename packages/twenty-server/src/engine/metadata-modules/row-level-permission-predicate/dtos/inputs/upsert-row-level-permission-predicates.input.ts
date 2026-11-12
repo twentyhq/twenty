@@ -105,30 +105,8 @@ export class RowLevelPermissionPredicateGroupInput {
   canDestroyRecords?: boolean;
 }
 
-@InputType()
-export class UpsertRowLevelPermissionPredicatesInput {
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  roleId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  @Field(() => UUIDScalarType)
-  objectMetadataId: string;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => RowLevelPermissionPredicateInput)
-  @Field(() => [RowLevelPermissionPredicateInput])
-  predicates: RowLevelPermissionPredicateInput[];
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => RowLevelPermissionPredicateGroupInput)
-  @Field(() => [RowLevelPermissionPredicateGroupInput])
-  predicateGroups: RowLevelPermissionPredicateGroupInput[];
-
+@InputType({ isAbstract: true })
+export class RowLevelPermissionRuleGrantsInput {
   @IsBoolean()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
@@ -153,4 +131,44 @@ export class UpsertRowLevelPermissionPredicatesInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   canDestroyRecords?: boolean;
+}
+
+@InputType()
+export class RowLevelPermissionRuleGrantInput extends RowLevelPermissionRuleGrantsInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  rootPredicateGroupId: string;
+}
+
+@InputType()
+export class UpsertRowLevelPermissionPredicatesInput extends RowLevelPermissionRuleGrantsInput {
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  roleId: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  @Field(() => UUIDScalarType)
+  objectMetadataId: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionPredicateInput)
+  @Field(() => [RowLevelPermissionPredicateInput])
+  predicates: RowLevelPermissionPredicateInput[];
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionPredicateGroupInput)
+  @Field(() => [RowLevelPermissionPredicateGroupInput])
+  predicateGroups: RowLevelPermissionPredicateGroupInput[];
+
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => RowLevelPermissionRuleGrantInput)
+  @Field(() => [RowLevelPermissionRuleGrantInput], { nullable: true })
+  ruleGrants?: RowLevelPermissionRuleGrantInput[];
 }

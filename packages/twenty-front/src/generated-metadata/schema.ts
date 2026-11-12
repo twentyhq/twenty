@@ -7006,6 +7006,7 @@ export type RowLevelPermissionPredicate = {
   relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
@@ -7024,6 +7025,7 @@ export type RowLevelPermissionPredicateGroup = {
   parentRowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
   roleId: Scalars['String']['output'];
+  rowLevelPermissionRuleId?: Maybe<Scalars['String']['output']>;
 };
 
 export type RowLevelPermissionPredicateGroupInput = {
@@ -7084,6 +7086,15 @@ export type RowLevelPermissionRule = {
   canUpdateRecords: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   objectMetadataId: Scalars['UUID']['output'];
+};
+
+export type RowLevelPermissionRuleGrantInput = {
+  canCreateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canDestroyRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canReadRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canSoftDeleteRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  canUpdateRecords?: InputMaybe<Scalars['Boolean']['input']>;
+  rootPredicateGroupId: Scalars['UUID']['input'];
 };
 
 export type RowLevelRecordsPermissions = {
@@ -8271,6 +8282,7 @@ export type UpsertRowLevelPermissionPredicatesInput = {
   predicateGroups: Array<RowLevelPermissionPredicateGroupInput>;
   predicates: Array<RowLevelPermissionPredicateInput>;
   roleId: Scalars['UUID']['input'];
+  ruleGrants?: InputMaybe<Array<RowLevelPermissionRuleGrantInput>>;
 };
 
 export type UpsertRowLevelPermissionPredicatesResult = {
