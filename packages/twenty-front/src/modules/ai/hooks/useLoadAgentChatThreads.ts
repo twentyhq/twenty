@@ -110,13 +110,11 @@ export const useLoadAgentChatThreads = () => {
       ]);
 
       const currentThreadIds = currentList?.threadIds ?? [];
+      const threadIdsAddedDuringRequest = currentThreadIds.filter(
+        (threadId) => !(listBeforeRequest?.threadIds ?? []).includes(threadId),
+      );
       const keptThreadIds =
-        mode === 'fetch-more'
-          ? currentThreadIds
-          : currentThreadIds.filter(
-              (threadId) =>
-                !(listBeforeRequest?.threadIds ?? []).includes(threadId),
-            );
+        mode === 'fetch-more' ? currentThreadIds : threadIdsAddedDuringRequest;
 
       store.set(agentChatThreadListState.atom, {
         threadIds: [

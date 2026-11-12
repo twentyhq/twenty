@@ -6,6 +6,7 @@ import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThre
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { applyAgentChatThreadLiveFields } from '@/ai/utils/applyAgentChatThreadLiveFields';
 
 export const useAgentChatThreadLiveUpdates = () => {
   const store = useStore();
@@ -36,23 +37,12 @@ export const useAgentChatThreadLiveUpdates = () => {
           return thread;
         }
 
-        const liveFieldNames = Object.entries(
-          fieldUpdateCountsById[thread.id] ?? {},
-        )
-          .filter(([, fieldUpdateCount]) => fieldUpdateCount > updateCount)
-          .map(([fieldName]) => fieldName);
-
-        return {
-          ...thread,
-          ...Object.fromEntries(
-            liveFieldNames
-              .filter((fieldName) => fieldName in storedThread)
-              .map((fieldName) => [
-                fieldName,
-                storedThread[fieldName as keyof AgentChatThreadRecord],
-              ]),
-          ),
-        };
+        return applyAgentChatThreadLiveFields({
+          loadedThread: thread,
+          storedThread,
+          fieldUpdateCounts: fieldUpdateCountsById[thread.id] ?? {},
+          updateCountBeforeLoad: updateCount,
+        });
       });
     },
     [store],
