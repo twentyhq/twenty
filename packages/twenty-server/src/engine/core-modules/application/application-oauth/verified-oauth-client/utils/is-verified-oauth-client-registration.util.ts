@@ -1,10 +1,26 @@
-import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { VERIFIED_OAUTH_CLIENTS } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/constants/verified-oauth-clients.constant';
+import { isDefined } from 'twenty-shared/utils';
 
+import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+
+// The identifier alone is not proof: only the row the server seeds for itself has no owner, creator or secret
 export const isVerifiedOAuthClientRegistration = ({
   universalIdentifier,
-}: Pick<ApplicationRegistrationEntity, 'universalIdentifier'>): boolean =>
-  VERIFIED_OAUTH_CLIENTS.some(
-    ({ registrationUniversalIdentifier }) =>
-      registrationUniversalIdentifier === universalIdentifier,
-  );
+  sourceType,
+  ownerWorkspaceId,
+  createdByUserId,
+  oAuthClientSecretHash,
+}: Pick<
+  ApplicationRegistrationEntity,
+  | 'universalIdentifier'
+  | 'sourceType'
+  | 'ownerWorkspaceId'
+  | 'createdByUserId'
+  | 'oAuthClientSecretHash'
+>): boolean =>
+  isVerifiedOAuthClientUniversalIdentifier(universalIdentifier) &&
+  sourceType === ApplicationRegistrationSourceType.OAUTH_ONLY &&
+  !isDefined(ownerWorkspaceId) &&
+  !isDefined(createdByUserId) &&
+  !isDefined(oAuthClientSecretHash);

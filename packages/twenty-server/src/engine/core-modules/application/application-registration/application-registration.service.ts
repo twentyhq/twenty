@@ -37,6 +37,7 @@ import {
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import {
@@ -501,7 +502,8 @@ export class ApplicationRegistrationService {
     if (
       isDefined(existingByUid) ||
       fields.universalIdentifier.toLowerCase() ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
+      isVerifiedOAuthClientUniversalIdentifier(fields.universalIdentifier)
     ) {
       throw new ApplicationRegistrationException(
         `Universal identifier ${fields.universalIdentifier} is already claimed`,
