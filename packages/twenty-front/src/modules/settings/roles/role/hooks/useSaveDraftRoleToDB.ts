@@ -15,6 +15,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type RowLevelPermissionPredicateGroupLogicalOperator,
@@ -113,7 +114,7 @@ export const useSaveDraftRoleToDB = ({
     const fetchedRole = data?.getRoles.find((role) => role.id === roleId);
 
     if (!isDefined(fetchedRole)) {
-      return;
+      throw new Error(doNotTranslate('Saved role not found'));
     }
 
     const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);

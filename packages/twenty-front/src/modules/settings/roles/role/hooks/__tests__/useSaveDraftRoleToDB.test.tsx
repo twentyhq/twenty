@@ -102,7 +102,7 @@ describe('useSaveDraftRoleToDB', () => {
       data: { createOneRole: { id: ROLE_ID } },
     });
     mockOtherMutation.mockResolvedValue({ data: {} });
-    mockQuery.mockResolvedValue({ data: { getRoles: [] } });
+    mockQuery.mockResolvedValue({ data: { getRoles: [PERSISTED_ROLE] } });
     mockUseMutation.mockImplementation((document: unknown) => [
       document === CreateOneRoleDocument ? mockCreateRole : mockOtherMutation,
     ]);
@@ -273,5 +273,26 @@ describe('useSaveDraftRoleToDB', () => {
     expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
       draftRole,
     );
+  });
+
+  it('should throw when the saved role is missing from the refetched roles', async () => {
+    const onSuccess = jest.fn();
+
+    mockQuery.mockResolvedValue({ data: { getRoles: [] } });
+
+    const { result } = renderUseSaveDraftRoleToDB({
+      isCreateMode: false,
+      draftRole: { ...PERSISTED_ROLE, label: 'Sales team' },
+      persistedRole: PERSISTED_ROLE,
+      onSuccess,
+    });
+
+    await act(async () => {
+      await expect(result.current.saveDraftRoleToDB()).rejects.toThrow(
+        'Saved role not found',
+      );
+    });
+
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 });
