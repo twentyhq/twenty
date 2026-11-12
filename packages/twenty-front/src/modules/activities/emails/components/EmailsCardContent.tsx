@@ -3,9 +3,15 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
+import { IconRefresh } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineThread } from '~/generated/graphql';
 
@@ -21,6 +27,8 @@ const StyledSection = styled(Section.Root)`
 `;
 
 type EmailsCardContentProps = {
+  error?: unknown;
+  onRetry: () => void;
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
   onLastRowVisible: () => Promise<void>;
@@ -28,13 +36,36 @@ type EmailsCardContentProps = {
 };
 
 export const EmailsCardContent = ({
+  error,
+  onRetry,
   firstQueryLoading,
   isFetchingMore,
   onLastRowVisible,
   timelineThreads,
 }: EmailsCardContentProps) => {
+  const { t } = useLingui();
+
   if (firstQueryLoading) {
     return <SkeletonLoader />;
+  }
+
+  if (isDefined(error) && !timelineThreads?.length) {
+    return (
+      <ErrorState.Root>
+        <AnimatedPlaceholder type="errorIndex" />
+        <ErrorState.Content>
+          <ErrorState.Title>{t`We couldn't load the messages`}</ErrorState.Title>
+          <ErrorState.Description>
+            {t`Something went wrong while fetching this record's messages.`}
+          </ErrorState.Description>
+        </ErrorState.Content>
+        <Button
+          startIcon={<IconRefresh />}
+          onClick={onRetry}
+          variant="outline"
+        >{t`Try again`}</Button>
+      </ErrorState.Root>
+    );
   }
 
   if (!timelineThreads?.length) {
