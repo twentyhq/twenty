@@ -65,11 +65,16 @@ export const loadDatabaseEventConditionRelatedRecords = async ({
       continue;
     }
 
+    // A failed read must not stop the other triggers of the batch, which a job retry would run twice
     const result = await findRelatedRecords({
       relationFieldName: relation.fieldName,
       recordIds,
       fieldNames,
-    });
+    }).catch((error: unknown) => ({
+      errorMessage: `Cannot read the records of "${relation.fieldName}": ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    }));
 
     if ('errorMessage' in result) {
       return result;

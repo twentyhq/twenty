@@ -226,6 +226,24 @@ describe('filterEventsMatchingDatabaseEventTrigger', () => {
     ).toEqual({ events: [], conditionErrorMessage: 'Cannot read employees' });
   });
 
+  it('should match nothing and report why when reading related records throws', async () => {
+    expect(
+      await filterEventsMatchingDatabaseEventTrigger({
+        events: [buildEvent({ after: { companyId: 'company-1' } })],
+        eventName: 'opportunity.created',
+        condition: 'company.employees > 100',
+        fields: FIELDS,
+        findRelatedRecords: jest
+          .fn()
+          .mockRejectedValue(new Error('connection reset')),
+      }),
+    ).toEqual({
+      events: [],
+      conditionErrorMessage:
+        'Cannot read the records of "company": connection reset',
+    });
+  });
+
   it('should reject previous values of a relation', async () => {
     const { events, conditionErrorMessage } =
       await filterEventsMatchingDatabaseEventTrigger({
