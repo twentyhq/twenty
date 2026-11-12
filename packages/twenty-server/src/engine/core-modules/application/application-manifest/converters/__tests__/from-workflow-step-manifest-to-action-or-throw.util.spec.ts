@@ -242,6 +242,7 @@ describe('application workflow actions', () => {
     Object.values(WorkflowActionType).filter(
       (type) =>
         type !== WorkflowActionType.CODE &&
+        type !== WorkflowActionType.MCP_TOOL &&
         type !== WorkflowActionType.SEND_CHAT_MESSAGE,
     ),
   )('converts %s to its runtime action', (type) => {

@@ -89,6 +89,8 @@ export { workflowIteratorActionSettingsSchema } from './schemas/iterator-action-
 export { workflowLogicFunctionActionSchema } from './schemas/logic-function-action-schema';
 export { workflowLogicFunctionActionSettingsSchema } from './schemas/logic-function-action-settings-schema';
 export { workflowManualTriggerSchema } from './schemas/manual-trigger-schema';
+export { workflowMcpToolActionSchema } from './schemas/mcp-tool-action-schema';
+export { workflowMcpToolActionSettingsSchema } from './schemas/mcp-tool-action-settings-schema';
 export { objectRecordSchema } from './schemas/object-record-schema';
 export { workflowPickRecordActionSchema } from './schemas/pick-record-action-schema';
 export {
