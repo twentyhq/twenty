@@ -1,20 +1,21 @@
 import { type Response } from 'supertest';
-import { isDefined } from 'twenty-shared/utils';
 
-import { CONNECTION_PROVIDER_FLOW_COOKIE_NAME } from 'src/engine/core-modules/application/connection-provider/constants/connection-provider-flow-cookie-name.constant';
+import {
+  CONNECTION_PROVIDER_FLOW_COOKIE_NAME,
+  CONNECTION_PROVIDER_FLOW_SECURE_COOKIE_NAME,
+} from 'src/engine/core-modules/application/connection-provider/constants/connection-provider-flow-cookie-name.constant';
+
+const FLOW_COOKIE_NAMES = [
+  CONNECTION_PROVIDER_FLOW_COOKIE_NAME,
+  CONNECTION_PROVIDER_FLOW_SECURE_COOKIE_NAME,
+];
 
 export const readFlowCookie = (response: Response): string | undefined => {
-  const setCookie: string | string[] | undefined =
-    response.headers['set-cookie'];
-  const cookies = Array.isArray(setCookie)
-    ? setCookie
-    : isDefined(setCookie)
-      ? [setCookie]
-      : [];
+  const cookies: string[] = [response.headers['set-cookie'] ?? []].flat();
 
   return cookies
     .find((cookie) =>
-      cookie.startsWith(`${CONNECTION_PROVIDER_FLOW_COOKIE_NAME}=`),
+      FLOW_COOKIE_NAMES.some((name) => cookie.startsWith(`${name}=`)),
     )
     ?.split(';')[0];
 };
