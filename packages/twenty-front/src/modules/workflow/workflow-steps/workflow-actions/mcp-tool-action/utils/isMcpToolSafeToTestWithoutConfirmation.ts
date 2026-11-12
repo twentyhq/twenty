@@ -8,4 +8,4 @@ export const isMcpToolSafeToTestWithoutConfirmation = ({
 }: {
   annotations?: McpToolAnnotations | null;
 }): boolean =>
-  annotations?.readOnlyHint === true || annotations?.destructiveHint === false;
+  Boolean(annotations?.readOnlyHint) || annotations?.destructiveHint === false;

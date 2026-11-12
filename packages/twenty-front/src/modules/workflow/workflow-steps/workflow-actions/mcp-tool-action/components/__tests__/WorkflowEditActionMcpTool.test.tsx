@@ -13,6 +13,16 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { type FunctionInput } from 'twenty-shared/workflow';
 
+type TestMcpToolStepResponse = {
+  data: {
+    testMcpToolStep: {
+      success: boolean;
+      result: Record<string, unknown> | null;
+      error: string | null;
+    };
+  };
+};
+
 const mockUseFindManyMcpServers = jest.fn();
 const mockTestMcpToolStep = jest.fn();
 
@@ -315,9 +325,9 @@ describe('WorkflowEditActionMcpTool', () => {
 
   it('keeps the arguments edited while the test was running', async () => {
     const onActionUpdate = jest.fn();
-    let finishTest: (value: unknown) => void = () => {};
+    let finishTest: (response: TestMcpToolStepResponse) => void = () => {};
     mockTestMcpToolStep.mockReturnValue(
-      new Promise((resolve) => {
+      new Promise<TestMcpToolStepResponse>((resolve) => {
         finishTest = resolve;
       }),
     );
