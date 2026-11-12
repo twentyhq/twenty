@@ -77,27 +77,6 @@ describe('validateRowLevelPermissionRules', () => {
     ]);
   });
 
-  it('should reject a rule reference on a predicate inside a group', () => {
-    expect(
-      validateRowLevelPermissionRules({
-        label: 'Sales',
-        rowLevelPermissionRules: [RULE],
-        rowLevelPermissionPredicateGroups: [
-          { ...ROOT_GROUP, rowLevelPermissionRuleUniversalIdentifier: 'rule' },
-        ],
-        rowLevelPermissionPredicates: [
-          {
-            ...PREDICATE,
-            predicateGroupUniversalIdentifier: 'root',
-            rowLevelPermissionRuleUniversalIdentifier: 'rule',
-          },
-        ],
-      }).errors,
-    ).toEqual([
-      'Row level permission predicate inside a predicate group takes the rule of its root group and must not set rowLevelPermissionRuleUniversalIdentifier',
-    ]);
-  });
-
   it('should reject a duplicate rule and a rule without predicates', () => {
     expect(
       validateRowLevelPermissionRules({

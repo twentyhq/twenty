@@ -298,7 +298,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   rowLevelPermissionRule: {
     entityKind: 'row-level permission rule',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      (manifest.roles ?? []).flatMap((role) =>
+        toCandidates(role.rowLevelPermissionRules, () => undefined),
+      ),
   },
   fieldMetadataOption: {
     entityKind: 'field option',

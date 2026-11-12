@@ -96,13 +96,6 @@ export const validateRowLevelPermissionRules = ({
 
     referencedRuleUniversalIdentifiers.add(ruleUniversalIdentifier);
 
-    if (ruleOwner.isNested) {
-      errors.push(
-        `Row level permission ${ruleOwner.kind} inside a predicate group takes the rule of its root group and must not set rowLevelPermissionRuleUniversalIdentifier`,
-      );
-      continue;
-    }
-
     const ruleObjectUniversalIdentifier =
       objectUniversalIdentifierByRuleUniversalIdentifier.get(
         ruleUniversalIdentifier,

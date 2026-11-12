@@ -41,6 +41,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-rule-to-row-level-permission-rule-manifest.util';
+import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
 import { fromFlatRelatedRecordPathToRelatedRecordPathManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-related-record-path-to-related-record-path-manifest.util';
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
@@ -318,6 +320,7 @@ const PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID =
   'babababa-baba-4aba-8aba-babababababa';
 const ROW_LEVEL_PERMISSION_PREDICATE_UID =
   'bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc';
+const ROW_LEVEL_PERMISSION_RULE_UID = 'bdbdbdbd-bdbd-4dbd-8dbd-bdbdbdbdbdbd';
 
 const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicateGroupManifest =
   {
@@ -326,6 +329,7 @@ const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: RowLevelPermissionPredicate
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
     parentPredicateGroupUniversalIdentifier:
       PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
+    rowLevelPermissionRuleUniversalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
     position: 1,
   };
 
@@ -340,14 +344,15 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     workspaceMemberFieldUniversalIdentifier: FIELD_UID,
     workspaceMemberSubFieldName: 'primaryEmail',
     predicateGroupUniversalIdentifier: ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID,
+    rowLevelPermissionRuleUniversalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
     position: 0,
   };
 
 const CREATE_PERMISSION_DERIVED_ON_IMPORT =
   'Not in the manifest yet: importing derives it from the update permission';
 
-const RULE_DERIVED_ON_IMPORT =
-  'rules are derived on import from the predicate groups and predicates';
+const FIELD_PERMISSION_ON_RULE_GAP =
+  'manifests do not declare field permissions on a row level permission rule yet';
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
@@ -785,8 +790,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
     knownGaps: {
       ...NESTED_ROLE_CHILD_GAPS,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
-        'manifests do not declare field permissions on a row level permission rule yet',
-      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
+        FIELD_PERMISSION_ON_RULE_GAP,
+      rowLevelPermissionRuleUniversalIdentifier: FIELD_PERMISSION_ON_RULE_GAP,
     },
   },
   {
@@ -838,7 +843,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
       canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
-      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -868,8 +872,29 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
-      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
+  },
+  {
+    metadataName: 'rowLevelPermissionRule',
+    emittedProperties: Object.keys(
+      fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest({
+        flatRowLevelPermissionRule:
+          fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule(
+            {
+              rowLevelPermissionRuleManifest: {
+                universalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
+                objectUniversalIdentifier: OBJECT_UID,
+              },
+              ...ROLE_CHILD_CONVERSION_CONTEXT,
+            },
+          ),
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+    },
+    workspaceLocalProperties: [],
+    knownGaps: NESTED_ROLE_CHILD_GAPS,
   },
   {
     metadataName: 'permissionFlag',

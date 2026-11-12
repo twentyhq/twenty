@@ -15,6 +15,14 @@ export const fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredica
       flatRowLevelPermissionPredicateGroup.objectMetadataUniversalIdentifier,
     logicalOperator: flatRowLevelPermissionPredicateGroup.logicalOperator,
     ...(isDefined(
+      flatRowLevelPermissionPredicateGroup.rowLevelPermissionRuleUniversalIdentifier,
+    )
+      ? {
+          rowLevelPermissionRuleUniversalIdentifier:
+            flatRowLevelPermissionPredicateGroup.rowLevelPermissionRuleUniversalIdentifier,
+        }
+      : {}),
+    ...(isDefined(
       flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
     )
       ? {

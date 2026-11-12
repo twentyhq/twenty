@@ -44,6 +44,14 @@ export const fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateMan
         }
       : {}),
     ...(isDefined(
+      flatRowLevelPermissionPredicate.rowLevelPermissionRuleUniversalIdentifier,
+    )
+      ? {
+          rowLevelPermissionRuleUniversalIdentifier:
+            flatRowLevelPermissionPredicate.rowLevelPermissionRuleUniversalIdentifier,
+        }
+      : {}),
+    ...(isDefined(
       flatRowLevelPermissionPredicate.positionInRowLevelPermissionPredicateGroup,
     )
       ? {

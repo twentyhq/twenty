@@ -226,6 +226,7 @@ export const reconstructRolesManifest = ({
   }
 
   const {
+    rulesByRoleUniversalIdentifier,
     predicateGroupsByRoleUniversalIdentifier,
     predicatesByRoleUniversalIdentifier,
     coverage: rowLevelPermissionCoverage,
@@ -254,6 +255,9 @@ export const reconstructRolesManifest = ({
       children: {
         objectPermissions: children?.objectPermissions,
         fieldPermissions: children?.fieldPermissions,
+        rowLevelPermissionRules:
+          rulesByRoleUniversalIdentifier.get(flatRole.universalIdentifier) ??
+          [],
         rowLevelPermissionPredicateGroups:
           predicateGroupsByRoleUniversalIdentifier.get(
             flatRole.universalIdentifier,

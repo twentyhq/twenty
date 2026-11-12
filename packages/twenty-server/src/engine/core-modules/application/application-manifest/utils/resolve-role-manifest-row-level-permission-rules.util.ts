@@ -152,9 +152,15 @@ export const resolveRoleManifestRowLevelPermissionRules = ({
     ]),
   );
 
+  const declaredRuleUniversalIdentifiers = new Set(
+    declaredRules.map(({ universalIdentifier }) => universalIdentifier),
+  );
+
   const undeclaredRules = derivedRules
-    .filter(({ universalIdentifier }) =>
-      undeclaredRuleUniversalIdentifiers.has(universalIdentifier),
+    .filter(
+      ({ universalIdentifier }) =>
+        undeclaredRuleUniversalIdentifiers.has(universalIdentifier) &&
+        !declaredRuleUniversalIdentifiers.has(universalIdentifier),
     )
     .map((rule) => {
       const objectPermission = objectPermissionByObjectUniversalIdentifier.get(

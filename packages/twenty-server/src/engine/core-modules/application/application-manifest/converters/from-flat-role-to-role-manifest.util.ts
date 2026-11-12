@@ -7,6 +7,7 @@ export type RoleChildrenManifests = Pick<
   RoleManifest,
   | 'objectPermissions'
   | 'fieldPermissions'
+  | 'rowLevelPermissionRules'
   | 'rowLevelPermissionPredicateGroups'
   | 'rowLevelPermissionPredicates'
   | 'permissionFlagUniversalIdentifiers'
@@ -15,12 +16,16 @@ export type RoleChildrenManifests = Pick<
 const withoutEmptyCollections = ({
   objectPermissions,
   fieldPermissions,
+  rowLevelPermissionRules,
   rowLevelPermissionPredicateGroups,
   rowLevelPermissionPredicates,
   permissionFlagUniversalIdentifiers,
 }: RoleChildrenManifests): RoleChildrenManifests => ({
   ...(isNonEmptyArray(objectPermissions) ? { objectPermissions } : {}),
   ...(isNonEmptyArray(fieldPermissions) ? { fieldPermissions } : {}),
+  ...(isNonEmptyArray(rowLevelPermissionRules)
+    ? { rowLevelPermissionRules }
+    : {}),
   ...(isNonEmptyArray(rowLevelPermissionPredicateGroups)
     ? { rowLevelPermissionPredicateGroups }
     : {}),
