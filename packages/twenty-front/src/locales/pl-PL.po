@@ -10315,6 +10315,11 @@ msgstr "Tożsamość pary w wiadomościach bezpośrednich"
 msgid "Direct messages"
 msgstr "Wiadomości bezpośrednie"
 
+#. js-lingui-id: Rz4s9r
+#: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
+msgid "Direct messages don't support attachments."
+msgstr ""
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
