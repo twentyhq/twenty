@@ -277,7 +277,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
-        deletionTriggerByUniversalIdentifier: Record<string, string>;
+        cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
       })
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
@@ -334,7 +334,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     | WorkspaceMigrationOrchestratorFailedResult
     | (WorkspaceMigrationOrchestratorSuccessfulResult & {
         hasSchemaMetadataChanged: boolean;
-        deletionTriggerByUniversalIdentifier: Record<string, string>;
+        cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
       })
   > {
     const callerMetadataNames = Object.keys(
@@ -355,7 +355,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     let resolvedFlatEntityOperationRecordByMetadataName =
       allFlatEntityOperationRecordByMetadataName;
-    let deletionTriggerByUniversalIdentifier: Record<string, string> = {};
+    let cascadeDeletionParentByUniversalIdentifier: Record<string, string> = {};
 
     if (!skipSideEffectExpandEngine) {
       const sideEffectExpansionResult =
@@ -373,8 +373,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
       resolvedFlatEntityOperationRecordByMetadataName =
         sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
-      deletionTriggerByUniversalIdentifier =
-        sideEffectExpansionResult.deletionTriggerByUniversalIdentifier;
+      cascadeDeletionParentByUniversalIdentifier =
+        sideEffectExpansionResult.cascadeDeletionParentByUniversalIdentifier;
     }
 
     const result =
@@ -398,7 +398,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return result;
     }
 
-    return { ...result, deletionTriggerByUniversalIdentifier };
+    return { ...result, cascadeDeletionParentByUniversalIdentifier };
   }
 
   private async computeAndRunWorkspaceMigrationFromResolvedOperations({

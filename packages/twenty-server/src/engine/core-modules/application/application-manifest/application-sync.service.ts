@@ -80,7 +80,7 @@ export class ApplicationSyncService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
-    deletionTriggerByUniversalIdentifier: Record<string, string>;
+    cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
   }> {
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
@@ -109,7 +109,7 @@ export class ApplicationSyncService {
     let syncResult: {
       workspaceMigration: WorkspaceMigration;
       hasSchemaMetadataChanged: boolean;
-      deletionTriggerByUniversalIdentifier: Record<string, string>;
+      cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
     };
 
     try {

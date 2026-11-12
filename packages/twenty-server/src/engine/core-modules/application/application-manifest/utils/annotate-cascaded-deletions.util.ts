@@ -38,13 +38,13 @@ const getRequiredParentReferences = (
     .map((foreignKey) => action.flatEntity?.[foreignKey])
     .filter(isNonEmptyString);
 
-// A deletion's cause is its side-effect trigger, else a deleted parent it cannot exist without.
+// A deletion's cause is its cascade parent, else a deleted parent it cannot exist without.
 export const annotateCascadedDeletions = <TAction extends AnnotatableAction>({
   actions,
-  deletionTriggerByUniversalIdentifier = {},
+  cascadeDeletionParentByUniversalIdentifier = {},
 }: {
   actions: TAction[];
-  deletionTriggerByUniversalIdentifier?: Record<string, string>;
+  cascadeDeletionParentByUniversalIdentifier?: Record<string, string>;
 }): CascadeAnnotatedAction<TAction>[] => {
   const deletionByUniversalIdentifier = new Map<string, TAction>();
 
@@ -59,7 +59,9 @@ export const annotateCascadedDeletions = <TAction extends AnnotatableAction>({
 
   const findCause = (action: TAction) =>
     [
-      deletionTriggerByUniversalIdentifier[action.universalIdentifier ?? ''],
+      cascadeDeletionParentByUniversalIdentifier[
+        action.universalIdentifier ?? ''
+      ],
       ...getRequiredParentReferences(action),
     ]
       .filter(isNonEmptyString)

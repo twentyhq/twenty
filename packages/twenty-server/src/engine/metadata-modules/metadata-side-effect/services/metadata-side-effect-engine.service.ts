@@ -98,7 +98,8 @@ export class MetadataSideEffectEngineService {
     const systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[] =
       [];
     const sideEffectFailures: MetadataSideEffectFailure[] = [];
-    const deletionTriggerByUniversalIdentifier: Record<string, string> = {};
+    const cascadeDeletionParentByUniversalIdentifier: Record<string, string> =
+      {};
 
     const triggerMatrix =
       allFlatEntityOperationRecordByMetadataName as unknown as GenericAllFlatEntityOperationRecordByMetadataName;
@@ -149,8 +150,9 @@ export class MetadataSideEffectEngineService {
             sideEffectOperations:
               sideEffectResult.operations as unknown as GenericMetadataSideEffectOperationsByMetadataName,
             systemSideEffectUniversalIdentifierCollisions,
-            triggerUniversalIdentifier: triggerFlatEntity.universalIdentifier,
-            deletionTriggerByUniversalIdentifier,
+            parentDeletionUniversalIdentifier:
+              triggerFlatEntity.universalIdentifier,
+            cascadeDeletionParentByUniversalIdentifier,
           });
         }
       }
@@ -184,7 +186,7 @@ export class MetadataSideEffectEngineService {
       status: 'success',
       allFlatEntityOperationRecordByMetadataName:
         expandedMatrix as unknown as AllFlatEntityOperationRecordByMetadataName,
-      deletionTriggerByUniversalIdentifier,
+      cascadeDeletionParentByUniversalIdentifier,
     };
   }
 
@@ -192,14 +194,14 @@ export class MetadataSideEffectEngineService {
     expandedMatrix,
     sideEffectOperations,
     systemSideEffectUniversalIdentifierCollisions,
-    triggerUniversalIdentifier,
-    deletionTriggerByUniversalIdentifier,
+    parentDeletionUniversalIdentifier,
+    cascadeDeletionParentByUniversalIdentifier,
   }: {
     expandedMatrix: GenericAllFlatEntityOperationRecordByMetadataName;
     sideEffectOperations: GenericMetadataSideEffectOperationsByMetadataName;
     systemSideEffectUniversalIdentifierCollisions: SystemSideEffectUniversalIdentifierCollision[];
-    triggerUniversalIdentifier: string;
-    deletionTriggerByUniversalIdentifier: Record<string, string>;
+    parentDeletionUniversalIdentifier: string;
+    cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
   }): void {
     for (const metadataName of Object.keys(sideEffectOperations)) {
       const operationBuckets = sideEffectOperations[metadataName];
@@ -224,9 +226,9 @@ export class MetadataSideEffectEngineService {
           });
 
           if (isAdded && operation === 'delete') {
-            deletionTriggerByUniversalIdentifier[
+            cascadeDeletionParentByUniversalIdentifier[
               sideEffectFlatEntity.universalIdentifier
-            ] = triggerUniversalIdentifier;
+            ] = parentDeletionUniversalIdentifier;
           }
         }
       }

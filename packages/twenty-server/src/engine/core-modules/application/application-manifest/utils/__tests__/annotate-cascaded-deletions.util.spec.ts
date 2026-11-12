@@ -14,15 +14,15 @@ const deletion = ({
 
 const cascadeRootsOf = ({
   actions,
-  deletionTriggerByUniversalIdentifier,
+  cascadeDeletionParentByUniversalIdentifier,
 }: {
   actions: ReturnType<typeof deletion>[];
-  deletionTriggerByUniversalIdentifier?: Record<string, string>;
+  cascadeDeletionParentByUniversalIdentifier?: Record<string, string>;
 }) =>
   Object.fromEntries(
     annotateCascadedDeletions({
       actions,
-      deletionTriggerByUniversalIdentifier,
+      cascadeDeletionParentByUniversalIdentifier,
     }).map((action) => [
       action.universalIdentifier,
       action.cascadedFromUniversalIdentifier,
@@ -30,7 +30,7 @@ const cascadeRootsOf = ({
   );
 
 describe('annotateCascadedDeletions', () => {
-  it('points deletions the side-effect engine emitted at their trigger', () => {
+  it('points deletions the side-effect engine cascaded at their parent deletion', () => {
     expect(
       cascadeRootsOf({
         actions: [
@@ -48,7 +48,7 @@ describe('annotateCascadedDeletions', () => {
             universalIdentifier: 'tax-id-index',
           }),
         ],
-        deletionTriggerByUniversalIdentifier: {
+        cascadeDeletionParentByUniversalIdentifier: {
           'tax-id-widget': 'tax-id',
           'tax-id-index': 'tax-id',
         },
@@ -60,7 +60,7 @@ describe('annotateCascadedDeletions', () => {
     });
   });
 
-  it('follows required parents and triggers up to the root deletion', () => {
+  it('follows cascade and required parents up to the root deletion', () => {
     expect(
       cascadeRootsOf({
         actions: [
@@ -83,7 +83,7 @@ describe('annotateCascadedDeletions', () => {
             },
           }),
         ],
-        deletionTriggerByUniversalIdentifier: { 'run-view': 'run' },
+        cascadeDeletionParentByUniversalIdentifier: { 'run-view': 'run' },
       }),
     ).toEqual({
       run: undefined,
@@ -115,7 +115,7 @@ describe('annotateCascadedDeletions', () => {
     ).toEqual({ 'end-date': undefined, 'deal-calendar': undefined });
   });
 
-  it('lists a deletion whose trigger is not deleted in the same migration', () => {
+  it('lists a deletion whose cascade parent is not deleted in the same migration', () => {
     expect(
       cascadeRootsOf({
         actions: [
@@ -124,7 +124,7 @@ describe('annotateCascadedDeletions', () => {
             universalIdentifier: 'widget',
           }),
         ],
-        deletionTriggerByUniversalIdentifier: { widget: 'updated-field' },
+        cascadeDeletionParentByUniversalIdentifier: { widget: 'updated-field' },
       }),
     ).toEqual({ widget: undefined });
   });
@@ -142,7 +142,10 @@ describe('annotateCascadedDeletions', () => {
             universalIdentifier: 'right',
           }),
         ],
-        deletionTriggerByUniversalIdentifier: { left: 'right', right: 'left' },
+        cascadeDeletionParentByUniversalIdentifier: {
+          left: 'right',
+          right: 'left',
+        },
       }),
     ).toEqual({ left: undefined, right: undefined });
   });

@@ -8,7 +8,7 @@ export type MetadataSideEffectExpansionResult =
   | {
       status: 'success';
       allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
-      deletionTriggerByUniversalIdentifier: Record<string, string>;
+      cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
     }
   | {
       status: 'fail';

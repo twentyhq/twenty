@@ -49,7 +49,7 @@ export class ApplicationManifestApplyService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
-    deletionTriggerByUniversalIdentifier: Record<string, string>;
+    cascadeDeletionParentByUniversalIdentifier: Record<string, string>;
   }> {
     // The application version is only persisted by a successful sync: no
     // version means no sync ever completed, so the SDK client must be
@@ -59,7 +59,7 @@ export class ApplicationManifestApplyService {
     const {
       workspaceMigration,
       hasSchemaMetadataChanged,
-      deletionTriggerByUniversalIdentifier,
+      cascadeDeletionParentByUniversalIdentifier,
     } = await this.applicationSyncService.synchronizeFromManifest({
       workspaceId,
       manifest,
@@ -86,7 +86,7 @@ export class ApplicationManifestApplyService {
     return {
       workspaceMigration,
       hasSchemaMetadataChanged,
-      deletionTriggerByUniversalIdentifier,
+      cascadeDeletionParentByUniversalIdentifier,
     };
   }
 
