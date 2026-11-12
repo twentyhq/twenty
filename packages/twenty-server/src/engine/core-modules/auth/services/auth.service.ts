@@ -738,7 +738,7 @@ export class AuthService {
     workspace,
     requestBaseUrl,
   }: {
-    workspace: WorkspaceEntity;
+    workspace: WorkspaceDomainConfig;
     requestBaseUrl: string;
   }): string[] {
     const { customUrl, subdomainUrl } =
