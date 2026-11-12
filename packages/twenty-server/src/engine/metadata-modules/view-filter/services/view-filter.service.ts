@@ -267,23 +267,14 @@ export class ViewFilterService {
     });
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFilterEntity[]> {
-    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
-      where: {
-        deletedAt: IsNull(),
-      },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view', 'viewFilterGroup'],
-    });
-
-    return viewFilters.filter(
-      (viewFilter) =>
-        isDefined(viewFilter.view) &&
-        isViewVisibleToUser(viewFilter.view, userWorkspaceId),
-    );
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterEntity[]> {
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
   }
 
   async findManyPaginated({
@@ -343,14 +334,34 @@ export class ViewFilterService {
     };
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFilterEntity[]> {
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterEntity[]> {
+    return this.findManyVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
+    });
+  }
+
+  private async findManyVisibleToUser({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterEntity[]> {
     const viewFilters = await this.viewFilterRepository.find(workspaceId, {
       where: {
-        viewId,
+        ...(isDefined(viewId) ? { viewId } : {}),
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
@@ -364,11 +375,15 @@ export class ViewFilterService {
     );
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFilterEntity | null> {
+  async findById({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterEntity | null> {
     const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
         id,

@@ -35,17 +35,17 @@ export class ViewFilterGroupResolver {
     viewId?: string,
   ): Promise<ViewFilterGroupDTO[]> {
     if (viewId) {
-      return this.viewFilterGroupService.findByViewId(
-        workspace.id,
+      return this.viewFilterGroupService.findByViewId({
+        workspaceId: workspace.id,
         viewId,
         userWorkspaceId,
-      );
+      });
     }
 
-    return this.viewFilterGroupService.findByWorkspaceId(
-      workspace.id,
+    return this.viewFilterGroupService.findByWorkspaceId({
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
   }
 
   @Query(() => ViewFilterGroupDTO, { nullable: true })
@@ -55,11 +55,11 @@ export class ViewFilterGroupResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupDTO | null> {
-    return this.viewFilterGroupService.findById(
+    return this.viewFilterGroupService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
   }
 
   @Mutation(() => ViewFilterGroupDTO)

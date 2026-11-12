@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { isArray } from '@sniptt/guards';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   createWebhook,
@@ -19,6 +20,7 @@ import {
   ViewVisibility,
   WorkflowVisibility,
 } from 'twenty-shared/types';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -57,7 +59,7 @@ const buildCreatedEventBatch = ({
 describe('unlisted view events (integration)', () => {
   let publisher: MetadataEventPublisher;
   let emitter: MetadataEventEmitter;
-  let broadcastSpy: jest.SpyInstance;
+  let broadcastSpy: jest.SpiedFunction<WorkspaceEventBroadcaster['broadcast']>;
   let unlistedViewId: string;
   let workspaceViewId: string;
   let creatorUserWorkspaceId: string;
@@ -144,7 +146,7 @@ describe('unlisted view events (integration)', () => {
     recordId: string;
   }): WorkspaceBroadcastEvent | undefined =>
     broadcastSpy.mock.calls
-      .flatMap(([{ events }]) => events as WorkspaceBroadcastEvent[])
+      .flatMap(([{ events }]) => events)
       .find(
         (event) =>
           event.entityName === entityName && event.recordId === recordId,
@@ -186,8 +188,11 @@ describe('unlisted view events (integration)', () => {
     ).handle(buildCreatedEventBatch({ metadataName, record }));
 
     const recordIds = addJob.mock.calls
-      .flatMap(([, jobData]) => jobData as CallMetadataWebhookJobData[])
-      .filter((jobData) => jobData.webhookId === webhookId)
+      .flatMap(([, jobData]) => (isArray(jobData) ? jobData : []))
+      .filter(
+        (jobData): jobData is CallMetadataWebhookJobData =>
+          isPlainObject(jobData) && jobData.webhookId === webhookId,
+      )
       .map((jobData) => jobData.event.recordId);
 
     addJob.mockRestore();

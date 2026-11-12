@@ -82,11 +82,11 @@ export class ViewFilterController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    const viewFilter = await this.viewFilterService.findById(
+    const viewFilter = await this.viewFilterService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
 
     if (!isDefined(viewFilter)) {
       throw new ViewFilterException(

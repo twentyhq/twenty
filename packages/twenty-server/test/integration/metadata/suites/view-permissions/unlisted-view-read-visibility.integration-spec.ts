@@ -19,57 +19,54 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-type ViewChildRead = {
-  childName: string;
-  listQueryName: string;
-  oneQueryName: string;
-  restPath?: string;
-  supportsListAll: boolean;
-};
-
-const VIEW_CHILD_READS: ViewChildRead[] = [
+const VIEW_CHILD_READS = [
   {
     childName: 'view field',
     listQueryName: 'getViewFields',
     oneQueryName: 'getViewField',
-    restPath: 'viewFields',
-    supportsListAll: false,
   },
   {
     childName: 'view filter',
     listQueryName: 'getViewFilters',
     oneQueryName: 'getViewFilter',
-    restPath: 'viewFilters',
-    supportsListAll: true,
   },
   {
     childName: 'view sort',
     listQueryName: 'getViewSorts',
     oneQueryName: 'getViewSort',
-    restPath: 'viewSorts',
-    supportsListAll: true,
   },
   {
     childName: 'view group',
     listQueryName: 'getViewGroups',
     oneQueryName: 'getViewGroup',
-    restPath: 'viewGroups',
-    supportsListAll: true,
   },
   {
     childName: 'view filter group',
     listQueryName: 'getViewFilterGroups',
     oneQueryName: 'getViewFilterGroup',
-    restPath: 'viewFilterGroups',
-    supportsListAll: true,
   },
   {
     childName: 'view field group',
     listQueryName: 'getViewFieldGroups',
     oneQueryName: 'getViewFieldGroup',
-    supportsListAll: false,
   },
+];
+
+const VIEW_CHILD_LIST_ALL_READS = [
+  { childName: 'view filter', listQueryName: 'getViewFilters' },
+  { childName: 'view sort', listQueryName: 'getViewSorts' },
+  { childName: 'view group', listQueryName: 'getViewGroups' },
+  { childName: 'view filter group', listQueryName: 'getViewFilterGroups' },
+];
+
+const VIEW_CHILD_REST_READS = [
+  { childName: 'view field', restPath: 'viewFields' },
+  { childName: 'view filter', restPath: 'viewFilters' },
+  { childName: 'view sort', restPath: 'viewSorts' },
+  { childName: 'view group', restPath: 'viewGroups' },
+  { childName: 'view filter group', restPath: 'viewFilterGroups' },
 ];
 
 const VIEW_WITH_CHILDREN_GQL_FIELDS = `
@@ -154,7 +151,7 @@ const findChildIds = async ({
   token: string;
 }): Promise<string[]> => {
   const response = await makeMetadataApiRequest(
-    viewId === undefined
+    !isDefined(viewId)
       ? {
           query: gql`
             query FindAllViewChildren {
@@ -403,7 +400,7 @@ describe('unlisted view read visibility (integration)', () => {
 
   describe.each(VIEW_CHILD_READS)(
     '$childName',
-    ({ childName, listQueryName, oneQueryName, restPath, supportsListAll }) => {
+    ({ childName, listQueryName, oneQueryName }) => {
       it('should return the child to the view creator', async () => {
         const childId = childIdByChildName[childName];
 
@@ -421,19 +418,56 @@ describe('unlisted view read visibility (integration)', () => {
             token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
           }),
         ).toEqual({ id: childId });
+      });
 
-        if (supportsListAll) {
+      it.each(getNonCreatorCallers())(
+        'should behave as a missing child for $caller',
+        async ({ token }) => {
+          const childId = childIdByChildName[childName];
+
           expect(
             await findChildIds({
               listQueryName,
-              token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+              viewId: unlistedViewId,
+              token,
             }),
-          ).toContain(childId);
-        }
+          ).toEqual([]);
+          expect(
+            await findChildById({ oneQueryName, childId, token }),
+          ).toBeNull();
+        },
+      );
+    },
+  );
 
-        if (restPath === undefined) {
-          return;
-        }
+  describe.each(VIEW_CHILD_LIST_ALL_READS)(
+    '$childName listed without a view',
+    ({ childName, listQueryName }) => {
+      it('should include the child for the view creator', async () => {
+        expect(
+          await findChildIds({
+            listQueryName,
+            token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+          }),
+        ).toContain(childIdByChildName[childName]);
+      });
+
+      it.each(getNonCreatorCallers())(
+        'should leave the child out for $caller',
+        async ({ token }) => {
+          expect(await findChildIds({ listQueryName, token })).not.toContain(
+            childIdByChildName[childName],
+          );
+        },
+      );
+    },
+  );
+
+  describe.each(VIEW_CHILD_REST_READS)(
+    '$childName through REST',
+    ({ childName, restPath }) => {
+      it('should return the child to the view creator', async () => {
+        const childId = childIdByChildName[childName];
 
         const restListResponse = await makeRestApiRequest({
           method: 'get',
@@ -459,29 +493,6 @@ describe('unlisted view read visibility (integration)', () => {
       it.each(getNonCreatorCallers())(
         'should behave as a missing child for $caller',
         async ({ token }) => {
-          const childId = childIdByChildName[childName];
-
-          expect(
-            await findChildIds({
-              listQueryName,
-              viewId: unlistedViewId,
-              token,
-            }),
-          ).toEqual([]);
-          expect(
-            await findChildById({ oneQueryName, childId, token }),
-          ).toBeNull();
-
-          if (supportsListAll) {
-            expect(await findChildIds({ listQueryName, token })).not.toContain(
-              childId,
-            );
-          }
-
-          if (restPath === undefined) {
-            return;
-          }
-
           const restListResponse = await makeRestApiRequest({
             method: 'get',
             path: `/metadata/${restPath}?viewId=${unlistedViewId}`,
@@ -494,7 +505,7 @@ describe('unlisted view read visibility (integration)', () => {
 
           const restOneResponse = await makeRestApiRequest({
             method: 'get',
-            path: `/metadata/${restPath}/${childId}`,
+            path: `/metadata/${restPath}/${childIdByChildName[childName]}`,
             bearer: token,
           });
 

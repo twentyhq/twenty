@@ -35,17 +35,17 @@ export class ViewSortResolver {
     viewId?: string,
   ): Promise<ViewSortDTO[]> {
     if (viewId) {
-      return this.viewSortService.findByViewId(
-        workspace.id,
+      return this.viewSortService.findByViewId({
+        workspaceId: workspace.id,
         viewId,
         userWorkspaceId,
-      );
+      });
     }
 
-    return this.viewSortService.findByWorkspaceId(
-      workspace.id,
+    return this.viewSortService.findByWorkspaceId({
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
   }
 
   @Query(() => ViewSortDTO, { nullable: true })
@@ -55,7 +55,7 @@ export class ViewSortResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById(id, workspaceId, userWorkspaceId);
+    return this.viewSortService.findById({ id, workspaceId, userWorkspaceId });
   }
 
   @Mutation(() => ViewSortDTO)

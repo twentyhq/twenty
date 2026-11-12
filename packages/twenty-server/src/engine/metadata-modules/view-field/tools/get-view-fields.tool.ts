@@ -43,11 +43,11 @@ export class GetViewFieldsTool extends BaseTool<
     context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewFieldsInputSchema>): Promise<ToolOutput> {
     const [viewFields, { flatFieldMetadataMaps }] = await Promise.all([
-      this.viewFieldService.findByViewId(
+      this.viewFieldService.findByViewId({
         workspaceId,
-        input.viewId,
+        viewId: input.viewId,
         userWorkspaceId,
-      ),
+      }),
       this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
         workspaceId,
         flatMapsKeys: ['flatFieldMetadataMaps'],

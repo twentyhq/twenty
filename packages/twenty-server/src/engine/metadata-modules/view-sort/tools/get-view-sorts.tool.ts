@@ -33,11 +33,11 @@ export class GetViewSortsTool extends BaseTool<typeof getViewSortsInputSchema> {
     input,
     context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewSortsInputSchema>): Promise<ToolOutput> {
-    const sorts = await this.viewSortService.findByViewId(
+    const sorts = await this.viewSortService.findByViewId({
       workspaceId,
-      input.viewId,
+      viewId: input.viewId,
       userWorkspaceId,
-    );
+    });
 
     return {
       success: true,

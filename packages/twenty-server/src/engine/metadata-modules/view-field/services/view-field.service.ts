@@ -285,10 +285,13 @@ export class ViewFieldService {
     });
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldDTO[]> {
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldDTO[]> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -315,11 +318,15 @@ export class ViewFieldService {
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldDTO[]> {
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldDTO[]> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -347,11 +354,15 @@ export class ViewFieldService {
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldDTO | null> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

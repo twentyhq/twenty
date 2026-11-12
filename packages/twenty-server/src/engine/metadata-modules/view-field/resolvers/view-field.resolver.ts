@@ -31,11 +31,11 @@ export class ViewFieldResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO[]> {
-    return this.viewFieldService.findByViewId(
-      workspace.id,
+    return this.viewFieldService.findByViewId({
+      workspaceId: workspace.id,
       viewId,
       userWorkspaceId,
-    );
+    });
   }
 
   @Query(() => ViewFieldDTO, { nullable: true })
@@ -45,7 +45,11 @@ export class ViewFieldResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO | null> {
-    return this.viewFieldService.findById(id, workspace.id, userWorkspaceId);
+    return this.viewFieldService.findById({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewFieldDTO)

@@ -41,7 +41,7 @@ import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { fromFlatSearchFieldMetadataToSearchFieldMetadataDto } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-flat-search-field-metadata-to-search-field-metadata-dto.util';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
@@ -716,7 +716,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -814,7 +814,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -847,7 +847,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -893,7 +893,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -931,7 +931,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -969,7 +969,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }
@@ -1007,7 +1007,7 @@ export class DataloaderService {
 
         if (
           !isDefined(flatView) ||
-          !isViewVisibleToUser(flatView, userWorkspaceId)
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
         ) {
           return [];
         }

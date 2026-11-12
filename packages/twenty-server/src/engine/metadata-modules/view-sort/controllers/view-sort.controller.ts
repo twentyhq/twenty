@@ -61,15 +61,15 @@ export class ViewSortController {
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewSortService.findByViewId(
-          workspace.id,
+      ? await this.viewSortService.findByViewId({
+          workspaceId: workspace.id,
           viewId,
           userWorkspaceId,
-        )
-      : await this.viewSortService.findByWorkspaceId(
-          workspace.id,
+        })
+      : await this.viewSortService.findByWorkspaceId({
+          workspaceId: workspace.id,
           userWorkspaceId,
-        );
+        });
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -81,11 +81,11 @@ export class ViewSortController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewSortDTO> {
-    const viewSort = await this.viewSortService.findById(
+    const viewSort = await this.viewSortService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
 
     if (!isDefined(viewSort)) {
       throw new ViewSortException(

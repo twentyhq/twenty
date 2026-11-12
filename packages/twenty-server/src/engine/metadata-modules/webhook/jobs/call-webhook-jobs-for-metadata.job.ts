@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -20,16 +20,14 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
-type WebhookEventRecord = {
-  visibility?: WorkflowVisibility | ViewVisibility | null;
-  coreWorkflowId?: string | null;
-  viewId?: string | null;
-};
+const getWebhookEventRecord = (
+  event: MetadataEventBatch['events'][number],
+): Record<string, unknown> | undefined => {
+  const record: unknown =
+    event.type === 'deleted' ? event.properties.before : event.properties.after;
 
-const getWebhookEventRecord = (event: MetadataEventBatch['events'][number]) =>
-  (event.type === 'deleted'
-    ? event.properties.before
-    : event.properties.after) as WebhookEventRecord | undefined;
+  return isPlainObject(record) ? record : undefined;
+};
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsForMetadataJob {
@@ -114,7 +112,10 @@ export class CallWebhookJobsForMetadataJob {
     metadataName,
     workspaceId,
     events,
-  }: MetadataEventBatch): Promise<MetadataEventBatch['events']> {
+  }: Pick<
+    MetadataEventBatch,
+    'metadataName' | 'workspaceId' | 'events'
+  >): Promise<MetadataEventBatch['events']> {
     if (metadataName === 'view') {
       return events.filter(
         (event) =>

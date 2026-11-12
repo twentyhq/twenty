@@ -244,12 +244,44 @@ export class ViewSortService {
     return fromFlatViewSortToViewSortDto(existingFlatViewSort);
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewSortEntity[]> {
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }
+
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
+    return this.findManyVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
+    });
+  }
+
+  private async findManyVisibleToUser({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity[]> {
     const viewSorts = await this.viewSortRepository.find(workspaceId, {
       where: {
+        ...(isDefined(viewId) ? { viewId } : {}),
         deletedAt: IsNull(),
       },
       order: { createdAt: 'ASC', id: 'ASC' },
@@ -263,32 +295,15 @@ export class ViewSortService {
     );
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewSortEntity[]> {
-    const viewSorts = await this.viewSortRepository.find(workspaceId, {
-      where: {
-        viewId,
-        deletedAt: IsNull(),
-      },
-      order: { createdAt: 'ASC', id: 'ASC' },
-      relations: ['workspace', 'view'],
-    });
-
-    return viewSorts.filter(
-      (viewSort) =>
-        isDefined(viewSort.view) &&
-        isViewVisibleToUser(viewSort.view, userWorkspaceId),
-    );
-  }
-
-  async findById(
-    id: string,
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewSortEntity | null> {
+  async findById({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewSortEntity | null> {
     const viewSort = await this.viewSortRepository.findOne(workspaceId, {
       where: {
         id,

@@ -221,17 +221,17 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
   }): Promise<ObjectRecordFilter> {
     assertIsDefinedOrThrow(args.viewId);
 
-    const viewFilters = await this.viewFilterService.findByViewId(
+    const viewFilters = await this.viewFilterService.findByViewId({
       workspaceId,
-      args.viewId,
+      viewId: args.viewId,
       userWorkspaceId,
-    );
+    });
 
-    const viewFilterGroups = await this.viewFilterGroupService.findByViewId(
+    const viewFilterGroups = await this.viewFilterGroupService.findByViewId({
       workspaceId,
-      args.viewId,
+      viewId: args.viewId,
       userWorkspaceId,
-    );
+    });
 
     const recordFilters = viewFilters.map((viewFilter) => {
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({

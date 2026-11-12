@@ -95,11 +95,11 @@ export class ViewFieldGroupResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO[]> {
-    return this.viewFieldGroupService.findByViewId(
-      workspace.id,
+    return this.viewFieldGroupService.findByViewId({
+      workspaceId: workspace.id,
       viewId,
       userWorkspaceId,
-    );
+    });
   }
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
@@ -110,11 +110,11 @@ export class ViewFieldGroupResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO | null> {
-    return this.viewFieldGroupService.findById(
+    return this.viewFieldGroupService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
   }
 
   @Mutation(() => ViewFieldGroupDTO)

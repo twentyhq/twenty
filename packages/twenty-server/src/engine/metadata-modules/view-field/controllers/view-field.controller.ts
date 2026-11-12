@@ -62,15 +62,15 @@ export class ViewFieldController {
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewFieldService.findByViewId(
-          workspace.id,
+      ? await this.viewFieldService.findByViewId({
+          workspaceId: workspace.id,
           viewId,
           userWorkspaceId,
-        )
-      : await this.viewFieldService.findByWorkspaceId(
-          workspace.id,
+        })
+      : await this.viewFieldService.findByWorkspaceId({
+          workspaceId: workspace.id,
           userWorkspaceId,
-        );
+        });
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -82,11 +82,11 @@ export class ViewFieldController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
-    const viewField = await this.viewFieldService.findById(
+    const viewField = await this.viewFieldService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
 
     if (!isDefined(viewField)) {
       throw new ViewFieldException(

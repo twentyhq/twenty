@@ -64,15 +64,15 @@ export class ViewFilterGroupController {
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewFilterGroupService.findByViewId(
-          workspace.id,
+      ? await this.viewFilterGroupService.findByViewId({
+          workspaceId: workspace.id,
           viewId,
           userWorkspaceId,
-        )
-      : await this.viewFilterGroupService.findByWorkspaceId(
-          workspace.id,
+        })
+      : await this.viewFilterGroupService.findByWorkspaceId({
+          workspaceId: workspace.id,
           userWorkspaceId,
-        );
+        });
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -84,11 +84,11 @@ export class ViewFilterGroupController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupDTO> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById(
+    const viewFilterGroup = await this.viewFilterGroupService.findById({
       id,
-      workspace.id,
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
 
     if (!isDefined(viewFilterGroup)) {
       throw new ViewFilterGroupException(

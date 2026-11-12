@@ -277,11 +277,15 @@ export class ViewFieldGroupService {
     });
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldGroupDTO[]> {
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldGroupDTO[]> {
     const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -309,11 +313,15 @@ export class ViewFieldGroupService {
       .sort((a, b) => a.position - b.position);
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldGroupDTO | null> {
+  async findById({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFieldGroupDTO | null> {
     const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {

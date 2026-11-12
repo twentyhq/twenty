@@ -33,17 +33,17 @@ export class ViewFilterResolver {
     viewId?: string,
   ): Promise<ViewFilterDTO[]> {
     if (viewId) {
-      return this.viewFilterService.findByViewId(
-        workspace.id,
+      return this.viewFilterService.findByViewId({
+        workspaceId: workspace.id,
         viewId,
         userWorkspaceId,
-      );
+      });
     }
 
-    return this.viewFilterService.findByWorkspaceId(
-      workspace.id,
+    return this.viewFilterService.findByWorkspaceId({
+      workspaceId: workspace.id,
       userWorkspaceId,
-    );
+    });
   }
 
   @Query(() => ViewFilterDTO, { nullable: true })
@@ -53,7 +53,11 @@ export class ViewFilterResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO | null> {
-    return this.viewFilterService.findById(id, workspace.id, userWorkspaceId);
+    return this.viewFilterService.findById({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewFilterDTO)
