@@ -3,7 +3,7 @@ import { type ServerRouteTriggerSettings } from '@/application/serverRouteTrigge
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import { type ToolTriggerSettings } from '@/application/toolTriggerSettingsType';
 import { type WorkflowActionTriggerSettings } from '@/application/workflowActionTriggerSettingsType';
-import { type HTTPMethod } from '@/types';
+import { type HTTPMethod, type ValidationRuleBindings } from '@/types';
 
 export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
@@ -32,6 +32,8 @@ export type DatabaseEventTriggerSettings = {
   updatedFields?: string[];
   batchMode?: boolean;
   condition?: string;
+  // Field universal identifiers by condition path, as validation rules store them
+  conditionBindings?: ValidationRuleBindings;
 };
 
 export type HttpRouteTriggerSettings = {

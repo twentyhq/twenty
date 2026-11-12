@@ -5,6 +5,7 @@ import {
   type DatabaseEventTriggerSettings,
   isRecordEventTriggerManifestSettings,
 } from 'twenty-shared/application';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -40,7 +41,7 @@ const throwInvalidTrigger = ({
   );
 };
 
-const assertConditionCompilesOrThrow = ({
+const compileConditionOrThrow = ({
   condition,
   objectUniversalIdentifier,
   lookup,
@@ -50,7 +51,7 @@ const assertConditionCompilesOrThrow = ({
   objectUniversalIdentifier: string | undefined;
   lookup: DatabaseEventTriggerManifestLookup;
   subject: string;
-}) => {
+}): ValidationRuleBindings => {
   if (!isDefined(objectUniversalIdentifier)) {
     return throwInvalidTrigger({
       subject,
@@ -69,12 +70,12 @@ const assertConditionCompilesOrThrow = ({
     fields,
   });
 
-  if (!compilation.isValid) {
-    throwInvalidTrigger({
-      subject,
-      reason: `condition "${condition}" is invalid: ${compilation.errorMessage}`,
-    });
-  }
+  return compilation.isValid
+    ? compilation.bindings
+    : throwInvalidTrigger({
+        subject,
+        reason: `condition "${condition}" is invalid: ${compilation.errorMessage}`,
+      });
 };
 
 // Settings come from JavaScript apps too, where a condition may not be text
@@ -110,10 +111,18 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
   });
 
   if (!isRecordEventTriggerManifestSettings(settings)) {
-    if (isDefined(condition)) {
-      const [objectNameSingular] = settings.eventName.split('.');
+    const { conditionBindings: _conditionBindings, ...legacySettings } =
+      settings;
 
-      assertConditionCompilesOrThrow({
+    if (!isDefined(condition)) {
+      return legacySettings;
+    }
+
+    const [objectNameSingular] = settings.eventName.split('.');
+
+    return {
+      ...legacySettings,
+      conditionBindings: compileConditionOrThrow({
         condition,
         objectUniversalIdentifier:
           objectNameSingular === ANY_OBJECT
@@ -124,10 +133,8 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
               }),
         lookup,
         subject,
-      });
-    }
-
-    return settings;
+      }),
+    };
   }
 
   const {
@@ -179,19 +186,18 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
     },
   );
 
-  if (isDefined(condition)) {
-    assertConditionCompilesOrThrow({
-      condition,
-      objectUniversalIdentifier,
-      lookup,
-      subject,
-    });
-  }
-
   return {
     eventName: `${objectNameSingular}.${action}`,
     ...(isDefined(updatedFields) && { updatedFields }),
-    ...(isDefined(condition) && { condition }),
+    ...(isDefined(condition) && {
+      condition,
+      conditionBindings: compileConditionOrThrow({
+        condition,
+        objectUniversalIdentifier,
+        lookup,
+        subject,
+      }),
+    }),
     ...(isDefined(batchMode) && { batchMode }),
   };
 };
