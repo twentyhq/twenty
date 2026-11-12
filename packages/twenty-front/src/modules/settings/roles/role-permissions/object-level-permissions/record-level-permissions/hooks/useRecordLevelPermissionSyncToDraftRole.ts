@@ -66,8 +66,18 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         }),
       );
 
+      const newPredicateGroupIds = new Set(
+        newPredicateGroups.map(({ id }) => id),
+      );
+
       return {
         ...previousRole,
+        fieldPermissions: previousRole.fieldPermissions?.filter(
+          ({ rowLevelPermissionPredicateGroupId }) =>
+            !isDefined(rowLevelPermissionPredicateGroupId) ||
+            !rulePredicateGroupIds.has(rowLevelPermissionPredicateGroupId) ||
+            newPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
+        ),
         rowLevelPermissionPredicates: replaceRuleItemsKeepingOrder({
           previousItems: previousRole.rowLevelPermissionPredicates ?? [],
           nextRuleItems: newPredicates,
