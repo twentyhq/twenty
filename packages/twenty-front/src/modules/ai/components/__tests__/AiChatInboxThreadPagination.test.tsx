@@ -1,3 +1,4 @@
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
@@ -7,7 +8,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import {
   jotaiStore,
@@ -23,10 +24,10 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const fetchMoreAgentChatThreads = jest.fn();
+const loadAgentChatInboxTabThreads = jest.fn();
 
-jest.mock('@/ai/hooks/useFetchMoreAgentChatThreads', () => ({
-  useFetchMoreAgentChatThreads: () => ({ fetchMoreAgentChatThreads }),
+jest.mock('@/ai/hooks/useLoadAgentChatInboxTabThreads', () => ({
+  useLoadAgentChatInboxTabThreads: () => ({ loadAgentChatInboxTabThreads }),
 }));
 
 const loadAgentChatChannelThreads = jest.fn();
@@ -46,10 +47,12 @@ const renderPagination = ({
   hasNextPage: boolean;
   onThreadSelect?: (threadId: string) => void;
 }) => {
-  jotaiStore.set(agentChatThreadListState.atom, {
+  jotaiStore.set(agentChatInboxTabThreadListState.atom, {
+    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     threadIds: THREADS.map(({ id }) => id),
     hasNextPage,
     endCursor: null,
+    lastLoadedActivityAt: null,
   });
 
   return render(
@@ -68,7 +71,7 @@ const renderPagination = ({
 describe('AiChatInboxThreadPagination', () => {
   beforeEach(() => {
     resetJotaiStore();
-    fetchMoreAgentChatThreads.mockClear();
+    loadAgentChatInboxTabThreads.mockClear();
     loadAgentChatChannelThreads.mockClear();
   });
 
@@ -87,7 +90,7 @@ describe('AiChatInboxThreadPagination', () => {
     expect(onThreadSelect).toHaveBeenCalledTimes(2);
     expect(onThreadSelect).toHaveBeenNthCalledWith(1, 'thread-1');
     expect(onThreadSelect).toHaveBeenNthCalledWith(2, 'thread-3');
-    expect(fetchMoreAgentChatThreads).not.toHaveBeenCalled();
+    expect(loadAgentChatInboxTabThreads).not.toHaveBeenCalled();
   });
 
   it('stops at the last chat once every chat is loaded', () => {
@@ -109,7 +112,7 @@ describe('AiChatInboxThreadPagination', () => {
 
     expect(onThreadSelect).toHaveBeenCalledTimes(1);
     expect(onThreadSelect).toHaveBeenCalledWith('thread-3');
-    expect(fetchMoreAgentChatThreads).toHaveBeenCalledTimes(1);
+    expect(loadAgentChatInboxTabThreads).toHaveBeenCalledWith('fetch-more');
   });
 
   it('loads more chats from the last loaded one while more exist', () => {
@@ -124,7 +127,7 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(onThreadSelect).not.toHaveBeenCalled();
-    expect(fetchMoreAgentChatThreads).toHaveBeenCalledTimes(1);
+    expect(loadAgentChatInboxTabThreads).toHaveBeenCalledWith('fetch-more');
   });
 
   it('shows nothing for a chat that is not listed', () => {
@@ -158,6 +161,6 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(loadAgentChatChannelThreads).toHaveBeenCalledWith('fetch-more');
-    expect(fetchMoreAgentChatThreads).not.toHaveBeenCalled();
+    expect(loadAgentChatInboxTabThreads).not.toHaveBeenCalled();
   });
 });

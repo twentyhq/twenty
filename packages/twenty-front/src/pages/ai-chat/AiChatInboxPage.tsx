@@ -14,7 +14,8 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { AgentChatInboxTabThreadsFetchMoreTrigger } from '@/ai/components/AgentChatInboxTabThreadsFetchMoreTrigger';
+import { AgentChatInboxTabThreadsLoadEffect } from '@/ai/components/AgentChatInboxTabThreadsLoadEffect';
 import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
 import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
 import { AiChatInboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
@@ -263,6 +264,7 @@ const AiChatInboxPageContent = () => {
   return (
     <StyledInbox>
       <AgentChatChannelThreadsLoadEffect />
+      <AgentChatInboxTabThreadsLoadEffect />
       <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
@@ -322,7 +324,7 @@ const AiChatInboxPageContent = () => {
                     {isDefined(agentChatShownChannelView) ? (
                       <AgentChatChannelThreadsFetchMoreTrigger />
                     ) : (
-                      <AgentChatThreadsFetchMoreTrigger />
+                      <AgentChatInboxTabThreadsFetchMoreTrigger />
                     )}
                   </StyledThreadList>
                   {!isMobile && (
