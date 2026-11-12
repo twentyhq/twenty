@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
@@ -5,6 +6,12 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 import { type TimelineActivityMutationInput } from 'src/modules/timeline/query-hooks/types/timeline-activity-mutation-input.type';
 import { type ResolvedTimelineActivityType } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 
@@ -130,6 +137,20 @@ export const stampTimelineActivityTypeSnapshots = ({
         })
       : stampedRecord;
   });
+};
+
+export const assertTimelineActivityIsNotMutatedByUserOrApiKey = (
+  authContext: WorkspaceAuthContext,
+): void => {
+  if (authContext.type === 'user' || authContext.type === 'apiKey') {
+    throw new PermissionsException(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+      PermissionsExceptionCode.PERMISSION_DENIED,
+      {
+        userFriendlyMessage: msg`Timeline history cannot be edited or deleted.`,
+      },
+    );
+  }
 };
 
 export const assertTimelineActivityTypeIsNotUpdated = (

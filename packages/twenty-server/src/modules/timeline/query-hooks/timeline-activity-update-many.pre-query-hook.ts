@@ -4,6 +4,7 @@ import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runne
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type TimelineActivityMutationInput } from 'src/modules/timeline/query-hooks/types/timeline-activity-mutation-input.type';
 import {
+  assertTimelineActivityIsNotMutatedByUserOrApiKey,
   assertTimelineActivityTypeIsNotUpdated,
   sanitizeApplicationTimelineActivityInput,
 } from 'src/modules/timeline/query-hooks/utils/timeline-activity-mutation-input.util';
@@ -15,6 +16,8 @@ export class TimelineActivityUpdateManyPreQueryHook implements WorkspacePreQuery
     _objectName: string,
     payload: UpdateManyResolverArgs<TimelineActivityMutationInput>,
   ): Promise<UpdateManyResolverArgs<TimelineActivityMutationInput>> {
+    assertTimelineActivityIsNotMutatedByUserOrApiKey(authContext);
+
     const data =
       authContext.type === 'application'
         ? sanitizeApplicationTimelineActivityInput({ record: payload.data })

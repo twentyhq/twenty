@@ -1,3 +1,5 @@
+> **Interview submission: Record Change History.** See [RECORD_HISTORY.md](./RECORD_HISTORY.md) for the design, files changed, edge cases and test results.
+
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />

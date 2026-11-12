@@ -1,6 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 
 import { useLinkedRecordsIdentifiers } from '@/activities/timeline-activities/hooks/useLinkedRecordsIdentifiers';
+import { useTimelineActivityTypeFilter } from '@/activities/timeline-activities/hooks/useTimelineActivityTypeFilter';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -21,13 +23,38 @@ export const useTimelineActivities = (
 ) => {
   const targetableObjectFieldIdName = `target${capitalize(targetableObject.targetObjectNameSingular)}Id`;
 
+  const {
+    effectiveTimelineActivityTypeUniversalIdentifiersFilter,
+    timelineActivityTypeMaps,
+  } = useTimelineActivityTypeFilter(targetableObject.id);
+
+  const selectedTimelineActivityTypeIdsKey = (
+    effectiveTimelineActivityTypeUniversalIdentifiersFilter ?? []
+  )
+    .map(
+      (universalIdentifier) =>
+        timelineActivityTypeMaps.byUniversalIdentifier.get(universalIdentifier)
+          ?.id,
+    )
+    .filter(isDefined)
+    .join(',');
+
   const filter: RecordGqlOperationFilter = useMemo(
     () => ({
       [targetableObjectFieldIdName]: {
         eq: targetableObject.id,
       },
+      ...(isNonEmptyString(selectedTimelineActivityTypeIdsKey) && {
+        timelineActivityTypeId: {
+          in: selectedTimelineActivityTypeIdsKey.split(','),
+        },
+      }),
     }),
-    [targetableObjectFieldIdName, targetableObject.id],
+    [
+      targetableObjectFieldIdName,
+      targetableObject.id,
+      selectedTimelineActivityTypeIdsKey,
+    ],
   );
 
   const { objectMetadataItem: timelineActivityMetadata } =
