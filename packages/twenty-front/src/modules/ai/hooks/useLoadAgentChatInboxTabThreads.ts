@@ -8,6 +8,7 @@ import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLive
 import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { agentChatInboxTabRefreshCountFamilyState } from '@/ai/states/agentChatInboxTabRefreshCountFamilyState';
 import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -42,6 +43,12 @@ export const useLoadAgentChatInboxTabThreads = () => {
         return;
       }
 
+      const refreshCountAtom =
+        agentChatInboxTabRefreshCountFamilyState.atomFamily(filterStatus);
+      const refreshCount = store.get(refreshCountAtom) + (isFetchMore ? 0 : 1);
+
+      store.set(refreshCountAtom, refreshCount);
+
       const updateCountBeforeRequest = getLiveUpdateCount();
       const page = await fetchAgentChatThreadsPage({
         lastCursor: isFetchMore ? (listBeforeRequest?.endCursor ?? null) : null,
@@ -64,6 +71,7 @@ export const useLoadAgentChatInboxTabThreads = () => {
 
       if (
         !isSameSession() ||
+        store.get(refreshCountAtom) !== refreshCount ||
         (isFetchMore && store.get(listAtom) !== listBeforeRequest)
       ) {
         return;
