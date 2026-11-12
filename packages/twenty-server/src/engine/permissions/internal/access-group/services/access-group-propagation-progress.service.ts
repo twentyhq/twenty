@@ -37,7 +37,7 @@ export class AccessGroupPropagationProgressService {
     workspaceId: string,
   ): Promise<AccessGroupPropagationProgress> {
     return computeAccessGroupPropagationProgress(
-      await this.applyUpdates({ workspaceId, updates: [] }),
+      await this.runProgressScript({ workspaceId, updateArgs: [] }),
     );
   }
 
@@ -155,34 +155,44 @@ export class AccessGroupPropagationProgressService {
       : objectMetadataId;
   }
 
-  private async applyUpdates({
+  private applyUpdates({
     workspaceId,
     unit,
     updates,
   }: {
     workspaceId: string;
-    unit?: string;
+    unit: string;
     updates: ProgressUpdate[];
   }): Promise<Record<string, string>> {
-    const now = Date.now();
+    return this.runProgressScript({
+      workspaceId,
+      updateArgs: [
+        ...updates.flatMap(({ command, field, value }) => [
+          command,
+          `${field}:${unit}`,
+          String(value),
+        ]),
+        'HSET',
+        `touchedAt:${unit}`,
+        String(Date.now()),
+      ],
+    });
+  }
+
+  private async runProgressScript({
+    workspaceId,
+    updateArgs,
+  }: {
+    workspaceId: string;
+    updateArgs: string[];
+  }): Promise<Record<string, string>> {
     const fields = await this.cacheStorageService.runScript<string[]>({
       script: APPLY_ACCESS_GROUP_PROPAGATION_PROGRESS_SCRIPT,
       keys: [`access-group-propagation-progress:${workspaceId}`],
       args: [
-        String(now),
+        String(Date.now()),
         String(ACCESS_GROUP_PROPAGATION_PROGRESS_STALE_AFTER_MS),
-        ...(isDefined(unit)
-          ? [
-              ...updates.flatMap(({ command, field, value }) => [
-                command,
-                `${field}:${unit}`,
-                String(value),
-              ]),
-              'HSET',
-              `touchedAt:${unit}`,
-              String(now),
-            ]
-          : []),
+        ...updateArgs,
       ],
     });
     const progressFields: Record<string, string> = {};
