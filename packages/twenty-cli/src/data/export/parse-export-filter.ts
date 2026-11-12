@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, splitFilterArrayItems } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -111,7 +111,7 @@ const parseFilterValue = ({
   if (!text.startsWith('[') || !text.endsWith(']')) {
     throw invalidFilter();
   }
-  return text.slice(1, -1).split(',').map(unquote);
+  return splitFilterArrayItems(text.slice(1, -1)).map(unquote);
 };
 
 const parsePredicate = ({
@@ -148,7 +148,7 @@ const parsePredicate = ({
     .reverse()
     .reduce<Filter>(
       (nested, name) => {
-        if (name.length === 0) {
+        if (!isNonEmptyString(name)) {
           throw invalidFilter();
         }
         return { [name]: nested };
@@ -159,11 +159,12 @@ const parsePredicate = ({
 
 export const parseExportFilter = (expression: string): Filter => {
   const predicates = splitPredicates(expression);
-  return predicates.length === 1 && /^(and|or|not)\(/.test(expression)
-    ? parsePredicate({ expression, depth: 0 })
-    : {
-        and: predicates.map((part) =>
-          parsePredicate({ expression: part, depth: 0 }),
-        ),
-      };
+  if (predicates.length === 1 && /^(and|or|not)\(/.test(expression)) {
+    return parsePredicate({ expression, depth: 0 });
+  }
+  return {
+    and: predicates.map((part) =>
+      parsePredicate({ expression: part, depth: 0 }),
+    ),
+  };
 };

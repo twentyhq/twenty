@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { writeFileSync } from 'node:fs';
 import * as fileSystem from 'node:fs/promises';
 import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
@@ -45,15 +46,15 @@ let downloadPath = DOWNLOAD_PATH;
 let downloadStatus = 200;
 let exportError: string | undefined;
 let subscriptionError: string | undefined;
-let interruptStream = false;
-let interruptDownload = false;
-let completeWithoutDownload = false;
+let shouldInterruptStream = false;
+let shouldInterruptDownload = false;
+let shouldCompleteWithoutDownload = false;
 let contentType = 'text/csv';
 let cancellation: 'subscription' | 'download' | undefined;
-let createDestinationDuringDownload = false;
+let shouldCreateDestinationDuringDownload = false;
 const server = await startTestServer((request, response) => {
   if (request.method === 'GET') {
-    if (createDestinationDuringDownload) {
+    if (shouldCreateDestinationDuringDownload) {
       writeFileSync(outputPath, 'created while exporting');
     }
     if (cancellation === 'download') {
@@ -72,9 +73,9 @@ const server = await startTestServer((request, response) => {
     }
     response.writeHead(200, {
       'content-type': contentType,
-      ...(interruptDownload ? { 'content-length': '999' } : {}),
+      ...(shouldInterruptDownload ? { 'content-length': '999' } : {}),
     });
-    if (interruptDownload) {
+    if (shouldInterruptDownload) {
       response.write('partial');
       setImmediate(() => response.destroy());
     } else {
@@ -85,7 +86,7 @@ const server = await startTestServer((request, response) => {
   const { query } = JSON.parse(request.body);
   if (query.includes('subscription ExportRecords')) {
     response.writeHead(200, { 'content-type': 'text/event-stream' });
-    if (subscriptionError) {
+    if (isDefined(subscriptionError)) {
       response.end(
         next({
           errors: [
@@ -112,20 +113,20 @@ const server = await startTestServer((request, response) => {
       setTimeout(() => process.emit('SIGINT'), 20);
       return;
     }
-    if (interruptStream) {
+    if (shouldInterruptStream) {
       response.end();
       return;
     }
-    if (!completeWithoutDownload) {
+    if (!shouldCompleteWithoutDownload) {
       response.write(
         next({
           data: {
             exportRecords: {
               id: EXPORT_ID,
               filename: 'company.csv',
-              progress: exportError ? 20 : 100,
+              progress: isDefined(exportError) ? 20 : 100,
               errorMessage: exportError ?? null,
-              downloadPath: exportError ? null : downloadPath,
+              downloadPath: isDefined(exportError) ? null : downloadPath,
             },
           },
         }),
@@ -180,12 +181,12 @@ beforeEach(async () => {
   downloadStatus = 200;
   exportError = undefined;
   subscriptionError = undefined;
-  interruptStream = false;
-  interruptDownload = false;
-  completeWithoutDownload = false;
+  shouldInterruptStream = false;
+  shouldInterruptDownload = false;
+  shouldCompleteWithoutDownload = false;
   contentType = 'text/csv';
   cancellation = undefined;
-  createDestinationDuringDownload = false;
+  shouldCreateDestinationDuringDownload = false;
 });
 afterEach(async () => {
   vi.unstubAllEnvs();
@@ -385,7 +386,7 @@ describe('twenty data export', () => {
 
   it('preserves the existing file and removes partial output when the download fails', async () => {
     await writeFile(outputPath, 'keep me');
-    interruptDownload = true;
+    shouldInterruptDownload = true;
     const result = await run('--force', '--format', 'json');
     expect(result.exitCode).not.toBe(0);
     expect(await readFile(outputPath, 'utf8')).toBe('keep me');
@@ -395,8 +396,8 @@ describe('twenty data export', () => {
   it.each(['interrupted', 'completed-too-early', 'worker-failed'])(
     'fails without a final CSV when the export is %s',
     async (failure) => {
-      interruptStream = failure === 'interrupted';
-      completeWithoutDownload = failure === 'completed-too-early';
+      shouldInterruptStream = failure === 'interrupted';
+      shouldCompleteWithoutDownload = failure === 'completed-too-early';
       exportError =
         failure === 'worker-failed'
           ? 'Access permissions have changed.'
@@ -424,7 +425,7 @@ describe('twenty data export', () => {
   );
 
   it('preserves a destination created after the initial existence check', async () => {
-    createDestinationDuringDownload = true;
+    shouldCreateDestinationDuringDownload = true;
     const result = await run('--format', 'json');
     expect(result.exitCode).not.toBe(0);
     expect(parseSingleJsonLine(result.stdout)).toMatchObject({
@@ -508,7 +509,7 @@ describe('twenty data export', () => {
   it.each(['NETWORK_ERROR', 'EXPORT_FAILED', 'CANCELLED'] as const)(
     'preserves %s when temporary-file cleanup fails',
     async (code) => {
-      interruptDownload = code === 'NETWORK_ERROR';
+      shouldInterruptDownload = code === 'NETWORK_ERROR';
       exportError = code === 'EXPORT_FAILED' ? 'Export failed' : undefined;
       cancellation = code === 'CANCELLED' ? 'download' : undefined;
       await writeFile(outputPath, 'keep me');

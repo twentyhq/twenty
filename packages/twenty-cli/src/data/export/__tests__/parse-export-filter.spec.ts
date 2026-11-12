@@ -3,6 +3,17 @@ import { describe, expect, it } from 'vitest';
 import { parseExportFilter } from '@/data/export/parse-export-filter';
 
 describe('parseExportFilter', () => {
+  it.each(['in', 'containsAny'])(
+    'preserves quoted commas in %s arrays',
+    (comparator) => {
+      expect(
+        parseExportFilter(`name[${comparator}]:["Acme, Inc.","Globex"]`),
+      ).toEqual({
+        and: [{ name: { [comparator]: ['Acme, Inc.', 'Globex'] } }],
+      });
+    },
+  );
+
   it('supports nested conjunctions, composite fields, quoted commas, arrays and null operators', () => {
     expect(
       parseExportFilter(

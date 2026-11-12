@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 
 import {
@@ -38,12 +38,12 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
   outputMode,
 }) => {
   const path = readStringOption(options, 'output');
-  if (!isDefined(path) || path.trim().length === 0 || path === '-') {
+  if (!isDefined(path) || !isNonEmptyString(path.trim()) || path === '-') {
     throw invalidInput('--output must name a destination CSV file.');
   }
   const fieldsText = readStringOption(options, 'fields');
   const fieldNames = fieldsText?.split(',').map((field) => field.trim());
-  if (fieldNames?.some((field) => field.length === 0)) {
+  if (fieldNames?.some((field) => !isNonEmptyString(field))) {
     throw invalidInput('--fields cannot contain empty names.');
   }
   const expression = readStringOption(options, 'filter');
