@@ -1436,40 +1436,37 @@ describe('Application export - data model', () => {
       expect(data.exportApplication.manifest.roles).toContainEqual(
         expect.objectContaining({
           label: 'Export Custom Application Recruiter',
-          objectRecordsPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canReadAllRecords: true,
-              canUpdateAllRecords: false,
-              rowLevelRecordsPermissions: [
-                expect.objectContaining({
-                  predicateGroups: [
-                    expect.objectContaining({
-                      universalIdentifier: predicateGroupId,
-                      logicalOperator:
-                        RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                      predicates: [
-                        expect.objectContaining({
-                          universalIdentifier: keptPredicateId,
-                          operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                          value: 'Engineer',
-                          position: 0,
-                        }),
-                      ],
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
-          fieldPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canUpdateFieldValue: false,
-            }),
-          ],
+          recordsPermissions: expect.objectContaining({
+            objects: [
+              expect.objectContaining({
+                objectUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+                canReadAllRecords: true,
+                canUpdateAllRecords: false,
+                uneditableFields: [expect.any(String)],
+                rowLevelRecordsPermissions: [
+                  expect.objectContaining({
+                    predicateGroups: [
+                      expect.objectContaining({
+                        universalIdentifier: predicateGroupId,
+                        logicalOperator:
+                          RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                        predicates: [
+                          expect.objectContaining({
+                            universalIdentifier: keptPredicateId,
+                            operand:
+                              RowLevelPermissionPredicateOperand.CONTAINS,
+                            value: 'Engineer',
+                            position: 0,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
           permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],
         }),
       );

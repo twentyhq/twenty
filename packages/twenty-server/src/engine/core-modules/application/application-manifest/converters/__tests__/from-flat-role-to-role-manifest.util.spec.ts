@@ -15,6 +15,14 @@ const OBJECT_PERMISSION_UID = '44444444-4444-4444-8444-444444444444';
 const PERMISSION_FLAG_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-14T10:00:00.000Z';
 
+const ALL_RECORDS_PERMISSIONS = {
+  canReadAllRecords: true,
+  canCreateAllRecords: false,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
+};
+
 const ROLE_MANIFEST: RoleManifest = {
   universalIdentifier: ROLE_UID,
   label: 'Support',
@@ -23,13 +31,10 @@ const ROLE_MANIFEST: RoleManifest = {
   canUpdateAllSettings: false,
   canAccessAllTools: true,
   canAccessAllAgentChatChannels: false,
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
+  recordsPermissions: ALL_RECORDS_PERMISSIONS,
 };
 
 const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
@@ -92,14 +97,17 @@ describe('fromFlatRoleToRoleManifest', () => {
       fromFlatRoleToRoleManifest({
         flatRole: forward(ROLE_MANIFEST),
         children: {
-          objectRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
-          fieldPermissions: [],
+          objectsRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
+          rowLevelPermissionPredicates: [],
           permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
         },
       }),
     ).toStrictEqual({
       ...ROLE_MANIFEST,
-      objectRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
+      recordsPermissions: {
+        ...ALL_RECORDS_PERMISSIONS,
+        objects: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
+      },
       permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
     });
   });

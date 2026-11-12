@@ -15,13 +15,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
-import { fromRoleManifestToUniversalFlatRecordsPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
+import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
 import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
-import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
@@ -374,21 +373,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           allUniversalFlatEntityMaps.flatRoleMaps,
       });
 
-      for (const fieldPermissionManifest of roleManifest.fieldPermissions ??
-        []) {
-        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-          universalFlatEntity:
-            fromFieldPermissionManifestToUniversalFlatFieldPermission({
-              fieldPermissionManifest,
-              roleUniversalIdentifier: roleManifest.universalIdentifier,
-              applicationUniversalIdentifier,
-              now,
-            }),
-          universalFlatEntityMapsToMutate:
-            allUniversalFlatEntityMaps.flatFieldPermissionMaps,
-        });
-      }
-
       for (const permissionFlagUniversalIdentifier of roleManifest.permissionFlagUniversalIdentifiers ??
         []) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
@@ -405,15 +389,24 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       }
 
       const {
+        objectPermissions,
+        fieldPermissions,
         rules,
         predicateGroups: linkedPredicateGroups,
         predicates: linkedPredicates,
-        objectPermissions,
-      } = fromRoleManifestToUniversalFlatRecordsPermissions({
+      } = fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
         roleManifest,
-        universalFlatRole,
+        applicationUniversalIdentifier,
         now,
       });
+
+      for (const fieldPermission of fieldPermissions) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: fieldPermission,
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatFieldPermissionMaps,
+        });
+      }
 
       for (const objectPermission of objectPermissions) {
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({

@@ -1,4 +1,7 @@
-import { type ObjectRecordsPermissionsManifest } from 'twenty-shared/application';
+import {
+  type FieldRestrictionsManifest,
+  type ObjectRecordsPermissionsManifest,
+} from 'twenty-shared/application';
 
 import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
 import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-records-permissions-manifest-to-universal-flat-object-permission.util';
@@ -13,7 +16,7 @@ const NOW = '2026-09-14T10:00:00.000Z';
 
 type AllRecordsManifest = Omit<
   ObjectRecordsPermissionsManifest,
-  'rowLevelRecordsPermissions'
+  'rowLevelRecordsPermissions' | keyof FieldRestrictionsManifest
 >;
 
 const ALL_RECORDS_MANIFEST: Required<AllRecordsManifest> = {

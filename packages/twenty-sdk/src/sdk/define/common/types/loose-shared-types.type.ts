@@ -63,6 +63,8 @@ export type RowLevelPermissionPredicateGroupManifest =
   LooseEnumValues<SharedApplication.RowLevelPermissionPredicateGroupManifest>;
 export type RowLevelPermissionPredicateManifest =
   LooseEnumValues<SharedApplication.RowLevelPermissionPredicateManifest>;
+export type RoleRecordsPermissionsManifest =
+  LooseEnumValues<SharedApplication.RoleRecordsPermissionsManifest>;
 export type ObjectRecordsPermissionsManifest =
   LooseEnumValues<SharedApplication.ObjectRecordsPermissionsManifest>;
 export type RowLevelRecordsPermissionsManifest =

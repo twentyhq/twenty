@@ -1,17 +1,12 @@
-import {
-  getRowLevelPermissionRuleUniversalIdentifier,
-  type RoleManifest,
-} from 'twenty-shared/application';
+import { type RoleManifest } from 'twenty-shared/application';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 
-import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
-import { fromRoleManifestToUniversalFlatRecordsPermissions } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
+import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 
 const APPLICATION = '20202020-0000-4000-8000-000000000001';
-const ROLE = '20202020-0000-4000-8000-000000000002';
 const NOW = '2026-11-12T00:00:00.000Z';
 
 const PREDICATE = {
@@ -22,128 +17,90 @@ const PREDICATE = {
 const convert = (
   roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
 ) =>
-  fromRoleManifestToUniversalFlatRecordsPermissions({
-    roleManifest,
-    universalFlatRole: fromRoleManifestToUniversalFlatRole({
-      roleManifest: {
-        universalIdentifier: ROLE,
-        label: 'Role',
-        ...roleManifest,
-      },
-      applicationUniversalIdentifier: APPLICATION,
-      now: NOW,
-    }),
+  fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
+    roleManifest: {
+      universalIdentifier: 'role',
+      label: 'Role',
+      ...roleManifest,
+    },
+    applicationUniversalIdentifier: APPLICATION,
     now: NOW,
   });
 
-const NO_OBJECT_RECORDS_GRANTS = {
-  canReadObjectRecords: false,
-  canCreateObjectRecords: false,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
-};
-
-describe('fromRoleManifestToUniversalFlatRecordsPermissions', () => {
-  it('should move the object permission onto the derived rule of predicates declared outside a rule', () => {
-    const { rules, predicates, objectPermissions } = convert({
-      objectPermissions: [
-        {
-          objectUniversalIdentifier: 'company',
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-        },
-      ],
-      rowLevelPermissionPredicates: [
-        {
-          ...PREDICATE,
-          universalIdentifier: 'predicate',
-          objectUniversalIdentifier: 'company',
-        },
-      ],
+describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
+  it('should write the all records permissions, field restrictions and rules of an object', () => {
+    const {
+      objectPermissions,
+      fieldPermissions,
+      rules,
+      predicateGroups,
+      predicates,
+    } = convert({
+      recordsPermissions: {
+        objects: [
+          {
+            objectUniversalIdentifier: 'company',
+            canReadAllRecords: false,
+            canUpdateAllRecords: true,
+            unreadableFields: ['secret'],
+            uneditableFields: ['secret', 'revenue'],
+            rowLevelRecordsPermissions: [
+              {
+                universalIdentifier: 'rule',
+                canReadRecords: true,
+                uneditableFields: ['name'],
+                predicates: [
+                  { ...PREDICATE, universalIdentifier: 'predicate' },
+                ],
+                predicateGroups: [
+                  {
+                    universalIdentifier: 'group',
+                    logicalOperator:
+                      RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                    predicates: [
+                      {
+                        ...PREDICATE,
+                        universalIdentifier: 'predicate-in-group',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     });
 
-    const derivedRuleUniversalIdentifier =
-      getRowLevelPermissionRuleUniversalIdentifier({
-        applicationUniversalIdentifier: APPLICATION,
-        roleUniversalIdentifier: ROLE,
-        objectMetadataUniversalIdentifier: 'company',
-        rootRowLevelPermissionPredicateGroupUniversalIdentifier: null,
-      });
-
-    expect(rules).toMatchObject([
-      {
-        universalIdentifier: derivedRuleUniversalIdentifier,
-        canReadRecords: true,
-        canCreateRecords: true,
-        canUpdateRecords: true,
-        canSoftDeleteRecords: false,
-        canDestroyRecords: false,
-      },
-    ]);
-    expect(predicates[0].rowLevelPermissionRuleUniversalIdentifier).toBe(
-      derivedRuleUniversalIdentifier,
-    );
     expect(objectPermissions).toMatchObject([
       {
         objectMetadataUniversalIdentifier: 'company',
-        ...NO_OBJECT_RECORDS_GRANTS,
+        canReadObjectRecords: false,
+        canCreateObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: null,
       },
     ]);
-  });
-
-  it('should take the role grants and add an object permission when predicates declared outside a rule have none', () => {
-    const { rules, objectPermissions } = convert({
-      canReadAllObjectRecords: true,
-      rowLevelPermissionPredicates: [
-        {
-          ...PREDICATE,
-          universalIdentifier: 'predicate',
-          objectUniversalIdentifier: 'company',
-        },
-      ],
-    });
-
-    expect(rules).toMatchObject([
-      { canReadRecords: true, canUpdateRecords: false },
-    ]);
-    expect(objectPermissions).toMatchObject([
+    expect(fieldPermissions).toMatchObject([
       {
-        objectMetadataUniversalIdentifier: 'company',
-        roleUniversalIdentifier: ROLE,
-        ...NO_OBJECT_RECORDS_GRANTS,
+        fieldMetadataUniversalIdentifier: 'secret',
+        canReadFieldValue: false,
+        canUpdateFieldValue: false,
+        rowLevelPermissionRuleUniversalIdentifier: null,
+      },
+      {
+        fieldMetadataUniversalIdentifier: 'revenue',
+        canReadFieldValue: null,
+        canUpdateFieldValue: false,
+        rowLevelPermissionRuleUniversalIdentifier: null,
+      },
+      {
+        fieldMetadataUniversalIdentifier: 'name',
+        canUpdateFieldValue: false,
+        rowLevelPermissionRuleUniversalIdentifier: 'rule',
+        rowLevelPermissionPredicateGroupUniversalIdentifier: 'group',
       },
     ]);
-  });
-
-  it('should write the all records grants and the rules of an object, with the predicates and groups nested in them', () => {
-    const { rules, predicateGroups, predicates, objectPermissions } = convert({
-      objectRecordsPermissions: [
-        {
-          objectUniversalIdentifier: 'company',
-          canReadAllRecords: false,
-          canUpdateAllRecords: true,
-          rowLevelRecordsPermissions: [
-            {
-              universalIdentifier: 'rule',
-              canReadRecords: true,
-              predicates: [{ ...PREDICATE, universalIdentifier: 'predicate' }],
-              predicateGroups: [
-                {
-                  universalIdentifier: 'group',
-                  logicalOperator:
-                    RowLevelPermissionPredicateGroupLogicalOperator.OR,
-                  predicates: [
-                    { ...PREDICATE, universalIdentifier: 'predicate-in-group' },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
-
     expect(rules).toMatchObject([
       {
         universalIdentifier: 'rule',
@@ -162,7 +119,6 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissions', () => {
     expect(predicates).toMatchObject([
       {
         universalIdentifier: 'predicate',
-        objectMetadataUniversalIdentifier: 'company',
         rowLevelPermissionRuleUniversalIdentifier: 'rule',
         rowLevelPermissionPredicateGroupUniversalIdentifier: null,
       },
@@ -172,83 +128,104 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissions', () => {
         rowLevelPermissionPredicateGroupUniversalIdentifier: 'group',
       },
     ]);
-    expect(objectPermissions).toMatchObject([
-      {
-        objectMetadataUniversalIdentifier: 'company',
-        canReadObjectRecords: false,
-        canCreateObjectRecords: true,
-        canUpdateObjectRecords: true,
-        canSoftDeleteObjectRecords: null,
-      },
-    ]);
   });
 
   it('should write no object permission for an object that only declares rules', () => {
-    const { rules, objectPermissions } = convert({
-      objectRecordsPermissions: [
-        {
-          objectUniversalIdentifier: 'company',
-          rowLevelRecordsPermissions: [
-            {
-              universalIdentifier: 'rule',
-              canReadRecords: true,
-              predicates: [{ ...PREDICATE, universalIdentifier: 'predicate' }],
-            },
-          ],
-        },
-      ],
+    const { objectPermissions, rules } = convert({
+      recordsPermissions: {
+        objects: [
+          {
+            objectUniversalIdentifier: 'company',
+            rowLevelRecordsPermissions: [
+              {
+                universalIdentifier: 'rule',
+                canReadRecords: true,
+                predicates: [
+                  { ...PREDICATE, universalIdentifier: 'predicate' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     });
 
     expect(rules).toHaveLength(1);
     expect(objectPermissions).toEqual([]);
   });
 
-  it('should only fall back on the objects whose predicates sit outside a rule', () => {
-    const { rules, objectPermissions } = convert({
+  it('should convert the deprecated properties before writing them', () => {
+    const { objectPermissions, fieldPermissions, rules, predicates } = convert({
       objectPermissions: [
-        { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
-      ],
-      objectRecordsPermissions: [
         {
           objectUniversalIdentifier: 'company',
-          canReadAllRecords: true,
-          rowLevelRecordsPermissions: [
-            {
-              universalIdentifier: 'company-rule',
-              canUpdateRecords: true,
-              predicates: [
-                { ...PREDICATE, universalIdentifier: 'company-predicate' },
-              ],
-            },
-          ],
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+        },
+      ],
+      fieldPermissions: [
+        {
+          objectUniversalIdentifier: 'company',
+          fieldUniversalIdentifier: 'secret',
+          canReadFieldValue: false,
         },
       ],
       rowLevelPermissionPredicates: [
         {
           ...PREDICATE,
-          universalIdentifier: 'person-predicate',
-          objectUniversalIdentifier: 'person',
+          universalIdentifier: 'predicate',
+          objectUniversalIdentifier: 'company',
         },
       ],
     });
 
     expect(rules).toMatchObject([
       {
-        universalIdentifier: 'company-rule',
-        canReadRecords: false,
+        canReadRecords: true,
+        canCreateRecords: true,
         canUpdateRecords: true,
+        canSoftDeleteRecords: false,
+        canDestroyRecords: false,
       },
-      { objectMetadataUniversalIdentifier: 'person', canReadRecords: true },
     ]);
+    expect(predicates[0].rowLevelPermissionRuleUniversalIdentifier).toBe(
+      rules[0].universalIdentifier,
+    );
     expect(objectPermissions).toMatchObject([
       {
-        objectMetadataUniversalIdentifier: 'person',
-        ...NO_OBJECT_RECORDS_GRANTS,
-      },
-      {
         objectMetadataUniversalIdentifier: 'company',
-        canReadObjectRecords: true,
+        canReadObjectRecords: false,
+        canCreateObjectRecords: false,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
       },
     ]);
+    expect(fieldPermissions).toMatchObject([
+      { fieldMetadataUniversalIdentifier: 'secret', canReadFieldValue: false },
+    ]);
+  });
+
+  it('should refuse field restrictions on a rule that has no predicate group to hold them', () => {
+    expect(() =>
+      convert({
+        recordsPermissions: {
+          objects: [
+            {
+              objectUniversalIdentifier: 'company',
+              rowLevelRecordsPermissions: [
+                {
+                  universalIdentifier: 'rule',
+                  unreadableFields: ['secret'],
+                  predicates: [
+                    { ...PREDICATE, universalIdentifier: 'predicate' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      }),
+    ).toThrow('no predicate group to hold them');
   });
 });

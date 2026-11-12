@@ -12,13 +12,12 @@ export const getReachableObjectPermissionsFromRoleManifest = ({
   role: RoleManifest;
   objectUniversalIdentifier: string;
 }): EffectiveObjectPermissions => {
-  const { objectPermissions, rowLevelPermissionRules } =
-    getRecordsPermissionsFromRoleManifest({ role });
+  const recordsPermissions = getRecordsPermissionsFromRoleManifest({ role });
   const allRecordsPermissions = getEffectiveObjectPermissionsFromRoleManifest({
-    role: { ...role, objectPermissions },
+    role: recordsPermissions,
     objectUniversalIdentifier,
   });
-  const rules = rowLevelPermissionRules.filter(
+  const rules = recordsPermissions.rowLevelPermissionRules.filter(
     (rule) => rule.objectUniversalIdentifier === objectUniversalIdentifier,
   );
 

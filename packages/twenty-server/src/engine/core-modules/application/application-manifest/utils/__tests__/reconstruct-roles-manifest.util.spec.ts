@@ -5,8 +5,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
-import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
+import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-records-permissions-manifest-to-universal-flat-object-permission.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
@@ -161,11 +160,11 @@ const buildFlatObjectPermission = ({
   objectUniversalIdentifier: string;
 }): FlatObjectPermission =>
   withIds(
-    fromObjectPermissionManifestToUniversalFlatObjectPermission({
-      objectPermissionManifest: {
+    fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
+      objectRecordsPermissionsManifest: {
         universalIdentifier,
         objectUniversalIdentifier,
-        canReadObjectRecords: true,
+        canReadAllRecords: true,
       },
       roleUniversalIdentifier,
       applicationUniversalIdentifier: APP_UID,
@@ -182,19 +181,19 @@ const buildFlatFieldPermission = ({
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
 }): FlatFieldPermission =>
-  withIds(
-    fromFieldPermissionManifestToUniversalFlatFieldPermission({
-      fieldPermissionManifest: {
-        universalIdentifier,
-        objectUniversalIdentifier,
-        fieldUniversalIdentifier,
-        canUpdateFieldValue: false,
-      },
-      roleUniversalIdentifier: SUPPORT_ROLE_UID,
-      applicationUniversalIdentifier: APP_UID,
-      now: NOW,
-    }),
-  ) as FlatFieldPermission;
+  withIds({
+    universalIdentifier,
+    applicationUniversalIdentifier: APP_UID,
+    roleUniversalIdentifier: SUPPORT_ROLE_UID,
+    objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+    fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+    rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+    rowLevelPermissionRuleUniversalIdentifier: null,
+    canReadFieldValue: null,
+    canUpdateFieldValue: false,
+    createdAt: NOW,
+    updatedAt: NOW,
+  }) as FlatFieldPermission;
 
 const buildFlatRolePermissionFlag = (
   universalIdentifier: string,
@@ -538,26 +537,21 @@ describe('reconstructRolesManifest', () => {
       expect.objectContaining({
         universalIdentifier: SUPPORT_ROLE_UID,
         label: 'Support',
-        objectRecordsPermissions: [
-          {
-            universalIdentifier: PERSON_OBJECT_PERMISSION_UID,
-            objectUniversalIdentifier: PERSON_UID,
-            canReadAllRecords: true,
-          },
-          {
-            universalIdentifier: PET_OBJECT_PERMISSION_UID,
-            objectUniversalIdentifier: PET_UID,
-            canReadAllRecords: true,
-          },
-        ],
-        fieldPermissions: [
-          {
-            universalIdentifier: PET_NAME_FIELD_PERMISSION_UID,
-            objectUniversalIdentifier: PET_UID,
-            fieldUniversalIdentifier: PET_NAME_FIELD_UID,
-            canUpdateFieldValue: false,
-          },
-        ],
+        recordsPermissions: expect.objectContaining({
+          objects: [
+            {
+              universalIdentifier: PERSON_OBJECT_PERMISSION_UID,
+              objectUniversalIdentifier: PERSON_UID,
+              canReadAllRecords: true,
+            },
+            {
+              universalIdentifier: PET_OBJECT_PERMISSION_UID,
+              objectUniversalIdentifier: PET_UID,
+              canReadAllRecords: true,
+              uneditableFields: [PET_NAME_FIELD_UID],
+            },
+          ],
+        }),
         permissionFlagUniversalIdentifiers: [
           EXPORT_PETS_FLAG_UID,
           WORKSPACE_FLAG_UID,

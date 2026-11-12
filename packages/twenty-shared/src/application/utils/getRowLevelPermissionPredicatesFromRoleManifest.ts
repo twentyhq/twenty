@@ -11,7 +11,7 @@ export const getRowLevelPermissionPredicatesFromRoleManifest = ({
 }: {
   role: Pick<
     RoleManifest,
-    | 'objectRecordsPermissions'
+    | 'recordsPermissions'
     | 'rowLevelPermissionPredicateGroups'
     | 'rowLevelPermissionPredicates'
   >;

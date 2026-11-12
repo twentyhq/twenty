@@ -48,6 +48,16 @@ export type RowLevelPermissionRulePredicateGroupManifest =
     predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
   };
 
+// fieldPermissionIdentifiers names a stored field permission whose identifier is not the derived one
+export type FieldRestrictionsManifest = {
+  unreadableFields?: string[];
+  uneditableFields?: string[];
+  fieldPermissionIdentifiers?: {
+    fieldUniversalIdentifier: string;
+    universalIdentifier: string;
+  }[];
+};
+
 export type RowLevelRecordsPermissionsManifest = SyncableEntityOptions & {
   canReadRecords?: boolean;
   canCreateRecords?: boolean;
@@ -56,35 +66,85 @@ export type RowLevelRecordsPermissionsManifest = SyncableEntityOptions & {
   canDestroyRecords?: boolean;
   predicates?: RowLevelPermissionRulePredicateManifest[];
   predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
+} & FieldRestrictionsManifest;
+
+export type AllRecordsPermissionsManifest = {
+  canReadAllRecords?: boolean;
+  canCreateAllRecords?: boolean;
+  canUpdateAllRecords?: boolean;
+  canSoftDeleteAllRecords?: boolean;
+  canDestroyAllRecords?: boolean;
 };
 
-export type ObjectRecordsPermissionsManifest =
-  Partial<SyncableEntityOptions> & {
+export type ObjectRecordsPermissionsManifest = Partial<SyncableEntityOptions> &
+  AllRecordsPermissionsManifest & {
     objectUniversalIdentifier: string;
-    canReadAllRecords?: boolean;
-    canCreateAllRecords?: boolean;
-    canUpdateAllRecords?: boolean;
-    canSoftDeleteAllRecords?: boolean;
-    canDestroyAllRecords?: boolean;
     rowLevelRecordsPermissions?: RowLevelRecordsPermissionsManifest[];
-  };
+  } & FieldRestrictionsManifest;
+
+export type RoleRecordsPermissionsManifest = AllRecordsPermissionsManifest & {
+  objects?: ObjectRecordsPermissionsManifest[];
+};
 
 export type RowLevelPermissionRuleManifest =
   RowLevelRecordsPermissionsManifest & {
     objectUniversalIdentifier: string;
   };
 
-export type RoleManifest = SyncableEntityOptions &
-  Omit<RolePermissionGrants, 'objectPermissions' | 'fieldPermissions'> & {
+export type DeprecatedRoleRecordsPermissionsManifest = {
+  /** @deprecated Use recordsPermissions.canReadAllRecords */
+  canReadAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canUpdateAllRecords */
+  canUpdateAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canSoftDeleteAllRecords */
+  canSoftDeleteAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canDestroyAllRecords */
+  canDestroyAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.objects */
+  objectPermissions?: ObjectPermissionManifest[];
+  /** @deprecated Use unreadableFields and uneditableFields in recordsPermissions.objects */
+  fieldPermissions?: FieldPermissionManifest[];
+  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
+  rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
+  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
+  rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];
+};
+
+export const DEPRECATED_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS = [
+  'canReadAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
+  'objectPermissions',
+  'fieldPermissions',
+  'rowLevelPermissionPredicates',
+  'rowLevelPermissionPredicateGroups',
+] as const satisfies (keyof DeprecatedRoleRecordsPermissionsManifest)[];
+
+type RoleManifestBase = SyncableEntityOptions &
+  Pick<
+    RolePermissionGrants,
+    | 'canUpdateAllSettings'
+    | 'canAccessAllTools'
+    | 'canAccessAllAgentChatChannels'
+    | 'permissionFlagUniversalIdentifiers'
+  > & {
     label: string;
     description?: string;
     icon?: string;
     canBeAssignedToUsers?: boolean;
     canBeAssignedToAgents?: boolean;
     canBeAssignedToApiKeys?: boolean;
-    objectPermissions?: ObjectPermissionManifest[];
-    fieldPermissions?: FieldPermissionManifest[];
-    objectRecordsPermissions?: ObjectRecordsPermissionsManifest[];
-    rowLevelPermissionPredicates?: RowLevelPermissionPredicateManifest[];
-    rowLevelPermissionPredicateGroups?: RowLevelPermissionPredicateGroupManifest[];
+  };
+
+export type NormalizedRoleManifest = RoleManifestBase & {
+  recordsPermissions: RoleRecordsPermissionsManifest & {
+    objects: ObjectRecordsPermissionsManifest[];
+  };
+};
+
+// The deprecated properties are read for manifests built before recordsPermissions
+export type RoleManifest = RoleManifestBase &
+  DeprecatedRoleRecordsPermissionsManifest & {
+    recordsPermissions?: RoleRecordsPermissionsManifest;
   };

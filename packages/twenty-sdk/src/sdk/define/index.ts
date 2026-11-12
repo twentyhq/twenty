@@ -198,6 +198,7 @@ export { defineRole } from '@/sdk/define/roles/define-role';
 export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionPredicateGroupManifest,
+  RoleRecordsPermissionsManifest,
   ObjectRecordsPermissionsManifest,
   RowLevelRecordsPermissionsManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';

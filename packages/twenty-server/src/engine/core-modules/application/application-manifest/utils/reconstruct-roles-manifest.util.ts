@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FieldPermissionManifest,
+  type FieldRestrictionsManifest,
+  getFieldPermissionUniversalIdentifier,
   type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 
-import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
 import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
 import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
@@ -35,9 +35,17 @@ type FlatRoleChild =
 type RoleChildren = {
   objectPermissions: Omit<
     ObjectRecordsPermissionsManifest,
-    'rowLevelRecordsPermissions'
+    'rowLevelRecordsPermissions' | keyof FieldRestrictionsManifest
   >[];
-  fieldPermissions: FieldPermissionManifest[];
+  fieldRestrictions: {
+    objectUniversalIdentifier: string;
+    fieldUniversalIdentifier: string;
+    rowLevelPermissionRuleUniversalIdentifier: string | null;
+    canReadFieldValue: boolean | null;
+    canUpdateFieldValue: boolean | null;
+    universalIdentifier: string;
+    derivedUniversalIdentifier: string;
+  }[];
   permissionFlagUniversalIdentifiers: string[];
 };
 
@@ -90,7 +98,7 @@ export const reconstructRolesManifest = ({
       universalIdentifier,
       {
         objectPermissions: [],
-        fieldPermissions: [],
+        fieldRestrictions: [],
         permissionFlagUniversalIdentifiers: [],
       },
     ]),
@@ -166,11 +174,12 @@ export const reconstructRolesManifest = ({
   for (const flatFieldPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatFieldPermissionMaps,
   )) {
-    // Manifests do not declare field permissions on a row level permission rule yet
+    // A field permission on a predicate group that no rule owns cannot be written under a rule
     if (
       isDefined(
         flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
-      )
+      ) &&
+      !isDefined(flatFieldPermission.rowLevelPermissionRuleUniversalIdentifier)
     ) {
       continue;
     }
@@ -194,11 +203,26 @@ export const reconstructRolesManifest = ({
     ) {
       childrenOf(
         flatFieldPermission.roleUniversalIdentifier,
-      )?.fieldPermissions.push(
-        fromFlatFieldPermissionToFieldPermissionManifest({
-          flatFieldPermission,
+      )?.fieldRestrictions.push({
+        objectUniversalIdentifier:
+          flatFieldPermission.objectMetadataUniversalIdentifier,
+        fieldUniversalIdentifier:
+          flatFieldPermission.fieldMetadataUniversalIdentifier,
+        rowLevelPermissionRuleUniversalIdentifier:
+          flatFieldPermission.rowLevelPermissionRuleUniversalIdentifier,
+        canReadFieldValue: flatFieldPermission.canReadFieldValue ?? null,
+        canUpdateFieldValue: flatFieldPermission.canUpdateFieldValue ?? null,
+        universalIdentifier: flatFieldPermission.universalIdentifier,
+        derivedUniversalIdentifier: getFieldPermissionUniversalIdentifier({
+          applicationUniversalIdentifier:
+            flatFieldPermission.applicationUniversalIdentifier,
+          roleUniversalIdentifier: flatFieldPermission.roleUniversalIdentifier,
+          fieldUniversalIdentifier:
+            flatFieldPermission.fieldMetadataUniversalIdentifier,
+          rowLevelPermissionPredicateGroupUniversalIdentifier:
+            flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
         }),
-      );
+      });
     }
   }
 
@@ -259,11 +283,11 @@ export const reconstructRolesManifest = ({
     return fromFlatRoleToRoleManifest({
       flatRole,
       children: {
-        objectRecordsPermissions: buildObjectRecordsPermissionsManifests({
+        objectsRecordsPermissions: buildObjectRecordsPermissionsManifests({
           allRecordsPermissions: children?.objectPermissions ?? [],
           rowLevelPermissionRules: rowLevelPermissions?.rules ?? [],
+          fieldRestrictions: children?.fieldRestrictions ?? [],
         }),
-        fieldPermissions: children?.fieldPermissions,
         rowLevelPermissionPredicateGroups: rowLevelPermissions?.predicateGroups,
         rowLevelPermissionPredicates: rowLevelPermissions?.predicates,
         permissionFlagUniversalIdentifiers:

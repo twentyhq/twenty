@@ -21,8 +21,13 @@ const buildRule = ({
   ],
 });
 
+const DERIVED_IDENTITY = {
+  universalIdentifier: 'derived',
+  derivedUniversalIdentifier: 'derived',
+};
+
 describe('buildObjectRecordsPermissionsManifests', () => {
-  it('should nest the rules of an object under its all records permissions, and add an entry for an object that only has rules', () => {
+  it('should gather the all records permissions, field restrictions and rules of each object, add an entry for an object without all records permissions, and name a field permission whose identifier is not derived', () => {
     const companyRule = buildRule({
       universalIdentifier: 'company-rule',
       objectUniversalIdentifier: 'company',
@@ -43,17 +48,61 @@ describe('buildObjectRecordsPermissionsManifests', () => {
           { objectUniversalIdentifier: 'task', canReadAllRecords: true },
         ],
         rowLevelPermissionRules: [companyRule, personRule],
+        fieldRestrictions: [
+          {
+            objectUniversalIdentifier: 'task',
+            fieldUniversalIdentifier: 'secret',
+            rowLevelPermissionRuleUniversalIdentifier: null,
+            canReadFieldValue: false,
+            canUpdateFieldValue: false,
+            ...DERIVED_IDENTITY,
+          },
+          {
+            objectUniversalIdentifier: 'company',
+            fieldUniversalIdentifier: 'revenue',
+            rowLevelPermissionRuleUniversalIdentifier: 'company-rule',
+            canReadFieldValue: null,
+            canUpdateFieldValue: false,
+            ...DERIVED_IDENTITY,
+          },
+          {
+            objectUniversalIdentifier: 'note',
+            fieldUniversalIdentifier: 'body',
+            rowLevelPermissionRuleUniversalIdentifier: null,
+            canReadFieldValue: false,
+            canUpdateFieldValue: null,
+            universalIdentifier: 'note-body-permission',
+            derivedUniversalIdentifier: 'derived',
+          },
+        ],
       }),
     ).toEqual([
       {
         objectUniversalIdentifier: 'company',
         canReadAllRecords: false,
-        rowLevelRecordsPermissions: [nestedCompanyRule],
+        rowLevelRecordsPermissions: [
+          { ...nestedCompanyRule, uneditableFields: ['revenue'] },
+        ],
       },
-      { objectUniversalIdentifier: 'task', canReadAllRecords: true },
+      {
+        objectUniversalIdentifier: 'task',
+        canReadAllRecords: true,
+        unreadableFields: ['secret'],
+        uneditableFields: ['secret'],
+      },
       {
         objectUniversalIdentifier: 'person',
         rowLevelRecordsPermissions: [nestedPersonRule],
+      },
+      {
+        objectUniversalIdentifier: 'note',
+        unreadableFields: ['body'],
+        fieldPermissionIdentifiers: [
+          {
+            fieldUniversalIdentifier: 'body',
+            universalIdentifier: 'note-body-permission',
+          },
+        ],
       },
     ]);
   });

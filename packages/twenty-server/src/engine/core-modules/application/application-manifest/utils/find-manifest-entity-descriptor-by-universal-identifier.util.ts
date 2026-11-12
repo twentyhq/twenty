@@ -241,7 +241,10 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'field permission',
     getCandidates: (manifest) =>
       (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.fieldPermissions, () => undefined),
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role }).fieldPermissions,
+          () => undefined,
+        ),
       ),
   },
   rowLevelPermissionPredicate: {

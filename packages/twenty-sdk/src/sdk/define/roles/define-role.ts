@@ -2,9 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { getDeprecatedRecordsPermissionsWarnings } from '@/sdk/define/roles/get-deprecated-records-permissions-warnings';
 import { getShadowedRowLevelPermissionRuleWarnings } from '@/sdk/define/roles/get-shadowed-row-level-permission-rule-warnings';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
-import { validateObjectRecordsPermissions } from '@/sdk/define/roles/validate-object-records-permissions';
+import { validateRecordsPermissions } from '@/sdk/define/roles/validate-records-permissions';
 
 const keepEachPermissionFlagOnce = <
   TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
@@ -130,18 +131,15 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  const objectRecordsPermissionsValidation =
-    validateObjectRecordsPermissions(config);
-
   return createValidationResult({
     config: keepEachPermissionFlagOnce(config),
-    errors: [...errors, ...objectRecordsPermissionsValidation.errors],
+    errors: [...errors, ...validateRecordsPermissions(config)],
     warnings: [
-      ...objectRecordsPermissionsValidation.warnings,
-      ...getShadowedRowLevelPermissionRuleWarnings({
+      ...getDeprecatedRecordsPermissionsWarnings({
+        label: config.label,
         role: config,
-        objectRecordsPermissions: config.objectRecordsPermissions,
       }),
+      ...getShadowedRowLevelPermissionRuleWarnings(config),
     ],
   });
 };

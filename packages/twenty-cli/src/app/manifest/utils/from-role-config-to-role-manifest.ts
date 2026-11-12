@@ -1,7 +1,7 @@
 import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import {
-  getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
+  normalizeRoleManifestRecordsPermissions,
   type RoleManifest,
 } from 'twenty-shared/application';
 
@@ -12,35 +12,17 @@ export const fromRoleConfigToRoleManifest = ({
   roleConfig: RoleConfig;
   applicationUniversalIdentifier: string;
 }): RoleManifest => {
+  const { recordsPermissions, ...role } =
+    normalizeRoleManifestRecordsPermissions({
+      role: roleConfig,
+      applicationUniversalIdentifier,
+    });
+
   return {
-    ...roleConfig,
-    objectPermissions: (roleConfig.objectPermissions ?? []).map(
-      (objectPermission) => ({
-        ...objectPermission,
-        universalIdentifier:
-          objectPermission.universalIdentifier ??
-          getObjectPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: roleConfig.universalIdentifier,
-            objectUniversalIdentifier:
-              objectPermission.objectUniversalIdentifier,
-          }),
-      }),
-    ),
-    fieldPermissions: (roleConfig.fieldPermissions ?? []).map(
-      (fieldPermission) => ({
-        ...fieldPermission,
-        universalIdentifier:
-          fieldPermission.universalIdentifier ??
-          getFieldPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: roleConfig.universalIdentifier,
-            fieldUniversalIdentifier: fieldPermission.fieldUniversalIdentifier,
-          }),
-      }),
-    ),
-    objectRecordsPermissions: (roleConfig.objectRecordsPermissions ?? []).map(
-      (objectRecordsPermissions) => ({
+    ...role,
+    recordsPermissions: {
+      ...recordsPermissions,
+      objects: recordsPermissions.objects.map((objectRecordsPermissions) => ({
         ...objectRecordsPermissions,
         universalIdentifier:
           objectRecordsPermissions.universalIdentifier ??
@@ -50,11 +32,8 @@ export const fromRoleConfigToRoleManifest = ({
             objectUniversalIdentifier:
               objectRecordsPermissions.objectUniversalIdentifier,
           }),
-      }),
-    ),
-    rowLevelPermissionPredicateGroups:
-      roleConfig.rowLevelPermissionPredicateGroups ?? [],
-    rowLevelPermissionPredicates: roleConfig.rowLevelPermissionPredicates ?? [],
+      })),
+    },
     permissionFlagUniversalIdentifiers:
       roleConfig.permissionFlagUniversalIdentifiers ?? [],
   };

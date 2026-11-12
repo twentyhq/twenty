@@ -260,11 +260,17 @@ export type {
   RowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
+  FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
+  AllRecordsPermissionsManifest,
   ObjectRecordsPermissionsManifest,
+  RoleRecordsPermissionsManifest,
   RowLevelPermissionRuleManifest,
+  DeprecatedRoleRecordsPermissionsManifest,
+  NormalizedRoleManifest,
   RoleManifest,
 } from './roleManifestType';
+export { DEPRECATED_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS } from './roleManifestType';
 export type {
   ObjectPermissionGrant,
   FieldPermissionGrant,
@@ -358,6 +364,7 @@ export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontC
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
+export { normalizeRoleManifestRecordsPermissions } from './utils/normalizeRoleManifestRecordsPermissions';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

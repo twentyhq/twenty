@@ -17,6 +17,8 @@ type RowLevelRecordsPermissions = {
   universalIdentifier: string;
   predicates?: RulePredicate[];
   predicateGroups?: RulePredicateGroup[];
+  unreadableFields?: string[];
+  uneditableFields?: string[];
 };
 
 type ObjectRecordsPermissions = {
@@ -24,19 +26,17 @@ type ObjectRecordsPermissions = {
   rowLevelRecordsPermissions?: RowLevelRecordsPermissions[];
 };
 
-export const validateObjectRecordsPermissions = ({
-  label,
+export const validateRecordsPermissions = ({
+  recordsPermissions,
   objectPermissions = [],
-  objectRecordsPermissions = [],
   rowLevelPermissionPredicateGroups = [],
   rowLevelPermissionPredicates = [],
 }: {
-  label: string;
+  recordsPermissions?: { objects?: ObjectRecordsPermissions[] };
   objectPermissions?: { objectUniversalIdentifier: string }[];
-  objectRecordsPermissions?: ObjectRecordsPermissions[];
   rowLevelPermissionPredicateGroups?: { universalIdentifier: string }[];
   rowLevelPermissionPredicates?: { universalIdentifier: string }[];
-}): { errors: string[]; warnings: string[] } => {
+}): string[] => {
   const errors: string[] = [];
   const ruleUniversalIdentifiers = new Set<string>();
   const predicateGroupUniversalIdentifiers = new Set(
@@ -126,14 +126,14 @@ export const validateObjectRecordsPermissions = ({
   for (const {
     objectUniversalIdentifier,
     rowLevelRecordsPermissions = [],
-  } of objectRecordsPermissions) {
+  } of recordsPermissions?.objects ?? []) {
     if (!isNonEmptyString(objectUniversalIdentifier)) {
       errors.push(
-        'Object records permissions must have an objectUniversalIdentifier',
+        'An object of recordsPermissions must have an objectUniversalIdentifier',
       );
     } else if (objectUniversalIdentifiers.has(objectUniversalIdentifier)) {
       errors.push(
-        `Object "${objectUniversalIdentifier}" is declared more than once across objectRecordsPermissions and objectPermissions`,
+        `Object "${objectUniversalIdentifier}" is declared more than once across recordsPermissions and objectPermissions`,
       );
     } else {
       objectUniversalIdentifiers.add(objectUniversalIdentifier);
@@ -155,18 +155,19 @@ export const validateObjectRecordsPermissions = ({
         );
       }
 
+      if (
+        (isNonEmptyArray(rule.unreadableFields) ||
+          isNonEmptyArray(rule.uneditableFields)) &&
+        !isNonEmptyArray(rule.predicateGroups)
+      ) {
+        errors.push(
+          `Row level permission rule "${rule.universalIdentifier}" declares unreadableFields or uneditableFields and needs at least one predicate group to hold them`,
+        );
+      }
+
       validateChildren(rule);
     }
   }
 
-  return {
-    errors,
-    warnings:
-      isNonEmptyArray(rowLevelPermissionPredicateGroups) ||
-      isNonEmptyArray(rowLevelPermissionPredicates)
-        ? [
-            `Role "${label}" declares rowLevelPermissionPredicates or rowLevelPermissionPredicateGroups, which are deprecated. Move them inside the rowLevelRecordsPermissions of the object in objectRecordsPermissions, with the operations each rule grants, and set the object's can…AllRecords to false for those operations. Until then the object permission is applied to the matching records only.`,
-          ]
-        : [],
-  };
+  return errors;
 };

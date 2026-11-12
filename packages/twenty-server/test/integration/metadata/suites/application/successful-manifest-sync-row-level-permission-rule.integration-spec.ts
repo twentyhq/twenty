@@ -29,9 +29,7 @@ const companyNamePredicate = {
 const buildManifest = (
   role: Pick<
     RoleManifest,
-    | 'objectPermissions'
-    | 'objectRecordsPermissions'
-    | 'rowLevelPermissionPredicates'
+    'objectPermissions' | 'recordsPermissions' | 'rowLevelPermissionPredicates'
   >,
 ): Manifest =>
   buildBaseManifest({
@@ -65,19 +63,21 @@ const {
 } = companyNamePredicate;
 
 const manifestWithRule = buildManifest({
-  objectRecordsPermissions: [
-    {
-      objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-      canUpdateAllRecords: true,
-      rowLevelRecordsPermissions: [
-        {
-          universalIdentifier: TEST_RULE_ID,
-          canReadRecords: true,
-          predicates: [companyNameRulePredicate],
-        },
-      ],
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+        canUpdateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: TEST_RULE_ID,
+            canReadRecords: true,
+            predicates: [companyNameRulePredicate],
+          },
+        ],
+      },
+    ],
+  },
 });
 
 type RuleRow = {

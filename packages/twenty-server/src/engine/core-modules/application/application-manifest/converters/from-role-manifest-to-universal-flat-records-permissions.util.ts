@@ -1,23 +1,28 @@
+import { msg } from '@lingui/core/macro';
 import {
+  type FieldRestrictionsManifest,
   flattenRowLevelPermissionRuleManifests,
-  getRecordsPermissionsFromRoleManifest,
+  getFieldPermissionUniversalIdentifier,
+  normalizeRoleManifestRecordsPermissions,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-records-permissions-manifest-to-universal-flat-object-permission.util';
-import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
-import { deriveUndeclaredRowLevelPermissionRules } from 'src/engine/core-modules/application/application-manifest/utils/derive-undeclared-row-level-permission-rules.util';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
-import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { type UniversalFlatRowLevelPermissionRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-rule.type';
 
-const ALL_RECORDS_GRANT_KEYS = [
+const ALL_RECORDS_PERMISSION_KEYS = [
   'canReadAllRecords',
   'canCreateAllRecords',
   'canUpdateAllRecords',
@@ -25,128 +30,166 @@ const ALL_RECORDS_GRANT_KEYS = [
   'canDestroyAllRecords',
 ] as const;
 
-export const fromRoleManifestToUniversalFlatRecordsPermissions = ({
+export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
   roleManifest,
-  universalFlatRole,
+  applicationUniversalIdentifier,
   now,
 }: {
-  roleManifest: Pick<
-    RoleManifest,
-    | 'objectPermissions'
-    | 'objectRecordsPermissions'
-    | 'rowLevelPermissionPredicateGroups'
-    | 'rowLevelPermissionPredicates'
-  >;
-  universalFlatRole: Pick<
-    UniversalFlatRole,
-    | 'universalIdentifier'
-    | 'applicationUniversalIdentifier'
-    | 'canReadAllObjectRecords'
-    | 'canCreateAllObjectRecords'
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-  >;
+  roleManifest: RoleManifest;
+  applicationUniversalIdentifier: string;
   now: string;
 }): {
+  objectPermissions: UniversalFlatObjectPermission[];
+  fieldPermissions: UniversalFlatFieldPermission[];
   rules: UniversalFlatRowLevelPermissionRule[];
   predicateGroups: UniversalFlatRowLevelPermissionPredicateGroup[];
   predicates: UniversalFlatRowLevelPermissionPredicate[];
-  objectPermissions: UniversalFlatObjectPermission[];
 } => {
+  const roleUniversalIdentifier = roleManifest.universalIdentifier;
   const owner = {
-    roleUniversalIdentifier: universalFlatRole.universalIdentifier,
-    applicationUniversalIdentifier:
-      universalFlatRole.applicationUniversalIdentifier,
+    roleUniversalIdentifier,
+    applicationUniversalIdentifier,
     now,
   };
-
-  const ruleManifests = getRecordsPermissionsFromRoleManifest({
+  const { objects } = normalizeRoleManifestRecordsPermissions({
     role: roleManifest,
-  }).rowLevelPermissionRules;
-  const declaredRules = ruleManifests.map((rowLevelPermissionRuleManifest) =>
-    fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule({
-      rowLevelPermissionRuleManifest,
-      ...owner,
-    }),
-  );
-  const declared = flattenRowLevelPermissionRuleManifests({
-    rules: ruleManifests,
-  });
+    applicationUniversalIdentifier,
+  }).recordsPermissions;
 
-  const undeclared = deriveUndeclaredRowLevelPermissionRules({
-    universalFlatRole,
-    universalFlatObjectPermissions: [
-      ...(roleManifest.objectPermissions ?? []).map(
-        (objectPermissionManifest) =>
-          fromObjectPermissionManifestToUniversalFlatObjectPermission({
-            objectPermissionManifest,
-            ...owner,
+  const buildFieldPermissions = ({
+    objectUniversalIdentifier,
+    unreadableFields = [],
+    uneditableFields = [],
+    fieldPermissionIdentifiers = [],
+    rowLevelPermissionRuleUniversalIdentifier,
+    rowLevelPermissionPredicateGroupUniversalIdentifier,
+  }: FieldRestrictionsManifest & {
+    objectUniversalIdentifier: string;
+    rowLevelPermissionRuleUniversalIdentifier: string | null;
+    rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
+  }): UniversalFlatFieldPermission[] =>
+    [...new Set([...unreadableFields, ...uneditableFields])].map(
+      (fieldUniversalIdentifier) => ({
+        universalIdentifier:
+          fieldPermissionIdentifiers.find(
+            (fieldPermissionIdentifier) =>
+              fieldPermissionIdentifier.fieldUniversalIdentifier ===
+              fieldUniversalIdentifier,
+          )?.universalIdentifier ??
+          getFieldPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier,
+            fieldUniversalIdentifier,
+            rowLevelPermissionPredicateGroupUniversalIdentifier,
           }),
-      ),
-      ...(roleManifest.objectRecordsPermissions ?? [])
-        .filter(
-          (objectRecordsPermissionsManifest) =>
-            isDefined(objectRecordsPermissionsManifest.universalIdentifier) ||
-            ALL_RECORDS_GRANT_KEYS.some((allRecordsGrantKey) =>
-              isDefined(objectRecordsPermissionsManifest[allRecordsGrantKey]),
-            ),
-        )
-        .map((objectRecordsPermissionsManifest) =>
-          fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
-            objectRecordsPermissionsManifest,
-            ...owner,
-          }),
-        ),
-    ],
-    declaredRuleUniversalIdentifiers: new Set(
-      declaredRules.map(({ universalIdentifier }) => universalIdentifier),
-    ),
-    predicateGroups: (roleManifest.rowLevelPermissionPredicateGroups ?? []).map(
-      (rowLevelPermissionPredicateGroupManifest) =>
-        fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
-          { rowLevelPermissionPredicateGroupManifest, ...owner },
-        ),
-    ),
-    predicates: (roleManifest.rowLevelPermissionPredicates ?? []).map(
-      (rowLevelPermissionPredicateManifest) =>
-        fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-          { rowLevelPermissionPredicateManifest, ...owner },
-        ),
-    ),
-    now,
-  });
+        applicationUniversalIdentifier,
+        roleUniversalIdentifier,
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+        fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+        rowLevelPermissionPredicateGroupUniversalIdentifier,
+        rowLevelPermissionRuleUniversalIdentifier,
+        canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
+          ? false
+          : null,
+        canUpdateFieldValue: uneditableFields.includes(fieldUniversalIdentifier)
+          ? false
+          : null,
+        createdAt: now,
+        updatedAt: now,
+      }),
+    );
+
+  const rules = objects.flatMap(
+    ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>
+      rowLevelRecordsPermissions.map((rowLevelRecordsPermissions) => ({
+        ...rowLevelRecordsPermissions,
+        objectUniversalIdentifier,
+      })),
+  );
+  const flattened = flattenRowLevelPermissionRuleManifests({ rules });
 
   return {
-    rules: [...declaredRules, ...undeclared.rules],
-    predicateGroups: [
-      ...declared.predicateGroups.map(
-        ({
-          rowLevelPermissionRuleUniversalIdentifier,
-          ...rowLevelPermissionPredicateGroupManifest
-        }) => ({
-          ...fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
-            { rowLevelPermissionPredicateGroupManifest, ...owner },
+    objectPermissions: objects
+      .filter(
+        (objectRecordsPermissionsManifest) =>
+          isDefined(objectRecordsPermissionsManifest.universalIdentifier) ||
+          ALL_RECORDS_PERMISSION_KEYS.some((allRecordsPermissionKey) =>
+            isDefined(
+              objectRecordsPermissionsManifest[allRecordsPermissionKey],
+            ),
           ),
-          rowLevelPermissionRuleUniversalIdentifier,
+      )
+      .map((objectRecordsPermissionsManifest) =>
+        fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
+          objectRecordsPermissionsManifest,
+          ...owner,
         }),
       ),
-      ...undeclared.predicateGroups,
-    ],
-    predicates: [
-      ...declared.predicates.map(
-        ({
-          rowLevelPermissionRuleUniversalIdentifier,
-          ...rowLevelPermissionPredicateManifest
-        }) => ({
-          ...fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-            { rowLevelPermissionPredicateManifest, ...owner },
-          ),
-          rowLevelPermissionRuleUniversalIdentifier,
+    fieldPermissions: [
+      ...objects.flatMap((objectRecordsPermissionsManifest) =>
+        buildFieldPermissions({
+          ...objectRecordsPermissionsManifest,
+          rowLevelPermissionRuleUniversalIdentifier: null,
+          rowLevelPermissionPredicateGroupUniversalIdentifier: null,
         }),
       ),
-      ...undeclared.predicates,
+      ...rules.flatMap((rule) => {
+        const hasFieldRestrictions =
+          (rule.unreadableFields ?? []).length > 0 ||
+          (rule.uneditableFields ?? []).length > 0;
+        const predicateGroupUniversalIdentifier =
+          rule.predicateGroups?.[0]?.universalIdentifier;
+
+        if (!hasFieldRestrictions) {
+          return [];
+        }
+
+        // Field permissions of a rule are stored on one of its predicate groups
+        if (!isDefined(predicateGroupUniversalIdentifier)) {
+          throw new ApplicationException(
+            `Row level records permissions ${rule.universalIdentifier} declare unreadable or uneditable fields but no predicate group to hold them`,
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`Row level records permissions that hide or lock fields need at least one predicate group.`,
+            },
+          );
+        }
+
+        return buildFieldPermissions({
+          ...rule,
+          rowLevelPermissionRuleUniversalIdentifier: rule.universalIdentifier,
+          rowLevelPermissionPredicateGroupUniversalIdentifier:
+            predicateGroupUniversalIdentifier,
+        });
+      }),
     ],
-    objectPermissions: undeclared.objectPermissions,
+    rules: rules.map((rowLevelPermissionRuleManifest) =>
+      fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule({
+        rowLevelPermissionRuleManifest,
+        ...owner,
+      }),
+    ),
+    predicateGroups: flattened.predicateGroups.map(
+      ({
+        rowLevelPermissionRuleUniversalIdentifier,
+        ...rowLevelPermissionPredicateGroupManifest
+      }) => ({
+        ...fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
+          { rowLevelPermissionPredicateGroupManifest, ...owner },
+        ),
+        rowLevelPermissionRuleUniversalIdentifier,
+      }),
+    ),
+    predicates: flattened.predicates.map(
+      ({
+        rowLevelPermissionRuleUniversalIdentifier,
+        ...rowLevelPermissionPredicateManifest
+      }) => ({
+        ...fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
+          { rowLevelPermissionPredicateManifest, ...owner },
+        ),
+        rowLevelPermissionRuleUniversalIdentifier,
+      }),
+    ),
   };
 };

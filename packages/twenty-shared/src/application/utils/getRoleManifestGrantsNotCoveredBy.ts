@@ -34,7 +34,10 @@ const getRoleLevelGrantsNotCoveredBy = ({
   ...OBJECT_PERMISSION_ACTIONS.filter((action) => {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
 
-    return role[roleLevelFlag] && !superset[roleLevelFlag];
+    return (
+      getRecordsPermissionsFromRoleManifest({ role })[roleLevelFlag] &&
+      !getRecordsPermissionsFromRoleManifest({ role: superset })[roleLevelFlag]
+    );
   }).map<RoleManifestGrant>((action) => ({
     type: 'ALL_OBJECT_RECORDS',
     action,
@@ -165,7 +168,9 @@ const getFieldGrantsNotCoveredBy = ({
   role: RoleManifest;
   superset: RoleManifest;
 }): RoleManifestGrant[] =>
-  (superset.fieldPermissions ?? []).flatMap(
+  getRecordsPermissionsFromRoleManifest({
+    role: superset,
+  }).fieldPermissions.flatMap(
     (supersetFieldPermission): RoleManifestGrant[] => {
       const { objectUniversalIdentifier, fieldUniversalIdentifier } =
         supersetFieldPermission;
@@ -174,7 +179,9 @@ const getFieldGrantsNotCoveredBy = ({
           role,
           objectUniversalIdentifier,
         });
-      const roleFieldPermission = role.fieldPermissions?.find(
+      const roleFieldPermission = getRecordsPermissionsFromRoleManifest({
+        role,
+      }).fieldPermissions.find(
         (permission) =>
           permission.objectUniversalIdentifier === objectUniversalIdentifier &&
           permission.fieldUniversalIdentifier === fieldUniversalIdentifier,

@@ -1,8 +1,7 @@
 import {
   type AgentManifest,
-  type FieldPermissionManifest,
   type NavigationMenuItemManifest,
-  type ObjectPermissionManifest,
+  type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
   type RowLevelPermissionPredicateGroupManifest,
@@ -49,9 +48,7 @@ import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 's
 import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-skill-to-skill-manifest.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
-import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
-import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
@@ -60,7 +57,7 @@ import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-mo
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
-import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
+import { fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-records-permissions-manifest-to-universal-flat-object-permission.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
@@ -259,24 +256,16 @@ const NESTED_VIEW_CHILD_GAPS = {
 
 const ROLE_UID = 'abababab-abab-4bab-8bab-abababababab';
 const OBJECT_PERMISSION_UID = 'acacacac-acac-4cac-8cac-acacacacacac';
-const FIELD_PERMISSION_UID = 'adadadad-adad-4dad-8dad-adadadadadad';
 const PERMISSION_FLAG_UID = 'aeaeaeae-aeae-4eae-8eae-aeaeaeaeaeae';
 
-const OBJECT_PERMISSION_MANIFEST: ObjectPermissionManifest = {
+const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
   universalIdentifier: OBJECT_PERMISSION_UID,
   objectUniversalIdentifier: OBJECT_UID,
-  canReadObjectRecords: true,
-  canUpdateObjectRecords: false,
-  canSoftDeleteObjectRecords: false,
-  canDestroyObjectRecords: false,
-};
-
-const FIELD_PERMISSION_MANIFEST: FieldPermissionManifest = {
-  universalIdentifier: FIELD_PERMISSION_UID,
-  objectUniversalIdentifier: OBJECT_UID,
-  fieldUniversalIdentifier: FIELD_UID,
-  canReadFieldValue: true,
-  canUpdateFieldValue: false,
+  canReadAllRecords: true,
+  canCreateAllRecords: false,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
 };
 
 const PERMISSION_FLAG_MANIFEST: PermissionFlagManifest = {
@@ -295,10 +284,7 @@ const ROLE_MANIFEST: RoleManifest = {
   icon: 'IconHeadset',
   canUpdateAllSettings: false,
   canAccessAllTools: true,
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
+  recordsPermissions: { canReadAllRecords: true },
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
@@ -346,11 +332,11 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: RowLevelPermissionPredicateManife
     position: 0,
   };
 
-const CREATE_PERMISSION_DERIVED_ON_IMPORT =
-  'Not in the manifest yet: importing derives it from the update permission';
+const ALL_RECORDS_UNDER_RECORDS_PERMISSIONS =
+  'written as can…AllRecords under recordsPermissions';
+const FIELD_RESTRICTION_LISTS =
+  'written as unreadableFields and uneditableFields under its object or rule';
 
-const FIELD_PERMISSION_ON_RULE_GAP =
-  'manifests do not declare field permissions on a row level permission rule yet';
 const NESTED_IN_RULE =
   'a predicate and a predicate group are written under their rule';
 const PREDICATE_GROUP_OPERATIONS_GAP =
@@ -748,7 +734,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: {
-      canCreateAllObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
+      canReadAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
+      canCreateAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
+      canUpdateAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
+      canSoftDeleteAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
+      canDestroyAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
     },
   },
   {
@@ -756,8 +746,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
     emittedProperties: Object.keys(
       fromFlatObjectPermissionToObjectRecordsPermissionsManifest({
         flatObjectPermission:
-          fromObjectPermissionManifestToUniversalFlatObjectPermission({
-            objectPermissionManifest: OBJECT_PERMISSION_MANIFEST,
+          fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
+            objectRecordsPermissionsManifest:
+              OBJECT_RECORDS_PERMISSIONS_MANIFEST,
             ...ROLE_CHILD_CONVERSION_CONTEXT,
           }),
       }),
@@ -775,25 +766,18 @@ const EXPORTED_KINDS: ExportedKind[] = [
   },
   {
     metadataName: 'fieldPermission',
-    emittedProperties: Object.keys(
-      fromFlatFieldPermissionToFieldPermissionManifest({
-        flatFieldPermission:
-          fromFieldPermissionManifestToUniversalFlatFieldPermission({
-            fieldPermissionManifest: FIELD_PERMISSION_MANIFEST,
-            ...ROLE_CHILD_CONVERSION_CONTEXT,
-          }),
-      }),
-    ),
-    renamedProperties: {
-      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
-      fieldMetadataUniversalIdentifier: 'fieldUniversalIdentifier',
-    },
+    emittedProperties: [],
+    renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: {
-      ...NESTED_ROLE_CHILD_GAPS,
+      roleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      objectMetadataUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      fieldMetadataUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      canReadFieldValue: FIELD_RESTRICTION_LISTS,
+      canUpdateFieldValue: FIELD_RESTRICTION_LISTS,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
-        FIELD_PERMISSION_ON_RULE_GAP,
-      rowLevelPermissionRuleUniversalIdentifier: FIELD_PERMISSION_ON_RULE_GAP,
+        FIELD_RESTRICTION_LISTS,
+      rowLevelPermissionRuleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
     },
   },
   {

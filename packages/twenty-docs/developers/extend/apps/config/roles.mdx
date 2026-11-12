@@ -20,39 +20,43 @@ export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
   label: 'My new role',
   description: 'A role that can be used in your workspace',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-          .universalIdentifier,
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
+  recordsPermissions: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+        unreadableFields: [
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+            .universalIdentifier,
+        ],
+      },
+    ],
+  },
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+`recordsPermissions` holds everything a role can do on records:
+
+- `canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`, `canSoftDeleteAllRecords` and
+  `canDestroyAllRecords` at its top level apply to **every object**. `canCreateAllRecords` follows
+  `canUpdateAllRecords` when it is not set.
+- `objects` lists what differs for one object: the same five grants for all its records,
+  `unreadableFields` and `uneditableFields` (field universal identifiers; a field that cannot be
+  read cannot be edited either), and its [row-level records permissions](#row-level-security).
 
 <Note>
   `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`
@@ -74,15 +78,12 @@ Object and field permissions decide _which objects and fields_ a role can touch.
 permission predicates** go further and decide _which records_ a role can see and act on — for
 example, a self-service role where each external user sees only their own records.
 
-Declare what a role can do on the records of an object with `objectRecordsPermissions`. Each entry
-names an object and holds two things:
-
-- its **all records** grants (`canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`,
-  `canSoftDeleteAllRecords`, `canDestroyAllRecords`), which apply to every record of the object;
-- its **row-level records permissions** (`rowLevelRecordsPermissions`), a list of rules. A rule
-  grants operations (`canReadRecords`, `canCreateRecords`, `canUpdateRecords`,
-  `canSoftDeleteRecords`, `canDestroyRecords`) on the records matched by the predicates nested
-  inside it.
+An object of `recordsPermissions.objects` can restrict some operations to part of its records with
+`rowLevelRecordsPermissions`, a list of rules. A rule grants operations (`canReadRecords`,
+`canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords`) on the records
+matched by the predicates nested inside it. A rule can also carry its own `unreadableFields` and
+`uneditableFields`, which apply to the records it matches; such a rule needs at least one predicate
+group.
 
 A predicate references a field by its `universalIdentifier`, an `operand`, and (optionally) a
 workspaceMember field whose value is injected at query time — so you can express "the record's owner
@@ -103,30 +104,32 @@ export default defineRole({
   label: 'Partner',
   description: 'External partner — sees only its own records',
   canBeAssignedToUsers: true,
-  objectRecordsPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canCreateAllRecords: true,
-      rowLevelRecordsPermissions: [
-        {
-          universalIdentifier: 'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
-          canReadRecords: true,
-          canUpdateRecords: true,
-          predicates: [
-            {
-              universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
-              fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-              operand: RowLevelPermissionPredicateOperand.IS,
-              workspaceMemberFieldUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
-                  .universalIdentifier,
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canCreateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              {
+                universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+                fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+                    .universalIdentifier,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
@@ -134,19 +137,15 @@ Because these permissions ship in the manifest, they are created, updated, and r
 the role on every install and upgrade — there is no separate post-install step to keep in sync.
 
 <Warning>
-  An operation granted on **all records** wins over the rules. Do not grant with
-  `can…AllRecords` (or with `canReadAllObjectRecords` and the other role-wide switches) the
-  operations a rule is meant to restrict: when a role-wide switch is on, set the object's
-  `can…AllRecords` to `false`. `defineRole` warns when a rule is shadowed this way.
+  An operation granted on **all records** wins over the rules. Do not grant with `can…AllRecords`,
+  on the object or for every object, the operations a rule is meant to restrict: when the role
+  grants one for every object, set the object's `can…AllRecords` to `false`. `defineRole` warns
+  when a rule is shadowed this way.
 </Warning>
 
 An object can declare several rules. A record is reachable for an operation as soon as one rule
 granting that operation matches it, so one rule can let a partner read the accounts of its region
 while another lets it update only the accounts it owns.
-
-`objectPermissions` remains available for all records grants, with `canReadObjectRecords`,
-`canUpdateObjectRecords`, `canSoftDeleteObjectRecords` and `canDestroyObjectRecords`. An object is
-declared in one of the two lists, not both.
 
 ### Combining predicates with groups
 
@@ -172,53 +171,62 @@ export default defineRole({
   universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
   label: 'Partner (opportunities)',
   canBeAssignedToUsers: true,
-  objectRecordsPermissions: [
-    {
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      rowLevelRecordsPermissions: [
-        {
-          universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
-          canReadRecords: true,
-          predicateGroups: [
-            {
-              universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.OR,
-              predicates: [
-                {
-                  universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
-                  fieldUniversalIdentifier:
-                    OPPORTUNITY.fields.owner.universalIdentifier,
-                  operand: RowLevelPermissionPredicateOperand.IS,
-                  workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-                },
-                {
-                  universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
-                  fieldUniversalIdentifier:
-                    OPPORTUNITY.fields.pointOfContact.universalIdentifier,
-                  operand: RowLevelPermissionPredicateOperand.IS,
-                  workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                predicates: [
+                  {
+                    universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.owner.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                  {
+                    universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
-### Predicates declared on the role (deprecated)
+### Deprecated properties
 
-Before `objectRecordsPermissions`, a role paired `objectPermissions` on an object with
-`rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` declared directly on the role.
-Such a manifest still syncs: Twenty creates one rule per top-level predicate group, and one for the
-ungrouped predicates of each object, gives it the operations the role had on that object, and turns
-the object permission off so that the predicates keep restricting it. `defineRole` prints a
-deprecation warning for each role concerned. To migrate, move the object to
-`objectRecordsPermissions`, nest the predicates and groups in its `rowLevelRecordsPermissions` with
-the operations each rule grants, and keep in `can…AllRecords` only what applies to every record.
+Before `recordsPermissions`, a role declared the same permissions with separate properties. They
+still work, `defineRole` prints a deprecation warning naming the ones a role uses, and the build
+converts them, so the manifest sent to Twenty only contains `recordsPermissions`:
+
+| Deprecated | Write instead |
+|---|---|
+| `canReadAllObjectRecords`, `canUpdateAllObjectRecords`, `canSoftDeleteAllObjectRecords`, `canDestroyAllObjectRecords` | `recordsPermissions.canReadAllRecords` and the other `can…AllRecords` |
+| `objectPermissions` with `canReadObjectRecords`, … | an entry of `recordsPermissions.objects` with `canReadAllRecords`, … |
+| `fieldPermissions` with `canReadFieldValue: false` / `canUpdateFieldValue: false` | `unreadableFields` / `uneditableFields` on the object |
+| `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups` | `rowLevelRecordsPermissions` on the object, with the predicates and groups nested in a rule |
+
+Predicates declared on the role had no grants of their own. They are converted to one rule per
+top-level predicate group, and one for the ungrouped predicates of each object. The rule takes the
+operations the role had on that object, and the object's `can…AllRecords` are set to `false` so
+that the predicates keep restricting it.
 
 Notes:
 
@@ -248,16 +256,16 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [],
-  fieldPermissions: [],
+  recordsPermissions: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+  },
   permissionFlagUniversalIdentifiers: [],
 });
 ```

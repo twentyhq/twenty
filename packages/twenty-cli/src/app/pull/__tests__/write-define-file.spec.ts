@@ -531,39 +531,41 @@ describe('writeDefineFile', () => {
       config: {
         universalIdentifier: 'role-uid',
         label: 'Auditor',
-        objectRecordsPermissions: [
-          {
-            objectUniversalIdentifier: 'object-uid',
-            canUpdateAllRecords: true,
-            rowLevelRecordsPermissions: [
-              {
-                universalIdentifier: 'rule-uid',
-                canReadRecords: true,
-                predicates: [
-                  {
-                    universalIdentifier: 'predicate-uid',
-                    fieldUniversalIdentifier: 'field-uid',
-                    operand: 'CONTAINS',
-                    value: 'Rex',
-                  },
-                ],
-                predicateGroups: [
-                  {
-                    universalIdentifier: 'predicate-group-uid',
-                    logicalOperator: 'OR',
-                    predicates: [
-                      {
-                        universalIdentifier: 'predicate-in-group-uid',
-                        fieldUniversalIdentifier: 'field-uid',
-                        operand: 'IS_EMPTY',
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
+        recordsPermissions: {
+          objects: [
+            {
+              objectUniversalIdentifier: 'object-uid',
+              canUpdateAllRecords: true,
+              rowLevelRecordsPermissions: [
+                {
+                  universalIdentifier: 'rule-uid',
+                  canReadRecords: true,
+                  predicates: [
+                    {
+                      universalIdentifier: 'predicate-uid',
+                      fieldUniversalIdentifier: 'field-uid',
+                      operand: 'CONTAINS',
+                      value: 'Rex',
+                    },
+                  ],
+                  predicateGroups: [
+                    {
+                      universalIdentifier: 'predicate-group-uid',
+                      logicalOperator: 'OR',
+                      predicates: [
+                        {
+                          universalIdentifier: 'predicate-in-group-uid',
+                          fieldUniversalIdentifier: 'field-uid',
+                          operand: 'IS_EMPTY',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       },
       enumBindings: ROLE_ENUM_BINDINGS,
     });

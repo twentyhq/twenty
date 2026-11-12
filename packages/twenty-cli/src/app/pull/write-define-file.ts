@@ -88,7 +88,8 @@ const buildRowLevelRecordsPermissionsEnumBindings = (): EnumBinding[] =>
     { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH + 1 },
     (_, depth) => {
       const path = [
-        'objectRecordsPermissions',
+        'recordsPermissions',
+        'objects',
         '[]',
         'rowLevelRecordsPermissions',
         '[]',

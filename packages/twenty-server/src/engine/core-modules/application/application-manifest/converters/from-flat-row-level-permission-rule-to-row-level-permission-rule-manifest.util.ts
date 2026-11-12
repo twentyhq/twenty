@@ -16,7 +16,16 @@ export const fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest = ({
     | 'canDestroyRecords'
   >;
 }): Required<
-  Omit<RowLevelPermissionRuleManifest, 'predicates' | 'predicateGroups'>
+  Pick<
+    RowLevelPermissionRuleManifest,
+    | 'universalIdentifier'
+    | 'objectUniversalIdentifier'
+    | 'canReadRecords'
+    | 'canCreateRecords'
+    | 'canUpdateRecords'
+    | 'canSoftDeleteRecords'
+    | 'canDestroyRecords'
+  >
 > => ({
   universalIdentifier: flatRowLevelPermissionRule.universalIdentifier,
   objectUniversalIdentifier:
