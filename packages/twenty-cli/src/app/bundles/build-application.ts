@@ -1,7 +1,8 @@
 import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 import crypto from 'crypto';
 import { readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
+import { collectApplicationSourceFiles } from '@/app/bundles/collect-application-source-files';
 import {
   computeDependencyFileChecksum,
   computePackageJsonChecksum,
@@ -87,7 +88,7 @@ export const buildApplication = async (
       }
     : undefined;
 
-  await esbuildOneShotBuild({
+  const logicBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: logicFunctions,
     fileFolder: FileFolder.BuiltLogicFunction,
@@ -119,7 +120,8 @@ export const buildApplication = async (
         })
       : null;
 
-  await esbuildOneShotBuild({
+  const styleInputs: string[] = [];
+  const frontBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
     fileFolder: FileFolder.BuiltFrontComponent,
@@ -136,6 +138,7 @@ export const buildApplication = async (
         : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
+          onSourceFiles: (paths) => styleInputs.push(...paths),
           getSharedDependenciesBuildContext: () =>
             sharedDependenciesBuildContext,
         }),
@@ -148,10 +151,18 @@ export const buildApplication = async (
   await copyStaticFiles({
     appPath: options.appPath,
     fileFolder: FileFolder.Source,
-    filePaths: [...new Set([...logicFunctions, ...frontComponents])],
+    filePaths: collectApplicationSourceFiles({
+      appPath: options.appPath,
+      entryPaths: [...logicFunctions, ...frontComponents],
+      buildInputs: [
+        ...Object.keys(logicBuild?.inputs ?? {}).map((path) => resolve(path)),
+        ...Object.keys(frontBuild?.inputs ?? {}).map((path) => resolve(path)),
+        ...styleInputs,
+      ],
+    }),
     collectFileBuilt,
     outputDir: relativeOutputDir,
-    dereferenceSymlinks: options.dereferenceSymlinks,
+    dereferenceSymlinks: true,
   });
 
   await copyStaticFiles({

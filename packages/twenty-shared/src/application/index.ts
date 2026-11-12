@@ -371,3 +371,6 @@ export {
   APPLICATION_WORKFLOW_TRIGGER_TYPES,
   workflowTriggerManifestSchema,
 } from './workflowTriggerManifestType';
+
+export { type SourceFileManifest } from './sourceFileManifestType';
+export { APPLICATION_SOURCE_FILE_EXTENSIONS } from './constants/application-source-file-extensions';

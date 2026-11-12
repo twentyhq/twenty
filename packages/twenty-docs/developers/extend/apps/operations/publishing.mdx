@@ -42,6 +42,8 @@ twenty app build
 
 This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` to inspect the manifest and artifact metadata. `twenty app publish` creates the package itself; no separate tarball build is required.
 
+Builds retain frontend and logic-function entry files, their imported local helpers and types, local TypeScript configuration, and nested CSS and assets. Original paths and bytes are preserved in a source inventory. Dependencies in `node_modules` and unrelated files are excluded; source imports and symlinks must remain inside the app directory. If you use `package.json#files`, include these retained sources or publishing reports the missing files. Older installed packages need to be rebuilt and published to gain this inventory. This does not yet expand which files `twenty app pull` restores.
+
 ## Deploying to a server (tarball)
 
 For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.

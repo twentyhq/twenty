@@ -31,11 +31,18 @@ export const manifestUpdateChecksums = ({
   outputDir = OUTPUT_DIR,
 }: UpdateManifestChecksumParams): Manifest => {
   let result = structuredClone(manifest);
+  result.sourceFiles = [];
   for (const [
     builtPath,
     { fileFolder, checksum },
   ] of builtFileInfos.entries()) {
     const rootBuiltPath = relative(outputDir, builtPath);
+    if (fileFolder === FileFolder.Source) {
+      result.sourceFiles?.push({
+        filePath: rootBuiltPath.replaceAll('\\', '/'),
+        checksum,
+      });
+    }
     if (fileFolder === FileFolder.BuiltLogicFunction) {
       const logicFunctions = result.logicFunctions;
       const fnIndex = logicFunctions.findIndex(
@@ -122,6 +129,10 @@ export const manifestUpdateChecksums = ({
       }
     }
   }
+
+  result.sourceFiles?.sort((first, second) =>
+    first.filePath.localeCompare(second.filePath),
+  );
 
   return result;
 };

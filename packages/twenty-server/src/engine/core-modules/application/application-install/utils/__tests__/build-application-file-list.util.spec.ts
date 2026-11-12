@@ -4,6 +4,35 @@ import { FileFolder } from 'twenty-shared/types';
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 
 describe('buildApplicationFileList', () => {
+  it('requires every inventoried source once when installing a package', () => {
+    const manifest = {
+      application: {},
+      frontComponents: [
+        {
+          sourceComponentPath: 'src/component.tsx',
+          builtComponentPath: 'src/component.mjs',
+        },
+      ],
+      sourceFiles: [
+        'src/component.tsx',
+        'src/helper.ts',
+        'src/logo.png',
+        'tsconfig.json',
+      ].map((filePath) => ({ filePath, checksum: 'checksum' })),
+    } as Manifest;
+    const sources = buildApplicationFileList(manifest).filter(
+      (file) => file.fileFolder === FileFolder.Source,
+    );
+    expect(sources.map((file) => file.relativePath)).toEqual([
+      'manifest.json',
+      'src/component.tsx',
+      'src/helper.ts',
+      'src/logo.png',
+      'tsconfig.json',
+    ]);
+    expect(sources.every((file) => file.isRequired)).toBe(true);
+  });
+
   it('includes source and built files for logic functions and front components', () => {
     const manifest = {
       application: {},
