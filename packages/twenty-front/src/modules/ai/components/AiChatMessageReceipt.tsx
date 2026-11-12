@@ -9,7 +9,7 @@ import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChat
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
-import { agentChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
+import { agentChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { getAgentChatMessageReaders } from '@/ai/utils/getAgentChatMessageReaders';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
@@ -63,9 +63,7 @@ export const AiChatMessageReceipt = ({
     agentChatIsSendingMessageFamilyState,
     { threadId: agentChatDisplayedThread ?? '' },
   );
-  const agentChatLastMessageId = useAtomStateValue(
-    agentChatLastMessageIdSelector,
-  );
+  const agentChatMessageIds = useAtomStateValue(agentChatMessageIdsSelector);
   const agentChatMessage = useAtomFamilySelectorValue(
     agentChatMessageFamilySelector,
     { messageId },
@@ -82,7 +80,7 @@ export const AiChatMessageReceipt = ({
     return null;
   }
 
-  if (agentChatIsSendingMessage && agentChatLastMessageId === messageId) {
+  if (agentChatIsSendingMessage && agentChatMessageIds.at(-1) === messageId) {
     return <ChatMessageReceipt status="sending" />;
   }
 

@@ -71,6 +71,12 @@ const StyledFilesContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledUserMessageContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`;
+
 type AiChatUserMessageTextProps = {
   messageId: string;
   text: string;
@@ -87,6 +93,11 @@ const AiChatUserMessageText = ({
   meta,
 }: AiChatUserMessageTextProps) => {
   const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
+  const content = (
+    <AiChatUserMessageCollapsibleContent text={text}>
+      {children}
+    </AiChatUserMessageCollapsibleContent>
+  );
 
   return (
     <StyledChatMessageBubble
@@ -94,12 +105,14 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <StyledChatMessageBubbleContent>
-        <AiChatUserMessageCollapsibleContent text={text}>
-          {children}
-        </AiChatUserMessageCollapsibleContent>
-        {meta}
-      </StyledChatMessageBubbleContent>
+      {isDefined(meta) ? (
+        <StyledChatMessageBubbleContent>
+          <StyledUserMessageContent>{content}</StyledUserMessageContent>
+          {meta}
+        </StyledChatMessageBubbleContent>
+      ) : (
+        content
+      )}
     </StyledChatMessageBubble>
   );
 };
@@ -232,12 +245,12 @@ export const AiChatMessage = ({
               text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
               meta={
-                hasOwnReceipt && (
+                hasOwnReceipt ? (
                   <StyledChatMessageMeta>
                     <ChatMessageTime date={createdAt} />
                     <AiChatMessageReceipt messageId={messageId} />
                   </StyledChatMessageMeta>
-                )
+                ) : undefined
               }
             >
               {messageContent}
