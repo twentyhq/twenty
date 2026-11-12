@@ -96,11 +96,19 @@ export class FieldMetadataOptionEnumSchemaService {
     queryRunner: QueryRunner;
     workspaceId: string;
   }): Promise<boolean> {
-    // A field whose rows are being created for the first time already holds the values of its options
-    const fromOptionRows =
-      fromOptionRowsOfChange.length > 0
-        ? fromOptionRowsOfChange
-        : fromFieldMetadataOptionsToOptionRows(flatFieldMetadata.options);
+    // A field whose missing rows are being created already holds the values of its options
+    const fromUniversalIdentifiers = new Set(
+      fromOptionRowsOfChange.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ),
+    );
+    const fromOptionRows = [
+      ...fromOptionRowsOfChange,
+      ...fromFieldMetadataOptionsToOptionRows(flatFieldMetadata.options).filter(
+        ({ universalIdentifier }) =>
+          !fromUniversalIdentifiers.has(universalIdentifier),
+      ),
+    ];
 
     const toValueByUniversalIdentifier = new Map(
       toOptionRows.map(({ universalIdentifier, value }) => [

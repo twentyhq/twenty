@@ -149,6 +149,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
             fieldMetadataOptionRows: fieldMetadataOptions.byFieldMetadataId.get(
               fieldMetadataEntity.id,
             ),
+            shouldRowsCoverStoredOptions: true,
           }),
           viewFields:
             viewFields.byFieldMetadataId.get(fieldMetadataEntity.id) || [],

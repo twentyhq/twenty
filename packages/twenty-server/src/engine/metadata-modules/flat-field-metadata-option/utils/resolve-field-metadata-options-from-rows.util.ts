@@ -46,19 +46,34 @@ const resolveEffectiveOptionRow = (
 };
 
 // A field without rows predates the option table or its backfill, so its stored options still stand.
+// With shouldRowsCoverStoredOptions, they also stand while a stored option has no row yet, which is
+// the state of a workspace the 2.59 alignment command has not reached.
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
+  shouldRowsCoverStoredOptions = false,
 }: {
   fieldMetadataEntity: Pick<FieldMetadataEntity, 'type' | 'options'> &
     Partial<Pick<FieldMetadataEntity, 'applicationId'>>;
   fieldMetadataOptionRows: FieldMetadataOptionRowForOptions[] | undefined;
+  shouldRowsCoverStoredOptions?: boolean;
 }): FieldMetadataEntity['options'] => {
   if (
     !(ENUM_FIELD_TYPES as readonly FieldMetadataType[]).includes(
       fieldMetadataEntity.type,
     ) ||
     !isNonEmptyArray(fieldMetadataOptionRows)
+  ) {
+    return fieldMetadataEntity.options;
+  }
+
+  const rowValues = new Set(fieldMetadataOptionRows.map(({ value }) => value));
+
+  if (
+    shouldRowsCoverStoredOptions &&
+    (fieldMetadataEntity.options ?? []).some(
+      ({ value }) => !rowValues.has(value),
+    )
   ) {
     return fieldMetadataEntity.options;
   }

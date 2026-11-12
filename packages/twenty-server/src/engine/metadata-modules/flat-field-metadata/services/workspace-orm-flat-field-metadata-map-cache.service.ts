@@ -79,6 +79,7 @@ export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCache
                 fieldMetadataOptions.byFieldMetadataId.get(
                   fieldMetadataEntity.id,
                 ),
+              shouldRowsCoverStoredOptions: true,
             }),
           },
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),

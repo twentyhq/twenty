@@ -115,6 +115,7 @@ export class WorkspaceExportService {
           fieldMetadataOptionRows: fieldMetadataOptionRows.filter(
             ({ fieldMetadataId }) => fieldMetadataId === fieldMetadata.id,
           ),
+          shouldRowsCoverStoredOptions: true,
         }),
       }),
     );
