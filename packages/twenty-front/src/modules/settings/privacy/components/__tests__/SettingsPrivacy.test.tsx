@@ -246,6 +246,8 @@ describe('SettingsPrivacy', () => {
         isProductImprovementDataSharingEnabled: true,
       },
       updateWorkspaceError: new Error('Save failed'),
+      // Longer than the click itself takes on a busy runner, so the in-flight state is observable
+      updateWorkspaceDelay: 500,
     });
 
     const zeroDataRetentionSwitch = screen.getByRole('switch', {
