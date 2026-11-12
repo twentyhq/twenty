@@ -1,21 +1,23 @@
+import { useApolloClient } from '@apollo/client/react';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useOpenDirectMessageThreadOrThrow } from '@/ai/hooks/useOpenDirectMessageThreadOrThrow';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
+import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const OpenDirectMessageButton = () => {
+  const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { openDirectMessageThreadOrThrow } =
-    useOpenDirectMessageThreadOrThrow();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
   });
@@ -44,7 +46,14 @@ export const OpenDirectMessageButton = () => {
     setIsOpening(true);
 
     try {
-      const thread = await openDirectMessageThreadOrThrow(workspaceMemberId);
+      const { data } = await apolloClient.mutate({
+        mutation: OpenDirectMessageDocument,
+        variables: { workspaceMemberId },
+      });
+      const threadId = data?.openDirectMessage;
+      assertIsDefinedOrThrow(threadId);
+      const thread = await loadAgentChatThread(threadId);
+      assertIsDefinedOrThrow(thread);
       handleThreadClick(thread);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
