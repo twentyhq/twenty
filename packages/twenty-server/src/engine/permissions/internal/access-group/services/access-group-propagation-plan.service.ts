@@ -83,9 +83,10 @@ export class AccessGroupPropagationPlanService {
       }
 
       if (!isNonEmptyArray(objectMetadataIdsToCompute)) {
-        await this.cacheStorageService.del(
+        await this.cacheStorageService.mdel([
           this.buildComputedRecordCountCacheKey(workspaceId),
-        );
+          this.buildIsPlanStoppedCacheKey(workspaceId),
+        ]);
       }
 
       const plan = {
@@ -154,7 +155,7 @@ export class AccessGroupPropagationPlanService {
       }
 
       if (!isNonEmptyArray(waitingObjectMetadataIds)) {
-        await this.stopPlan(workspaceId);
+        await this.clearPlan(workspaceId);
 
         return;
       }
@@ -167,10 +168,14 @@ export class AccessGroupPropagationPlanService {
   }
 
   async stopPlan(workspaceId: string): Promise<void> {
-    await this.cacheStorageService.mdel([
-      this.buildPlanCacheKey(workspaceId),
-      this.buildComputedRecordCountCacheKey(workspaceId),
-    ]);
+    await this.withPlanLock(workspaceId, async () => {
+      await this.clearPlan(workspaceId);
+      await this.cacheStorageService.set(
+        this.buildIsPlanStoppedCacheKey(workspaceId),
+        true,
+        ACCESS_GROUP_PROPAGATION_PLAN_TTL_MS,
+      );
+    });
   }
 
   async findProgress(
@@ -206,9 +211,14 @@ export class AccessGroupPropagationPlanService {
   }: ApplyAccessGroupPropagationPlanJobData): Promise<AccessGroupPropagationPlan> {
     const cachedPlan = await this.findPlan(workspaceId);
 
+    const isPlanStopped = await this.cacheStorageService.get<boolean>(
+      this.buildIsPlanStoppedCacheKey(workspaceId),
+    );
+
     if (
       isNonEmptyArray(cachedPlan.objectMetadataIdsToCompute) ||
-      !isNonEmptyArray(plan.objectMetadataIdsToCompute)
+      !isNonEmptyArray(plan.objectMetadataIdsToCompute) ||
+      isPlanStopped === true
     ) {
       return cachedPlan;
     }
@@ -255,6 +265,13 @@ export class AccessGroupPropagationPlanService {
     );
   }
 
+  private async clearPlan(workspaceId: string): Promise<void> {
+    await this.cacheStorageService.mdel([
+      this.buildPlanCacheKey(workspaceId),
+      this.buildComputedRecordCountCacheKey(workspaceId),
+    ]);
+  }
+
   private async findPlan(
     workspaceId: string,
   ): Promise<AccessGroupPropagationPlan> {
@@ -288,6 +305,10 @@ export class AccessGroupPropagationPlanService {
 
   private buildPlanCacheKey(workspaceId: string): string {
     return `access-group-propagation:${workspaceId}:plan`;
+  }
+
+  private buildIsPlanStoppedCacheKey(workspaceId: string): string {
+    return `access-group-propagation:${workspaceId}:is-plan-stopped`;
   }
 
   private buildComputedRecordCountCacheKey(workspaceId: string): string {
