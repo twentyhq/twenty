@@ -32,7 +32,8 @@ type MessageAccumulator = {
     | 'text'
     | 'messageThreadId'
     | 'isDraft'
-  >;
+  > &
+    Partial<Pick<MessageWorkspaceEntity, 'createdBy'>>;
   sentDraftToRefresh?: MessageToRefresh;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
@@ -185,6 +186,9 @@ export class MessagingMessageService {
               text: message.text,
               messageThreadId,
               isDraft: message.isDraft,
+              ...(isDefined(message.createdBy)
+                ? { createdBy: message.createdBy }
+                : {}),
             };
 
             messageAccumulator.messageToCreate = messageToCreate;

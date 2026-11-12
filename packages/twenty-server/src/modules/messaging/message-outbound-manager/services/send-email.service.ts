@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type ComposedEmail } from 'src/engine/core-modules/tool/tools/email-tool/types/composed-email.type';
 import { MessagingDraftSendService } from 'src/modules/messaging/message-outbound-manager/services/messaging-draft-send.service';
@@ -80,6 +81,7 @@ export class SendEmailService {
     sendResult: SendMessageResult,
     data: ComposedEmail,
     workspaceId: string,
+    createdBy?: ActorMetadata,
   ): Promise<PersistedSentMessage | undefined> {
     try {
       return await this.sentMessagePersistenceService.persistSentMessage({
@@ -93,6 +95,7 @@ export class SendEmailService {
         parentThreadExternalId: data.threadExternalId,
         workspaceId,
         attachments: data.attachments,
+        createdBy,
       });
     } catch (persistenceError) {
       this.logger.warn(
