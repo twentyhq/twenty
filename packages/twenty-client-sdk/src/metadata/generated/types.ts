@@ -7252,7 +7252,7 @@ export default {
                         "String!"
                     ],
                     "resource": [
-                        1
+                        4
                     ],
                     "scope": [
                         4
