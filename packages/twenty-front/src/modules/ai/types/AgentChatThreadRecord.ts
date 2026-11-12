@@ -21,7 +21,7 @@ export type AgentChatThreadRecord = ObjectRecord & {
   pendingQuestionMessageId?: string | null;
   totalInputTokens?: number;
   totalOutputTokens?: number;
-  totalCacheReadTokens?: number;
+  totalCacheReadTokens?: number | string;
   contextWindowTokens?: number | null;
   conversationSize?: number;
   totalInputCredits?: number | string;

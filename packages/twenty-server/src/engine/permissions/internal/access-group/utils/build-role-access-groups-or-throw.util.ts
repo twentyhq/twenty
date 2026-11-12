@@ -8,7 +8,7 @@ import {
 import {
   canAccessThroughAllRecordsPermission,
   isDefined,
-  isRowLevelRecordsPermissionsRuleGrantingOperation,
+  canRlsRuleAccessOperation,
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -16,7 +16,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildAccessGroupMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-access-group-member-field-values-or-throw.util';
 import { computeAccessGroupHash } from 'src/engine/permissions/internal/access-group/utils/compute-access-group-hash.util';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
 const ALL_OPERATION_TYPES: ObjectRecordsOperationType[] = [
   'create',
@@ -39,7 +39,7 @@ export const buildRoleAccessGroupsOrThrow = ({
   objectMetadataId: string;
   objectRecordsPermissions: ObjectRecordsPermissions | undefined;
   operationTypes?: ObjectRecordsOperationType[];
-  workspaceMembers: RowLevelPermissionWorkspaceMember[];
+  workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   isRelationHopEnabled: boolean;
 }): AccessGroupWithoutCompactId[] => {
@@ -57,7 +57,7 @@ export const buildRoleAccessGroupsOrThrow = ({
     objectRecordsPermissions.rowLevelRecordsPermissions ?? []
   ).filter((rule) =>
     operationTypes.some((operationType) =>
-      isRowLevelRecordsPermissionsRuleGrantingOperation({
+      canRlsRuleAccessOperation({
         rule,
         operationType,
       }),

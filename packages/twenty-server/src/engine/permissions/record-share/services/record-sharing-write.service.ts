@@ -37,7 +37,7 @@ import { type RecordSharingArgs } from 'src/engine/permissions/record-share/type
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { type CreatedRecordSharing } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
-import { canSetRecordPrivacy } from 'src/engine/permissions/private-record/utils/can-set-record-privacy.util';
+import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -134,7 +134,7 @@ export class RecordSharingWriteService {
     return this.recordSharingChangeService.runChange({
       args,
       write: (change) => this.writeRecordPrivacy({ ...change, args }),
-      isChangeEnabled: canSetRecordPrivacy,
+      isChangeEnabled: canSetPrivateRecordState,
     });
   }
 
