@@ -9,7 +9,7 @@ import {
   FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateOperand,
-  type ViewFilterOperand,
+  ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
   convertViewFilterValueToString,
@@ -37,6 +37,36 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
+
+const VIEW_FILTER_OPERAND_BY_ROW_LEVEL_PERMISSION_PREDICATE_OPERAND: Record<
+  RowLevelPermissionPredicateOperand,
+  ViewFilterOperand
+> = {
+  [RowLevelPermissionPredicateOperand.IS]: ViewFilterOperand.IS,
+  [RowLevelPermissionPredicateOperand.IS_NOT_NULL]:
+    ViewFilterOperand.IS_NOT_NULL,
+  [RowLevelPermissionPredicateOperand.IS_NOT]: ViewFilterOperand.IS_NOT,
+  [RowLevelPermissionPredicateOperand.LESS_THAN_OR_EQUAL]:
+    ViewFilterOperand.LESS_THAN_OR_EQUAL,
+  [RowLevelPermissionPredicateOperand.GREATER_THAN_OR_EQUAL]:
+    ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+  [RowLevelPermissionPredicateOperand.IS_BEFORE]: ViewFilterOperand.IS_BEFORE,
+  [RowLevelPermissionPredicateOperand.IS_AFTER]: ViewFilterOperand.IS_AFTER,
+  [RowLevelPermissionPredicateOperand.CONTAINS]: ViewFilterOperand.CONTAINS,
+  [RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN]:
+    ViewFilterOperand.DOES_NOT_CONTAIN,
+  [RowLevelPermissionPredicateOperand.IS_EMPTY]: ViewFilterOperand.IS_EMPTY,
+  [RowLevelPermissionPredicateOperand.IS_NOT_EMPTY]:
+    ViewFilterOperand.IS_NOT_EMPTY,
+  [RowLevelPermissionPredicateOperand.IS_RELATIVE]:
+    ViewFilterOperand.IS_RELATIVE,
+  [RowLevelPermissionPredicateOperand.IS_IN_PAST]: ViewFilterOperand.IS_IN_PAST,
+  [RowLevelPermissionPredicateOperand.IS_IN_FUTURE]:
+    ViewFilterOperand.IS_IN_FUTURE,
+  [RowLevelPermissionPredicateOperand.IS_TODAY]: ViewFilterOperand.IS_TODAY,
+  [RowLevelPermissionPredicateOperand.VECTOR_SEARCH]:
+    ViewFilterOperand.VECTOR_SEARCH,
+};
 
 @Injectable()
 export class FlatRowLevelPermissionPredicateValidatorService {
@@ -743,7 +773,11 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       subFieldName,
     });
 
-    if (allowedOperands.includes(operand as unknown as ViewFilterOperand)) {
+    if (
+      allowedOperands.includes(
+        VIEW_FILTER_OPERAND_BY_ROW_LEVEL_PERMISSION_PREDICATE_OPERAND[operand],
+      )
+    ) {
       return undefined;
     }
 
@@ -771,7 +805,8 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
-    const recordFilterOperand = operand as unknown as ViewFilterOperand;
+    const recordFilterOperand =
+      VIEW_FILTER_OPERAND_BY_ROW_LEVEL_PERMISSION_PREDICATE_OPERAND[operand];
 
     if (
       isRecordFilterOperandExpectingValue(recordFilterOperand) &&
