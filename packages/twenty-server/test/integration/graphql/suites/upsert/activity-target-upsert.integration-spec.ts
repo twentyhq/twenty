@@ -6,106 +6,160 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 
 describe('activity target upsert', () => {
-  it('keeps one live task target and creates a new one after deletion', async () => {
-    const taskId = randomUUID();
-    const personId = randomUUID();
-    const taskTargetIds: string[] = [];
+  it.each([
+    {
+      activityName: 'task',
+      targetName: 'taskTarget',
+      targetNamePlural: 'taskTargets',
+      createTargetsKey: 'createTaskTargets',
+      activityIdField: 'taskId',
+    },
+    {
+      activityName: 'note',
+      targetName: 'noteTarget',
+      targetNamePlural: 'noteTargets',
+      createTargetsKey: 'createNoteTargets',
+      activityIdField: 'noteId',
+    },
+  ])(
+    'keeps one live $targetName when a removed target is added again and its $activityName is restored',
+    async ({
+      activityName,
+      targetName,
+      targetNamePlural,
+      createTargetsKey,
+      activityIdField,
+    }) => {
+      const activityId = randomUUID();
+      const personId = randomUUID();
+      const targetIds: string[] = [];
 
-    try {
-      await createOneOperation({
-        objectMetadataSingularName: 'task',
-        gqlFields: 'id',
-        input: { id: taskId, title: 'Activity target upsert task' },
-      });
-      await createOneOperation({
-        objectMetadataSingularName: 'person',
-        gqlFields: 'id',
-        input: {
-          id: personId,
-          name: { firstName: 'Activity target', lastName: 'upsert' },
-        },
-      });
-
-      const createTaskTarget = () =>
-        makeGraphqlApiRequest(
-          createManyOperationFactory({
-            objectMetadataSingularName: 'taskTarget',
-            objectMetadataPluralName: 'taskTargets',
-            gqlFields: 'id deletedAt taskId targetPersonId',
-            data: [{ taskId, targetPersonId: personId }],
-            upsert: true,
+      const findLiveTargetIds = async (): Promise<string[]> => {
+        const findResponse = await makeGraphqlApiRequest(
+          findManyOperationFactory({
+            objectMetadataSingularName: targetName,
+            objectMetadataPluralName: targetNamePlural,
+            gqlFields: 'id',
+            filter: {
+              [activityIdField]: { eq: activityId },
+              targetPersonId: { eq: personId },
+            },
           }),
         );
 
-      const firstCreateResponse = await createTaskTarget();
-      const createdTaskTargetId =
-        firstCreateResponse.body.data.createTaskTargets[0].id;
+        return findResponse.body.data[targetNamePlural].edges.map(
+          ({ node }: { node: { id: string } }) => node.id,
+        );
+      };
 
-      taskTargetIds.push(createdTaskTargetId);
-
-      const repeatedCreateResponse = await createTaskTarget();
-
-      expect(repeatedCreateResponse.body.data.createTaskTargets[0]).toEqual(
-        expect.objectContaining({ id: createdTaskTargetId, deletedAt: null }),
-      );
-
-      await makeGraphqlApiRequest(
-        deleteOneOperationFactory({
-          objectMetadataSingularName: 'taskTarget',
+      try {
+        await createOneOperation({
+          objectMetadataSingularName: activityName,
           gqlFields: 'id',
-          recordId: createdTaskTargetId,
-        }),
-      );
-
-      const recreateResponse = await createTaskTarget();
-      const recreatedTaskTarget =
-        recreateResponse.body.data.createTaskTargets[0];
-
-      taskTargetIds.push(recreatedTaskTarget.id);
-
-      expect(recreatedTaskTarget.id).not.toEqual(createdTaskTargetId);
-      expect(recreatedTaskTarget.deletedAt).toBeNull();
-
-      const findResponse = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'taskTarget',
-          objectMetadataPluralName: 'taskTargets',
+          input: { id: activityId, title: 'Activity target upsert' },
+        });
+        await createOneOperation({
+          objectMetadataSingularName: 'person',
           gqlFields: 'id',
-          filter: {
-            taskId: { eq: taskId },
-            targetPersonId: { eq: personId },
+          input: {
+            id: personId,
+            name: { firstName: 'Activity target', lastName: 'upsert' },
           },
-        }),
-      );
+        });
 
-      expect(findResponse.body.data.taskTargets.edges).toHaveLength(1);
-    } finally {
-      for (const taskTargetId of taskTargetIds) {
+        const upsertTarget = async (): Promise<{
+          id: string;
+          deletedAt: string | null;
+        }> => {
+          const response = await makeGraphqlApiRequest(
+            createManyOperationFactory({
+              objectMetadataSingularName: targetName,
+              objectMetadataPluralName: targetNamePlural,
+              gqlFields: 'id deletedAt',
+              data: [
+                { [activityIdField]: activityId, targetPersonId: personId },
+              ],
+              upsert: true,
+            }),
+          );
+
+          return response.body.data[createTargetsKey][0];
+        };
+
+        const createdTarget = await upsertTarget();
+
+        targetIds.push(createdTarget.id);
+
+        expect(await upsertTarget()).toEqual({
+          id: createdTarget.id,
+          deletedAt: null,
+        });
+
+        await makeGraphqlApiRequest(
+          deleteOneOperationFactory({
+            objectMetadataSingularName: targetName,
+            gqlFields: 'id',
+            recordId: createdTarget.id,
+          }),
+        );
+
+        const recreatedTarget = await upsertTarget();
+
+        targetIds.push(recreatedTarget.id);
+
+        expect(recreatedTarget.id).not.toEqual(createdTarget.id);
+        expect(recreatedTarget.deletedAt).toBeNull();
+        expect(await findLiveTargetIds()).toEqual([recreatedTarget.id]);
+
+        await makeGraphqlApiRequest(
+          deleteOneOperationFactory({
+            objectMetadataSingularName: activityName,
+            gqlFields: 'id',
+            recordId: activityId,
+          }),
+        );
+
+        expect(await findLiveTargetIds()).toEqual([]);
+
+        const restoreResponse = await makeGraphqlApiRequest(
+          restoreOneOperationFactory({
+            objectMetadataSingularName: activityName,
+            gqlFields: 'id',
+            recordId: activityId,
+          }),
+        );
+
+        expect(restoreResponse.body.errors).toBeUndefined();
+        expect(await findLiveTargetIds()).toEqual([recreatedTarget.id]);
+      } finally {
+        for (const targetId of targetIds) {
+          await makeGraphqlApiRequest(
+            destroyOneOperationFactory({
+              objectMetadataSingularName: targetName,
+              gqlFields: 'id',
+              recordId: targetId,
+            }),
+          );
+        }
+
         await makeGraphqlApiRequest(
           destroyOneOperationFactory({
-            objectMetadataSingularName: 'taskTarget',
+            objectMetadataSingularName: activityName,
             gqlFields: 'id',
-            recordId: taskTargetId,
+            recordId: activityId,
+          }),
+        );
+        await makeGraphqlApiRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: personId,
           }),
         );
       }
-
-      await makeGraphqlApiRequest(
-        destroyOneOperationFactory({
-          objectMetadataSingularName: 'task',
-          gqlFields: 'id',
-          recordId: taskId,
-        }),
-      );
-      await makeGraphqlApiRequest(
-        destroyOneOperationFactory({
-          objectMetadataSingularName: 'person',
-          gqlFields: 'id',
-          recordId: personId,
-        }),
-      );
-    }
-  });
+    },
+  );
 });

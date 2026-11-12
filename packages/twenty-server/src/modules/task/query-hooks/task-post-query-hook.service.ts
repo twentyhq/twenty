@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
+import { getLastDeletedRecordIdsByParentId } from 'src/utils/get-last-deleted-record-ids-by-parent-id.util';
 
 @Injectable()
 export class TaskPostQueryHookService {
@@ -55,8 +56,29 @@ export class TaskPostQueryHookService {
           'taskTarget',
         );
 
+      const deletedTaskTargets = await taskTargetRepository.find({
+        where: {
+          taskId: In(payload.map((task) => task.id)),
+          deletedAt: Not(IsNull()),
+        },
+        select: { id: true, taskId: true, deletedAt: true },
+        withDeleted: true,
+      });
+
+      const taskTargetIdsToRestore = getLastDeletedRecordIdsByParentId(
+        deletedTaskTargets.map(({ id, taskId, deletedAt }) => ({
+          id,
+          parentId: taskId,
+          deletedAt,
+        })),
+      );
+
+      if (taskTargetIdsToRestore.length === 0) {
+        return;
+      }
+
       await taskTargetRepository.restore({
-        taskId: In(payload.map((task) => task.id)),
+        id: In(taskTargetIdsToRestore),
       });
     }, authContext);
   }
