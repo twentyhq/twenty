@@ -734,6 +734,57 @@ describe('useAgentChat', () => {
     expect(jotaiStore.get(quotedMessageIdAtom)).toBeNull();
   });
 
+  it('keeps a quote picked while a failed send was in flight', async () => {
+    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+      threadId: EXISTING_THREAD_ID,
+    });
+    const result = renderAgentChat({
+      persistedDrafts: {
+        [EXISTING_THREAD_ID]:
+          serializePlainTextAsAdvancedTextEditorDocument('Yes'),
+      },
+      sendChatMessageOutcomes: ['failed'],
+      currentThreadId: EXISTING_THREAD_ID,
+      isAiChatInboxEnabled: true,
+    });
+    jotaiStore.set(
+      agentChatMessagesFamilyState.atomFamily({
+        threadId: EXISTING_THREAD_ID,
+      }),
+      [
+        {
+          id: 'first-quoted-message',
+          role: 'user',
+          parts: [{ type: 'text', text: 'Can you take Stripe?' }],
+        },
+        {
+          id: 'second-quoted-message',
+          role: 'user',
+          parts: [{ type: 'text', text: 'And Acme?' }],
+        },
+      ],
+    );
+    jotaiStore.set(quotedMessageIdAtom, 'first-quoted-message');
+    const releaseSend = holdNextMutation(result.current.apolloClient);
+
+    let pendingSend: Promise<void> | undefined;
+
+    await act(async () => {
+      pendingSend = result.current.handleSendMessage();
+    });
+    act(() => {
+      jotaiStore.set(quotedMessageIdAtom, 'second-quoted-message');
+    });
+
+    releaseSend();
+
+    await act(async () => {
+      await pendingSend;
+    });
+
+    expect(jotaiStore.get(quotedMessageIdAtom)).toBe('second-quoted-message');
+  });
+
   it('keeps recipient editing locked until the send settles and unlocks a retry', async () => {
     const result = renderAgentChat({
       persistedDrafts: {

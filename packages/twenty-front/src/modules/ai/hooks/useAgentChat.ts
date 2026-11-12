@@ -435,7 +435,9 @@ export const useAgentChat = () => {
         ...currentUploadedFiles,
       ]);
 
-      store.set(quotedMessageIdAtom, quotedMessageId);
+      if (!isDefined(store.get(quotedMessageIdAtom))) {
+        store.set(quotedMessageIdAtom, quotedMessageId);
+      }
 
       removeOptimisticUserMessage();
       store.set(errorAtom, toAiChatError(error));
