@@ -36,19 +36,24 @@ export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
         const peerWorkspaceMember = workspaceMembers.find(
           ({ id }) => id === peerWorkspaceMemberId,
         );
+        const { isUnread } = get(
+          agentChatThreadInboxStatusFamilySelector,
+          thread.id,
+        );
+
+        if (!isDefined(peerWorkspaceMember)) {
+          return { threadId: thread.id, peer: null, isUnread };
+        }
 
         return {
           threadId: thread.id,
-          peer: isDefined(peerWorkspaceMember)
-            ? {
-                workspaceMemberId: peerWorkspaceMember.id,
-                name: getWorkspaceMemberNameOrEmail(peerWorkspaceMember),
-                avatarUrl: peerWorkspaceMember.avatarUrl,
-                email: peerWorkspaceMember.userEmail,
-              }
-            : null,
-          isUnread: get(agentChatThreadInboxStatusFamilySelector, thread.id)
-            .isUnread,
+          peer: {
+            workspaceMemberId: peerWorkspaceMember.id,
+            name: getWorkspaceMemberNameOrEmail(peerWorkspaceMember),
+            avatarUrl: peerWorkspaceMember.avatarUrl,
+            email: peerWorkspaceMember.userEmail,
+          },
+          isUnread,
         };
       },
     );

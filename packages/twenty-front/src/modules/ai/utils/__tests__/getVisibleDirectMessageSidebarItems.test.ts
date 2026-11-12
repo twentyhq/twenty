@@ -1,10 +1,13 @@
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
 
-const buildDirectMessage = (
-  threadId: string,
+const buildDirectMessage = ({
+  threadId,
   isUnread = false,
-): DirectMessageSidebarItem => ({
+}: {
+  threadId: string;
+  isUnread?: boolean;
+}): DirectMessageSidebarItem => ({
   threadId,
   peer: null,
   isUnread,
@@ -13,11 +16,11 @@ const buildDirectMessage = (
 describe('getVisibleDirectMessageSidebarItems', () => {
   it('keeps the first direct messages, plus unread ones and the open one past the cap', () => {
     const directMessages = [
-      buildDirectMessage('first'),
-      buildDirectMessage('second'),
-      buildDirectMessage('hidden'),
-      buildDirectMessage('unread', true),
-      buildDirectMessage('open'),
+      buildDirectMessage({ threadId: 'first' }),
+      buildDirectMessage({ threadId: 'second' }),
+      buildDirectMessage({ threadId: 'hidden' }),
+      buildDirectMessage({ threadId: 'unread', isUnread: true }),
+      buildDirectMessage({ threadId: 'open' }),
     ];
 
     expect(
