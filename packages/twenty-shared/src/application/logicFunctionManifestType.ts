@@ -32,7 +32,6 @@ export type DatabaseEventTriggerSettings = {
   updatedFields?: string[];
   batchMode?: boolean;
   condition?: string;
-  // Field universal identifiers by condition path, as validation rules store them
   conditionBindings?: ValidationRuleBindings;
 };
 
