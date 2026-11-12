@@ -1,6 +1,6 @@
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -8,12 +8,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const agentChatSelectedPresetFilter = useAtomStateValue(
-    agentChatSelectedPresetFilterState,
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
   );
   const agentChatThreadListThreads = useAtomFamilySelectorValue(
     agentChatThreadListThreadsFamilySelector,
-    { type: 'presetFilter', presetFilter: agentChatSelectedPresetFilter },
+    agentChatSelectedThreadListSource,
   );
   const { selectAiChatThread } = useSelectAiChatThread();
 

@@ -7,7 +7,7 @@ import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
-import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
@@ -45,10 +45,9 @@ export const useLeaveRemovedAiChatThread = () => {
     const nextThreadId =
       sortChatThreadsByLastActivityDesc(
         store.get(
-          agentChatThreadListThreadsFamilySelector.selectorFamily({
-            type: 'presetFilter',
-            presetFilter: store.get(agentChatSelectedPresetFilterState.atom),
-          }),
+          agentChatThreadListThreadsFamilySelector.selectorFamily(
+            store.get(agentChatSelectedThreadListSourceState.atom),
+          ),
         ),
       )[0]?.id ?? newAiChatThreadId;
     store.set(currentAiChatThreadState.atom, nextThreadId);

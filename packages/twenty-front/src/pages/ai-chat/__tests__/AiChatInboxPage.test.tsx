@@ -20,7 +20,7 @@ import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId'
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
@@ -354,10 +354,10 @@ describe('AiChatInboxPage', () => {
   });
 
   it('stays on a done chat the member writes in, though it leaves the done list', () => {
-    jotaiStore.set(
-      agentChatSelectedPresetFilterState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
-    );
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+    });
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
       Object.fromEntries(

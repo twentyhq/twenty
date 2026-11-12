@@ -15,7 +15,7 @@ import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState
 import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
@@ -78,12 +78,12 @@ export const AgentChatThreadInitializationEffect = () => {
   )
     .map(({ id }) => id)
     .join(',');
-  const agentChatSelectedPresetFilter = useAtomStateValue(
-    agentChatSelectedPresetFilterState,
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
   );
   const agentChatThreadListThreads = useAtomFamilySelectorValue(
     agentChatThreadListThreadsFamilySelector,
-    { type: 'presetFilter', presetFilter: agentChatSelectedPresetFilter },
+    agentChatSelectedThreadListSource,
   );
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);

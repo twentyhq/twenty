@@ -9,7 +9,7 @@ import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPa
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -157,7 +157,7 @@ describe('AiChatInboxThreadPagination', () => {
       filter: AgentChatChannelThreadFilter.ANY,
     };
 
-    jotaiStore.set(agentChatChannelViewState.atom, channelView);
+    setAgentChatShownChannelView(jotaiStore, channelView);
     jotaiStore.set(
       agentChatThreadListFamilyState.atomFamily(
         getAgentChatThreadListSourceKey({ type: 'channel', channelView }),

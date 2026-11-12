@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AGENT_CHAT_THREAD_FILTER_STATUS,
   type AgentChatThreadFilterStatus,
@@ -10,7 +11,7 @@ import { AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES } from '@/ai/constants/AgentChat
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
-import { agentChatSelectedPresetFilterState } from '@/ai/states/agentChatSelectedPresetFilterState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -19,8 +20,14 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const AiChatInboxPersonalViewDropdown = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
-  const [agentChatSelectedPresetFilter, setAgentChatSelectedPresetFilter] =
-    useAtomState(agentChatSelectedPresetFilterState);
+  const [
+    agentChatSelectedThreadListSource,
+    setAgentChatSelectedThreadListSource,
+  ] = useAtomState(agentChatSelectedThreadListSourceState);
+  const selectedPresetFilter =
+    agentChatSelectedThreadListSource.type === 'presetFilter'
+      ? agentChatSelectedThreadListSource.presetFilter
+      : undefined;
   const {
     openThreadCount,
     needsInputThreadCount,
@@ -43,23 +50,26 @@ export const AiChatInboxPersonalViewDropdown = () => {
 
   const handleSelect = (filterStatus: AgentChatThreadFilterStatus) => {
     resetRecordSelection();
-    setAgentChatSelectedPresetFilter(filterStatus);
+    setAgentChatSelectedThreadListSource({
+      type: 'presetFilter',
+      presetFilter: filterStatus,
+    });
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
   return (
     <AiChatInboxFilterDropdown
       isFiltered={
-        agentChatSelectedPresetFilter !==
-          AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
-        isAgentChatOpenThreadFilterStatus(agentChatSelectedPresetFilter)
+        isDefined(selectedPresetFilter) &&
+        selectedPresetFilter !== AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
+        isAgentChatOpenThreadFilterStatus(selectedPresetFilter)
       }
       options={AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES.map((filterStatus) => ({
         key: filterStatus,
         label: t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[filterStatus]),
         Icon: AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus],
         count: countByFilterStatus[filterStatus],
-        isSelected: filterStatus === agentChatSelectedPresetFilter,
+        isSelected: filterStatus === selectedPresetFilter,
         onSelect: () => handleSelect(filterStatus),
       }))}
     />

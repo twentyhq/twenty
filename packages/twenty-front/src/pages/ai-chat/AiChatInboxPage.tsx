@@ -31,7 +31,7 @@ import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatTh
 import { AgentChatThreadListLoadEffect } from '@/ai/components/AgentChatThreadListLoadEffect';
 import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatShownThreadListSourceSelector } from '@/ai/states/selectors/agentChatShownThreadListSourceSelector';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -123,16 +123,16 @@ const AiChatInboxPageContent = () => {
     agentChatShownChannelViewSelector,
   );
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const agentChatShownThreadListSource = useAtomStateValue(
-    agentChatShownThreadListSourceSelector,
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
   );
   const { threads, loading: isLoading } = useAgentChatThreadList(
-    agentChatShownThreadListSource,
+    agentChatSelectedThreadListSource,
   );
   const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const fetchMoreShownThreads = () =>
     void loadAgentChatThreadList({
-      source: agentChatShownThreadListSource,
+      source: agentChatSelectedThreadListSource,
       mode: 'fetch-more',
     });
 
@@ -272,7 +272,9 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
-      <AgentChatThreadListLoadEffect source={agentChatShownThreadListSource} />
+      <AgentChatThreadListLoadEffect
+        source={agentChatSelectedThreadListSource}
+      />
       <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
       <AiChatInboxSelectionEffect
@@ -331,9 +333,9 @@ const AiChatInboxPageContent = () => {
                     )}
                     <AgentChatThreadListFetchMoreTrigger
                       key={getAgentChatThreadListSourceKey(
-                        agentChatShownThreadListSource,
+                        agentChatSelectedThreadListSource,
                       )}
-                      source={agentChatShownThreadListSource}
+                      source={agentChatSelectedThreadListSource}
                     />
                   </StyledThreadList>
                   {!isMobile && (

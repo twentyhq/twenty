@@ -4,7 +4,9 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
+import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
 // A failed load keeps what was shown, as the next change loads again
@@ -27,8 +29,28 @@ export const useRefreshAgentChatChannels = () => {
 
     const channels = channelsResult?.data?.agentChatChannels;
 
-    if (isDefined(channels)) {
-      store.set(agentChatChannelsState.atom, channels);
+    if (!isDefined(channels)) {
+      return;
+    }
+
+    store.set(agentChatChannelsState.atom, channels);
+
+    const agentChatSelectedThreadListSource = store.get(
+      agentChatSelectedThreadListSourceState.atom,
+    );
+
+    if (
+      agentChatSelectedThreadListSource.type === 'channel' &&
+      !channels.some(
+        ({ id, isAccessible }) =>
+          isAccessible &&
+          id === agentChatSelectedThreadListSource.channelView.channelId,
+      )
+    ) {
+      store.set(
+        agentChatSelectedThreadListSourceState.atom,
+        AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
+      );
     }
   }, [apolloClient, refreshAgentChatChannelSummaries, store]);
 

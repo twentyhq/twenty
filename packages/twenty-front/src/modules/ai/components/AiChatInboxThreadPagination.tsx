@@ -6,7 +6,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { agentChatShownThreadListSourceSelector } from '@/ai/states/selectors/agentChatShownThreadListSourceSelector';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,12 +23,12 @@ export const AiChatInboxThreadPagination = ({
   onThreadSelect,
 }: AiChatInboxThreadPaginationProps) => {
   const { t } = useLingui();
-  const agentChatShownThreadListSource = useAtomStateValue(
-    agentChatShownThreadListSourceSelector,
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
   );
   const agentChatThreadList = useAtomFamilyStateValue(
     agentChatThreadListFamilyState,
-    getAgentChatThreadListSourceKey(agentChatShownThreadListSource),
+    getAgentChatThreadListSourceKey(agentChatSelectedThreadListSource),
   );
   const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const index = threads.findIndex(({ id }) => id === threadId);
@@ -41,7 +41,7 @@ export const AiChatInboxThreadPagination = ({
   const hasMoreThreads = agentChatThreadList?.hasNextPage ?? false;
   const fetchMoreThreads = () =>
     loadAgentChatThreadList({
-      source: agentChatShownThreadListSource,
+      source: agentChatSelectedThreadListSource,
       mode: 'fetch-more',
     });
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
