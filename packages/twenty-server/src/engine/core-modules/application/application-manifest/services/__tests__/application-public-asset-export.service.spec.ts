@@ -44,6 +44,8 @@ describe('ApplicationPublicAssetExportService', () => {
       applicationUniversalIdentifier,
     });
 
+    expect(repository.find).toHaveBeenCalledTimes(1);
+    expect(storage.readFile).toHaveBeenCalledTimes(1);
     expect(repository.find).toHaveBeenCalledWith(workspaceId, {
       where: {
         applicationId,
@@ -75,21 +77,57 @@ describe('ApplicationPublicAssetExportService', () => {
     ]);
   });
 
-  it('bounds the total binary content across assets', async () => {
+  it('keeps metadata export available when assets exceed the byte budget', async () => {
     repository.find.mockResolvedValue([
-      { path: 'public-asset/public/first.png' },
-      { path: 'public-asset/public/second.png' },
+      { id: 'first', path: 'public-asset/public/first.png' },
+      { id: 'second', path: 'public-asset/public/second.png' },
     ]);
     storage.readFile.mockImplementation(async () =>
       Readable.from([Buffer.alloc(8 * 1024 * 1024)]),
     );
-    await expect(
-      service.exportPublicAssets({
-        workspaceId,
-        applicationId,
-        applicationUniversalIdentifier,
-      }),
-    ).rejects.toThrow('Stream exceeds maximum allowed size');
+    const result = await service.exportPublicAssets({
+      workspaceId,
+      applicationId,
+      applicationUniversalIdentifier,
+    });
+    expect(result.files.map(({ path }) => path)).toEqual(['public/first.png']);
+    expect(result.publicAssets.map(({ filePath }) => filePath)).toEqual([
+      'public/first.png',
+    ]);
+    expect(result.coverage).toEqual([
+      {
+        metadataName: 'publicAsset',
+        universalIdentifier: 'second',
+        status: 'UNSUPPORTED',
+        reason: expect.stringContaining('8 MiB total'),
+      },
+    ]);
+    expect(Buffer.byteLength(JSON.stringify({ data: result }))).toBeLessThan(
+      16 * 1024 * 1024,
+    );
+  });
+
+  it('continues exporting smaller assets after an oversized asset', async () => {
+    repository.find.mockResolvedValue([
+      { id: 'large', path: 'public-asset/public/large.png' },
+      { id: 'small', path: 'public-asset/public/small.png' },
+    ]);
+    storage.readFile
+      .mockResolvedValueOnce(Readable.from([Buffer.alloc(8 * 1024 * 1024 + 1)]))
+      .mockResolvedValueOnce(Readable.from([Buffer.from([0, 255])]));
+    const result = await service.exportPublicAssets({
+      workspaceId,
+      applicationId,
+      applicationUniversalIdentifier,
+    });
+    expect(result.files).toEqual([
+      {
+        folder: 'public-asset',
+        path: 'public/small.png',
+        content: 'AP8=',
+      },
+    ]);
+    expect(result.coverage[0].universalIdentifier).toBe('large');
   });
 
   it('fails the export if an asset is missing instead of recording an incomplete baseline', async () => {

@@ -11,6 +11,11 @@ export type ApplicationExportCoverageEntry = {
   reason?: string;
 };
 
+export type ApplicationExportFileCoverageEntry = Omit<
+  ApplicationExportCoverageEntry,
+  'metadataName'
+> & { metadataName: 'publicAsset' };
+
 export type ApplicationExportFile = {
   folder: string;
   path: string;
@@ -24,6 +29,9 @@ export type ApplicationExport = {
     sourceType: ApplicationRegistrationSourceType;
   };
   manifest: Manifest;
-  coverage: ApplicationExportCoverageEntry[];
+  coverage: (
+    | ApplicationExportCoverageEntry
+    | ApplicationExportFileCoverageEntry
+  )[];
   files: ApplicationExportFile[];
 };

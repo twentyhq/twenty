@@ -27,7 +27,6 @@ export const recordPullBase = async ({
       target,
       signal,
       shouldIncludeSourceFiles: true,
-      shouldIncludePublicAssets: true,
     });
 
     await writePullBase({

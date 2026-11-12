@@ -3,6 +3,7 @@ import {
   ASSETS_DIR,
   isRestorableFrontComponentSourcePath,
   type FrontComponentManifest,
+  type AssetManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
@@ -25,7 +26,7 @@ export const parsePullFiles = ({
 }: {
   value: unknown;
   frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
-  publicAssets?: unknown;
+  publicAssets?: Pick<AssetManifest, 'filePath'>[];
 }): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
@@ -62,10 +63,7 @@ export const parsePullFiles = ({
       !file.path.includes('\\') &&
       !file.path.includes('\0') &&
       file.path.split('/').every((part) => !['', '.', '..'].includes(part)) &&
-      isArray(publicAssets) &&
-      publicAssets.some(
-        (asset) => isPlainObject(asset) && asset.filePath === file.path,
-      );
+      publicAssets.some((asset) => asset.filePath === file.path);
 
     if (
       !isPublicAsset &&

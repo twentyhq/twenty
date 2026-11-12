@@ -7,15 +7,20 @@ import { ASSETS_DIR, type AssetManifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { Like } from 'typeorm';
 
-import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
+import {
+  type ApplicationExportFile,
+  type ApplicationExportFileCoverageEntry,
+} from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-const MAX_PUBLIC_ASSET_EXPORT_BYTES = 12 * 1024 * 1024;
+const MAX_PUBLIC_ASSET_EXPORT_BYTES = 8 * 1024 * 1024;
 
 @Injectable()
 export class ApplicationPublicAssetExportService {
@@ -36,6 +41,7 @@ export class ApplicationPublicAssetExportService {
   }): Promise<{
     publicAssets: AssetManifest[];
     files: ApplicationExportFile[];
+    coverage: ApplicationExportFileCoverageEntry[];
   }> {
     const storedFiles = await this.fileRepository.find(workspaceId, {
       where: {
@@ -47,20 +53,35 @@ export class ApplicationPublicAssetExportService {
     });
     const publicAssets: AssetManifest[] = [];
     const files: ApplicationExportFile[] = [];
+    const coverage: ApplicationExportFileCoverageEntry[] = [];
 
     let remainingBytes = MAX_PUBLIC_ASSET_EXPORT_BYTES;
 
     for (const storedFile of storedFiles) {
       const path = storedFile.path.slice(`${FileFolder.PublicAsset}/`.length);
-      const content = await streamToBuffer(
-        await this.fileStorageService.readFile({
-          workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.PublicAsset,
-          resourcePath: path,
-        }),
-        remainingBytes,
-      );
+      let content: Buffer;
+      try {
+        content = await streamToBuffer(
+          await this.fileStorageService.readFile({
+            workspaceId,
+            applicationUniversalIdentifier,
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: path,
+          }),
+          remainingBytes,
+        );
+      } catch (error) {
+        if (!(error instanceof StreamSizeExceededError)) {
+          throw error;
+        }
+        coverage.push({
+          metadataName: 'publicAsset',
+          universalIdentifier: storedFile.id,
+          status: ApplicationExportCoverageStatus.UNSUPPORTED,
+          reason: `${path} exceeds the remaining public asset export budget (8 MiB total).`,
+        });
+        continue;
+      }
       remainingBytes -= content.length;
 
       publicAssets.push({
@@ -76,6 +97,6 @@ export class ApplicationPublicAssetExportService {
       });
     }
 
-    return { publicAssets, files };
+    return { publicAssets, files, coverage };
   }
 }

@@ -1,5 +1,5 @@
 import { isArray, isNull, isString } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { createAppNotInstalledError } from '@/app/create-app-not-installed-error';
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
@@ -13,6 +13,15 @@ const NOT_EXPORTABLE_SUB_CODES = new Set([
   'APPLICATION_NOT_EXPORTABLE',
   'STANDARD_APPLICATION_NOT_EXPORTABLE',
 ]);
+
+const isValidationErrorEntry = (
+  entry: unknown,
+  status: unknown,
+): entry is Record<string, unknown> =>
+  isPlainObject(entry) &&
+  (entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
+    (isNull(entry.code) && status === 400)) &&
+  isNull(entry.path);
 
 const isExportValidationError = ({
   error,
@@ -34,10 +43,7 @@ const isExportValidationError = ({
   const entry: unknown = errors[0];
 
   return (
-    isPlainObject(entry) &&
-    (entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
-      (isNull(entry.code) && error.details?.status === 400)) &&
-    isNull(entry.path) &&
+    isValidationErrorEntry(entry, error.details?.status) &&
     isString(entry.message) &&
     entry.message.startsWith(messagePrefix)
   );
@@ -80,6 +86,9 @@ export const fetchAppExport = async ({
 }): Promise<AppExport> => {
   const client = createMetadataClient({ target, signal });
   const fileOptions = { shouldIncludeSourceFiles, shouldIncludePublicAssets };
+  const fileOptionKeys = Object.keys(
+    fileOptions,
+  ) as (keyof typeof fileOptions)[];
   const query = () =>
     client.query({
       __name: 'ExportApplication',
@@ -120,22 +129,13 @@ export const fetchAppExport = async ({
         const unsupportedOptions = new Set<keyof typeof fileOptions>();
         if (
           !isArray(errors) ||
-          errors.length === 0 ||
+          !isNonEmptyArray(errors) ||
           !errors.every((entry: unknown) => {
-            if (
-              !isPlainObject(entry) ||
-              !isNull(entry.path) ||
-              !(
-                entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
-                (isNull(entry.code) && error.details?.status === 400)
-              )
-            ) {
+            if (!isValidationErrorEntry(entry, error.details?.status)) {
               return false;
             }
             const message = entry.message;
-            const option = (
-              Object.keys(fileOptions) as (keyof typeof fileOptions)[]
-            ).find(
+            const option = fileOptionKeys.find(
               (key) =>
                 fileOptions[key] &&
                 isString(message) &&

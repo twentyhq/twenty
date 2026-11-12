@@ -233,13 +233,17 @@ export class ApplicationManifestExportService {
         )
       : undefined;
 
-    const { publicAssets, files: publicAssetFiles } = shouldIncludePublicAssets
+    const {
+      publicAssets,
+      files: publicAssetFiles,
+      coverage: publicAssetCoverage,
+    } = shouldIncludePublicAssets
       ? await this.applicationPublicAssetExportService.exportPublicAssets({
           workspaceId,
           applicationId: flatApplication.id,
           applicationUniversalIdentifier,
         })
-      : { publicAssets: [], files: [] };
+      : { publicAssets: [], files: [], coverage: [] };
 
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
@@ -282,24 +286,27 @@ export class ApplicationManifestExportService {
         sourceType: flatApplication.sourceType,
       },
       manifest,
-      coverage: classifyApplicationFlatEntities({
-        flatApplication,
-        applicationAllFlatEntityMaps,
-        allFlatEntityMaps,
-        reconstructedCoverage: [
-          ...dataModelCoverage,
-          ...frontComponentsCoverage,
-          ...rolesCoverage,
-          ...viewsCoverage,
-          ...pageLayoutsCoverage,
-          ...navigationMenuItemsCoverage,
-          ...workflowsCoverage,
-          ...agentsCoverage,
-          ...skillsCoverage,
-          ...validationRulesCoverage,
-          ...relatedRecordPathsCoverage,
-        ],
-      }),
+      coverage: [
+        ...classifyApplicationFlatEntities({
+          flatApplication,
+          applicationAllFlatEntityMaps,
+          allFlatEntityMaps,
+          reconstructedCoverage: [
+            ...dataModelCoverage,
+            ...frontComponentsCoverage,
+            ...rolesCoverage,
+            ...viewsCoverage,
+            ...pageLayoutsCoverage,
+            ...navigationMenuItemsCoverage,
+            ...workflowsCoverage,
+            ...agentsCoverage,
+            ...skillsCoverage,
+            ...validationRulesCoverage,
+            ...relatedRecordPathsCoverage,
+          ],
+        }),
+        ...publicAssetCoverage,
+      ],
       files: [
         ...(shouldIncludeDependencies ? dependencyFiles : []),
         ...sourceFiles,

@@ -269,31 +269,35 @@ describe('app pull command with the packaged worker', () => {
     },
   );
 
-  it('restores a declared binary public asset through the worker and reports it', async () => {
-    const content = Buffer.from([0, 255, 128, 254]);
-    const path = 'public/fonts/example.woff2';
-    Object.assign(exported.manifest, {
-      publicAssets: [
-        {
-          filePath: path,
-          fileName: 'example.woff2',
-          fileType: 'woff2',
-          checksum: null,
-        },
-      ],
-    });
-    exported.files.push({
-      folder: 'public-asset',
-      path,
-      content: content.toString('base64'),
-    });
-    const result = await runJson();
-    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
-    expect(result.envelope.data.writes).toContainEqual(
-      expect.objectContaining({ kind: 'publicAsset', relativePath: path }),
-    );
-    expect(await readFile(join(appPath, path))).toEqual(content);
-  });
+  it.each([4, 8 * 1024 * 1024])(
+    'restores a %i-byte public asset through the HTTP response reader and worker',
+    async (size) => {
+      const content = Buffer.alloc(size, Buffer.from([0, 255, 128, 254]));
+      const path = 'public/fonts/example.woff2';
+      Object.assign(exported.manifest, {
+        publicAssets: [
+          {
+            filePath: path,
+            fileName: 'example.woff2',
+            fileType: 'woff2',
+            checksum: null,
+          },
+        ],
+      });
+      exported.files.push({
+        folder: 'public-asset',
+        path,
+        content: content.toString('base64'),
+      });
+      const result = await runJson();
+      expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+      expect(result.envelope.data.writes).toContainEqual(
+        expect.objectContaining({ kind: 'publicAsset', relativePath: path }),
+      );
+      expect((await readFile(join(appPath, path))).equals(content)).toBe(true);
+    },
+    30_000,
+  );
 
   it.each([true, false])(
     'pulls dependencies and keeps the app usable with an exported SDK dependency: %s',
