@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { assertAgentTriggerConditionsCompileOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/assert-agent-trigger-conditions-compile-or-throw.util';
+import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -35,7 +35,7 @@ const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
 });
 
 const assertConditions = (eventName: string, condition: string) =>
-  assertAgentTriggerConditionsCompileOrThrow({
+  addAgentTriggerConditionBindingsOrThrow({
     triggers: [
       {
         id: 'trigger-id',
@@ -49,7 +49,55 @@ const assertConditions = (eventName: string, condition: string) =>
     flatFieldMetadataMaps,
   });
 
-describe('assertAgentTriggerConditionsCompileOrThrow', () => {
+describe('addAgentTriggerConditionBindingsOrThrow', () => {
+  it('stores the field each condition path reads', () => {
+    expect(
+      assertConditions(
+        'opportunity.updated',
+        "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        settings: {
+          eventName: 'opportunity.updated',
+          condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+          conditionBindings: {
+            stage: 'opportunity-stage',
+            'previous.stage': 'opportunity-stage',
+          },
+        },
+      }),
+    ]);
+  });
+
+  it('keeps the bindings of a stored condition sent back unchanged', () => {
+    const storedTrigger = {
+      type: 'DATABASE_EVENT',
+      settings: {
+        eventName: 'opportunity.created',
+        condition: 'amount > 0',
+        conditionBindings: { amount: 'opportunity-amount' },
+      },
+    };
+
+    expect(
+      addAgentTriggerConditionBindingsOrThrow({
+        triggers: [
+          {
+            type: 'DATABASE_EVENT',
+            settings: {
+              eventName: 'opportunity.created',
+              condition: 'amount > 0',
+            },
+          },
+        ],
+        storedTriggers: [storedTrigger],
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual([storedTrigger]);
+  });
+
   it('accepts a condition on the fields of the trigger object', () => {
     expect(() =>
       assertConditions(
@@ -73,7 +121,7 @@ describe('assertAgentTriggerConditionsCompileOrThrow', () => {
 
   it('ignores triggers without a condition', () => {
     expect(() =>
-      assertAgentTriggerConditionsCompileOrThrow({
+      addAgentTriggerConditionBindingsOrThrow({
         triggers: [
           {
             type: 'DATABASE_EVENT',
@@ -94,7 +142,7 @@ describe('assertAgentTriggerConditionsCompileOrThrow', () => {
     };
 
     expect(() =>
-      assertAgentTriggerConditionsCompileOrThrow({
+      addAgentTriggerConditionBindingsOrThrow({
         triggers: [staleTrigger],
         storedTriggers: [staleTrigger],
         flatObjectMetadataMaps,
@@ -105,7 +153,7 @@ describe('assertAgentTriggerConditionsCompileOrThrow', () => {
 
   it('still checks a stored condition once it is edited', () => {
     expect(() =>
-      assertAgentTriggerConditionsCompileOrThrow({
+      addAgentTriggerConditionBindingsOrThrow({
         triggers: [
           {
             type: 'DATABASE_EVENT',

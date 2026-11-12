@@ -315,6 +315,10 @@ describe('Manifest update - agents', () => {
             eventName: 'opportunity.updated',
             updatedFields: ['stage', 'companyId'],
             condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+            conditionBindings: {
+              stage: OPPORTUNITY.fields.stage.universalIdentifier,
+              'previous.stage': OPPORTUNITY.fields.stage.universalIdentifier,
+            },
           },
         },
       ]);
