@@ -14,12 +14,10 @@ const EXCERPT_BY_MESSAGE = new WeakMap<
 const computeAgentChatMessageQuoteExcerpt = (
   message: Pick<ExtendedUIMessage, 'parts'>,
 ) => {
-  // an assistant turn interleaves text with tool calls, so all its text parts are what it said
   const fullText = message.parts
     .flatMap((part) => (part.type === 'text' ? [part.text.trim()] : []))
     .filter(isNonEmptyString)
     .join('\n\n');
-  // a reply starts with the quote it answers, which is not part of what its author said
   const text = parseAgentChatMessageQuote(fullText)?.replyText ?? fullText;
 
   return text.length > AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH
