@@ -17,6 +17,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
+import { AiChatMessageReplyQuote } from '@/ai/components/AiChatMessageReplyQuote';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
@@ -31,6 +32,8 @@ import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/age
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
 import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
+import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
@@ -72,6 +75,7 @@ const StyledFilesContainer = styled.div`
 type AiChatUserMessageTextProps = {
   messageId: string;
   text: string;
+  quote: AgentChatMessageQuote | null;
   children: ReactNode;
   isOtherMember: boolean;
 };
@@ -79,6 +83,7 @@ type AiChatUserMessageTextProps = {
 const AiChatUserMessageText = ({
   messageId,
   text,
+  quote,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -90,7 +95,10 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent text={text}>
+      {quote !== null && (
+        <AiChatMessageReplyQuote replyMessageId={messageId} quote={quote} />
+      )}
+      <AiChatUserMessageCollapsibleContent text={quote?.replyText ?? text}>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledChatMessageBubble>
@@ -177,11 +185,20 @@ export const AiChatMessage = ({
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
+  const messageQuote = isUser ? parseAgentChatMessageQuote(messageText) : null;
+  const messageParts =
+    messageQuote === null
+      ? agentChatMessage.parts
+      : agentChatMessage.parts.map((part) =>
+          part.type === 'text' && part.text === messageText
+            ? { ...part, text: messageQuote.replyText }
+            : part,
+        );
   const messageContent = (
     <AiChatAssistantMessageRenderer
       isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
-      messageParts={agentChatMessage.parts}
+      messageParts={messageParts}
       hasError={shouldShowError}
       shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
       workDurationMs={getAgentChatMessageWorkDurationMs({
@@ -226,6 +243,7 @@ export const AiChatMessage = ({
             <AiChatUserMessageText
               messageId={messageId}
               text={messageText}
+              quote={messageQuote}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}

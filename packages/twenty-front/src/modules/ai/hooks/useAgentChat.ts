@@ -35,13 +35,12 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { agentChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/agentChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { agentChatMessageQuoteSourceFamilySelector } from '@/ai/states/selectors/agentChatMessageQuoteSourceFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
@@ -134,22 +133,17 @@ export const useAgentChat = () => {
       threadId,
     });
     const quotedMessageId = store.get(quotedMessageIdAtom);
-    const quotedMessage = store
-      .get(agentChatMessagesFamilyState.atomFamily({ threadId }))
-      .find(({ id }) => id === quotedMessageId);
-    const quotedMessageSender = store
-      .get(currentWorkspaceMembersState.atom)
-      .find(
-        ({ id }) => id === quotedMessage?.metadata?.senderWorkspaceMemberId,
-      );
-    const contentToSend = isDefined(quotedMessage)
+    const quotedMessageSource = store.get(
+      agentChatMessageQuoteSourceFamilySelector.selectorFamily({
+        threadId,
+        messageId: quotedMessageId,
+      }),
+    );
+    const contentToSend = isDefined(quotedMessageSource)
       ? prependAgentChatQuoteToText({
           text: draftText,
-          authorName: getAgentChatSenderLabel({
-            sender: quotedMessageSender,
-            isCurrentWorkspaceMember: false,
-          }),
-          excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
+          authorName: quotedMessageSource.authorName,
+          excerpt: quotedMessageSource.excerpt,
         })
       : draftText;
 

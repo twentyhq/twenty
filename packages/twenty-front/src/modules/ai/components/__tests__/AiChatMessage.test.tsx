@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -11,6 +12,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -36,6 +38,10 @@ jest.mock('@/ai/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
+}));
+
 jest.mock('@/ai/components/AiChatMessageReactionPicker', () => ({
   AiChatMessageReactionPicker: () => null,
 }));
@@ -50,6 +56,10 @@ jest.mock('@/ai/components/AiChatErrorRenderer', () => ({
 
 jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
+}));
+
+jest.mock('@/ai/utils/scrollToAgentChatMessage', () => ({
+  scrollToAgentChatMessage: jest.fn(),
 }));
 
 const THREAD_ID = '1b8e5c2a-4d3f-4a6b-9c7e-2f1d0a9b8c71';
@@ -117,6 +127,30 @@ const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T07:00:00.000Z' },
 };
 
+const REPLY_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Julia Martin:** Which deals close this week?\n\nThe Acme renewal does.',
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:01:00.000Z' },
+};
+
+const REPLY_TO_MISSING_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-to-missing-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Julia Martin:** Who owns Stripe?\n\nI do.',
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:02:00.000Z' },
+};
+
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
@@ -165,6 +199,8 @@ const renderMessage = ({
       MESSAGE_WITHOUT_SENDER,
       LONG_USER_MESSAGE,
       LONG_ASSISTANT_MESSAGE,
+      REPLY_MESSAGE,
+      REPLY_TO_MISSING_MESSAGE,
     ],
   );
 
@@ -179,6 +215,7 @@ const renderMessage = ({
 
 describe('AiChatMessage', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceMemberState.atom, null);
   });
@@ -325,5 +362,39 @@ describe('AiChatMessage', () => {
     expect(
       screen.getByText('The connection to the assistant was lost'),
     ).toBeInTheDocument();
+  });
+
+  it('opens the original message from the quote a reply starts with', async () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: true });
+
+    expect(screen.getByText('The Acme renewal does.')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View original message' }),
+    );
+
+    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+  });
+
+  it('opens the original message from the keyboard', async () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: true });
+
+    screen.getByRole('button', { name: 'View original message' }).focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+  });
+
+  it('shows a quote whose original is missing without a way to open it', () => {
+    renderMessage({
+      messageId: REPLY_TO_MISSING_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.getByText('Who owns Stripe?')).toBeInTheDocument();
+    expect(screen.getByText('I do.')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'View original message' }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -418,3 +418,51 @@ export const ReplyToTeammate: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const OpenOriginalFromReply: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeNewAiChatStory({ isInboxEnabled: true });
+
+    const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+    const teammate = jotaiStore
+      .get(currentWorkspaceMembersState.atom)
+      .find(({ name }) => name.firstName === 'Jane');
+
+    jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammate?.id },
+      },
+      {
+        id: '20202020-8d2f-4b1a-8e3c-4a5b6c7d8e92',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: '> **Jane Doe:** On it. Their procurement asked for a security review.\n\nThanks, I will loop in our security lead.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammate?.id },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const quote = await canvas.findByRole('button', {
+      name: 'View original message',
+    });
+
+    await userEvent.click(quote);
+    await expect(
+      await canvas.findByText('Thanks, I will loop in our security lead.'),
+    ).toBeVisible();
+  },
+};

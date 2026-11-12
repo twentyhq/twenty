@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 export type AiChatQuotedMessageSource =
   | {
       status: 'available';
-      messageId: string;
+      messageId?: string;
       authorName: string;
       authorAvatar?: ReactNode;
       excerpt: string;

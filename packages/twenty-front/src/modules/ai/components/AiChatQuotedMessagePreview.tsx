@@ -54,6 +54,8 @@ export const AiChatQuotedMessagePreview = ({
     );
   }
 
+  const { messageId } = source;
+
   return (
     <StyledQuote>
       <StyledHeader>
@@ -63,13 +65,13 @@ export const AiChatQuotedMessagePreview = ({
         </Text>
       </StyledHeader>
       <LazyMarkdownRenderer text={source.excerpt} noImage />
-      {isDefined(onNavigateToMessage) && (
+      {isDefined(onNavigateToMessage) && isDefined(messageId) && (
         <StyledNavigation>
           <Button
             size="sm"
             variant="ghost"
             startIcon={<IconArrowUpRight />}
-            onClick={() => onNavigateToMessage(source.messageId)}
+            onClick={() => onNavigateToMessage(messageId)}
           >
             {t`View original message`}
           </Button>
