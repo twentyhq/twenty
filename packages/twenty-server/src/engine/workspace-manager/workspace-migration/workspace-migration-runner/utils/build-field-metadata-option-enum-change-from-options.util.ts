@@ -6,7 +6,7 @@ import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-module
 import { type FieldMetadataOptionRowForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { type FieldMetadataOptionEnumChange } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 
-const toOptionRows = (
+export const fromFieldMetadataOptionsToOptionRows = (
   options: FlatFieldMetadata['options'],
 ): FieldMetadataOptionRowForOptions[] =>
   (options ?? [])
@@ -30,7 +30,7 @@ export const buildFieldMetadataOptionEnumChangeFromOptions = ({
 }): FieldMetadataOptionEnumChange | undefined =>
   isDefined(toOptions) && !isFieldMetadataOptionEntityAvailable()
     ? {
-        fromOptionRows: toOptionRows(fromOptions),
-        toOptionRows: toOptionRows(toOptions),
+        fromOptionRows: fromFieldMetadataOptionsToOptionRows(fromOptions),
+        toOptionRows: fromFieldMetadataOptionsToOptionRows(toOptions),
       }
     : undefined;

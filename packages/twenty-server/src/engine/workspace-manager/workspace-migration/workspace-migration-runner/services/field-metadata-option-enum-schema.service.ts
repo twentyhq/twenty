@@ -13,6 +13,7 @@ import {
   type FieldMetadataOptionEnumChange,
   type FieldMetadataOptionEnumChangeTracker,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
+import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-from-options.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -83,7 +84,7 @@ export class FieldMetadataOptionEnumSchemaService {
 
   // Returns false when the enum already holds the target values, so the column is left alone.
   async applyEnumChange({
-    enumChange: { fromOptionRows, toOptionRows },
+    enumChange: { fromOptionRows: fromOptionRowsOfChange, toOptionRows },
     flatFieldMetadata,
     flatObjectMetadata,
     queryRunner,
@@ -95,6 +96,12 @@ export class FieldMetadataOptionEnumSchemaService {
     queryRunner: QueryRunner;
     workspaceId: string;
   }): Promise<boolean> {
+    // A field whose rows are being created for the first time already holds the values of its options
+    const fromOptionRows =
+      fromOptionRowsOfChange.length > 0
+        ? fromOptionRowsOfChange
+        : fromFieldMetadataOptionsToOptionRows(flatFieldMetadata.options);
+
     const toValueByUniversalIdentifier = new Map(
       toOptionRows.map(({ universalIdentifier, value }) => [
         universalIdentifier,
