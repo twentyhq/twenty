@@ -44,7 +44,9 @@ describe('SecureHttpClientService', () => {
 
     expect(service.getHttpClient().defaults.httpsAgent).toBeUndefined();
 
-    const publicOnlyClient = service.getHttpClient({ publicHostsOnly: true });
+    const publicOnlyClient = service.getHttpClient({
+      shouldRestrictToPublicHosts: true,
+    });
 
     expect(publicOnlyClient.defaults.httpAgent).toBeDefined();
     expect(publicOnlyClient.defaults.httpsAgent).toBeDefined();
@@ -58,7 +60,8 @@ describe('SecureHttpClientService', () => {
 
     expect(service.getHttpClient().defaults.httpsAgent).toBeUndefined();
     expect(
-      service.getHttpClient({ publicHostsOnly: true }).defaults.httpsAgent,
+      service.getHttpClient({ shouldRestrictToPublicHosts: true }).defaults
+        .httpsAgent,
     ).toBeDefined();
   });
 });

@@ -82,7 +82,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
     crypto.createHash('sha256').update(CODE_VERIFIER).digest(),
   );
 
-  let ds: DataSource;
+  let dataSource: DataSource;
   let isClientIdMetadataDocumentEnabled: boolean;
   let clientIdMetadataDocumentService: ClientIdMetadataDocumentService;
   let findDocumentSpy: jest.SpyInstance;
@@ -123,7 +123,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
     request(baseUrl).post('/oauth/token').send(body);
 
   const countRegistrations = async (clientId: string): Promise<number> => {
-    const [{ count }] = await ds.query(
+    const [{ count }] = await dataSource.query(
       `SELECT COUNT(*)::int AS count FROM core."applicationRegistration" WHERE "oAuthClientId" = $1`,
       [clientId],
     );
@@ -149,7 +149,7 @@ describe('OAuth client ID metadata documents (integration)', () => {
   };
 
   beforeAll(() => {
-    ds = global.testDataSource;
+    dataSource = global.testDataSource;
     clientIdMetadataDocumentService =
       getAppProviderByClassName<ClientIdMetadataDocumentService>(
         'ClientIdMetadataDocumentService',
@@ -178,18 +178,18 @@ describe('OAuth client ID metadata documents (integration)', () => {
     jest.restoreAllMocks();
     await clearFetchRateLimit();
 
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."application" application
        USING core."applicationRegistration" registration
        WHERE registration.id = application."applicationRegistrationId"
          AND registration."oAuthClientId" = ANY($1)`,
       [DOCUMENT_CLIENT_IDS],
     );
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
       [DOCUMENT_CLIENT_IDS],
     );
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."appToken" WHERE context->>'clientId' = ANY($1)`,
       [DOCUMENT_CLIENT_IDS],
     );

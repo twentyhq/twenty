@@ -1,5 +1,5 @@
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
-import { doRedirectUrisMatch } from 'src/engine/core-modules/application/application-registration/utils/do-redirect-uris-match.util';
+import { doRedirectUrisMatch } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/do-redirect-uris-match.util';
 
 export const isRedirectUriListedInClientIdMetadataDocument = ({
   clientIdMetadataDocument,

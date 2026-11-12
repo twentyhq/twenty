@@ -14,9 +14,9 @@ import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/applica
 import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/resolved-oauth-client.type';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
+import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules/application/application-oauth/constants/public-oauth-client-registration-values.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -141,12 +141,9 @@ export class OAuthClientRegistrationResolverService {
       .values({
         ...documentFields,
         universalIdentifier: v4(),
+        ...PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES,
         oAuthClientId: clientIdMetadataDocument.clientId,
-        oAuthClientSecretHash: null,
         oAuthScopes: [...ALL_OAUTH_SCOPES],
-        ownerWorkspaceId: null,
-        createdByUserId: null,
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       })
       .orIgnore()
       .execute();

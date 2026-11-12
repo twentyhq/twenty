@@ -1,4 +1,4 @@
-import { doRedirectUrisMatch } from 'src/engine/core-modules/application/application-registration/utils/do-redirect-uris-match.util';
+import { doRedirectUrisMatch } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/do-redirect-uris-match.util';
 
 describe('doRedirectUrisMatch', () => {
   it('matches identical callbacks', () => {

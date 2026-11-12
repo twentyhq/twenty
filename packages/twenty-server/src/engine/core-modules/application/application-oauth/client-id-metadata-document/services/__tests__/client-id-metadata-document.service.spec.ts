@@ -87,7 +87,7 @@ describe('ClientIdMetadataDocumentService', () => {
       expect.objectContaining({
         maxRedirects: 0,
         maxContentLength: 5120,
-        publicHostsOnly: true,
+        shouldRestrictToPublicHosts: true,
       }),
     );
     expect(httpGet).toHaveBeenCalledWith(DOCUMENT_URL);

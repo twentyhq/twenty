@@ -123,7 +123,7 @@ export class ClientIdMetadataDocumentService {
           timeout: CLIENT_ID_METADATA_DOCUMENT_LIMITS.fetchTimeoutMs,
           maxContentLength: CLIENT_ID_METADATA_DOCUMENT_LIMITS.maxSizeBytes,
           maxRedirects: 0,
-          publicHostsOnly: true,
+          shouldRestrictToPublicHosts: true,
           headers: { Accept: 'application/json' },
           responseType: 'json',
         })
