@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatAgentMessageHeader } from '@/ai/components/AiChatAgentMessageHeader';
+import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
@@ -39,6 +40,7 @@ export const AiChatMessageAuthorHeader = ({
   const applicationId = metadata?.senderApplicationId;
   const senderId = metadata?.senderWorkspaceMemberId;
   const agentId = metadata?.agentId;
+  const receipt = <AiChatMessageReceipt messageId={messageId} />;
 
   if (metadata?.isBuiltInAssistant === true) {
     return (
@@ -46,6 +48,7 @@ export const AiChatMessageAuthorHeader = ({
         avatar={<AiChatAssistantAvatar />}
         name={assistantDisplayName}
         createdAt={createdAt}
+        receipt={receipt}
       />
     );
   }
@@ -59,12 +62,19 @@ export const AiChatMessageAuthorHeader = ({
           currentWorkspace,
         })}
         createdAt={createdAt}
+        receipt={receipt}
       />
     );
   }
 
   if (isDefined(agentId) && !isDefined(senderId)) {
-    return <AiChatAgentMessageHeader agentId={agentId} createdAt={createdAt} />;
+    return (
+      <AiChatAgentMessageHeader
+        agentId={agentId}
+        createdAt={createdAt}
+        receipt={receipt}
+      />
+    );
   }
 
   const unknownAuthorName =
@@ -86,6 +96,7 @@ export const AiChatMessageAuthorHeader = ({
       }
       name={authorName}
       createdAt={createdAt}
+      receipt={receipt}
     />
   );
 };
