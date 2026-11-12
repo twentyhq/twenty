@@ -479,9 +479,10 @@ export class BullMQDriver
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
-    this.workerMap[queueName].on('completed', (job) =>
-      this.releaseFinishedJobMemory({ queueName, job }),
-    );
+    this.workerMap[queueName].on('completed', (job) => {
+      void this.clearCompletedJobData(job);
+      this.releaseFinishedJobMemory({ queueName, job });
+    });
     this.workerMap[queueName].on('failed', (job) => {
       if (isDefined(job?.finishedOn)) {
         this.releaseFinishedJobMemory({ queueName, job });
@@ -893,6 +894,20 @@ export class BullMQDriver
       jobId,
       groupKeys: memoryGroupKeys,
     });
+  }
+
+  private async clearCompletedJobData(job: Job): Promise<void> {
+    if (!this.jobMemoryLimiter.isEnabled()) {
+      return;
+    }
+
+    try {
+      await job.updateData({});
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   private releaseFinishedJobMemory({
