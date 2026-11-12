@@ -199,7 +199,8 @@ const CoreWorkflowShowContent = ({
             flowTab={
               isDefined(selectedVersion) ? (
                 <CoreWorkflowEditor
-                  key={selectedVersion.id}
+                  // The editable editor outlives a change of current version, so creating a draft does not remount the canvas
+                  key={isReadOnlyVersion ? selectedVersion.id : coreWorkflowId}
                   coreWorkflowId={coreWorkflowId}
                   coreWorkflowVersionId={selectedVersion.id}
                   readonly={isReadOnlyVersion}

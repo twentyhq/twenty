@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
@@ -9,6 +11,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { resolveApplicationGrantRoleId } from 'src/engine/core-modules/application/application-grant-role/utils/resolve-application-grant-role-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
@@ -20,15 +23,16 @@ export class ApplicationGrantRoleLookupService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
   async findWorkspaceCustomApplicationIdOrThrow(
     workspaceId: string,
   ): Promise<string> {
-    const workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      workspaceId,
-    );
+    const workspace =
+      (await this.coreEntityCacheService.get('workspaceEntity', workspaceId)) ??
+      (await this.findSoftDeletedWorkspace(workspaceId));
 
     if (!isDefined(workspace)) {
       throw new WorkspaceException(
@@ -38,6 +42,16 @@ export class ApplicationGrantRoleLookupService {
     }
 
     return workspace.workspaceCustomApplicationId;
+  }
+
+  private async findSoftDeletedWorkspace(
+    workspaceId: string,
+  ): Promise<Pick<WorkspaceEntity, 'workspaceCustomApplicationId'> | null> {
+    return this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      select: { id: true, workspaceCustomApplicationId: true },
+      withDeleted: true,
+    });
   }
 
   async findGrantRoleId({
