@@ -19,11 +19,11 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
       : themeCssVariables.font.color.light};
   border: 1px solid ${themeCssVariables.background.primary};
   border-radius: ${themeCssVariables.border.radius.rounded};
-  bottom: -2px;
+  bottom: calc(-1 * ${themeCssVariables.spacing['0.5']});
   box-sizing: border-box;
   height: ${themeCssVariables.spacing['1.5']};
   position: absolute;
-  right: -2px;
+  right: calc(-1 * ${themeCssVariables.spacing['0.5']});
   width: ${themeCssVariables.spacing['1.5']};
 `;
 
