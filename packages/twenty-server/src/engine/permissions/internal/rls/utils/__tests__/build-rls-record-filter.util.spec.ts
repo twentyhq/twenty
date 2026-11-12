@@ -671,6 +671,7 @@ describe('buildRecordFilterForRule with access group member values', () => {
       'sales',
       false,
     ],
+    [RowLevelPermissionPredicateOperand.IS, [''], 'sales', false],
   ])(
     'should compare a text field to a member list value by value (%s %j on "%s")',
     (operand, memberValues, name, expected) => {

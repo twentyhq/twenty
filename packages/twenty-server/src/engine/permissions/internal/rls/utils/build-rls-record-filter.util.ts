@@ -224,6 +224,11 @@ const buildPredicateRecordFilter = ({
     .map((value) => buildValueRecordFilter(value))
     .filter(isDefined);
 
+  // Values that give no filter, as blank strings do, must not drop an any-of predicate
+  if (valueRecordFilters.length === 0 && !isMatchingNoMemberValue) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
   if (valueRecordFilters.length <= 1) {
     return valueRecordFilters[0];
   }
