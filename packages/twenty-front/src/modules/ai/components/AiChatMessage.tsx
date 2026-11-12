@@ -84,7 +84,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent messageId={messageId}>
+      <AiChatUserMessageCollapsibleContent>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledChatMessageBubble>

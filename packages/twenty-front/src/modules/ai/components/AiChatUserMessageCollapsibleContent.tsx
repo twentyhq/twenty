@@ -2,10 +2,10 @@ import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import {
   type FocusEvent,
+  type MouseEvent,
   type ReactNode,
   useCallback,
   useId,
-  useRef,
   useState,
 } from 'react';
 import { flushSync } from 'react-dom';
@@ -14,11 +14,9 @@ import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapsedLineCount';
-import { agentChatIsUserMessageExpandedFamilyState } from '@/ai/states/agentChatIsUserMessageExpandedFamilyState';
 import { isAiChatUserMessageCollapsible } from '@/ai/utils/isAiChatUserMessageCollapsible';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 const StyledContent = styled.div<{ isCollapsed: boolean }>`
   mask-image: ${({ isCollapsed }) =>
@@ -38,29 +36,23 @@ const StyledToggleContainer = styled.div`
 `;
 
 type AiChatUserMessageCollapsibleContentProps = {
-  messageId: string;
   children: ReactNode;
 };
 
 export const AiChatUserMessageCollapsibleContent = ({
-  messageId,
   children,
 }: AiChatUserMessageCollapsibleContentProps) => {
   const { t } = useLingui();
   const contentId = useId();
-  const toggleContainerRef = useRef<HTMLDivElement>(null);
   const [isCollapsible, setIsCollapsible] = useState(false);
-  const [isExpanded, setIsExpanded] = useAtomFamilyState(
-    agentChatIsUserMessageExpandedFamilyState,
-    { messageId },
-  );
+  const [isExpanded, setIsExpanded] = useState(false);
   const scrollWrapperInstanceId = useAvailableComponentInstanceId(
     ScrollWrapperComponentInstanceContext,
   );
 
   const isCollapsed = isCollapsible && !isExpanded;
 
-  // A ref callback measures during commit, so a tall message never paints at full height first.
+  // Measured in a ref callback, during commit: an effect would paint a tall message at full height for 1 to 2 frames.
   const observeContentHeight = useCallback(
     (contentElement: HTMLDivElement | null) => {
       if (!isDefined(contentElement)) {
@@ -89,34 +81,31 @@ export const AiChatUserMessageCollapsibleContent = ({
     [],
   );
 
-  const handleToggleClick = () => {
+  const handleToggleClick = (event: MouseEvent<HTMLButtonElement>) => {
     if (!isExpanded) {
       setIsExpanded(true);
       return;
     }
 
-    const toggleContainerElement = toggleContainerRef.current;
+    const toggleButtonElement = event.currentTarget;
     const scrollWrapperElement = isDefined(scrollWrapperInstanceId)
       ? document.getElementById(`scroll-wrapper-${scrollWrapperInstanceId}`)
       : null;
 
-    if (
-      !isDefined(toggleContainerElement) ||
-      !isDefined(scrollWrapperElement)
-    ) {
+    if (!isDefined(scrollWrapperElement)) {
       setIsExpanded(false);
       return;
     }
 
     const toggleTopBeforeCollapseInPx =
-      toggleContainerElement.getBoundingClientRect().top;
+      toggleButtonElement.getBoundingClientRect().top;
 
     flushSync(() => setIsExpanded(false));
 
     // Scrolls up by the removed height so the toggle and the messages below stay in place.
     scrollWrapperElement.scrollTop -=
       toggleTopBeforeCollapseInPx -
-      toggleContainerElement.getBoundingClientRect().top;
+      toggleButtonElement.getBoundingClientRect().top;
   };
 
   const handleContentFocus = (event: FocusEvent<HTMLDivElement>) => {
@@ -135,7 +124,7 @@ export const AiChatUserMessageCollapsibleContent = ({
         <div ref={observeContentHeight}>{children}</div>
       </StyledContent>
       {isCollapsible && (
-        <StyledToggleContainer ref={toggleContainerRef}>
+        <StyledToggleContainer>
           <LightButton
             aria-controls={contentId}
             aria-expanded={isExpanded}
