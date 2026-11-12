@@ -1,9 +1,10 @@
+import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
+import { isDefined } from 'twenty-shared/utils';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 
-// Saving a rule makes the server derive its rule list and rewrite the object's grants,
-// so a role is compared on what it grants, not on how the draft happened to store it
+// A save rewrites how grants are stored (derived rules, inherited values), so roles are compared on what they grant
 export const getRoleWithoutSaveArtifacts = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
@@ -22,7 +23,11 @@ export const getRoleWithoutSaveArtifacts = (
   const objectPermissionsOfObjectsWithoutRule = (
     role.objectPermissions ?? []
   ).filter(
-    ({ objectMetadataId }) => !ruleObjectMetadataIds.includes(objectMetadataId),
+    (objectPermission) =>
+      !ruleObjectMetadataIds.includes(objectPermission.objectMetadataId) &&
+      SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.some((key) =>
+        isDefined(objectPermission[key]),
+      ),
   );
 
   const objectPermissionsOfObjectsWithRule = ruleObjectMetadataIds

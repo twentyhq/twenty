@@ -34,10 +34,19 @@ export const getObjectPermissionOverrideGrants = ({
       : isGranted;
   };
 
-  return {
-    canReadObjectRecords: getGrant('canReadObjectRecords'),
+  const changeGrants = {
     canUpdateObjectRecords: getGrant('canUpdateObjectRecords'),
     canSoftDeleteObjectRecords: getGrant('canSoftDeleteObjectRecords'),
     canDestroyObjectRecords: getGrant('canDestroyObjectRecords'),
+  };
+
+  // A change granted by the override needs See granted by it too, or dropping See for all objects leaves a write without read
+  const hasChangeGrantedByOverride = Object.values(changeGrants).includes(true);
+
+  return {
+    canReadObjectRecords: hasChangeGrantedByOverride
+      ? true
+      : getGrant('canReadObjectRecords'),
+    ...changeGrants,
   };
 };
