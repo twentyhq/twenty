@@ -20,17 +20,17 @@ type FieldMetadataOptionOperations = {
 };
 
 const hasOptionColumnsChanged = ({
-  effectiveOptionColumns,
+  currentOptionColumns,
   targetOptionColumns,
 }: {
-  effectiveOptionColumns: FieldMetadataOptionColumns;
+  currentOptionColumns: FieldMetadataOptionColumns;
   targetOptionColumns: FieldMetadataOptionColumns;
 }) =>
-  effectiveOptionColumns.value !== targetOptionColumns.value ||
-  effectiveOptionColumns.label !== targetOptionColumns.label ||
-  effectiveOptionColumns.color !== targetOptionColumns.color ||
-  effectiveOptionColumns.position !== targetOptionColumns.position ||
-  effectiveOptionColumns.isActive !== targetOptionColumns.isActive;
+  currentOptionColumns.value !== targetOptionColumns.value ||
+  currentOptionColumns.label !== targetOptionColumns.label ||
+  currentOptionColumns.color !== targetOptionColumns.color ||
+  currentOptionColumns.position !== targetOptionColumns.position ||
+  currentOptionColumns.isActive !== targetOptionColumns.isActive;
 
 // A row's universal identifier is its option id.
 export const computeFieldMetadataOptionOperationsForField = ({
@@ -72,13 +72,18 @@ export const computeFieldMetadataOptionOperationsForField = ({
       continue;
     }
 
-    const effectiveOptionColumns = resolveEffectiveFieldMetadataOptionColumns({
-      universalFlatFieldMetadataOption: existingOption,
-      workspaceCustomApplicationUniversalIdentifier,
-    });
+    // The owner writes the row itself, so an override that already matches must not hide its change.
+    const currentOptionColumns =
+      existingOption.applicationUniversalIdentifier ===
+      applicationUniversalIdentifier
+        ? existingOption
+        : resolveEffectiveFieldMetadataOptionColumns({
+            universalFlatFieldMetadataOption: existingOption,
+            workspaceCustomApplicationUniversalIdentifier,
+          });
 
     if (
-      !hasOptionColumnsChanged({ effectiveOptionColumns, targetOptionColumns })
+      !hasOptionColumnsChanged({ currentOptionColumns, targetOptionColumns })
     ) {
       continue;
     }
