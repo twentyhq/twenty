@@ -8,7 +8,10 @@ export const filterAgentChatThreadsWithinLoadedPages = ({
   pagedList,
 }: {
   threads: AgentChatThreadRecord[];
-  pagedList: AgentChatThreadPagedList | null;
+  pagedList: Pick<
+    AgentChatThreadPagedList,
+    'threadIds' | 'hasNextPage' | 'lastLoadedActivityAt'
+  > | null;
 }): AgentChatThreadRecord[] => {
   if (!isDefined(pagedList) || !pagedList.hasNextPage) {
     return threads;
