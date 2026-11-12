@@ -391,6 +391,35 @@ describe('proxy headers', () => {
     expect(server.requests.at(-1)?.headers['cf-access-token']).toBeUndefined();
   });
 
+  it('renews command headers when the proxy rejects an upload to the API host', async () => {
+    const counterPath = join(home, 'header-command-runs');
+
+    proxy.acceptedToken = 'token-2';
+
+    const status = await putUploadFile({
+      target: {
+        apiUrl: server.url,
+        proxyHeaders: createProxyHeaders({
+          headers: {},
+          headerCommand: createNodeCommand({
+            script: COUNTING_TOKEN_SCRIPT,
+            args: [counterPath],
+          }),
+        }),
+      },
+      uploadUrl: `${server.url}/file-upload/file-id?token=t`,
+      contentType: 'application/octet-stream',
+      bytes: new TextEncoder().encode('bundle'),
+      signal: new AbortController().signal,
+    });
+
+    expect(status).toBe(200);
+    expect(
+      server.requests.map((request) => request.headers['cf-access-token']),
+    ).toEqual(['token-1', 'token-2']);
+    expect(server.requests.at(-1)?.body).toBe('bundle');
+  });
+
   it('shares one header command run between concurrent reads and renewals', async () => {
     const counterPath = join(home, 'header-command-runs');
     const proxyHeaders = createProxyHeaders({
