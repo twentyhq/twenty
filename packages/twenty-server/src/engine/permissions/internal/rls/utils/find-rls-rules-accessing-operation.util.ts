@@ -23,7 +23,13 @@ export const findRlsRulesAccessingOperation = ({
   operationType,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: PermissionsMetadataMaps;
+  metadataMaps: Pick<
+    PermissionsMetadataMaps,
+    | 'rolesPermissions'
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'featureFlagsMap'
+  >;
   objectMetadataId: string;
   operationType: ObjectRecordsOperationType;
 }): RowLevelRecordsPermissions[] | undefined => {

@@ -18,7 +18,13 @@ export const findRlsRuleFields = ({
   fieldList,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
-  metadataMaps: PermissionsMetadataMaps;
+  metadataMaps: Pick<
+    PermissionsMetadataMaps,
+    | 'rolesPermissions'
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'featureFlagsMap'
+  >;
   objectMetadataId: string;
   fieldList: 'unreadableFields' | 'uneditableFields';
 }): {
