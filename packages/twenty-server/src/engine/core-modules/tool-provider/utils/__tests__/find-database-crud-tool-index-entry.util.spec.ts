@@ -82,6 +82,42 @@ describe('findDatabaseCrudToolIndexEntry', () => {
     });
   });
 
+  describe('objects whose names differ only by case', () => {
+    const toolIndex = [
+      buildEntry('find_many_foo_bars', 'fooBar', 'find_many'),
+      buildEntry('find_many_foobars', 'foobar', 'find_many'),
+    ];
+
+    it('should resolve the exactly named object', () => {
+      for (const [objectName, entry] of [
+        ['fooBar', toolIndex[0]],
+        ['foobar', toolIndex[1]],
+        ['foobars', toolIndex[1]],
+      ] as const) {
+        expect(
+          findDatabaseCrudToolIndexEntry({
+            toolIndex,
+            objectName,
+            operation: 'find_many',
+          }),
+        ).toEqual({ status: 'found', entry });
+      }
+    });
+
+    it('should not guess when the name matches several objects loosely', () => {
+      expect(
+        findDatabaseCrudToolIndexEntry({
+          toolIndex,
+          objectName: 'FOOBAR',
+          operation: 'find_many',
+        }),
+      ).toEqual({
+        status: 'objectNotFound',
+        similarObjectNames: ['fooBar', 'foobar'],
+      });
+    });
+  });
+
   it('should not match tools that are not record operations', () => {
     expect(
       findDatabaseCrudToolIndexEntry({

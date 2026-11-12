@@ -24,7 +24,8 @@ export const findDatabaseCrudToolIndexEntry = ({
 }): DatabaseCrudToolIndexEntryLookup => {
   const normalizedObjectName = normalizeObjectName(objectName);
   const objectNameSingularByAlias = new Map<string, string>();
-  let matchedObjectNameSingular: string | undefined;
+  const looselyMatchedObjectNamesSingular = new Set<string>();
+  let exactlyMatchedObjectNameSingular: string | undefined;
 
   for (const entry of toolIndex) {
     if (entry.executionRef.kind !== 'database_crud') {
@@ -38,20 +39,34 @@ export const findDatabaseCrudToolIndexEntry = ({
 
     objectNameSingularByAlias.set(nameInToolName, objectNameSingular);
 
+    if (objectName === objectNameSingular || objectName === nameInToolName) {
+      exactlyMatchedObjectNameSingular ??= objectNameSingular;
+    }
+
     if (
       normalizeObjectName(objectNameSingular) === normalizedObjectName ||
       normalizeObjectName(nameInToolName) === normalizedObjectName
     ) {
-      matchedObjectNameSingular = objectNameSingular;
+      looselyMatchedObjectNamesSingular.add(objectNameSingular);
     }
   }
+
+  // Names differing only by case or separators are distinct objects: never guess between them
+  const matchedObjectNameSingular =
+    exactlyMatchedObjectNameSingular ??
+    (looselyMatchedObjectNamesSingular.size === 1
+      ? [...looselyMatchedObjectNamesSingular][0]
+      : undefined);
 
   if (!isDefined(matchedObjectNameSingular)) {
     return {
       status: 'objectNotFound',
-      similarObjectNames: findSimilarToolNames(objectName, [
-        ...objectNameSingularByAlias.keys(),
-      ]),
+      similarObjectNames:
+        looselyMatchedObjectNamesSingular.size > 1
+          ? [...looselyMatchedObjectNamesSingular]
+          : findSimilarToolNames(objectName, [
+              ...objectNameSingularByAlias.keys(),
+            ]),
     };
   }
 
