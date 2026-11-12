@@ -87,6 +87,10 @@ jest.mock('@/ai/components/NavigationDrawerDirectMessageItem', () => ({
   }) => <div>{directMessage.peer?.name}</div>,
 }));
 
+jest.mock('@/ai/components/OpenDirectMessageButton', () => ({
+  OpenDirectMessageButton: () => null,
+}));
+
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadItem', () => ({
   NavigationDrawerAiChatThreadItem: ({
     thread,

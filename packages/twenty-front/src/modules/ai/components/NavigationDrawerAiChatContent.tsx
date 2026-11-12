@@ -11,6 +11,7 @@ import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/Navigati
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
+import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
 import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
@@ -119,6 +120,7 @@ export const NavigationDrawerAiChatContent = () => {
               directMessages={agentChatDirectMessageSidebarItems}
               currentThreadId={currentAiChatThread}
               onSelect={(threadId) => handleThreadClick({ id: threadId })}
+              memberPicker={<OpenDirectMessageButton />}
             />
           )}
           {recentThreads.length > 0 && (
