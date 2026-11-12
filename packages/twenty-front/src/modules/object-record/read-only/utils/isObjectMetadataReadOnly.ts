@@ -1,5 +1,8 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type IsObjectMetadataReadOnlyParams = {
@@ -16,7 +19,7 @@ export const isObjectMetadataReadOnly = ({
 }: IsObjectMetadataReadOnlyParams) => {
   return (
     (isDefined(objectPermissions) &&
-      !canReachSomeRecords({
+      !canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermissions,
         operationType: 'update',
       })) ||
