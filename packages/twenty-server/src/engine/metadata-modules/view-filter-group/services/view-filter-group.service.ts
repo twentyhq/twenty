@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -16,6 +17,7 @@ import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/vie
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -259,45 +261,66 @@ export class ViewFilterGroupService {
 
   async findByWorkspaceId(
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
-      where: {
-        deletedAt: IsNull(),
+    const viewFilterGroups = await this.viewFilterGroupRepository.find(
+      workspaceId,
+      {
+        where: {
+          deletedAt: IsNull(),
+        },
+        order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
-    });
+    );
+
+    return viewFilterGroups.filter(
+      (viewFilterGroup) =>
+        isDefined(viewFilterGroup.view) &&
+        isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId),
+    );
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
-      where: {
-        viewId,
-        deletedAt: IsNull(),
+    const viewFilterGroups = await this.viewFilterGroupRepository.find(
+      workspaceId,
+      {
+        where: {
+          viewId,
+          deletedAt: IsNull(),
+        },
+        order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
-    });
+    );
+
+    return viewFilterGroups.filter(
+      (viewFilterGroup) =>
+        isDefined(viewFilterGroup.view) &&
+        isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId),
+    );
   }
 
   async findById(
     id: string,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupEntity | null> {
     const viewFilterGroup = await this.viewFilterGroupRepository.findOne(
       workspaceId,
@@ -316,6 +339,14 @@ export class ViewFilterGroupService {
       },
     );
 
-    return viewFilterGroup || null;
+    if (
+      !isDefined(viewFilterGroup) ||
+      !isDefined(viewFilterGroup.view) ||
+      !isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId)
+    ) {
+      return null;
+    }
+
+    return viewFilterGroup;
   }
 }

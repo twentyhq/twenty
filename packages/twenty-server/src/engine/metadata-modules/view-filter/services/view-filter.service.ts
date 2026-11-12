@@ -5,6 +5,7 @@ import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
@@ -20,6 +21,8 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -264,30 +267,41 @@ export class ViewFilterService {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewFilterEntity[]> {
+    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return viewFilters.filter(
+      (viewFilter) =>
+        isDefined(viewFilter.view) &&
+        isViewVisibleToUser(viewFilter.view, userWorkspaceId),
+    );
   }
 
   async findManyPaginated({
     workspaceId,
     viewId,
+    userWorkspaceId,
     pagination,
   }: {
     workspaceId: string;
     viewId?: string;
+    userWorkspaceId: string | undefined;
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
-    const { flatViewFilterMaps } =
+    const { flatViewFilterMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFilterMaps'],
+          flatMapsKeys: ['flatViewFilterMaps', 'flatViewMaps'],
         },
       );
     const flatViewFilters = Object.values(
@@ -300,6 +314,17 @@ export class ViewFilterService {
           flatViewFilter.deletedAt === null &&
           (!isDefined(viewId) || flatViewFilter.viewId === viewId),
       )
+      .filter((flatViewFilter) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewFilter.viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        return (
+          isDefined(flatView) &&
+          isViewAvailableToUser({ flatView, userWorkspaceId })
+        );
+      })
       .sort(
         (first, second) =>
           (first.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) -
@@ -321,8 +346,9 @@ export class ViewFilterService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find(workspaceId, {
+    const viewFilters = await this.viewFilterRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
@@ -330,11 +356,18 @@ export class ViewFilterService {
       order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+
+    return viewFilters.filter(
+      (viewFilter) =>
+        isDefined(viewFilter.view) &&
+        isViewVisibleToUser(viewFilter.view, userWorkspaceId),
+    );
   }
 
   async findById(
     id: string,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFilterEntity | null> {
     const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
@@ -344,6 +377,14 @@ export class ViewFilterService {
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
 
-    return viewFilter || null;
+    if (
+      !isDefined(viewFilter) ||
+      !isDefined(viewFilter.view) ||
+      !isViewVisibleToUser(viewFilter.view, userWorkspaceId)
+    ) {
+      return null;
+    }
+
+    return viewFilter;
   }
 }

@@ -23,6 +23,7 @@ import {
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -320,21 +321,31 @@ export class ViewGroupService {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewGroupEntity[]> {
+    const viewGroups = await this.viewGroupRepository.find(workspaceId, {
       where: {
         deletedAt: IsNull(),
       },
       order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return viewGroups.filter(
+      (viewGroup) =>
+        isDefined(viewGroup.view) &&
+        isViewVisibleToUser(viewGroup.view, userWorkspaceId),
+    );
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewGroupEntity[]> {
-    return this.viewGroupRepository.find(workspaceId, {
+    const viewGroups = await this.viewGroupRepository.find(workspaceId, {
       where: {
         viewId,
         deletedAt: IsNull(),
@@ -342,11 +353,18 @@ export class ViewGroupService {
       order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
+
+    return viewGroups.filter(
+      (viewGroup) =>
+        isDefined(viewGroup.view) &&
+        isViewVisibleToUser(viewGroup.view, userWorkspaceId),
+    );
   }
 
   async findById(
     id: string,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewGroupEntity | null> {
     const viewGroup = await this.viewGroupRepository.findOne(workspaceId, {
       where: {
@@ -356,6 +374,14 @@ export class ViewGroupService {
       relations: ['workspace', 'view'],
     });
 
-    return viewGroup || null;
+    if (
+      !isDefined(viewGroup) ||
+      !isDefined(viewGroup.view) ||
+      !isViewVisibleToUser(viewGroup.view, userWorkspaceId)
+    ) {
+      return null;
+    }
+
+    return viewGroup;
   }
 }

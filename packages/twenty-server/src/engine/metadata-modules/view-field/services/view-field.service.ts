@@ -20,6 +20,7 @@ import {
   ViewFieldExceptionCode,
 } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -284,18 +285,32 @@ export class ViewFieldService {
     });
   }
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFieldDTO[]> {
-    const { flatViewFieldMaps } =
+  async findByWorkspaceId(
+    workspaceId: string,
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewFieldDTO[]> {
+    const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
         },
       );
 
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((field) => !isDefined(field.deletedAt))
+      .filter((field) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: field.viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        return (
+          isDefined(flatView) &&
+          isViewAvailableToUser({ flatView, userWorkspaceId })
+        );
+      })
       .map(fromFlatViewFieldToViewFieldDto)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
@@ -303,14 +318,27 @@ export class ViewFieldService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO[]> {
-    const { flatViewFieldMaps } =
+    const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
         },
       );
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (
+      !isDefined(flatView) ||
+      !isViewAvailableToUser({ flatView, userWorkspaceId })
+    ) {
+      return [];
+    }
 
     return Object.values(flatViewFieldMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -322,12 +350,13 @@ export class ViewFieldService {
   async findById(
     id: string,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO | null> {
-    const { flatViewFieldMaps } =
+    const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldMaps'],
+          flatMapsKeys: ['flatViewFieldMaps', 'flatViewMaps'],
         },
       );
 
@@ -337,6 +366,18 @@ export class ViewFieldService {
     });
 
     if (!isDefined(flatViewField) || isDefined(flatViewField.deletedAt)) {
+      return null;
+    }
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewField.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (
+      !isDefined(flatView) ||
+      !isViewAvailableToUser({ flatView, userWorkspaceId })
+    ) {
       return null;
     }
 

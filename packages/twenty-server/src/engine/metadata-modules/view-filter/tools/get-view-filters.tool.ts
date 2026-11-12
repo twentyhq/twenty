@@ -35,11 +35,12 @@ export class GetViewFiltersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewFiltersInputSchema>): Promise<ToolOutput> {
     const filters = await this.viewFilterService.findByViewId(
       workspaceId,
       input.viewId,
+      userWorkspaceId,
     );
 
     return {

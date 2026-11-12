@@ -18,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
@@ -56,11 +57,20 @@ export class ViewGroupController {
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @Query('viewId') viewId?: string,
   ) {
     const items = viewId
-      ? await this.viewGroupService.findByViewId(workspace.id, viewId)
-      : await this.viewGroupService.findByWorkspaceId(workspace.id);
+      ? await this.viewGroupService.findByViewId(
+          workspace.id,
+          viewId,
+          userWorkspaceId,
+        )
+      : await this.viewGroupService.findByWorkspaceId(
+          workspace.id,
+          userWorkspaceId,
+        );
 
     return paginateMetadataRestItems({ items, request });
   }
@@ -69,8 +79,14 @@ export class ViewGroupController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    const viewGroup = await this.viewGroupService.findById(id, workspace.id);
+    const viewGroup = await this.viewGroupService.findById(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
 
     if (!isDefined(viewGroup)) {
       throw new ViewGroupException(

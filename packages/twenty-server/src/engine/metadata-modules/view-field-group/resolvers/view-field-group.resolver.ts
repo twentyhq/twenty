@@ -16,6 +16,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/create-view-child-entity-permission.guard';
 import { ViewChildEntityPermissionGuard } from 'src/engine/metadata-modules/view/guards/view-child-entity-permission.guard';
@@ -91,8 +92,14 @@ export class ViewFieldGroupResolver {
   async getViewFieldGroups(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO[]> {
-    return this.viewFieldGroupService.findByViewId(workspace.id, viewId);
+    return this.viewFieldGroupService.findByViewId(
+      workspace.id,
+      viewId,
+      userWorkspaceId,
+    );
   }
 
   @Query(() => ViewFieldGroupDTO, { nullable: true })
@@ -100,8 +107,14 @@ export class ViewFieldGroupResolver {
   async getViewFieldGroup(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO | null> {
-    return this.viewFieldGroupService.findById(id, workspace.id);
+    return this.viewFieldGroupService.findById(
+      id,
+      workspace.id,
+      userWorkspaceId,
+    );
   }
 
   @Mutation(() => ViewFieldGroupDTO)
@@ -215,6 +228,8 @@ export class ViewFieldGroupResolver {
     @Parent() viewFieldGroup: ViewFieldGroupDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     if (isArray(viewFieldGroup.viewFields)) {
       return viewFieldGroup.viewFields;
@@ -223,6 +238,7 @@ export class ViewFieldGroupResolver {
     return context.loaders.viewFieldsByViewFieldGroupIdLoader.load({
       workspaceId: workspace.id,
       viewFieldGroupId: viewFieldGroup.id,
+      userWorkspaceId,
     });
   }
 }

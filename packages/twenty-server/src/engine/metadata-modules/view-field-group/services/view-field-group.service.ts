@@ -20,6 +20,7 @@ import {
   ViewFieldGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -279,14 +280,27 @@ export class ViewFieldGroupService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO[]> {
-    const { flatViewFieldGroupMaps } =
+    const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewMaps'],
         },
       );
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (
+      !isDefined(flatView) ||
+      !isViewAvailableToUser({ flatView, userWorkspaceId })
+    ) {
+      return [];
+    }
 
     return Object.values(flatViewFieldGroupMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -298,12 +312,13 @@ export class ViewFieldGroupService {
   async findById(
     id: string,
     workspaceId: string,
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldGroupDTO | null> {
-    const { flatViewFieldGroupMaps } =
+    const { flatViewFieldGroupMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
+          flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewMaps'],
         },
       );
 
@@ -315,6 +330,18 @@ export class ViewFieldGroupService {
     if (
       !isDefined(flatViewFieldGroup) ||
       isDefined(flatViewFieldGroup.deletedAt)
+    ) {
+      return null;
+    }
+
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: flatViewFieldGroup.viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    if (
+      !isDefined(flatView) ||
+      !isViewAvailableToUser({ flatView, userWorkspaceId })
     ) {
       return null;
     }
