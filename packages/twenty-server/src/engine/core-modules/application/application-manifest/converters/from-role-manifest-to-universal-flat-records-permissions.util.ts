@@ -144,7 +144,6 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
           return [];
         }
 
-        // Field permissions of a rule are stored on one of its predicate groups
         if (!isDefined(predicateGroupUniversalIdentifier)) {
           throw new ApplicationException(
             `Row level records permissions ${rule.universalIdentifier} declare unreadable or uneditable fields but no predicate group to hold them`,

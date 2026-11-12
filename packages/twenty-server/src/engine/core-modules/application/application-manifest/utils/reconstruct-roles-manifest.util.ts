@@ -174,7 +174,6 @@ export const reconstructRolesManifest = ({
   for (const flatFieldPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatFieldPermissionMaps,
   )) {
-    // A field permission on a predicate group that no rule owns cannot be written under a rule
     if (
       isDefined(
         flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,

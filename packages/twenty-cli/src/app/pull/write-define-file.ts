@@ -82,41 +82,44 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
 
 const ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH = 5;
 
-// Deeper predicate groups keep their enum values as string literals, which defineRole accepts
-const buildRowLevelRecordsPermissionsEnumBindings = (): EnumBinding[] =>
-  Array.from(
-    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH + 1 },
-    (_, depth) => {
-      const path = [
-        'recordsPermissions',
-        'objects',
-        '[]',
-        'rowLevelRecordsPermissions',
-        '[]',
-        ...Array.from({ length: depth }, () => [
-          'predicateGroups',
-          '[]',
-        ]).flat(),
-      ];
+const buildRowLevelRecordsPermissionsPath = (predicateGroupDepth: number) => [
+  'recordsPermissions',
+  'objects',
+  '[]',
+  'rowLevelRecordsPermissions',
+  '[]',
+  ...Array.from({ length: predicateGroupDepth }, () => [
+    'predicateGroups',
+    '[]',
+  ]).flat(),
+];
 
-      return [
-        {
-          path: [...path, 'predicates', '[]', 'operand'],
-          symbol: 'RowLevelPermissionPredicateOperand',
-          members: RowLevelPermissionPredicateOperand,
-        },
-        ...(depth > 0
-          ? [
-              {
-                path: [...path, 'logicalOperator'],
-                symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
-                members: RowLevelPermissionPredicateGroupLogicalOperator,
-              },
-            ]
-          : []),
-      ];
-    },
-  ).flat();
+const buildRowLevelRecordsPermissionsEnumBindings = (): EnumBinding[] => [
+  ...Array.from(
+    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH + 1 },
+    (_, predicateGroupDepth) => ({
+      path: [
+        ...buildRowLevelRecordsPermissionsPath(predicateGroupDepth),
+        'predicates',
+        '[]',
+        'operand',
+      ],
+      symbol: 'RowLevelPermissionPredicateOperand',
+      members: RowLevelPermissionPredicateOperand,
+    }),
+  ),
+  ...Array.from(
+    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH },
+    (_, index) => ({
+      path: [
+        ...buildRowLevelRecordsPermissionsPath(index + 1),
+        'logicalOperator',
+      ],
+      symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
+      members: RowLevelPermissionPredicateGroupLogicalOperator,
+    }),
+  ),
+];
 
 export const buildRoleEnumBindings = (
   systemPermissionFlag: Record<string, string>,

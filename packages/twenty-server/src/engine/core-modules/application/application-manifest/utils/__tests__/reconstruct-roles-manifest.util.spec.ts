@@ -549,6 +549,12 @@ describe('reconstructRolesManifest', () => {
               objectUniversalIdentifier: PET_UID,
               canReadAllRecords: true,
               uneditableFields: [PET_NAME_FIELD_UID],
+              fieldPermissionIdentifiers: [
+                {
+                  fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+                  universalIdentifier: PET_NAME_FIELD_PERMISSION_UID,
+                },
+              ],
             },
           ],
         }),
