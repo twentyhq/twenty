@@ -194,13 +194,13 @@ const renderMessage = ({
   isAiChatInboxEnabled,
   currentWorkspaceMemberId,
   error,
-  withComposerQuote = false,
+  hasComposerQuote = false,
 }: {
   messageId: string;
   isAiChatInboxEnabled: boolean;
   currentWorkspaceMemberId?: string;
   error?: Error;
-  withComposerQuote?: boolean;
+  hasComposerQuote?: boolean;
 }) => {
   jotaiStore.set(
     currentWorkspaceMemberState.atom,
@@ -251,7 +251,7 @@ const renderMessage = ({
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <AiChatMessage messageId={messageId} error={error} />
-        {withComposerQuote && <AiChatComposerQuote />}
+        {hasComposerQuote && <AiChatComposerQuote />}
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -458,7 +458,7 @@ describe('AiChatMessage', () => {
       messageId: BUILT_IN_ASSISTANT_MESSAGE.id,
       isAiChatInboxEnabled: true,
       currentWorkspaceMemberId: MEMBER_ID,
-      withComposerQuote: true,
+      hasComposerQuote: true,
     });
 
     expect(screen.getAllByText('Ada')).toHaveLength(1);
@@ -477,7 +477,7 @@ describe('AiChatMessage', () => {
       messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
       isAiChatInboxEnabled: true,
       currentWorkspaceMemberId: MEMBER_ID,
-      withComposerQuote: true,
+      hasComposerQuote: true,
     });
 
     await userEvent.click(screen.getByRole('button', { name: 'Reply' }));

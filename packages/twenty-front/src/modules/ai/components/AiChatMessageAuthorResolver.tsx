@@ -8,7 +8,6 @@ type AiChatMessageAuthorResolverProps = {
   children: (author: AgentChatMessageAuthor) => ReactNode;
 };
 
-// agent names come from a query, which only agent authors should trigger
 export const AiChatMessageAuthorResolver = ({
   author,
   children,

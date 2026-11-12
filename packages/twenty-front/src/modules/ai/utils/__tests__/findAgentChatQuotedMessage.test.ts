@@ -39,10 +39,13 @@ const REPLY = buildMessage({
 
 const QUOTE = { authorName: 'Julia Martin', excerpt: 'On it.' };
 
-const findQuotedMessageId = (
-  messages: ExtendedUIMessage[],
-  quote: { authorName: string; excerpt: string } = QUOTE,
-) =>
+const findQuotedMessageId = ({
+  messages,
+  quote = QUOTE,
+}: {
+  messages: ExtendedUIMessage[];
+  quote?: { authorName: string; excerpt: string };
+}) =>
   findAgentChatQuotedMessage({
     messages,
     replyMessageId: REPLY.id,
@@ -57,66 +60,72 @@ const findQuotedMessageId = (
 describe('findAgentChatQuotedMessage', () => {
   it('finds the quoted message', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'original', text: 'On it.' }),
-        REPLY,
-      ]),
+      findQuotedMessageId({
+        messages: [buildMessage({ id: 'original', text: 'On it.' }), REPLY],
+      }),
     ).toBe('original');
   });
 
   it('finds nothing when no earlier message has the quoted text', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'other', text: 'Not yet.' }),
-        REPLY,
-      ]),
+      findQuotedMessageId({
+        messages: [buildMessage({ id: 'other', text: 'Not yet.' }), REPLY],
+      }),
     ).toBeUndefined();
   });
 
   it('skips a message with the quoted text from another author', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'original', text: 'On it.' }),
-        buildMessage({
-          id: 'other-author',
-          text: 'On it.',
-          metadata: { senderWorkspaceMemberId: MARCO.id },
-        }),
-        REPLY,
-      ]),
+      findQuotedMessageId({
+        messages: [
+          buildMessage({ id: 'original', text: 'On it.' }),
+          buildMessage({
+            id: 'other-author',
+            text: 'On it.',
+            metadata: { senderWorkspaceMemberId: MARCO.id },
+          }),
+          REPLY,
+        ],
+      }),
     ).toBe('original');
   });
 
   it('matches a sender who left by the quoted text alone', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({
-          id: 'original',
-          text: 'On it.',
-          metadata: { senderWorkspaceMemberId: 'former-member-id' },
-        }),
-        REPLY,
-      ]),
+      findQuotedMessageId({
+        messages: [
+          buildMessage({
+            id: 'original',
+            text: 'On it.',
+            metadata: { senderWorkspaceMemberId: 'former-member-id' },
+          }),
+          REPLY,
+        ],
+      }),
     ).toBe('original');
   });
 
   it('picks the latest earlier match', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'first', text: 'On it.' }),
-        buildMessage({ id: 'second', text: 'On it.' }),
-        REPLY,
-      ]),
+      findQuotedMessageId({
+        messages: [
+          buildMessage({ id: 'first', text: 'On it.' }),
+          buildMessage({ id: 'second', text: 'On it.' }),
+          REPLY,
+        ],
+      }),
     ).toBe('second');
   });
 
   it('ignores messages sent after the reply', () => {
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'original', text: 'On it.' }),
-        REPLY,
-        buildMessage({ id: 'later', text: 'On it.' }),
-      ]),
+      findQuotedMessageId({
+        messages: [
+          buildMessage({ id: 'original', text: 'On it.' }),
+          REPLY,
+          buildMessage({ id: 'later', text: 'On it.' }),
+        ],
+      }),
     ).toBe('original');
   });
 
@@ -129,18 +138,23 @@ describe('findAgentChatQuotedMessage', () => {
     });
 
     expect(
-      findQuotedMessageId([assistantMessage, REPLY], {
-        authorName: 'Ada',
-        excerpt: 'On it.',
+      findQuotedMessageId({
+        messages: [assistantMessage, REPLY],
+        quote: {
+          authorName: 'Ada',
+          excerpt: 'On it.',
+        },
       }),
     ).toBe('assistant');
-    expect(findQuotedMessageId([assistantMessage, REPLY])).toBeUndefined();
+    expect(
+      findQuotedMessageId({ messages: [assistantMessage, REPLY] }),
+    ).toBeUndefined();
   });
 
   it('finds an agent message by the quoted text alone', () => {
     expect(
-      findQuotedMessageId(
-        [
+      findQuotedMessageId({
+        messages: [
           buildMessage({
             id: 'agent',
             text: 'On it.',
@@ -149,15 +163,15 @@ describe('findAgentChatQuotedMessage', () => {
           }),
           REPLY,
         ],
-        { authorName: 'Sales agent', excerpt: 'On it.' },
-      ),
+        quote: { authorName: 'Sales agent', excerpt: 'On it.' },
+      }),
     ).toBe('agent');
   });
 
   it('finds a message without text from an empty excerpt', () => {
     expect(
-      findQuotedMessageId(
-        [
+      findQuotedMessageId({
+        messages: [
           buildMessage({ id: 'original', text: 'On it.' }),
           {
             id: 'tool-only',
@@ -175,8 +189,8 @@ describe('findAgentChatQuotedMessage', () => {
           },
           REPLY,
         ],
-        { authorName: 'Ada', excerpt: '' },
-      ),
+        quote: { authorName: 'Ada', excerpt: '' },
+      }),
     ).toBe('tool-only');
   });
 });

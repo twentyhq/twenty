@@ -224,7 +224,9 @@ export const AiChatMessage = ({
       >
         {hasHeader && (
           <AiChatMessageAuthorHeader
-            message={agentChatMessage}
+            messageId={messageId}
+            role={agentChatMessage.role}
+            metadata={agentChatMessage.metadata}
             createdAt={createdAt}
           />
         )}

@@ -28,7 +28,7 @@ export const getAgentChatMessageAuthor = <
   const senderWorkspaceMemberId = message.metadata?.senderWorkspaceMemberId;
   const agentId = message.metadata?.agentId;
 
-  if (message.metadata?.isBuiltInAssistant === true) {
+  if (message.metadata?.isBuiltInAssistant) {
     return {
       type: 'builtInAssistant',
       name: authorContext.assistantDisplayName,

@@ -1,25 +1,32 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
 import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
-import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
+import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
+import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type AiChatMessageAuthorHeaderProps = {
-  message: Pick<ExtendedUIMessage, 'id' | 'role' | 'metadata'>;
+  messageId: string;
+  role: ExtendedUIMessage['role'];
+  metadata: ExtendedUIMessage['metadata'];
   createdAt: Date | string;
 };
 
 export const AiChatMessageAuthorHeader = ({
-  message,
+  messageId,
+  role,
+  metadata,
   createdAt,
 }: AiChatMessageAuthorHeaderProps) => {
-  const author = useAgentChatMessageAuthor(message);
-
-  if (!isDefined(author)) {
-    return null;
-  }
+  const agentChatMessageAuthorContext = useAtomStateValue(
+    agentChatMessageAuthorContextSelector,
+  );
+  const author = getAgentChatMessageAuthor({
+    message: { id: messageId, role, metadata },
+    authorContext: agentChatMessageAuthorContext,
+  });
 
   return (
     <AiChatMessageAuthorResolver author={author}>
