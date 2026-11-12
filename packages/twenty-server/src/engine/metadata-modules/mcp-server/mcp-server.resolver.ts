@@ -3,11 +3,15 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
@@ -31,10 +35,9 @@ const MCP_SERVER_AUTH_PRINCIPALS: AccessPolicy['authPrincipals'] = {
   application: true,
 };
 
-// Workflow editors pick tools from this catalog, which exposes no secrets.
 const MCP_SERVER_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
-  requiredPermissionFlags: [],
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
   requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 };
 
@@ -57,8 +60,18 @@ export class McpServerResolver {
   @UseGuards(AccessPolicyGuard(MCP_SERVER_READ_ACCESS_POLICY))
   async mcpServers(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<McpServerDTO[]> {
-    return await this.mcpServerService.findAll(workspace.id);
+    const mcpServers = await this.mcpServerService.findAll(workspace.id);
+
+    return mcpServers.filter((mcpServer) =>
+      this.canCallerReachMcpServer({
+        mcpServer,
+        workspace,
+        callingApplication,
+      }),
+    );
   }
 
   @Query(() => McpServerDTO, { nullable: true })
@@ -66,8 +79,15 @@ export class McpServerResolver {
   async mcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<McpServerDTO | null> {
-    return await this.mcpServerService.findById(id, workspace.id);
+    const mcpServer = await this.mcpServerService.findById(id, workspace.id);
+
+    return isDefined(mcpServer) &&
+      this.canCallerReachMcpServer({ mcpServer, workspace, callingApplication })
+      ? mcpServer
+      : null;
   }
 
   @Mutation(() => McpServerDTO)
@@ -122,5 +142,23 @@ export class McpServerResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<McpServerDTO> {
     return await this.mcpServerService.delete(id, workspace.id);
+  }
+
+  // Workflow editors can only pick tools from servers their caller may trigger.
+  private canCallerReachMcpServer({
+    mcpServer,
+    workspace,
+    callingApplication,
+  }: {
+    mcpServer: McpServerDTO;
+    workspace: WorkspaceEntity;
+    callingApplication: FlatApplication | undefined;
+  }): boolean {
+    return canCallerReachApplication({
+      callingApplication,
+      applicationId: mcpServer.applicationId,
+      operation: 'trigger',
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+    });
   }
 }

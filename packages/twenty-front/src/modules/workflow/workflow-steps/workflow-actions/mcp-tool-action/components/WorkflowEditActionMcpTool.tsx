@@ -16,6 +16,7 @@ import { WorkflowStepTestVariableInput } from '@/workflow/workflow-steps/compone
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
+import { getDefaultToolInputFromJsonSchema } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/getDefaultToolInputFromJsonSchema';
 import { useMcpToolStepForm } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useMcpToolStepForm';
 import { McpToolTestResult } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult';
 import { WORKFLOW_MCP_TOOL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/constants/WorkflowMcpToolTabListComponentId';
@@ -30,7 +31,6 @@ import { isObject } from '@sniptt/guards';
 import { isDestructiveMcpServerTool } from 'twenty-shared/ai';
 import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
-import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconChevronDown, IconPlayerPlay, IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -116,8 +116,8 @@ export const WorkflowEditActionMcpTool = ({
   const inputSchema = isDefined(tool)
     ? jsonSchemaToInputSchema(tool.inputSchema)
     : undefined;
-  const defaultToolInput = isDefined(inputSchema)
-    ? getFunctionInputFromInputSchema(inputSchema)[0]
+  const defaultToolInput = isDefined(tool)
+    ? getDefaultToolInputFromJsonSchema(tool.inputSchema)
     : undefined;
   const toolInput = isObject(defaultToolInput)
     ? mergeDefaultFunctionInputAndFunctionInput({
