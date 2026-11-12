@@ -2960,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Conversații asociate oportunității"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Alegeți o filă activă și o poziție pentru widget care corespunde modului său de aspect."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -5386,11 +5391,6 @@ msgstr "Crearea înregistrării a eșuat."
 msgid "Failed to delete file {fileId}"
 msgstr "Nu s-a reușit ștergerea fișierului {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Nu s-a reușit ștergerea slujbelor. Vă rugăm să încercați din nou mai târziu."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6162,6 +6162,11 @@ msgstr "frontComponentId nu trebuie setat când engineComponentKey este TRIGGER_
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Solicitarea pentru generatorul de componente frontend depășește limita de 6 MiB. Reduceți dependențele aplicației sau dimensiunea SDK-ului generat."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Componenta de interfață nu a fost găsită."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13803,6 +13808,11 @@ msgstr "Dependențele componentei nu au putut fi verificate. Încercați să cre
 msgid "The condition of a database event trigger must be text"
 msgstr "Condiția unui declanșator de eveniment al bazei de date trebuie să fie text"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr "Condiția unui declanșator de agent este nevalidă"
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14859,6 +14869,11 @@ msgstr "Încărcarea acestui fișier a fost deja finalizată."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "This form no longer waits for an answer."
 msgstr "Acest formular nu mai așteaptă un răspuns."
+
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Această componentă de interfață nu este disponibilă în acest aspect de pagină."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17221,6 +17236,11 @@ msgstr "Cine primește accesul"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "De ce a fost acordat accesul"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Configurarea widgetului este necesară."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

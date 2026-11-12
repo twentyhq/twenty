@@ -12,14 +12,15 @@ import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-r
 
 const unionFields = ({
   objectRecordsPermissionsPerRole,
-  fieldList,
+  inaccessibleFieldsKey,
 }: {
   objectRecordsPermissionsPerRole: (ObjectRecordsPermissions | undefined)[];
-  fieldList: 'unreadableFields' | 'uneditableFields';
+  inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';
 }): string[] => [
   ...new Set(
     objectRecordsPermissionsPerRole.flatMap(
-      (objectRecordsPermissions) => objectRecordsPermissions?.[fieldList] ?? [],
+      (objectRecordsPermissions) =>
+        objectRecordsPermissions?.[inaccessibleFieldsKey] ?? [],
     ),
   ),
 ];
@@ -53,11 +54,11 @@ const intersectObjectRecordsPermissions = (
     ),
     unreadableFields: unionFields({
       objectRecordsPermissionsPerRole,
-      fieldList: 'unreadableFields',
+      inaccessibleFieldsKey: 'unreadableFields',
     }),
     uneditableFields: unionFields({
       objectRecordsPermissionsPerRole,
-      fieldList: 'uneditableFields',
+      inaccessibleFieldsKey: 'uneditableFields',
     }),
   };
 

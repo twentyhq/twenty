@@ -469,6 +469,38 @@ describe('roles permissions', () => {
     });
   });
 
+  describe('accessGroupPropagationProgress', () => {
+    const query = {
+      query: `
+        query AccessGroupPropagationProgress {
+          accessGroupPropagationProgress {
+            totalRecordCount
+            remainingRecordCount
+            isInProgress
+          }
+        }
+      `,
+    };
+
+    it('should allow admin to read the propagation progress', async () => {
+      const response = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(query)
+        .expect(200);
+
+      expect(response.body.data.accessGroupPropagationProgress).toEqual({
+        totalRecordCount: expect.any(Number),
+        remainingRecordCount: expect.any(Number),
+        isInProgress: expect.any(Boolean),
+      });
+    });
+
+    it('should throw a permission error when user does not have permission (member role)', async () => {
+      await assertPermissionDeniedForMemberWithMemberRole({ query });
+    });
+  });
+
   describe('updateWorkspaceMemberRole', () => {
     it('should throw a permission error when user does not have permission to update roles (member role)', async () => {
       const query = {

@@ -4,16 +4,11 @@ import {
   type ObjectRecordsOperationType,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
-import {
-  canAccessThroughAllRecordsPermission,
-  isDefined,
-  canRlsRuleAccessOperation,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
-import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
-import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
+import { findRlsRulesAccessingOperation } from 'src/engine/permissions/internal/rls/utils/find-rls-rules-accessing-operation.util';
 import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
 import {
   buildRlsRecordFilter,
@@ -63,33 +58,16 @@ export const resolveRlsRuleRecordFilter = ({
 }: ResolveRlsRuleRecordFilterArgs & {
   operationType: ObjectRecordsOperationType;
 }): RecordGqlOperationFilter | null => {
-  const objectRecordsPermissions =
-    getPermissionsPrincipalsRecordsPermissions(args).objects[
-      args.flatObjectMetadata.id
-    ];
-  const enforcedOperationType = getEnforcedOperationType({
+  const rowLevelPermissionRules = findRlsRulesAccessingOperation({
+    principals: args.principals,
+    metadataMaps: args.metadataMaps,
+    objectMetadataId: args.flatObjectMetadata.id,
     operationType,
-    featureFlagsMap: args.metadataMaps.featureFlagsMap,
   });
 
-  if (
-    !isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions) ||
-    canAccessThroughAllRecordsPermission({
-      objectRecordsPermissions,
-      operationType: enforcedOperationType,
-    })
-  ) {
+  if (!isDefined(rowLevelPermissionRules)) {
     return null;
   }
 
-  return buildRlsRulesRecordFilter({
-    ...args,
-    rowLevelPermissionRules:
-      objectRecordsPermissions.rowLevelRecordsPermissions.filter((rule) =>
-        canRlsRuleAccessOperation({
-          rule,
-          operationType: enforcedOperationType,
-        }),
-      ),
-  });
+  return buildRlsRulesRecordFilter({ ...args, rowLevelPermissionRules });
 };

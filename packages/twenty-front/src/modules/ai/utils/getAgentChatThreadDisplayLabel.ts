@@ -3,6 +3,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AgentChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
@@ -30,14 +31,11 @@ export const getAgentChatThreadDisplayLabel = ({
     return isNonEmptyString(title) ? title : fallbackLabel;
   }
 
-  const peerWorkspaceMemberIds = [
-    thread.directMessageFirstWorkspaceMemberId,
-    thread.directMessageSecondWorkspaceMemberId,
-  ].filter(
-    (workspaceMemberId) =>
-      isDefined(workspaceMemberId) &&
-      workspaceMemberId !== currentWorkspaceMemberId,
-  );
+  const peerWorkspaceMemberIds =
+    getAgentChatDirectMessagePeerWorkspaceMemberIds({
+      thread,
+      currentWorkspaceMemberId,
+    });
 
   if (!isNonEmptyArray(peerWorkspaceMemberIds)) {
     return formerMemberLabel;

@@ -5,7 +5,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/internal/field-access/utils/is-update-of-hidden-fields-only.util';
 import { omitUnreadableFieldsFromEvent } from 'src/engine/permissions/internal/field-access/utils/omit-unreadable-fields-from-event.util';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
-import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
+import { type UnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/unreadable-fields-on-matching-records.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export const omitUnreadableFieldsFromEvents = <
@@ -15,13 +15,13 @@ export const omitUnreadableFieldsFromEvents = <
   objectMetadata,
   recordsPermissions,
   metadataMaps,
-  fieldsHiddenOnMatchingRecords,
+  unreadableFieldsOnMatchingRecords,
 }: {
   events: TEvent[];
   objectMetadata: FlatObjectMetadata;
   recordsPermissions: Pick<RoleRecordsPermissions, 'objects'>;
   metadataMaps: PermissionsMetadataMaps;
-  fieldsHiddenOnMatchingRecords: FieldsHiddenOnMatchingRecords[];
+  unreadableFieldsOnMatchingRecords: UnreadableFieldsOnMatchingRecords[];
 }): TEvent[] => {
   const recordReadRestrictions = buildRecordReadRestrictions({
     recordsPermissions,
@@ -35,7 +35,7 @@ export const omitUnreadableFieldsFromEvents = <
         recordsPermissions,
         recordReadRestrictions,
         metadataMaps,
-        fieldsHiddenOnMatchingRecords,
+        unreadableFieldsOnMatchingRecords,
       }),
     )
     .filter((event) => !isUpdateOfHiddenFieldsOnly(event));
