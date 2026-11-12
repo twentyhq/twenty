@@ -1,11 +1,11 @@
 import { createStore } from 'jotai';
 
-import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
@@ -40,7 +40,12 @@ const buildThread = ({
   lastActivityAt,
 });
 
-describe('agentChatChannelVisibleThreadsSelector', () => {
+const CHANNEL_SOURCE: AgentChatThreadListSource = {
+  type: 'channel',
+  channelView: CHANNEL_VIEW,
+};
+
+describe('agentChatThreadListThreadsFamilySelector for a channel view', () => {
   it('keeps the chats of the channel pages loaded so far when the main list is refreshed', () => {
     const store = createStore();
     const recentThread = buildThread({
@@ -52,21 +57,28 @@ describe('agentChatChannelVisibleThreadsSelector', () => {
       lastActivityAt: '2026-10-01T10:00:00.000Z',
     });
 
-    store.set(agentChatChannelViewState.atom, CHANNEL_VIEW);
     store.set(recordStoreFamilyState.atomFamily('older'), olderThread);
     // A refresh replaced the main list with its first page
     setAgentChatThreadList(store, [recentThread]);
-    store.set(agentChatChannelThreadListState.atom, {
-      viewKey: getAgentChatChannelViewKey(CHANNEL_VIEW),
-      threadIds: ['recent', 'older'],
-      hasNextPage: true,
-      endCursor: 'cursor',
-      lastLoadedActivityAt: '2026-10-01T10:00:00.000Z',
-    });
+    store.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(CHANNEL_SOURCE),
+      ),
+      {
+        threadIds: ['recent', 'older'],
+        hasNextPage: true,
+        endCursor: 'cursor',
+        lastLoadedActivityAt: '2026-10-01T10:00:00.000Z',
+      },
+    );
 
     expect(
       store
-        .get(agentChatChannelVisibleThreadsSelector.atom)
+        .get(
+          agentChatThreadListThreadsFamilySelector.selectorFamily(
+            CHANNEL_SOURCE,
+          ),
+        )
         .map(({ id }) => id),
     ).toEqual(['recent', 'older']);
   });

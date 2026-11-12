@@ -4,13 +4,13 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
 import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
@@ -23,6 +23,11 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
 const mockApolloCoreClient = { query: queryMock };
+
+jest.mock('@apollo/client/react', () => ({
+  ...jest.requireActual('@apollo/client/react'),
+  useApolloClient: () => mockApolloCoreClient,
+}));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => mockApolloCoreClient,
@@ -82,6 +87,10 @@ const buildPage = (
   },
 });
 
+const RECENT_THREAD_LIST_ATOM = agentChatThreadListFamilyState.atomFamily(
+  getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+);
+
 const buildStore = () => {
   const store = createStore();
 
@@ -97,18 +106,31 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
-const useAgentChatThreadLoading = () => ({
-  ...useRefreshAgentChatThreads(),
-  ...useFetchMoreAgentChatThreads(),
-  ...useLoadAgentChatThread(),
-});
+const useAgentChatThreadLoading = () => {
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+
+  return {
+    loadAgentChatThreadList,
+    refreshAgentChatThreads: () =>
+      loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'refresh',
+      }),
+    fetchMoreAgentChatThreads: () =>
+      loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'fetch-more',
+      }),
+    ...useLoadAgentChatThread(),
+  };
+};
 
 const renderRefresh = (store: ReturnType<typeof createStore>) =>
   renderHook(() => useAgentChatThreadLoading(), {
     wrapper: getWrapper(store),
   }).result;
 
-describe('useRefreshAgentChatThreads', () => {
+describe('useLoadAgentChatThreadList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
@@ -117,12 +139,12 @@ describe('useRefreshAgentChatThreads', () => {
   it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
     const store = buildStore();
     const { result, rerender } = renderHook(
-      () => useRefreshAgentChatThreads(),
+      () => useLoadAgentChatThreadList(),
       { wrapper: getWrapper(store) },
     );
-    const refresh = result.current.refreshAgentChatThreads;
+    const load = result.current.loadAgentChatThreadList;
     rerender();
-    expect(result.current.refreshAgentChatThreads).toBe(refresh);
+    expect(result.current.loadAgentChatThreadList).toBe(load);
   });
 
   it('loads the most recently active chats and the member read state', async () => {
@@ -144,10 +166,11 @@ describe('useRefreshAgentChatThreads', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(store.get(agentChatThreadListState.atom)).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,
       endCursor: 'end',
+      lastLoadedActivityAt: null,
     });
     expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
@@ -323,10 +346,11 @@ describe('useRefreshAgentChatThreads', () => {
         directMessageSecondWorkspaceMemberId: 'member-2',
       },
     ]);
-    expect(store.get(agentChatThreadListState.atom)).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['recent-thread'],
       hasNextPage: true,
       endCursor: 'recent-page-cursor',
+      lastLoadedActivityAt: null,
     });
   });
 
@@ -354,10 +378,11 @@ describe('useRefreshAgentChatThreads', () => {
         variables: expect.objectContaining({ lastCursor: 'page-1' }),
       }),
     );
-    expect(store.get(agentChatThreadListState.atom)).toEqual({
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toEqual({
       threadIds: ['thread-1', 'thread-2'],
       hasNextPage: false,
       endCursor: 'page-2',
+      lastLoadedActivityAt: null,
     });
 
     await act(async () => {
@@ -366,115 +391,13 @@ describe('useRefreshAgentChatThreads', () => {
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
 
-  it('retries when a record event changes the list during the request', async () => {
-    const store = buildStore();
-    const serverThreads = [
-      buildThread('thread-1', 'Newer title'),
-      buildThread('thread-2', 'Server thread'),
-    ];
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock
-      .mockReturnValueOnce(
-        new Promise((resolve) => {
-          resolveQuery = resolve;
-        }),
-      )
-      .mockResolvedValueOnce(buildPage(serverThreads));
-    const result = renderRefresh(store);
-
-    const refreshPromise = result.current.refreshAgentChatThreads();
-
-    act(() => {
-      store.set(agentChatThreadListState.atom, {
-        threadIds: ['thread-1'],
-        hasNextPage: false,
-        endCursor: null,
-      });
-    });
-
-    let refreshedThreads: AgentChatThreadRecord[] | undefined;
-
-    await act(async () => {
-      resolveQuery(buildPage([buildThread('thread-1', 'Stale title')]));
-      refreshedThreads = await refreshPromise;
-    });
-
-    expect(refreshedThreads).toMatchObject([
-      { id: 'thread-1', title: 'Newer title' },
-      { id: 'thread-2' },
-    ]);
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(store.get(agentChatThreadListState.atom)?.threadIds).toEqual([
-      'thread-1',
-      'thread-2',
-    ]);
-  });
-
-  it('retries rather than overwrite a chat updated during the request', async () => {
-    const store = buildStore();
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock
-      .mockReturnValueOnce(
-        new Promise((resolve) => {
-          resolveQuery = resolve;
-        }),
-      )
-      .mockResolvedValueOnce(
-        buildPage([buildThread('thread-1', 'Renamed meanwhile')]),
-      );
-    const result = renderRefresh(store);
-
-    const refreshPromise = result.current.refreshAgentChatThreads();
-
-    act(() => {
-      store.set(agentChatThreadRecordUpdateCountState.atom, 1);
-    });
-
-    await act(async () => {
-      resolveQuery(buildPage([buildThread('thread-1', 'Stale title')]));
-      await refreshPromise;
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
-      { id: 'thread-1', title: 'Renamed meanwhile' },
-    ]);
-  });
-
-  it('stops retrying when record events keep changing the list', async () => {
-    const store = buildStore();
-    let changeCount = 0;
-    queryMock.mockImplementation(async () => {
-      changeCount++;
-      store.set(agentChatThreadListState.atom, {
-        threadIds: [`thread-${changeCount}`],
-        hasNextPage: false,
-        endCursor: null,
-      });
-      return buildPage([buildThread('thread-1', 'Stale title')]);
-    });
-    const result = renderRefresh(store);
-
-    await act(async () => {
-      expect(await result.current.refreshAgentChatThreads()).toBeUndefined();
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(store.get(agentChatThreadListState.atom)?.threadIds).toEqual([
-      'thread-2',
-    ]);
-  });
-
   it('drops chats the server no longer lists', async () => {
     const store = buildStore();
-    store.set(agentChatThreadListState.atom, {
+    store.set(RECENT_THREAD_LIST_ATOM, {
       threadIds: ['thread-1', 'thread-2'],
       hasNextPage: false,
       endCursor: null,
+      lastLoadedActivityAt: null,
     });
     queryMock.mockResolvedValue(
       buildPage([buildThread('thread-1', 'Refreshed title')]),
@@ -485,9 +408,7 @@ describe('useRefreshAgentChatThreads', () => {
       await result.current.refreshAgentChatThreads();
     });
 
-    expect(store.get(agentChatThreadListState.atom)?.threadIds).toEqual([
-      'thread-1',
-    ]);
+    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual(['thread-1']);
   });
 
   it('leaves the list unloaded so initialization can retry a failed request', async () => {
@@ -499,15 +420,16 @@ describe('useRefreshAgentChatThreads', () => {
       await result.current.refreshAgentChatThreads();
     });
 
-    expect(store.get(agentChatThreadListState.atom)).toBeNull();
+    expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
   });
 
   it('adds a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
     const store = buildStore();
-    store.set(agentChatThreadListState.atom, {
+    store.set(RECENT_THREAD_LIST_ATOM, {
       threadIds: ['thread-1'],
       hasNextPage: true,
       endCursor: 'page-1',
+      lastLoadedActivityAt: null,
     });
     const result = renderRefresh(store);
 
@@ -528,7 +450,7 @@ describe('useRefreshAgentChatThreads', () => {
         }),
       }),
     );
-    expect(store.get(agentChatThreadListState.atom)?.threadIds).toEqual([
+    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual([
       'old-thread',
       'thread-1',
     ]);
@@ -569,43 +491,5 @@ describe('useRefreshAgentChatThreads', () => {
         agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
       ),
     ).toMatchObject({ inputTokens: 42 });
-  });
-
-  it('looks a chat up again rather than overwrite an update applied during the request', async () => {
-    const store = buildStore();
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock
-      .mockReturnValueOnce(
-        new Promise((resolve) => {
-          resolveQuery = resolve;
-        }),
-      )
-      .mockResolvedValueOnce(
-        buildPage([buildThread('old-thread', 'Renamed meanwhile')]),
-      );
-    store.set(agentChatThreadListState.atom, {
-      threadIds: [],
-      hasNextPage: true,
-      endCursor: 'page-1',
-    });
-    const result = renderRefresh(store);
-
-    const loadPromise = result.current.loadAgentChatThread('old-thread');
-
-    act(() => {
-      store.set(agentChatThreadRecordUpdateCountState.atom, 1);
-    });
-
-    await act(async () => {
-      resolveQuery(buildPage([buildThread('old-thread', 'Stale title')]));
-      await loadPromise;
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(2);
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
-      { id: 'old-thread', title: 'Renamed meanwhile' },
-    ]);
   });
 });

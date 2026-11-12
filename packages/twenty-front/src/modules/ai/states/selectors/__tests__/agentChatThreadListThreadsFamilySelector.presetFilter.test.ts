@@ -4,10 +4,9 @@ import {
   type AgentChatThreadFilterStatus,
 } from 'twenty-shared/ai';
 
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -190,12 +189,17 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
       ),
     ),
   );
-  store.set(agentChatThreadFilterStatusState.atom, filterStatus);
-
-  return store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id);
+  return store
+    .get(
+      agentChatThreadListThreadsFamilySelector.selectorFamily({
+        type: 'presetFilter',
+        presetFilter: filterStatus,
+      }),
+    )
+    .map(({ id }) => id);
 };
 
-describe('agentChatVisibleThreadsSelector', () => {
+describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
