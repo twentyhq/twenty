@@ -31,7 +31,11 @@ export const AiChatComposerQuote = () => {
   const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
   const isOwnQuotedMessage = useIsOwnAgentChatMessage(quotedMessage);
 
-  if (!isDefined(agentChatQuotedMessageId)) {
+  // the displayed thread lags a switch until its messages load
+  if (
+    !isDefined(agentChatQuotedMessageId) ||
+    agentChatDisplayedThread !== currentAiChatThread
+  ) {
     return null;
   }
 

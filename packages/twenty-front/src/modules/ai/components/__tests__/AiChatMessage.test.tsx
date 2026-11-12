@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -10,6 +10,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -229,6 +232,8 @@ const renderMessage = ({
     },
   ]);
   jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
+  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
     agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     [
@@ -443,6 +448,33 @@ describe('AiChatMessage', () => {
 
     expect(screen.getByText('Replying to')).toBeInTheDocument();
     expect(screen.getByText('You')).toBeInTheDocument();
+  });
+
+  it('hides the reply bar while switching to another chat', async () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+    expect(screen.getByText('Replying to')).toBeInTheDocument();
+
+    act(() => {
+      jotaiStore.set(currentAiChatThreadState.atom, 'another-thread');
+      jotaiStore.set(
+        agentChatQuotedMessageIdFamilyState.atomFamily({
+          threadId: 'another-thread',
+        }),
+        USER_MESSAGE.id,
+      );
+    });
+
+    expect(screen.queryByText('Replying to')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Original message unavailable'),
+    ).not.toBeInTheDocument();
   });
 
   it('opens the original message from the keyboard', async () => {
