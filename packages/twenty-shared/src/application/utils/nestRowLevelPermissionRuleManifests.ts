@@ -23,7 +23,6 @@ const withoutRuleLink = <TManifest extends NullableRowLevelPermissionRuleLink>({
 }: TManifest): Omit<TManifest, 'rowLevelPermissionRuleUniversalIdentifier'> =>
   manifest;
 
-// Predicates and groups linked to none of the rules stay in the flat form
 export const nestRowLevelPermissionRuleManifests = ({
   rules,
   predicateGroups,

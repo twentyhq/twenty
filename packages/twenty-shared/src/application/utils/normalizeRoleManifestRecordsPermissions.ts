@@ -62,7 +62,6 @@ const findTopLevelPredicateGroupUniversalIdentifier = ({
   return currentUniversalIdentifier;
 };
 
-// Rewrites the deprecated role properties into recordsPermissions, the only form the server syncs
 export const normalizeRoleManifestRecordsPermissions = ({
   role,
   applicationUniversalIdentifier,

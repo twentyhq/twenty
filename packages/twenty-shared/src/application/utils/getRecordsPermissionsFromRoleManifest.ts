@@ -17,7 +17,6 @@ type RoleManifestRecordsPermissions = Pick<
   | 'fieldPermissions'
 >;
 
-// Reads recordsPermissions and the deprecated properties as one set of grants
 export const getRecordsPermissionsFromRoleManifest = ({
   role,
 }: {
