@@ -4,7 +4,8 @@ import { RESERVED_PROXY_HEADER_NAMES } from '@/proxy-headers/constants/reserved-
 
 const HEADER_NAME_PATTERN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
 
-const INVALID_HEADER_VALUE_PATTERN = /[\r\n\0]/;
+// RFC 9110 field values: visible ASCII, space, tab and obs-text (0x80-0xFF).
+const INVALID_HEADER_VALUE_PATTERN = /[^\t\x20-\x7E\x80-\xFF]/;
 
 const createInvalidHeaderError = (sourceName: string, reason: string) =>
   new CliError({
@@ -43,7 +44,7 @@ export const validateProxyHeader = ({
   if (INVALID_HEADER_VALUE_PATTERN.test(normalizedValue)) {
     throw createInvalidHeaderError(
       sourceName,
-      `the value of ${normalizedName} contains a line break.`,
+      `the value of ${normalizedName} contains a line break or a character HTTP headers cannot carry, such as a smart quote.`,
     );
   }
 

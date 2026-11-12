@@ -217,6 +217,20 @@ describe('proxy headers', () => {
     expect(server.requests).toEqual([]);
   });
 
+  it('refuses header values HTTP cannot carry before sending anything', async () => {
+    const { envelope, exitCode } = await login([
+      '--url',
+      server.url,
+      '--proxy-header',
+      'cf-access-token: \u201cpasted-token\u201d',
+    ]);
+
+    expect(exitCode).toBe(2);
+    expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(envelope.error.message).not.toContain('pasted-token');
+    expect(server.requests).toEqual([]);
+  });
+
   it('does not carry saved headers over when a remote moves to another server', async () => {
     await login([
       '--url',
