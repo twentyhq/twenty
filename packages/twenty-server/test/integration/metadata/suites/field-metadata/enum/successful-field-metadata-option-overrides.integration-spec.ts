@@ -142,18 +142,27 @@ describe('a workspace overrides the options of a standard field', () => {
         .map(({ id }) => id)
         .sort(),
     ).toEqual(originalOptions.map(({ id }) => id).sort());
+    // The owner is derived from the option rows when the field is read, and never stored.
     expect(
-      updatedOptions.map(({ value, isCustom, isActive }) => ({
+      updatedOptions.map(({ value, applicationId, isActive }) => ({
         value,
-        isCustom,
+        hasOtherOwnerThanField: applicationId !== undefined,
         isActive,
       })),
     ).toEqual([
-      ...otherOptions.map(({ value }) => ({ value })),
-      { value: 'SCREENING' },
-      { value: 'ON_HOLD', isCustom: true },
-      { value: 'MEETING', isActive: false },
+      ...otherOptions.map(({ value }) => ({
+        value,
+        hasOtherOwnerThanField: false,
+      })),
+      { value: 'SCREENING', hasOtherOwnerThanField: false },
+      { value: 'ON_HOLD', hasOtherOwnerThanField: true },
+      { value: 'MEETING', hasOtherOwnerThanField: false, isActive: false },
     ]);
+    expect(
+      (await findStageField()).options.some(
+        (option) => 'applicationId' in option,
+      ),
+    ).toBe(false);
 
     const updatedRows = await findOptionRows(fieldMetadataId);
     const findRow = (rows: OptionRow[], value: string) =>

@@ -4,5 +4,5 @@ export type PartialFieldMetadataItemOption = {
   position: number;
   value: string;
   isActive?: boolean;
-  isCustom?: boolean;
+  applicationId?: string;
 };

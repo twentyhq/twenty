@@ -163,7 +163,6 @@ describe('keepWorkspaceOptionStateInManifestFieldOptions', () => {
         label: 'Archived',
         color: 'gray',
         position: 1,
-        isCustom: true,
       },
       {
         id: OPEN_OPTION_ID,

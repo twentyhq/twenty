@@ -12,7 +12,7 @@ const selectOptionSchema = z
     position: z.number(),
     value: z.string(),
     isActive: z.boolean().optional(),
-    isCustom: z.boolean().optional(),
+    applicationId: z.string().optional(),
   })
   .refine(
     (option) => {

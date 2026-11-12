@@ -88,10 +88,6 @@ export const sanitizeRawUpdateFieldInput = ({
     const normalizedOptions = normalizeUpdatedFieldMetadataOptions({
       updatedOptions: updatedEditableFieldProperties.options,
       existingOptions: existingFlatFieldMetadata.options ?? [],
-      isFieldOwnedByAnotherApplication:
-        !isSystemBuild &&
-        existingFlatFieldMetadata.applicationUniversalIdentifier !==
-          workspaceCustomApplicationUniversalIdentifier,
     });
 
     updatedEditableFieldProperties.options = isFieldMetadataSelectKind(

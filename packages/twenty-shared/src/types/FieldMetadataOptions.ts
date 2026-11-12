@@ -9,8 +9,8 @@ export class FieldMetadataDefaultOption {
   value: string;
   // Only stored when false: an inactive option stays on records but can no longer be picked.
   isActive?: boolean;
-  // Set by the server on options a workspace added to a field owned by another application.
-  isCustom?: boolean;
+  // Read-only: set when the option is owned by another application than its field. Never stored.
+  applicationId?: string;
 }
 
 export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {

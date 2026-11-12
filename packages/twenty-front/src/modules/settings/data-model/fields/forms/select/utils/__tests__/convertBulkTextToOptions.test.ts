@@ -192,7 +192,7 @@ describe('convertBulkTextToOptions', () => {
       value: 'PARTNER',
       color: 'purple',
       position: 2,
-      isCustom: true,
+      applicationId: 'workspace-application',
     };
     const lostOption: FieldMetadataItemOption = {
       id: 'lost',

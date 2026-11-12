@@ -33,6 +33,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { addOptionApplicationIdsToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/add-option-application-ids-to-field-metadata-dto.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -551,11 +552,19 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataOptionMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: [
+                'flatFieldMetadataMaps',
+                'flatObjectMetadataMaps',
+                'flatFieldMetadataOptionMaps',
+              ],
             },
           );
 
@@ -601,7 +610,13 @@ export class DataloaderService {
                 (flatFieldMetadata) =>
                   !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
               )
-              .map(fromFlatFieldMetadataToFieldMetadataDto);
+              .map((flatFieldMetadata) =>
+                addOptionApplicationIdsToFieldMetadataDto({
+                  fieldMetadataDto:
+                    fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata),
+                  flatFieldMetadataOptionMaps,
+                }),
+              );
           },
         );
 

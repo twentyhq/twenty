@@ -150,15 +150,19 @@ export const SettingsDataModelFieldSelectForm = ({
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
-  const isFieldOwnedByAnotherApplication =
-    isDefined(fieldMetadataItem?.applicationId) &&
-    isDefined(workspaceCustomApplicationId) &&
-    fieldMetadataItem.applicationId !== workspaceCustomApplicationId;
-  // Options the field's application ships can only be deactivated, and keep their API value.
+  // Options another application ships can only be deactivated, and keep their API value.
   const applicationOptionIds = new Set(
-    isFieldOwnedByAnotherApplication
+    isDefined(workspaceCustomApplicationId)
       ? (fieldMetadataItem?.options ?? [])
-          .filter((option) => option.isCustom !== true)
+          .filter((option) => {
+            const optionApplicationId =
+              option.applicationId ?? fieldMetadataItem?.applicationId;
+
+            return (
+              isDefined(optionApplicationId) &&
+              optionApplicationId !== workspaceCustomApplicationId
+            );
+          })
           .map((option) => option.id)
       : [],
   );

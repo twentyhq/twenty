@@ -17,7 +17,9 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
@@ -25,6 +27,8 @@ import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-module
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { addOptionApplicationIdsToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/add-option-application-ids-to-field-metadata-dto.util';
+import { assertOtherApplicationOptionsAreKeptOrThrow } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/assert-other-application-options-are-kept-or-throw.util';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -314,6 +318,17 @@ export class FieldMetadataService {
       flatViewsToDelete,
     } = inputTranspilationResult.result;
 
+    if (!isSystemBuild) {
+      assertOtherApplicationOptionsAreKeptOrThrow({
+        flatFieldMetadatasToUpdate,
+        existingFlatFieldMetadataOptionMaps,
+        callerApplicationUniversalIdentifier:
+          resolvedOwnerFlatApplication.universalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+      });
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -519,5 +534,24 @@ export class FieldMetadataService {
         flatEntityMaps: recomputedFlatFieldMetadataMaps,
       },
     );
+  }
+
+  async toFieldMetadataDto({
+    flatFieldMetadata,
+    workspaceId,
+  }: {
+    flatFieldMetadata: FlatFieldMetadata;
+    workspaceId: string;
+  }): Promise<FieldMetadataDTO> {
+    const { flatFieldMetadataOptionMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatFieldMetadataOptionMaps'] },
+      );
+
+    return addOptionApplicationIdsToFieldMetadataDto({
+      fieldMetadataDto:
+        fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata),
+      flatFieldMetadataOptionMaps,
+    });
   }
 }

@@ -93,7 +93,7 @@ Select and multi-select option `value` strings must be uppercase snake case:
 
 For select fields, default values must be quoted string expressions like `"'PLANNED'"`, not plain strings like `'planned'`.
 
-A workspace can relabel, recolor, reorder and deactivate the options an app ships, and add its own; it cannot remove them or change their `value`. Those changes survive later syncs, so changing an option's `label`, `color` or `position` in the app only changes the default. In a field's `options` read from the metadata API, `isActive: false` marks an option the workspace deactivated and `isCustom: true` one it added. Twenty sets both flags; do not declare them in the app.
+A workspace can relabel, recolor, reorder and deactivate the options an app ships, and add its own; it cannot remove them or change their `value`. Those changes survive later syncs, so changing an option's `label`, `color` or `position` in the app only changes the default. In a field's `options` read from the metadata API, `isActive: false` marks an option the workspace deactivated, and a read-only `applicationId` is present on an option owned by another application than the field, such as one the workspace added. Twenty sets both; do not declare them in the app.
 
 ### Relations
 

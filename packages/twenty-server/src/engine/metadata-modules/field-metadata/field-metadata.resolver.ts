@@ -252,7 +252,10 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+      return await this.fieldMetadataService.toFieldMetadataDto({
+        flatFieldMetadata,
+        workspaceId,
+      });
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(error);
     }
@@ -270,7 +273,10 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+      return await this.fieldMetadataService.toFieldMetadataDto({
+        flatFieldMetadata,
+        workspaceId,
+      });
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }

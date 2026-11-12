@@ -183,7 +183,10 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
+    const result = await this.fieldMetadataService.toFieldMetadataDto({
+      flatFieldMetadata: flatField,
+      workspaceId,
+    });
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -242,7 +245,10 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
+    const result = await this.fieldMetadataService.toFieldMetadataDto({
+      flatFieldMetadata: flatField,
+      workspaceId,
+    });
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result

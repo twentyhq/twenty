@@ -246,7 +246,6 @@ describe('Sync application keeps the option edits a workspace made on its fields
           value: 'ARCHIVED',
           label: 'Archived',
           color: 'purple',
-          isCustom: true,
         },
         { value: 'PAUSED', label: 'Paused', color: 'gray', isActive: false },
         { value: 'PENDING', label: 'Pending', color: 'yellow' },

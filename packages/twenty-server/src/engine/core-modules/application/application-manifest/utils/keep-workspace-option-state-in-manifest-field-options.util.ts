@@ -125,18 +125,11 @@ export const keepWorkspaceOptionStateInManifestFieldOptions = ({
     );
 
     toFlatFieldMetadata.options = [
-      ...applicationOptionRows.map((optionRow) => ({
-        optionRow,
-        isCustom: false,
-      })),
-      ...workspaceOptionRows.map((optionRow) => ({
-        optionRow,
-        isCustom: true,
-      })),
+      ...applicationOptionRows,
+      ...workspaceOptionRows,
     ]
-      .map(({ optionRow, isCustom }) => ({
+      .map((optionRow) => ({
         universalIdentifier: optionRow.universalIdentifier,
-        isCustom,
         ...resolveEffectiveFieldMetadataOptionColumns({
           universalFlatFieldMetadataOption: optionRow,
           workspaceCustomApplicationUniversalIdentifier,
@@ -147,10 +140,7 @@ export const keepWorkspaceOptionStateInManifestFieldOptions = ({
           firstOption.position - secondOption.position,
       )
       .map(
-        (
-          { universalIdentifier, isCustom, value, label, color, isActive },
-          position,
-        ) => ({
+        ({ universalIdentifier, value, label, color, isActive }, position) => ({
           ...manifestOptionById.get(universalIdentifier),
           id: universalIdentifier,
           value,
@@ -158,7 +148,6 @@ export const keepWorkspaceOptionStateInManifestFieldOptions = ({
           position,
           ...(isDefined(color) ? { color } : {}),
           ...(isActive ? {} : { isActive: false }),
-          ...(isCustom ? { isCustom: true } : {}),
         }),
       ) as typeof toFlatFieldMetadata.options;
   }
