@@ -1524,6 +1524,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
+      expect(onToolCallArgumentsChange).toHaveBeenCalledTimes(1);
       expect(onToolCallArgumentsChange).toHaveBeenCalledWith({
         bookingId: 'booking-1',
         decision: 'DECLINE',

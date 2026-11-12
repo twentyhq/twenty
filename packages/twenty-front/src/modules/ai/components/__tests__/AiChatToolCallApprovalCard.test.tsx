@@ -155,6 +155,7 @@ describe('AiChatToolCallApprovalCard', () => {
     await user.click(screen.getByRole('button', { name: 'Decline instead' }));
     await user.click(screen.getByRole('button', { name: 'Approve' }));
 
+    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
     expect(answerAgentChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {

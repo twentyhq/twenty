@@ -41,7 +41,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
 
   const argumentsEditor = (
     <AiChatToolCallApprovalArgumentsEditor
-      defaultArguments={proposal.arguments}
+      defaultArguments={toolArguments ?? proposal.arguments}
       readonly={isAnswering}
       onChange={setToolArguments}
     />
@@ -127,6 +127,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           }}
           onToolCallArgumentsChange={setToolArguments}
           unavailableFallback={argumentsEditor}
+          errorFallback={argumentsEditor}
         />
       )}
     </AiChatToolCallApprovalCardLayout>

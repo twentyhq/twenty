@@ -23,6 +23,7 @@ type AiChatToolFrontComponentProps = {
   toolCall: FrontComponentToolCall;
   onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   unavailableFallback: ReactNode;
+  errorFallback?: ReactNode;
 };
 
 export const AiChatToolFrontComponent = ({
@@ -30,6 +31,7 @@ export const AiChatToolFrontComponent = ({
   toolCall,
   onToolCallArgumentsChange,
   unavailableFallback,
+  errorFallback,
 }: AiChatToolFrontComponentProps) => (
   <StyledContainer>
     <Suspense fallback={<FrontComponentSkeletonLoader />}>
@@ -39,6 +41,7 @@ export const AiChatToolFrontComponent = ({
         onToolCallArgumentsChange={onToolCallArgumentsChange}
         loadingFallback={<FrontComponentSkeletonLoader />}
         unavailableFallback={unavailableFallback}
+        errorFallback={errorFallback}
       />
     </Suspense>
   </StyledContainer>
