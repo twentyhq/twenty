@@ -2,19 +2,29 @@ import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
+  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
+import { type AccessGroupPropagationProgressDTO } from 'src/engine/permissions/dtos/access-group-propagation-progress.dto';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
+const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
+const PERSON_TABLE = `${SCHEMA}."person"`;
 const ACCESS_GROUP_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."accessGroup"`;
 
 const findAdminRoleId = async (): Promise<string> => {
@@ -168,7 +178,7 @@ describe('access group sync (integration)', () => {
       roleId: await findAdminRoleId(),
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupReadService.findCallerCompactIds({
+    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
       principals,
       objectMetadataId,
       operationType: 'read',
@@ -179,5 +189,159 @@ describe('access group sync (integration)', () => {
 
     expect(compactIds).toHaveLength(1);
     expect(storedCompactIds).toContain(compactIds[0]);
+  });
+});
+
+const readProgress = async (): Promise<AccessGroupPropagationProgressDTO> => {
+  const { data } = await findAccessGroupPropagationProgress({
+    expectToFail: false,
+  });
+
+  return data.accessGroupPropagationProgress;
+};
+
+describe('access group propagation progress (integration)', () => {
+  let recordAccessGroupComputationService: RecordAccessGroupComputationService;
+  let objectMetadataId: string;
+  let jobTitleFieldMetadataId: string;
+  let roleId: string;
+
+  beforeAll(async () => {
+    recordAccessGroupComputationService =
+      getAppProviderByClassName<RecordAccessGroupComputationService>(
+        'RecordAccessGroupComputationService',
+      );
+
+    [{ id: objectMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = 'person'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+    [{ id: jobTitleFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'jobTitle'`,
+      [objectMetadataId],
+    );
+
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Access group propagation progress',
+        description: 'Access group propagation progress',
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: true,
+        canDestroyAllObjectRecords: true,
+      },
+    });
+
+    roleId = data.createOneRole.id;
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+    await waitForAllJobsToFinish();
+    await global.app
+      .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
+      .mdel(
+        ['plan', 'computed-record-count'].map(
+          (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
+        ),
+      );
+    await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
+  });
+
+  afterAll(async () => {
+    jest.restoreAllMocks();
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
+      value: false,
+      expectToFail: false,
+    });
+    await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
+    await waitForAllJobsToFinish();
+    await global.testDataSource.query(
+      `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
+    );
+    await global.testDataSource.query(`DELETE FROM ${ACCESS_GROUP_TABLE}`);
+  });
+
+  it('should plan the records of a rule change and report them until they are computed', async () => {
+    const [{ count }] = await global.testDataSource.query(
+      `SELECT COUNT(*) AS "count" FROM ${PERSON_TABLE}`,
+    );
+    const personCount = Number(count);
+    const computeRecords =
+      recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfRecords.bind(
+        recordAccessGroupComputationService,
+      );
+    let signalFirstBatchReached = () => {};
+    let resumeCompute = () => {};
+    const firstBatchReached = new Promise<void>((resolve) => {
+      signalFirstBatchReached = resolve;
+    });
+    const computeResumed = new Promise<void>((resolve) => {
+      resumeCompute = resolve;
+    });
+
+    jest
+      .spyOn(
+        recordAccessGroupComputationService,
+        'recomputeRecordAccessGroupIdsOfRecords',
+      )
+      .mockImplementation(async (args) => {
+        signalFirstBatchReached();
+        await computeResumed;
+
+        return computeRecords(args);
+      });
+
+    const predicateGroupId = v4();
+
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId,
+        objectMetadataId,
+        canReadRecords: true,
+        predicateGroups: [
+          {
+            id: predicateGroupId,
+            objectMetadataId,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          },
+        ],
+        predicates: [
+          {
+            id: v4(),
+            fieldMetadataId: jobTitleFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Paris',
+            rowLevelPermissionPredicateGroupId: predicateGroupId,
+          },
+        ],
+      },
+    });
+
+    try {
+      await firstBatchReached;
+
+      const progress = await readProgress();
+
+      expect(progress.totalRecordCount).toBeGreaterThanOrEqual(personCount);
+      expect(progress.remainingRecordCount).toBe(progress.totalRecordCount);
+      expect(progress.isInProgress).toBe(true);
+    } finally {
+      resumeCompute();
+    }
+
+    await waitForAllJobsToFinish();
+
+    expect(await readProgress()).toEqual({
+      totalRecordCount: 0,
+      remainingRecordCount: 0,
+      isInProgress: false,
+    });
   });
 });

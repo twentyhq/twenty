@@ -28,6 +28,16 @@ export class ApplicationAuthorizationService {
   }): Promise<void> {
     const now = new Date();
 
+    // Authorizing on top of an active authorization keeps its start, so the member's other sessions keep refreshing
+    const { affected } = await this.applicationAuthorizationRepository.update(
+      { userId, applicationId, revokedAt: IsNull() },
+      { workspaceId, userWorkspaceId, scopes, lastUsedAt: now },
+    );
+
+    if (isDefined(affected) && affected > 0) {
+      return;
+    }
+
     await this.applicationAuthorizationRepository.upsert(
       {
         userId,

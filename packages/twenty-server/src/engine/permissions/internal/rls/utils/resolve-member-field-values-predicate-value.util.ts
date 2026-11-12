@@ -8,7 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 
 const LIST_MEMBER_FIELD_TYPES: FieldMetadataType[] = [
@@ -22,7 +22,7 @@ export const resolveMemberFieldValuesPredicateValue = ({
   predicate,
   workspaceMemberFieldMetadata,
 }: {
-  memberFieldValues: RowLevelPermissionMemberFieldValues;
+  memberFieldValues: RlsMemberFieldValues;
   predicate: Pick<
     RowLevelPermissionPredicate,
     'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName'

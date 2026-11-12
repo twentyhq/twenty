@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
+import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
@@ -25,7 +25,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   metadataMaps,
   buildEntrySQLCondition,
   canRelatedRecordPathExtendAccessToObject,
-  isRecordPrivacyApplicable,
+  arePrivateRecordsApplicable,
   isUncorrelated = false,
 }: {
   workspaceId: string;
@@ -36,12 +36,12 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   canRelatedRecordPathExtendAccessToObject: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
-  isRecordPrivacyApplicable: (
+  arePrivateRecordsApplicable: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
   isUncorrelated?: boolean;
 }): SQLCondition | boolean => {
-  const resolvedRelatedRecordPaths = areRecordAccessGroupsEnabled({
+  const resolvedRelatedRecordPaths = isAccessGroupsEnabled({
     featureFlagsMap: metadataMaps.featureFlagsMap,
   })
     ? resolveRelatedRecordPaths(metadataMaps)
@@ -149,7 +149,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
 
     if (
       typeof pathsSQLCondition === 'boolean' ||
-      !isRecordPrivacyApplicable(flatObjectMetadata)
+      !arePrivateRecordsApplicable(flatObjectMetadata)
     ) {
       return combineSQLConditionOutcomesWithOr([
         entrySQLCondition,
@@ -162,7 +162,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
       combineSQLConditions({
         sqlConditions: [
           pathsSQLCondition,
-          buildRecordPrivacySQLCondition({ tableAlias, isPrivate: false }),
+          buildPrivateRecordStateSQLCondition({ tableAlias, isPrivate: false }),
         ],
       }),
     ]);

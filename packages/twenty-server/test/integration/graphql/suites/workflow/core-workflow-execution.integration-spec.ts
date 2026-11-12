@@ -1470,6 +1470,49 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('takes the answer to a question from a run no member started, whose prompt has no sender', async () => {
+      mockAgent();
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+
+      await (
+        await global.workflowTestServices.triggerJob()
+      ).handle({
+        workspaceId,
+        workflowId: fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        payload: {},
+      });
+
+      const [{ id: runId }] = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+      const run = await waitForPausedAgentStep(runId, agent.id);
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
+      const prompts = await global.testDataSource.query(
+        `SELECT "senderWorkspaceMemberId", "senderApplicationId" FROM "${schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'user'`,
+        [threadId],
+      );
+
+      expect(prompts).toEqual([
+        { senderWorkspaceMemberId: null, senderApplicationId: null },
+      ]);
+
+      const response = await answer({ threadId });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const completedRun = await waitForRun(runId, 'COMPLETED');
+
+      expect(completedRun.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(completedRun.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
+    });
+
     it('goes on with the agent when the recipient writes instead of answering, which skips the question', async () => {
       const runTurn = mockAgent();
       const { runId, agent, threadId } = await startAskingRun();

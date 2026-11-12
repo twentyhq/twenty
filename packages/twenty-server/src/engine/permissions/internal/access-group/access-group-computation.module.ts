@@ -3,9 +3,10 @@ import { Module } from '@nestjs/common';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-related-record-path-targets.job';
-import { RecomputeRecordAccessGroupIdsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids.job';
+import { ApplyAccessGroupPropagationPlanJob } from 'src/engine/permissions/internal/access-group/jobs/apply-access-group-propagation-plan.job';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
+import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
@@ -23,18 +24,20 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
+    AccessGroupPropagationPlanService,
     RecordAccessGroupComputationService,
     RecordAccessGroupMetadataMapsService,
     RecordAccessGroupPropagationService,
     AccessGroupSyncService,
     AccessGroupSyncListener,
     AccessGroupSyncSchedulerService,
-    RecomputeRecordAccessGroupIdsJob,
+    ApplyAccessGroupPropagationPlanJob,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
     RecomputeRelatedRecordPathTargetsJob,
     SyncAccessGroupsJob,
   ],
   exports: [
+    AccessGroupPropagationPlanService,
     AccessGroupSyncService,
     RecordAccessGroupComputationService,
     RecordAccessGroupPropagationService,
