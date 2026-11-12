@@ -11,6 +11,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { setTimeout as sleep } from 'node:timers/promises';
 import { v4 } from 'uuid';
 
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
@@ -21,6 +22,7 @@ import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
+const COMPUTE_START_TIMEOUT_MS = 30_000;
 const SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
 const PERSON_TABLE = `${SCHEMA}."person"`;
 const ACCESS_GROUP_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."accessGroup"`;
@@ -203,6 +205,7 @@ describe('access group propagation progress (integration)', () => {
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let roleId: string;
+  const temporaryPersonIds = [v4(), v4()];
 
   beforeAll(async () => {
     recordAccessGroupComputationService =
@@ -240,8 +243,8 @@ describe('access group propagation progress (integration)', () => {
     });
     await waitForAllJobsToFinish();
     await global.testDataSource.query(
-      `DELETE FROM core."deferredWorkspaceOperation" WHERE "workspaceId" = $1`,
-      [SEED_APPLE_WORKSPACE_ID],
+      `INSERT INTO ${PERSON_TABLE} ("id") SELECT UNNEST($1::uuid[])`,
+      [temporaryPersonIds],
     );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
@@ -255,6 +258,10 @@ describe('access group propagation progress (integration)', () => {
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
     await waitForAllJobsToFinish();
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [temporaryPersonIds],
+    );
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
@@ -319,8 +326,30 @@ describe('access group propagation progress (integration)', () => {
       },
     });
 
+    const computeStartAbortController = new AbortController();
+    const describeStateWhenComputeDidNotStart = async (): Promise<never> => {
+      await sleep(COMPUTE_START_TIMEOUT_MS, undefined, {
+        signal: computeStartAbortController.signal,
+      });
+
+      const deferredOperations = await global.testDataSource.query(
+        `SELECT "name", "status", "attempts", "lastError", "payload" FROM core."deferredWorkspaceOperation" WHERE "workspaceId" = $1`,
+        [SEED_APPLE_WORKSPACE_ID],
+      );
+      const accessGroups = await global.testDataSource.query(
+        `SELECT "objectMetadataId", "roleId", "rowLevelPermissionPredicateGroupId" FROM ${ACCESS_GROUP_TABLE}`,
+      );
+
+      throw new Error(
+        `The person compute did not start: ${JSON.stringify({ personObjectMetadataId: objectMetadataId, roleId, personCount, deferredOperations, accessGroups })}`,
+      );
+    };
+
     try {
-      await firstBatchReached;
+      await Promise.race([
+        firstBatchReached,
+        describeStateWhenComputeDidNotStart(),
+      ]);
 
       const progress = await readProgress();
 
@@ -328,6 +357,7 @@ describe('access group propagation progress (integration)', () => {
       expect(progress.remainingRecordCount).toBe(progress.totalRecordCount);
       expect(progress.isInProgress).toBe(true);
     } finally {
+      computeStartAbortController.abort();
       resumeCompute();
     }
 
