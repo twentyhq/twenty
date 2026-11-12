@@ -189,19 +189,21 @@ describe('createShareWithObjectRecordsPermissions', () => {
   });
 
   describe('with record-level sharing', () => {
-    const setRecordSharingEnabled = (value: boolean) =>
-      updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value,
-        expectToFail: false,
-      });
+    const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+      for (const featureFlag of [
+        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      ]) {
+        await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+      }
+    };
 
     beforeAll(async () => {
-      await setRecordSharingEnabled(true);
+      await setRecordSharingAndPrivateRecordsEnabled(true);
     });
 
     afterAll(async () => {
-      await setRecordSharingEnabled(false);
+      await setRecordSharingAndPrivateRecordsEnabled(false);
     });
 
     it('should write the named grants without an owner row when everyone keeps the default access', async () => {

@@ -17,5 +17,4 @@ export const getPermissionsPrincipalsRecordsPermissions = ({
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-    flatApplicationMaps: metadataMaps.flatApplicationMaps,
   });

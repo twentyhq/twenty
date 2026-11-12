@@ -1112,10 +1112,10 @@ msgstr "{roleLabel} {objectLabel} yozuvlarini {humanReadableAction} qila olmaydi
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} \"{newRoleName}\" roliga biriktiriladi."
 
-#. js-lingui-id: Mkqwbv
+#. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
-msgid "{runCount, plural, one {# run} other {# runs}}"
-msgstr "{runCount, plural, one {# ta ishga tushirish} other {# ta ishga tushirish}}"
+msgid "{runCount, plural, one {# turn} other {# turns}}"
+msgstr "{runCount, plural, one {# aylanish} other {# aylanish}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2990,6 +2990,11 @@ msgstr "Agent rollari"
 msgid "Agent run"
 msgstr "Agent ishga tushirilishi"
 
+#. js-lingui-id: aeu9gE
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Agent sections"
+msgstr "Agent bo‘limlari"
+
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Agent Web Search"
@@ -4861,6 +4866,11 @@ msgstr "Avatar"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Average"
 msgstr "O‘rtacha"
+
+#. js-lingui-id: RSsxRl
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Avg duration"
+msgstr "O‘rtacha davomiylik"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -7069,6 +7079,7 @@ msgstr "yakunlandi"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7990,8 +8001,13 @@ msgstr "Ko‘rib chiqishni yuklab bo‘lmadi."
 msgid "Could not load related records"
 msgstr "Bog‘liq yozuvlarni yuklab bo‘lmadi"
 
+#. js-lingui-id: 3167/q
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Could not load run insights"
+msgstr "Ishga tushirish ma'lumotlarini yuklab bo‘lmadi"
+
 #. js-lingui-id: Ft89Ck
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Could not load runs"
 msgstr "Ishga tushirishlarni yuklab bo‘lmadi"
 
@@ -8004,6 +8020,11 @@ msgstr "Ushbu ish jarayoni versiyasini yuklab bo‘lmadi."
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Could not load this workflow."
 msgstr "Ushbu ish jarayonini yuklab bo‘lmadi."
+
+#. js-lingui-id: 6UPqqs
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Could not load turns"
+msgstr "Navbatlarni yuklab bo‘lmadi"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8414,6 +8435,11 @@ msgstr "Yozuv yarating"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Yozuv yaratish"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "Yozuvlarni ulashish va kirish guruhi xotirasini obyektlar o‘rniga ruxsat mexanizmiga tegishli jadvallar sifatida yarating. Faqat ish maydoni yaratilganda qo‘llaniladi."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10715,6 +10741,7 @@ msgstr "Vidjetni nusxalash"
 
 #. js-lingui-id: lkz6PL
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -11966,6 +11993,7 @@ msgstr "Yumshoq o‘chirilgan yozuvlarni butunlay o‘chirish"
 #: src/modules/log-console/constants/LogConsoleLevels.ts
 #: src/modules/log-console/constants/LogConsoleWebhookColumns.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -12719,6 +12747,7 @@ msgstr "Yuz"
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 #: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -12735,6 +12764,11 @@ msgstr "Yuz"
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 msgid "Failed"
 msgstr "Muvaffaqiyatsiz"
+
+#. js-lingui-id: GUHLDy
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failed · 14d"
+msgstr "Muvaffaqiyatsiz · 14k"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13272,6 +13306,11 @@ msgstr "Faylni yuklash amalga oshmadi: {fileName}"
 #: src/modules/settings/workspace/components/WorkspaceLogoUploader.tsx
 msgid "Failed to upload picture"
 msgstr "Rasmni yuklab boʻlmadi"
+
+#. js-lingui-id: D98pOW
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Failure rate"
+msgstr "Muvaffaqiyatsizlik darajasi"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -13855,6 +13894,7 @@ msgid "Fix the payment issue to restore your premium features."
 msgstr "Premium funksiyalaringizni tiklash uchun to‘lovdagi muammoni bartaraf qiling."
 
 #. js-lingui-id: ylQd2j
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Flow"
@@ -15508,6 +15548,16 @@ msgstr "CSV fayllarini import qilish"
 msgid "Import data"
 msgstr "Ma’lumotlarni import qilish"
 
+#. js-lingui-id: Iu+TFD
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Import new emails from this account"
+msgstr "Bu hisobdan yangi xatlarni import qilish"
+
+#. js-lingui-id: QOjodt
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Import new events from this account"
+msgstr "Bu hisobdan yangi tadbirlarni import qilish"
+
 #. js-lingui-id: D5QSQM
 #: src/modules/settings/accounts/components/SettingsAccountsMessageFolderCard.tsx
 msgid "Import only selected folders/labels"
@@ -16842,6 +16892,11 @@ msgstr "Oxirgi toʻlov amalga oshmadi. Iltimos, hisob-kitob maʼlumotlaringizni 
 msgid "Last refreshed"
 msgstr "So‘nggi marta yangilangan"
 
+#. js-lingui-id: WT1Ibn
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Last run"
+msgstr "So‘nggi ishga tushirish"
+
 #. js-lingui-id: U011Uh
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Last seen"
@@ -18155,6 +18210,7 @@ msgstr "Maksimal qiymatlar"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18178,6 +18234,11 @@ msgstr "MCP serveri"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP serverlari"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP serverlari mavjud emas"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -18989,6 +19050,8 @@ msgstr "N/A"
 #: src/modules/getting-started/components/step-preview/GettingStartedImportPreview.tsx
 #: src/modules/object-core/agents/constants/CoreAgentFilterFields.ts
 #: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/object-core/workflows/constants/CoreWorkflowFilterFields.ts
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19956,6 +20019,11 @@ msgstr "Tadbirlar topilmadi"
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Bu {objectName} bilan hali hech qanday hodisa rejalashtirilmagan."
 
+#. js-lingui-id: dAMlIe
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+msgid "No failed runs"
+msgstr "Muvaffaqiyatsiz ishga tushirishlar yo‘q"
+
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
 msgid "No field configured"
@@ -20014,6 +20082,11 @@ msgstr "Kiritish mavjud emas"
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "Ushbu amal uchun kirish maydonlari yo‘q"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "Ushbu vosita uchun kirish maydonlari yo‘q"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20353,7 +20426,7 @@ msgid "No rules yet"
 msgstr "Hozircha qoidalar yo‘q"
 
 #. js-lingui-id: eOvDHm
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "No runs yet"
 msgstr "Hozircha ishga tushirishlar yo‘q"
 
@@ -20458,6 +20531,11 @@ msgstr "Ushbu funksiya uchun hech qanday trigger sozlanmagan."
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
 msgstr "Hech bir trigger yoqilmagan. Funksiya qanday chaqirilishini tanlash uchun yuqoridagi variantlardan birini yoqing."
+
+#. js-lingui-id: 96i2d6
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "No turns yet"
+msgstr "Hozircha navbatlar yo‘q"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -21745,6 +21823,7 @@ msgstr "Asl xabar mavjud emas"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -21888,6 +21967,7 @@ msgid "Override Draft"
 msgstr "Qoralamani almashtirish"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
@@ -22155,6 +22235,16 @@ msgstr "Yo‘l"
 msgid "Pause"
 msgstr "Pauza"
 
+#. js-lingui-id: 03eLh4
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Pause or resume importing emails from this account"
+msgstr "Bu hisobdan xatlarni import qilishni to‘xtatib turish yoki davom ettirish"
+
+#. js-lingui-id: ylzMCX
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Pause or resume importing events from this account"
+msgstr "Bu hisobdan hodisalarni import qilishni to‘xtatib turish yoki davom ettirish"
+
 #. js-lingui-id: URAE3q
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -22316,6 +22406,11 @@ msgstr "ruxsat belgisi"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Permission flags"
 msgstr "Ruxsat belgilari"
+
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "Ruxsat jadvallari"
 
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
@@ -23434,6 +23529,17 @@ msgstr "Yaqindagi"
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
 msgid "Recent Events (oldest → newest)"
 msgstr "So‘nggi hodisalar (eng eski → eng yangi)"
+
+#. js-lingui-id: gKFqSG
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Recent failed runs"
+msgstr "So‘nggi muvaffaqiyatsiz ishga tushirishlar"
+
+#. js-lingui-id: dF8kMd
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Recent runs"
+msgstr "So‘nggi ishga tushirishlar"
 
 #. js-lingui-id: EoiSFI
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -24992,6 +25098,7 @@ msgid "runs"
 msgstr "ishga tushirishlar"
 
 #. js-lingui-id: Tpm2G9
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringFunctionsTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
@@ -24999,15 +25106,26 @@ msgstr "ishga tushirishlar"
 msgid "Runs"
 msgstr "Ishga tushirishlar"
 
+#. js-lingui-id: 24xGtY
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
+msgid "Runs · 14d"
+msgstr "Ishga tushirishlar · 14 kun"
+
 #. js-lingui-id: F4I4hU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
 msgid "Runs and failures per version"
 msgstr "Har bir versiya bo‘yicha ishga tushirishlar va xatoliklar"
 
-#. js-lingui-id: RASTzS
-#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Runs appear here once a workflow or an app uses this agent"
-msgstr "Ishga tushirishlar bu agentdan ish jarayoni yoki ilova foydalangach, shu yerda paydo bo‘ladi"
+#. js-lingui-id: +L9ulP
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
+msgid "Runs appear here once this workflow is triggered"
+msgstr "Bu ish jarayoni ishga tushirilgach, ishga tushirishlar shu yerda ko‘rinadi"
+
+#. js-lingui-id: NQVS6K
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+msgid "Runs per day"
+msgstr "Kuniga ishga tushirishlar"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25871,16 +25989,10 @@ msgstr "Yozuvlarni ko‘rish"
 msgid "See Records on All Objects"
 msgstr "Barcha obyektlardagi yozuvlarni koʻrish"
 
-#. js-lingui-id: dcr/0m
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
-msgid "See Runs"
-msgstr "Ishga tushirishlarni ko‘rish"
-
-#. js-lingui-id: dKYXK6
-#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
-msgid "See Settings"
-msgstr "Sozlamalarni ko‘rish"
+msgid "See Turns"
+msgstr "Navbatlarni ko‘rish"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -26684,6 +26796,7 @@ msgstr "<0>Maʼlumotlar bazangiz</0> sozlanmoqda..."
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -27682,6 +27795,8 @@ msgstr "Obunangizni boshlang"
 
 #. js-lingui-id: JEGlfK
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Started"
 msgstr "Boshlandi"
 
@@ -27736,6 +27851,7 @@ msgstr "Statistika"
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -28270,15 +28386,26 @@ msgid "Switched to a production instance."
 msgstr "Ishchi instansiyaga o‘tildi."
 
 #. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/SettingsAccountsChannelSyncSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
 msgstr "Sinxronlash"
+
+#. js-lingui-id: sCZwJy
+#: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelDetails.tsx
+msgid "Sync calendar"
+msgstr "Taqvimni sinxronlash"
 
 #. js-lingui-id: NmHVSC
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Sync catalog"
 msgstr "Katalogni sinxronlashtirish"
+
+#. js-lingui-id: uhtQRu
+#: src/modules/settings/app-preferences/components/SettingsAppPreferencesMessageChannelDetails.tsx
+msgid "Sync emails"
+msgstr "Elektron xatlarni sinxronlash"
 
 #. js-lingui-id: btyblj
 #: src/modules/settings/app-preferences/constants/BuiltInAccountApps.ts
@@ -28818,6 +28945,11 @@ msgstr "Pochta serveri sertifikati yaroqsiz"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "Marketplace yuklanmadi. Ulanishingizni tekshiring va qayta urinib ko‘ring."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "MCP serverlarini yuklab bo‘lmadi, shuning uchun bu qadamni hozir tahrirlab bo‘lmaydi."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28874,6 +29006,11 @@ msgstr "Faqat manzilning o‘zi o‘rniga, qabul qiluvchilar pochta qutisida man
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The name recipients see next to your address. It is set when the channel is created."
 msgstr "Qabul qiluvchilar manzilingiz yonida ko‘radigan nom. U kanal yaratilganda o‘rnatiladi."
+
+#. js-lingui-id: op7R9r
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
+msgstr "Sanadan UTC bo‘yicha bugungacha bo‘lgan kunlar soni. Kelajakdagi sana uchun manfiy."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -28934,6 +29071,11 @@ msgstr "Tanlangan yozuvlar (eng ko‘pi {maxRecordsFormatted} ta) ish jarayoning
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Siz foydalanmoqchi bo‘lgan umumiy elektron pochta manzili."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "Vosita argumentsiz ishlaydi."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29550,6 +29692,11 @@ msgstr "Ushbu subdomen zaxiraga olingan"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "Bu darhol ushbu ish maydonidan {0} kreditni qaytarib oladi. Bekor qilishni qaytarib bo‘lmaydi."
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "Bu vosita endi MCP serveri tomonidan taqdim etilmaydi. Server vositalarini sinxronlang yoki boshqa vositani tanlang."
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -29952,6 +30099,11 @@ msgstr "Asbob o‘chirildi"
 msgid "Tool details: {displayMessage}"
 msgstr "Asbob tafsilotlari: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Vosita topilmadi"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30247,6 +30399,11 @@ msgstr "Kamida bir tomoni true bo‘lsa, true bo‘ladi."
 msgid "True when both sides are true."
 msgstr "Har ikki tomoni true bo‘lsa, true bo‘ladi."
 
+#. js-lingui-id: NYXoie
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
+msgstr "Sana UTC bo‘yicha bugundan hisoblangan davrga tushsa, rost bo‘ladi: PAST, NEXT yoki THIS, miqdor va DAY, WEEK yoki MONTH kabi birlik. PAST va NEXT joriy davrni o‘z ichiga olmaydi."
+
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the value is a text with at least one character."
@@ -30285,6 +30442,8 @@ msgstr "Qayta urinib ko‘ring"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Birozdan so‘ng qayta urinib ko‘ring"
 
@@ -30329,6 +30488,16 @@ msgstr "O'zgartirish"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
 msgstr "AI ichki oynasini suhbatlarni saralash, tayinlash, kechiktirish va kuzatish uchun kiruvchi xatlar qutisiga aylantiring, ish jarayonlariga xabarlar va agent savollarini a’zoning kiruvchi xatlar qutisiga yuborishga ruxsat bering hamda yozuv sahifalarida Suhbatlar yorlig‘ini ko‘rsating."
+
+#. js-lingui-id: R3c2/s
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+msgid "Turns"
+msgstr "Navbatlar"
+
+#. js-lingui-id: ZKeDcZ
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+msgid "Turns appear here once a workflow or an app uses this agent"
+msgstr "Ish jarayoni yoki ilova ushbu agentdan foydalangach, navbatlar shu yerda ko‘rinadi"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -31917,6 +32086,7 @@ msgstr "E-pochtangiz tekshirilmoqda"
 
 #. js-lingui-id: eE0JZ4
 #: src/modules/log-console/constants/LogConsoleSources.tsx
+#: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringVersionsTable.tsx
 #: src/modules/settings/legal/components/SettingsDpaAgreementsTable.tsx
@@ -32880,6 +33050,11 @@ msgstr "Ish jarayoni bajarilishi"
 #: src/pages/object-core/WorkflowCoreShowPage.tsx
 msgid "Workflow not found."
 msgstr "Ish jarayoni topilmadi."
+
+#. js-lingui-id: fezYCQ
+#: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
+msgid "Workflow sections"
+msgstr "Ish jarayoni bo‘limlari"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

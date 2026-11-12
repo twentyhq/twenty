@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
-import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions/internal/combine/utils/are-record-grants-held-to-row-level-permissions.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-permissions-creator-sql-condition.util';
+import { buildPermissionsRelatedRecordPathSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-permissions-related-record-path-sql-condition.util';
 import { buildPermissionsShareSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-permissions-share-sql-condition.util';
-import { buildPermissionsRoleSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-permissions-role-sql-condition.util';
+import { buildAllRecordsOrRowLevelPermissionsSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-all-records-or-row-level-permissions-sql-condition.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-filter.util';
 import { resolvePermissionsRowLevelPermissionSQLCondition } from 'src/engine/permissions/internal/combine/utils/resolve-permissions-row-level-permission-sql-condition.util';
 
@@ -41,44 +41,31 @@ export const buildPermissionsSQLCondition = ({
         rlsRuleFilter,
       })
     : undefined;
-  const roleSQLCondition = buildPermissionsRoleSQLCondition({
-    request: sqlRequest,
-    rlsRuleFilter,
-    rlsRuleSQLCondition,
-  });
+  const allRecordsOrRowLevelPermissionsSQLCondition =
+    buildAllRecordsOrRowLevelPermissionsSQLCondition({
+      request: sqlRequest,
+      rlsRuleFilter,
+      rlsRuleSQLCondition,
+    });
 
-  if (roleSQLCondition === true) {
+  if (allRecordsOrRowLevelPermissionsSQLCondition === true) {
     return true;
   }
 
-  const roleSQLConditions =
-    roleSQLCondition === false ? [] : [roleSQLCondition];
+  const allRecordsOrRowLevelPermissionsSQLConditions =
+    allRecordsOrRowLevelPermissionsSQLCondition === false
+      ? []
+      : [allRecordsOrRowLevelPermissionsSQLCondition];
 
   const recordSQLConditions = [
     buildPermissionsShareSQLCondition(sqlRequest),
     buildPermissionsCreatorSQLCondition(sqlRequest),
+    buildPermissionsRelatedRecordPathSQLCondition(sqlRequest),
   ].filter(isDefined);
-  const rowLevelPermissionSQLCondition =
-    areRecordGrantsHeldToRowLevelPermissions(sqlRequest)
-      ? rlsRuleSQLCondition
-      : undefined;
-
-  if (
-    isDefined(rowLevelPermissionSQLCondition) &&
-    recordSQLConditions.length > 0
-  ) {
-    return combineWithOr([
-      ...roleSQLConditions,
-      combineSQLConditions({
-        sqlConditions: [
-          rowLevelPermissionSQLCondition,
-          combineWithOr(recordSQLConditions),
-        ],
-      }),
-    ]);
-  }
-
-  const sqlConditions = [...roleSQLConditions, ...recordSQLConditions];
+  const sqlConditions = [
+    ...allRecordsOrRowLevelPermissionsSQLConditions,
+    ...recordSQLConditions,
+  ];
 
   return sqlConditions.length === 0 ? false : combineWithOr(sqlConditions);
 };

@@ -1,6 +1,7 @@
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
 import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
+import { useTabListActiveTabId } from '@/ui/layout/tab-list/hooks/useTabListActiveTabId';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -87,21 +88,12 @@ export const TabList = ({
     componentInstanceId,
   );
 
-  const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
-  const routeTabId = location.hash.replace('#', '');
-  const shouldSelectRouteTab =
-    behaveAsLinks &&
-    workspaceSurface.ownsRouteLocation &&
-    visibleTabs.some((tab) => tab.id === routeTabId);
-  const defaultTabId =
-    visibleTabs.find((tab) => tab.id === defaultActiveTabId)?.id ??
-    visibleTabs[0]?.id ??
-    null;
-  const nextActiveTabId = shouldSelectRouteTab
-    ? routeTabId
-    : activeTabExists
-      ? activeTabId
-      : defaultTabId;
+  const nextActiveTabId = useTabListActiveTabId({
+    componentInstanceId,
+    visibleTabIds: visibleTabs.map((tab) => tab.id),
+    defaultTabId: defaultActiveTabId,
+    behaveAsLinks,
+  });
 
   const {
     visibleTabCount,

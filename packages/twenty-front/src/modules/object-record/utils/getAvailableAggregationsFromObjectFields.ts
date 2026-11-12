@@ -80,7 +80,7 @@ export const getAvailableAggregationsFromObjectFields = (
         };
       }
 
-      if (isFieldMetadataDateKind(field.type) === true) {
+      if (isFieldMetadataDateKind(field.type)) {
         acc[field.name] = {
           ...acc[field.name],
           [DateAggregateOperations.EARLIEST]: `min${capitalize(field.name)}`,

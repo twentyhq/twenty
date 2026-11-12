@@ -17,24 +17,33 @@ import { McpServerGraphqlApiExceptionInterceptor } from 'src/engine/metadata-mod
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-    requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
-  }),
-)
+const MCP_SERVER_AUTH_PRINCIPALS: AccessPolicy['authPrincipals'] = {
+  userSession: {
+    standard: true,
+    impersonated: true,
+    playground: true,
+    workspaceAgnostic: false,
+  },
+  apiKey: true,
+  oauthClient: true,
+  application: true,
+};
+
+// Workflow editors pick tools from this catalog, which exposes no secrets.
+const MCP_SERVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
+  requiredPermissionFlags: [],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
+};
+
+const MCP_SERVER_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
+};
+
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   McpServerGraphqlApiExceptionInterceptor,
@@ -45,6 +54,7 @@ export class McpServerResolver {
   constructor(private readonly mcpServerService: McpServerService) {}
 
   @Query(() => [McpServerDTO])
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_READ_ACCESS_POLICY))
   async mcpServers(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<McpServerDTO[]> {
@@ -52,6 +62,7 @@ export class McpServerResolver {
   }
 
   @Query(() => McpServerDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_READ_ACCESS_POLICY))
   async mcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -60,6 +71,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async createMcpServer(
     @Args('input') input: CreateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -74,6 +86,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async updateMcpServer(
     @Args('input') input: UpdateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -88,6 +101,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async syncMcpServerTools(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -102,6 +116,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async deleteMcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
