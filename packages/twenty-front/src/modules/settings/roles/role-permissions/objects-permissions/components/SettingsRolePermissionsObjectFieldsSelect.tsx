@@ -84,16 +84,21 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   const getFieldLockedReason = (
     field: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>,
   ) => {
+    const fieldPermission = getFieldPermission(field.id);
     const hasStoredReadRestriction =
-      getFieldPermission(field.id)?.canReadFieldValue === false;
+      fieldPermission?.canReadFieldValue === false;
 
     if (!(field.isUIEditable ?? true)) {
-      if (mode === 'update') {
-        return t`Can't be edited`;
+      // A restriction stored through the API still applies, so it must stay restorable
+      if (mode === 'read') {
+        return hasStoredReadRestriction ? undefined : t`Always visible`;
       }
 
-      // A hide stored through the API still applies, so it must stay restorable
-      return hasStoredReadRestriction ? undefined : t`Always visible`;
+      const hasOnlyStoredUpdateRestriction =
+        !hasStoredReadRestriction &&
+        fieldPermission?.canUpdateFieldValue === false;
+
+      return hasOnlyStoredUpdateRestriction ? undefined : t`Can't be edited`;
     }
 
     if (
