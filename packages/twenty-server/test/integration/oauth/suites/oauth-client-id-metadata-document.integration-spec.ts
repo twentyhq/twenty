@@ -298,15 +298,16 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(refreshResponse.status).toBe(200);
     });
 
-    it('should reject a callback the document does not list', async () => {
+    it('should reject a callback the document does not list, without registering the client', async () => {
       const response = await requestAuthorization({
-        clientId: WEB_CLIENT_DOCUMENT.clientId,
-        redirectUrl: 'https://chatgpt.com/another_callback',
+        clientId: NATIVE_CLIENT_DOCUMENT.clientId,
+        redirectUrl: 'https://claude.ai/another_callback',
       });
 
       expect(response.body.errors?.[0]?.message).toContain(
         'redirectUrl mismatch',
       );
+      expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
     });
 
     it('should accept any port on a loopback callback the document lists', async () => {

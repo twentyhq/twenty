@@ -120,6 +120,27 @@ describe('ClientIdMetadataDocumentService', () => {
     await expect(service.isFetchDue(DOCUMENT_URL)).resolves.toBe(true);
   });
 
+  it('does not count a lookup as due while a fetch of the same document is pending', async () => {
+    let respond: () => void = () => undefined;
+
+    httpGet.mockReturnValueOnce(
+      new Promise((resolve) => {
+        respond = () => resolve({ data: RAW_DOCUMENT });
+      }),
+    );
+
+    const pendingLookup = service.findDocument(DOCUMENT_URL);
+
+    while (httpGet.mock.calls.length === 0) {
+      await Promise.resolve();
+    }
+
+    await expect(service.isFetchDue(DOCUMENT_URL)).resolves.toBe(false);
+
+    respond();
+    await pendingLookup;
+  });
+
   it('keeps serving the last document while its host is unreachable', async () => {
     await service.findDocument(DOCUMENT_URL);
     moveClockPastRefresh();

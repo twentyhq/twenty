@@ -11,7 +11,6 @@ import {
   CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
-import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/resolved-oauth-client.type';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
@@ -59,31 +58,6 @@ export class OAuthClientRegistrationResolverService {
     return (await this.resolveClient(clientId))?.registration ?? null;
   }
 
-  // Only for a signed-in user's authorization: the public token and consent endpoints would store a row for any hosted URL
-  async findOrRegisterByClientId(
-    clientId: string,
-  ): Promise<
-    | (ResolvedOAuthClient & { registration: ApplicationRegistrationEntity })
-    | null
-  > {
-    const resolvedClient = await this.resolveClient(clientId);
-
-    if (!isDefined(resolvedClient)) {
-      return null;
-    }
-
-    if (resolvedClient.kind === 'registeredClient') {
-      return resolvedClient;
-    }
-
-    const registration = await this.upsertClientIdMetadataDocumentRegistration({
-      clientIdMetadataDocument: resolvedClient.clientIdMetadataDocument,
-      existingRegistration: resolvedClient.registration,
-    });
-
-    return isDefined(registration) ? { ...resolvedClient, registration } : null;
-  }
-
   async resolveClient(clientId: string): Promise<ResolvedOAuthClient | null> {
     if (!isClientIdMetadataDocumentUrl(clientId)) {
       const registration = await this.findRegistrationByOAuthClientId(clientId);
@@ -129,13 +103,14 @@ export class OAuthClientRegistrationResolverService {
     });
   }
 
-  private async upsertClientIdMetadataDocumentRegistration({
+  // Only for a signed-in user's authorization: the public token and consent endpoints would store a row for any hosted URL
+  async registerClientIdMetadataDocumentClient({
     clientIdMetadataDocument,
-    existingRegistration,
-  }: {
-    clientIdMetadataDocument: ClientIdMetadataDocument;
-    existingRegistration: ApplicationRegistrationEntity | null;
-  }): Promise<ApplicationRegistrationEntity | null> {
+    registration: existingRegistration,
+  }: Pick<
+    Extract<ResolvedOAuthClient, { kind: 'clientIdMetadataDocument' }>,
+    'clientIdMetadataDocument' | 'registration'
+  >): Promise<void> {
     const documentFields = toClientIdMetadataDocumentRegistrationFields(
       clientIdMetadataDocument,
     );
@@ -149,16 +124,14 @@ export class OAuthClientRegistrationResolverService {
           documentFields.oAuthRedirectUris,
         );
 
-      if (!hasDocumentChanged) {
-        return existingRegistration;
+      if (hasDocumentChanged) {
+        await this.applicationRegistrationRepository.update(
+          existingRegistration.id,
+          documentFields,
+        );
       }
 
-      await this.applicationRegistrationRepository.update(
-        existingRegistration.id,
-        documentFields,
-      );
-
-      return { ...existingRegistration, ...documentFields };
+      return;
     }
 
     await this.applicationRegistrationRepository
@@ -177,9 +150,5 @@ export class OAuthClientRegistrationResolverService {
       })
       .orIgnore()
       .execute();
-
-    return this.findRegistrationByOAuthClientId(
-      clientIdMetadataDocument.clientId,
-    );
   }
 }

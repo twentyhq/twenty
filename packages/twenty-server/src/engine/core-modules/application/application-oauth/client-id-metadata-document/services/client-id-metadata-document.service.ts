@@ -87,6 +87,10 @@ export class ClientIdMetadataDocumentService {
   }
 
   async isFetchDue(clientIdMetadataDocumentUrl: string): Promise<boolean> {
+    if (this.inFlightRefreshes.has(clientIdMetadataDocumentUrl)) {
+      return false;
+    }
+
     const cachedEntry =
       await this.cacheStorage.get<CachedClientIdMetadataDocument>(
         clientIdMetadataDocumentUrl,

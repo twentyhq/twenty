@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
+import { toOAuthClientAuthorizationSettings } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/utils/to-oauth-client-authorization-settings.util';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
@@ -560,9 +561,7 @@ export class AuthService {
     );
 
     const resolvedClient =
-      await this.oAuthClientRegistrationResolverService.findOrRegisterByClientId(
-        clientId,
-      );
+      await this.oAuthClientRegistrationResolverService.resolveClient(clientId);
 
     if (!isDefined(resolvedClient)) {
       throw new AuthException(
@@ -571,8 +570,9 @@ export class AuthService {
       );
     }
 
-    const { registration: applicationRegistration, clientIdMetadataDocument } =
-      resolvedClient;
+    const applicationRegistration =
+      toOAuthClientAuthorizationSettings(resolvedClient);
+    const { clientIdMetadataDocument } = resolvedClient;
 
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
@@ -660,6 +660,12 @@ export class AuthService {
       throw new AuthException(
         redirectUriValidation.reason,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (resolvedClient.kind === 'clientIdMetadataDocument') {
+      await this.oAuthClientRegistrationResolverService.registerClientIdMetadataDocumentClient(
+        resolvedClient,
       );
     }
 
