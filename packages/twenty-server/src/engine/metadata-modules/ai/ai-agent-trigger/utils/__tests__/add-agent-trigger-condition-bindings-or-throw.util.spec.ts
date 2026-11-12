@@ -2,12 +2,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const STAGE = getFlatFieldMetadataMock({
   id: 'stage-id',
@@ -19,8 +16,7 @@ const STAGE = getFlatFieldMetadataMock({
 
 const flatFieldMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
   flatEntity: STAGE,
-  flatEntityMaps:
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+  flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
 const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
@@ -30,11 +26,10 @@ const flatObjectMetadataMaps = addFlatEntityToFlatEntityMapsOrThrow({
     nameSingular: 'opportunity',
     fieldIds: [STAGE.id],
   }),
-  flatEntityMaps:
-    createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>,
+  flatEntityMaps: createEmptyFlatEntityMaps(),
 });
 
-const assertConditions = (eventName: string, condition: string) =>
+const addConditionBindings = (eventName: string, condition: string) =>
   addAgentTriggerConditionBindingsOrThrow({
     triggers: [
       {
@@ -52,7 +47,7 @@ const assertConditions = (eventName: string, condition: string) =>
 describe('addAgentTriggerConditionBindingsOrThrow', () => {
   it('stores the field each condition path reads', () => {
     expect(
-      assertConditions(
+      addConditionBindings(
         'opportunity.updated',
         "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
       ),
@@ -100,7 +95,7 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
 
   it('accepts a condition on the fields of the trigger object', () => {
     expect(() =>
-      assertConditions(
+      addConditionBindings(
         'opportunity.updated',
         "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
       ),
@@ -108,14 +103,14 @@ describe('addAgentTriggerConditionBindingsOrThrow', () => {
   });
 
   it('rejects a condition reading a field the object does not have', () => {
-    expect(() => assertConditions('opportunity.created', 'amount > 0')).toThrow(
-      /Condition "amount > 0" of an agent trigger is invalid/,
-    );
+    expect(() =>
+      addConditionBindings('opportunity.created', 'amount > 0'),
+    ).toThrow(/Condition "amount > 0" of an agent trigger is invalid/);
   });
 
   it('rejects a condition on an unknown object', () => {
     expect(() =>
-      assertConditions('invoice.created', "stage == 'PAID'"),
+      addConditionBindings('invoice.created', "stage == 'PAID'"),
     ).toThrow(/Unknown object invoice/);
   });
 
