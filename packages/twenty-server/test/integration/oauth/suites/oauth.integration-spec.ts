@@ -279,11 +279,13 @@ describe('OAuth (integration)', () => {
         $clientId: String!
         $redirectUrl: String!
         $state: String
+        $resource: String
       ) {
         authorizeApp(
           clientId: $clientId
           redirectUrl: $redirectUrl
           state: $state
+          resource: $resource
         ) {
           redirectUrl
         }
@@ -326,6 +328,86 @@ describe('OAuth (integration)', () => {
       );
 
       createdEntityIds.tokens.push(issuedToken.id);
+    });
+
+    describe('resource indicator', () => {
+      const authorizeForResource = (resource: string) =>
+        makeMetadataApiRequest({
+          query: authorizeAppMutation,
+          variables: {
+            clientId: testRegistration.oAuthClientId,
+            redirectUrl: testRegistration.oAuthRedirectUris[0],
+            resource,
+          },
+        });
+
+      const exchangeCodeForResource = ({
+        code,
+        resource,
+      }: {
+        code: string;
+        resource: string;
+      }) =>
+        postToken({
+          grant_type: 'authorization_code',
+          code,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+          redirect_uri: testRegistration.oAuthRedirectUris[0],
+          resource,
+        });
+
+      const authorizeForOwnMcpServer = async (): Promise<string> => {
+        const response = await authorizeForResource(`${baseUrl}/mcp`);
+
+        expect(response.body.errors).toBeUndefined();
+
+        const code = new URL(
+          response.body.data.authorizeApp.redirectUrl,
+        ).searchParams.get('code');
+
+        assertIsDefinedOrThrow(code);
+
+        const [issuedToken] = await ds.query(
+          `SELECT id FROM core."appToken" WHERE value = $1`,
+          [crypto.createHash('sha256').update(code).digest('hex')],
+        );
+
+        createdEntityIds.tokens.push(issuedToken.id);
+
+        return code;
+      };
+
+      it('should refuse to authorize a client for a resource this server does not serve', async () => {
+        const response = await authorizeForResource(
+          'https://mcp.attacker.example.com/mcp',
+        );
+
+        expect(response.body.data).toBeNull();
+        expect(response.body.errors?.[0]?.message).toContain(
+          'Unknown resource',
+        );
+      });
+
+      it('should exchange a code for the resource it was authorized for', async () => {
+        const code = await authorizeForOwnMcpServer();
+
+        await exchangeCodeForResource({
+          code,
+          resource: `${baseUrl}/mcp`,
+        }).expect(200);
+      });
+
+      it('should refuse to exchange a code for another resource than it was authorized for', async () => {
+        const code = await authorizeForOwnMcpServer();
+
+        const response = await exchangeCodeForResource({
+          code,
+          resource: baseUrl,
+        }).expect(400);
+
+        expect(response.body.error).toBe('invalid_target');
+      });
     });
   });
 

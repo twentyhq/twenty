@@ -38,11 +38,13 @@ const authorizeAppMutation = gql`
     $clientId: String!
     $redirectUrl: String!
     $codeChallenge: String
+    $resource: String
   ) {
     authorizeApp(
       clientId: $clientId
       redirectUrl: $redirectUrl
       codeChallenge: $codeChallenge
+      resource: $resource
     ) {
       redirectUrl
     }
@@ -98,14 +100,16 @@ describe('OAuth client ID metadata documents (integration)', () => {
   const requestAuthorization = ({
     clientId,
     redirectUrl,
+    resource,
   }: {
     clientId: string;
     redirectUrl: string;
+    resource?: string;
   }) =>
     makeMetadataApiRequest(
       {
         query: authorizeAppMutation,
-        variables: { clientId, redirectUrl, codeChallenge },
+        variables: { clientId, redirectUrl, codeChallenge, resource },
       },
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
@@ -243,6 +247,17 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(response.body.errors?.[0]?.message).toContain(
         'redirectUrl mismatch',
       );
+      expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
+    });
+
+    it('should refuse a resource this server does not serve, without registering the client', async () => {
+      const response = await requestAuthorization({
+        clientId: NATIVE_CLIENT_DOCUMENT.clientId,
+        redirectUrl: 'http://localhost:53124/callback',
+        resource: 'https://mcp.attacker.example.com/mcp',
+      });
+
+      expect(response.body.errors?.[0]?.message).toContain('Unknown resource');
       expect(await countRegistrations(NATIVE_CLIENT_DOCUMENT.clientId)).toBe(0);
     });
 

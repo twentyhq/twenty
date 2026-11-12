@@ -7251,6 +7251,9 @@ export default {
                         4,
                         "String!"
                     ],
+                    "resource": [
+                        4
+                    ],
                     "scope": [
                         4
                     ],
