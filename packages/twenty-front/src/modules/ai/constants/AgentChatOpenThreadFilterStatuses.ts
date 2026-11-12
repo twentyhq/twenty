@@ -1,5 +1,7 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
+import {
+  AGENT_CHAT_THREAD_FILTER_STATUS,
+  type AgentChatThreadFilterStatus,
+} from 'twenty-shared/ai';
 
 export const AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES: readonly AgentChatThreadFilterStatus[] =
   [

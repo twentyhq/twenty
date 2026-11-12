@@ -168,7 +168,7 @@ describe('access group sync (integration)', () => {
       roleId: await findAdminRoleId(),
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupReadService.findCallerCompactIds({
+    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
       principals,
       objectMetadataId,
       operationType: 'read',

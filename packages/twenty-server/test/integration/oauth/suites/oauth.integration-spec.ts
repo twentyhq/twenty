@@ -1022,6 +1022,9 @@ describe('OAuth (integration)', () => {
         [TEST_USER_ID, testApplication.id],
       );
 
+    const waitForNextSecond = () =>
+      new Promise((resolve) => setTimeout(resolve, 1100));
+
     const revokeRefreshToken = (refreshToken: string) =>
       request(baseUrl)
         .post('/oauth/revoke')
@@ -1060,10 +1063,11 @@ describe('OAuth (integration)', () => {
       expect(res.body.error).toBe('invalid_grant');
     });
 
-    it('should let the user authorize again after revoking', async () => {
+    it('should let the user authorize again after revoking, without reviving the revoked refresh token', async () => {
       const { refreshToken: revokedRefreshToken } = await exchangeForTokens();
 
       await revokeRefreshToken(revokedRefreshToken);
+      await waitForNextSecond();
 
       const { refreshToken } = await exchangeForTokens();
 
@@ -1075,6 +1079,40 @@ describe('OAuth (integration)', () => {
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(200);
+
+      const revokedRefresh = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: revokedRefreshToken,
+        client_id: testRegistration.oAuthClientId,
+        client_secret: testClientSecret,
+      }).expect(400);
+
+      expect(revokedRefresh.body.error).toBe('invalid_grant');
+    });
+
+    it('should keep an earlier refresh token working when the user authorizes again without revoking', async () => {
+      const { refreshToken: earlierRefreshToken } = await exchangeForTokens();
+      const earlierAuthorization = await findAuthorization();
+
+      await waitForNextSecond();
+
+      const { refreshToken } = await exchangeForTokens('read');
+
+      const authorization = await findAuthorization();
+
+      expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.lastAuthorizedAt).toEqual(
+        earlierAuthorization.lastAuthorizedAt,
+      );
+
+      for (const token of [earlierRefreshToken, refreshToken]) {
+        await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: token,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        }).expect(200);
+      }
     });
 
     // Deleting the row recreates the state of tokens minted before this table existed.

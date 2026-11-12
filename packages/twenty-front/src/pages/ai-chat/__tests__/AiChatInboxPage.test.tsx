@@ -1,3 +1,5 @@
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -17,7 +19,6 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
@@ -127,8 +128,10 @@ jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ fetchMoreAgentChatThreads: jest.fn() }),
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreads', () => ({
+  useFetchMoreAgentChatThreads: () => ({
+    fetchMoreAgentChatThreads: jest.fn(),
+  }),
 }));
 
 jest.mock('@/ai/hooks/useAgentChatOpenThreadsSummary', () => ({

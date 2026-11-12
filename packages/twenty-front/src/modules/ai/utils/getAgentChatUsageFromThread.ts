@@ -27,7 +27,7 @@ export const getAgentChatUsageFromThread = (
 
   return {
     lastMessage: null,
-    cachedInputTokens: thread.totalCacheReadTokens ?? 0,
+    cachedInputTokens: Number(thread.totalCacheReadTokens ?? 0),
     conversationSize,
     contextWindowTokens: thread.contextWindowTokens,
     inputTokens: thread.totalInputTokens ?? 0,

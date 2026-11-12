@@ -214,6 +214,12 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Egy irányítópult"
 
+#. js-lingui-id: 79heIx
+#: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
+msgid "A database event trigger in this application is invalid."
+msgstr "Az alkalmazásban található adatbázis-eseményindító érvénytelen."
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -13792,6 +13798,16 @@ msgstr "A komponens függőségei túl nagyok. Csökkentse a Workspace alkalmaz�
 msgid "The component dependencies could not be verified. Try creating the component again."
 msgstr "A komponens függőségeit nem sikerült ellenőrizni. Próbálja meg újra létrehozni a komponenst."
 
+#. js-lingui-id: Ebgiv3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "The condition of a database event trigger must be text"
+msgstr "Az adatbázis-eseményindító feltételének szövegnek kell lennie"
+
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -16971,10 +16987,10 @@ msgstr "leválasztva lett általa"
 msgid "Watched fields of a database event trigger must be field names"
 msgstr "Egy adatbázis-eseményindító figyelt mezőinek mezőneveknek kell lenniük"
 
-#. js-lingui-id: CsCRdd
+#. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
-msgid "Watched fields only apply to \"updated\" database event triggers"
-msgstr "A figyelt mezők csak az \"updated\" adatbázis-eseményindítókra vonatkoznak"
+msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
+msgstr "A figyelt mezők csak az \"updated\" és \"upserted\" adatbázis-eseményindítókra vonatkoznak"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
