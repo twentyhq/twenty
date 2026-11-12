@@ -130,6 +130,7 @@ describe('ConnectionProviderOAuthDiscoveryService', () => {
       tokenEndpoint: `${AUTHORIZATION_SERVER_URL}/token`,
       clientId: CLIENT_METADATA_URL,
       clientSecret: null,
+      tokenEndpointAuthMethod: 'none',
       scopes: ['read', 'write'],
       resource: RESOURCE_URL,
       shouldUsePkce: true,

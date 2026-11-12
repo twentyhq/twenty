@@ -21,17 +21,11 @@ export const exchangeCodeForToken = ({
 }): Promise<TokenExchangeResponse> =>
   postOAuthTokenRequest({
     fetchFn,
-    tokenEndpoint: client.tokenEndpoint,
-    contentType: client.tokenRequestContentType,
-    params: {
+    client,
+    grantParams: {
       grant_type: 'authorization_code',
       code,
       redirect_uri: redirectUri,
-      client_id: client.clientId,
-      ...(isDefined(client.clientSecret) && {
-        client_secret: client.clientSecret,
-      }),
       ...(isDefined(codeVerifier) && { code_verifier: codeVerifier }),
-      ...(isDefined(client.resource) && { resource: client.resource }),
     },
   });

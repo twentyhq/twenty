@@ -98,6 +98,7 @@ export class ConnectionProviderOAuthClientResolverService {
       tokenEndpoint,
       clientId,
       clientSecret,
+      tokenEndpointAuthMethod: 'client_secret_post',
       scopes,
       resource: null,
       authorizationParams,

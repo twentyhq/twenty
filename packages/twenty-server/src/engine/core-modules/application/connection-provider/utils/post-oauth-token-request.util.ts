@@ -1,7 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
+import { type OAuthTokenRequestClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
+import { buildOAuthClientAuthentication } from 'src/engine/core-modules/application/connection-provider/utils/build-oauth-client-authentication.util';
 import { encodeOAuthBody } from 'src/engine/core-modules/application/connection-provider/utils/encode-oauth-body.util';
 import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
 
@@ -41,18 +43,24 @@ const readOAuthErrorCode = (text: string): string | null => {
 
 export const postOAuthTokenRequest = async (args: {
   fetchFn: FetchFn;
-  tokenEndpoint: string;
-  contentType: OAuthProviderTokenRequestContentType;
-  params: Record<string, string>;
+  client: OAuthTokenRequestClient;
+  grantParams: Record<string, string>;
 }): Promise<TokenExchangeResponse> => {
+  const { client } = args;
+  const clientAuthentication = buildOAuthClientAuthentication(client);
   const { body, contentTypeHeader } = encodeOAuthBody(
-    args.contentType,
-    args.params,
+    client.tokenRequestContentType,
+    {
+      ...args.grantParams,
+      ...clientAuthentication.params,
+      ...(isDefined(client.resource) && { resource: client.resource }),
+    },
   );
 
-  const response = await args.fetchFn(args.tokenEndpoint, {
+  const response = await args.fetchFn(client.tokenEndpoint, {
     method: 'POST',
     headers: {
+      ...clientAuthentication.headers,
       'Content-Type': contentTypeHeader,
       // Many providers (notably GitHub) default to URL-encoded responses
       // unless we explicitly ask for JSON.

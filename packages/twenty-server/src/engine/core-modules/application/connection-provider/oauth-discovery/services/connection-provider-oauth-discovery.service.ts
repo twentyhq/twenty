@@ -30,6 +30,7 @@ import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/ap
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { isStoredOAuthClientUsable } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-stored-oauth-client-usable.util';
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
+import { resolveTokenEndpointAuthMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/resolve-token-endpoint-auth-method.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
 import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
@@ -361,6 +362,9 @@ export class ConnectionProviderOAuthDiscoveryService {
         new URL('/token', authorizationServerUrl).toString(),
       clientId: storedClient.clientInformation.client_id,
       clientSecret: storedClient.clientInformation.client_secret ?? null,
+      tokenEndpointAuthMethod: resolveTokenEndpointAuthMethod(
+        storedClient.clientInformation,
+      ),
       scopes: isNonEmptyArray(probedScopes)
         ? probedScopes
         : (resourceMetadata?.scopes_supported ?? []),

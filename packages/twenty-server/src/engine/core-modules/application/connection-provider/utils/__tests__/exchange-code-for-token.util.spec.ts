@@ -23,6 +23,7 @@ const CLIENT: ResolvedOAuthClient = {
   tokenEndpoint: 'https://example.com/token',
   clientId: 'cid',
   clientSecret: 'csec',
+  tokenEndpointAuthMethod: 'client_secret_post',
   scopes: ['read'],
   resource: null,
   authorizationParams: null,
@@ -97,6 +98,51 @@ describe('exchangeCodeForToken', () => {
 
     expect(params.has('client_secret')).toBe(false);
     expect(params.get('resource')).toBe('https://mcp.example.com/mcp');
+  });
+
+  it('sends the credentials in a Basic header for a client_secret_basic client', async () => {
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ access_token: 'a' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      client: {
+        ...CLIENT,
+        clientId: 'c id',
+        clientSecret: 's:c/ret',
+        tokenEndpointAuthMethod: 'client_secret_basic',
+      },
+      fetchFn,
+    });
+
+    const init = fetchFn.mock.calls[0][1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBe(
+      `Basic ${Buffer.from('c+id:s%3Ac%2Fret').toString('base64')}`,
+    );
+    expect(params.has('client_id')).toBe(false);
+    expect(params.has('client_secret')).toBe(false);
+  });
+
+  it('keeps the secret out of the request when the client registered as public', async () => {
+    const fetchFn = jest.fn<Promise<Response>, FetchCall>(async () =>
+      buildResponse({ access_token: 'a' }),
+    );
+
+    await exchangeCodeForToken({
+      ...baseExchangeArgs,
+      client: { ...CLIENT, tokenEndpointAuthMethod: 'none' },
+      fetchFn,
+    });
+
+    const init = fetchFn.mock.calls[0][1];
+    const params = new URLSearchParams(init.body);
+
+    expect(init.headers.Authorization).toBeUndefined();
+    expect(params.get('client_id')).toBe('cid');
+    expect(params.has('client_secret')).toBe(false);
   });
 
   it('POSTs JSON when contentType is json', async () => {
