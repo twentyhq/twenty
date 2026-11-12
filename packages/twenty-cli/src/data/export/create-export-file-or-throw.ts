@@ -10,13 +10,13 @@ import { hasErrorCode } from '@/utils/has-error-code';
 
 const MAX_EXPORT_BYTES = 1024 * 1024 * 1024;
 
-export const createExportFile = async ({
+export const createExportFileOrThrow = async ({
   path,
-  force,
+  shouldOverwrite,
   signal,
 }: {
   path: string;
-  force: boolean;
+  shouldOverwrite: boolean;
   signal: AbortSignal;
 }) => {
   const outputPath = resolve(path);
@@ -52,7 +52,7 @@ export const createExportFile = async ({
       throw error;
     }),
   );
-  if (isDefined(existing) && (!force || !existing.isFile())) {
+  if (isDefined(existing) && (!shouldOverwrite || !existing.isFile())) {
     throw conflict();
   }
   const temporaryPath = `${outputPath}.${randomUUID()}.tmp`;
@@ -61,7 +61,7 @@ export const createExportFile = async ({
     await file.close().catch(() => undefined);
     await rm(temporaryPath, { force: true }).catch(() => undefined);
   };
-  if (!force) {
+  if (!shouldOverwrite) {
     const probePath = `${temporaryPath}.probe`;
     try {
       await link(temporaryPath, probePath);
@@ -110,7 +110,7 @@ export const createExportFile = async ({
       await runFileOperation(() => file.sync());
       await runFileOperation(() => file.close());
       signal.throwIfAborted();
-      if (force) {
+      if (shouldOverwrite) {
         await runFileOperation(() => rename(temporaryPath, outputPath));
       } else {
         await runFileOperation(() => link(temporaryPath, outputPath));

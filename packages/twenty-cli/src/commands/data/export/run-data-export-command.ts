@@ -8,11 +8,11 @@ import {
 } from '@/catalog/read-command-values';
 import { type CommandRun } from '@/catalog/types/command-run.type';
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
-import { createExportFile } from '@/data/export/create-export-file';
+import { createExportFileOrThrow } from '@/data/export/create-export-file-or-throw';
 import { downloadRecordExport } from '@/data/export/download-record-export';
 import { fetchExportFields } from '@/data/export/fetch-export-fields';
 import { parseExportFilter } from '@/data/export/parse-export-filter';
-import { parseExportOrderBy } from '@/data/export/parse-export-order-by';
+import { parseExportOrderByOrThrow } from '@/data/export/parse-export-order-by-or-throw';
 import { resolveMetadataObject } from '@/metadata/resolve-metadata-object';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -51,10 +51,12 @@ export const runDataExportCommand: CommandRun<TargetCommandContext> = async ({
   const filter = isDefined(expression)
     ? parseExportFilter(expression)
     : undefined;
-  const orderBy = isDefined(order) ? parseExportOrderBy(order) : undefined;
-  const file = await createExportFile({
+  const orderBy = isDefined(order)
+    ? parseExportOrderByOrThrow(order)
+    : undefined;
+  const file = await createExportFileOrThrow({
     path,
-    force: readBooleanOption(options, 'force'),
+    shouldOverwrite: readBooleanOption(options, 'force'),
     signal,
   });
   const startedAt = Date.now();

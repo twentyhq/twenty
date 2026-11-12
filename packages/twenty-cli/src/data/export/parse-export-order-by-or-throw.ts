@@ -6,7 +6,7 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
 type OrderBy = { [key: string]: OrderByDirection | OrderBy };
 
-export const parseExportOrderBy = (expression: string): OrderBy[] => {
+export const parseExportOrderByOrThrow = (expression: string): OrderBy[] => {
   const orderBy = expression.split(',').map((item) => {
     const match = /^([^\[\]]+)(?:\[([^\[\]]+)\])?$/.exec(item);
     const direction = Object.values(OrderByDirection).find(

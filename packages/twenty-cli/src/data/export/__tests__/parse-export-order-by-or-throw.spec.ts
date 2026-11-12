@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseExportOrderBy } from '@/data/export/parse-export-order-by';
+import { parseExportOrderByOrThrow } from '@/data/export/parse-export-order-by-or-throw';
 
-describe('parseExportOrderBy', () => {
+describe('parseExportOrderByOrThrow', () => {
   it('supports composite sort fields and preserves an explicit id sort', () => {
     expect(
-      parseExportOrderBy('name.firstName[AscNullsLast],id[DescNullsFirst]'),
+      parseExportOrderByOrThrow(
+        'name.firstName[AscNullsLast],id[DescNullsFirst]',
+      ),
     ).toEqual([
       { name: { firstName: 'AscNullsLast' } },
       { id: 'DescNullsFirst' },
     ]);
-    expect(parseExportOrderBy('employees')).toEqual([
+    expect(parseExportOrderByOrThrow('employees')).toEqual([
       { employees: 'AscNullsFirst' },
       { id: 'AscNullsLast' },
     ]);
@@ -18,6 +20,8 @@ describe('parseExportOrderBy', () => {
   it.each(['', 'name[invalid]', 'name[AscNullsLast'])(
     'rejects invalid order %s',
     (value) =>
-      expect(() => parseExportOrderBy(value)).toThrow('Invalid REST order_by'),
+      expect(() => parseExportOrderByOrThrow(value)).toThrow(
+        'Invalid REST order_by',
+      ),
   );
 });
