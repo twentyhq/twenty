@@ -23,17 +23,17 @@ const StyledVoiceNote = styled.div`
   width: fit-content;
 `;
 
-type ChatThreadMessageVoiceNoteProps = {
+type ChatMessageVoiceNoteProps = {
   src: string;
   label: string;
   onError: () => void;
 };
 
-export const ChatThreadMessageVoiceNote = ({
+export const ChatMessageVoiceNote = ({
   src,
   label,
   onError,
-}: ChatThreadMessageVoiceNoteProps) => {
+}: ChatMessageVoiceNoteProps) => {
   const { t } = useLingui();
   const audioElementRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -53,7 +53,6 @@ export const ChatThreadMessageVoiceNote = ({
 
     if (audioElement?.paused === true) {
       audioElement.play().catch((error: unknown) => {
-        // Pausing or reloading can interrupt play without a media failure.
         if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }

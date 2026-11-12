@@ -10,7 +10,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { resolveFieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-fields-hidden-on-matching-records.util';
+import { resolveUnreadableFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/utils/resolve-unreadable-fields-on-matching-records.util';
 
 const OBJECT_METADATA_ID = 'invoice-object-id';
 const MEMBER_ROLE_ID = 'member-role-id';
@@ -98,7 +98,7 @@ const resolve = ({
   memberRules: RowLevelRecordsPermissions[];
   agentRules?: RowLevelRecordsPermissions[];
 }) =>
-  resolveFieldsHiddenOnMatchingRecords({
+  resolveUnreadableFieldsOnMatchingRecords({
     principals: {
       workspaceId: 'workspace-id',
       mainPrincipal: {
@@ -130,18 +130,20 @@ const resolve = ({
         [AGENT_ROLE_ID]: {
           ...NO_ROLE_RECORDS_PERMISSIONS,
           objects: {
-            [OBJECT_METADATA_ID]: buildObjectRecordsPermissions(agentRules),
+            [OBJECT_METADATA_ID]: {
+              ...buildObjectRecordsPermissions(agentRules),
+              canReadAllRecords: true,
+            },
           },
         },
       },
     },
     flatObjectMetadata: invoice,
-    fieldList: 'unreadableFields',
     records: [],
     findRelationJoinValues: jest.fn(),
   });
 
-describe('resolveFieldsHiddenOnMatchingRecords', () => {
+describe('resolveUnreadableFieldsOnMatchingRecords', () => {
   it('should take the hidden fields and filter of the main role only', async () => {
     expect(
       await resolve({
@@ -170,7 +172,7 @@ describe('resolveFieldsHiddenOnMatchingRecords', () => {
     ]);
   });
 
-  it('should hide each rule fields on the records matching that rule only', async () => {
+  it('should return every rule with its hidden fields, including a rule hiding nothing', async () => {
     expect(
       await resolve({
         memberRules: [
@@ -198,6 +200,10 @@ describe('resolveFieldsHiddenOnMatchingRecords', () => {
       {
         fieldMetadataIds: ['secret-field-id'],
         recordFilter: { name: { eq: 'first-invoice' } },
+      },
+      {
+        fieldMetadataIds: [],
+        recordFilter: { name: { eq: 'second-invoice' } },
       },
       {
         fieldMetadataIds: ['amount-field-id'],

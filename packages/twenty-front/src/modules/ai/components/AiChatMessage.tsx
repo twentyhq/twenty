@@ -8,15 +8,16 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
+import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -57,24 +58,14 @@ const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
-const StyledFilesContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
 type AiChatUserMessageTextProps = {
   messageId: string;
-  text: string;
   children: ReactNode;
   isOtherMember: boolean;
 };
 
 const AiChatUserMessageText = ({
   messageId,
-  text,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -86,7 +77,7 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      <AiChatUserMessageCollapsibleContent text={text}>
+      <AiChatUserMessageCollapsibleContent>
         {children}
       </AiChatUserMessageCollapsibleContent>
     </StyledChatMessageBubble>
@@ -161,7 +152,9 @@ export const AiChatMessage = ({
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
-  const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
+  const attachments = agentChatMessage.parts
+    .filter(isExtendedFileUIPart)
+    .map(getFieldFilesValueFromFilePart);
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (
@@ -209,7 +202,6 @@ export const AiChatMessage = ({
           {isUser ? (
             <AiChatUserMessageText
               messageId={messageId}
-              text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}
@@ -217,12 +209,11 @@ export const AiChatMessage = ({
           ) : (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
-          {isNonEmptyArray(fileParts) && (
-            <StyledFilesContainer>
-              {fileParts.map((file) => (
-                <AgentChatFilePreview key={file.filename} file={file} />
-              ))}
-            </StyledFilesContainer>
+          {isNonEmptyArray(attachments) && (
+            <ChatMessageAttachments
+              files={attachments}
+              isRightAligned={isRightAligned}
+            />
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
         </StyledMessageContainer>
