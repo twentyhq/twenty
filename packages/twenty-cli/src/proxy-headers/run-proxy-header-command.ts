@@ -9,13 +9,13 @@ import { parseProxyHeaderLinesOrThrow } from '@/proxy-headers/parse-proxy-header
 const SOURCE_NAME = 'The proxy header command';
 
 const describeFailure = ({
-  timedOut,
+  isTimedOut,
   exitCode,
 }: {
-  timedOut: boolean;
+  isTimedOut: boolean;
   exitCode: number | undefined;
 }) => {
-  if (timedOut) {
+  if (isTimedOut) {
     return `${SOURCE_NAME} did not finish within ${PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS / 1000} seconds.`;
   }
 
@@ -64,7 +64,7 @@ export const runProxyHeaderCommand = async ({
       throw new CliError({
         code: 'PROXY_HEADERS_FAILED',
         message: describeFailure({
-          timedOut: result.timedOut,
+          isTimedOut: result.timedOut,
           exitCode: result.exitCode,
         }),
         hint: 'Run the command yourself to check it prints "Name: value" lines, for example after signing in to the proxy again.',
