@@ -2,7 +2,6 @@
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { type MessageQueueJobRetryContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-related-record-path-targets-job-name.constant';
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
@@ -19,27 +18,16 @@ export class RecomputeRelatedRecordPathTargetsJob {
   @Process(RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME)
   async handle(
     jobData: RecomputeRelatedRecordPathTargetsJobData,
-    {
-      attemptsMade,
-      retryLimit,
-    }: Pick<MessageQueueJobRetryContext, 'attemptsMade' | 'retryLimit'>,
   ): Promise<void> {
     try {
       await this.recordAccessGroupPropagationService.scheduleRecomputeOfRelatedRecordPathTargets(
         jobData,
       );
-    } catch (error) {
-      if (attemptsMade >= retryLimit) {
-        await this.accessGroupPropagationProgressService.removePendingSync(
-          jobData.workspaceId,
-        );
-      }
-
-      throw error;
+    } finally {
+      // Also on an attempt that will be retried: the retry runs uncounted rather than a failed job staying pending
+      await this.accessGroupPropagationProgressService.removePendingSync(
+        jobData.workspaceId,
+      );
     }
-
-    await this.accessGroupPropagationProgressService.removePendingSync(
-      jobData.workspaceId,
-    );
   }
 }

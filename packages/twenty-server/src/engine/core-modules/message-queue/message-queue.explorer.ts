@@ -269,7 +269,6 @@ export class MessageQueueExplorer implements OnModuleInit {
           jobId: job.id,
           abortSignal: job.abortSignal,
           retryLimit: job.retryLimit,
-          attemptsMade: job.attemptsMade,
           updateData: job.updateData,
           updateProgress: job.updateProgress,
         });

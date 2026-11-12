@@ -4,7 +4,6 @@ export interface MessageQueueJob<T = any> {
   name: string;
   data: T;
   retryLimit: number;
-  attemptsMade: number;
   updateData(data: T): Promise<void>;
   updateProgress(progress: number | object): Promise<void>;
   abortSignal?: AbortSignal;
@@ -23,7 +22,6 @@ export interface MessageQueueJobRetryContext<
   T = MessageQueueJobData,
 > extends MessageQueueJobContext {
   retryLimit: number;
-  attemptsMade: number;
   updateData(data: T): Promise<void>;
 }
 

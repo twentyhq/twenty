@@ -57,17 +57,14 @@ export class AccessGroupPropagationProgressService {
     });
   }
 
-  // Estimated, and never zero, so scheduling stays cheap and the object reads as pending until its job counts it
+  // Estimated so scheduling never scans the table, the job counts it exactly when it starts
   async trackScheduledObjectRecompute(
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<void> {
     await this.setObjectRecordCount({
       jobData,
-      countRecords: async (countArgs) =>
-        Math.max(
-          1,
-          await this.recordAccessGroupRepository.estimateRecordCount(countArgs),
-        ),
+      countRecords: (countArgs) =>
+        this.recordAccessGroupRepository.estimateRecordCount(countArgs),
     });
   }
 
@@ -107,17 +104,19 @@ export class AccessGroupPropagationProgressService {
     }
 
     const recordCount = await countRecords({ workspaceId, flatObjectMetadata });
+    // An empty table still holds one record, so its object stays pending until its job settles it
+    const remainingRecordCount = Math.max(1, recordCount);
 
     await this.applyUpdates({
       workspaceId,
       unit: this.buildObjectUnit(jobData),
       updates: [
         { command: 'HSET', field: 'total', value: recordCount },
-        { command: 'HSET', field: 'remaining', value: recordCount },
+        { command: 'HSET', field: 'remaining', value: remainingRecordCount },
       ],
     });
 
-    return recordCount;
+    return remainingRecordCount;
   }
 
   async trackRecomputedRecords({
