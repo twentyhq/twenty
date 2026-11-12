@@ -84,6 +84,7 @@ export class ConnectionProviderOAuthFlowService {
         codeVerifier,
         tokenEndpoint: client.tokenEndpoint,
         clientId: client.clientId,
+        scopes: client.scopes,
         browserNonce,
       },
       expiresIn: STATE_JWT_EXPIRES_IN,
@@ -191,7 +192,7 @@ export class ConnectionProviderOAuthFlowService {
       credentials: {
         accessToken: tokenResponse.accessToken,
         refreshToken: tokenResponse.refreshToken,
-        scopes: tokenResponse.scopes ?? client.scopes,
+        scopes: tokenResponse.scopes ?? flowSecrets.scopes,
         accessTokenExpiresAt: tokenResponse.accessTokenExpiresAt,
       },
       handle,

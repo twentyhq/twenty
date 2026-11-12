@@ -65,7 +65,7 @@ export class ConnectionProviderOAuthClientResolverService {
     if (
       provider.type !== 'oauth-discovery' ||
       !(error instanceof OAuthTokenEndpointError) ||
-      (error.errorCode !== 'invalid_client' && error.status !== 401)
+      error.errorCode !== 'invalid_client'
     ) {
       return;
     }
