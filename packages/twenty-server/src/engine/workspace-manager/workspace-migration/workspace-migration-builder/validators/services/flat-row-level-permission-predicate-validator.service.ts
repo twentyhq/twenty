@@ -25,9 +25,11 @@ import {
 } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-union-operands.constant';
+import { RLS_PREDICATE_ARRAY_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-value-filter-types.constant';
 import { RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-array-matching-intersection-operands.constant';
 import { RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES_COMPARABLE_TO_ARRAY } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/rls-predicate-single-value-filter-types-comparable-to-array.constant';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
@@ -667,12 +669,32 @@ export class FlatRowLevelPermissionPredicateValidatorService {
     }
 
     const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
-
-    if (
+    const isComparedToMemberArray =
+      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) &&
+      !isCompositeFieldMetadataType(fieldMetadata.type);
+    const isComparedToMemberArrayValueByValue =
       RLS_PREDICATE_SINGLE_VALUE_FILTER_TYPES_COMPARABLE_TO_ARRAY.includes(
         filterType,
-      ) &&
-      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) &&
+      );
+
+    if (
+      isComparedToMemberArray &&
+      !isComparedToMemberArrayValueByValue &&
+      !RLS_PREDICATE_ARRAY_VALUE_FILTER_TYPES.includes(filterType)
+    ) {
+      const fieldName = fieldMetadata.name;
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Field "${fieldName}" cannot be compared to the list held by workspace member field "${workspaceMemberFieldName}"`,
+        userFriendlyMessage: msg`This field cannot be compared to a list of values`,
+      };
+    }
+
+    if (
+      isComparedToMemberArray &&
+      isComparedToMemberArrayValueByValue &&
       !RLS_PREDICATE_ARRAY_MATCHING_UNION_OPERANDS.includes(operand) &&
       !RLS_PREDICATE_ARRAY_MATCHING_INTERSECTION_OPERANDS.includes(operand)
     ) {
