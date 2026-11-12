@@ -9399,6 +9399,12 @@ msgstr "Nu s-a furnizat nicio intrare în pasul formular"
 msgid "No mailbox is connected for this action. Connect one in Settings."
 msgstr "Nicio căsuță poștală nu este conectată pentru această acțiune. Conectați una în Setări."
 
+#. js-lingui-id: YnSJd+
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
+msgid "No more than {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} inherent related record paths can follow one another"
+msgstr "Nu pot urma una după alta mai mult de {MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH} căi de înregistrări asociate inerente"
+
 #. js-lingui-id: vIG1/X
 #: src/modules/emailing/services/message-campaign.service.ts
 msgid "No one on this list can receive the campaign."
@@ -15383,12 +15389,6 @@ msgstr "Conversația căreia îi aparține această stare"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "joi"
-
-#. js-lingui-id: g9BupG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Tidy up"
-msgstr "Curăță"
 
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts

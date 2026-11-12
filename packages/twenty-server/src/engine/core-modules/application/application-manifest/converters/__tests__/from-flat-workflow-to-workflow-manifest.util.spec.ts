@@ -535,7 +535,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
               buildStep({
                 type: 'HTTP_REQUEST',
                 overrides: {
-                  position: { x: 0, y: 180 },
                   expectedOutputSchema: { ok: true },
                   errorHandlingOptions: {
                     retryOnFailure: { value: 0 },
@@ -1047,7 +1046,6 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
   ): StoredWorkflowNode => ({
     name: 'Record is created',
     type: 'DATABASE_EVENT',
-    position: { x: 0, y: 0 },
     settings: { eventName: 'ticket.created', outputSchema: {} },
     nextStepIds: [STEP_ID],
     ...overrides,
@@ -1060,7 +1058,6 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     name: 'Create Record',
     type: 'CREATE_RECORD',
     valid: false,
-    position: { x: 0, y: 180 },
     nextStepIds: [],
     settings: {
       outputSchema: {},
@@ -1160,7 +1157,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     },
   );
 
-  it('exports a moved trigger position, and a missing one as null', () => {
+  it('exports a moved trigger position, and omits a missing one', () => {
     expect(
       exportBuilderVersion({
         triggers: [recordCreatedTrigger({ position: { x: 120, y: 26 } })],
@@ -1169,10 +1166,10 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     ).toEqual({ x: 120, y: 26 });
     expect(
       exportBuilderVersion({
-        triggers: [recordCreatedTrigger({ position: undefined })],
+        triggers: [recordCreatedTrigger()],
         steps: [createRecordStep()],
-      }).trigger.position,
-    ).toBeNull();
+      }).trigger,
+    ).not.toHaveProperty('position');
   });
 
   it('exports the output schema the builder wrote for a POST webhook', () => {
@@ -1445,13 +1442,13 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     expect(step.input).not.toHaveProperty('logicFunctionId');
   });
 
-  it('exports a step without a position as null', () => {
+  it('omits the position of a step without one', () => {
     const [step] = exportBuilderVersion({
       triggers: [recordCreatedTrigger()],
-      steps: [createRecordStep({ position: undefined })],
+      steps: [createRecordStep()],
     }).steps;
 
-    expect(step.position).toBeNull();
+    expect(step).not.toHaveProperty('position');
   });
 
   it.each([
@@ -1463,10 +1460,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     },
     {
       description: 'Apollo typenames',
-      overrides: {
-        __typename: 'WorkflowAction',
-        position: { x: 0, y: 180, __typename: 'WorkflowStepPosition' },
-      },
+      overrides: { __typename: 'WorkflowAction' },
     },
     {
       description: 'a retry count stored as a boolean',

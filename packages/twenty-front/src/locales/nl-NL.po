@@ -1115,7 +1115,7 @@ msgstr "{roleTargetName} zal worden toegewezen aan de rol \"{newRoleName}\"."
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# turn} other {# turns}}"
-msgstr ""
+msgstr "{runCount, plural, one {# beurt} other {# beurten}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2993,7 +2993,7 @@ msgstr "Agentuitvoering"
 #. js-lingui-id: aeu9gE
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Agent sections"
-msgstr ""
+msgstr "Agentsecties"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4870,7 +4870,7 @@ msgstr "Gemiddeld"
 #. js-lingui-id: RSsxRl
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
-msgstr ""
+msgstr "Gem. duur"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -8004,7 +8004,7 @@ msgstr "Kan gerelateerde records niet laden"
 #. js-lingui-id: 3167/q
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Could not load run insights"
-msgstr ""
+msgstr "Kon inzichten in runs niet laden"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
@@ -8024,7 +8024,7 @@ msgstr "Kon deze workflow niet laden."
 #. js-lingui-id: 6UPqqs
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Could not load turns"
-msgstr ""
+msgstr "Kon beurten niet laden"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8435,6 +8435,11 @@ msgstr "Record aanmaken"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Record aanmaken"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "Maak opslag voor recorddeling en toegangsgroepen aan als tabellen die eigendom zijn van de permissie-engine in plaats van als objecten. Is alleen van toepassing wanneer een werkruimte wordt aangemaakt."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -12763,7 +12768,7 @@ msgstr "Mislukt"
 #. js-lingui-id: GUHLDy
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failed · 14d"
-msgstr ""
+msgstr "Mislukt · 14d"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13305,7 +13310,7 @@ msgstr "Afbeelding uploaden mislukt"
 #. js-lingui-id: D98pOW
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failure rate"
-msgstr ""
+msgstr "Foutpercentage"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -18205,6 +18210,7 @@ msgstr "Maximaal aantal waarden"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18228,6 +18234,11 @@ msgstr "MCP Server"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP-servers"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP-servers niet beschikbaar"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20011,7 +20022,7 @@ msgstr "Er zijn nog geen evenementen gepland met deze {objectName}."
 #. js-lingui-id: dAMlIe
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 msgid "No failed runs"
-msgstr ""
+msgstr "Geen mislukte runs"
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -20071,6 +20082,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "Geen invoervelden voor deze actie"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "Geen invoervelden voor deze tool"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20519,7 +20535,7 @@ msgstr "Er is geen trigger ingeschakeld. Schakel een van de bovenstaande opties 
 #. js-lingui-id: 96i2d6
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "No turns yet"
-msgstr ""
+msgstr "Nog geen beurten"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -22391,6 +22407,11 @@ msgstr "permissievlag"
 msgid "Permission flags"
 msgstr "Permissievlaggen"
 
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "Permissietabellen"
+
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23512,7 +23533,7 @@ msgstr "Recente gebeurtenissen (oudste → nieuwste)"
 #. js-lingui-id: gKFqSG
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Recent failed runs"
-msgstr ""
+msgstr "Recente mislukte runs"
 
 #. js-lingui-id: dF8kMd
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
@@ -25099,12 +25120,12 @@ msgstr "Uitvoeringen en fouten per versie"
 #. js-lingui-id: +L9ulP
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Runs appear here once this workflow is triggered"
-msgstr ""
+msgstr "Runs verschijnen hier zodra deze workflow wordt geactiveerd"
 
 #. js-lingui-id: NQVS6K
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
-msgstr ""
+msgstr "Runs per dag"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25971,7 +25992,7 @@ msgstr "Bekijk gegevens op alle objecten"
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
-msgstr ""
+msgstr "Bekijk beurten"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28924,6 +28945,11 @@ msgstr "Het certificaat van de mailserver is ongeldig"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "De marketplace kon niet worden geladen. Controleer je verbinding en probeer het opnieuw."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "De MCP-servers konden niet worden geladen, dus deze stap kan momenteel niet worden bewerkt."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28984,7 +29010,7 @@ msgstr "De naam die ontvangers naast uw adres zien. Deze wordt ingesteld wanneer
 #. js-lingui-id: op7R9r
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr ""
+msgstr "Het aantal dagen van de datum tot vandaag, in UTC. Negatief voor een datum in de toekomst."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -29045,6 +29071,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Het gedeelde e-mailadres dat je wilt gebruiken."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "De tool wordt zonder argumenten uitgevoerd."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29663,6 +29694,11 @@ msgstr "Dit subdomein is gereserveerd"
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "Hiermee worden onmiddellijk {0} credits van deze workspace afgenomen. Intrekken kan niet ongedaan worden gemaakt."
 
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "Deze tool wordt niet langer aangeboden door de MCP-server. Synchroniseer de servertools of kies een andere tool."
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -30065,6 +30101,11 @@ msgstr "Tool verwijderd"
 msgid "Tool details: {displayMessage}"
 msgstr "Tooldetails: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Tool niet gevonden"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30363,7 +30404,7 @@ msgstr "True wanneer beide zijden true zijn."
 #. js-lingui-id: NYXoie
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
-msgstr ""
+msgstr "Waar als de datum binnen een periode valt die vanaf vandaag wordt geteld, in UTC: PAST, NEXT of THIS, een hoeveelheid en een eenheid zoals DAY, WEEK of MONTH. PAST en NEXT sluiten de huidige periode uit."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30453,12 +30494,12 @@ msgstr "Maak van het AI-tabblad een inbox om chats te triëren, toe te wijzen, t
 #. js-lingui-id: R3c2/s
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Turns"
-msgstr ""
+msgstr "Beurten"
 
 #. js-lingui-id: ZKeDcZ
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "Beurten verschijnen hier zodra een workflow of een app deze agent gebruikt"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33015,7 +33056,7 @@ msgstr "Workflow niet gevonden."
 #. js-lingui-id: fezYCQ
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 msgid "Workflow sections"
-msgstr ""
+msgstr "Workflowsecties"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

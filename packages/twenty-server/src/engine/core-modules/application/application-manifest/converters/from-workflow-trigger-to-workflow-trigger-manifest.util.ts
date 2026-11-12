@@ -10,10 +10,7 @@ import {
 import { computeCronPatternFromWorkflowCronSchedule } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
-import {
-  computeWorkflowTriggerManifestDefaults,
-  DEFAULT_WORKFLOW_TRIGGER_POSITION,
-} from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
+import { computeWorkflowTriggerManifestDefaults } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
 import { buildWorkflowManifestInverseReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-inverse-reference-resolvers.util';
 import { type UpdateEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
@@ -221,17 +218,13 @@ export const fromWorkflowTriggerToWorkflowTriggerManifest = ({
     manifestWithoutBuilderState,
   );
   const { outputSchema } = trigger.settings;
-  const position = isDefined(trigger.position)
-    ? { x: trigger.position.x, y: trigger.position.y }
-    : null;
-
   return {
     manifest: {
       ...manifestWithoutBuilderState,
       ...(trigger.name !== defaults.name ? { name: trigger.name } : {}),
-      ...(isEqual(position, DEFAULT_WORKFLOW_TRIGGER_POSITION)
-        ? {}
-        : { position }),
+      ...(isDefined(trigger.position)
+        ? { position: { x: trigger.position.x, y: trigger.position.y } }
+        : {}),
       ...(isPlainObject(outputSchema) &&
       !isEqual(outputSchema, defaults.outputSchema)
         ? { outputSchema: sortKeysDeeply(outputSchema) }

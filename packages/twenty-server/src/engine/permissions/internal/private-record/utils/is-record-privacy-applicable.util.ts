@@ -2,7 +2,7 @@
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
 export const isRecordPrivacyApplicable = ({
   flatObjectMetadata,
@@ -15,5 +15,5 @@ export const isRecordPrivacyApplicable = ({
   >;
 }): boolean =>
   operationType !== 'create' &&
-  !isPermissionStorageObject(flatObjectMetadata) &&
+  !temporaryExcludePermissionStorageObject(flatObjectMetadata) &&
   arePrivateRecordsEnabled({ flatObjectMetadata, featureFlagsMap });

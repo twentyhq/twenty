@@ -7,10 +7,7 @@ import {
   type WorkflowManifestFieldReference,
   type WorkflowManifestReferences,
 } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
-import {
-  computeWorkflowTriggerManifestDefaults,
-  DEFAULT_WORKFLOW_TRIGGER_POSITION,
-} from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
+import { computeWorkflowTriggerManifestDefaults } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
 import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import {
@@ -68,9 +65,7 @@ const fromTriggerManifestBase = (
       ...(isDefined(universalIdentifier) ? { universalIdentifier } : {}),
       name: name ?? defaults.name,
       nextStepIds,
-      ...(position === null
-        ? {}
-        : { position: position ?? DEFAULT_WORKFLOW_TRIGGER_POSITION }),
+      ...(isDefined(position) ? { position } : {}),
     },
     outputSchema: (trigger.outputSchema ??
       defaults.outputSchema) as OutputSchema,

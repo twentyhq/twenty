@@ -26,6 +26,7 @@ import { type AgentInboxCallerAuthContext } from 'src/engine/metadata-modules/ai
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
+import { PrivateRecordSystemWriteService } from 'src/engine/permissions/private-record/services/private-record-system-write.service';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -75,6 +76,7 @@ export class AgentChatSharingService {
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordSharingWriteService: RecordSharingWriteService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
+    private readonly privateRecordSystemWriteService: PrivateRecordSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordSharingPermissionsService: RecordSharingPermissionsService,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
@@ -475,7 +477,7 @@ export class AgentChatSharingService {
           workspaceMemberId: authContext.workspaceMemberId,
           ...(isDefined(args.channelId) ? { channelId: args.channelId } : {}),
         });
-        await this.recordShareSystemWriteService.setRecordsPrivacy({
+        await this.privateRecordSystemWriteService.setRecordsPrivacy({
           workspaceId: args.workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: [threadId],
@@ -692,7 +694,7 @@ export class AgentChatSharingService {
       ({ id }) => id,
     );
 
-    await this.recordShareSystemWriteService.setRecordsPrivacy({
+    await this.privateRecordSystemWriteService.setRecordsPrivacy({
       workspaceId,
       objectMetadataId: participantObjectMetadata.id,
       recordIds: insertedParticipantIds,
