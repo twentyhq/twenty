@@ -354,7 +354,7 @@ export class ToolRegistryService {
         const index = await this.getCatalog(fullContext);
         const entry = index.find((indexEntry) => indexEntry.name === toolName);
 
-        if (!entry) {
+        if (!isDefined(entry)) {
           const similarToolNames = findSimilarToolNames(
             toolName,
             index.map((indexEntry) => indexEntry.name),

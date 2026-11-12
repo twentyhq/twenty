@@ -1,4 +1,5 @@
 import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { MCP_DATABASE_CRUD_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-database-crud-tool-annotations.constant';
@@ -166,18 +167,24 @@ type GenericRecordToolFactory = {
 };
 
 const defineGenericRecordTool = <
-  TSchema extends z.ZodType<{ objectName: string }>,
+  TSchema extends z.ZodType<{
+    objectName: string;
+    filter?: Record<string, unknown>;
+  }>,
 >({
   name,
   operation,
   description,
   inputSchema,
+  argumentNamesReadBesideFilter = [],
   toOperationArguments,
 }: {
   name: string;
   operation: DatabaseCrudOperation;
   description: string;
   inputSchema: TSchema;
+  // The operation reads these from the same object as the filter fields, so a field sharing a name cannot be filtered
+  argumentNamesReadBesideFilter?: string[];
   toOperationArguments: (input: z.infer<TSchema>) => Record<string, unknown>;
 }): GenericRecordToolFactory => ({
   name,
@@ -193,6 +200,18 @@ const defineGenericRecordTool = <
           toolName: name,
           error: parsed.error,
         });
+      }
+
+      const unfilterableFieldName = argumentNamesReadBesideFilter.find(
+        (argumentName) => argumentName in (parsed.data.filter ?? {}),
+      );
+
+      if (isDefined(unfilterableFieldName)) {
+        return {
+          success: false,
+          message: `Cannot filter ${name} on "${unfilterableFieldName}"`,
+          error: `A field named "${unfilterableFieldName}" cannot be used in the filter of ${name} because it is also an argument of the tool. Filter on another field.`,
+        };
       }
 
       return toolRegistry.resolveAndExecuteDatabaseCrud({
@@ -213,6 +232,7 @@ const GENERIC_RECORD_TOOL_FACTORIES: GenericRecordToolFactory[] = [
     description:
       'Search the records of an object with filters, sorting and pagination. Returns the matching records, a "count" of total matches and a "hasNextPage" flag: when it is true, continue with a higher offset before concluding a record is absent or answering count questions.',
     inputSchema: findRecordsInputSchema,
+    argumentNamesReadBesideFilter: ['limit', 'offset', 'orderBy', 'select'],
     toOperationArguments: ({
       objectName: _objectName,
       filter: recordFilter,
@@ -225,6 +245,13 @@ const GENERIC_RECORD_TOOL_FACTORIES: GenericRecordToolFactory[] = [
     description:
       'Group the records of an object by one or two fields and compute an aggregate per group. Use for questions like "how many deals per stage?" or "total revenue by company".',
     inputSchema: groupRecordsInputSchema,
+    argumentNamesReadBesideFilter: [
+      'groupBy',
+      'aggregateOperation',
+      'aggregateFieldName',
+      'limit',
+      'orderBy',
+    ],
     toOperationArguments: ({
       objectName: _objectName,
       filter: recordFilter,
