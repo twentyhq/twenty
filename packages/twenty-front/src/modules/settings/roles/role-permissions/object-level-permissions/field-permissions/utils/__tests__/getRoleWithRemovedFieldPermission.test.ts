@@ -39,10 +39,10 @@ describe('getRoleWithRemovedFieldPermission', () => {
 
     expect(role.fieldPermissions).toBeDefined();
 
-    const updatedRole = getRoleWithRemovedFieldPermission(
+    const updatedRole = getRoleWithRemovedFieldPermission({
       role,
-      BASE_FIELD_PERMISSION.fieldMetadataId,
-    );
+      fieldPermissionToRemove: BASE_FIELD_PERMISSION,
+    });
 
     expect(updatedRole.fieldPermissions).toBeDefined();
     expect(updatedRole.fieldPermissions?.length).toBe(0);
@@ -55,7 +55,10 @@ describe('getRoleWithRemovedFieldPermission', () => {
 
     expect(role.fieldPermissions?.length).toBe(1);
 
-    const updatedRole = getRoleWithRemovedFieldPermission(role, 'unknown-id');
+    const updatedRole = getRoleWithRemovedFieldPermission({
+      role,
+      fieldPermissionToRemove: { fieldMetadataId: 'unknown-id' },
+    });
 
     expect(updatedRole.fieldPermissions?.length).toBe(1);
   });
@@ -68,10 +71,10 @@ describe('getRoleWithRemovedFieldPermission', () => {
 
     expect(role.fieldPermissions).not.toBeDefined();
 
-    const updatedRole = getRoleWithRemovedFieldPermission(
+    const updatedRole = getRoleWithRemovedFieldPermission({
       role,
-      BASE_FIELD_PERMISSION.fieldMetadataId,
-    );
+      fieldPermissionToRemove: BASE_FIELD_PERMISSION,
+    });
 
     expect(updatedRole.fieldPermissions).not.toBeDefined();
   });

@@ -11,6 +11,6 @@ export const getFieldRestrictionKeys = ({
     )
     .map(
       (fieldPermission) =>
-        `${fieldPermission.fieldMetadataId}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
+        `${fieldPermission.fieldMetadataId}:${fieldPermission.rowLevelPermissionPredicateGroupId ?? ''}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
     )
     .sort();

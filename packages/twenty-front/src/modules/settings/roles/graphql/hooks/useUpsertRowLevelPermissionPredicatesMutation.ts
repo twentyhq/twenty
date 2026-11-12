@@ -3,6 +3,7 @@
 import { useMutation } from '@apollo/client/react';
 
 import { UPSERT_ROW_LEVEL_PERMISSION_PREDICATES } from '@/settings/roles/graphql/mutations/upsertRowLevelPermissionPredicatesMutation';
+import { type RowLevelPermissionRuleGrant } from '@/settings/roles/role/utils/getRowLevelPermissionRulesToSave';
 import {
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -16,6 +17,7 @@ export type UpsertRowLevelPermissionPredicatesInput = {
   predicates: Array<{
     id?: string;
     fieldMetadataId: string;
+    relationFieldMetadataId?: string | null;
     operand: RowLevelPermissionPredicateOperand;
     value?: unknown;
     subFieldName?: string | null;
@@ -31,6 +33,7 @@ export type UpsertRowLevelPermissionPredicatesInput = {
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
     positionInRowLevelPermissionPredicateGroup?: number | null;
   }>;
+  ruleGrants?: RowLevelPermissionRuleGrant[];
   canCreateRecords?: boolean;
   canReadRecords?: boolean;
   canUpdateRecords?: boolean;

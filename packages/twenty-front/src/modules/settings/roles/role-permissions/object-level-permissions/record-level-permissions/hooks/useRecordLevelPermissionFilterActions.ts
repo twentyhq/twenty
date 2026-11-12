@@ -29,10 +29,12 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type UseRecordLevelPermissionFilterActionsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
+  ruleRootGroupId: string;
 };
 
 export const useRecordLevelPermissionFilterActions = ({
   objectMetadataItem,
+  ruleRootGroupId,
 }: UseRecordLevelPermissionFilterActionsProps) => {
   const { upsertRecordFilter } = useUpsertRecordFilter();
   const { upsertRecordFilterGroup } = useUpsertRecordFilterGroup();
@@ -110,7 +112,7 @@ export const useRecordLevelPermissionFilterActions = ({
     }
 
     const newRecordFilterGroup = {
-      id: v4(),
+      id: ruleRootGroupId,
       logicalOperator: RecordFilterGroupLogicalOperator.AND,
     };
 

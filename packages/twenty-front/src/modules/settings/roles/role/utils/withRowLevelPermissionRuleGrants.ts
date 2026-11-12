@@ -1,66 +1,86 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
+import { RowLevelPermissionPredicateGroupLogicalOperator } from '~/generated-metadata/graphql';
 
-// An object filtered by row level rules keeps its object-level grant off, so its toggles show its rule grants
 export const withRowLevelPermissionRuleGrants = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
-  const filteredObjectMetadataIds = new Set(
-    (role.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
-  );
-  const rules = (role.rowLevelPermissionRules ?? []).filter(
-    ({ objectMetadataId }) => filteredObjectMetadataIds.has(objectMetadataId),
-  );
+  const rules = role.rowLevelPermissionRules ?? [];
 
   if (rules.length === 0) {
     return role;
   }
 
-  const objectPermissions = [...(role.objectPermissions ?? [])];
+  const fieldPermissions = [
+    ...(role.fieldPermissions ?? []),
+    ...(role.rowLevelPermissionFieldPermissions ?? []),
+  ];
 
-  for (const rule of rules) {
-    const objectPermissionIndex = objectPermissions.findIndex(
-      ({ objectMetadataId }) => objectMetadataId === rule.objectMetadataId,
-    );
-    // A grant equal to the all-objects one stays inherited, so it keeps following that toggle
-    const inheritWhenEqual = ({
-      ruleGrant,
-      allObjectsGrant,
-    }: {
-      ruleGrant: boolean;
-      allObjectsGrant: boolean;
-    }) => (ruleGrant === allObjectsGrant ? null : ruleGrant);
-    const ruleGrants = {
-      objectMetadataId: rule.objectMetadataId,
-      canReadObjectRecords: inheritWhenEqual({
-        ruleGrant: rule.canReadRecords,
-        allObjectsGrant: role.canReadAllObjectRecords,
-      }),
-      canUpdateObjectRecords: inheritWhenEqual({
-        ruleGrant: rule.canUpdateRecords,
-        allObjectsGrant: role.canUpdateAllObjectRecords,
-      }),
-      canSoftDeleteObjectRecords: inheritWhenEqual({
-        ruleGrant: rule.canSoftDeleteRecords,
-        allObjectsGrant: role.canSoftDeleteAllObjectRecords,
-      }),
-      canDestroyObjectRecords: inheritWhenEqual({
-        ruleGrant: rule.canDestroyRecords,
-        allObjectsGrant: role.canDestroyAllObjectRecords,
-      }),
-    };
+  const ruleById = new Map(rules.map((rule) => [rule.id, rule]));
+  const predicateGroups = [...(role.rowLevelPermissionPredicateGroups ?? [])];
+  const groupIds = new Set(predicateGroups.map(({ id }) => id));
 
-    if (objectPermissionIndex === -1) {
-      objectPermissions.push(ruleGrants);
-    } else if (isDefined(objectPermissions[objectPermissionIndex])) {
-      objectPermissions[objectPermissionIndex] = {
-        ...objectPermissions[objectPermissionIndex],
-        ...ruleGrants,
+  const predicates = (role.rowLevelPermissionPredicates ?? []).map(
+    (predicate) => {
+      const rule = isDefined(predicate.rowLevelPermissionRuleId)
+        ? ruleById.get(predicate.rowLevelPermissionRuleId)
+        : undefined;
+
+      if (
+        isDefined(predicate.rowLevelPermissionPredicateGroupId) ||
+        isDefined(predicate.relationFieldMetadataId) ||
+        !isDefined(rule)
+      ) {
+        return predicate;
+      }
+
+      if (!groupIds.has(rule.id)) {
+        groupIds.add(rule.id);
+        predicateGroups.push({
+          __typename: 'RowLevelPermissionPredicateGroup',
+          id: rule.id,
+          parentRowLevelPermissionPredicateGroupId: null,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          positionInRowLevelPermissionPredicateGroup: null,
+          canReadRecords: false,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+          roleId: role.id,
+          objectMetadataId: rule.objectMetadataId,
+          rowLevelPermissionRuleId: rule.id,
+        });
+      }
+
+      return { ...predicate, rowLevelPermissionPredicateGroupId: rule.id };
+    },
+  );
+
+  return {
+    ...role,
+    fieldPermissions,
+    rowLevelPermissionPredicates: predicates,
+    rowLevelPermissionPredicateGroups: predicateGroups.map((predicateGroup) => {
+      if (
+        isDefined(predicateGroup.parentRowLevelPermissionPredicateGroupId) ||
+        !isDefined(predicateGroup.rowLevelPermissionRuleId)
+      ) {
+        return predicateGroup;
+      }
+
+      const rule = ruleById.get(predicateGroup.rowLevelPermissionRuleId);
+
+      if (!isDefined(rule)) {
+        return predicateGroup;
+      }
+
+      return {
+        ...predicateGroup,
+        canReadRecords: rule.canReadRecords,
+        canUpdateRecords: rule.canUpdateRecords,
+        canSoftDeleteRecords: rule.canSoftDeleteRecords,
+        canDestroyRecords: rule.canDestroyRecords,
       };
-    }
-  }
-
-  return { ...role, objectPermissions };
+    }),
+  };
 };

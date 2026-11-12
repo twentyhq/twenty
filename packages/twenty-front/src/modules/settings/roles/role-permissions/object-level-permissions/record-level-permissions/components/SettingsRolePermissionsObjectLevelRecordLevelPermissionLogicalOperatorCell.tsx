@@ -56,7 +56,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
     return (
       <StyledContainer>
         {index === 0 ? (
-          <StyledText>{t`Where`}</StyledText>
+          <StyledText>{t`When`}</StyledText>
         ) : index === 1 ? (
           readonly ? (
             <Select

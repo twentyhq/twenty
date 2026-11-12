@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
+import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
@@ -8,13 +9,15 @@ import {
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
 import { getObjectPermissionOverrideGrants } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionOverrideGrants';
 import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
+import { getRuleGrantedKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getRuleGrantedKeys';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -22,6 +25,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
@@ -79,6 +83,9 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
   const { upsertObjectPermissionInDraftRole } =
     useUpsertObjectPermissionInDraftRole(roleId);
 
+  const { createRule, setRuleGrantedKeys } =
+    useRowLevelPermissionRulesInDraftRole(roleId);
+
   const { removeObjectOverride } = useSettingsRoleObjectOverrides(roleId);
 
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
@@ -86,16 +93,9 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
       objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
     });
 
-  const rulePredicates = getObjectRowLevelPermissionPredicates({
+  const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
-  });
-  const hasRule = rulePredicates.length > 0;
-
-  const ruleLabel = getRowLevelPermissionRuleLabel({
-    predicates: rulePredicates,
-    objectMetadataItem,
-    workspaceMemberObjectMetadataItem,
   });
 
   const grantedKeys = getGrantedObjectPermissionKeys({
@@ -134,20 +134,25 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     );
   };
 
-  const openRulePage = () => {
+  const openRulePage = (rootPredicateGroupId: string) => {
     navigateSettings(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId: objectMetadataItem.id },
-      isDefined(fromAgentId) ? { fromAgent: fromAgentId } : undefined,
+      {
+        ruleId: rootPredicateGroupId,
+        ...(isDefined(fromAgentId) ? { fromAgent: fromAgentId } : {}),
+      },
     );
+  };
+
+  const handleNewRule = () => {
+    openRulePage(createRule(objectMetadataItem.id));
   };
 
   return (
     <StyledPanel>
       <StyledHeaderRow>
-        <TableHeader>
-          {hasRule ? t`Records matching the rule` : t`All records`}
-        </TableHeader>
+        <TableHeader>{t`All records`}</TableHeader>
         <TableHeader>{t`Allows`}</TableHeader>
         <TableHeader />
       </StyledHeaderRow>
@@ -187,28 +192,68 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           </TableRow>
         );
       })}
-      {hasRule && (
+      {rules.length > 0 && (
         <>
           <StyledHeaderRow>
-            <TableHeader>{t`Rule`}</TableHeader>
-            <TableHeader />
+            <TableHeader>{t`Some records`}</TableHeader>
+            <TableHeader>{t`Allows`}</TableHeader>
             <TableHeader />
           </StyledHeaderRow>
-          <TableRow
-            gridTemplateColumns={OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS}
-            onClick={isEditable ? openRulePage : undefined}
-          >
-            <TableCell overflow="hidden">
-              <OverflowingTextWithTooltip text={ruleLabel} />
-            </TableCell>
-            <TableCell />
-            <TableCell
-              align="right"
-              color={themeCssVariables.font.color.tertiary}
-            >
-              {isEditable && <IconChevronRight size={theme.icon.size.md} />}
-            </TableCell>
-          </TableRow>
+          {rules.map(({ rootPredicateGroup, predicates }) => {
+            const ruleLabel = getRowLevelPermissionRuleLabel({
+              predicates,
+              objectMetadataItem,
+              workspaceMemberObjectMetadataItem,
+            });
+
+            return (
+              <TableRow
+                key={rootPredicateGroup.id}
+                gridTemplateColumns={
+                  OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS
+                }
+                onClick={
+                  isEditable
+                    ? () => openRulePage(rootPredicateGroup.id)
+                    : undefined
+                }
+              >
+                <TableCell
+                  color={
+                    isNonEmptyString(ruleLabel)
+                      ? themeCssVariables.font.color.primary
+                      : themeCssVariables.font.color.tertiary
+                  }
+                  overflow="hidden"
+                >
+                  <OverflowingTextWithTooltip
+                    text={
+                      isNonEmptyString(ruleLabel) ? ruleLabel : t`No condition`
+                    }
+                  />
+                </TableCell>
+                <TableCell onClick={(event) => event.stopPropagation()}>
+                  <SettingsRolePermissionsObjectActionsSelect
+                    dropdownId={`settings-role-rule-actions-${rootPredicateGroup.id}`}
+                    selectedKeys={getRuleGrantedKeys(rootPredicateGroup)}
+                    onChange={(selectedKeys) =>
+                      setRuleGrantedKeys({
+                        rootPredicateGroupId: rootPredicateGroup.id,
+                        grantedKeys: selectedKeys,
+                      })
+                    }
+                    disabled={!isEditable}
+                  />
+                </TableCell>
+                <TableCell
+                  align="right"
+                  color={themeCssVariables.font.color.tertiary}
+                >
+                  {isEditable && <IconChevronRight size={theme.icon.size.md} />}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </>
       )}
       {isEditable && (
@@ -220,16 +265,14 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
           >
             {t`Remove override`}
           </Button>
-          {!hasRule && (
-            <Button
-              size="sm"
-              variant="outline"
-              startIcon={<IconPlus />}
-              onClick={openRulePage}
-            >
-              {t`Add rule`}
-            </Button>
-          )}
+          <Button
+            size="sm"
+            variant="outline"
+            startIcon={<IconPlus />}
+            onClick={handleNewRule}
+          >
+            {t`New rule`}
+          </Button>
         </StyledFooter>
       )}
     </StyledPanel>

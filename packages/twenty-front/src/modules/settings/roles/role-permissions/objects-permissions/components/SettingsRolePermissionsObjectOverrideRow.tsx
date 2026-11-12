@@ -7,7 +7,7 @@ import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permission
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionAccessIcon } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionAccessIcon';
 import { getObjectPermissionActionsLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionsLabel';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleExpandedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedObjectOverrideIdsFamilyState';
@@ -18,6 +18,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -69,7 +70,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataItem.id,
   );
 
-  const rulePredicates = getObjectRowLevelPermissionPredicates({
+  const rules = getObjectRowLevelPermissionRules({
     role: settingsDraftRole,
     objectMetadataId: objectMetadataItem.id,
   });
@@ -77,6 +78,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
   const hasFieldRestriction = (settingsDraftRole.fieldPermissions ?? []).some(
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataItem.id &&
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
       (fieldPermission.canReadFieldValue === false ||
         fieldPermission.canUpdateFieldValue === false),
   );
@@ -86,7 +88,7 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isAdvanced = rulePredicates.length > 0 || hasFieldRestriction;
+  const isAdvanced = rules.length > 0 || hasFieldRestriction;
 
   const AccessIcon = getObjectPermissionAccessIcon({
     grantedKeys,
@@ -97,11 +99,27 @@ export const SettingsRolePermissionsObjectOverrideRow = ({
     ? t`Advanced`
     : getObjectPermissionActionsLabel(grantedKeys);
 
-  const ruleSummary = getRowLevelPermissionRuleLabel({
-    predicates: rulePredicates,
-    objectMetadataItem,
-    workspaceMemberObjectMetadataItem,
-  });
+  const getRuleSummary = () => {
+    const [onlyRule] = rules;
+
+    if (rules.length > 1) {
+      const ruleCount = rules.length;
+
+      return t`${ruleCount} rules`;
+    }
+
+    if (rules.length === 1 && onlyRule !== undefined) {
+      return getRowLevelPermissionRuleLabel({
+        predicates: onlyRule.predicates,
+        objectMetadataItem,
+        workspaceMemberObjectMetadataItem,
+      });
+    }
+
+    return '';
+  };
+
+  const ruleSummary = getRuleSummary();
 
   const ChevronIcon = isExpanded ? IconChevronUp : IconChevronDown;
 

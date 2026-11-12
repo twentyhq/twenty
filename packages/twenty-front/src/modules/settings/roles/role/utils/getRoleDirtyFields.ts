@@ -1,5 +1,5 @@
 import { getFieldRestrictionKeys } from '@/settings/roles/role/utils/getFieldRestrictionKeys';
-import { getRoleWithoutSaveArtifacts } from '@/settings/roles/role/utils/getRoleWithoutSaveArtifacts';
+import { getRoleWithoutServerDerivedRuleFields } from '@/settings/roles/role/utils/getRoleWithoutServerDerivedRuleFields';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -10,9 +10,9 @@ export const getRoleDirtyFields = (
   persistedRole: RoleWithPartialMembers | undefined,
 ): Partial<RoleWithPartialMembers> => {
   const dirtyFields = getDirtyFields(
-    getRoleWithoutSaveArtifacts(draftRole),
+    getRoleWithoutServerDerivedRuleFields(draftRole),
     isDefined(persistedRole)
-      ? getRoleWithoutSaveArtifacts(persistedRole)
+      ? getRoleWithoutServerDerivedRuleFields(persistedRole)
       : undefined,
   );
 

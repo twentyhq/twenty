@@ -6,9 +6,11 @@ import { useRolePermissionFlagConfig } from '@/settings/roles/role-permissions/p
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { Section } from 'twenty-ui/components/layout';
-import { IconSettings } from 'twenty-ui/icon';
+import { IconSearch, IconSettings } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -21,6 +23,11 @@ const StyledTable = styled.div`
 const StyledTableRows = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   padding-top: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSearchInputContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
+  width: 100%;
 `;
 
 const StyledCardContainer = styled.div`
@@ -37,6 +44,7 @@ export const SettingsRolePermissionsSettingsSection = ({
   isEditable,
 }: SettingsRolePermissionsSettingsSectionProps) => {
   const { t } = useLingui();
+  const [searchTerm, setSearchTerm] = useState('');
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -60,6 +68,13 @@ export const SettingsRolePermissionsSettingsSection = ({
     permissionType: 'settings',
     standardPermissionsConfig: standardSettingsPermissionsConfig,
   });
+
+  const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase();
+  const matchingSettingsPermissionsConfig = settingsPermissionsConfig.filter(
+    (permission) =>
+      permission.name.toLocaleLowerCase().includes(normalizedSearchTerm) ||
+      permission.description.toLocaleLowerCase().includes(normalizedSearchTerm),
+  );
 
   const shouldShowAllAccessToggle =
     !settingsDraftRole.canBeAssignedToAgents ||
@@ -93,6 +108,15 @@ export const SettingsRolePermissionsSettingsSection = ({
         }
       >
         <Collapsible.Panel dimension="height" containAnimation={false}>
+          <StyledSearchInputContainer>
+            <SettingsTextInput
+              instanceId={`settings-role-permissions-search-${roleId}`}
+              LeftIcon={IconSearch}
+              placeholder={t`Search`}
+              value={searchTerm}
+              onChange={setSearchTerm}
+            />
+          </StyledSearchInputContainer>
           <StyledTable>
             <SettingsRolePermissionsSettingsTableHeader
               roleId={roleId}
@@ -100,7 +124,7 @@ export const SettingsRolePermissionsSettingsSection = ({
               isEditable={isEditable}
             />
             <StyledTableRows>
-              {settingsPermissionsConfig.map((permission) => (
+              {matchingSettingsPermissionsConfig.map((permission) => (
                 <SettingsRolePermissionsSettingsTableRow
                   key={permission.key}
                   roleId={roleId}

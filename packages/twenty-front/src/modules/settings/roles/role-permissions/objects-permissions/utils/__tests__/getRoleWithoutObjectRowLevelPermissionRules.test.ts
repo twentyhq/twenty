@@ -28,6 +28,7 @@ const buildPredicate = ({
   positionInRowLevelPermissionPredicateGroup: null,
   roleId: 'role-id',
   value: 'value',
+  rowLevelPermissionRuleId: null,
 });
 
 describe('getRoleWithoutObjectRowLevelPermissionRules', () => {
@@ -58,6 +59,7 @@ describe('getRoleWithoutObjectRowLevelPermissionRules', () => {
             canDestroyRecords: false,
             roleId: 'role-id',
             objectMetadataId: 'company',
+            rowLevelPermissionRuleId: null,
           },
         ],
       },

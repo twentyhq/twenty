@@ -10,6 +10,11 @@ export const getRoleWithoutObjectRowLevelPermissionRules = ({
   objectMetadataId: string;
 }): RoleWithPartialMembers => ({
   ...role,
+  fieldPermissions: role.fieldPermissions?.filter(
+    (fieldPermission) =>
+      fieldPermission.objectMetadataId !== objectMetadataId ||
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId),
+  ),
   rowLevelPermissionPredicates: role.rowLevelPermissionPredicates?.filter(
     (predicate) =>
       predicate.objectMetadataId !== objectMetadataId ||

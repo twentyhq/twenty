@@ -1,16 +1,27 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder';
+import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
+import { SettingsRolePermissionsRuleAllowsCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsRuleAllowsCard';
+import { SettingsRolePermissionsRuleFieldsCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsRuleFieldsCard';
+import { SettingsRolePermissionsRuleUpgradeCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsRuleUpgradeCard';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
+import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -18,14 +29,14 @@ import {
   isRecordFilterValueValid,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { useQuery } from '@apollo/client/react';
-import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
+import { Section } from 'twenty-ui/components/layout';
+import { IconCheck, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { useTheme } from 'twenty-ui/theme';
 import {
   BillingEntitlementKey,
   FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
-import { useLingui } from '@lingui/react/macro';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
   roleId: string;
@@ -37,9 +48,11 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   objectMetadataId,
 }: SettingsRolePermissionsObjectLevelObjectFormProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
+  const ruleRootGroupId = searchParams.get('ruleId');
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -48,72 +61,90 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     roleId,
   );
 
+  const { deleteRule } = useRowLevelPermissionRulesInDraftRole(roleId);
+
   const { data: agentData } = useQuery(FindOneAgentDocument, {
     variables: { id: fromAgentId || '' },
-    skip: !fromAgentId,
+    skip: !isNonEmptyString(fromAgentId),
   });
 
-  const objectMetadata = useObjectMetadataItemById({
+  const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });
 
-  const isRLSBillingEntitlementEnabled =
+  const hasRowLevelPermissionEntitlement =
     checkIfBillingEntitlementIsEnabledOnWorkspace(
       BillingEntitlementKey.RLS,
       currentWorkspace,
     );
 
-  const objectMetadataItem = objectMetadata.objectMetadataItem;
-
-  const objectLabelSingular = objectMetadataItem.labelSingular;
-  const objectLabelPlural = objectMetadataItem.labelPlural;
-
   const agent = agentData?.findOneAgent;
+  const roleLabel = settingsDraftRole.label;
+  const objectLabelPlural = objectMetadataItem.labelPlural;
+  const objectLabelPluralLowercase = objectLabelPlural.toLocaleLowerCase();
+
+  const rolePath = getSettingsPath(SettingsPath.RoleDetail, { roleId });
+  const finishPath =
+    isNonEmptyString(fromAgentId) && isDefined(agent)
+      ? getCoreAgentLink(agent.id)
+      : rolePath;
+
+  const rootPredicateGroup =
+    settingsDraftRole.rowLevelPermissionPredicateGroups?.find(
+      (predicateGroup) =>
+        predicateGroup.id === ruleRootGroupId &&
+        predicateGroup.objectMetadataId === objectMetadataId,
+    );
+
+  const isDraftRoleSeeded = settingsDraftRole.id === roleId;
+
+  if (!isDraftRoleSeeded) {
+    return <SettingsRoleDraftSyncEffect roleId={roleId} />;
+  }
+
+  if (!isDefined(ruleRootGroupId) || !isDefined(rootPredicateGroup)) {
+    return <Navigate to={finishPath} replace />;
+  }
+
+  const ruleCrumbLabel = isDefined(rootPredicateGroup.rowLevelPermissionRuleId)
+    ? t`Rule`
+    : t`New rule`;
 
   const breadcrumbLinks =
-    fromAgentId && isDefined(agent)
+    isNonEmptyString(fromAgentId) && isDefined(agent)
       ? getCoreAgentBreadcrumbLinks([
           { children: agent.label, href: getCoreAgentLink(agent.id) },
-          { children: t`Permissions · ${objectLabelSingular}` },
+          { children: objectLabelPlural },
+          { children: ruleCrumbLabel },
         ])
       : [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          {
-            children: t`Members`,
-            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
-          },
           {
             children: t`Roles`,
             href: getSettingsPath(SettingsPath.Roles),
           },
           {
-            children: settingsDraftRole.label,
-            href: getSettingsPath(SettingsPath.RoleDetail, {
-              roleId,
-            }),
+            children: roleLabel,
+            href: rolePath,
           },
-          {
-            children: t`Permissions · ${objectLabelSingular}`,
-          },
+          { children: objectLabelPlural, href: rolePath },
+          { children: ruleCrumbLabel },
         ];
 
-  const finishButtonPath =
-    fromAgentId && isDefined(agent)
-      ? getCoreAgentLink(agent.id)
-      : getSettingsPath(SettingsPath.RoleDetail, { roleId });
+  const rulePredicateGroupIds = getRulePredicateGroupIds({
+    predicateGroups: settingsDraftRole.rowLevelPermissionPredicateGroups ?? [],
+    ruleRootGroupId,
+  });
 
-  const headerTitle =
-    fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
-
-  const objectPredicates =
+  const rulePredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(
-      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+      (predicate) =>
+        isDefined(predicate.rowLevelPermissionPredicateGroupId) &&
+        rulePredicateGroupIds.has(predicate.rowLevelPermissionPredicateGroupId),
     ) ?? [];
 
-  const hasInvalidPredicate = objectPredicates.some((predicate) => {
+  const isRuleEmpty = rulePredicates.length === 0;
+
+  const hasInvalidPredicate = rulePredicates.some((predicate) => {
     if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
       return false;
     }
@@ -124,35 +155,96 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     });
   });
 
-  const isFinishDisabled = hasInvalidPredicate;
+  const handleDeleteRule = () => {
+    deleteRule(ruleRootGroupId);
+    navigate(finishPath);
+  };
+
+  const handleBack = () => {
+    if (isRuleEmpty) {
+      deleteRule(ruleRootGroupId);
+    }
+
+    navigate(finishPath);
+  };
 
   return (
     <SettingsPageLayout
-      title={headerTitle}
-      titleColor={themeCssVariables.font.color.tertiary}
+      title={objectLabelPlural}
+      icon={
+        <ObjectMetadataIcon
+          objectMetadataItem={objectMetadataItem}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
+      }
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar
-          label={t`${objectLabelPlural} rule`}
-          onBack={() => navigate(finishButtonPath)}
+          label={t`Row-level permission`}
+          onBack={handleBack}
           trailing={
             <NavigationButton
               size="sm"
-              to={finishButtonPath}
-              disabled={isFinishDisabled}
+              to={finishPath}
+              disabled={hasInvalidPredicate || isRuleEmpty}
               variant="solid"
               color="accent"
+              startIcon={<IconCheck />}
             >{t`Finish`}</NavigationButton>
           }
         />
       }
     >
       <SettingsPageContainer>
-        <SettingsRolePermissionsObjectLevelRecordLevelSection
-          objectMetadataItem={objectMetadataItem}
-          roleId={roleId}
-          hasOrganizationPlan={isRLSBillingEntitlementEnabled}
-        />
+        <Section.Root>
+          <Section.Header
+            title={t`Condition`}
+            description={t`Which ${objectLabelPluralLowercase} this rule applies to. Me is the person viewing.`}
+          />
+          {hasRowLevelPermissionEntitlement ? (
+            <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
+              roleId={roleId}
+              objectMetadataItem={objectMetadataItem}
+              ruleRootGroupId={ruleRootGroupId}
+            />
+          ) : (
+            <SettingsRolePermissionsRuleUpgradeCard />
+          )}
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Allows`}
+            description={t`What ${roleLabel} can do on ${objectLabelPluralLowercase} matching this rule.`}
+          />
+          <SettingsRolePermissionsRuleAllowsCard
+            roleId={roleId}
+            objectMetadataItem={objectMetadataItem}
+            ruleRootGroupId={ruleRootGroupId}
+          />
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Fields`}
+            description={t`Fields ${roleLabel} can see and edit on ${objectLabelPluralLowercase} matching this rule.`}
+          />
+          <SettingsRolePermissionsRuleFieldsCard
+            roleId={roleId}
+            objectMetadataItem={objectMetadataItem}
+            ruleRootGroupId={ruleRootGroupId}
+          />
+        </Section.Root>
+        {settingsDraftRole.isEditable && (
+          <Section.Root>
+            <Button
+              size="sm"
+              variant="outline"
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={handleDeleteRule}
+            >{t`Delete rule`}</Button>
+          </Section.Root>
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

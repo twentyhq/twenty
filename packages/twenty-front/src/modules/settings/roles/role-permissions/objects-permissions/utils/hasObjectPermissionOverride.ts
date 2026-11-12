@@ -1,5 +1,5 @@
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
-import { getObjectRowLevelPermissionPredicates } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionPredicates';
+import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,7 +10,10 @@ export const hasObjectPermissionOverride = ({
 }: {
   role: Pick<
     RoleWithPartialMembers,
-    'objectPermissions' | 'fieldPermissions' | 'rowLevelPermissionPredicates'
+    | 'objectPermissions'
+    | 'fieldPermissions'
+    | 'rowLevelPermissionPredicates'
+    | 'rowLevelPermissionPredicateGroups'
   >;
   objectMetadataId: string;
 }) => {
@@ -25,6 +28,7 @@ export const hasObjectPermissionOverride = ({
   const hasFieldRestriction = (role.fieldPermissions ?? []).some(
     (fieldPermission) =>
       fieldPermission.objectMetadataId === objectMetadataId &&
+      !isDefined(fieldPermission.rowLevelPermissionPredicateGroupId) &&
       (fieldPermission.canReadFieldValue === false ||
         fieldPermission.canUpdateFieldValue === false),
   );
@@ -32,6 +36,6 @@ export const hasObjectPermissionOverride = ({
   return (
     hasObjectGrant ||
     hasFieldRestriction ||
-    getObjectRowLevelPermissionPredicates({ role, objectMetadataId }).length > 0
+    getObjectRowLevelPermissionRules({ role, objectMetadataId }).length > 0
   );
 };
