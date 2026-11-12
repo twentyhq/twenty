@@ -63,14 +63,6 @@ const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(
   'Expected an array of option values',
 );
 
-export const ARRAY_FILTER_VALUE_SCHEMAS = new Set<z.ZodType>([
-  selectFilterValueSchema,
-  relationFilterValueSchema,
-  strictArrayOfUuidOrVariableSchema,
-  arrayOfStringsOrVariablesSchema,
-  actorSourceFilterValueSchema,
-]);
-
 const containsOperandsSchemas = {
   [ViewFilterOperand.CONTAINS]: nonEmptyStringFilterValueSchema,
   [ViewFilterOperand.DOES_NOT_CONTAIN]: nonEmptyStringFilterValueSchema,

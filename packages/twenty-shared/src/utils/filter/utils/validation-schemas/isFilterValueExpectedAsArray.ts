@@ -1,11 +1,19 @@
 import {
+  FieldActorSource,
   type FilterableAndTSVectorFieldType,
   type ViewFilterOperand,
 } from '@/types';
-import { ARRAY_FILTER_VALUE_SCHEMAS } from '@/utils/filter/utils/validation-schemas/filterValueSchemasMap';
 import { getFilterValueSchema } from '@/utils/filter/utils/validation-schemas/getFilterValueSchema';
 import { isDefined } from '@/utils/validation/isDefined';
 
+const SINGLE_VALUE_SAMPLE = 'value';
+const ARRAY_VALUE_SAMPLES = [
+  JSON.stringify(['value']),
+  JSON.stringify(['00000000-0000-4000-8000-000000000000']),
+  JSON.stringify([FieldActorSource.MANUAL]),
+];
+
+// Read off the schema itself: it takes an array when it accepts one and refuses a bare value
 export const isFilterValueExpectedAsArray = ({
   filterType,
   operand,
@@ -21,5 +29,11 @@ export const isFilterValueExpectedAsArray = ({
     subFieldName,
   });
 
-  return isDefined(valueSchema) && ARRAY_FILTER_VALUE_SCHEMAS.has(valueSchema);
+  return (
+    isDefined(valueSchema) &&
+    !valueSchema.safeParse(SINGLE_VALUE_SAMPLE).success &&
+    ARRAY_VALUE_SAMPLES.some(
+      (arrayValueSample) => valueSchema.safeParse(arrayValueSample).success,
+    )
+  );
 };

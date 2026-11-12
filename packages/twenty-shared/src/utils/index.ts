@@ -199,7 +199,6 @@ export {
   actorSourceFilterValueSchema,
 } from './filter/utils/validation-schemas/filterValueScalarSchemas';
 export {
-  ARRAY_FILTER_VALUE_SCHEMAS,
   FILTER_VALUE_SCHEMAS_MAP,
   COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
   FILTER_VALUE_FORMAT_HINTS,
