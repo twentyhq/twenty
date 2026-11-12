@@ -223,6 +223,28 @@ export const SettingsAvailableApplicationDetails = () => {
     );
   };
 
+  const renderActionButton = () => {
+    if (!isDefined(detail)) {
+      return undefined;
+    }
+
+    if (isNonEmptyString(detail.connectUrl)) {
+      return (
+        <SettingsMarketplaceAppConnectButton connectUrl={detail.connectUrl} />
+      );
+    }
+
+    return (
+      <SettingsApplicationActionButton
+        installedApplicationId={application?.id}
+        canInstallMarketplaceApps={canInstallMarketplaceApps}
+        onInstall={requestInstall}
+        isInstalling={isInstalling}
+        installProgress={installProgress}
+      />
+    );
+  };
+
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
       <SettingsPageLayout
@@ -251,23 +273,7 @@ export const SettingsAvailableApplicationDetails = () => {
             />
           ) : undefined
         }
-        actionButton={
-          !isDefined(detail) ? undefined : isNonEmptyString(
-              detail.connectUrl,
-            ) ? (
-            <SettingsMarketplaceAppConnectButton
-              connectUrl={detail.connectUrl}
-            />
-          ) : (
-            <SettingsApplicationActionButton
-              installedApplicationId={application?.id}
-              canInstallMarketplaceApps={canInstallMarketplaceApps}
-              onInstall={requestInstall}
-              isInstalling={isInstalling}
-              installProgress={installProgress}
-            />
-          )
-        }
+        actionButton={renderActionButton()}
       >
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (

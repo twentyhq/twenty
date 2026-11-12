@@ -1,8 +1,7 @@
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-// Cards for clients that connect over OAuth and install nothing. logoPath is served by the front end;
-// {mcpServerUrl} in connectUrl is filled in by the front end, which knows the server it talks to.
+// The front end serves logoPath and fills in {mcpServerUrl}.
 export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] =
   [
     {

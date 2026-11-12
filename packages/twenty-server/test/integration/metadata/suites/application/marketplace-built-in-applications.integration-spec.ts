@@ -1,6 +1,9 @@
 import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BUILT_IN_NAMES = ['Claude', 'ChatGPT', 'Twenty CLI'];
@@ -38,6 +41,13 @@ const publicMarketplaceAppsQuery = gql`
 `;
 
 describe('Built-in marketplace applications', () => {
+  // Listing computes the catalog cache; later suites insert registrations and expect to compute it themselves.
+  afterAll(async () => {
+    await getAppProviderByClassName<CoreEntityCacheService>(
+      'CoreEntityCacheService',
+    ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
+  });
+
   it('should list Claude, ChatGPT and the Twenty CLI first, each with a connect link', async () => {
     const response = await makeMetadataApiRequest({
       query: findManyMarketplaceAppsQuery,
