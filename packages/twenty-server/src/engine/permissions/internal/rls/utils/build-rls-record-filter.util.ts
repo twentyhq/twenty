@@ -24,7 +24,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
 import {
   PermissionsException,
@@ -32,14 +32,14 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
-export type RowLevelPermissionRule = Pick<
+export type RlsRule = Pick<
   RowLevelRecordsPermissions,
   'predicates' | 'predicateGroups'
 >;
 
 type BuildRecordFilterForRuleArgs = {
-  rowLevelPermissionRule: RowLevelPermissionRule | null | undefined;
-  memberFieldValues: RowLevelPermissionMemberFieldValues;
+  rowLevelPermissionRule: RlsRule | null | undefined;
+  memberFieldValues: RlsMemberFieldValues;
   currentWorkspaceMemberId?: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -270,11 +270,11 @@ export const buildRecordFilterForRule = ({
   );
 };
 
-export const buildRowLevelPermissionRecordFilter = ({
+export const buildRlsRecordFilter = ({
   rowLevelPermissionRules,
   ...buildRecordFilterForRuleArgs
 }: Omit<BuildRecordFilterForRuleArgs, 'rowLevelPermissionRule'> & {
-  rowLevelPermissionRules: RowLevelPermissionRule[];
+  rowLevelPermissionRules: RlsRule[];
 }): RecordGqlOperationFilter => {
   const recordFilters = rowLevelPermissionRules
     .map((rowLevelPermissionRule) =>

@@ -5,11 +5,11 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
 import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 
-export const areLimitingRolesReachingAllRecords = ({
+export const areLimitingRolesAccessingAllRecords = ({
   principals,
   metadataMaps,
   flatObjectMetadata,

@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
-import { type PermissionsRowAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
+import { type PermissionsRowAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
-export const isRecordPrivacyApplicable = ({
+export const arePrivateRecordsApplicable = ({
   flatObjectMetadata,
   operationType,
   metadataMaps: { featureFlagsMap },
@@ -16,4 +16,4 @@ export const isRecordPrivacyApplicable = ({
 }): boolean =>
   operationType !== 'create' &&
   !temporaryExcludePermissionStorageObject(flatObjectMetadata) &&
-  arePrivateRecordsEnabled({ flatObjectMetadata, featureFlagsMap });
+  isPrivateRecordsEnabled({ flatObjectMetadata, featureFlagsMap });

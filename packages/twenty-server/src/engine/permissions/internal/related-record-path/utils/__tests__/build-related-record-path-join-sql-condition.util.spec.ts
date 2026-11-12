@@ -8,7 +8,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import {
   type BuildEntrySQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
@@ -194,7 +194,7 @@ const buildAttachmentCondition = ({
     buildEntrySQLCondition: buildEntrySQLConditionFrom(entryByObject),
     canRelatedRecordPathExtendAccessToObject: (flatObjectMetadata) =>
       !disabledObjectNames.includes(flatObjectMetadata.nameSingular),
-    isRecordPrivacyApplicable: (flatObjectMetadata) =>
+    arePrivateRecordsApplicable: (flatObjectMetadata) =>
       privateObjectNames.includes(flatObjectMetadata.nameSingular),
     isUncorrelated,
   });
@@ -402,7 +402,7 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
           company: true,
         }),
         canRelatedRecordPathExtendAccessToObject: () => true,
-        isRecordPrivacyApplicable: () => false,
+        arePrivateRecordsApplicable: () => false,
       }),
     ).toBe(false);
   });

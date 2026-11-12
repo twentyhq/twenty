@@ -2,7 +2,7 @@
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 
-export const canSetRecordPrivacy = ({
+export const canSetPrivateRecordState = ({
   featureFlagsMap,
 }: {
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;

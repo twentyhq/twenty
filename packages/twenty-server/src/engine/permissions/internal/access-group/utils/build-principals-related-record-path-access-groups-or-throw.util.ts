@@ -4,21 +4,21 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
-import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
-import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
-import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
+import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
+import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
-export const buildCallerRelatedRecordPathAccessGroupsOrThrow = ({
+export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
   request,
   workspaceMembers,
   flatFieldMetadataMaps,
   visitedObjectMetadataIds = [],
 }: {
   request: PermissionsObjectAccessRequest;
-  workspaceMembers: RowLevelPermissionWorkspaceMember[];
+  workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   visitedObjectMetadataIds?: string[];
 }): AccessGroupWithoutCompactId[] => {
@@ -52,14 +52,14 @@ export const buildCallerRelatedRecordPathAccessGroupsOrThrow = ({
               operationTypes: [request.operationType],
               workspaceMembers,
               flatFieldMetadataMaps,
-              isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
+              isRelationHopEnabled: isRlsRelationHopEnabled(
                 metadataMaps.featureFlagsMap,
               ),
             })
           : []),
         ...(isInherent &&
         !nextVisitedObjectMetadataIds.includes(sourceFlatObjectMetadata.id)
-          ? buildCallerRelatedRecordPathAccessGroupsOrThrow({
+          ? buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
               request: sourceRequest,
               workspaceMembers,
               flatFieldMetadataMaps,

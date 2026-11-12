@@ -41,7 +41,7 @@ type SqlRenderingContext = {
   collectedParameters: ObjectLiteral;
 };
 
-export const renderRowLevelPermissionFilterToSql = ({
+export const renderRlsRecordFilterToSql = ({
   recordFilter,
   tableAlias,
   objectMetadata,
