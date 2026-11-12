@@ -241,7 +241,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
                   gridTemplateColumns={
                     OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS
                   }
-                  isExpanded={isRuleExpanded}
                   ariaExpanded={isRuleExpanded}
                   onClick={
                     isEditable

@@ -11,6 +11,7 @@ import {
   convertRecordFilterToPredicate,
 } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/recordLevelPermissionPredicateConversion';
 import { getRulePredicateGroupIds } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getRulePredicateGroupIds';
+import { replaceRuleItemsKeepingOrder } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/replaceRuleItemsKeepingOrder';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
@@ -46,22 +47,6 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
         ...currentRecordFilterGroups.map((group) => group.id),
       ]);
 
-      const predicatesNotManagedByFilters = (
-        previousRole.rowLevelPermissionPredicates ?? []
-      ).filter(
-        (predicate) =>
-          predicate.objectMetadataId !== objectMetadataItem.id ||
-          isDefined(predicate.relationFieldMetadataId) ||
-          !isDefined(predicate.rowLevelPermissionPredicateGroupId) ||
-          !rulePredicateGroupIds.has(
-            predicate.rowLevelPermissionPredicateGroupId,
-          ),
-      );
-
-      const otherObjectGroups = (
-        previousRole.rowLevelPermissionPredicateGroups ?? []
-      ).filter((group) => !rulePredicateGroupIds.has(group.id));
-
       const newPredicates = currentRecordFilters.map((filter) =>
         convertRecordFilterToPredicate(filter, roleId, objectMetadataItem.id),
       );
@@ -83,14 +68,23 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
       return {
         ...previousRole,
-        rowLevelPermissionPredicates: [
-          ...predicatesNotManagedByFilters,
-          ...newPredicates,
-        ],
-        rowLevelPermissionPredicateGroups: [
-          ...otherObjectGroups,
-          ...newPredicateGroups,
-        ],
+        rowLevelPermissionPredicates: replaceRuleItemsKeepingOrder({
+          previousItems: previousRole.rowLevelPermissionPredicates ?? [],
+          nextRuleItems: newPredicates,
+          isRuleItem: (predicate) =>
+            predicate.objectMetadataId === objectMetadataItem.id &&
+            !isDefined(predicate.relationFieldMetadataId) &&
+            isDefined(predicate.rowLevelPermissionPredicateGroupId) &&
+            rulePredicateGroupIds.has(
+              predicate.rowLevelPermissionPredicateGroupId,
+            ),
+        }),
+        rowLevelPermissionPredicateGroups: replaceRuleItemsKeepingOrder({
+          previousItems: previousRole.rowLevelPermissionPredicateGroups ?? [],
+          nextRuleItems: newPredicateGroups,
+          isRuleItem: (predicateGroup) =>
+            rulePredicateGroupIds.has(predicateGroup.id),
+        }),
       };
     });
   }, [
