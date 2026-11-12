@@ -23,7 +23,6 @@ export const buildOAuthDiscoveryClientProvider = ({
 
   return new OAuthDiscoveryClientProvider({
     redirectUrl: buildAppOAuthCallbackUrl(serverUrl),
-    // An authorization server only fetches a metadata document over HTTPS.
     clientMetadataUrl:
       isClientIdMetadataDocumentAllowed && isHttpsUrl(clientMetadataUrl)
         ? clientMetadataUrl

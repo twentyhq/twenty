@@ -1,6 +1,5 @@
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 
-// Without a browser session the server answers with its login page, unless it does not know the client.
 export const isOAuthClientRejected = async ({
   authorizationUrl,
   fetchFn,

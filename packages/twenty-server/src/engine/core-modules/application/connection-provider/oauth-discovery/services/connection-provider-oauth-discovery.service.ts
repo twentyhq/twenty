@@ -6,11 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
 import { type OAuthDiscoveryProviderContext } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-provider-context.type';
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
+import { buildOAuthDiscoveryFetch } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-fetch.util';
 import { isOAuthClientRejected } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-oauth-client-rejected.util';
 import { type OAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/oauth-discovery-client-provider';
 import {
@@ -45,7 +45,11 @@ export class ConnectionProviderOAuthDiscoveryService {
     codeVerifier: string;
     clientId: string;
   }> {
-    const fetchFn = this.buildFetch(workspaceId);
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+    const fetchFn = buildOAuthDiscoveryFetch({
+      secureHttpClientService: this.secureHttpClientService,
+      workspaceId,
+    });
     const { resourceMetadataUrl, scope } = await this.probeResource({
       provider,
       fetchFn,
@@ -68,7 +72,7 @@ export class ConnectionProviderOAuthDiscoveryService {
         resourceMetadataUrl,
         scope,
         clientProvider: buildOAuthDiscoveryClientProvider({
-          serverUrl: this.twentyConfigService.get('SERVER_URL'),
+          serverUrl,
           storedClient: clientToReuse,
           shouldReuseStoredDiscoveryState: false,
           isClientIdMetadataDocumentAllowed,
@@ -96,12 +100,9 @@ export class ConnectionProviderOAuthDiscoveryService {
       ...attempt.clientToPersist,
       connectionProviderId: provider.id,
       workspaceId,
-      redirectUri: buildAppOAuthCallbackUrl(
-        this.twentyConfigService.get('SERVER_URL'),
-      ),
+      redirectUri: buildAppOAuthCallbackUrl(serverUrl),
     };
 
-    // Another member's sign-in registered or replaced the client meanwhile: use theirs, so one client issues every token
     const isClientSaved = isDefined(storedClient)
       ? await this.oauthClientService.replaceClientIfUnchanged({
           client: clientToSave,
@@ -131,7 +132,6 @@ export class ConnectionProviderOAuthDiscoveryService {
     };
   }
 
-  // A replacement client is kept only if the server accepts it: other members' refresh tokens belong to the stored one.
   private async prepareReplacementIfRejected<
     TAttempt extends { authorizationUrl: URL },
   >({
@@ -217,10 +217,6 @@ export class ConnectionProviderOAuthDiscoveryService {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
-      this.logger.warn(
-        `OAuth discovery for connection provider ${provider.id} failed: ${message}`,
-      );
-
       throw new ConnectionProviderException(
         `OAuth discovery for connection provider ${provider.id} failed: ${message}`,
         ConnectionProviderExceptionCode.INVALID_REQUEST,
@@ -245,12 +241,5 @@ export class ConnectionProviderOAuthDiscoveryService {
       authorizationUrl: clientProvider.authorizationUrl,
       codeVerifier: clientProvider.savedCodeVerifier,
     };
-  }
-
-  private buildFetch(workspaceId: string): FetchLike {
-    return this.secureHttpClientService.createFetchLike({
-      context: { workspaceId, source: 'connection-provider' },
-      timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
-    });
   }
 }

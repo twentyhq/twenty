@@ -20,7 +20,6 @@ type OAuthDiscoveryClientProviderOptions = {
   clientMetadata: OAuthClientMetadata;
   storedClient: OAuthDiscoveryStoredClient | null;
   codeVerifier?: string;
-  // The authorize step discovers afresh; the callback reuses what it found.
   shouldReuseStoredDiscoveryState: boolean;
   now: Date;
 };
@@ -67,7 +66,6 @@ export class OAuthDiscoveryClientProvider implements OAuthClientProvider {
     this.registeredClientInformation = clientInformation;
   }
 
-  // Connecting always asks the user; refreshing happens outside the SDK flow.
   tokens(): undefined {
     return undefined;
   }

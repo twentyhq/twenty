@@ -8,15 +8,14 @@ import {
   InvalidClientError,
   UnauthorizedClientError,
 } from '@modelcontextprotocol/sdk/server/auth/errors.js';
-import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/constants/oauth-discovery-request-timeout-ms.constant';
 import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/services/connection-provider-oauth-client.service';
 import { type OAuthDiscoveryProviderContext } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-provider-context.type';
 import { buildOAuthDiscoveryClientProvider } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-provider.util';
+import { buildOAuthDiscoveryFetch } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-fetch.util';
 import { isPermanentOAuthDiscoveryRefreshError } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-permanent-oauth-discovery-refresh-error.util';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { parseTokenResponse } from 'src/engine/core-modules/application/connection-provider/utils/parse-token-response.util';
@@ -70,7 +69,10 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
       await auth(clientProvider, {
         serverUrl: provider.oauthDiscoveryConfig.resourceUrl,
         authorizationCode: code,
-        fetchFn: this.buildFetch(workspaceId),
+        fetchFn: buildOAuthDiscoveryFetch({
+          secureHttpClientService: this.secureHttpClientService,
+          workspaceId,
+        }),
       });
     } catch (error) {
       throw new ConnectionProviderException(
@@ -120,12 +122,14 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
         clientInformation: storedClient.clientInformation,
         refreshToken,
         resource: resourceMetadata?.resource,
-        fetchFn: this.buildFetch(workspaceId),
+        fetchFn: buildOAuthDiscoveryFetch({
+          secureHttpClientService: this.secureHttpClientService,
+          workspaceId,
+        }),
       });
 
       return parseTokenResponse(tokens);
     } catch (error) {
-      // The authorization server forgot the client: the next sign-in registers a new one.
       if (
         error instanceof InvalidClientError ||
         error instanceof UnauthorizedClientError
@@ -148,7 +152,6 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
     }
   }
 
-  // The server's rejection is the error worth surfacing; a failed cleanup must not turn it into a transient one.
   private async deleteRejectedClient(target: {
     connectionProviderId: string;
     workspaceId: string;
@@ -161,12 +164,5 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
         `Could not delete the rejected OAuth client of connection provider ${target.connectionProviderId}: ${error instanceof Error ? error.message : String(error)}`,
       );
     }
-  }
-
-  private buildFetch(workspaceId: string): FetchLike {
-    return this.secureHttpClientService.createFetchLike({
-      context: { workspaceId, source: 'connection-provider' },
-      timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
-    });
   }
 }

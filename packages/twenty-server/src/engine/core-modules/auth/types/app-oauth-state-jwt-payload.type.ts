@@ -13,7 +13,6 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   // of creating a new one (used by the UI's "Reconnect" action).
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
-  // Points at the PKCE verifier kept server-side, so the redirect URL never carries it
   flowSecretId: string | null;
   // TODO: remove after 2.59, only read from states signed before the verifier moved server-side
   codeVerifier?: string | null;

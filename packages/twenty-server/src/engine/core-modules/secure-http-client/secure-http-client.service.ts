@@ -252,7 +252,6 @@ export class SecureHttpClientService {
     return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
   }
 
-  // The MCP SDK reads SSE from a WHATWG Response, which the axios client yields whatever globalThis.fetch is.
   createFetchLike({
     context,
     timeoutMs,

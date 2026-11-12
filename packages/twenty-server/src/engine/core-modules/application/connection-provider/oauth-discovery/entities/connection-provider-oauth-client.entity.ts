@@ -59,7 +59,6 @@ export class ConnectionProviderOAuthClientEntity extends WorkspaceRelatedEntity 
   @Column({ type: 'varchar', nullable: true })
   tokenEndpointAuthMethod: string | null;
 
-  // A client registered for another callback URL cannot complete our redirects.
   @Column({ type: 'varchar', nullable: false })
   redirectUri: string;
 

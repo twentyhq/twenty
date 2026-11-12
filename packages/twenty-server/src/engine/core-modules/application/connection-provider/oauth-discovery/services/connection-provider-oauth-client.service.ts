@@ -129,7 +129,6 @@ export class ConnectionProviderOAuthClientService {
     }
   }
 
-  // Scoped to the rejected client so a replacement registered meanwhile survives
   async deleteClient({
     connectionProviderId,
     workspaceId,
@@ -157,7 +156,6 @@ export class ConnectionProviderOAuthClientService {
       connectionProviderId,
       registrationMethod,
       redirectUri,
-      // TypeORM's deep partial cannot express the SDK's open-ended metadata objects
       discoveryState:
         discoveryState as QueryDeepPartialEntity<OAuthDiscoveryState>,
       clientId: clientInformation.client_id,
@@ -169,7 +167,6 @@ export class ConnectionProviderOAuthClientService {
           workspaceId,
         },
       ),
-      // 0 means the secret never expires (RFC 7591)
       clientSecretExpiresAt: clientInformation.client_secret_expires_at
         ? new Date(clientInformation.client_secret_expires_at * 1000)
         : null,

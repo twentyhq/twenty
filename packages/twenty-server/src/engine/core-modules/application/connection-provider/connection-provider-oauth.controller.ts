@@ -43,7 +43,6 @@ export class ConnectionProviderOAuthController {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Authorization servers that read Client ID Metadata Documents identify Twenty here.
   @Get('client-metadata.json')
   clientMetadata(@Res() res: Response) {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
