@@ -9,6 +9,48 @@ const packageFile = {
 };
 
 describe('parsePullFiles', () => {
+  const asset = {
+    folder: 'public-asset',
+    path: 'public/font.woff2',
+    content: 'AP+A',
+  };
+  const publicAssets = [{ filePath: asset.path }];
+  it('accepts binary public assets declared in the manifest', () => {
+    expect(parsePullFiles({ value: [asset], publicAssets })).toEqual([asset]);
+  });
+  it.each(['attachment', 'source', 'dependencies'])(
+    'rejects an asset in the %s category',
+    (folder) => {
+      expect(() =>
+        parsePullFiles({ value: [{ ...asset, folder }], publicAssets }),
+      ).toThrow();
+    },
+  );
+  it.each([
+    'public/../secret',
+    'public/./font',
+    'public//font',
+    'public/\\font',
+    '/public/font',
+    'private/font',
+  ])('rejects the asset path %s', (path) => {
+    expect(() =>
+      parsePullFiles({
+        value: [{ ...asset, path }],
+        publicAssets: [{ filePath: path }],
+      }),
+    ).toThrow();
+  });
+  it('rejects unlisted assets and corrupt base64 before writing', () => {
+    expect(() => parsePullFiles({ value: [asset] })).toThrow();
+    expect(() =>
+      parsePullFiles({
+        value: [{ ...asset, content: 'not base64!' }],
+        publicAssets,
+      }),
+    ).toThrow('base64');
+  });
+
   it('retains the exact dependency contents', () => {
     const files = [
       packageFile,

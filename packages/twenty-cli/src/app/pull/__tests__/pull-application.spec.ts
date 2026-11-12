@@ -286,6 +286,71 @@ export default defineField({
     await rm(appPath, { recursive: true, force: true });
   });
 
+  const createAssetExport = (content = Buffer.from([0, 255, 128, 254])) => {
+    const exported = createExport({ includeObject: false });
+    return {
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        publicAssets: [
+          {
+            filePath: 'public/fonts/example.woff2',
+            fileName: 'example.woff2',
+            fileType: 'woff2',
+            checksum: null,
+          },
+        ],
+      },
+      files: [
+        {
+          folder: 'public-asset',
+          path: 'public/fonts/example.woff2',
+          content: content.toString('base64'),
+        },
+      ],
+    };
+  };
+  it('pulls binary assets exactly and keeps local edits until the remote changes', async () => {
+    const assetPath = 'public/fonts/example.woff2';
+    const remote = Buffer.from([0, 255, 128, 254]);
+    const first = requireSuccess(await pull(createAssetExport(remote)));
+    expect(first.writes).toContainEqual(
+      expect.objectContaining({ kind: 'publicAsset', relativePath: assetPath }),
+    );
+    expect(await readFile(join(appPath, assetPath))).toEqual(remote);
+    const local = Buffer.from([129, 0, 1]);
+    await writeFile(join(appPath, assetPath), local);
+    expect(
+      requireSuccess(await pull(createAssetExport(remote))).writes,
+    ).toEqual([]);
+    expect(await readFile(join(appPath, assetPath))).toEqual(local);
+    const updated = Buffer.from([0, 253, 1]);
+    const next = requireSuccess(await pull(createAssetExport(updated)));
+    expect(next.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: `public-asset/${assetPath}`,
+      relativePath: assetPath,
+    });
+    expect(await readFile(join(appPath, assetPath))).toEqual(updated);
+  });
+  it('does not remove local public assets absent from the export', async () => {
+    requireSuccess(await pull(createAssetExport()));
+    requireSuccess(await pull(createExport({ includeObject: false })));
+    expect(await readFile(join(appPath, 'public/fonts/example.woff2'))).toEqual(
+      Buffer.from([0, 255, 128, 254]),
+    );
+  });
+  it('refuses a public asset through a symlink before reading or writing it', async () => {
+    const outside = await mkdtemp(join(tmpdir(), 'twenty-public-assets-'));
+    try {
+      await symlink(outside, join(appPath, 'public'), 'dir');
+      const result = await pull(createAssetExport());
+      expect(result.success).toBe(false);
+      expect(await readdir(outside)).toEqual([]);
+    } finally {
+      await rm(outside, { recursive: true, force: true });
+    }
+  });
+
   const componentIdentifier = 'fefefefe-fefe-4efe-8efe-fefefefefefe';
   const componentPath = 'src/front-components/hello.front-component.tsx';
   const createComponentExport = ({

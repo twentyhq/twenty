@@ -69,21 +69,26 @@ export const fetchAppExport = async ({
   signal,
   shouldIncludeDependencies = false,
   shouldIncludeSourceFiles = false,
+  shouldIncludePublicAssets = false,
 }: {
   universalIdentifier: string;
   target: ResolvedTarget;
   signal: AbortSignal;
   shouldIncludeDependencies?: boolean;
   shouldIncludeSourceFiles?: boolean;
+  shouldIncludePublicAssets?: boolean;
 }): Promise<AppExport> => {
   const client = createMetadataClient({ target, signal });
-  const query = (shouldQuerySourceFiles: boolean) =>
+  const fileOptions = { shouldIncludeSourceFiles, shouldIncludePublicAssets };
+  const query = () =>
     client.query({
       __name: 'ExportApplication',
       exportApplication: {
         __args: {
           universalIdentifier,
-          ...(shouldQuerySourceFiles ? { shouldIncludeSourceFiles: true } : {}),
+          ...Object.fromEntries(
+            Object.entries(fileOptions).filter(([, enabled]) => enabled),
+          ),
           ...(shouldIncludeDependencies
             ? { shouldIncludeDependencies: true }
             : {}),
@@ -104,21 +109,56 @@ export const fetchAppExport = async ({
       },
     });
   try {
-    const data = await query(shouldIncludeSourceFiles).catch(
-      (error: unknown) => {
+    const queryWithFallback = async (): ReturnType<typeof query> => {
+      try {
+        return await query();
+      } catch (error) {
+        if (!(error instanceof CliError) || error.code !== 'GRAPHQL_ERROR') {
+          throw error;
+        }
+        const errors = error.details?.errors;
+        const unsupportedOptions = new Set<keyof typeof fileOptions>();
         if (
-          shouldIncludeSourceFiles &&
-          isExportValidationError({
-            error,
-            messagePrefix:
-              'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
+          !isArray(errors) ||
+          errors.length === 0 ||
+          !errors.every((entry: unknown) => {
+            if (
+              !isPlainObject(entry) ||
+              !isNull(entry.path) ||
+              !(
+                entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
+                (isNull(entry.code) && error.details?.status === 400)
+              )
+            ) {
+              return false;
+            }
+            const message = entry.message;
+            const option = (
+              Object.keys(fileOptions) as (keyof typeof fileOptions)[]
+            ).find(
+              (key) =>
+                fileOptions[key] &&
+                isString(message) &&
+                message.startsWith(
+                  `Unknown argument "${key}" on field "Query.exportApplication".`,
+                ),
+            );
+            if (!option) {
+              return false;
+            }
+            unsupportedOptions.add(option);
+            return true;
           })
         ) {
-          return query(false);
+          throw error;
         }
-        throw error;
-      },
-    );
+        for (const option of unsupportedOptions) {
+          fileOptions[option] = false;
+        }
+        return queryWithFallback();
+      }
+    };
+    const data = await queryWithFallback();
     return parseAppExport({
       value: data?.exportApplication,
       universalIdentifier,

@@ -701,6 +701,7 @@ describe('app apply', () => {
     ).toEqual({
       universalIdentifier: APPLICATION.universalIdentifier,
       shouldIncludeSourceFiles: true,
+      shouldIncludePublicAssets: true,
     });
     expect((await readdir(join(appPath, '.twenty/cli'))).sort()).toEqual([
       'pull-base.json',

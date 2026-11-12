@@ -1,3 +1,4 @@
+import { ASSETS_DIR } from 'twenty-shared/application';
 import { readFile } from 'node:fs/promises';
 import { relative, sep } from 'node:path';
 
@@ -19,6 +20,7 @@ export const collectSourceFingerprints = async (
       `${COMPILED_LOCALES_DIR}/*.json`,
       'package.json',
       'yarn.lock',
+      `${ASSETS_DIR}/**/*`,
     ],
     { cwd: appPath, absolute: true, onlyFiles: true },
   );

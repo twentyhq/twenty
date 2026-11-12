@@ -22,6 +22,7 @@ export const prepareAppPull = async ({
 
   const files = parsePullFiles({
     value: applicationExport.files,
+    publicAssets: applicationExport.manifest.publicAssets,
     frontComponents:
       toPullManifest(applicationExport.manifest).frontComponents ?? [],
   });

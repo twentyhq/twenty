@@ -92,7 +92,7 @@ const createExport = () => ({
 });
 let exported = createExport();
 let forbidden = false;
-let isSourceFileExportUnsupported = false;
+let unsupportedFileOptions: string[] = [];
 let customApplication: { universalIdentifier: string } | null = {
   universalIdentifier: SOURCE_TEST_APPLICATION_ID,
 };
@@ -107,18 +107,15 @@ const server = await startTestServer((request, response) => {
       },
     });
   }
-  if (
-    isSourceFileExportUnsupported &&
-    request.body.includes('shouldIncludeSourceFiles')
-  ) {
+  const unsupportedOptions = unsupportedFileOptions.filter((option) =>
+    request.body.includes(option),
+  );
+  if (unsupportedOptions.length > 0) {
     return sendJson(response, 400, {
-      errors: [
-        {
-          message:
-            'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
-          extensions: { code: 'GRAPHQL_VALIDATION_FAILED' },
-        },
-      ],
+      errors: unsupportedOptions.map((option) => ({
+        message: `Unknown argument "${option}" on field "Query.exportApplication". Did you mean "shouldIncludeDependencies"?`,
+        extensions: { code: 'GRAPHQL_VALIDATION_FAILED' },
+      })),
     });
   }
   if (forbidden) {
@@ -163,7 +160,7 @@ describe('app pull command with the packaged worker', () => {
     sdkPath = await createSourceTestApp(appPath);
     await writeFile(join(appPath, 'app.ts'), sourceApplication());
     exported = createExport();
-    isSourceFileExportUnsupported = false;
+    unsupportedFileOptions = [];
     forbidden = false;
     customApplication = { universalIdentifier: SOURCE_TEST_APPLICATION_ID };
     server.requests.length = 0;
@@ -227,39 +224,75 @@ describe('app pull command with the packaged worker', () => {
     expect((await runJson()).envelope.data.writes).toEqual([]);
   });
 
-  it('keeps metadata and dependency pull working on servers without source export', async () => {
-    isSourceFileExportUnsupported = true;
-    exported.coverage.push({
-      metadataName: 'frontComponent',
-      universalIdentifier: '11111111-1111-4111-8111-111111111111',
-      status: 'UNSUPPORTED',
-      reason: 'front components are not exported yet',
+  it.each([
+    ['shouldIncludePublicAssets'],
+    ['shouldIncludeSourceFiles', 'shouldIncludePublicAssets'],
+  ])(
+    'keeps metadata and dependency pull working without %j',
+    async (...unsupportedOptions) => {
+      unsupportedFileOptions = unsupportedOptions;
+      exported.coverage.push({
+        metadataName: 'frontComponent',
+        universalIdentifier: '11111111-1111-4111-8111-111111111111',
+        status: 'UNSUPPORTED',
+        reason: 'front components are not exported yet',
+      });
+      exported.files.push({
+        folder: 'dependencies',
+        path: 'yarn.lock',
+        content: 'legacy-lock',
+      });
+      const result = await runJson();
+      expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+        'legacy-lock',
+      );
+      expect(result.envelope.data.coverage).toEqual(exported.coverage);
+      expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+      const requests = server.requests
+        .filter((request) => request.body.includes('exportApplication'))
+        .map((request) => readGraphqlRequest(request).arguments);
+      expect(requests).toEqual([
+        {
+          universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+          shouldIncludeDependencies: true,
+          shouldIncludeSourceFiles: true,
+          shouldIncludePublicAssets: true,
+        },
+        {
+          universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+          shouldIncludeDependencies: true,
+          ...(!unsupportedOptions.includes('shouldIncludeSourceFiles')
+            ? { shouldIncludeSourceFiles: true }
+            : {}),
+        },
+      ]);
+    },
+  );
+
+  it('restores a declared binary public asset through the worker and reports it', async () => {
+    const content = Buffer.from([0, 255, 128, 254]);
+    const path = 'public/fonts/example.woff2';
+    Object.assign(exported.manifest, {
+      publicAssets: [
+        {
+          filePath: path,
+          fileName: 'example.woff2',
+          fileType: 'woff2',
+          checksum: null,
+        },
+      ],
     });
     exported.files.push({
-      folder: 'dependencies',
-      path: 'yarn.lock',
-      content: 'legacy-lock',
+      folder: 'public-asset',
+      path,
+      content: content.toString('base64'),
     });
     const result = await runJson();
-    expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
-      'legacy-lock',
-    );
-    expect(result.envelope.data.coverage).toEqual(exported.coverage);
     expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
-    const requests = server.requests
-      .filter((request) => request.body.includes('exportApplication'))
-      .map((request) => readGraphqlRequest(request).arguments);
-    expect(requests).toEqual([
-      {
-        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
-        shouldIncludeDependencies: true,
-        shouldIncludeSourceFiles: true,
-      },
-      {
-        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
-        shouldIncludeDependencies: true,
-      },
-    ]);
+    expect(result.envelope.data.writes).toContainEqual(
+      expect.objectContaining({ kind: 'publicAsset', relativePath: path }),
+    );
+    expect(await readFile(join(appPath, path))).toEqual(content);
   });
 
   it.each([true, false])(
@@ -288,6 +321,7 @@ describe('app pull command with the packaged worker', () => {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
           shouldIncludeSourceFiles: true,
+          shouldIncludePublicAssets: true,
         },
       ]);
       const pulledPackageJson = await readFile(
@@ -500,6 +534,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
       universalIdentifier: SOURCE_TEST_APPLICATION_ID,
       shouldIncludeDependencies: true,
       shouldIncludeSourceFiles: true,
+      shouldIncludePublicAssets: true,
     });
     expect(
       await readFile(join(appPath, 'src/application.config.ts'), 'utf8'),
@@ -520,6 +555,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
         universalIdentifier: SOURCE_TEST_APPLICATION_ID,
         shouldIncludeDependencies: true,
         shouldIncludeSourceFiles: true,
+        shouldIncludePublicAssets: true,
       });
       expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
       expect(promptInTerminal).not.toHaveBeenCalled();

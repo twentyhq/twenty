@@ -1,5 +1,6 @@
 import { isArray, isString } from '@sniptt/guards';
 import {
+  ASSETS_DIR,
   isRestorableFrontComponentSourcePath,
   type FrontComponentManifest,
 } from 'twenty-shared/application';
@@ -20,9 +21,11 @@ const isPackageJsonObject = (content: string): boolean => {
 export const parsePullFiles = ({
   value,
   frontComponents = [],
+  publicAssets = [],
 }: {
   value: unknown;
   frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
+  publicAssets?: unknown;
 }): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
@@ -53,7 +56,19 @@ export const parsePullFiles = ({
         (component) => component.sourceComponentPath === file.path,
       ) &&
       isRestorableFrontComponentSourcePath(file.path);
+    const isPublicAsset =
+      file.folder === FileFolder.PublicAsset &&
+      file.path.startsWith(`${ASSETS_DIR}/`) &&
+      !file.path.includes('\\') &&
+      !file.path.includes('\0') &&
+      file.path.split('/').every((part) => !['', '.', '..'].includes(part)) &&
+      isArray(publicAssets) &&
+      publicAssets.some(
+        (asset) => isPlainObject(asset) && asset.filePath === file.path,
+      );
+
     if (
+      !isPublicAsset &&
       !isFrontComponentSource &&
       (file.folder !== FileFolder.Dependencies ||
         !['package.json', 'yarn.lock'].includes(file.path))
@@ -61,11 +76,21 @@ export const parsePullFiles = ({
       throw new CliError({
         code: 'TOOLING_UNSUPPORTED',
         message:
-          'This CLI can only pull dependency files and declared front component sources. No local files were changed.',
+          'This CLI can only pull dependency files, public assets and declared front component sources. No local files were changed.',
       });
     }
 
-    if (paths.has(file.path)) {
+    if (
+      isPublicAsset &&
+      Buffer.from(file.content, 'base64').toString('base64') !== file.content
+    ) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message: `The exported public asset ${file.path} is not valid base64.`,
+      });
+    }
+
+    if (paths.has(file.path.toLowerCase())) {
       throw new CliError({
         code: 'INVALID_RESPONSE',
         message: `The server exported ${file.path} more than once.`,
@@ -79,7 +104,7 @@ export const parsePullFiles = ({
       });
     }
 
-    paths.add(file.path);
+    paths.add(file.path.toLowerCase());
     files.push({ folder: file.folder, path: file.path, content: file.content });
   }
 

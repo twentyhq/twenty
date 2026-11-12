@@ -1,3 +1,4 @@
+import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
 import { Injectable } from '@nestjs/common';
 
 import { type Manifest } from 'twenty-shared/application';
@@ -51,6 +52,7 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationPublicAssetExportService: ApplicationPublicAssetExportService,
     private readonly applicationFrontComponentExportService: ApplicationFrontComponentExportService,
     private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
@@ -64,11 +66,13 @@ export class ApplicationManifestExportService {
     applicationUniversalIdentifier,
     shouldIncludeDependencies = false,
     shouldIncludeSourceFiles = false,
+    shouldIncludePublicAssets = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldIncludeDependencies?: boolean;
     shouldIncludeSourceFiles?: boolean;
+    shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -229,6 +233,14 @@ export class ApplicationManifestExportService {
         )
       : undefined;
 
+    const { publicAssets, files: publicAssetFiles } = shouldIncludePublicAssets
+      ? await this.applicationPublicAssetExportService.exportPublicAssets({
+          workspaceId,
+          applicationId: flatApplication.id,
+          applicationUniversalIdentifier,
+        })
+      : { publicAssets: [], files: [] };
+
     const manifest: Manifest = {
       application: fromFlatApplicationToApplicationManifest({
         flatApplication,
@@ -247,7 +259,7 @@ export class ApplicationManifestExportService {
       roles,
       skills,
       agents,
-      publicAssets: [],
+      publicAssets,
       views,
       viewFields,
       navigationMenuItems,
@@ -291,6 +303,7 @@ export class ApplicationManifestExportService {
       files: [
         ...(shouldIncludeDependencies ? dependencyFiles : []),
         ...sourceFiles,
+        ...publicAssetFiles,
       ],
     };
   }
