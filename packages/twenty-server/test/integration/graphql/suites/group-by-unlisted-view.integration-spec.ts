@@ -26,15 +26,22 @@ const EXCLUDED_JOB_TITLE = 'Unlisted view excluded job title';
 
 describe('group by with an unlisted view (integration)', () => {
   let unlistedViewId: string;
+  let unlistedSearchViewId: string;
 
-  const findGroupedJobTitles = async (token: string): Promise<string[]> => {
+  const findGroupedJobTitles = async ({
+    viewId,
+    token,
+  }: {
+    viewId: string;
+    token: string;
+  }): Promise<string[]> => {
     const response = await makeGraphqlApiRequest(
       groupByOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         groupBy: [{ jobTitle: true }],
         filter: { id: { in: PERSON_IDS } },
-        viewId: unlistedViewId,
+        viewId,
       }),
       token,
     );
@@ -117,12 +124,31 @@ describe('group by with an unlisted view (integration)', () => {
     );
 
     expect(createViewFilterResponse.body.errors).toBeUndefined();
+
+    const createSearchViewResponse = await makeMetadataApiRequest(
+      createViewQueryFactory({
+        gqlFields: 'id',
+        input: {
+          name: 'Member private people search',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'IconTable',
+          type: ViewType.TABLE,
+          visibility: ViewVisibility.UNLISTED,
+          anyFieldFilterValue: KEPT_JOB_TITLE,
+        },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(createSearchViewResponse.body.errors).toBeUndefined();
+    unlistedSearchViewId = createSearchViewResponse.body.data.createView.id;
   });
 
   afterAll(async () => {
-    await makeMetadataApiRequest(
-      destroyViewQueryFactory({ viewId: unlistedViewId }),
-    );
+    for (const viewId of [unlistedViewId, unlistedSearchViewId]) {
+      await makeMetadataApiRequest(destroyViewQueryFactory({ viewId }));
+    }
+
     await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -133,21 +159,32 @@ describe('group by with an unlisted view (integration)', () => {
     );
   });
 
-  it('should apply the view filters for the view creator', async () => {
-    expect(await findGroupedJobTitles(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
-      KEPT_JOB_TITLE,
-    ]);
-  });
+  describe.each([
+    { viewPart: 'filters', getViewId: () => unlistedViewId },
+    { viewPart: 'search text', getViewId: () => unlistedSearchViewId },
+  ])('view $viewPart', ({ getViewId }) => {
+    it('should apply to the view creator', async () => {
+      expect(
+        await findGroupedJobTitles({
+          viewId: getViewId(),
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        }),
+      ).toEqual([KEPT_JOB_TITLE]);
+    });
 
-  it.each([
-    { caller: 'an admin', getToken: () => APPLE_JANE_ADMIN_ACCESS_TOKEN },
-    { caller: 'an API key', getToken: () => API_KEY_ACCESS_TOKEN },
-  ])(
-    'should ignore the view filters for $caller, as for a missing view',
-    async ({ getToken }) => {
-      expect(await findGroupedJobTitles(getToken())).toEqual(
-        [EXCLUDED_JOB_TITLE, KEPT_JOB_TITLE].sort(),
-      );
-    },
-  );
+    it.each([
+      { caller: 'an admin', getToken: () => APPLE_JANE_ADMIN_ACCESS_TOKEN },
+      { caller: 'an API key', getToken: () => API_KEY_ACCESS_TOKEN },
+    ])(
+      'should be ignored for $caller, as for a missing view',
+      async ({ getToken }) => {
+        expect(
+          await findGroupedJobTitles({
+            viewId: getViewId(),
+            token: getToken(),
+          }),
+        ).toEqual([EXCLUDED_JOB_TITLE, KEPT_JOB_TITLE].sort());
+      },
+    );
+  });
 });
