@@ -39,6 +39,7 @@ export const AuthorizeClientIdentityNotice = ({
   if (isVerified) {
     return (
       <Tooltip
+        side="bottom"
         content={t`Only continue if you started this connection from ${appName}.`}
       >
         <StyledVerifiedNotice>
