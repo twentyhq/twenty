@@ -218,7 +218,7 @@ msgstr "'n paneelbord"
 #: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
-msgstr ""
+msgstr "’n Databasisgebeurtenissneller in hierdie toepassing is ongeldig."
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -13801,7 +13801,7 @@ msgstr "Die komponentafhanklikhede kon nie geverifieer word nie. Probeer om die 
 #. js-lingui-id: Ebgiv3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "The condition of a database event trigger must be text"
-msgstr ""
+msgstr "Die voorwaarde van ’n databasisgebeurtenissneller moet teks wees"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16985,7 +16985,7 @@ msgstr "Gemonitorde velde van ’n databasisgebeurtenissneller moet veldname wee
 #. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
-msgstr ""
+msgstr "Gemonitorde velde is slegs van toepassing op \"updated\"- en \"upserted\"-databasisgebeurtenissnellers"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts

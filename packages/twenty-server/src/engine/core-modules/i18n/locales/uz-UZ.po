@@ -218,7 +218,7 @@ msgstr "Boshqaruv paneli (dashboard)"
 #: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
-msgstr ""
+msgstr "Ushbu ilovadagi ma’lumotlar bazasi hodisasi triggeri yaroqsiz."
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -13801,7 +13801,7 @@ msgstr "Komponent bog‘liqliklarini tekshirib bo‘lmadi. Komponentni yana yara
 #. js-lingui-id: Ebgiv3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "The condition of a database event trigger must be text"
-msgstr ""
+msgstr "Ma’lumotlar bazasi hodisasi triggerining sharti matn bo‘lishi kerak"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -16985,7 +16985,7 @@ msgstr "Ma’lumotlar bazasi hodisasi triggerining kuzatiladigan maydonlari mayd
 #. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
 msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
-msgstr ""
+msgstr "Kuzatiladigan maydonlar faqat \"updated\" va \"upserted\" ma’lumotlar bazasi hodisasi triggerlariga tegishli"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
