@@ -430,6 +430,8 @@ export const createMemoryHarness = async ({
       job.data = data;
     };
 
+    Object.assign(job, { updateData });
+
     try {
       await mockBullMQ.processor({ ...job, updateData, timestamp: Date.now() });
     } catch (error) {

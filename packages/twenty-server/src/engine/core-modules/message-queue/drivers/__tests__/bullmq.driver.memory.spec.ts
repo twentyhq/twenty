@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   createMemoryHarness,
   MEMORY_SCENARIO_JOB_NAME,
@@ -719,5 +721,72 @@ describe('BullMQDriver job memory scenarios', () => {
         jobs: [expect.anything()],
       });
     });
+  });
+});
+
+describe('retained job payloads', () => {
+  beforeAll(silenceDriverLogs);
+
+  it('clears successful job data after the handler has consumed it', async () => {
+    const harness = await createMemoryHarness();
+    const jobId = await harness.enqueue({
+      label: 'completed',
+      payloadBytes: 2_000,
+      options: { workspaceId: 'A', isWorkspaceJob: true },
+    });
+    const handler = jest.fn(
+      async ({ data }: { data: { payload?: string } }) => {
+        expect(data.payload).toHaveLength(2_000);
+      },
+    );
+
+    if (!isDefined(jobId)) {
+      throw new Error('Expected an enqueued job');
+    }
+
+    await harness.processJobOrThrow({ jobId, handler });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(harness.storedJob(jobId)?.data).toEqual({});
+    expect(await harness.readUsedBytes('workspace:A')).toBe(0);
+  });
+
+  it('keeps failed job data for a manual retry', async () => {
+    const harness = await createMemoryHarness();
+    const jobId = await harness.enqueue({
+      label: 'failed',
+      payloadBytes: 2_000,
+      options: { workspaceId: 'A', isWorkspaceJob: true },
+    });
+
+    if (!isDefined(jobId)) {
+      throw new Error('Expected an enqueued job');
+    }
+
+    await harness.processJobOrThrow({
+      jobId,
+      handler: async () => {
+        throw new Error('transient failure');
+      },
+    });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
+  });
+
+  it('keeps successful job data while memory fairness is disabled', async () => {
+    const harness = await createMemoryHarness({ isEnabled: false });
+    const jobId = await harness.enqueue({
+      label: 'disabled',
+      payloadBytes: 2_000,
+      options: { workspaceId: 'A', isWorkspaceJob: true },
+    });
+
+    if (!isDefined(jobId)) {
+      throw new Error('Expected an enqueued job');
+    }
+
+    await harness.processJobOrThrow({ jobId });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
   });
 });
