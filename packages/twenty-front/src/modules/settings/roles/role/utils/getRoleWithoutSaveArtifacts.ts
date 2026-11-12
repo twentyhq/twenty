@@ -3,7 +3,6 @@ import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/uti
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-// A save rewrites how grants are stored (derived rules, inherited values), so roles are compared on what they grant
 export const getRoleWithoutSaveArtifacts = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {

@@ -1,9 +1,11 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-// Draft field permissions carry temporary ids and cleared entries the server does not return
-export const getFieldRestrictionKeys = ({
+type RoleFieldPermissions = Pick<RoleWithPartialMembers, 'fieldPermissions'>;
+
+const getSortedFieldRestrictions = ({
   fieldPermissions,
-}: Pick<RoleWithPartialMembers, 'fieldPermissions'>) =>
+}: RoleFieldPermissions) =>
   (fieldPermissions ?? [])
     .filter(
       ({ canReadFieldValue, canUpdateFieldValue }) =>
@@ -14,3 +16,15 @@ export const getFieldRestrictionKeys = ({
         `${fieldPermission.fieldMetadataId}:${fieldPermission.canReadFieldValue === false}:${fieldPermission.canUpdateFieldValue === false}`,
     )
     .sort();
+
+export const hasSameFieldRestrictions = ({
+  firstRole,
+  secondRole,
+}: {
+  firstRole: RoleFieldPermissions;
+  secondRole: RoleFieldPermissions;
+}) =>
+  isDeeplyEqual(
+    getSortedFieldRestrictions(firstRole),
+    getSortedFieldRestrictions(secondRole),
+  );

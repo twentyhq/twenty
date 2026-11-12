@@ -1,4 +1,4 @@
-import { getFieldRestrictionKeys } from '@/settings/roles/role/utils/getFieldRestrictionKeys';
+import { hasSameFieldRestrictions } from '@/settings/roles/role/utils/hasSameFieldRestrictions';
 import { getRoleWithoutSaveArtifacts } from '@/settings/roles/role/utils/getRoleWithoutSaveArtifacts';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,16 +24,16 @@ export const getRoleDirtyFields = (
     draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
     persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
   );
-  const hasSameFieldRestrictions = isDeeplyEqual(
-    getFieldRestrictionKeys(draftRole),
-    getFieldRestrictionKeys(persistedRole),
-  );
+  const hasUnchangedFieldRestrictions = hasSameFieldRestrictions({
+    firstRole: draftRole,
+    secondRole: persistedRole,
+  });
 
   return Object.fromEntries(
     Object.entries(dirtyFields).filter(
       ([key]) =>
         !(key === 'permissionFlags' && hasSamePermissionFlags) &&
-        !(key === 'fieldPermissions' && hasSameFieldRestrictions),
+        !(key === 'fieldPermissions' && hasUnchangedFieldRestrictions),
     ),
   );
 };
