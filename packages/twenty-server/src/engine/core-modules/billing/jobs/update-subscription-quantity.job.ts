@@ -10,7 +10,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 export type UpdateSubscriptionQuantityJobData = {
   workspaceId: string;
-  renewalPeriodStartMs?: number;
+  renewalDateMs?: number;
 };
 
 @Processor({
@@ -26,8 +26,8 @@ export class UpdateSubscriptionQuantityJob {
   async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
     await this.billingSubscriptionUpdateService.syncSeats({
       workspaceId: data.workspaceId,
-      renewalPeriodStart: isDefined(data.renewalPeriodStartMs)
-        ? new Date(data.renewalPeriodStartMs)
+      renewalDate: isDefined(data.renewalDateMs)
+        ? new Date(data.renewalDateMs)
         : undefined,
     });
   }

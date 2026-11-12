@@ -36,7 +36,7 @@ import { computeRolloverClosingAllowances } from 'src/engine/core-modules/billin
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
-import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
+import { getRenewalDate } from 'src/engine/core-modules/billing/utils/get-renewal-date.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -116,26 +116,26 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    const boundary = resolveBillingTransitionBoundary({
+    const renewalDate = getRenewalDate({
       invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
       subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
       subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    await this.processRollover({ subscription, boundary });
+    await this.processRollover({ subscription, boundary: renewalDate });
 
     await this.enqueueSeatSyncForSeatArrangements({
       workspaceId: subscription.workspaceId,
-      renewalPeriodStart: boundary,
+      renewalDate,
     });
   }
 
   private async enqueueSeatSyncForSeatArrangements({
     workspaceId,
-    renewalPeriodStart,
+    renewalDate,
   }: {
     workspaceId: string;
-    renewalPeriodStart: Date;
+    renewalDate: Date;
   }) {
     const seatArrangements =
       await this.billingSeatService.findSeatArrangements(workspaceId);
@@ -146,7 +146,7 @@ export class BillingWebhookInvoiceService {
 
     await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
       UpdateSubscriptionQuantityJob.name,
-      { workspaceId, renewalPeriodStartMs: renewalPeriodStart.getTime() },
+      { workspaceId, renewalDateMs: renewalDate.getTime() },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         workspaceId,

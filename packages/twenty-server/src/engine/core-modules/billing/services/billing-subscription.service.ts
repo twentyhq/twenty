@@ -34,7 +34,7 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
-import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
+import { computeBillingPeriodUpdate } from 'src/engine/core-modules/billing/utils/compute-billing-period-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -332,11 +332,11 @@ export class BillingSubscriptionService {
   async syncSubscriptionToDatabase({
     workspaceId,
     stripeSubscriptionId,
-    renewalPeriodStart,
+    renewalDate,
   }: {
     workspaceId: string;
     stripeSubscriptionId: string;
-    renewalPeriodStart?: Date;
+    renewalDate?: Date;
   }) {
     const subscription =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
@@ -383,10 +383,10 @@ export class BillingSubscriptionService {
       workspaceId,
       {
         ...incomingSubscription,
-        ...resolveBillingPeriodBoundaryUpdate({
+        ...computeBillingPeriodUpdate({
           incomingPeriodStart: incomingSubscription.currentPeriodStart,
           storedSubscription,
-          renewalPeriodStart,
+          renewalDate,
         }),
       },
       {

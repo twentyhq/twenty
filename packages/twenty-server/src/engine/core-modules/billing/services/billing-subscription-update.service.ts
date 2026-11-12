@@ -226,10 +226,10 @@ export class BillingSubscriptionUpdateService {
 
   async syncSeats({
     workspaceId,
-    renewalPeriodStart,
+    renewalDate,
   }: {
     workspaceId: string;
-    renewalPeriodStart?: Date;
+    renewalDate?: Date;
   }) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -257,7 +257,7 @@ export class BillingSubscriptionUpdateService {
             type: SubscriptionUpdateType.SEATS,
             newSeats: billedSeats,
           },
-          renewalPeriodStart,
+          renewalDate,
         });
       },
     });
@@ -297,12 +297,12 @@ export class BillingSubscriptionUpdateService {
     workspaceId,
     subscriptionId,
     subscriptionUpdate,
-    renewalPeriodStart,
+    renewalDate,
   }: {
     workspaceId: string;
     subscriptionId: string;
     subscriptionUpdate: SubscriptionUpdate;
-    renewalPeriodStart?: Date;
+    renewalDate?: Date;
   }): Promise<void> {
     const subscription = await this.billingSubscriptionRepository.findOneOrFail(
       workspaceId,
@@ -434,10 +434,10 @@ export class BillingSubscriptionUpdateService {
       this.billingSubscriptionService.syncSubscriptionToDatabase({
         workspaceId: subscription.workspaceId,
         stripeSubscriptionId: subscription.stripeSubscriptionId,
-        renewalPeriodStart,
+        renewalDate,
       });
 
-    if (!isDefined(renewalPeriodStart)) {
+    if (!isDefined(renewalDate)) {
       await syncSubscriptionToDatabase();
 
       return;

@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
-// Invoice period stamps are ambiguous (metered items bill in arrears), so use the subscription boundary nearest invoice.created.
-// Only valid for subscription_cycle invoices, which Stripe raises at the handover.
-export const resolveBillingTransitionBoundary = ({
+export const getRenewalDate = ({
   invoiceCreatedAt,
   subscriptionCurrentPeriodStart,
   subscriptionCurrentPeriodEnd,

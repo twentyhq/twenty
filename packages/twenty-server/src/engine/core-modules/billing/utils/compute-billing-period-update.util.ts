@@ -13,7 +13,7 @@ type StoredBillingPeriod = Pick<
   | 'billingSubscriptionItems'
 >;
 
-type BillingPeriodBoundaryUpdate = {
+type BillingPeriodUpdate = {
   previousPeriodStart?: Date;
   currentPeriodStart?: Date;
   currentPeriodEnd?: Date;
@@ -21,17 +21,15 @@ type BillingPeriodBoundaryUpdate = {
   currentPeriodMaxSeats?: number | null;
 };
 
-// Stripe only reports the current window, so the boundary a period moves off must be captured here or is lost;
-// the rollover bounds the usage it settles with it, so every subscription write resolves period fields through this.
-export const resolveBillingPeriodBoundaryUpdate = ({
+export const computeBillingPeriodUpdate = ({
   incomingPeriodStart,
   storedSubscription,
-  renewalPeriodStart,
+  renewalDate,
 }: {
   incomingPeriodStart: Date | undefined;
   storedSubscription: StoredBillingPeriod | null;
-  renewalPeriodStart?: Date;
-}): BillingPeriodBoundaryUpdate => {
+  renewalDate?: Date;
+}): BillingPeriodUpdate => {
   if (!isDefined(storedSubscription) || !isDefined(incomingPeriodStart)) {
     return {};
   }
@@ -47,12 +45,11 @@ export const resolveBillingPeriodBoundaryUpdate = ({
     };
   }
 
-  // Stripe never moves a period backwards, so an older window is a late event and must not rewind the boundary.
   if (incomingPeriodStart.getTime() < currentPeriodStart.getTime()) {
     return { currentPeriodStart, currentPeriodEnd, currentPeriodMaxSeats };
   }
 
-  if (renewalPeriodStart?.getTime() === incomingPeriodStart.getTime()) {
+  if (renewalDate?.getTime() === incomingPeriodStart.getTime()) {
     return { currentPeriodMaxSeats: null };
   }
 
