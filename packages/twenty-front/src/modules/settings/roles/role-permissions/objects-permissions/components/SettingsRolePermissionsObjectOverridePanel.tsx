@@ -9,11 +9,11 @@ import {
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
 import { SETTINGS_ROLE_OBJECT_PERMISSION_KEYS } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionKeys';
-import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/objects-permissions/hooks/useRowLevelPermissionRulesInDraftRole';
 import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/objects-permissions/hooks/useSettingsRoleObjectOverrides';
 import { getGrantedObjectPermissionKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getGrantedObjectPermissionKeys';
 import { getObjectPermissionActionLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionActionLabel';
+import { getObjectPermissionOverrideGrants } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionOverrideGrants';
 import { getObjectPermissionKeysWithReadDependency } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionKeysWithReadDependency';
 import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
@@ -103,7 +103,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  // a grant equal to the all-objects one stays inherited, so it keeps following that setting
   const setGrantedKeys = (
     nextGrantedKeys: SettingsRoleObjectPermissionKey[],
   ) => {
@@ -112,24 +111,13 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
         objectPermission.objectMetadataId === objectMetadataItem.id,
     );
 
-    const objectGrants = Object.fromEntries(
-      SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.map((key) => {
-        const isGranted = nextGrantedKeys.includes(key);
-        const allObjectsGrant =
-          settingsDraftRole[
-            SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING[
-              key
-            ]
-          ];
-
-        return [key, isGranted === allObjectsGrant ? null : isGranted];
-      }),
-    );
-
     upsertObjectPermissionInDraftRole({
       ...existingObjectPermission,
       objectMetadataId: objectMetadataItem.id,
-      ...objectGrants,
+      ...getObjectPermissionOverrideGrants({
+        role: settingsDraftRole,
+        grantedKeys: nextGrantedKeys,
+      }),
     });
   };
 
