@@ -11,10 +11,12 @@ import { CreateOneRoleDocument } from '~/generated-metadata/graphql';
 const mockUseMutation = jest.fn();
 const mockCreateRole = jest.fn();
 const mockOtherMutation = jest.fn();
+const mockQuery = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useMutation: (...args: unknown[]) => mockUseMutation(...args),
+  useApolloClient: () => ({ query: mockQuery }),
 }));
 
 const ROLE_ID = 'role-id';
@@ -85,10 +87,13 @@ const renderUseSaveDraftRoleToDB = ({
     <JotaiProvider store={store}>{children}</JotaiProvider>
   );
 
-  return renderHook(
-    () => useSaveDraftRoleToDB({ roleId: ROLE_ID, isCreateMode, onSuccess }),
-    { wrapper: Wrapper },
-  );
+  return {
+    store,
+    ...renderHook(
+      () => useSaveDraftRoleToDB({ roleId: ROLE_ID, isCreateMode, onSuccess }),
+      { wrapper: Wrapper },
+    ),
+  };
 };
 
 describe('useSaveDraftRoleToDB', () => {
@@ -97,6 +102,7 @@ describe('useSaveDraftRoleToDB', () => {
       data: { createOneRole: { id: ROLE_ID } },
     });
     mockOtherMutation.mockResolvedValue({ data: {} });
+    mockQuery.mockResolvedValue({ data: { getRoles: [] } });
     mockUseMutation.mockImplementation((document: unknown) => [
       document === CreateOneRoleDocument ? mockCreateRole : mockOtherMutation,
     ]);
@@ -183,5 +189,89 @@ describe('useSaveDraftRoleToDB', () => {
     );
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledWith(ROLE_ID);
+  });
+
+  it('should replace the draft with the saved role after a save', async () => {
+    const savedRole = {
+      ...PERSISTED_ROLE,
+      label: 'Sales team',
+      rowLevelPermissionRules: [],
+    };
+
+    mockQuery.mockResolvedValue({ data: { getRoles: [savedRole] } });
+
+    const { result, store } = renderUseSaveDraftRoleToDB({
+      isCreateMode: false,
+      draftRole: { ...PERSISTED_ROLE, label: 'Sales team' },
+      persistedRole: PERSISTED_ROLE,
+      onSuccess: jest.fn(),
+    });
+
+    await act(async () => {
+      await result.current.saveDraftRoleToDB();
+    });
+
+    expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
+      savedRole,
+    );
+    expect(
+      store.get(settingsPersistedRoleFamilyState.atomFamily(ROLE_ID)),
+    ).toEqual(savedRole);
+  });
+
+  it('should keep a draft edited during the save', async () => {
+    const editedDraftRole = { ...PERSISTED_ROLE, label: 'Edited during save' };
+
+    mockQuery.mockResolvedValue({
+      data: { getRoles: [{ ...PERSISTED_ROLE, label: 'Sales team' }] },
+    });
+
+    const { result, store } = renderUseSaveDraftRoleToDB({
+      isCreateMode: false,
+      draftRole: { ...PERSISTED_ROLE, label: 'Sales team' },
+      persistedRole: PERSISTED_ROLE,
+      onSuccess: jest.fn(),
+    });
+
+    mockOtherMutation.mockImplementation(async () => {
+      store.set(
+        settingsDraftRoleFamilyState.atomFamily(ROLE_ID),
+        editedDraftRole,
+      );
+
+      return { data: {} };
+    });
+
+    await act(async () => {
+      await result.current.saveDraftRoleToDB();
+    });
+
+    expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
+      editedDraftRole,
+    );
+  });
+
+  it('should leave the draft untouched when the save fails', async () => {
+    const draftRole = { ...PERSISTED_ROLE, label: 'Sales team' };
+
+    mockOtherMutation.mockRejectedValue(new Error('Save failed'));
+
+    const { result, store } = renderUseSaveDraftRoleToDB({
+      isCreateMode: false,
+      draftRole,
+      persistedRole: PERSISTED_ROLE,
+      onSuccess: jest.fn(),
+    });
+
+    await act(async () => {
+      await expect(result.current.saveDraftRoleToDB()).rejects.toThrow(
+        'Save failed',
+      );
+    });
+
+    expect(mockQuery).not.toHaveBeenCalled();
+    expect(store.get(settingsDraftRoleFamilyState.atomFamily(ROLE_ID))).toEqual(
+      draftRole,
+    );
   });
 });

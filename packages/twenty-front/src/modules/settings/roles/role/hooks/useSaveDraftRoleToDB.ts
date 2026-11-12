@@ -1,4 +1,3 @@
-import { getRowLevelPermissionObjectMetadataIds } from '@/settings/roles/role/utils/getRowLevelPermissionObjectMetadataIds';
 import { useUpsertRowLevelPermissionPredicatesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
@@ -6,22 +5,30 @@ import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole'
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
+import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
+import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type RowLevelPermissionPredicateGroupLogicalOperator,
   type RowLevelPermissionPredicateOperand,
   type Role,
   CreateOneRoleDocument,
+  GetRolesDocument,
   UpdateOneRoleDocument,
   UpsertFieldPermissionsDocument,
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
 import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 
@@ -79,6 +86,46 @@ export const useSaveDraftRoleToDB = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
+
+  const apolloClient = useApolloClient();
+  const store = useStore();
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsDraftRoleBase = useSetAtomFamilyState(
+    settingsDraftRoleBaseFamilyState,
+    roleId,
+  );
+  const setSettingsPersistedRole = useSetAtomFamilyState(
+    settingsPersistedRoleFamilyState,
+    roleId,
+  );
+
+  const replaceDraftRoleWithSavedRole = async (
+    savedDraftRole: RoleWithPartialMembers,
+  ) => {
+    const { data } = await apolloClient.query({
+      query: GetRolesDocument,
+      fetchPolicy: 'network-only',
+    });
+    const fetchedRole = data?.getRoles.find((role) => role.id === roleId);
+
+    if (!isDefined(fetchedRole)) {
+      return;
+    }
+
+    const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
+
+    setSettingsPersistedRole(savedRole);
+    setSettingsDraftRoleBase(savedRole);
+    setSettingsDraftRole((currentDraftRole) =>
+      isDeeplyEqual(currentDraftRole, savedDraftRole)
+        ? savedRole
+        : currentDraftRole,
+    );
+  };
 
   const dirtyFields = getRoleDirtyFields(
     settingsDraftRole,
@@ -176,10 +223,16 @@ export const useSaveDraftRoleToDB = ({
     return createdRoleId;
   };
 
-  const rowLevelPermissionObjectMetadataIds =
-    getRowLevelPermissionObjectMetadataIds(settingsDraftRole);
-  const persistedRowLevelPermissionObjectMetadataIds =
-    getRowLevelPermissionObjectMetadataIds(settingsPersistedRole);
+  const rowLevelPermissionObjectMetadataIds = new Set(
+    (settingsDraftRole.rowLevelPermissionPredicates ?? []).map(
+      ({ objectMetadataId }) => objectMetadataId,
+    ),
+  );
+  const persistedRowLevelPermissionObjectMetadataIds = new Set(
+    (settingsPersistedRole?.rowLevelPermissionPredicates ?? []).map(
+      ({ objectMetadataId }) => objectMetadataId,
+    ),
+  );
 
   // Rules carry the grant of a filtered object, so a change to either side rewrites both
   const shouldSyncObjectRecordsGrants =
@@ -526,11 +579,21 @@ export const useSaveDraftRoleToDB = ({
   const saveDraftRoleToDB = async () => {
     removeUselessFieldPermissions();
 
+    const savedDraftRole = store.get(
+      settingsDraftRoleFamilyState.getAtom(roleId, routedFlowStateScopeId),
+    );
+
     const savedRoleId = isCreateMode
       ? await createNewRole()
       : await updateExistingRole();
 
-    if (isDefined(savedRoleId) && isDefined(onSuccess)) {
+    if (!isDefined(savedRoleId)) {
+      return;
+    }
+
+    await replaceDraftRoleWithSavedRole(savedDraftRole);
+
+    if (isDefined(onSuccess)) {
       await onSuccess(savedRoleId);
     }
   };
