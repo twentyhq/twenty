@@ -172,6 +172,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isInternalImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
@@ -629,14 +630,19 @@ export class WorkspaceService {
       });
     }
 
+    const isInternalImportEnabled =
+      payload.isInternalImportEnabled ??
+      payload.isInternalMessagesImportEnabled;
+
     let updatedWorkspace: WorkspaceEntity;
 
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
         ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
-        ...(isDefined(payload.isInternalMessagesImportEnabled) && {
-          isInternalImportEnabled: payload.isInternalMessagesImportEnabled,
+        ...(isDefined(isInternalImportEnabled) && {
+          isInternalImportEnabled,
+          isInternalMessagesImportEnabled: isInternalImportEnabled,
         }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({

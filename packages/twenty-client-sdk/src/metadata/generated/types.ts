@@ -15428,6 +15428,9 @@ export default {
             "isGoogleAuthEnabled": [
                 1
             ],
+            "isInternalImportEnabled": [
+                1
+            ],
             "isInternalMessagesImportEnabled": [
                 1
             ],
@@ -16970,6 +16973,9 @@ export default {
                 1
             ],
             "isGoogleAuthEnabled": [
+                1
+            ],
+            "isInternalImportEnabled": [
                 1
             ],
             "isInternalMessagesImportEnabled": [

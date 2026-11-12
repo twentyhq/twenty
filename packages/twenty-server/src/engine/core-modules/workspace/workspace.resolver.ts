@@ -278,6 +278,11 @@ export class WorkspaceResolver {
     );
   }
 
+  @ResolveField(() => Boolean)
+  isInternalImportEnabled(@Parent() workspace: WorkspaceEntity): boolean {
+    return workspace.isInternalMessagesImportEnabled;
+  }
+
   @ResolveField(() => AiDataPolicyDTO, { nullable: true })
   async aiDataPolicy(
     @Parent() workspace: WorkspaceEntity,

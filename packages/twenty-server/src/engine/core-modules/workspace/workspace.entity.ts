@@ -325,7 +325,8 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
-  @Field()
+  // TODO: remove this column and field once isInternalImportEnabled is copied again and read from its own column
+  @Field({ deprecationReason: 'Use isInternalImportEnabled' })
   @Column({ default: false })
   isInternalMessagesImportEnabled: boolean;
 
