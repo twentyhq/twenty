@@ -1,27 +1,39 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
+import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+
 export const getAgentChatNewThreadDirectMessageWorkspaceMemberId = ({
-  isAssistantParticipant,
+  isDirectMessageIdentityEnabled,
+  newInboxChatRecipients,
   isAssistantMentioned,
   channelId,
-  recipientWorkspaceMemberIds,
-  mentionedWorkspaceMemberIds,
+  initialRecipients,
+  participantMentions,
 }: {
-  isAssistantParticipant: boolean;
+  isDirectMessageIdentityEnabled: boolean;
+  newInboxChatRecipients: AgentChatNewThreadRecipients | undefined;
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
-  recipientWorkspaceMemberIds: string[];
-  mentionedWorkspaceMemberIds: string[];
+  initialRecipients: AgentChatParticipantMention[];
+  participantMentions: AgentChatParticipantMention[];
 }): string | undefined => {
-  if (isAssistantParticipant || isAssistantMentioned || isDefined(channelId)) {
+  if (
+    !isDirectMessageIdentityEnabled ||
+    !isDefined(newInboxChatRecipients) ||
+    newInboxChatRecipients.isAssistantParticipant ||
+    isAssistantMentioned ||
+    isDefined(channelId)
+  ) {
     return undefined;
   }
 
   const addressedWorkspaceMemberIds = [
-    ...new Set([
-      ...recipientWorkspaceMemberIds,
-      ...mentionedWorkspaceMemberIds,
-    ]),
+    ...new Set(
+      [...initialRecipients, ...participantMentions].map(
+        ({ workspaceMemberId }) => workspaceMemberId,
+      ),
+    ),
   ];
 
   return addressedWorkspaceMemberIds.length === 1

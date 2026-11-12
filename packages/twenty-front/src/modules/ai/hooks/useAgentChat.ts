@@ -199,20 +199,14 @@ export const useAgentChat = () => {
     }
 
     const directMessageWorkspaceMemberId =
-      isDefined(newInboxChatRecipients) && isDirectMessageIdentityEnabled
-        ? getAgentChatNewThreadDirectMessageWorkspaceMemberId({
-            isAssistantParticipant:
-              newInboxChatRecipients.isAssistantParticipant,
-            isAssistantMentioned,
-            channelId,
-            recipientWorkspaceMemberIds: initialRecipients.map(
-              ({ workspaceMemberId }) => workspaceMemberId,
-            ),
-            mentionedWorkspaceMemberIds: participantMentions.map(
-              ({ workspaceMemberId }) => workspaceMemberId,
-            ),
-          })
-        : undefined;
+      getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+        isDirectMessageIdentityEnabled,
+        newInboxChatRecipients,
+        isAssistantMentioned,
+        channelId,
+        initialRecipients,
+        participantMentions,
+      });
 
     if (isDefined(directMessageWorkspaceMemberId)) {
       const directMessageThreadId = await openNewAgentChatAsDirectMessage({

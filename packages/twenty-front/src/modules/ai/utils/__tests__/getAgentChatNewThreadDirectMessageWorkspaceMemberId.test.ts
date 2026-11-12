@@ -1,11 +1,18 @@
 import { getAgentChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAgentChatNewThreadDirectMessageWorkspaceMemberId';
 
+const JANE = { workspaceMemberId: 'jane', label: 'Jane' };
+const BOB = { workspaceMemberId: 'bob', label: 'Bob' };
+
 const ONE_PERSON_WITHOUT_ADA = {
-  isAssistantParticipant: false,
+  isDirectMessageIdentityEnabled: true,
+  newInboxChatRecipients: {
+    isAssistantParticipant: false,
+    recipientWorkspaceMemberIds: ['jane'],
+  },
   isAssistantMentioned: false,
   channelId: null,
-  recipientWorkspaceMemberIds: ['jane'],
-  mentionedWorkspaceMemberIds: [],
+  initialRecipients: [JANE],
+  participantMentions: [],
 };
 
 describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
@@ -21,7 +28,7 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
-        mentionedWorkspaceMemberIds: ['jane'],
+        participantMentions: [JANE],
       }),
     ).toBe('jane');
   });
@@ -30,17 +37,27 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
-        recipientWorkspaceMemberIds: [],
-        mentionedWorkspaceMemberIds: ['jane'],
+        initialRecipients: [],
+        participantMentions: [JANE],
       }),
     ).toBe('jane');
   });
 
   it.each([
-    ['Ada is a recipient', { isAssistantParticipant: true }],
+    ['direct messages are disabled', { isDirectMessageIdentityEnabled: false }],
+    ['the chat is not a new inbox chat', { newInboxChatRecipients: undefined }],
+    [
+      'Ada is a recipient',
+      {
+        newInboxChatRecipients: {
+          isAssistantParticipant: true,
+          recipientWorkspaceMemberIds: ['jane'],
+        },
+      },
+    ],
     ['Ada is mentioned', { isAssistantMentioned: true }],
     ['a channel is picked', { channelId: 'channel' }],
-    ['two people are addressed', { mentionedWorkspaceMemberIds: ['bob'] }],
+    ['two people are addressed', { participantMentions: [BOB] }],
   ])('returns nothing when %s', (_, overrides) => {
     expect(
       getAgentChatNewThreadDirectMessageWorkspaceMemberId({
