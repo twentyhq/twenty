@@ -447,10 +447,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
 
       assertRowLevelPermissionRuleLinksOrThrow({
         declaredRules,
-        ruleLinkedEntities: [
-          ...universalFlatPredicateGroups,
-          ...universalFlatPredicates,
-        ],
+        predicateGroups: universalFlatPredicateGroups,
+        predicates: universalFlatPredicates,
       });
 
       const {

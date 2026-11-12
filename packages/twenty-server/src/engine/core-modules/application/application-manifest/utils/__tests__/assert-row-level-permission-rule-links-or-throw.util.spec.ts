@@ -4,10 +4,18 @@ const RULE = {
   universalIdentifier: 'rule',
   objectMetadataUniversalIdentifier: 'company',
 };
+const OTHER_RULE = { ...RULE, universalIdentifier: 'other-rule' };
 const PREDICATE = {
   universalIdentifier: 'predicate',
   objectMetadataUniversalIdentifier: 'company',
   rowLevelPermissionRuleUniversalIdentifier: 'rule',
+  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+};
+const GROUP = {
+  universalIdentifier: 'group',
+  objectMetadataUniversalIdentifier: 'company',
+  rowLevelPermissionRuleUniversalIdentifier: 'rule',
+  parentRowLevelPermissionPredicateGroupUniversalIdentifier: null,
 };
 
 describe('assertRowLevelPermissionRuleLinksOrThrow', () => {
@@ -15,9 +23,19 @@ describe('assertRowLevelPermissionRuleLinksOrThrow', () => {
     expect(() =>
       assertRowLevelPermissionRuleLinksOrThrow({
         declaredRules: [RULE],
-        ruleLinkedEntities: [
+        predicateGroups: [GROUP],
+        predicates: [
           PREDICATE,
-          { ...PREDICATE, rowLevelPermissionRuleUniversalIdentifier: null },
+          {
+            ...PREDICATE,
+            universalIdentifier: 'grouped-predicate',
+            rowLevelPermissionPredicateGroupUniversalIdentifier: 'group',
+          },
+          {
+            ...PREDICATE,
+            universalIdentifier: 'predicate-without-rule',
+            rowLevelPermissionRuleUniversalIdentifier: null,
+          },
         ],
       }),
     ).not.toThrow();
@@ -27,7 +45,8 @@ describe('assertRowLevelPermissionRuleLinksOrThrow', () => {
     expect(() =>
       assertRowLevelPermissionRuleLinksOrThrow({
         declaredRules: [],
-        ruleLinkedEntities: [PREDICATE],
+        predicateGroups: [],
+        predicates: [PREDICATE],
       }),
     ).toThrow('which its role does not declare');
   });
@@ -38,8 +57,33 @@ describe('assertRowLevelPermissionRuleLinksOrThrow', () => {
         declaredRules: [
           { ...RULE, objectMetadataUniversalIdentifier: 'person' },
         ],
-        ruleLinkedEntities: [PREDICATE],
+        predicateGroups: [],
+        predicates: [PREDICATE],
       }),
     ).toThrow('are not on the same object');
+  });
+
+  it('should throw when a predicate is not on the rule of the group that contains it', () => {
+    expect(() =>
+      assertRowLevelPermissionRuleLinksOrThrow({
+        declaredRules: [RULE, OTHER_RULE],
+        predicateGroups: [
+          GROUP,
+          {
+            ...GROUP,
+            universalIdentifier: 'nested-group',
+            rowLevelPermissionRuleUniversalIdentifier: null,
+            parentRowLevelPermissionPredicateGroupUniversalIdentifier: 'group',
+          },
+        ],
+        predicates: [
+          {
+            ...PREDICATE,
+            rowLevelPermissionRuleUniversalIdentifier: 'other-rule',
+            rowLevelPermissionPredicateGroupUniversalIdentifier: 'nested-group',
+          },
+        ],
+      }),
+    ).toThrow('is not the rule of the group that contains it');
   });
 });
