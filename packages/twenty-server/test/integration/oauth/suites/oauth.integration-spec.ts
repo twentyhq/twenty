@@ -334,6 +334,7 @@ describe('OAuth (integration)', () => {
       query FindApplicationRegistrationByClientId($clientId: String!) {
         findApplicationRegistrationByClientId(clientId: $clientId) {
           name
+          logoUrl
           isVerified
           isClaimingVerifiedClientName
         }
@@ -361,6 +362,7 @@ describe('OAuth (integration)', () => {
 
       expect(await lookUp(metadata.body.cli_client_id)).toEqual({
         name: 'Twenty CLI',
+        logoUrl: '/images/oauth-clients/twenty-cli.svg',
         isVerified: true,
         isClaimingVerifiedClientName: false,
       });
@@ -384,6 +386,7 @@ describe('OAuth (integration)', () => {
 
       expect(await lookUp(registration.body.client_id)).toEqual({
         name: 'Twenty CLI',
+        logoUrl: null,
         isVerified: false,
         isClaimingVerifiedClientName: true,
       });
@@ -392,6 +395,7 @@ describe('OAuth (integration)', () => {
     it('should neither verify nor flag any other client', async () => {
       expect(await lookUp(testRegistration.oAuthClientId)).toEqual({
         name: testRegistration.name,
+        logoUrl: null,
         isVerified: false,
         isClaimingVerifiedClientName: false,
       });

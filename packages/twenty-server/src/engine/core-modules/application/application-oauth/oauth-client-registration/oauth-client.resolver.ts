@@ -10,6 +10,7 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { isVerifiedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-registration.util';
+import { findVerifiedOAuthClientLogoPath } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-logo-path.util';
 import { isVerifiedOAuthClientName } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-name.util';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
@@ -56,7 +57,10 @@ export class OAuthClientResolver {
         logoUrl:
           this.applicationRegistrationAssetUrlService.buildLogoUrl(
             registration,
-          ),
+          ) ??
+          (isVerified
+            ? findVerifiedOAuthClientLogoPath(registration.universalIdentifier)
+            : null),
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
         isVerified,
