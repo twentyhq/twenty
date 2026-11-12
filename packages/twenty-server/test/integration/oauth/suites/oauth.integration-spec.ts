@@ -1121,10 +1121,10 @@ describe('OAuth (integration)', () => {
   });
 
   describe('Per-user authorizations', () => {
-    const exchangeForTokens = async (
+    const exchangeForTokens = async ({
       scope = 'read write',
       userId = TEST_USER_ID,
-    ): Promise<{
+    }: { scope?: string; userId?: string } = {}): Promise<{
       accessToken: string;
       refreshToken: string;
     }> => {
@@ -1193,7 +1193,7 @@ describe('OAuth (integration)', () => {
 
     // 'read' alone, so the assertion fails if the declared scope is used instead of the granted one.
     it('should record the authorization with the scopes the user granted', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findAuthorization();
 
@@ -1252,7 +1252,7 @@ describe('OAuth (integration)', () => {
 
       await waitForNextSecond();
 
-      const { refreshToken } = await exchangeForTokens('read');
+      const { refreshToken } = await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findAuthorization();
 
@@ -1273,7 +1273,7 @@ describe('OAuth (integration)', () => {
 
     // Deleting the row recreates the state of tokens minted before this table existed.
     it('should backfill a refresh token that predates the authorization record without inventing a consent', async () => {
-      const { refreshToken } = await exchangeForTokens('read write');
+      const { refreshToken } = await exchangeForTokens({ scope: 'read write' });
 
       await deleteAuthorization();
 
@@ -1363,7 +1363,7 @@ describe('OAuth (integration)', () => {
       );
 
     it('should list the authorization to the user who granted it', async () => {
-      await exchangeForTokens('read');
+      await exchangeForTokens({ scope: 'read' });
 
       const authorization = await findListedAuthorization();
 
@@ -1449,14 +1449,14 @@ describe('OAuth (integration)', () => {
     const OTHER_MEMBER_USER_ID = USER_DATA_SEED_IDS.JONY;
 
     const findOtherMemberAuthorization = async () => {
-      const res = await makeMetadataApiRequest(
+      const response = await makeMetadataApiRequest(
         LIST_WORKSPACE_AUTHORIZATIONS_OPERATION,
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
       );
 
-      expect(res.body.errors).toBeUndefined();
+      expect(response.body.errors).toBeUndefined();
 
-      return res.body.data.workspaceApplicationAuthorizations.find(
+      return response.body.data.workspaceApplicationAuthorizations.find(
         (authorization: { applicationId: string; userId: string }) =>
           authorization.applicationId === testApplication.id &&
           authorization.userId === OTHER_MEMBER_USER_ID,
@@ -1472,7 +1472,7 @@ describe('OAuth (integration)', () => {
     );
 
     it('should list another member authorization to a user who manages applications', async () => {
-      await exchangeForTokens('read write', OTHER_MEMBER_USER_ID);
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
 
       expect(await findOtherMemberAuthorization()).toEqual({
         id: expect.any(String),
@@ -1484,10 +1484,9 @@ describe('OAuth (integration)', () => {
     });
 
     it('should let a user who manages applications revoke another member authorization', async () => {
-      const { refreshToken } = await exchangeForTokens(
-        'read write',
-        OTHER_MEMBER_USER_ID,
-      );
+      const { refreshToken } = await exchangeForTokens({
+        userId: OTHER_MEMBER_USER_ID,
+      });
 
       const { id } = await findOtherMemberAuthorization();
 
@@ -1501,14 +1500,14 @@ describe('OAuth (integration)', () => {
         revokeResponse.body.data.revokeWorkspaceApplicationAuthorization,
       ).toBe(true);
 
-      const res = await postToken({
+      const tokenResponse = await postToken({
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
         client_id: testRegistration.oAuthClientId,
         client_secret: testClientSecret,
       }).expect(400);
 
-      expect(res.body.error).toBe('invalid_grant');
+      expect(tokenResponse.body.error).toBe('invalid_grant');
       expect(await findOtherMemberAuthorization()).toBeUndefined();
     });
 
