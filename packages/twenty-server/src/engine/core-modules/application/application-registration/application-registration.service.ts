@@ -74,6 +74,9 @@ import {
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -145,6 +148,8 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineMcpClientMode)
+    private readonly mcpClientModeCacheStorage: CacheStorageService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -535,7 +540,11 @@ export class ApplicationRegistrationService {
         ownerWorkspaceId,
       });
 
-    await this.applyUpdate({ id, update });
+    await this.applyUpdate({
+      id,
+      universalIdentifier: existingRegistration.universalIdentifier,
+      update,
+    });
 
     await this.broadcastApplicationRegistrationUpdatedById(
       id,
@@ -556,9 +565,11 @@ export class ApplicationRegistrationService {
       update: { isListed, isPreInstalled, ...update },
     } = input;
 
-    await this.findOneByIdGlobal(id);
+    const existingRegistration = await this.findOneByIdGlobal(id);
+
     await this.applyUpdate({
       id,
+      universalIdentifier: existingRegistration.universalIdentifier,
       update,
       instanceFlags: { isListed, isPreInstalled },
     });
@@ -569,10 +580,12 @@ export class ApplicationRegistrationService {
   // Instance-wide flags are kept apart from the payload so the workspace-scoped update cannot set them
   private async applyUpdate({
     id,
+    universalIdentifier,
     update,
     instanceFlags = {},
   }: {
     id: string;
+    universalIdentifier: string;
     update: UpdateApplicationRegistrationPayload;
     instanceFlags?: Pick<
       AdminUpdateApplicationRegistrationPayload,
@@ -610,6 +623,11 @@ export class ApplicationRegistrationService {
     }
 
     await this.applicationRegistrationRepository.update(id, updateData);
+
+    if (isDefined(update.oAuthRedirectUris)) {
+      await this.mcpClientModeCacheStorage.del(universalIdentifier);
+    }
+
     await this.invalidateMarketplaceAppsCache();
   }
 

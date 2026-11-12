@@ -5,12 +5,14 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { listDirectModeMcpToolNames } from 'test/integration/graphql/suites/application-role-intersection/utils/list-direct-mode-mcp-tool-names.util';
 import { listMcpTools } from 'test/integration/graphql/suites/user-session/utils/list-mcp-tools.util';
+import { updateApplicationRegistration } from 'test/integration/metadata/suites/application/utils/update-application-registration.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AppTokenType } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { EXECUTE_TOOL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -444,6 +446,7 @@ describe('OAuth (integration)', () => {
       ApplicationRegistrationSourceType.LOCAL,
     ])('ChatGPT MCP with a %s registration', (sourceType) => {
       let token: string;
+      let registrationId: string;
 
       beforeAll(async () => {
         const redirectUri =
@@ -457,6 +460,7 @@ describe('OAuth (integration)', () => {
         });
 
         createdEntityIds.registrations.push(chatGptRegistration.id);
+        registrationId = chatGptRegistration.id;
 
         const code = await createAuthorizationCode(
           chatGptRegistration.oAuthClientId,
@@ -491,7 +495,7 @@ describe('OAuth (integration)', () => {
           expect.arrayContaining([
             'get_tool_catalog',
             'learn_tools',
-            'execute_tool',
+            EXECUTE_TOOL_TOOL_NAME,
           ]),
         );
         expect(toolNames).not.toContain('find_many_companies');
@@ -521,7 +525,44 @@ describe('OAuth (integration)', () => {
         const directToolNames = await listDirectModeMcpToolNames({ token });
 
         expect(directToolNames).toContain('list_object_metadata_names');
-        expect(directToolNames).not.toContain('execute_tool');
+        expect(directToolNames).not.toContain(EXECUTE_TOOL_TOOL_NAME);
+      });
+
+      it('should refresh discovery immediately after callback URLs change', async () => {
+        const initialCatalog = await listMcpTools({ token });
+
+        expect(initialCatalog.body.result.tools).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ name: EXECUTE_TOOL_TOOL_NAME }),
+          ]),
+        );
+
+        for (const { redirectUri, isMetaMode } of [
+          {
+            redirectUri: 'https://claude.ai/api/mcp/auth_callback',
+            isMetaMode: false,
+          },
+          {
+            redirectUri:
+              'https://chatgpt.com/connector_platform_oauth_redirect',
+            isMetaMode: true,
+          },
+        ]) {
+          const { errors } = await updateApplicationRegistration({
+            id: registrationId,
+            update: { oAuthRedirectUris: [redirectUri] },
+          });
+
+          expect(errors).toBeUndefined();
+
+          const { status, body } = await listMcpTools({ token });
+          const tools: { name: string }[] = body.result.tools;
+
+          expect(status).toBe(200);
+          expect(
+            tools.some(({ name }) => name === EXECUTE_TOOL_TOOL_NAME),
+          ).toBe(isMetaMode);
+        }
       });
     });
 
