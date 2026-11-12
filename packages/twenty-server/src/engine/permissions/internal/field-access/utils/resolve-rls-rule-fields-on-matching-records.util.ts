@@ -1,10 +1,9 @@
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
 } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { type RlsRuleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields-on-matching-records.type';
 import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
@@ -27,9 +26,7 @@ export const resolveRlsRuleFieldsOnMatchingRecords = ({
   }[];
   records: object[];
   findRelationJoinValues: RowAccessEvaluationContext['findRelationJoinValues'];
-}): Promise<
-  { fieldMetadataIds: string[]; recordFilter: RecordGqlOperationFilter }[]
-> =>
+}): Promise<RlsRuleFieldsOnMatchingRecords[]> =>
   Promise.all(
     rlsRuleFields.map(async ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
       fieldMetadataIds,

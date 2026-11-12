@@ -1,6 +1,3 @@
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { type RlsRuleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields-on-matching-records.type';
 
-export type UneditableFieldsOnMatchingRecords = {
-  fieldMetadataIds: string[];
-  recordFilter: RecordGqlOperationFilter;
-};
+export type UneditableFieldsOnMatchingRecords = RlsRuleFieldsOnMatchingRecords;
