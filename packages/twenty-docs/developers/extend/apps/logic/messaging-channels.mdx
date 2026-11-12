@@ -232,8 +232,11 @@ export default defineMessagingProvider({
   sendMessageLogicFunction: {
     universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   },
+  conversationStyle: 'chat',
 });
 ```
+
+`conversationStyle` sets how Twenty lays out the provider's conversations: `'chat'` shows message bubbles grouped by sender, like a messaging app, and `'email'` shows the email thread layout. Without it, app channels keep the chat layout. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Bind a channel to it when you create the channel, or later with `updateMessageChannel` (passing `null` unbinds it):
 
@@ -250,7 +253,7 @@ await createMessageChannel({
 
 The messaging provider must belong to your app and use the connection provider of the channel's account; its connection provider cannot change after the first sync. Changing the send function in a later version applies to every channel bound to the provider.
 
-Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, the text and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
+Replies are sent with the `sendAppChannelMessage` mutation, which takes the channel, the thread, either the `text` or, for providers whose `conversationStyle` is `'email'`, an `email` block (`to`, `cc`, `bcc`, `subject`, rich text `body`, `inReplyTo`), and an `idempotencyKey` (a UUID the client generates per reply and reuses when retrying it), and runs the provider's function:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -274,6 +277,8 @@ export const linkedinSendMessageHandler = async ({
 
 The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
 
+The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Attachments are not sent yet. Requires `"engines": { "twenty": ">=2.58.0" }`.
+
 When the workspace has message attachments enabled, a member can attach files to a reply, and the reply may then have an empty `text`. The payload's `attachments` lists them, and is an empty array for a text-only reply. Each one has a `filename`, a `contentType`, a `size` in bytes and a `downloadUrl`: a signed link your function fetches to get the file, so the bytes never travel in the payload. Check `size` against your provider's limit before downloading, and throw when the provider cannot deliver a file rather than sending the text alone, so the member sees the reply fail:
 
 ```ts
@@ -286,7 +291,7 @@ const files = await Promise.all(
 );
 ```
 
-`attachments` requires `"engines": { "twenty": ">=2.57.0" }`.
+`attachments` requires `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients and its attachments, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
@@ -342,7 +347,7 @@ Each recipient carries its `personId`, its `displayName`, and the `handle` the p
 
 Return the sent message's `externalId` and the new conversation's `threadExternalId`, using the same thread id your ingestion uses so later messages land in the same thread. Return each recipient's `handle` in `recipients` unless the payload already carried it: Twenty records the message as an outgoing message from the channel to that handle, linked to the Person, and opens the new thread. Replies then go through your `sendMessageLogicFunction` as usual.
 
-Retries, idempotency and failures behave as for [replies](#sending-replies), keyed on the person instead of the thread. A channel whose provider has no `startConversationLogicFunction` refuses the mutation, and the "New message" entry only lists channels that can start conversations. Requires `"engines": { "twenty": ">=2.57.0" }`.
+Retries, idempotency and failures behave as for [replies](#sending-replies), keyed on the person instead of the thread. A channel whose provider has no `startConversationLogicFunction` refuses the mutation, and the "New message" entry only lists channels that can start conversations. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 ## Marking threads as read
 
@@ -371,7 +376,7 @@ export const linkedinMarkThreadAsReadHandler = async ({
 };
 ```
 
-When the owner of the channel's account opens one of its threads, Twenty calls the `markAppChannelThreadAsRead` mutation, which runs your function with the `messagingProviderName`, the `connectedAccountId`, the `messageChannelId` and the conversation's `threadExternalId`. Its return value is ignored. Members the account is only shared with never trigger it, and calls for the same member and thread are skipped for 30 seconds, so reopening a conversation does not call your provider again. The call is best effort: the thread opens whatever your function does. A provider without `markThreadAsReadLogicFunction` is never called. Requires `"engines": { "twenty": ">=2.57.0" }`.
+When the owner of the channel's account opens one of its threads, Twenty calls the `markAppChannelThreadAsRead` mutation, which runs your function with the `messagingProviderName`, the `connectedAccountId`, the `messageChannelId` and the conversation's `threadExternalId`. Its return value is ignored. Members the account is only shared with never trigger it, and calls for the same member and thread are skipped for 30 seconds, so reopening a conversation does not call your provider again. The call is best effort: the thread opens whatever your function does. A provider without `markThreadAsReadLogicFunction` is never called. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
 ## Listing and updating channels
 

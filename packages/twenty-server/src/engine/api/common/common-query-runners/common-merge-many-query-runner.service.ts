@@ -119,14 +119,14 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     context: CommonExtendedQueryRunnerContext,
     args: CommonExtendedInput<MergeManyQueryArgs>,
   ): Promise<ObjectRecord[]> {
-    const restrictedFields =
-      await this.recordPermissionsService.findRestrictedFields({
+    const unreadableFieldMetadataIds =
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: context.permissionsPrincipals,
         objectMetadataId: context.flatObjectMetadata.id,
       });
 
     const columnsToSelect = getAllSelectableColumnNames({
-      restrictedFields,
+      unreadableFieldMetadataIds,
       objectMetadata: {
         objectMetadataMapItem: context.flatObjectMetadata,
         flatFieldMetadataMaps: context.flatFieldMetadataMaps,
@@ -215,19 +215,13 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       transactionScope,
     } = queryRunnerContext;
 
-    const restrictedFields =
-      await this.recordPermissionsService.findRestrictedFields({
+    const unreadableFieldMetadataIds =
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: permissionsPrincipals,
         objectMetadataId: flatObjectMetadata.id,
       });
 
-    const unreadableFieldIds = new Set(
-      Object.entries(restrictedFields)
-        .filter(([, fieldPermissions]) => fieldPermissions.canRead === false)
-        .map(([fieldMetadataId]) => fieldMetadataId),
-    );
-
-    if (unreadableFieldIds.size === 0) {
+    if (unreadableFieldMetadataIds.size === 0) {
       return;
     }
 
@@ -241,7 +235,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       ...fieldIdByName,
       ...fieldIdByJoinColumnName,
     })
-      .filter(([, fieldMetadataId]) => unreadableFieldIds.has(fieldMetadataId))
+      .filter(([, fieldMetadataId]) =>
+        unreadableFieldMetadataIds.has(fieldMetadataId),
+      )
       .map(([recordKey]) => recordKey);
 
     const unrestrictedRepository = isDefined(transactionScope)
@@ -255,7 +251,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     const fullRecords = await unrestrictedRepository.find({
       where: { id: In(ids) },
       select: getAllSelectableColumnNames({
-        restrictedFields: {},
+        unreadableFieldMetadataIds: new Set(),
         objectMetadata: {
           objectMetadataMapItem: flatObjectMetadata,
           flatFieldMetadataMaps,

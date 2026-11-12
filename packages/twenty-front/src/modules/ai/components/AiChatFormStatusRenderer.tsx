@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconListDetails } from 'twenty-ui/icon';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { useIsAgentChatToolCallAskedInComposer } from '@/ai/hooks/useIsAgentChatToolCallAskedInComposer';
 import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
 
 export const AiChatFormStatusRenderer = ({
@@ -19,6 +20,9 @@ export const AiChatFormStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
+  const isAskedInComposer = useIsAgentChatToolCallAskedInComposer(
+    toolPart.toolCallId,
+  );
 
   const fields =
     (toolPart.input as Partial<RequestFormToolInput> | undefined)?.fields ?? [];
@@ -33,6 +37,10 @@ export const AiChatFormStatusRenderer = ({
     answered: t`Form submitted`,
     skipped: t`Form skipped`,
   };
+
+  if (isAskedInComposer) {
+    return null;
+  }
 
   return (
     <AiChatAskStatusRow

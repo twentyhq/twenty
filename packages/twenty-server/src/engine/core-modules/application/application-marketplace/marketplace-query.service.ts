@@ -9,6 +9,7 @@ import {
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
@@ -183,6 +184,9 @@ export class MarketplaceQueryService {
         manifest?.application?.requestedIframeMediaPermissions,
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
+      content: isDefined(manifest)
+        ? buildApplicationContentFromManifest(manifest)
+        : undefined,
       manifest: registration.manifest ?? undefined,
     };
   }

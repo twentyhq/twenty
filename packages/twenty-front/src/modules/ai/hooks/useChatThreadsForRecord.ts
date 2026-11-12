@@ -131,7 +131,7 @@ export const useChatThreadsForRecord = ({
   );
   const canReadSomeRecords = canReachSomeRecords({
     objectRecordsPermissions: junctionObjectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { threads, refetchLimit } = getChatThreadsForRecordPage({

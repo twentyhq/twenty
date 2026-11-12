@@ -1,4 +1,3 @@
-import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
@@ -21,12 +20,16 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const StyledScroll = styled.div`
-  container-name: getting-started-scroll;
+const StyledPage = styled.div`
+  container-name: getting-started-page;
   container-type: inline-size;
+  display: flex;
   flex: 1;
-  overflow: auto;
-  padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: ${themeCssVariables.spacing[20]} ${themeCssVariables.spacing[10]}
+    ${themeCssVariables.spacing[12]};
 `;
 
 const StyledContent = styled.div`
@@ -35,14 +38,15 @@ const StyledContent = styled.div`
   gap: ${themeCssVariables.spacing[8]};
   margin: 0 auto;
   max-width: ${GETTING_STARTED_CONTENT_MAX_WIDTH}px;
+  min-height: 0;
+  width: 100%;
 `;
 
 const StyledHeading = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[5]};
-  margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-bottom: ${themeCssVariables.spacing[12]};
   text-align: center;
 `;
 
@@ -92,8 +96,7 @@ const StyledDigit = styled.span`
 export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
-  const { daysLeft, isCountdownVisible, canKeepPlan } =
-    useGettingStartedTrial();
+  const { daysLeft, isCountdownVisible } = useGettingStartedTrial();
   const gettingStartedJustCompletedStep = useAtomStateValue(
     gettingStartedJustCompletedStepState,
   );
@@ -116,7 +119,7 @@ export const GettingStartedPageContent = () => {
   });
 
   return (
-    <StyledScroll>
+    <StyledPage>
       <StyledContent>
         <StyledHeading>
           <StyledCountdown>
@@ -142,7 +145,6 @@ export const GettingStartedPageContent = () => {
               )}
             </StyledOnboardingStepTitle>
           </StyledCountdown>
-          {canKeepPlan && <GettingStartedKeepPlanButton color="accent" />}
         </StyledHeading>
         {loading && !isDefined(progress) && (
           <Loader role="status" aria-label={t`Loading your progress`} />
@@ -171,6 +173,6 @@ export const GettingStartedPageContent = () => {
           </>
         )}
       </StyledContent>
-    </StyledScroll>
+    </StyledPage>
   );
 };

@@ -25,6 +25,11 @@ describe('validateFilePath', () => {
       fileFolder: FileFolder.Dependencies,
     },
     {
+      title: 'valid dependency type references archive',
+      resourcePath: 'shared-dependencies.mjs.types.json.gz',
+      fileFolder: FileFolder.Dependencies,
+    },
+    {
       title: 'valid unconfigured folder',
       resourcePath: 'photo.png',
       fileFolder: FileFolder.CorePicture,
@@ -88,6 +93,15 @@ describe('validateFilePath', () => {
     if (!result.isValid) {
       expect(result.error).toContain('Invalid file extension');
     }
+  });
+
+  it('should reject a dependency archive in the source folder', () => {
+    expect(
+      validateFilePath({
+        resourcePath: 'shared-dependencies.mjs.types.json.gz',
+        fileFolder: FileFolder.Source,
+      }).isValid,
+    ).toBe(false);
   });
 
   it('should short-circuit on the first failure', () => {

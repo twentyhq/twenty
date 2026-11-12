@@ -1,3 +1,5 @@
+import { recordGroupTabRecordCountByGroupIdComponentState } from '@/object-record/record-group/states/recordGroupTabRecordCountByGroupIdComponentState';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { visibleRecordGroupIdsIncludingEmptyComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsIncludingEmptyComponentSelector';
 import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -5,6 +7,7 @@ import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-r
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type ViewType } from '@/views/types/ViewType';
+import { isDefined } from 'twenty-shared/utils';
 
 export const visibleRecordGroupIdsComponentFamilySelector =
   createAtomComponentFamilySelector<RecordGroupDefinition['id'][], ViewType>({
@@ -25,6 +28,21 @@ export const visibleRecordGroupIdsComponentFamilySelector =
 
         if (!shouldHideEmptyRecordGroups) {
           return visibleRecordGroupIds;
+        }
+
+        if (get(isRecordGroupTabsDisplayedComponentSelector, { instanceId })) {
+          const recordCountByGroupId = get(
+            recordGroupTabRecordCountByGroupIdComponentState,
+            { instanceId },
+          );
+
+          if (!isDefined(recordCountByGroupId)) {
+            return visibleRecordGroupIds;
+          }
+
+          return visibleRecordGroupIds.filter(
+            (recordGroupId) => (recordCountByGroupId[recordGroupId] ?? 0) > 0,
+          );
         }
 
         return visibleRecordGroupIds.filter(

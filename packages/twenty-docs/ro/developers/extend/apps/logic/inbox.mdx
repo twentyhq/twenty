@@ -40,7 +40,7 @@ Puncte principale:
 * `workspaceMemberIds` enumeră membrii care primesc conversaţia, cel puţin unul. Primul membru al unei noi conversaţii îl deţine, iar ceilalţi îl urmăresc ca participanţi. Un trimis ulterior sub aceeaşi cheie pe care se adaugă noii membri; membrii pe care îi părăseşte conversaţia.
 * `threadKey` alege conversaţia pentru această aplicaţie, împărtăşită de fiecare membru către care este trimisă. O nouă cheie începe o conversație intitulată \`title"; o cheie pe care ai folosit-o înainte de a adăuga mesajul la acea conversație.
 * `idempotencyKey` identifică mesajul din conversaţie. Trimițând din nou cu aceleași chei nu scrie nimic nou, așa că reîncearcă și rulările simultane nu dublează niciodată un mesaj.
-* `text` este markdown, și poate avea [menționări și referințe înregistrare](#mentions-and-record-references).
+* `text` este markdown, și poate avea [menționări și referințe înregistrare](#mentions-and-record-references). Un membru menționat este notificat, chiar și atunci când nu se află în `workspaceMemberIds`.
 * `toolCall` (opţional) încheie mesajul pe unul dintre el:
   * un apel la membrii răspunsuri, care pune pauză de conversație: `ask_question` (o întrebare cu mai multe opțiuni), `request_form` (câmpuri de completat) sau `propose_tool_call` (un apel pentru aprobare). `input` acesteia ia `toolName`, `arguments` pe care le-ai apela unealtă și un `summary` de o propoziție. Unealta trebuie să fie una dintre funcțiile implicite ale aplicației dvs., cum ar fi `create_one_person` sau `update_one_oportunity` (cu înregistrarea `id`); un e-mail (`send_email` sau `draft_email`, cu `recipients`, `subject` și un `body` în HTML) nu are nevoie de permisiunea aplicației. Membrul revizuieşte apelul pe aceeaşi carte ca şi apelul propus de asistent, îl modifică dacă doresc, iar apelul aprobat se desfășoară cu acces propriu;
   * una dintre uneltele proprii ale aplicației, prin `logicFunctionUniversalIdentifier`, redat de componenta din față cu `input` și `output` pe care le treci. Nu întrerupe conversația.
@@ -71,6 +71,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+const managerMention = await inboxMention({ workspaceMemberId: manager.id });
 
 const dealReference = await inboxReferenceRecord({
   objectNameSingular: 'opportunity',
@@ -78,18 +79,20 @@ const dealReference = await inboxReferenceRecord({
 });
 
 await sendInboxMessage({
-  workspaceMemberIds: [owner.id],
+  workspaceMemberIds: [owner.id, salesOps.id],
   threadKey: `idle-deal-${opportunity.id}`,
   idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
   title: `${opportunity.name} is idle`,
-  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks. ${managerMention}, can you help?`,
 });
 ```
 
 * `inboxMention({ workspaceMemberId })` scrie o mențiune a unui membru al spațiului de lucru, iar `inboxReferenceRecord({ objectNameSingular, recordId })` un cip care se conectează la orice înregistrare.
 * Amândoi citesc eticheta pe care cipul o arată, după cum face compozitorul: numele complet al membrului, sau adresa lor de e-mail atunci când numele este gol și identificatorul etichetei înregistrării, cum ar fi numele companiei. Parantezele devin paranteze şi rupturile de linie devin spaţii, astfel încât cipul se redă întotdeauna.
 * Au citit cu acelaşi acces ca şi restul apelului, astfel încât accesul trebuie să ajungă la membru sau la înregistrare. O referință de înregistrare face două solicitări, una pentru câmpul de etichetare al obiectului și una pentru înregistrare.
-* O mențiune doar de randare. Acesta nu adaugă membrul la conversație sau îi notifică, așa că listează pe toți cei care ar trebui să primească mesajul în `workspaceMemberIds`.
+* Un membru menționat primește conversația în mesaje primite, ca necitită, cu o mențiune de rezolvat, ca atunci când un coleg îl menționează. Nu trebuie să se afle în `workspaceMemberIds`, iar membrul care deține conversația poate fi, de asemenea, menționat. Un membru menționat care nu poate avea conversația, de exemplu fără permisiunea `AI`, este omis, iar mesajul este totuși trimis.
+* Mențiunile notifică o singură dată, atunci când mesajul este scris prima dată: trimiterea lui din nou cu aceleași chei nu notifică pe nimeni, chiar și cu un `text` diferit, iar un nou `idempotencyKey` menționează din nou.
+* Doar o mențiune completă notifică. O mențiune în cod inline sau într-un bloc de cod, una ale cărei paranteze sunt escape-uite (`\[\[`), și un `@name` tastat nu notifică pe nimeni. O referință la înregistrare nu notifică niciodată și nu partajează niciodată înregistrarea.
 * `INBOX_ASSISTANT_MENTION` scrie referința canonică a asistentului din editor. Căsuța de primire o afișează ca `@Ada`; identitatea sa stabilă este separată de eticheta sa. Această referință singură nu solicită un răspuns al asistentului dintr-un mesaj al aplicației.
 
 ## Atașarea înregistrărilor la o conversație
@@ -121,5 +124,29 @@ await attachRecordToInboxThread({
 * Ambele sunt idempotente: asocierea aceleiași înregistrări de două ori păstrează o singură asociere, iar eliminarea asocierii unei înregistrări care nu este asociată nu modifică nimic.
 * Apelul rulează cu același acces ca [trimiterea unui mesaj](#who-sends-the-message), care necesită permisiunea `AI`. Un membru trebuie să poată edita conversația, iar aplicația dvs. poate acționa asupra unei conversații pe care a scris-o ea însăși sau asupra uneia care a fost acordată rolului său implicit; în caz contrar, apelul eșuează cu `THREAD_NOT_FOUND`.
 * Înregistrarea trebuie să poată fi citită cu acel acces, altfel apelul eșuează cu `RECORD_NOT_FOUND`.
+
+## Arhivarea unei conversații
+
+`archiveInboxThread()` arhivează o conversație creată de aplicația dvs., pentru membrii pe care îi specificați, ca și cum fiecare dintre ei ar fi arhivat-o din căsuța sa de primire. Utilizați-o atunci când activitatea din spatele unui mesaj a fost finalizată în altă parte: e-mailul pe care l-ați propus a fost trimis din Gmail, întâlnirea despre care ați întrebat a fost aprobată în calendar.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+* Doar aplicația dvs. o poate apela, pentru o conversație pe care a creat-o ea însăși sau una la care rolului său implicit i s-a acordat acces; în caz contrar, apelul eșuează cu `THREAD_NOT_FOUND`. Membrii arhivează din propriile căsuțe de primire.
+* Fiecare membru pe care îl numiți trebuie să poată citi conversația. Dacă unul nu poate, apelul eșuează cu `THREAD_NOT_FOUND` și o arhivează pentru nimeni.
+* Un mesaj nou în conversație o readuce în inbox, la fel cum se întâmplă după ce un membru o arhivează.
+* Un membru care a încetat să urmărească conversația este omis, astfel încât aceasta rămâne în afara inboxului său.
+
+Omiteți `workspaceMemberIds` pentru a marca în schimb o conversație ca finalizată în canalul său, așa cum face un membru din vizualizarea canalului. Inboxurile proprii ale membrilor rămân neschimbate, iar o conversație care nu se află în niciun canal eșuează cu `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
 
 <PageBanner illustration="card-page-inbox" />

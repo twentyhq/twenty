@@ -92,6 +92,7 @@ const createExport = () => ({
 });
 let exported = createExport();
 let forbidden = false;
+let isSourceFileExportUnsupported = false;
 let customApplication: { universalIdentifier: string } | null = {
   universalIdentifier: SOURCE_TEST_APPLICATION_ID,
 };
@@ -104,6 +105,20 @@ const server = await startTestServer((request, response) => {
           workspaceCustomApplication: customApplication,
         },
       },
+    });
+  }
+  if (
+    isSourceFileExportUnsupported &&
+    request.body.includes('shouldIncludeSourceFiles')
+  ) {
+    return sendJson(response, 400, {
+      errors: [
+        {
+          message:
+            'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
+          extensions: { code: 'GRAPHQL_VALIDATION_FAILED' },
+        },
+      ],
     });
   }
   if (forbidden) {
@@ -148,6 +163,7 @@ describe('app pull command with the packaged worker', () => {
     sdkPath = await createSourceTestApp(appPath);
     await writeFile(join(appPath, 'app.ts'), sourceApplication());
     exported = createExport();
+    isSourceFileExportUnsupported = false;
     forbidden = false;
     customApplication = { universalIdentifier: SOURCE_TEST_APPLICATION_ID };
     server.requests.length = 0;
@@ -211,6 +227,41 @@ describe('app pull command with the packaged worker', () => {
     expect((await runJson()).envelope.data.writes).toEqual([]);
   });
 
+  it('keeps metadata and dependency pull working on servers without source export', async () => {
+    isSourceFileExportUnsupported = true;
+    exported.coverage.push({
+      metadataName: 'frontComponent',
+      universalIdentifier: '11111111-1111-4111-8111-111111111111',
+      status: 'UNSUPPORTED',
+      reason: 'front components are not exported yet',
+    });
+    exported.files.push({
+      folder: 'dependencies',
+      path: 'yarn.lock',
+      content: 'legacy-lock',
+    });
+    const result = await runJson();
+    expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
+      'legacy-lock',
+    );
+    expect(result.envelope.data.coverage).toEqual(exported.coverage);
+    expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
+    const requests = server.requests
+      .filter((request) => request.body.includes('exportApplication'))
+      .map((request) => readGraphqlRequest(request).arguments);
+    expect(requests).toEqual([
+      {
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        shouldIncludeDependencies: true,
+        shouldIncludeSourceFiles: true,
+      },
+      {
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        shouldIncludeDependencies: true,
+      },
+    ]);
+  });
+
   it.each([true, false])(
     'pulls dependencies and keeps the app usable with an exported SDK dependency: %s',
     async (hasSdk) => {
@@ -236,6 +287,7 @@ describe('app pull command with the packaged worker', () => {
         {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
+          shouldIncludeSourceFiles: true,
         },
       ]);
       const pulledPackageJson = await readFile(
@@ -447,6 +499,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
     expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
       universalIdentifier: SOURCE_TEST_APPLICATION_ID,
       shouldIncludeDependencies: true,
+      shouldIncludeSourceFiles: true,
     });
     expect(
       await readFile(join(appPath, 'src/application.config.ts'), 'utf8'),
@@ -466,6 +519,7 @@ export default defineObject({ nameSingular: 'invalid' });`,
       expect(readGraphqlRequest(server.requests[1]).arguments).toEqual({
         universalIdentifier: SOURCE_TEST_APPLICATION_ID,
         shouldIncludeDependencies: true,
+        shouldIncludeSourceFiles: true,
       });
       expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();
       expect(promptInTerminal).not.toHaveBeenCalled();

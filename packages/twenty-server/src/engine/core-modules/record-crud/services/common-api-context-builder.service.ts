@@ -17,8 +17,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -33,8 +33,8 @@ export type CommonApiContext = {
 export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
   ) {}
 
   async build({
@@ -90,17 +90,17 @@ export class CommonApiContextBuilderService {
     }
 
     const principals =
-      await this.principalPermissionsService.buildPermissionsPrincipalsOrThrow({
-        authContext,
-      });
-
-    const unreadableFieldMetadataIds =
-      await this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
+      await this.principalPermissionsReadService.resolvePermissionsPrincipalsOrThrow(
         {
-          principals,
-          objectMetadataId: flatObjectMetadata.id,
+          authContext,
         },
       );
+
+    const unreadableFieldMetadataIds =
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
+        principals,
+        objectMetadataId: flatObjectMetadata.id,
+      });
 
     const selectedFields = buildFieldSelection({
       unreadableFieldMetadataIds,

@@ -57,7 +57,9 @@ export const SpreadsheetImportSingleSelectTable = <
       }
     };
 
-  if (!rows.length) return null;
+  if (!rows.length) {
+    return null;
+  }
 
   return (
     <RadioGroup

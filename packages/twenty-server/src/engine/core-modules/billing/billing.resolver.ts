@@ -218,16 +218,15 @@ export class BillingResolver {
           return {
             url: successUrl,
           };
-        } else {
-          const checkoutSessionURL =
-            await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
-              checkoutSessionParams,
-            );
-
-          return {
-            url: checkoutSessionURL,
-          };
         }
+        const checkoutSessionURL =
+          await this.billingPortalWorkspaceService.computeCheckoutSessionURL(
+            checkoutSessionParams,
+          );
+
+        return {
+          url: checkoutSessionURL,
+        };
       },
     });
   }

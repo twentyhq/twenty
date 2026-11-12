@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SOFT_DELETE_FILTER_FIELD_NAME } from '@/object-record/record-filter/constants/SoftDeleteFilterFieldName';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
+import { RecordFilterOperand } from 'twenty-shared/types';
 import { getRecordFilterFieldMetadataItem } from '@/object-record/record-filter/utils/getRecordFilterFieldMetadataItem';
 import { isRecordFilterAboutSoftDelete as isRecordFilterAboutSoftDeleteUtil } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 

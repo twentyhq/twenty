@@ -18,7 +18,9 @@ export const validateMultiSelectFieldOrThrow = (
 ): string | string[] | null => {
   const preValidatedValue = validateArrayFieldOrThrow(value, fieldName);
 
-  if (isNull(preValidatedValue)) return null;
+  if (isNull(preValidatedValue)) {
+    return null;
+  }
 
   if (!isDefined(options)) {
     throw new CommonQueryRunnerException(

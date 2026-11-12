@@ -2,7 +2,10 @@ import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type'
 import { PROVIDER_NAME_PATTERN } from '@/sdk/define/common/constants/provider-name-pattern.constant';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
-import { type MessagingProviderManifest } from 'twenty-shared/application';
+import {
+  MESSAGING_PROVIDER_CONVERSATION_STYLES,
+  type MessagingProviderManifest,
+} from 'twenty-shared/application';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 export const defineMessagingProvider: DefineEntity<
@@ -70,6 +73,15 @@ export const defineMessagingProvider: DefineEntity<
   ) {
     errors.push(
       `Messaging provider markThreadAsReadLogicFunction.universalIdentifier "${config.markThreadAsReadLogicFunction.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
+    );
+  }
+
+  if (
+    isDefined(config.conversationStyle) &&
+    !MESSAGING_PROVIDER_CONVERSATION_STYLES.includes(config.conversationStyle)
+  ) {
+    errors.push(
+      `Messaging provider conversationStyle "${config.conversationStyle}" must be one of ${MESSAGING_PROVIDER_CONVERSATION_STYLES.join(', ')}`,
     );
   }
 

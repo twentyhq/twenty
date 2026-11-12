@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   type FieldPermissionManifest,
   type ObjectPermissionManifest,
@@ -161,6 +162,15 @@ export const reconstructRolesManifest = ({
   for (const flatFieldPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatFieldPermissionMaps,
   )) {
+    // Manifests do not declare field permissions on a row level permission rule yet
+    if (
+      isDefined(
+        flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
+      )
+    ) {
+      continue;
+    }
+
     if (
       decideRoleChild({
         metadataName: 'fieldPermission',

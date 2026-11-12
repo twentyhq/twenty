@@ -168,7 +168,7 @@ export class ApplicationUpgradeService {
       applications,
       UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE,
     )) {
-      const batchJobIds =
+      const { jobs: batchJobs } =
         await this.applicationUpgradeQueueService.bulkAdd<UpgradeWorkspaceApplicationJobData>(
           UPGRADE_WORKSPACE_APPLICATION_JOB_NAME,
           applicationsBatch.map((application) => ({
@@ -183,7 +183,7 @@ export class ApplicationUpgradeService {
           UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS,
         );
 
-      jobIds.push(...batchJobIds);
+      jobIds.push(...batchJobs.map(({ jobId }) => jobId));
     }
 
     return jobIds;

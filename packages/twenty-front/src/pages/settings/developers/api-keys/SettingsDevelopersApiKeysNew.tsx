@@ -76,7 +76,9 @@ export const SettingsDevelopersApiKeysNew = () => {
   );
 
   const handleSave = async () => {
-    if (!formValues.name) return;
+    if (!formValues.name) {
+      return;
+    }
 
     const expiresAt = addDays(
       new Date(),

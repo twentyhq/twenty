@@ -3,7 +3,6 @@ export enum CurrencyCode {
   AFN = 'AFN',
   ALL = 'ALL',
   AMD = 'AMD',
-  ANG = 'ANG',
   AOA = 'AOA',
   ARS = 'ARS',
   AUD = 'AUD',

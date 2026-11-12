@@ -25,6 +25,7 @@ type SettingsAiBehaviorSectionProps = {
   isLoading?: boolean;
   disabled?: boolean;
   errorMessage?: string;
+  assistantName?: string;
 };
 
 const StyledBehaviorMessages = styled.div`
@@ -42,6 +43,7 @@ export const SettingsAiBehaviorSection = ({
   isLoading = false,
   disabled = false,
   errorMessage,
+  assistantName = AGENT_CHAT_ASSISTANT_NAME,
 }: SettingsAiBehaviorSectionProps) => {
   const { t } = useLingui();
   const sectionId = useId();
@@ -58,7 +60,7 @@ export const SettingsAiBehaviorSection = ({
     <Section.Root>
       <Section.Header
         title={t`Behavior`}
-        description={t`Choose when ${AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace`}
+        description={t`Choose when ${assistantName} participates in conversations across your workspace`}
       />
       <Card.Root
         backgroundColor={themeCssVariables.background.secondary}
@@ -98,7 +100,7 @@ export const SettingsAiBehaviorSection = ({
       </Card.Root>
       <StyledBehaviorMessages>
         <Text id={helperId} size="sm" color="tertiary">
-          {t`Never keeps ${AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks ${AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets ${AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and ${AGENT_CHAT_ASSISTANT_NAME} always get replies.`}
+          {t`Never keeps ${assistantName} out. Only when mentioned asks ${assistantName} to reply when tagged. Auto lets ${assistantName} decide when to reply. Chats with only you and ${assistantName} always get replies.`}
         </Text>
         {isLoading && (
           <Text aria-hidden size="sm" color="tertiary">

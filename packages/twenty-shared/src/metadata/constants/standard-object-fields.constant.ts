@@ -402,16 +402,6 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
       }),
     },
-    targetWorkflow: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-      }),
-    },
     targetWorkflowVersion: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -543,16 +533,6 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.dashboard,
-      }),
-    },
-    targetWorkflow: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
       }),
     },
     targetAgentChatThread: {
@@ -1401,6 +1381,9 @@ export const STANDARD_OBJECT_FIELDS = {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
     ),
+    objectMetadataId: {
+      universalIdentifier: 'a1e1a495-ed2e-4e8d-8814-6ef0d1e484d0',
+    },
     roleId: {
       universalIdentifier: '0f8c81b0-6d46-4593-97cb-97216de930ff',
     },
@@ -1522,58 +1505,6 @@ export const STANDARD_OBJECT_FIELDS = {
       }),
     },
   },
-  workflow: {
-    ...buildStandardObjectSystemFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-    ),
-    name: { universalIdentifier: '20202020-b3d3-478f-acc0-5d901e725b20' },
-    lastPublishedVersionId: {
-      universalIdentifier: '20202020-326a-4fba-8639-3456c0a169e8',
-    },
-    coreWorkflowId: {
-      universalIdentifier: '20202020-058a-42ad-8eb8-0662a5552aad',
-    },
-    statuses: { universalIdentifier: '20202020-357c-4432-8c50-8c31b4a552d9' },
-    versions: { universalIdentifier: '20202020-9432-416e-8f3c-27ee3153d099' },
-    runs: { universalIdentifier: '20202020-759b-4340-b58b-e73595c4df4f' },
-    automatedTriggers: {
-      universalIdentifier: '20202020-3319-4234-a34c-117ecad2b8a9',
-    },
-    timelineActivities: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
-      }),
-    },
-    attachments: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
-      }),
-    },
-  },
-  workflowAutomatedTrigger: {
-    ...buildStandardObjectSystemFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
-    ),
-    type: {
-      universalIdentifier: '20202020-3319-4234-a34c-3f92c1ab56e7',
-    },
-    settings: {
-      universalIdentifier: '20202020-3319-4234-a34c-bac8f903de12',
-    },
-    workflow: {
-      universalIdentifier: '20202020-3319-4234-a34c-8e1a4d2f7c03',
-    },
-  },
   workflowRun: {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
@@ -1581,9 +1512,6 @@ export const STANDARD_OBJECT_FIELDS = {
     name: { universalIdentifier: '20202020-b840-4253-aef9-4e5013694587' },
     workflowVersion: {
       universalIdentifier: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
-    },
-    workflow: {
-      universalIdentifier: '20202020-8c57-4e7f-84f5-f373f68e1b82',
     },
     enqueuedAt: {
       universalIdentifier: '20202020-f1e3-4de1-a461-b5c4fdbc861d',
@@ -1619,9 +1547,6 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
     ),
     name: { universalIdentifier: '20202020-a12f-4cca-9937-a2e40cc65509' },
-    workflow: {
-      universalIdentifier: '20202020-afa3-46c3-91b0-0631ca6aa1c8',
-    },
     trigger: {
       universalIdentifier: '20202020-4eae-43e7-86e0-212b41a30b48',
     },

@@ -110,9 +110,8 @@ export const triggerAttachRelationOptimisticEffect = ({
             ...targetRecordFieldValue,
             edges: nextEdges,
           };
-        } else {
-          return sourceRecordReference;
         }
+        return sourceRecordReference;
       },
     },
   });

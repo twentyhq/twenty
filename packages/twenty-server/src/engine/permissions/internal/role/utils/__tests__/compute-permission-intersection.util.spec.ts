@@ -1,8 +1,8 @@
 import {
   type ObjectRecordsPermissions,
-  type RestrictedFieldsPermissions,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
+  type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
@@ -24,16 +24,20 @@ const ALL_GRANTED: AllRecordsGrants = {
 };
 
 const buildAllRecordsPermissions = ({
-  restrictedFields = {},
+  unreadableFields = [],
+  uneditableFields = [],
   ...grants
-}: AllRecordsGrants & {
-  restrictedFields?: RestrictedFieldsPermissions;
-}): ObjectRecordsPermissions => ({
+}: AllRecordsGrants &
+  Partial<
+    Pick<ObjectRecordsPermissions, 'unreadableFields' | 'uneditableFields'>
+  >): ObjectRecordsPermissions => ({
+  canCreateAllRecords: grants.canUpdate,
   canReadAllRecords: grants.canRead,
   canUpdateAllRecords: grants.canUpdate,
   canSoftDeleteAllRecords: grants.canSoftDelete,
   canDestroyAllRecords: grants.canDestroy,
-  restrictedFields,
+  unreadableFields,
+  uneditableFields,
 });
 
 const buildRoleRecordsPermissions = (
@@ -49,6 +53,29 @@ const buildRoleRecordsPermissions = (
 describe('computePermissionIntersection', () => {
   const objectMetadataId1 = 'object-1';
   const objectMetadataId2 = 'object-2';
+
+  describe('create permission', () => {
+    const buildRole = (
+      objectRecordsPermissions: Partial<ObjectRecordsPermissions>,
+    ) =>
+      buildRoleRecordsPermissions({
+        [objectMetadataId1]: {
+          ...buildAllRecordsPermissions(ALL_GRANTED),
+          ...objectRecordsPermissions,
+        },
+      });
+
+    it('should deny when one role denies it', () => {
+      const result = computePermissionIntersection([
+        buildRole({ canCreateAllRecords: true }),
+        buildRole({ canCreateAllRecords: false }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canCreateAllRecords).toBe(
+        false,
+      );
+    });
+  });
 
   describe('edge cases', () => {
     it('should return no permissions for empty array', () => {
@@ -206,33 +233,31 @@ describe('computePermissionIntersection', () => {
     });
   });
 
-  describe('restricted fields', () => {
-    it('should compute intersection for restricted fields', () => {
+  describe('unreadable and uneditable fields', () => {
+    it('should add up the field lists of every role', () => {
       const result = computePermissionIntersection([
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: null, canUpdate: false },
-              salary: { canRead: false, canUpdate: null },
-            },
+            unreadableFields: ['salary'],
+            uneditableFields: ['email', 'salary'],
           }),
         }),
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: null, canUpdate: null },
-              salary: { canRead: null, canUpdate: false },
-            },
+            unreadableFields: [],
+            uneditableFields: ['salary'],
           }),
         }),
       ]);
 
-      expect(result.objects[objectMetadataId1]?.restrictedFields).toEqual({
-        email: { canRead: null, canUpdate: false },
-        salary: { canRead: false, canUpdate: false },
-      });
+      expect(result.objects[objectMetadataId1]?.unreadableFields).toEqual([
+        'salary',
+      ]);
+      expect(
+        new Set(result.objects[objectMetadataId1]?.uneditableFields),
+      ).toEqual(new Set(['email', 'salary']));
     });
 
     it('should handle fields that only exist in some roles', () => {
@@ -240,25 +265,22 @@ describe('computePermissionIntersection', () => {
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              email: { canRead: false, canUpdate: false },
-            },
+            unreadableFields: ['email'],
+            uneditableFields: ['email'],
           }),
         }),
         buildRoleRecordsPermissions({
           [objectMetadataId1]: buildAllRecordsPermissions({
             ...ALL_GRANTED,
-            restrictedFields: {
-              salary: { canRead: false, canUpdate: false },
-            },
+            unreadableFields: ['salary'],
+            uneditableFields: ['salary'],
           }),
         }),
       ]);
 
-      expect(result.objects[objectMetadataId1]?.restrictedFields).toEqual({
-        email: { canRead: false, canUpdate: false },
-        salary: { canRead: false, canUpdate: false },
-      });
+      expect(
+        new Set(result.objects[objectMetadataId1]?.unreadableFields),
+      ).toEqual(new Set(['email', 'salary']));
     });
   });
 
@@ -293,135 +315,186 @@ describe('computePermissionIntersection', () => {
     });
   });
 
-  describe('row-level permission predicates', () => {
-    const buildPermissions = (
-      roleId: string,
-      constrainedFieldMetadataIds: string[],
-      grants: AllRecordsGrants = ALL_GRANTED,
-    ): RoleRecordsPermissions => {
-      if (constrainedFieldMetadataIds.length === 0) {
-        return buildRoleRecordsPermissions({
-          [objectMetadataId1]: buildAllRecordsPermissions(grants),
-        });
-      }
-
-      return buildRoleRecordsPermissions({
-        [objectMetadataId1]: {
-          ...buildAllRecordsPermissions({
-            canRead: false,
-            canUpdate: false,
-            canSoftDelete: false,
-            canDestroy: false,
-          }),
-          rowLevelRecordsPermissions: {
-            canReadRecords: grants.canRead,
-            canUpdateRecords: grants.canUpdate,
-            canSoftDeleteRecords: grants.canSoftDelete,
-            canDestroyRecords: grants.canDestroy,
-            predicates: constrainedFieldMetadataIds.map((fieldMetadataId) => ({
-              id: `${roleId}-${fieldMetadataId}`,
-              roleId,
-              objectMetadataId: objectMetadataId1,
-              fieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.IS,
-              value: null,
-              subFieldName: null,
-              rowLevelPermissionPredicateGroupId: null,
-              workspaceMemberFieldMetadataId: null,
-              workspaceMemberSubFieldName: null,
-            })),
-            predicateGroups: [
-              {
-                id: `${roleId}-group`,
-                roleId,
-                objectMetadataId: objectMetadataId1,
-                logicalOperator:
-                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                parentRowLevelPermissionPredicateGroupId: null,
-                positionInRowLevelPermissionPredicateGroup: null,
-                canReadRecords: false,
-                canUpdateRecords: false,
-                canSoftDeleteRecords: false,
-                canDestroyRecords: false,
-              },
-            ],
-          },
-        },
-      });
+  describe('row-level permission rules', () => {
+    const NO_GRANT: AllRecordsGrants = {
+      canRead: false,
+      canUpdate: false,
+      canSoftDelete: false,
+      canDestroy: false,
     };
 
-    const constrainedFieldMetadataIdsOf = (
-      permissions: RoleRecordsPermissions,
-    ) =>
-      permissions.objects[
-        objectMetadataId1
-      ]?.rowLevelRecordsPermissions?.predicates.map(
-        (predicate) => predicate.fieldMetadataId,
-      );
-
-    it('should keep a field every role constrains', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', ['field-1']),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual(['field-1']);
+    const buildRule = ({
+      roleId,
+      constrainedFieldMetadataIds,
+      grants,
+    }: {
+      roleId: string;
+      constrainedFieldMetadataIds: string[];
+      grants: AllRecordsGrants;
+    }): RowLevelRecordsPermissions => ({
+      ruleId: `${roleId}-rule`,
+      canCreateRecords: grants.canUpdate,
+      canReadRecords: grants.canRead,
+      canUpdateRecords: grants.canUpdate,
+      canSoftDeleteRecords: grants.canSoftDelete,
+      canDestroyRecords: grants.canDestroy,
+      predicates: constrainedFieldMetadataIds.map((fieldMetadataId) => ({
+        id: `${roleId}-${fieldMetadataId}`,
+        roleId,
+        objectMetadataId: objectMetadataId1,
+        fieldMetadataId,
+        operand: RowLevelPermissionPredicateOperand.IS,
+        value: null,
+        subFieldName: null,
+        rowLevelPermissionPredicateGroupId: null,
+        workspaceMemberFieldMetadataId: null,
+        workspaceMemberSubFieldName: null,
+      })),
+      predicateGroups: [
+        {
+          id: `${roleId}-group`,
+          roleId,
+          objectMetadataId: objectMetadataId1,
+          logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+          parentRowLevelPermissionPredicateGroupId: null,
+          positionInRowLevelPermissionPredicateGroup: null,
+          canReadRecords: false,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+        },
+      ],
+      unreadableFields: [],
+      uneditableFields: [],
     });
 
-    it('should drop a field only one role constrains', () => {
+    const buildPermissions = ({
+      roleId,
+      constrainedFieldMetadataIds = [],
+      allRecordsGrants = NO_GRANT,
+      ruleGrants = ALL_GRANTED,
+    }: {
+      roleId: string;
+      constrainedFieldMetadataIds?: string[];
+      allRecordsGrants?: AllRecordsGrants;
+      ruleGrants?: AllRecordsGrants;
+    }): RoleRecordsPermissions =>
+      buildRoleRecordsPermissions({
+        [objectMetadataId1]:
+          constrainedFieldMetadataIds.length === 0
+            ? buildAllRecordsPermissions(allRecordsGrants)
+            : {
+                ...buildAllRecordsPermissions(allRecordsGrants),
+                rowLevelRecordsPermissions: [
+                  buildRule({
+                    roleId,
+                    constrainedFieldMetadataIds,
+                    grants: ruleGrants,
+                  }),
+                ],
+              },
+      });
+
+    const findRules = (permissions: RoleRecordsPermissions) =>
+      permissions.objects[objectMetadataId1]?.rowLevelRecordsPermissions ?? [];
+
+    it('should keep the rules of every role without intersecting their predicates', () => {
       const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1', 'field-2']),
-        buildPermissions('application-role-id', ['field-1']),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual(['field-1']);
-    });
-
-    it('should drop every field when a role constrains none', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', []),
-      ]);
-
-      expect(constrainedFieldMetadataIdsOf(result)).toEqual([]);
-    });
-
-    it('should not expose a combined predicate group tree', () => {
-      const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', ['field-1']),
+        buildPermissions({
+          roleId: 'user-role-id',
+          constrainedFieldMetadataIds: ['field-1', 'field-2'],
+        }),
+        buildPermissions({
+          roleId: 'application-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+        }),
       ]);
 
       expect(
-        result.objects[objectMetadataId1]?.rowLevelRecordsPermissions
-          ?.predicateGroups,
-      ).toEqual([]);
+        findRules(result).map(({ ruleId, predicates }) => [
+          ruleId,
+          predicates.map(({ fieldMetadataId }) => fieldMetadataId),
+        ]),
+      ).toEqual([
+        ['user-role-id-rule', ['field-1', 'field-2']],
+        ['application-role-id-rule', ['field-1']],
+      ]);
     });
 
-    it('should reach records through row-level permissions only when every role reaches some', () => {
+    it('should not reach records through a rule when another role is restricted too', () => {
       const result = computePermissionIntersection([
-        buildPermissions('user-role-id', ['field-1']),
-        buildPermissions('application-role-id', [], {
-          ...ALL_GRANTED,
-          canDestroy: false,
+        buildPermissions({
+          roleId: 'user-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+        }),
+        buildPermissions({
+          roleId: 'application-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+        }),
+      ]);
+
+      expect(findRules(result)).toHaveLength(2);
+      findRules(result).forEach((rule) =>
+        expect(rule).toMatchObject({
+          canCreateRecords: false,
+          canReadRecords: false,
+          canUpdateRecords: false,
+          canSoftDeleteRecords: false,
+          canDestroyRecords: false,
+        }),
+      );
+    });
+
+    it('should keep the all records grants that every role holds next to the rules', () => {
+      const result = computePermissionIntersection([
+        buildPermissions({
+          roleId: 'user-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+          allRecordsGrants: { ...NO_GRANT, canRead: true },
+        }),
+        buildPermissions({
+          roleId: 'application-role-id',
+          allRecordsGrants: ALL_GRANTED,
+        }),
+      ]);
+
+      expect(result.objects[objectMetadataId1]?.canReadAllRecords).toBe(true);
+      expect(result.objects[objectMetadataId1]?.canUpdateAllRecords).toBe(
+        false,
+      );
+      expect(findRules(result)).toEqual([
+        buildRule({
+          roleId: 'user-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+          grants: ALL_GRANTED,
+        }),
+      ]);
+    });
+
+    it('should reach records through a rule only for operations every other role reaches on all records', () => {
+      const result = computePermissionIntersection([
+        buildPermissions({
+          roleId: 'user-role-id',
+          constrainedFieldMetadataIds: ['field-1'],
+        }),
+        buildPermissions({
+          roleId: 'application-role-id',
+          allRecordsGrants: { ...ALL_GRANTED, canDestroy: false },
         }),
       ]);
 
       expect(result.objects[objectMetadataId1]).toEqual({
-        ...buildAllRecordsPermissions({
-          canRead: false,
-          canUpdate: false,
-          canSoftDelete: false,
-          canDestroy: false,
-        }),
-        rowLevelRecordsPermissions: {
-          canReadRecords: true,
-          canUpdateRecords: true,
-          canSoftDeleteRecords: true,
-          canDestroyRecords: false,
-          predicates: [],
-          predicateGroups: [],
-        },
+        ...buildAllRecordsPermissions(NO_GRANT),
+        rowLevelRecordsPermissions: [
+          {
+            ...buildRule({
+              roleId: 'user-role-id',
+              constrainedFieldMetadataIds: ['field-1'],
+              grants: ALL_GRANTED,
+            }),
+            canDestroyRecords: false,
+          },
+        ],
       });
     });
 
@@ -431,19 +504,21 @@ describe('computePermissionIntersection', () => {
       ['canSoftDelete', 'canSoftDeleteRecords'],
       ['canDestroy', 'canDestroyRecords'],
     ] as const)(
-      'should not reach records through row-level permissions when another role denies %s',
+      'should not reach records through a rule when another role denies %s',
       (deniedGrant, rowLevelGrant) => {
         const result = computePermissionIntersection([
-          buildPermissions('user-role-id', ['field-1']),
-          buildPermissions('application-role-id', [], {
-            ...ALL_GRANTED,
-            [deniedGrant]: false,
+          buildPermissions({
+            roleId: 'user-role-id',
+            constrainedFieldMetadataIds: ['field-1'],
+          }),
+          buildPermissions({
+            roleId: 'application-role-id',
+            allRecordsGrants: { ...ALL_GRANTED, [deniedGrant]: false },
           }),
         ]);
 
-        expect(
-          result.objects[objectMetadataId1]?.rowLevelRecordsPermissions,
-        ).toMatchObject({
+        expect(findRules(result)[0]).toMatchObject({
+          canCreateRecords: deniedGrant !== 'canUpdate',
           canReadRecords: deniedGrant !== 'canRead',
           canUpdateRecords: deniedGrant !== 'canUpdate',
           canSoftDeleteRecords: deniedGrant !== 'canSoftDelete',
@@ -454,7 +529,10 @@ describe('computePermissionIntersection', () => {
     );
 
     it('should leave a single role untouched', () => {
-      const permissions = buildPermissions('user-role-id', ['field-1']);
+      const permissions = buildPermissions({
+        roleId: 'user-role-id',
+        constrainedFieldMetadataIds: ['field-1'],
+      });
 
       expect(computePermissionIntersection([permissions])).toBe(permissions);
     });

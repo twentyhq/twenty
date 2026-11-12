@@ -3,10 +3,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import {
-  currentWorkspaceState,
-  type CurrentWorkspace,
-} from '@/auth/states/currentWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -108,8 +106,9 @@ describe('useOpenAskAiPageInSidePanel', () => {
 
   it('should not open the AskAI page for a suspended workspace', () => {
     jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
-    } as CurrentWorkspace);
+    });
 
     const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
       wrapper: Wrapper,

@@ -56,7 +56,7 @@ export const getNonReadableFieldInfoForViewField = ({
   if (
     !canReachSomeRecords({
       objectRecordsPermissions: targetObjectPermissions,
-      operationType: 'select',
+      operationType: 'read',
     })
   ) {
     return {

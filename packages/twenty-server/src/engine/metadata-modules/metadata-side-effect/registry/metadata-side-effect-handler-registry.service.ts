@@ -46,7 +46,9 @@ export class MetadataSideEffectHandlerRegistryService implements OnModuleInit {
     providers.forEach((wrapper) => {
       const { instance, metatype } = wrapper;
 
-      if (!instance || !metatype) return;
+      if (!instance || !metatype) {
+        return;
+      }
 
       const descriptor: MetadataSideEffectHandlerDescriptor | undefined =
         Reflect.getMetadata(

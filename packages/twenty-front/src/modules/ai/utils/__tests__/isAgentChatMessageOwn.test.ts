@@ -9,11 +9,20 @@ type MessageOwnershipTestCase = {
   name: string;
   role: ExtendedUIMessage['role'];
   senderWorkspaceMemberId?: string | null;
+  senderApplicationId?: string | null;
   isSenderlessUserMessageOwn: boolean;
   expected: boolean;
 };
 
 const TEST_CASES: MessageOwnershipTestCase[] = [
+  {
+    name: 'keeps application messages separate from their delegated member',
+    role: 'assistant',
+    senderWorkspaceMemberId: CURRENT_WORKSPACE_MEMBER_ID,
+    senderApplicationId: 'application',
+    isSenderlessUserMessageOwn: true,
+    expected: false,
+  },
   {
     name: 'retains ownership of legacy user messages when the fallback is enabled',
     role: 'user',
@@ -62,12 +71,16 @@ describe('isAgentChatMessageOwn', () => {
     ({
       role,
       senderWorkspaceMemberId,
+      senderApplicationId,
       isSenderlessUserMessageOwn,
       expected,
     }) => {
       expect(
         isAgentChatMessageOwn({
-          message: { role, metadata: { senderWorkspaceMemberId } },
+          message: {
+            role,
+            metadata: { senderWorkspaceMemberId, senderApplicationId },
+          },
           currentWorkspaceMemberId: CURRENT_WORKSPACE_MEMBER_ID,
           isSenderlessUserMessageOwn,
         }),

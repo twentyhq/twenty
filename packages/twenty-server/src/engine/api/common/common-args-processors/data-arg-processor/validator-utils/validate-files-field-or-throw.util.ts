@@ -28,7 +28,9 @@ export const validateFilesFieldOrThrow = (
   fieldName: string,
   settings: FieldMetadataSettingsMapping[FieldMetadataType.FILES],
 ): FileInput[] | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   let parsedValue: unknown = value;
 

@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
 import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';
+import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const VALIDATION_RULE_KEYWORDS: ValidationRuleSyntaxDefinition[] = [
@@ -28,6 +29,12 @@ export const VALIDATION_RULE_KEYWORDS: ValidationRuleSyntaxDefinition[] = [
     name: 'now',
     signature: 'now',
     description: msg`The date and time of the write being checked.`,
+  },
+  {
+    name: VALIDATION_RULE_PREVIOUS_VARIABLE_NAME,
+    signature: doNotTranslate('previous.field'),
+    description: msg`The value a field had before the update. Empty when the record is created.`,
+    insertText: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`,
   },
   {
     name: 'true',

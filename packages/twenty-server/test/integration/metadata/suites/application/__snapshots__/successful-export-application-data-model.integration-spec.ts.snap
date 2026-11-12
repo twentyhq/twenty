@@ -39,6 +39,12 @@ exports[`Application export - data model exports the whole application as a stab
       "status": "EXPORTED",
       "universalIdentifier": "de7e7102-6725-5a65-8ee8-3154fe4fb94b",
     },
+    {
+      "metadataName": "rowLevelPermissionRule",
+      "reason": null,
+      "status": "ENGINE_DERIVED",
+      "universalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
+    },
   ],
   "named": [
     {
@@ -1245,6 +1251,7 @@ exports[`Application export - data model exports the whole application as a stab
       "objectUniversalIdentifier": "<TICKET_OBJECT>",
       "openRecordIn": "SIDE_PANEL",
       "position": 1,
+      "shouldDisplayGroupsAsTabs": false,
       "shouldHideEmptyGroups": false,
       "sorts": [
         {

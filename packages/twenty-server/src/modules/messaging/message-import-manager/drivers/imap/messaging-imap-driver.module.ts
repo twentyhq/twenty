@@ -6,6 +6,7 @@ import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-clie
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
+import { ImapFetchMessageAttachmentService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-message-attachment.service';
 import { ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
@@ -32,6 +33,7 @@ import { ImapSyncService } from 'src/modules/messaging/message-import-manager/dr
     ImapMessageParserService,
     ImapFindDraftsFolderService,
     ImapFindSentFolderService,
+    ImapFetchMessageAttachmentService,
   ],
   exports: [
     ImapGetMessagesService,
@@ -39,6 +41,7 @@ import { ImapSyncService } from 'src/modules/messaging/message-import-manager/dr
     ImapClientProvider,
     ImapFindDraftsFolderService,
     ImapFindSentFolderService,
+    ImapFetchMessageAttachmentService,
   ],
 })
 export class MessagingIMAPDriverModule {}

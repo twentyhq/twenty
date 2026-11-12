@@ -55,8 +55,8 @@ export const addErrorsAndRunHooks = (
 
           values.forEach((value) => {
             if (
-              fieldValidationDefinition.allowEmpty === true &&
-              (!isDefined(value) || value === '' || !Boolean(value))
+              fieldValidationDefinition.allowEmpty &&
+              (!isDefined(value) || value === '' || value === false)
             ) {
               return;
             }

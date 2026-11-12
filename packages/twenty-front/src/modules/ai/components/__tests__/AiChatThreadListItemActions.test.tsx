@@ -154,11 +154,15 @@ const renderThread = async ({
             }
           : null,
       );
-      setAgentChatThreadPermissions(store, THREAD_ID, {
-        canRead: true,
-        canUpdate: true,
-        canDelete: true,
-        canSoftDelete: true,
+      setAgentChatThreadPermissions({
+        store,
+        threadId: THREAD_ID,
+        permissions: {
+          canRead: true,
+          canUpdate: true,
+          canDelete: true,
+          canSoftDelete: true,
+        },
       });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), thread);
       store.set(agentChatThreadParticipantsState.atom, {

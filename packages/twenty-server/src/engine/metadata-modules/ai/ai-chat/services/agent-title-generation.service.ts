@@ -1,15 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  type LanguageModelUsage,
-  type StepResult,
-  type ToolSet,
-  generateText,
-} from 'ai';
+import { type LanguageModelUsage, generateText } from 'ai';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceAiDataPolicyService } from 'src/engine/metadata-modules/ai/ai-models/services/workspace-ai-data-policy.service';
@@ -58,7 +52,6 @@ export class AgentTitleGenerationService {
     }
 
     let usage: LanguageModelUsage | undefined;
-    let steps: StepResult<ToolSet>[] | undefined;
 
     try {
       const result = await generateText({
@@ -74,7 +67,6 @@ export class AgentTitleGenerationService {
       });
 
       usage = result.usage;
-      steps = result.steps;
 
       return this.cleanTitle(result.text);
     } catch (error) {
@@ -83,13 +75,9 @@ export class AgentTitleGenerationService {
       return this.generateFallbackTitle(messageContent);
     } finally {
       if (usage) {
-        const cacheCreationTokens = steps
-          ? extractCacheCreationTokensFromSteps(steps)
-          : 0;
-
         void this.aiBillingService.calculateAndBillUsage({
           modelId: defaultModel.modelId,
-          billingInput: { usage, cacheCreationTokens },
+          billingInput: { usage },
           workspaceId,
           operationType: UsageOperationType.AI_CHAT_TOKEN,
           spenders: { userWorkspaceId },

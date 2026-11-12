@@ -33,4 +33,34 @@ describe('MessageQueueRestApiExceptionFilter', () => {
       { shouldBeCapturedBySentry: false },
     );
   });
+
+  it('answers 429 when the job queue memory limit is reached, without reporting it to Sentry', () => {
+    const handleError = jest.fn();
+    const response = {};
+    const filter = new MessageQueueRestApiExceptionFilter({
+      handleError,
+    } as unknown as HttpExceptionHandlerService);
+    const exception = new MessageQueueException(
+      'Job memory limit reached',
+      MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+      {
+        requestedBytes: 2_000,
+        availableBytes: 0,
+        refusedGroupKeys: ['workspace:ws-1'],
+      },
+    );
+
+    filter.catch(exception, {
+      switchToHttp: () => ({ getResponse: () => response }),
+    } as unknown as ArgumentsHost);
+
+    expect(handleError).toHaveBeenCalledWith(
+      exception,
+      response,
+      429,
+      undefined,
+      undefined,
+      { shouldBeCapturedBySentry: false },
+    );
+  });
 });

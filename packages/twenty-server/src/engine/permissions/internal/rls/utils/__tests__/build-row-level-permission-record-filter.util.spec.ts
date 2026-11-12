@@ -1,6 +1,8 @@
 import {
   FieldMetadataType,
   RelationType,
+  type RowLevelPermissionPredicate,
+  type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -12,11 +14,14 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
-import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
+import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
+import { buildMemberFieldValuesOrThrow } from 'src/engine/permissions/internal/rls/utils/build-member-field-values-or-throw.util';
+import {
+  buildRecordFilterForRule,
+  buildRowLevelPermissionRecordFilter,
+} from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
 
 const OBJECT_ID = 'object-1';
 const WORKSPACE_MEMBER_OBJECT_ID = 'workspace-member-object';
@@ -36,6 +41,7 @@ const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
 const TEXT_IS_ROLE_ID = 'text-is-role-1';
 const SELECT_CONTAINS_ROLE_ID = 'select-contains-role-1';
 const RELATION_HOP_ROLE_ID = 'relation-hop-role-1';
+const TWO_ROOT_GROUPS_ROLE_ID = 'two-root-groups-role-1';
 const COMPANY_OBJECT_ID = 'company-object';
 const PERSON_OBJECT_ID = 'person-object';
 const OWNER_MORPH_ID = 'owner-morph';
@@ -177,44 +183,26 @@ const flatFieldMetadataMaps = buildMaps([
   }),
 ]);
 
-const FLAT_ENTITY_DEFAULTS = {
-  applicationId: 'application-id',
-  applicationUniversalIdentifier: 'application-universal-identifier',
-  workspaceId: 'workspace-id',
-  createdAt: '2026-01-01T00:00:00.000Z',
-  updatedAt: '2026-01-01T00:00:00.000Z',
-};
-
 const buildPredicate = (
   id: string,
   roleId: string,
-  predicate: Partial<FlatRowLevelPermissionPredicate>,
-): FlatRowLevelPermissionPredicate => ({
+  predicate: Partial<RowLevelPermissionPredicate>,
+): RowLevelPermissionPredicate => ({
   id,
-  universalIdentifier: id,
-  ...FLAT_ENTITY_DEFAULTS,
   roleId,
   objectMetadataId: OBJECT_ID,
   fieldMetadataId: FIELD_ID,
   relationFieldMetadataId: null,
-  fieldMetadataUniversalIdentifier: FIELD_ID,
-  relationFieldMetadataUniversalIdentifier: null,
-  objectMetadataUniversalIdentifier: OBJECT_ID,
-  roleUniversalIdentifier: roleId,
-  workspaceMemberFieldMetadataUniversalIdentifier: null,
-  rowLevelPermissionPredicateGroupUniversalIdentifier: null,
   operand: RowLevelPermissionPredicateOperand.CONTAINS,
   value: null,
   subFieldName: null,
   workspaceMemberFieldMetadataId: null,
   workspaceMemberSubFieldName: null,
   rowLevelPermissionPredicateGroupId: null,
-  positionInRowLevelPermissionPredicateGroup: null,
-  deletedAt: null,
   ...predicate,
 });
 
-const flatRowLevelPermissionPredicateMaps = buildMaps([
+const predicates = [
   buildPredicate('predicate-user', USER_ROLE_ID, { value: 'visible-to-user' }),
   buildPredicate('predicate-application', APPLICATION_ROLE_ID, {
     value: 'visible-to-application',
@@ -282,42 +270,49 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     operand: RowLevelPermissionPredicateOperand.CONTAINS,
     value: 'OPEN',
   }),
+  buildPredicate('predicate-root-b', TWO_ROOT_GROUPS_ROLE_ID, {
+    value: 'from-root-b',
+    rowLevelPermissionPredicateGroupId: 'root-b',
+  }),
+  buildPredicate('predicate-root-a', TWO_ROOT_GROUPS_ROLE_ID, {
+    value: 'from-root-a',
+    rowLevelPermissionPredicateGroupId: 'root-a',
+  }),
   buildPredicate('predicate-relation-hop', RELATION_HOP_ROLE_ID, {
     relationFieldMetadataId: 'relation-field',
     value: 'reached-through-relation',
   }),
-]);
+];
 
 const buildPredicateGroup = (
   id: string,
   roleId: string,
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,
   parentRowLevelPermissionPredicateGroupId: string | null = null,
-): FlatRowLevelPermissionPredicateGroup => ({
+): RowLevelPermissionPredicateGroup => ({
   id,
-  universalIdentifier: id,
-  ...FLAT_ENTITY_DEFAULTS,
   objectMetadataId: OBJECT_ID,
   positionInRowLevelPermissionPredicateGroup: null,
   canReadRecords: true,
   canUpdateRecords: true,
   canSoftDeleteRecords: true,
   canDestroyRecords: true,
-  childRowLevelPermissionPredicateGroupIds: [],
-  rowLevelPermissionPredicateIds: [],
-  childRowLevelPermissionPredicateGroupUniversalIdentifiers: [],
-  rowLevelPermissionPredicateUniversalIdentifiers: [],
-  objectMetadataUniversalIdentifier: OBJECT_ID,
-  roleUniversalIdentifier: roleId,
-  parentRowLevelPermissionPredicateGroupUniversalIdentifier:
-    parentRowLevelPermissionPredicateGroupId,
   roleId,
   logicalOperator,
   parentRowLevelPermissionPredicateGroupId,
-  deletedAt: null,
 });
 
-const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
+const predicateGroups = [
+  buildPredicateGroup(
+    'root-a',
+    TWO_ROOT_GROUPS_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  ),
+  buildPredicateGroup(
+    'root-b',
+    TWO_ROOT_GROUPS_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  ),
   buildPredicateGroup(
     'or-group',
     OR_GROUP_ROLE_ID,
@@ -344,7 +339,16 @@ const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
     OR_GROUP_ONLY_MEMBER_ROLE_ID,
     RowLevelPermissionPredicateGroupLogicalOperator.OR,
   ),
-]);
+];
+
+const findRule = (roleId: string) => {
+  return {
+    predicates: predicates.filter((predicate) => predicate.roleId === roleId),
+    predicateGroups: predicateGroups.filter(
+      (predicateGroup) => predicateGroup.roleId === roleId,
+    ),
+  };
+};
 
 const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) => ({
   id: 'workspace-member-1',
@@ -356,43 +360,58 @@ const build = (
   workspaceMember?: RowLevelPermissionWorkspaceMember,
 ) =>
   buildRowLevelPermissionRecordFilter({
-    flatRowLevelPermissionPredicateMaps,
-    flatRowLevelPermissionPredicateGroupMaps,
+    isRelationHopEnabled: false,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
-    objectMetadata: flatObjectMetadata,
-    roleIds,
-    workspaceMember,
+    rowLevelPermissionRules: roleIds.map(findRule),
+    memberFieldValues: buildMemberFieldValuesOrThrow({
+      workspaceMember,
+      predicates,
+      flatFieldMetadataMaps,
+    }),
+    currentWorkspaceMemberId: workspaceMember?.id,
   });
 
 describe('buildRowLevelPermissionRecordFilter', () => {
-  it('should return null when no role is given', () => {
-    expect(build([])).toBeNull();
+  it('should match nothing when no rule is given', () => {
+    expect(build([])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
-  it('should return null when the role has no predicates', () => {
-    expect(build([UNRESTRICTED_ROLE_ID])).toBeNull();
+  it('should match nothing when the only rule has no predicates', () => {
+    expect(build([UNRESTRICTED_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 
-  it('should return the role filter as-is for a single role', () => {
+  it('should return the rule filter as-is for a single rule', () => {
     expect(build([USER_ROLE_ID])).toEqual({
       name: { ilike: '%visible-to-user%' },
     });
   });
 
-  it('should keep the restriction when the other role is unrestricted', () => {
+  it('should ignore a rule without predicates next to another rule', () => {
     expect(build([USER_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual({
       name: { ilike: '%visible-to-user%' },
     });
   });
 
-  it('should require both roles to be satisfied when both restrict', () => {
-    expect(build([USER_ROLE_ID, APPLICATION_ROLE_ID])).toEqual({
-      and: [
+  it('should match a record matching any of two rules', () => {
+    const filter = build([USER_ROLE_ID, APPLICATION_ROLE_ID]);
+    const isMatching = (name: string) =>
+      isRecordMatchingFilter({
+        record: { name, deletedAt: null },
+        filter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+    expect(filter).toEqual({
+      or: [
         { name: { ilike: '%visible-to-user%' } },
         { name: { ilike: '%visible-to-application%' } },
       ],
     });
+    expect(isMatching('visible-to-user')).toBe(true);
+    expect(isMatching('visible-to-application')).toBe(true);
+    expect(isMatching('visible-to-nobody')).toBe(false);
   });
 
   it('should compile an IS operand on a text field to a case-sensitive exact match', () => {
@@ -422,6 +441,15 @@ describe('buildRowLevelPermissionRecordFilter', () => {
     },
   );
 
+  it('should require every root group of a rule', () => {
+    expect(build([TWO_ROOT_GROUPS_ROLE_ID])).toEqual({
+      and: [
+        { and: [{ name: { ilike: '%from-root-a%' } }] },
+        { and: [{ name: { ilike: '%from-root-b%' } }] },
+      ],
+    });
+  });
+
   it('should match nothing for a predicate reached through a relation hop', () => {
     expect(build([RELATION_HOP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
@@ -448,6 +476,12 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       ).toEqual(UNSATISFIABLE_RECORD_FILTER);
     });
 
+    it('should match nothing when the workspace member carries an empty list', () => {
+      expect(
+        build([LOCALE_BOUND_ROLE_ID], buildWorkspaceMember({ locale: [] })),
+      ).toEqual(UNSATISFIABLE_RECORD_FILTER);
+    });
+
     it('should match nothing when the workspace member value does not fit the target field', () => {
       expect(
         build([TEAM_BOUND_ROLE_ID], buildWorkspaceMember({ team: 'SALES' })),
@@ -460,17 +494,38 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       ).toEqual({ status: { in: ['OPEN'] } });
     });
 
-    it('should keep matching nothing when the other role is unrestricted', () => {
+    it('should keep matching nothing next to a rule without predicates', () => {
       expect(build([LOCALE_BOUND_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual(
         UNSATISFIABLE_RECORD_FILTER,
       );
     });
 
-    it('should keep the other branches of an OR group it cannot satisfy', () => {
+    it('should leave a never-matching branch in an OR group so the others still match', () => {
       expect(build([OR_GROUP_ROLE_ID])).toEqual({
-        or: [{ name: { ilike: '%shared-with-everyone%' } }],
+        or: [
+          { name: { ilike: '%shared-with-everyone%' } },
+          UNSATISFIABLE_RECORD_FILTER,
+        ],
       });
     });
+
+    it.each([
+      [OR_GROUP_ROLE_ID, true],
+      [AND_GROUP_ROLE_ID, false],
+      [NESTED_GROUP_ROLE_ID, false],
+    ])(
+      'should evaluate the never-matching branch of %s as false',
+      (roleId, isMatching) => {
+        expect(
+          isRecordMatchingFilter({
+            record: { name: 'shared-with-everyone', deletedAt: null },
+            filter: build([roleId]),
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          }),
+        ).toBe(isMatching);
+      },
+    );
 
     it('should keep both branches of an OR group once the member carries the value', () => {
       expect(
@@ -483,29 +538,110 @@ describe('buildRowLevelPermissionRecordFilter', () => {
       });
     });
 
-    it('should match nothing when an AND group holds a branch it cannot satisfy', () => {
-      expect(build([AND_GROUP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
-    });
-
-    it('should drop a nested AND branch it cannot satisfy and keep its sibling', () => {
-      expect(build([NESTED_GROUP_ROLE_ID])).toEqual({
-        or: [{ name: { ilike: '%kept-branch%' } }],
+    it('should leave a never-matching branch in an AND group so the group matches nothing', () => {
+      expect(build([AND_GROUP_ROLE_ID])).toEqual({
+        and: [
+          { name: { ilike: '%shared-with-everyone%' } },
+          UNSATISFIABLE_RECORD_FILTER,
+        ],
       });
     });
 
-    it('should match nothing when no branch of an OR group can be satisfied', () => {
-      expect(build([OR_GROUP_ONLY_MEMBER_ROLE_ID])).toEqual(
-        UNSATISFIABLE_RECORD_FILTER,
-      );
+    it('should keep the sibling of a nested AND branch that matches nothing', () => {
+      expect(build([NESTED_GROUP_ROLE_ID])).toEqual({
+        or: [
+          { name: { ilike: '%kept-branch%' } },
+          {
+            and: [
+              { name: { ilike: '%denied-branch%' } },
+              UNSATISFIABLE_RECORD_FILTER,
+            ],
+          },
+        ],
+      });
     });
 
-    it('should keep matching nothing when the other role restricts', () => {
+    it('should match nothing when every branch of an OR group matches nothing', () => {
+      expect(build([OR_GROUP_ONLY_MEMBER_ROLE_ID])).toEqual({
+        or: [UNSATISFIABLE_RECORD_FILTER, UNSATISFIABLE_RECORD_FILTER],
+      });
+    });
+
+    it('should still match through another rule when the member does not carry the value', () => {
       expect(build([LOCALE_BOUND_ROLE_ID, USER_ROLE_ID])).toEqual({
-        and: [
+        or: [
           UNSATISFIABLE_RECORD_FILTER,
           { name: { ilike: '%visible-to-user%' } },
         ],
       });
     });
+  });
+});
+
+describe('buildRecordFilterForRule with access group member values', () => {
+  const buildForAccessGroup = ({
+    roleId,
+    memberFieldValues,
+  }: {
+    roleId: string;
+    memberFieldValues: Record<string, string | string[] | null>;
+  }) =>
+    buildRecordFilterForRule({
+      isRelationHopEnabled: false,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      rowLevelPermissionRule: findRule(roleId),
+      memberFieldValues,
+    });
+
+  it('should filter on the group value as a member carrying it would', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'fr-FR',
+        },
+      }),
+    ).toEqual(
+      build([LOCALE_BOUND_ROLE_ID], buildWorkspaceMember({ locale: 'fr-FR' })),
+    );
+  });
+
+  it('should wrap the group value of a select member field into a list', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should keep only the member values that are options of the target field', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN', 'SALES'],
+        },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should use a whole list kept by the group as it is', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN'] },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should match nothing when the group holds no value', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: LOCALE_BOUND_ROLE_ID,
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: null },
+      }),
+    ).toEqual(UNSATISFIABLE_RECORD_FILTER);
   });
 });

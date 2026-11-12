@@ -58,7 +58,6 @@ export const CURRENCY_CODE_ICONS: Record<CurrencyCode, IconComponent> = {
   AFN: IconCurrencyAfghani,
   ALL: IconCurrencyLeu,
   AMD: IconCurrencyDram,
-  ANG: IconCurrencyFlorin,
   AOA: IconCoins,
   ARS: IconCoins,
   AUD: IconCurrencyDollarAustralian,

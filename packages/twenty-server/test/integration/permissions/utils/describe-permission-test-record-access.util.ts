@@ -7,8 +7,8 @@ import {
 } from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 
 type PermissionTestRecordAccessCase = Partial<PermissionTestPrincipals> & {
   it: string;
@@ -35,31 +35,37 @@ export const describePermissionTestRecordAccess = ({
           principals: { ...sharedPrincipals, ...casePrincipals },
           workspace,
         });
-        const recordPermissionsService =
-          getAppProviderByClassName<RecordPermissionsService>(
-            'RecordPermissionsService',
+        const recordPermissionsReadService =
+          getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
           );
         const recordsQuestion = {
           principals:
-            await getAppProviderByClassName<PrincipalPermissionsService>(
-              'PrincipalPermissionsService',
-            ).buildPermissionsPrincipals({ authContext }),
+            await getAppProviderByClassName<PrincipalPermissionsReadService>(
+              'PrincipalPermissionsReadService',
+            ).resolvePermissionsPrincipals({ authContext }),
           objectMetadataId: workspace.objectMetadataId,
           recordIds: [recordId],
         };
 
         expect({
-          findRecordsPermissions: (
-            await recordPermissionsService.findRecordsPermissions({
+          findRecordsActions: (
+            await recordPermissionsReadService.findRecordsActions({
               authContext,
               objectNameSingular: workspace.objectNameSingular,
               recordIds: [recordId],
             })
           ).get(recordId),
-          canReadRecords:
-            await recordPermissionsService.canReadRecords(recordsQuestion),
-          canUpdateRecords:
-            await recordPermissionsService.canUpdateRecords(recordsQuestion),
+          canReadRecords: await recordPermissionsReadService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
+          canUpdateRecords: await recordPermissionsReadService.canAccessRecords(
+            {
+              ...recordsQuestion,
+              operationType: 'update',
+            },
+          ),
         }).toEqual(expected);
       });
     }

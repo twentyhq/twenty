@@ -2,7 +2,7 @@ import {
   AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.constant';
 import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/utils/get-available-efforts.util';
 
 describe('getAvailableEfforts', () => {

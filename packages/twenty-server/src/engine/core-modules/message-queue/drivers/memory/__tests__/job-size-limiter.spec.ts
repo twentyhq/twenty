@@ -35,6 +35,7 @@ describe('JobSizeLimiter', () => {
     expect(() =>
       limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
         jobs: JOBS,
       }),
     ).not.toThrow();
@@ -49,6 +50,7 @@ describe('JobSizeLimiter', () => {
     try {
       limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
         jobs: JOBS,
       });
     } catch (error) {
@@ -64,7 +66,11 @@ describe('JobSizeLimiter', () => {
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
+      attributes: {
+        queue: MessageQueue.workspaceQueue,
+        job_name: 'job',
+        reason: 'size',
+      },
       shouldStoreInCache: false,
     });
   });
@@ -75,6 +81,7 @@ describe('JobSizeLimiter', () => {
     expect(() =>
       limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
         jobs: [{ index: 0, groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
       }),
     ).not.toThrow();

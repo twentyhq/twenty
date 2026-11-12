@@ -1,23 +1,16 @@
-import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const getRecordCreationCommandType = ({
-  objectNameSingular,
   creationTargetObjectMetadataId,
   contextObjectMetadataId,
   recordIndexId,
   hasAnySoftDeleteFilterOnView = false,
 }: {
-  objectNameSingular: string;
   hasAnySoftDeleteFilterOnView?: boolean;
   contextObjectMetadataId?: string | null;
   recordIndexId?: string | null;
   creationTargetObjectMetadataId?: string | null;
-}): 'workflow' | 'global' | 'index' => {
-  if (objectNameSingular === StandardObjectNameSingular.Workflow) {
-    return 'workflow';
-  }
-
+}): 'global' | 'index' => {
   if (!isDefined(creationTargetObjectMetadataId)) {
     return 'index';
   }

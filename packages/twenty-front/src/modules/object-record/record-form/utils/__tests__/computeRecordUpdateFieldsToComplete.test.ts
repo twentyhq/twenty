@@ -176,6 +176,31 @@ describe('computeRecordUpdateFieldsToComplete', () => {
     ).toEqual([]);
   });
 
+  it('asks for the field a rule needs the first time a stage is reached', () => {
+    const lostNeedsReasonOnceRule: ValidationRule = {
+      ...LOST_REASON_RULE,
+      id: 'lost-needs-reason-once',
+      expression:
+        "stage != 'LOST' or previous.stage == 'LOST' or not isEmpty(lostReason)",
+    };
+
+    expect(
+      compute({
+        currentRecord: { stage: 'PROPOSAL', lostReason: null },
+        updateInput: { stage: 'LOST' },
+        validationRules: [lostNeedsReasonOnceRule],
+      }).fieldMetadataIds,
+    ).toEqual([LOST_REASON_FIELD_ID]);
+
+    expect(
+      compute({
+        currentRecord: { stage: 'LOST', lostReason: null },
+        updateInput: { stage: 'LOST' },
+        validationRules: [lostNeedsReasonOnceRule],
+      }).fieldMetadataIds,
+    ).toEqual([]);
+  });
+
   it('ignores an inactive rule', () => {
     expect(
       compute({

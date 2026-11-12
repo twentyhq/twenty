@@ -11,7 +11,9 @@ export const transformFullNameField = (
   firstName?: string | null;
   lastName?: string | null;
 } | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   return {
     firstName: isUndefined(value.firstName)

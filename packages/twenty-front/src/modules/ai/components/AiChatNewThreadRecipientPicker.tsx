@@ -7,7 +7,7 @@ import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
@@ -26,6 +26,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatNewThreadRecipientPicker = () => {
   const { t } = useLingui();
+  const { displayName: assistantName } = useAiChatAssistantProfile();
   const [search, setSearch] = useState('');
   const trimmedSearch = search.trim();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
@@ -46,9 +47,9 @@ export const AiChatNewThreadRecipientPicker = () => {
   const agentChatAccessibleChannels = useAtomStateValue(
     agentChatAccessibleChannelsSelector,
   );
-  const shouldShowAssistant = normalizeSearchText(
-    AGENT_CHAT_ASSISTANT_NAME,
-  ).includes(normalizeSearchText(trimmedSearch));
+  const shouldShowAssistant = normalizeSearchText(assistantName).includes(
+    normalizeSearchText(trimmedSearch),
+  );
   const matchingWorkspaceMembers = filterBySearchQuery({
     items: currentWorkspaceMembers.filter(
       ({ id }) => id !== currentWorkspaceMember?.id,
@@ -102,7 +103,7 @@ export const AiChatNewThreadRecipientPicker = () => {
               }))
             }
           >
-            {AGENT_CHAT_ASSISTANT_NAME}
+            {assistantName}
           </Dropdown.OptionItem>
         )}
         {matchingWorkspaceMembers.map((workspaceMember) => {

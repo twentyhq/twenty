@@ -1,0 +1,1 @@
+export const VALIDATION_RULE_PREVIOUS_VARIABLE_NAME = 'previous';

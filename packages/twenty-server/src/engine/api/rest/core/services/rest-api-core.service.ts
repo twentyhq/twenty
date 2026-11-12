@@ -58,9 +58,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiUpdateOneHandler.handle(request);
-    } else {
-      return await this.restApiUpdateManyHandler.handle(request);
     }
+    return await this.restApiUpdateManyHandler.handle(request);
   }
 
   async get(request: AuthenticatedRequest) {
@@ -68,9 +67,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiFindOneHandler.handle(request);
-    } else {
-      return await this.restApiFindManyHandler.handle(request);
     }
+    return await this.restApiFindManyHandler.handle(request);
   }
 
   async groupBy(request: AuthenticatedRequest) {
@@ -82,15 +80,19 @@ export class RestApiCoreService {
 
     const isSoftDelete = parseSoftDeleteRestRequest(request);
 
-    if (!isSoftDelete && isDefined(recordId))
+    if (!isSoftDelete && isDefined(recordId)) {
       return await this.restApiDestroyOneHandler.handle(request);
-    if (!isSoftDelete && !isDefined(recordId))
+    }
+    if (!isSoftDelete && !isDefined(recordId)) {
       return await this.restApiDestroyManyHandler.handle(request);
+    }
 
-    if (isSoftDelete && isDefined(recordId))
+    if (isSoftDelete && isDefined(recordId)) {
       return await this.restApiDeleteOneHandler.handle(request);
-    if (isSoftDelete && !isDefined(recordId))
+    }
+    if (isSoftDelete && !isDefined(recordId)) {
       return await this.restApiDeleteManyHandler.handle(request);
+    }
   }
 
   async restore(request: AuthenticatedRequest) {
@@ -98,9 +100,8 @@ export class RestApiCoreService {
 
     if (isDefined(recordId)) {
       return await this.restApiRestoreOneHandler.handle(request);
-    } else {
-      return await this.restApiRestoreManyHandler.handle(request);
     }
+    return await this.restApiRestoreManyHandler.handle(request);
   }
 
   async mergeMany(request: AuthenticatedRequest) {

@@ -1,6 +1,4 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { pageLayoutDraggingWidgetIdComponentState } from '@/page-layout/states/pageLayoutDraggingWidgetIdComponentState';
-import { pageLayoutResizingWidgetIdComponentState } from '@/page-layout/states/pageLayoutResizingWidgetIdComponentState';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { BarChart } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/BarChart';
@@ -41,6 +39,7 @@ type GraphWidgetBarChartProps = {
   groupMode?: 'grouped' | 'stacked';
   id: string;
   indexBy: string;
+  isWidgetMoving?: boolean;
   keys: string[];
   layout?: BarChartLayout;
   omitNullValues?: boolean;
@@ -51,6 +50,7 @@ type GraphWidgetBarChartProps = {
   seriesLabels?: Record<string, string>;
   showGrid?: boolean;
   showLegend?: boolean;
+  isLegendInteractive?: boolean;
   showValues?: boolean;
   tooltipDisplayType?: GraphValueFormatOptions['displayType'];
   xAxisLabel?: string;
@@ -69,9 +69,11 @@ const StyledContainer = styled.div`
 export const GraphWidgetBarChart = ({
   data,
   indexBy,
+  isWidgetMoving = false,
   keys,
   series,
   showLegend = true,
+  isLegendInteractive = true,
   showGrid = true,
   showValues = false,
   xAxisLabel,
@@ -112,20 +114,9 @@ export const GraphWidgetBarChart = ({
     graphWidgetHoveredSliceIndexComponentState,
   );
 
-  const pageLayoutDraggingWidgetId = useAtomComponentStateValue(
-    pageLayoutDraggingWidgetIdComponentState,
-  );
-
-  const pageLayoutResizingWidgetId = useAtomComponentStateValue(
-    pageLayoutResizingWidgetIdComponentState,
-  );
-
   const isSidePanelAnimating = useAtomStateValue(isSidePanelAnimatingState);
 
-  const isLayoutAnimating =
-    isSidePanelAnimating ||
-    pageLayoutDraggingWidgetId === id ||
-    pageLayoutResizingWidgetId === id;
+  const isLayoutAnimating = isSidePanelAnimating || isWidgetMoving;
 
   const allowDataTransitions = !isLayoutAnimating;
 
@@ -160,7 +151,13 @@ export const GraphWidgetBarChart = ({
   );
 
   const { enrichedKeysMap, enrichedKeys, legendItems, visibleKeys } =
-    useBarChartData({ keys, series, colorRegistry, seriesLabels, colorMode });
+    useBarChartData({
+      keys,
+      series,
+      colorRegistry,
+      seriesLabels,
+      colorMode,
+    });
 
   const orderedKeys =
     groupMode === 'stacked' && layout === BarChartLayout.VERTICAL
@@ -311,7 +308,11 @@ export const GraphWidgetBarChart = ({
         onSliceClick={onSliceClick}
       />
       {showLegend && data.length > 0 && keys.length > 0 && (
-        <GraphWidgetLegend items={legendItems} show />
+        <GraphWidgetLegend
+          items={legendItems}
+          show
+          isInteractive={isLegendInteractive}
+        />
       )}
     </StyledContainer>
   );

@@ -35,6 +35,7 @@ export const fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermi
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         rowLevelPermissionPredicateManifest.predicateGroupUniversalIdentifier ??
         null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
       positionInRowLevelPermissionPredicateGroup:
         rowLevelPermissionPredicateManifest.position ?? null,
       createdAt: now,

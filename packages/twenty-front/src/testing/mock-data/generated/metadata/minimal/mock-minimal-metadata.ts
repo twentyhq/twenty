@@ -42,17 +42,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "isRemote": false
     },
     {
-      "id": "6e8eca5e-742b-4d5c-abe5-41bf2ee81922",
-      "nameSingular": "workflowAutomatedTrigger",
-      "namePlural": "workflowAutomatedTriggers",
-      "labelSingular": "Workflow Automated Trigger",
-      "labelPlural": "Workflow Automated Triggers",
-      "icon": "IconSettingsAutomation",
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
       "id": "5fd99bf8-8a88-4bed-aa6c-8ff34e43b0d0",
       "nameSingular": "workspaceMember",
       "namePlural": "workspaceMembers",
@@ -116,17 +105,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "icon": "IconCheckbox",
       "isActive": true,
       "isSystem": true,
-      "isRemote": false
-    },
-    {
-      "id": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9",
-      "nameSingular": "workflow",
-      "namePlural": "workflows",
-      "labelSingular": "Workflow",
-      "labelPlural": "Workflows",
-      "icon": "IconSettingsAutomation",
-      "isActive": true,
-      "isSystem": false,
       "isRemote": false
     },
     {
@@ -402,12 +380,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "objectMetadataId": "34ac72b8-0aaa-4c01-b8a8-8390415fdf8a"
     },
     {
-      "id": "64f8cabc-2bb7-48da-a137-05b1f4c99eb7",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "a3c473c4-6f08-4fa1-8ece-e429bb3cfce9"
-    },
-    {
       "id": "143fc3c5-ca1c-40fc-a1e2-286b114cae59",
       "type": "TABLE",
       "key": "INDEX",
@@ -508,12 +480,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "type": "TABLE",
       "key": "INDEX",
       "objectMetadataId": "7db07e5a-4476-4a4f-ba75-6de6597689aa"
-    },
-    {
-      "id": "b2e63752-f7e4-4d38-ae6e-063e6766a02d",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "6e8eca5e-742b-4d5c-abe5-41bf2ee81922"
     },
     {
       "id": "abd89c2e-a683-434b-ba3d-d387c47d853d",

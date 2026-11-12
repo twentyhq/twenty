@@ -27,9 +27,15 @@ const insertScript = ({
   defer?: boolean;
 }) => {
   const script = document.createElement('script');
-  if (isNonEmptyString(src)) script.src = src;
-  if (isNonEmptyString(innerHTML)) script.innerHTML = innerHTML;
-  if (isDefined(onLoad)) script.onload = onLoad;
+  if (isNonEmptyString(src)) {
+    script.src = src;
+  }
+  if (isNonEmptyString(innerHTML)) {
+    script.innerHTML = innerHTML;
+  }
+  if (isDefined(onLoad)) {
+    script.onload = onLoad;
+  }
   script.defer = defer;
   document.body.appendChild(script);
 };

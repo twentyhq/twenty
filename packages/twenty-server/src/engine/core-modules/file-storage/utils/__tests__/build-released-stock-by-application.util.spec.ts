@@ -1,4 +1,5 @@
 import { buildReleasedStockByApplication } from 'src/engine/core-modules/file-storage/utils/build-released-stock-by-application.util';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 
 const APPLICATION_ID = 'b30a4560-fedb-4ccd-904a-3788762c7d33';
 const ANOTHER_APPLICATION_ID = 'c41b5671-0fec-4dde-a15b-4899873d8e44';
@@ -7,9 +8,21 @@ describe('buildReleasedStockByApplication', () => {
   it('sums the bytes and counts the rows of each application', () => {
     expect(
       buildReleasedStockByApplication([
-        { size: 1000, applicationId: APPLICATION_ID },
-        { size: 2000, applicationId: APPLICATION_ID },
-        { size: 40, applicationId: ANOTHER_APPLICATION_ID },
+        {
+          size: 1000,
+          applicationId: APPLICATION_ID,
+          status: FILE_STATUS.UPLOADED,
+        },
+        {
+          size: 2000,
+          applicationId: APPLICATION_ID,
+          status: FILE_STATUS.UPLOADED,
+        },
+        {
+          size: 40,
+          applicationId: ANOTHER_APPLICATION_ID,
+          status: FILE_STATUS.UPLOADED,
+        },
       ]),
     ).toEqual(
       new Map([
@@ -17,6 +30,18 @@ describe('buildReleasedStockByApplication', () => {
         [ANOTHER_APPLICATION_ID, { bytes: 40, quantity: 1 }],
       ]),
     );
+  });
+
+  it('gives back nothing for remote files, which were never charged', () => {
+    expect(
+      buildReleasedStockByApplication([
+        {
+          size: 1000,
+          applicationId: APPLICATION_ID,
+          status: FILE_STATUS.REMOTE,
+        },
+      ]),
+    ).toEqual(new Map());
   });
 
   it('gives back nothing when the delete removed no row', () => {

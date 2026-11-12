@@ -7,22 +7,53 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { getWorkspaceAiDataPolicy } from '@/ai/utils/getWorkspaceAiDataPolicy';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { isAiDataPolicySavingState } from '@/settings/privacy/states/isAiDataPolicySavingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { pendingAiDataPolicyState } from '@/settings/privacy/states/pendingAiDataPolicyState';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateWorkspaceAiDataPolicyField = () => {
   const { enqueueToast } = useToast();
   const store = useStore();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
-  const isAiDataPolicySaving = useAtomStateValue(isAiDataPolicySavingState);
 
   const setStoredAiDataPolicy = (aiDataPolicy: AiDataPolicy) =>
     store.set(currentWorkspaceState.atom, (workspace) =>
       isDefined(workspace) ? { ...workspace, aiDataPolicy } : workspace,
     );
 
-  // an update replaces the whole policy, so the controls stay disabled until it lands
+  const saveAiDataPolicy = async ({
+    aiDataPolicy,
+    lastSavedAiDataPolicy,
+  }: {
+    aiDataPolicy: AiDataPolicy;
+    lastSavedAiDataPolicy: AiDataPolicy;
+  }): Promise<void> => {
+    try {
+      await updateWorkspace({ variables: { input: { aiDataPolicy } } });
+    } catch (error) {
+      store.set(pendingAiDataPolicyState.atom, null);
+      setStoredAiDataPolicy(lastSavedAiDataPolicy);
+      enqueueToast(getToastOptionsFromError({ error }));
+
+      return;
+    }
+
+    const pendingAiDataPolicy = store.get(pendingAiDataPolicyState.atom);
+
+    if (
+      !isDefined(pendingAiDataPolicy) ||
+      pendingAiDataPolicy === aiDataPolicy
+    ) {
+      store.set(pendingAiDataPolicyState.atom, null);
+
+      return;
+    }
+
+    await saveAiDataPolicy({
+      aiDataPolicy: pendingAiDataPolicy,
+      lastSavedAiDataPolicy: aiDataPolicy,
+    });
+  };
+
   const updateWorkspaceAiDataPolicyField = async <
     TField extends keyof AiDataPolicy,
   >({
@@ -32,23 +63,26 @@ export const useUpdateWorkspaceAiDataPolicyField = () => {
     field: TField;
     value: AiDataPolicy[TField];
   }) => {
-    const previousAiDataPolicy = getWorkspaceAiDataPolicy(
+    const storedAiDataPolicy = getWorkspaceAiDataPolicy(
       store.get(currentWorkspaceState.atom),
     );
-    const aiDataPolicy = { ...previousAiDataPolicy, [field]: value };
+    const pendingAiDataPolicy = store.get(pendingAiDataPolicyState.atom);
+    const aiDataPolicy = {
+      ...(pendingAiDataPolicy ?? storedAiDataPolicy),
+      [field]: value,
+    };
 
-    store.set(isAiDataPolicySavingState.atom, true);
+    store.set(pendingAiDataPolicyState.atom, aiDataPolicy);
     setStoredAiDataPolicy(aiDataPolicy);
 
-    try {
-      await updateWorkspace({ variables: { input: { aiDataPolicy } } });
-    } catch (error) {
-      setStoredAiDataPolicy(previousAiDataPolicy);
-      enqueueToast(getToastOptionsFromError({ error }));
-    } finally {
-      store.set(isAiDataPolicySavingState.atom, false);
+    // an update replaces the whole policy, so a save in flight sends this one when it lands
+    if (!isDefined(pendingAiDataPolicy)) {
+      await saveAiDataPolicy({
+        aiDataPolicy,
+        lastSavedAiDataPolicy: storedAiDataPolicy,
+      });
     }
   };
 
-  return { updateWorkspaceAiDataPolicyField, isAiDataPolicySaving };
+  return { updateWorkspaceAiDataPolicyField };
 };

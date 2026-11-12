@@ -183,7 +183,9 @@ export class WorkspaceIteratorService {
 
       if (error instanceof WorkspaceMigrationRunnerException && error.errors) {
         for (const [label, innerError] of Object.entries(error.errors)) {
-          if (!isDefined(innerError)) continue;
+          if (!isDefined(innerError)) {
+            continue;
+          }
 
           if (innerError instanceof Error) {
             this.logger.error(

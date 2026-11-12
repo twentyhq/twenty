@@ -25,6 +25,7 @@ import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-module
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
+import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -110,6 +111,7 @@ export class FieldMetadataService {
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+      flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -118,6 +120,7 @@ export class FieldMetadataService {
           'flatIndexMaps',
           'flatFieldMetadataMaps',
           'flatPageLayoutWidgetMaps',
+          'flatFieldMetadataOptionMaps',
         ],
       },
     );
@@ -174,6 +177,13 @@ export class FieldMetadataService {
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
             },
+            fieldMetadataOption:
+              computeFieldMetadataOptionOperationsForFieldMetadatas({
+                flatFieldMetadatasToDelete,
+                existingFlatFieldMetadataOptionMaps,
+                applicationUniversalIdentifier:
+                  resolvedOwnerFlatApplication.universalIdentifier,
+              }),
             index: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatIndexesToDelete,
@@ -234,6 +244,7 @@ export class FieldMetadataService {
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -245,6 +256,7 @@ export class FieldMetadataService {
           'flatViewGroupMaps',
           'flatViewMaps',
           'flatViewFieldMaps',
+          'flatFieldMetadataOptionMaps',
         ],
       },
     );
@@ -312,6 +324,14 @@ export class FieldMetadataService {
               flatEntityToDelete: [],
               flatEntityToUpdate: flatFieldMetadatasToUpdate,
             },
+            fieldMetadataOption:
+              computeFieldMetadataOptionOperationsForFieldMetadatas({
+                flatFieldMetadatasToCreate,
+                flatFieldMetadatasToUpdate,
+                existingFlatFieldMetadataOptionMaps,
+                applicationUniversalIdentifier:
+                  resolvedOwnerFlatApplication.universalIdentifier,
+              }),
             index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
               flatEntityToDelete: flatIndexMetadatasToDelete,
@@ -394,9 +414,11 @@ export class FieldMetadataService {
     const {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
+      'flatFieldMetadataOptionMaps',
     ]);
 
     const allTranspiledTranspilationInputs: Awaited<
@@ -443,6 +465,13 @@ export class FieldMetadataService {
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            fieldMetadataOption:
+              computeFieldMetadataOptionOperationsForFieldMetadatas({
+                flatFieldMetadatasToCreate,
+                existingFlatFieldMetadataOptionMaps,
+                applicationUniversalIdentifier:
+                  resolvedOwnerFlatApplication.universalIdentifier,
+              }),
             index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,
               flatEntityToDelete: [],

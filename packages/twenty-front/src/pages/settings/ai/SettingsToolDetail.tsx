@@ -102,7 +102,9 @@ export const SettingsToolDetail = () => {
     : undefined;
 
   const debouncedSaveName = useDebouncedCallback(async (value: string) => {
-    if (!isCustomTool || !isDefined(logicFunction)) return;
+    if (!isCustomTool || !isDefined(logicFunction)) {
+      return;
+    }
 
     const result = await updateLogicFunction({
       input: {
@@ -123,7 +125,9 @@ export const SettingsToolDetail = () => {
 
   const debouncedSaveDescription = useDebouncedCallback(
     async (value: string) => {
-      if (!isCustomTool || !isDefined(logicFunction)) return;
+      if (!isCustomTool || !isDefined(logicFunction)) {
+        return;
+      }
 
       const result = await updateLogicFunction({
         input: {
@@ -145,7 +149,9 @@ export const SettingsToolDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!isCustomTool || !isDefined(logicFunction)) return;
+    if (!isCustomTool || !isDefined(logicFunction)) {
+      return;
+    }
 
     setIsDeleting(true);
 

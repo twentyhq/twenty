@@ -27,7 +27,7 @@ import {
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordPermissionReadOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-permission-read-orm.service';
+import { type RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -62,7 +62,7 @@ const findManyOperation = (recordId: string) =>
   });
 
 describe('createShareWithObjectRecordsPermissions', () => {
-  let recordPermissionReadOrmService: RecordPermissionReadOrmService;
+  let recordPermissionReadRepository: RecordPermissionReadRepository;
   let objectMetadataId: string;
   let personRelationFieldMetadataId: string;
 
@@ -70,7 +70,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordPermissionReadOrmService.findRecordShares({
+    recordPermissionReadRepository.findRecordShares({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
       recordIds: [recordId],
@@ -85,9 +85,9 @@ describe('createShareWithObjectRecordsPermissions', () => {
   };
 
   beforeAll(async () => {
-    recordPermissionReadOrmService =
-      getAppProviderByClassName<RecordPermissionReadOrmService>(
-        'RecordPermissionReadOrmService',
+    recordPermissionReadRepository =
+      getAppProviderByClassName<RecordPermissionReadRepository>(
+        'RecordPermissionReadRepository',
       );
 
     const { data } = await createOneObjectMetadata({
@@ -189,19 +189,21 @@ describe('createShareWithObjectRecordsPermissions', () => {
   });
 
   describe('with record-level sharing', () => {
-    const setRecordSharingEnabled = (value: boolean) =>
-      updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        value,
-        expectToFail: false,
-      });
+    const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
+      for (const featureFlag of [
+        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+      ]) {
+        await updateFeatureFlag({ featureFlag, value, expectToFail: false });
+      }
+    };
 
     beforeAll(async () => {
-      await setRecordSharingEnabled(true);
+      await setRecordSharingAndPrivateRecordsEnabled(true);
     });
 
     afterAll(async () => {
-      await setRecordSharingEnabled(false);
+      await setRecordSharingAndPrivateRecordsEnabled(false);
     });
 
     it('should write the named grants without an owner row when everyone keeps the default access', async () => {

@@ -111,6 +111,7 @@ export class ApplicationMessageIngestionService {
           messageChannel,
           connectedAccount,
           workspaceId,
+          folderLinkUpdate: 'add',
           personHandleField: personHandleField ?? undefined,
         }),
       buildAppIngestionLockKey({ workspaceId, messageChannelId }),

@@ -51,7 +51,9 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   ];
 
   const handleVisibilityChange = (visibility: ViewVisibility) => {
-    if (!canPersistChanges || !currentView) return;
+    if (!canPersistChanges || !currentView) {
+      return;
+    }
     updateCurrentView({
       visibility,
     });

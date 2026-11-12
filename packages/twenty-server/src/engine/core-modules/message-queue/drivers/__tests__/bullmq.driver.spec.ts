@@ -174,12 +174,16 @@ describe('BullMQDriver deduplication', () => {
     it('reads the waiting jobs once and drops the jobs already waiting', async () => {
       mockGetRanges.mockResolvedValue([WAITING_JOB_ID, 'ws-1.exact-job-id']);
 
-      const jobIds = await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
-        { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
-        { data: {}, jobId: 'sync-catalog-ws-1', ...SYSTEM_JOB },
-        { data: {}, jobId: 'ws-1.new-job-id', ...SYSTEM_JOB },
-        { data: {}, ...SYSTEM_JOB },
-      ]);
+      const { jobs } = await driver.bulkAdd(
+        MessageQueue.workspaceQueue,
+        'job',
+        [
+          { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
+          { data: {}, jobId: 'sync-catalog-ws-1', ...SYSTEM_JOB },
+          { data: {}, jobId: 'ws-1.new-job-id', ...SYSTEM_JOB },
+          { data: {}, ...SYSTEM_JOB },
+        ],
+      );
 
       expect(mockGetRanges).toHaveBeenCalledTimes(1);
       expect(mockGetRanges).toHaveBeenCalledWith(
@@ -193,17 +197,22 @@ describe('BullMQDriver deduplication', () => {
           (job: { opts: { jobId?: string } }) => job.opts.jobId,
         ),
       ).toEqual(['ws-1.new-job-id', undefined]);
-      expect(jobIds).toEqual(['ws-1.new-job-id', 'auto-1']);
+      expect(jobs.map(({ jobId }) => jobId)).toEqual([
+        'ws-1.new-job-id',
+        'auto-1',
+      ]);
     });
 
     it('adds nothing when every job is already waiting', async () => {
       mockGetRanges.mockResolvedValue(['ws-1.exact-job-id']);
 
-      const jobIds = await driver.bulkAdd(MessageQueue.workspaceQueue, 'job', [
-        { data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB },
-      ]);
+      const { jobs } = await driver.bulkAdd(
+        MessageQueue.workspaceQueue,
+        'job',
+        [{ data: {}, jobId: 'ws-1.exact-job-id', ...SYSTEM_JOB }],
+      );
 
-      expect(jobIds).toEqual([]);
+      expect(jobs).toEqual([]);
       expect(mockAddBulk).not.toHaveBeenCalled();
     });
 
@@ -905,7 +914,11 @@ describe('BullMQDriver job size limit', () => {
     ).rejects.toBeInstanceOf(MessageQueueException);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
+      attributes: {
+        queue: MessageQueue.workspaceQueue,
+        job_name: 'job',
+        reason: 'size',
+      },
       shouldStoreInCache: false,
     });
   });
@@ -952,5 +965,37 @@ describe('BullMQDriver job size limit', () => {
         timestamp: Date.now(),
       } as Job),
     ).rejects.toBeInstanceOf(jest.requireActual('bullmq').UnrecoverableError);
+  });
+
+  it('lets the job retry when it is refused for memory', async () => {
+    const { driver } = buildDriver(true);
+
+    driver.work(MessageQueue.workspaceQueue, async () => {
+      throw new MessageQueueException(
+        'memory limit',
+        MessageQueueExceptionCode.JOB_QUEUE_MEMORY_LIMIT_REACHED,
+        {
+          requestedBytes: 100,
+          availableBytes: 0,
+          refusedGroupKeys: ['workspace:ws-1'],
+        },
+      );
+    });
+
+    const processor = mockWorkerConstructor.mock.calls[0][1];
+
+    if (typeof processor !== 'function') {
+      throw new Error('Worker processor was not registered');
+    }
+
+    await expect(
+      processor({
+        id: 'job-id',
+        name: 'job',
+        data: {},
+        opts: {},
+        timestamp: Date.now(),
+      } as Job),
+    ).rejects.toBeInstanceOf(MessageQueueException);
   });
 });

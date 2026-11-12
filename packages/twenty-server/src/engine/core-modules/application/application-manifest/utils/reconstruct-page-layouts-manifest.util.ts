@@ -39,10 +39,12 @@ export const reconstructPageLayoutsManifest = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
+  exportedFrontComponentUniversalIdentifiers = new Set<string>(),
 }: {
   applicationAllFlatEntityMaps: AllFlatEntityMaps;
   allFlatEntityMaps: AllFlatEntityMaps;
   exportedObjectUniversalIdentifiers: Set<string>;
+  exportedFrontComponentUniversalIdentifiers?: ReadonlySet<string>;
 }): {
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
@@ -175,6 +177,7 @@ export const reconstructPageLayoutsManifest = ({
             applicationAllFlatEntityMaps,
             allFlatEntityMaps,
             exportedObjectUniversalIdentifiers,
+            exportedFrontComponentUniversalIdentifiers,
           })
         : 'page layout widget on a page layout tab that does not exist',
       canStandAlone: true,

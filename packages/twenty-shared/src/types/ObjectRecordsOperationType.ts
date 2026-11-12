@@ -1,7 +1,6 @@
 export type ObjectRecordsOperationType =
-  | 'select'
-  | 'insert'
+  | 'create'
+  | 'read'
   | 'update'
-  | 'delete'
-  | 'restore'
-  | 'soft-delete';
+  | 'softDelete'
+  | 'destroy';

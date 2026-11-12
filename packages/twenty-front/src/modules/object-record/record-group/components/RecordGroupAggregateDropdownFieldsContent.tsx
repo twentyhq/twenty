@@ -54,7 +54,9 @@ export const RecordGroupAggregateDropdownFieldsContent = ({
             (field) => field.id === fieldId,
           );
 
-          if (!isDefined(fieldMetadata)) return null;
+          if (!isDefined(fieldMetadata)) {
+            return null;
+          }
 
           const isSelected =
             recordIndexGroupAggregateFieldMetadataItem?.id === fieldId &&

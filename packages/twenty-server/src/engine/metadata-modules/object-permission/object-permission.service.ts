@@ -149,8 +149,14 @@ export class ObjectPermissionService {
             ? desired.canDestroyObjectRecords
             : current.canDestroyObjectRecords;
 
+        const effectiveCanCreate =
+          desired.canUpdateObjectRecords !== undefined
+            ? desired.canUpdateObjectRecords
+            : current.canCreateObjectRecords;
+
         const canChanged =
           effectiveCanRead !== current.canReadObjectRecords ||
+          effectiveCanCreate !== current.canCreateObjectRecords ||
           effectiveCanUpdate !== current.canUpdateObjectRecords ||
           effectiveCanSoftDelete !== current.canSoftDeleteObjectRecords ||
           effectiveCanDestroy !== current.canDestroyObjectRecords;
@@ -165,6 +171,7 @@ export class ObjectPermissionService {
             objectMetadataUniversalIdentifier:
               current.objectMetadataUniversalIdentifier,
             canReadObjectRecords: effectiveCanRead,
+            canCreateObjectRecords: effectiveCanCreate,
             canUpdateObjectRecords: effectiveCanUpdate,
             canSoftDeleteObjectRecords: effectiveCanSoftDelete,
             canDestroyObjectRecords: effectiveCanDestroy,
@@ -185,6 +192,7 @@ export class ObjectPermissionService {
           objectMetadataUniversalIdentifier:
             current.objectMetadataUniversalIdentifier,
           canReadObjectRecords: current.canReadObjectRecords,
+          canCreateObjectRecords: current.canCreateObjectRecords,
           canUpdateObjectRecords: current.canUpdateObjectRecords,
           canSoftDeleteObjectRecords: current.canSoftDeleteObjectRecords,
           canDestroyObjectRecords: current.canDestroyObjectRecords,

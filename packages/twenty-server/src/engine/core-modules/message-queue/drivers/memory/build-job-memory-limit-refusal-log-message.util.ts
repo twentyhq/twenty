@@ -4,6 +4,7 @@ import { type JobMemoryLimitRefusal } from 'src/engine/core-modules/message-queu
 
 export const buildJobMemoryLimitRefusalLogMessage = ({
   queueName,
+  jobName,
   groupKey,
   reason,
   requestedBytes,
@@ -18,5 +19,5 @@ export const buildJobMemoryLimitRefusalLogMessage = ({
     `limitBytes=${limitBytes}`,
   ];
 
-  return `Job memory limit refused on queue ${queueName} [${fields.join(' ')}]`;
+  return `Job memory limit refused for job ${jobName} on queue ${queueName} [${fields.join(' ')}]`;
 };

@@ -29,7 +29,9 @@ export const ClientConfigProviderEffect = () => {
   ]);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     if (error instanceof Error) {
       setClientConfigApiStatus((currentStatus) => ({

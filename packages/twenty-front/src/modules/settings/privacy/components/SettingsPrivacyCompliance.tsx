@@ -2,12 +2,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
 import {
-  IconFileCheck,
-  IconFileText,
-  IconListCheck,
-  IconStack2,
+  IconEuStars,
+  IconRosetteDiscountCheck,
+  IconSignature,
 } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 
@@ -24,46 +22,63 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
+const StyledProviderLogo = styled.span`
+  background-color: currentColor;
+  border-radius: 1px;
+  height: ${themeCssVariables.spacing[1]};
+  width: ${themeCssVariables.spacing[1]};
+`;
+
 export const SettingsPrivacyCompliance = () => {
   const { t } = useLingui();
   const theme = useTheme();
 
-  const gdprCard = (
-    <SettingsCard
-      href={TWENTY_TRUST_CENTER_URLS.gdpr}
-      Icon={<IconListCheck size={theme.icon.size.md} />}
-      title={t`GDPR`}
-      description={t`Built to meet EU data protection rules`}
-    />
-  );
-
   return (
-    <Section.Root>
-      <Section.Header
-        title={t`Compliance`}
-        description={t`Audited controls and the agreements that cover your data.`}
+    <StyledCardsGrid>
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.soc2}
+        illustrationColor="green"
+        Icon={
+          <IconRosetteDiscountCheck
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        }
+        title={t`SOC 2`}
+        description={t`Independently audited security controls`}
       />
-      <StyledCardsGrid>
-        <SettingsCard
-          href={TWENTY_TRUST_CENTER_URLS.soc2}
-          Icon={<IconFileCheck size={theme.icon.size.md} />}
-          title={t`SOC 2`}
-          description={t`Independently audited security controls`}
-        />
-        <SettingsCard
-          to={getSettingsPath(SettingsPath.LegalDpa)}
-          Icon={<IconFileText size={theme.icon.size.md} />}
-          title={t`Data Processing Agreement`}
-          description={t`Generate a signed copy in one click`}
-        />
-        <SettingsCard
-          href={TWENTY_TRUST_CENTER_URLS.subprocessors}
-          Icon={<IconStack2 size={theme.icon.size.md} />}
-          title={t`Subprocessors`}
-          description={t`Every provider that handles your data`}
-        />
-        {gdprCard}
-      </StyledCardsGrid>
-    </Section.Root>
+      <SettingsCard
+        to={getSettingsPath(SettingsPath.LegalDpa)}
+        illustrationColor="orange"
+        Icon={
+          <IconSignature
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.md}
+          />
+        }
+        title={t`Data Processing Agreement`}
+        description={t`Generate a signed copy in one click`}
+      />
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.subprocessors}
+        illustrationColor="purple"
+        Icon={
+          <>
+            <StyledProviderLogo />
+            <StyledProviderLogo />
+            <StyledProviderLogo />
+          </>
+        }
+        title={t`Subprocessors`}
+        description={t`Every provider that handles your data`}
+      />
+      <SettingsCard
+        href={TWENTY_TRUST_CENTER_URLS.gdpr}
+        illustrationColor="blue"
+        Icon={<IconEuStars size={theme.icon.size.md} />}
+        title={t`GDPR`}
+        description={t`Built to meet EU data protection rules`}
+      />
+    </StyledCardsGrid>
   );
 };

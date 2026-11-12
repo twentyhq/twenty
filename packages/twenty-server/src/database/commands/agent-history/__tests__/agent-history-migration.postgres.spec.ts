@@ -117,7 +117,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         permissionsPrincipals: undefined,
         recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
         eventEmitterService: { emitDatabaseBatchEvent },
-        recordRepositoryPermissions: {} as never,
+        recordPermissions: {} as never,
+        recordFieldPermissions: {
+          findFieldsHiddenOnMatchingRecords: jest.fn(),
+        },
+        recordAccessGroupWrite: {
+          isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+          isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+          findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+          recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+        },
+        recordAccessGroupQueue: { queueRecompute: jest.fn() },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
           acquireRecordStock: jest.fn().mockResolvedValue(undefined),
@@ -290,16 +300,19 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     beforeAll(async () => {
       jest.useRealTimers();
       Logger.overrideLogger(false);
-      if (new URL(DATABASE_URL!).pathname !== '/agent_history_migration_test')
+      if (new URL(DATABASE_URL!).pathname !== '/agent_history_migration_test') {
         throw new Error(
           'Use the isolated agent_history_migration_test database',
         );
+      }
       await dataSource.initialize();
       await dataSource.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
     });
     afterAll(async () => {
       await pool.end();
-      if (dataSource.isInitialized) await dataSource.destroy();
+      if (dataSource.isInitialized) {
+        await dataSource.destroy();
+      }
     });
 
     beforeEach(async () => {
@@ -312,7 +325,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await dataSource.query(
         `CREATE TABLE core."keyValuePair" ("key" text, "workspaceId" uuid, "userId" uuid, "applicationId" uuid, "type" text, "value" jsonb, "updatedAt" timestamptz DEFAULT now()); CREATE UNIQUE INDEX state_key ON core."keyValuePair" ("key", "workspaceId") WHERE "userId" IS NULL AND "applicationId" IS NULL`,
       );
-      for (const ddl of AGENT_HISTORY_TEST_SCHEMA) await dataSource.query(ddl);
+      for (const ddl of AGENT_HISTORY_TEST_SCHEMA) {
+        await dataSource.query(ddl);
+      }
       const senderRunner = dataSource.createQueryRunner();
       try {
         await senderRunner.connect();
@@ -392,8 +407,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             !ACTIVE_AGENT_HISTORY_TABLES.some(
               (table) => table.name === object.nameSingular,
             )
-          )
+          ) {
             continue;
+          }
           await new WorkspaceSchemaIndexManagerService().createIndex({
             queryRunner: runner,
             schemaName: SCHEMA,
@@ -580,8 +596,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 1
-          )
+          ) {
             throw new Error('Injected process failure');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(
@@ -744,6 +761,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       await Promise.all(
         ['First checkpoint', 'Second checkpoint'].map((text) =>
           conversationWriter.upsertAssistantMessage({
+            agentId: null,
             id: checkpointId,
             threadId: THREAD_ID,
             turnId: TURN_ID,
@@ -1193,10 +1211,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 5
-          )
+          ) {
             await runner.query(
               `UPDATE "${SCHEMA}"."agentChatThread" SET title = 'corrupted'`,
             );
+          }
         });
       await expect(
         migration.migrate({ workspaceId: WORKSPACE_ID, target: 'workspace' }),
@@ -1437,8 +1456,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           if (
             state.migration?.phase === 'copying' &&
             state.migration.tableIndex === 1
-          )
+          ) {
             throw new Error('crash');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(
@@ -1448,7 +1468,9 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const failAbort = jest
         .spyOn(migrationState, 'writeState')
         .mockImplementation(async (runner, workspaceId, state) => {
-          if (!state.migration) throw new Error('abort interrupted');
+          if (!state.migration) {
+            throw new Error('abort interrupted');
+          }
           await writeState(runner, workspaceId, state);
         });
       await expect(

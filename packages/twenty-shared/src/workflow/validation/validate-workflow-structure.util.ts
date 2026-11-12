@@ -6,6 +6,7 @@ import {
   type WorkflowValidationResult,
 } from '@/workflow/validation/types/WorkflowValidation';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
+import { validateWorkflowExecutionPaths } from '@/workflow/validation/utils/validate-workflow-execution-paths.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
 import { validateWorkflowStepParams } from '@/workflow/validation/utils/validate-workflow-step-params.util';
 import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/validate-workflow-variable-references.util';
@@ -61,6 +62,7 @@ export const validateWorkflowStructure = (
   const graph = buildWorkflowGraph(workflow);
 
   issues.push(...validateWorkflowGraph({ workflow, graph }));
+  issues.push(...validateWorkflowExecutionPaths({ workflow, graph }));
   issues.push(...validateWorkflowStepParams(workflow));
   issues.push(
     ...validateWorkflowVariableReferences({

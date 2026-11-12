@@ -44,7 +44,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 
   const hasObjectReadPermissions = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const updateRecord = useContext(RecordTableUpdateContext);

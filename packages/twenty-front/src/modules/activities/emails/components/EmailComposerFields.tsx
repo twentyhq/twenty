@@ -5,7 +5,6 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import {
   canConnectedAccountPerformEmailOperation,
-  getSendableEmailHandles,
   isDefined,
 } from 'twenty-shared/utils';
 import { IconPaperclip } from 'twenty-ui/icon';
@@ -27,9 +26,10 @@ import { type EmailRecipientDragData } from '@/activities/emails/recipients/type
 import { type EmailRecipientsFieldId } from '@/activities/emails/recipients/types/EmailRecipientsFieldId';
 import { getEmailRecipientKey } from '@/activities/emails/recipients/utils/getEmailRecipientKey';
 import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/utils/moveEmailRecipientsBetweenFields';
+import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
+import { getEmailComposerSenderPicker } from '@/activities/emails/utils/getEmailComposerSenderPicker';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { buildConnectedAccountSenderOptions } from '@/accounts/utils/buildConnectedAccountSenderOptions';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
@@ -76,12 +76,14 @@ type EmailComposerFieldsProps = {
   contextRecord?: EmailComposerContextRecord | null;
   // For surfaces without a composer footer of their own.
   onAttachFiles?: () => void;
+  appSender?: Pick<AppReplyTarget, 'connectedAccountId' | 'handle'> | null;
 };
 
 export const EmailComposerFields = ({
   composerState,
   contextRecord,
   onAttachFiles,
+  appSender,
 }: EmailComposerFieldsProps) => {
   const { t } = useLingui();
   const ccInputRef = useRef<HTMLInputElement>(null);
@@ -101,30 +103,24 @@ export const EmailComposerFields = ({
       }),
   );
 
-  const senderOptions = buildConnectedAccountSenderOptions(sendableAccounts);
+  const {
+    options: senderOptions,
+    selectedValue: selectedSenderValue,
+    getSenderForValue,
+  } = getEmailComposerSenderPicker({
+    sendableAccounts,
+    appSender,
+    sender: composerState,
+  });
 
   const hasMultipleSenders = senderOptions.length > 1;
 
-  const selectedAccount = sendableAccounts.find(
-    (account) => account.id === composerState.connectedAccountId,
-  );
+  const handleSenderChange = (value: string) => {
+    const nextSender = getSenderForValue(value);
 
-  const selectedSenderValue =
-    composerState.fromHandle ?? selectedAccount?.handle;
-
-  const handleSenderChange = (handle: string) => {
-    const senderAccount = sendableAccounts.find((account) =>
-      getSendableEmailHandles(account).includes(handle),
-    );
-
-    if (!isDefined(senderAccount)) {
-      return;
+    if (isDefined(nextSender)) {
+      composerState.setSender(nextSender);
     }
-
-    composerState.setSender({
-      connectedAccountId: senderAccount.id,
-      fromHandle: handle,
-    });
   };
 
   const allRecipientKeys = [

@@ -145,7 +145,9 @@ export const SettingsObjectFieldItemTableRow = ({
     });
   };
 
-  if (!isFieldTypeSupported) return null;
+  if (!isFieldTypeSupported) {
+    return null;
+  }
 
   const isRelatedObjectLinkable = isDefined(
     relationObjectMetadataItem?.namePlural,

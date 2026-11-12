@@ -34,7 +34,9 @@ export const useFieldPreviewValue = ({
       !isDefined(relationObjectNameSingular),
   });
 
-  if (skip === true) return null;
+  if (skip === true) {
+    return null;
+  }
 
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.CURRENCY:

@@ -46,9 +46,11 @@ import {
   type JoinClause,
   type OrderByClause,
   type SelectClause,
+  type ColumnNullifyConditions,
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -96,9 +98,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
   private offsetValue?: number;
+  private isLockedForUpdate = false;
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
+  private readonly aliasesWithColumnNullifyApplied = new Set<string>();
+  private readonly columnNullifyConditions: ColumnNullifyConditions = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -150,6 +155,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
     cloned.offsetValue = this.offsetValue;
+    cloned.isLockedForUpdate = this.isLockedForUpdate;
     cloned.includeDeleted = this.includeDeleted;
     cloned.explicitSelection =
       this.explicitSelection === undefined
@@ -559,6 +565,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this;
   }
 
+  forUpdate(): this {
+    this.isLockedForUpdate = true;
+
+    return this;
+  }
+
   take(count: number): this {
     return this.limit(count);
   }
@@ -689,6 +701,36 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     const rows = await this.context.executor.execute(compiled);
 
     return Number(rows[0]?.count ?? 0);
+  }
+
+  markColumnNullifyApplied(alias: string): boolean {
+    if (this.aliasesWithColumnNullifyApplied.has(alias)) {
+      return false;
+    }
+
+    this.aliasesWithColumnNullifyApplied.add(alias);
+
+    return true;
+  }
+
+  nullifyColumnsWhen({
+    alias,
+    columnNames,
+    condition,
+  }: {
+    alias: string;
+    columnNames: string[];
+    condition: SQLCondition;
+  }): this {
+    const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
+      alias
+    ] ??= {});
+
+    for (const columnName of columnNames) {
+      (columnNullifyConditionsOfAlias[columnName] ??= []).push(condition.sql);
+    }
+
+    return this.setParameters(condition.parameters);
   }
 
   addJoinCondition(alias: string, condition: string): this {
@@ -1271,6 +1313,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
+      columnNullifyConditions: this.columnNullifyConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       rowAccessConditions: this.rowAccessConditions,
@@ -1282,6 +1325,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       allowPlainToManyJoins: options?.allowPlainToManyJoins ?? false,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
+      isLockedForUpdate: this.isLockedForUpdate,
     };
   }
 }

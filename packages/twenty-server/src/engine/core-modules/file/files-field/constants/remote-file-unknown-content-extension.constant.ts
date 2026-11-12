@@ -1,0 +1,1 @@
+export const REMOTE_FILE_UNKNOWN_CONTENT_EXTENSION = 'bin';

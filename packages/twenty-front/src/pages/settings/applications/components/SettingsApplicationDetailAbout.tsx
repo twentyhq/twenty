@@ -4,6 +4,7 @@ import {
   SettingsApplicationAboutSidebar,
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
+import { type ApplicationContentLink } from '@/settings/applications/types/ApplicationContentLink';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,6 +26,7 @@ type SettingsApplicationDetailAboutProps = {
   installCount?: number;
   category?: string;
   developerLinks?: DeveloperLinks;
+  contentLink?: ApplicationContentLink;
   onShare?: () => void;
 };
 
@@ -140,6 +142,7 @@ export const SettingsApplicationDetailAbout = ({
   installCount,
   category,
   developerLinks,
+  contentLink,
   onShare,
 }: SettingsApplicationDetailAboutProps) => {
   const { t } = useLingui();
@@ -183,6 +186,7 @@ export const SettingsApplicationDetailAbout = ({
           pricingDescription={pricingDescription}
           billsCredits={billsCredits}
           developerLinks={developerLinks}
+          contentLink={contentLink}
         />
       </StyledSidebarColumn>
 

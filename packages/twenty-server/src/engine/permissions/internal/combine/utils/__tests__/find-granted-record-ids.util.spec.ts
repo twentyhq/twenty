@@ -20,13 +20,13 @@ import {
 } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util';
+import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 
 jest.mock(
-  'src/engine/permissions/internal/rls/utils/resolve-row-level-permission-record-filter.util',
+  'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util',
 );
 
 const MEMBER_ID = 'member-1';
@@ -92,11 +92,13 @@ const privateRecordStates = new Map<string, PrivateRecordState>([
 ]);
 
 const fullAccess: ObjectRecordsPermissions = {
+  canCreateAllRecords: true,
   canReadAllRecords: true,
   canUpdateAllRecords: true,
   canSoftDeleteAllRecords: true,
   canDestroyAllRecords: true,
-  restrictedFields: {},
+  unreadableFields: [],
+  uneditableFields: [],
 };
 
 const rolePrincipals: PermissionsPrincipalsWithRolesContext = {
@@ -127,11 +129,12 @@ const deniedPrincipals: PermissionsPrincipalsWithRolesContext = {
 
 const filterByStatus = (status: string) =>
   jest
-    .mocked(resolveRowLevelPermissionRecordFilter)
+    .mocked(resolveRlsRuleRecordFilter)
     .mockReturnValue({ status: { eq: status } });
 
 const buildContext = (): RowAccessEvaluationContext => ({
   shouldIgnoreSoftDeleteDefaultFilter: false,
+  findRelationJoinValues: jest.fn().mockResolvedValue([]),
   fetchRecordShares: jest.fn(async ({ recordIds }) =>
     recordShares.filter((recordShare) =>
       recordIds.includes(recordShare.recordId),
@@ -140,9 +143,14 @@ const buildContext = (): RowAccessEvaluationContext => ({
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
 });
 
+const SHARING_WORKSPACE_FEATURE_FLAG_KEYS = [
+  FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
+  FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+];
+
 const findGranted = ({
   principals,
-  featureFlagKeys = [],
+  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
   context = buildContext(),
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
@@ -160,27 +168,24 @@ const findGranted = ({
           objects: { [flatObjectMetadata.id]: fullAccess },
         },
       },
-      flatApplicationMaps: { byId: {} },
-      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
     },
     flatObjectMetadata,
-    operationType: 'select',
+    operationType: 'read',
     records,
     context,
   });
 
 describe('findGrantedRecordIds', () => {
   beforeEach(() => {
-    jest.mocked(resolveRowLevelPermissionRecordFilter).mockReturnValue(null);
+    jest.mocked(resolveRlsRuleRecordFilter).mockReturnValue(null);
   });
 
-  it('grants no record to a role without access', async () => {
+  it('grants a member whose role has no access only the private records they created', async () => {
     expect(await findGranted({ principals: deniedPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
   });
 
@@ -202,16 +207,32 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: deniedPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
       }),
     ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
   });
 
-  it('grants private records to their creator within the role filter', async () => {
+  it('grants no shared or created record when a limiting role lacks all records', async () => {
+    expect(
+      await findGranted({
+        principals: {
+          ...memberPrincipals,
+          limitingPrincipal: {
+            type: 'agent',
+            agentId: 'agent-1',
+            roleId: 'missing-role',
+          },
+        },
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
+      }),
+    ).toEqual(new Set());
+  });
+
+  it('grants private records to their creator whatever the role filter', async () => {
     filterByStatus('none');
 
     expect(await findGranted({ principals: memberPrincipals })).toEqual(
-      new Set(),
+      new Set(['active-private']),
     );
 
     filterByStatus('active');
@@ -229,7 +250,7 @@ describe('findGrantedRecordIds', () => {
     expect(
       await findGranted({
         principals: memberPrincipals,
-        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        featureFlagKeys: SHARING_WORKSPACE_FEATURE_FLAG_KEYS,
         context,
       }),
     ).toEqual(new Set(records.map((record) => record.id)));

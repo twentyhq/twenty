@@ -121,11 +121,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
 
       if (cursorArgFilter.length > 0) {
-        appliedFilters = (args.filter && Object.keys(args.filter).length > 0
-          ? {
-              and: [args.filter, { or: cursorArgFilter }],
-            }
-          : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+        appliedFilters =
+          args.filter && Object.keys(args.filter).length > 0
+            ? {
+                and: [args.filter, { or: cursorArgFilter }],
+              }
+            : { or: cursorArgFilter };
       }
     }
 

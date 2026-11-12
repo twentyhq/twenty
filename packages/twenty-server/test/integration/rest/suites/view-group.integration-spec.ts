@@ -100,7 +100,9 @@ describe('View Group REST API', () => {
   });
 
   afterEach(async () => {
-    if (!testViewGroupId) return;
+    if (!testViewGroupId) {
+      return;
+    }
 
     await destroyOneViewGroup({
       input: {

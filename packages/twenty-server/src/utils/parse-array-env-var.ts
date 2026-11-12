@@ -3,7 +3,9 @@ export const parseArrayEnvVar = <T>(
   expectedValues: T[],
   defaultValues: T[],
 ): T[] => {
-  if (!envVar) return defaultValues;
+  if (!envVar) {
+    return defaultValues;
+  }
 
   const values = envVar
     .split(',')

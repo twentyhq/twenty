@@ -52,6 +52,23 @@ export const Disabled: Story = {
   },
 };
 
+export const Illustrated: Story = {
+  args: {
+    Icon: React.createElement(IconMailCog, { size: 12 }),
+    title: 'Settings Card',
+    description: 'Illustrated card description',
+    illustrationColor: 'blue',
+    href: 'https://twenty.com',
+  },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', {
+      name: 'Settings Card Illustrated card description',
+    });
+
+    await expect(link).toHaveAttribute('href', 'https://twenty.com');
+  },
+};
+
 export const ExternalLink: Story = {
   args: {
     Icon: React.createElement(IconMailCog),

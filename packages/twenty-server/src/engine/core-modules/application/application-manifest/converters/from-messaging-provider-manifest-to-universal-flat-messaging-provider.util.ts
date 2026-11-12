@@ -26,6 +26,7 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProvider = ({
   markThreadAsReadLogicFunctionUniversalIdentifier:
     messagingProviderManifest.markThreadAsReadLogicFunction
       ?.universalIdentifier ?? null,
+  conversationStyle: messagingProviderManifest.conversationStyle ?? null,
   createdAt: now,
   updatedAt: now,
 });

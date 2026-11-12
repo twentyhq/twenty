@@ -56,11 +56,12 @@ twenty app add validation-rule --name invoice-has-amount --object <object-uuid>
 
 - `field('name')` reads a field, and `field('company.employees')` reads a field through a many-to-one relation.
 - `now` is the current date and time.
+- `previous('stage')` reads the value stored before the update, to restrict transitions. It is empty when a record is created, and reads the record's own fields, not fields through a relation.
 - `and`, `or` and `not` combine conditions.
 - `eq`, `notEq`, `gt`, `gte`, `lt` and `lte` compare values.
 - `add`, `subtract`, `multiply` and `divide` compute values.
 - `isIn(field('stage'), ['NEW', 'WON'])` checks a value against a list.
-- Functions such as `isNonEmptyString` and `isDefined`.
+- Functions such as `isNonEmptyString` and `isDefined`, and the date functions `daysSince(date)` (whole days since the date, negative for a future date) and `isInRelativeDateRange(date, direction, amount, unit)`, with direction `'PAST'`, `'NEXT'` or `'THIS'` and unit `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`, such as `isInRelativeDateRange(closeDate, 'PAST', 30, 'DAY')`.
 
 The builder outputs a plain string, which is what [`twenty app pull`](/developers/extend/apps/operations/cli) writes back. You can write that string directly:
 
@@ -68,7 +69,12 @@ The builder outputs a plain string, which is what [`twenty app pull`](/developer
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes.
+Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single or double quotes. A previous value is written `previous.stage`:
+
+```ts
+// A proposal only follows a meeting
+expression: 'stage != "PROPOSAL" or previous.stage in ["MEETING", "PROPOSAL"]',
+```
 
 A rule can read fields you declare, and the [system fields](/developers/extend/apps/data/system-fields) Twenty provisions, such as `createdAt`. The CLI checks expressions against your app's own objects. On an object outside your app, it only checks the syntax and the server checks the fields at sync time.
 

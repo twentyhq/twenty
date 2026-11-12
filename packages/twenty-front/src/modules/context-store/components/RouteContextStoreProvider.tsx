@@ -60,6 +60,7 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   // The chat page and the whole inbox act on chats: the chat on screen, or
   // the chats selected in the inbox list
@@ -71,15 +72,15 @@ export const RouteContextStoreProvider = () => {
     isAiChatPage ||
     isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
+  const isCoreAgentPage =
+    isMatchingLocation(location, AppPath.AgentIndexPage) ||
+    isMatchingLocation(location, AppPath.AgentShowPage);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = routeParams?.objectNamePlural;
-  const objectNameSingular =
-    isCoreWorkflowIndexPage || isCoreWorkflowShowPage
-      ? StandardObjectNameSingular.Workflow
-      : isAiChatPage
-        ? StandardObjectNameSingular.AgentChatThread
-        : routeParams?.objectNameSingular;
+  const objectNameSingular = isAiChatPage
+    ? StandardObjectNameSingular.AgentChatThread
+    : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -138,7 +139,8 @@ export const RouteContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
-      isSettingsPage) &&
+      isSettingsPage ||
+      isCoreAgentPage) &&
     metadataStore.status === 'up-to-date';
 
   const coreObjectName =
@@ -150,7 +152,7 @@ export const RouteContextStoreProvider = () => {
       <RouteContextStoreCoreObjectNameEffect coreObjectName={coreObjectName} />
       {shouldComputeContextStore && (
         <RouteContextStoreProviderEffect
-          viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
+          viewId={isCoreWorkflowPage || isAiChatPage ? undefined : viewId}
           objectMetadataItem={objectMetadataItem}
           isRecordIndexPage={isRecordIndexPage}
           isRecordShowPage={isRecordShowPage}

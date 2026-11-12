@@ -1,6 +1,13 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stop } from 'esbuild';
@@ -73,11 +80,48 @@ describe('CLI app source loading', () => {
     },
   );
 
+  it('keeps code-step files in the inventory without evaluating their definitions', async () => {
+    const markerPath = join(appPath, 'code-step-executed');
+    const codeStepPath = 'workflow.code.ts';
+    await writeFile(join(appPath, 'app.ts'), sourceApplication());
+    await writeFile(
+      join(appPath, codeStepPath),
+      sourceApplication(`import { writeFileSync } from 'node:fs';
+writeFileSync(${JSON.stringify(markerPath)}, 'executed');`),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: { universalIdentifier: SOURCE_TEST_APPLICATION_ID },
+    });
+    const files = await scanProjectSourceFiles({ appPath, signal });
+    expect(files.find((file) => file.relativePath === codeStepPath)).toEqual({
+      relativePath: codeStepPath,
+      entityKey: null,
+      targetFunctionName: null,
+      universalIdentifier: null,
+      isReadable: true,
+    });
+    await expect(readFile(markerPath)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('recognizes a component definition after JSX in a TSX file', () => {
+    expect(
+      extractDefineEntity({
+        fileContent: `const Component = () => <div>Hello</div>;
+export default defineFrontComponent({ component: Component });`,
+        filePath: 'component.tsx',
+      }),
+    ).toBe('defineFrontComponent');
+  });
+
   it('retains the supported default define-call syntax', () => {
     expect(
-      extractDefineEntity(
-        '// export default defineObject({});\nexport default defineApplication({});',
-      ),
+      extractDefineEntity({
+        fileContent:
+          '// export default defineObject({});\nexport default defineApplication({});',
+        filePath: 'application.ts',
+      }),
     ).toBe('defineApplication');
     for (const source of [
       'export default sdk.defineApplication({});',
@@ -87,8 +131,31 @@ describe('CLI app source loading', () => {
       'export default renamedDefine({});',
       'function helper() { return defineApplication({}); }',
     ]) {
-      expect(extractDefineEntity(source)).toBeUndefined();
+      expect(
+        extractDefineEntity({
+          fileContent: source,
+          filePath: 'application.ts',
+        }),
+      ).toBeUndefined();
     }
+  });
+
+  it('finds an application identity following JSX in a TSX file', async () => {
+    await symlink(
+      resolve('../../node_modules/react'),
+      join(appPath, 'node_modules/react'),
+      'dir',
+    );
+    await writeFile(
+      join(appPath, 'app.tsx'),
+      sourceApplication('const Preview = () => <div>Preview</div>;'),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: {
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        displayName: 'Source app',
+      },
+    });
   });
 
   it('distinguishes missing, duplicate, and invalid application identities', async () => {

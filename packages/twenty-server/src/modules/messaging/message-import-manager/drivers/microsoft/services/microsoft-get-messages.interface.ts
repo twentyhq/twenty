@@ -1,3 +1,5 @@
+import { type MicrosoftGraphMessageAttachment } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/microsoft-graph-message-attachment.type';
+
 export interface MicrosoftGraphBatchResponse {
   responses: {
     id: string;
@@ -42,6 +44,7 @@ export interface MicrosoftGraphBatchResponse {
           address?: string;
         };
       };
+      attachments?: MicrosoftGraphMessageAttachment[];
     };
   }[];
 }

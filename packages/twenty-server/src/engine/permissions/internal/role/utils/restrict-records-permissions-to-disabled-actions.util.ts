@@ -1,12 +1,8 @@
 import {
+  type DisableableObjectPermissionAction,
   type FieldPermissionAction,
-  type ObjectPermissionAction,
 } from 'twenty-shared/application';
-import {
-  type ObjectRecordsPermissions,
-  type RestrictedFieldPermissions,
-  type RestrictedFieldsPermissions,
-} from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -16,27 +12,22 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getFlatFieldMetadatasWithDisabledActionsByObjectId } from 'src/engine/permissions/internal/role/utils/get-flat-field-metadatas-with-disabled-actions-by-object-id.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
-const RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION: Record<
-  FieldPermissionAction,
-  keyof RestrictedFieldPermissions
-> = {
-  canReadFieldValue: 'canRead',
-  canUpdateFieldValue: 'canUpdate',
-};
-
 const restrictObjectRecordsPermissionsToDisabledActions = ({
   objectRecordsPermissions,
   disabledObjectPermissionActions,
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
-  disabledObjectPermissionActions: ObjectPermissionAction[];
+  disabledObjectPermissionActions: DisableableObjectPermissionAction[];
 }): ObjectRecordsPermissions => {
-  const isEnabled = (action: ObjectPermissionAction) =>
+  const isEnabled = (action: DisableableObjectPermissionAction) =>
     !disabledObjectPermissionActions.includes(action);
   const { rowLevelRecordsPermissions } = objectRecordsPermissions;
 
   return {
     ...objectRecordsPermissions,
+    canCreateAllRecords:
+      objectRecordsPermissions.canCreateAllRecords &&
+      isEnabled('canCreateObjectRecords'),
     canReadAllRecords:
       objectRecordsPermissions.canReadAllRecords &&
       isEnabled('canReadObjectRecords'),
@@ -50,21 +41,19 @@ const restrictObjectRecordsPermissionsToDisabledActions = ({
       objectRecordsPermissions.canDestroyAllRecords &&
       isEnabled('canDestroyObjectRecords'),
     ...(isDefined(rowLevelRecordsPermissions) && {
-      rowLevelRecordsPermissions: {
-        ...rowLevelRecordsPermissions,
+      rowLevelRecordsPermissions: rowLevelRecordsPermissions.map((rule) => ({
+        ...rule,
+        canCreateRecords:
+          rule.canCreateRecords && isEnabled('canCreateObjectRecords'),
         canReadRecords:
-          rowLevelRecordsPermissions.canReadRecords &&
-          isEnabled('canReadObjectRecords'),
+          rule.canReadRecords && isEnabled('canReadObjectRecords'),
         canUpdateRecords:
-          rowLevelRecordsPermissions.canUpdateRecords &&
-          isEnabled('canUpdateObjectRecords'),
+          rule.canUpdateRecords && isEnabled('canUpdateObjectRecords'),
         canSoftDeleteRecords:
-          rowLevelRecordsPermissions.canSoftDeleteRecords &&
-          isEnabled('canSoftDeleteObjectRecords'),
+          rule.canSoftDeleteRecords && isEnabled('canSoftDeleteObjectRecords'),
         canDestroyRecords:
-          rowLevelRecordsPermissions.canDestroyRecords &&
-          isEnabled('canDestroyObjectRecords'),
-      },
+          rule.canDestroyRecords && isEnabled('canDestroyObjectRecords'),
+      })),
     }),
   };
 };
@@ -104,32 +93,40 @@ const getEnforcedFieldPermissionActions = ({
   );
 
 const restrictFieldsToDisabledActions = ({
-  restrictedFields,
+  objectRecordsPermissions: { unreadableFields, uneditableFields },
   fieldsWithDisabledActions,
   labelIdentifierFieldMetadataId,
 }: {
-  restrictedFields: RestrictedFieldsPermissions;
+  objectRecordsPermissions: Pick<
+    ObjectRecordsPermissions,
+    'unreadableFields' | 'uneditableFields'
+  >;
   fieldsWithDisabledActions: OrmFlatFieldMetadata[];
   labelIdentifierFieldMetadataId: string | null;
-}): RestrictedFieldsPermissions => {
-  const updatedRestrictedFields = { ...restrictedFields };
+}): Pick<ObjectRecordsPermissions, 'unreadableFields' | 'uneditableFields'> => {
+  const restrictedUnreadableFields = new Set(unreadableFields);
+  const restrictedUneditableFields = new Set(uneditableFields);
 
   for (const flatFieldMetadata of fieldsWithDisabledActions) {
-    updatedRestrictedFields[flatFieldMetadata.id] = {
-      ...updatedRestrictedFields[flatFieldMetadata.id],
-      ...Object.fromEntries(
-        getEnforcedFieldPermissionActions({
-          flatFieldMetadata,
-          labelIdentifierFieldMetadataId,
-        }).map((action) => [
-          RESTRICTED_FIELD_PERMISSION_BY_FIELD_PERMISSION_ACTION[action],
-          false,
-        ]),
-      ),
-    };
+    const enforcedActions = getEnforcedFieldPermissionActions({
+      flatFieldMetadata,
+      labelIdentifierFieldMetadataId,
+    });
+
+    if (enforcedActions.includes('canReadFieldValue')) {
+      restrictedUnreadableFields.add(flatFieldMetadata.id);
+      restrictedUneditableFields.add(flatFieldMetadata.id);
+    }
+
+    if (enforcedActions.includes('canUpdateFieldValue')) {
+      restrictedUneditableFields.add(flatFieldMetadata.id);
+    }
   }
 
-  return updatedRestrictedFields;
+  return {
+    unreadableFields: [...restrictedUnreadableFields],
+    uneditableFields: [...restrictedUneditableFields],
+  };
 };
 
 export const restrictRecordsPermissionsToDisabledActions = ({
@@ -186,8 +183,8 @@ export const restrictRecordsPermissionsToDisabledActions = ({
         objectRecordsPermissions,
         disabledObjectPermissionActions,
       }),
-      restrictedFields: restrictFieldsToDisabledActions({
-        restrictedFields: objectRecordsPermissions.restrictedFields,
+      ...restrictFieldsToDisabledActions({
+        objectRecordsPermissions,
         fieldsWithDisabledActions,
         labelIdentifierFieldMetadataId:
           flatObjectMetadata.labelIdentifierFieldMetadataId,

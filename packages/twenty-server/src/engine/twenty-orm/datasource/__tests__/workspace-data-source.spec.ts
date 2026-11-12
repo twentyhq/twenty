@@ -90,8 +90,17 @@ const sumPetColumn = ({
       eventEmitterService: { emitDatabaseBatchEvent: jest.fn() },
       permissionsPrincipals: undefined,
       recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-      recordRepositoryPermissions:
-        {} as WorkspaceInternalContext['recordRepositoryPermissions'],
+      recordPermissions: {} as WorkspaceInternalContext['recordPermissions'],
+      recordFieldPermissions: {
+        findFieldsHiddenOnMatchingRecords: jest.fn(),
+      },
+      recordAccessGroupWrite: {
+        isWriteTransactionRequired: jest.fn().mockResolvedValue(false),
+        isRecordsBeforeWriteRequired: jest.fn().mockResolvedValue(false),
+        findRelatedRecordsBeforeDelete: jest.fn().mockResolvedValue([]),
+        recomputeAfterWrite: jest.fn().mockResolvedValue([]),
+      },
+      recordAccessGroupQueue: { queueRecompute: jest.fn() },
       recordStock: {
         assertRecordStockAvailable: jest.fn(),
         acquireRecordStock: jest.fn(),

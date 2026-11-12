@@ -40,7 +40,7 @@ Puntos clave:
 * `workspaceMemberIds` lista a los miembros que reciben la conversación, al menos uno. El primer miembro de una nueva conversación la posee, y los demás la siguen como participantes. Un envío posterior bajo la misma clave que lista a los nuevos miembros los agrega; los miembros deja fuera mantener la conversación.
 * `threadKey` elige la conversación para esta aplicación, compartida por todos los miembros a los que se envía. Una nueva clave inicia una conversación titulada `title`; una clave que usaste antes añade el mensaje a esa conversación.
 * El mensaje que identifica el mensaje dentro de la conversación es `idempotencyKey`cyKey\`. Enviar de nuevo con las mismas claves no escribe nada nuevo, así que reintentas y ejecuciones simultáneas nunca duplican un mensaje.
-* `text` es markdown, y puede llevar [menciones y referencias de registro](#mentions-and-record-references).
+* `text` es markdown, y puede llevar [menciones y referencias de registro](#mentions-and-record-references). El miembro que menciona recibe una notificación, incluso cuando no está en `workspaceMemberIds`.
 * `toolCall` (opcional) termina el mensaje en uno de:
   * una llamada a las respuestas de los miembros, que pausa la conversación: `ask_question` (una pregunta de elección múltiple), `request_form` (campos a rellenar) o `propose_tool_call` (una llamada a aprobar). Su `input` toma el `toolName`, los `argumentos` con la herramienta y una frase `Resumen`. La herramienta debe ser uno de los roles predeterminados de tu aplicación, como `create_one_person` o `update_one_opportunity` (con el registro `id`); un correo electrónico (`send_email` o `draft_email`, con `recipients`, `subject` y un `body` en HTML) no necesita permiso de tu aplicación. El miembro revisa la llamada en la misma tarjeta que una llamada que el asistente propone, lo edita si quieren, y la llamada aprobada se ejecuta con su propio acceso;
   * una de las herramientas propias de tu aplicación, por `logicFunctionUniversalIdentifier`, renderizada por su componente frontal con el `input` y `output` que pases. No detiene la conversación.
@@ -71,6 +71,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 const ownerMention = await inboxMention({ workspaceMemberId: owner.id });
+const managerMention = await inboxMention({ workspaceMemberId: manager.id });
 
 const dealReference = await inboxReferenceRecord({
   objectNameSingular: 'opportunity',
@@ -78,18 +79,20 @@ const dealReference = await inboxReferenceRecord({
 });
 
 await sendInboxMessage({
-  workspaceMemberIds: [owner.id],
+  workspaceMemberIds: [owner.id, salesOps.id],
   threadKey: `idle-deal-${opportunity.id}`,
   idempotencyKey: `idle-deal-${opportunity.id}-${weekNumber}`,
   title: `${opportunity.name} is idle`,
-  text: `${ownerMention}, ${dealReference} has had no activity for two weeks.`,
+  text: `${ownerMention}, ${dealReference} has had no activity for two weeks. ${managerMention}, can you help?`,
 });
 ```
 
 * `inboxMention({ workspaceMemberId })` escribe una mención de un miembro del espacio de trabajo, y `inboxReferenceRecord({ objectNameSingular, recordId })` un chip que enlaza a cualquier registro.
 * Ambos leen la etiqueta que muestra el chip, como lo hace el composer: el nombre completo del miembro o su correo electrónico cuando el nombre está vacío, y el identificador de la etiqueta del registro, como el nombre de una empresa. Los corchetes se convierten en paréntesis y los saltos de línea se convierten en espacios, por lo que el chip siempre se renderiza.
 * Leen con el mismo acceso que el resto de la llamada, por lo que el acceso tiene que llegar al miembro o al registro. Una referencia de registro hace dos peticiones, una para el campo de etiqueta del objeto y otra para el registro.
-* Una mención sólo renderiza. No añade al miembro a la conversación o notificarlos, así que lista a todos los que deberían recibir el mensaje en `workspaceMemberIds`.
+* Un miembro mencionado recibe la conversación en su bandeja de entrada, sin leer, con una mención por resolver, como cuando un compañero de equipo lo menciona. No necesita estar en `workspaceMemberIds`, y también se puede mencionar al miembro propietario de la conversación. Se omite un miembro mencionado que no puede participar en la conversación, por ejemplo, sin el permiso `AI`, y el mensaje se sigue enviando.
+* Las menciones notifican una vez, cuando el mensaje se escribe por primera vez: volver a enviarlo con las mismas claves no notifica a nadie, incluso con un `text` diferente, y una nueva `idempotencyKey` vuelve a mencionar.
+* Solo una mención completa notifica. Una en código insertado o en un bloque de código, una cuyos corchetes tienen caracteres de escape (`\[\[`), y un `@name` escrito no notifican a nadie. Una referencia a un registro nunca notifica ni comparte el registro.
 * `INBOX_ASSISTANT_MENTION` escribe la referencia canónica del asistente del compositor. La bandeja de entrada lo muestra como `@Ada`; su identidad estable es independiente de su etiqueta. Esta referencia por sí sola no solicita una respuesta del asistente desde un mensaje de la aplicación.
 
 ## Asociar registros a una conversación
@@ -121,5 +124,29 @@ await attachRecordToInboxThread({
 * Ambos son idempotentes: asociar un registro dos veces mantiene un solo vínculo y desasociar un registro que no está asociado no cambia nada.
 * La llamada se ejecuta con el mismo acceso que [enviar un mensaje](#who-sends-the-message), lo que requiere el permiso `AI`. Un miembro debe poder editar la conversación, y tu aplicación puede actuar en una conversación que ella misma escribió o en una a la que se concedió su rol predeterminado; de lo contrario, la llamada falla con `THREAD_NOT_FOUND`.
 * El registro debe poder leerse con ese acceso; de lo contrario, la llamada falla con `RECORD_NOT_FOUND`.
+
+## Archivar una conversación
+
+`archiveInboxThread()` archiva una conversación que escribió tu aplicación, para los miembros que indiques, como si cada uno de ellos la hubiera archivado desde su bandeja de entrada. Úsalo cuando el trabajo relacionado con un mensaje se haya realizado en otro lugar: el correo electrónico que propusiste se envió desde Gmail, la reunión sobre la que preguntaste se aprobó en el calendario.
+
+```ts src/logic-functions/on-email-sent-archive-thread.ts
+import { archiveInboxThread } from 'twenty-sdk/logic-function';
+
+await archiveInboxThread({
+  threadId,
+  workspaceMemberIds: [owner.id],
+});
+```
+
+* Solo tu aplicación puede llamarlo en una conversación que ella misma escribió o en una para la que se concedió su función predeterminada; de lo contrario, la llamada falla con `THREAD_NOT_FOUND`. Los miembros archivan desde su propia bandeja de entrada.
+* Todos los miembros que nombres deben poder leer la conversación. Si alguno no puede, la llamada falla con `THREAD_NOT_FOUND` y la archiva para nadie.
+* Un mensaje nuevo en la conversación la devuelve a la bandeja de entrada, igual que cuando un miembro la archiva.
+* Se omite a un miembro que dejó de seguir la conversación, por lo que permanece fuera de su bandeja de entrada.
+
+Omite `workspaceMemberIds` para marcar una conversación como terminada en su canal, tal como lo hace un miembro desde la vista del canal. Las bandejas de entrada de los propios miembros se mantienen como están, y una conversación que no está en ningún canal falla con `CHAT_THREAD_NOT_IN_CHANNEL`.
+
+```ts
+await archiveInboxThread({ threadId });
+```
 
 <PageBanner illustration="card-page-inbox" />

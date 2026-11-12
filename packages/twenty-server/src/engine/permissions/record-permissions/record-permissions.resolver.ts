@@ -15,7 +15,7 @@ import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permiss
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { RecordPermissionsResult } from 'src/engine/permissions/record-permissions/dtos/record-permissions-result.dto';
 import { RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
@@ -41,7 +41,7 @@ const MAX_PERMISSION_TARGETS = 100;
 )
 export class RecordPermissionsResolver {
   constructor(
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -80,7 +80,7 @@ export class RecordPermissionsResolver {
       });
       const permissions = !isDefined(objectMetadata)
         ? new Map<string, RecordPermissionsDTO>()
-        : await this.recordPermissionsService.findRecordsPermissions({
+        : await this.recordPermissionsReadService.findRecordsActions({
             authContext,
             objectNameSingular: objectMetadata.nameSingular,
             recordIds: [...recordIds],

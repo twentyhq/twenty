@@ -89,6 +89,7 @@ export class SentMessagePersistenceService {
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
           workspaceId,
+          folderLinkUpdate: 'add',
         },
       );
     } finally {

@@ -88,7 +88,9 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   const roleTargets = tableConfig[roleTargetType].roleTargets;
 
   const filteredRoleTargets = useMemo(() => {
-    if (!searchFilter) return roleTargets;
+    if (!searchFilter) {
+      return roleTargets;
+    }
 
     const getSearchableFields = (
       roleTarget: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,

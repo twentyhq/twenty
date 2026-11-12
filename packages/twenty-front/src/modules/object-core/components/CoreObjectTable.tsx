@@ -72,6 +72,7 @@ export const CoreObjectTable = <TItem,>({
             <CoreObjectTableCheckboxCell
               checked={areAllRowsSelected || areSomeRowsSelected}
               indeterminate={areSomeRowsSelected}
+              disabled={selectableRowIds.length === 0}
               ariaLabel={t`Select all loaded rows`}
               onToggle={() =>
                 selection.onToggleAllRows(
@@ -112,13 +113,12 @@ export const CoreObjectTable = <TItem,>({
             >
               {isSelectable && (
                 <TableCell align="center" padding="0">
-                  {(selection.isItemSelectable?.(item) ?? true) && (
-                    <CoreObjectTableCheckboxCell
-                      checked={selection.selectedRowIds.includes(rowId)}
-                      ariaLabel={t`Select row`}
-                      onToggle={() => selection.onToggleRow(rowId)}
-                    />
-                  )}
+                  <CoreObjectTableCheckboxCell
+                    checked={selection.selectedRowIds.includes(rowId)}
+                    disabled={selection.isItemSelectable?.(item) === false}
+                    ariaLabel={t`Select row`}
+                    onToggle={() => selection.onToggleRow(rowId)}
+                  />
                 </TableCell>
               )}
               {columns.map((column) => (

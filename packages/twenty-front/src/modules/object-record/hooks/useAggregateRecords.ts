@@ -45,7 +45,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
 
   const hasReadPermission = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const { data, loading, error, refetch } =

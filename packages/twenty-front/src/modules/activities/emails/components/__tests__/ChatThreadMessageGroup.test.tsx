@@ -1,12 +1,23 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { type ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
+import { ToastProvider } from 'twenty-ui/components/feedback';
 
 import { ChatThreadMessageGroup } from '@/activities/emails/components/ChatThreadMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+
+const Providers = ({ children }: { children: ReactNode }) => (
+  <I18nProvider i18n={i18n}>
+    <ToastProvider>{children}</ToastProvider>
+  </I18nProvider>
+);
+
+const renderWithProviders = (ui: ReactNode) =>
+  render(ui, { wrapper: Providers });
 
 const asAttachments = (
   files: FieldFilesValue[],
@@ -37,7 +48,7 @@ describe('ChatThreadMessageGroup', () => {
   });
 
   it('renders the text of each message', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -50,8 +61,29 @@ describe('ChatThreadMessageGroup', () => {
     expect(screen.getByText('See you tomorrow')).toBeInTheDocument();
   });
 
+  it('shows the time and sent receipt of outgoing messages only', () => {
+    const message = buildMessage({ receivedAt: '2026-11-07T10:07:00.000Z' });
+    const { rerender } = renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{ id: 'group-id', isOutgoing: true, messages: [message] }}
+      />,
+    );
+
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Sent' })).toBeInTheDocument();
+
+    rerender(
+      <ChatThreadMessageGroup
+        group={{ id: 'group-id', isOutgoing: false, messages: [message] }}
+      />,
+    );
+
+    expect(screen.queryByText(/10:07/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('img', { name: 'Sent' })).not.toBeInTheDocument();
+  });
+
   it('renders image, video and audio attachments as media', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -100,7 +132,7 @@ describe('ChatThreadMessageGroup', () => {
   });
 
   it('renders other attachments as a file chip next to the text', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -127,8 +159,8 @@ describe('ChatThreadMessageGroup', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders no empty text bubble for a message that only holds files', () => {
-    const { container } = render(
+  it('offers no text to copy for a message that only holds files', () => {
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -150,16 +182,36 @@ describe('ChatThreadMessageGroup', () => {
       />,
     );
 
-    const group = container.firstElementChild;
+    expect(screen.getByRole('img', { name: 'photo.png' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Copy to Clipboard' }),
+    ).not.toBeInTheDocument();
+  });
 
-    expect(group?.children).toHaveLength(1);
-    expect(group?.firstElementChild).toContainElement(
-      screen.getByRole('img', { name: 'photo.png' }),
+  it('shows the sender name above an incoming group', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          messages: [
+            buildMessage({
+              sender: {
+                id: 'participant-id',
+                displayName: 'Jane Doe',
+                handle: 'jane',
+              } as EmailThreadMessageWithSender['sender'],
+            }),
+          ],
+        }}
+      />,
     );
+
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
   });
 
   it('falls back to a file chip when the browser cannot play a file', () => {
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -211,7 +263,9 @@ describe('ChatThreadMessageGroup', () => {
       />
     );
 
-    const { rerender } = render(renderVideo('https://files.test/expired.mp4'));
+    const { rerender } = renderWithProviders(
+      renderVideo('https://files.test/expired.mp4'),
+    );
 
     fireEvent.error(screen.getByLabelText('clip.mp4'));
     rerender(renderVideo('https://files.test/refreshed.mp4'));
@@ -227,7 +281,7 @@ describe('ChatThreadMessageGroup', () => {
 
     global.fetch = fetchSpy;
 
-    render(
+    renderWithProviders(
       <ChatThreadMessageGroup
         group={{
           id: 'group-id',
@@ -253,21 +307,43 @@ describe('ChatThreadMessageGroup', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps the sender of an incoming group whose first body is masked', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              sender: {
+                id: 'participant-id',
+                displayName: 'Jane Doe',
+                handle: 'jane',
+              } as EmailThreadMessageWithSender['sender'],
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Jane Doe')).toBeInTheDocument();
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+  });
+
   it('does not render a body masked by metadata visibility', () => {
-    render(
-      <I18nProvider i18n={i18n}>
-        <ChatThreadMessageGroup
-          group={{
-            id: 'group-id',
-            isOutgoing: true,
-            messages: [
-              buildMessage({
-                text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
-              }),
-            ],
-          }}
-        />
-      </I18nProvider>,
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+            }),
+          ],
+        }}
+      />,
     );
 
     expect(screen.getByText('Not shared')).toBeInTheDocument();

@@ -37,6 +37,8 @@ import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-meta
 import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 'src/engine/metadata-modules/object-metadata/constants/rename-is-ui-read-only-to-is-ui-editable-upgrade-command-name.constant';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
+import { FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -284,4 +286,34 @@ export class FieldMetadataEntity<
     (searchFieldMetadata) => searchFieldMetadata.fieldMetadata,
   )
   searchFieldMetadatas: Relation<SearchFieldMetadataEntity[]>;
+
+  @OneToMany(
+    () => FieldMetadataOptionEntity,
+    (fieldMetadataOption) => fieldMetadataOption.fieldMetadata,
+  )
+  fieldMetadataOptions: Relation<FieldMetadataOptionEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) => rowLevelPermissionPredicate.fieldMetadata,
+  )
+  rowLevelPermissionPredicates: Relation<RowLevelPermissionPredicateEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) =>
+      rowLevelPermissionPredicate.relationFieldMetadata,
+  )
+  relationRowLevelPermissionPredicates: Relation<
+    RowLevelPermissionPredicateEntity[]
+  >;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) =>
+      rowLevelPermissionPredicate.workspaceMemberFieldMetadata,
+  )
+  workspaceMemberRowLevelPermissionPredicates: Relation<
+    RowLevelPermissionPredicateEntity[]
+  >;
 }

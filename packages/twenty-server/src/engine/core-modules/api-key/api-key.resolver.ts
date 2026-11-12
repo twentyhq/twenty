@@ -95,9 +95,12 @@ export class ApiKeyResolver {
   ): Promise<ApiKeyEntity | null> {
     const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};
 
-    if (input.name !== undefined) updateData.name = input.name;
-    if (input.expiresAt !== undefined)
+    if (input.name !== undefined) {
+      updateData.name = input.name;
+    }
+    if (input.expiresAt !== undefined) {
       updateData.expiresAt = new Date(input.expiresAt);
+    }
     if (input.revokedAt !== undefined) {
       updateData.revokedAt = input.revokedAt ? new Date(input.revokedAt) : null;
     }

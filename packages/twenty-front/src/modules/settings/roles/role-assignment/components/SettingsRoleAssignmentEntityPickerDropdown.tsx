@@ -69,9 +69,8 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
       return isAgent
         ? t`No agents match your search`
         : t`No API keys match your search`;
-    } else {
-      return isAgent ? t`No agents available` : t`No API keys available`;
     }
+    return isAgent ? t`No agents available` : t`No API keys available`;
   };
 
   const filteredEntities = useMemo(() => {
@@ -89,11 +88,10 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
           normalizeSearchText(agent.name).includes(searchTerm) ||
           normalizeSearchText(agent.label).includes(searchTerm)
         );
-      } else {
-        return normalizeSearchText((entity as ApiKeyForRole).name).includes(
-          searchTerm,
-        );
       }
+      return normalizeSearchText((entity as ApiKeyForRole).name).includes(
+        searchTerm,
+      );
     });
   }, [entities, searchFilter, excludedIds, isAgent]);
 

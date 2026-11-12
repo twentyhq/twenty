@@ -1,6 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -88,6 +89,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     tableAlias: 'company',
     objectMetadata: companyObjectMetadata,
     flatFieldMetadataMaps,
+    flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
   };
 
   it('returns null for an empty filter', () => {
@@ -99,7 +101,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toBeNull();
   });
 
-  it('renders the unsatisfiable filter as a condition no row meets', () => {
+  it('renders the unsatisfiable filter as a sqlCondition no row meets', () => {
     expect(
       renderRowLevelPermissionFilterToSql({
         ...baseArgs,
@@ -108,7 +110,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toEqual({ sql: 'NOT (1=1)', parameters: {} });
   });
 
-  it('renders a single field condition referencing the join alias', () => {
+  it('renders a single field sqlCondition referencing the join alias', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { name: { ilike: '%Visible%' } },
@@ -189,7 +191,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
   });
 
-  it('renders a not group over a join column condition', () => {
+  it('renders a not group over a join column sqlCondition', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { not: { accountOwnerId: { in: ['id-1'] } } },
@@ -224,7 +226,7 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     );
   });
 
-  it('renders a composite sub field condition with the flattened column name', () => {
+  it('renders a composite sub field sqlCondition with the flattened column name', () => {
     const result = renderRowLevelPermissionFilterToSql({
       ...baseArgs,
       recordFilter: { annualRecurringRevenue: { amountMicros: { gte: 1000 } } },
@@ -261,13 +263,70 @@ describe('renderRowLevelPermissionFilterToSql', () => {
     ).toThrow('field "nonexistent" does not exist');
   });
 
-  it('throws for a relation referenced by field name', () => {
+  it('throws for a relation whose target object cannot be found', () => {
     expect(() =>
       renderRowLevelPermissionFilterToSql({
         ...baseArgs,
         recordFilter: { accountOwner: { name: { eq: 'x' } } },
       }),
-    ).toThrow('traversing a relation requires an additional join');
+    ).toThrow('through relation "accountOwner"');
+  });
+
+  it('renders a many to one relation as a correlated subquery on the target object', () => {
+    const relationField = createFlatFieldMetadata({
+      id: 'relation-field-id',
+      name: 'accountOwner',
+      type: FieldMetadataType.RELATION,
+      universalIdentifier: 'relation-field-universal-id',
+      relationTargetObjectMetadataId: 'company-object-id',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        joinColumnName: 'accountOwnerId',
+      },
+    } as Partial<FlatFieldMetadata>);
+    const objectMetadata = {
+      ...companyObjectMetadata,
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+      fieldIds: [...companyObjectMetadata.fieldIds, relationField.id],
+    } as FlatObjectMetadata;
+    const fields = [...companyFields, relationField];
+
+    const sqlCondition = renderRowLevelPermissionFilterToSql({
+      recordFilter: { accountOwner: { name: { eq: 'x' } } },
+      tableAlias: 'company',
+      objectMetadata: {
+        ...objectMetadata,
+        fieldIds: fields
+          .filter(({ id }) => id !== 'account-owner-field-id')
+          .map(({ id }) => id),
+      } as FlatObjectMetadata,
+      flatFieldMetadataMaps: {
+        ...flatFieldMetadataMaps,
+        byUniversalIdentifier: Object.fromEntries(
+          fields.map((field) => [field.universalIdentifier, field]),
+        ),
+        universalIdentifierById: Object.fromEntries(
+          fields.map((field) => [field.id, field.universalIdentifier]),
+        ),
+      },
+      flatObjectMetadataMaps: {
+        byUniversalIdentifier: {
+          [objectMetadata.universalIdentifier]: objectMetadata,
+        },
+        universalIdentifierById: {
+          [objectMetadata.id]: objectMetadata.universalIdentifier,
+        },
+        universalIdentifiersByApplicationId: {},
+      },
+    });
+
+    expect(sqlCondition?.sql).toContain('EXISTS (SELECT 1 FROM');
+    expect(sqlCondition?.sql).toContain(
+      '"company_accountOwner"."id" = "company"."accountOwnerId"',
+    );
+    expect(sqlCondition?.sql).toContain(
+      '"company_accountOwner"."deletedAt" IS NULL',
+    );
   });
 
   it('throws for an array operator with an empty array', () => {

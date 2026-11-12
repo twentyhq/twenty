@@ -630,15 +630,21 @@ export class ApplicationRegistrationService {
 
     const updateData: Record<string, unknown> = {};
 
-    if (isDefined(update.name)) updateData.name = update.name;
-    if (isDefined(update.oAuthRedirectUris))
+    if (isDefined(update.name)) {
+      updateData.name = update.name;
+    }
+    if (isDefined(update.oAuthRedirectUris)) {
       updateData.oAuthRedirectUris = update.oAuthRedirectUris;
-    if (isDefined(update.oAuthScopes))
+    }
+    if (isDefined(update.oAuthScopes)) {
       updateData.oAuthScopes = update.oAuthScopes;
-    if (isDefined(instanceFlags.isListed))
+    }
+    if (isDefined(instanceFlags.isListed)) {
       updateData.isListed = instanceFlags.isListed;
-    if (isDefined(instanceFlags.isPreInstalled))
+    }
+    if (isDefined(instanceFlags.isPreInstalled)) {
       updateData.isPreInstalled = instanceFlags.isPreInstalled;
+    }
 
     if (Object.keys(updateData).length === 0) {
       return;

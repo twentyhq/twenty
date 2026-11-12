@@ -27,7 +27,7 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
   return (
     <StyledContainer>
       {React.Children.map(children, (child, index) => {
-        if (!React.isValidElement(child)) {
+        if (!React.isValidElement<StepProps>(child)) {
           return null;
         }
 
@@ -45,7 +45,7 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
           return null;
         }
 
-        return React.cloneElement<StepProps>(child as any, {
+        return React.cloneElement<StepProps>(child, {
           index,
           isLast: index === React.Children.count(children) - 1,
           activeStep,

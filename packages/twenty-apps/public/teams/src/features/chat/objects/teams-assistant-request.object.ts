@@ -24,10 +24,11 @@ import {
   TEAMS_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/features/chat/constants/universal-identifiers';
 import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-functions/constants/teams-assistant-request-status';
+import { TEAMS_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR } from 'src/features/chat/constants/teams-assistant-request-object-name-singular';
 
 export default defineObject({
   universalIdentifier: TEAMS_ASSISTANT_REQUEST_OBJECT_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'teamsAssistantRequest',
+  nameSingular: TEAMS_ASSISTANT_REQUEST_OBJECT_NAME_SINGULAR,
   namePlural: 'teamsAssistantRequests',
   labelSingular: 'Teams Assistant Request',
   labelPlural: 'Teams Assistant Requests',

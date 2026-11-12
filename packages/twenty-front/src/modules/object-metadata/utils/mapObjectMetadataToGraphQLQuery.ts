@@ -49,7 +49,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     if (
       !canReachSomeRecords({
         objectRecordsPermissions: objectPermission,
-        operationType: 'select',
+        operationType: 'read',
       })
     ) {
       return '';

@@ -52,7 +52,10 @@ export const insertValidationRuleHelperItem = ({
         .chain()
         .focus()
         .insertContentAt(range, [
-          { type: 'text', text: `${item.definition.name} ` },
+          {
+            type: 'text',
+            text: item.definition.insertText ?? `${item.definition.name} `,
+          },
         ])
         .run();
       return;

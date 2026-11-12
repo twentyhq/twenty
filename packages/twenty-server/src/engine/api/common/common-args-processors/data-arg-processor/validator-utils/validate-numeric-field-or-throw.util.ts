@@ -8,7 +8,9 @@ export const validateNumericFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): number | string | null => {
-  if (value === '' || isNull(value)) return null;
+  if (value === '' || isNull(value)) {
+    return null;
+  }
 
   const numberValue = Number(value);
 

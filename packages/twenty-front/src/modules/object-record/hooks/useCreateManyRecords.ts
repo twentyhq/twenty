@@ -200,7 +200,9 @@ export const useCreateManyRecords = <
             mutationResponseField
           ];
 
-          if (!isDefined(records?.length) || skipPostOptimisticEffect) return;
+          if (!isDefined(records?.length) || skipPostOptimisticEffect) {
+            return;
+          }
 
           triggerCreateRecordsOptimisticEffect({
             cache,

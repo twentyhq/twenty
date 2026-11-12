@@ -3,6 +3,7 @@ import * as https from 'https';
 import { type Socket } from 'net';
 import { type Duplex } from 'stream';
 
+import { OutboundRequestBlockedError } from 'src/engine/core-modules/secure-http-client/errors/outbound-request-blocked.error';
 import { getIsBlockedIp } from 'src/engine/core-modules/secure-http-client/utils/get-is-blocked-ip.util';
 
 type IsBlockedIp = ReturnType<typeof getIsBlockedIp>;
@@ -21,7 +22,9 @@ const isHostnameBlockedIp = (
 
 const validateHost = (host: string | undefined, isBlockedIp: IsBlockedIp) => {
   if (host && isHostnameBlockedIp(host, isBlockedIp)) {
-    throw new Error(`Request to internal IP address ${host} is not allowed.`);
+    throw new OutboundRequestBlockedError(
+      `Request to internal IP address ${host} is not allowed.`,
+    );
   }
 };
 
@@ -41,14 +44,14 @@ const attachLookupValidation = (
     try {
       if (isBlockedIp(address)) {
         socket.destroy(
-          new Error(
+          new OutboundRequestBlockedError(
             `Request to internal IP address ${address} is not allowed.`,
           ),
         );
       }
     } catch {
       socket.destroy(
-        new Error(
+        new OutboundRequestBlockedError(
           `Request to unvalidatable IP address ${address} is not allowed.`,
         ),
       );

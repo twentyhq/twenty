@@ -125,8 +125,9 @@ export const RecordDetailRelationSectionDropdownToOne = ({
   ) => {
     closeDropdown(dropdownId);
 
-    if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name)
+    if (!selectedMorphItem?.recordId || !relationFieldMetadataItem?.name) {
       return;
+    }
 
     onSubmit?.({ newValue: { id: selectedMorphItem.recordId } });
   };

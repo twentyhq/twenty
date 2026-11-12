@@ -1,3 +1,3 @@
-export const castToString = (value: any) => {
+export const castToString = (value: unknown) => {
   return String(value ?? '');
 };

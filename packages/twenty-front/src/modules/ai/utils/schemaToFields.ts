@@ -6,7 +6,9 @@ import { v4 } from 'uuid';
 export const schemaToFields = (
   schema: AgentResponseSchema,
 ): OutputSchemaField[] => {
-  if (!isDefined(schema.properties)) return [];
+  if (!isDefined(schema.properties)) {
+    return [];
+  }
 
   return Object.entries(schema.properties).map(([key, field]) => ({
     id: v4(),

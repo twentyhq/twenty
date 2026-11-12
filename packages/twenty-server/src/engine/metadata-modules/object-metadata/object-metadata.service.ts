@@ -30,6 +30,7 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -357,6 +358,7 @@ export class ObjectMetadataService {
       flatFieldMetadataMaps,
       flatIndexMaps,
       flatViewMaps,
+      flatFieldMetadataOptionMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -366,6 +368,7 @@ export class ObjectMetadataService {
             'flatIndexMaps',
             'flatFieldMetadataMaps',
             'flatViewMaps',
+            'flatFieldMetadataOptionMaps',
           ],
         },
       );
@@ -479,6 +482,14 @@ export class ObjectMetadataService {
               flatEntityToDelete: flatFieldMetadatasToDelete,
               flatEntityToUpdate: [],
             },
+            fieldMetadataOption:
+              computeFieldMetadataOptionOperationsForFieldMetadatas({
+                flatFieldMetadatasToDelete,
+                existingFlatFieldMetadataOptionMaps:
+                  flatFieldMetadataOptionMaps,
+                applicationUniversalIdentifier:
+                  resolvedOwnerFlatApplication.universalIdentifier,
+              }),
             view: {
               flatEntityToCreate: [],
               flatEntityToDelete: Object.values(
@@ -682,6 +693,10 @@ export class ObjectMetadataService {
       pageLayoutUniversalIdentifier: null,
       agentChatChannelId: null,
       agentChatChannelUniversalIdentifier: null,
+      workflowId: null,
+      workflowUniversalIdentifier: null,
+      agentId: null,
+      agentUniversalIdentifier: null,
       name: null,
       link: null,
       nativePageKey: null,

@@ -125,10 +125,9 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         contextInstance,
         ...executeParams,
       );
-    } else {
-      // @ts-expect-error legacy noImplicitAny
-      return instance[methodName].call(instance, ...executeParams);
     }
+    // @ts-expect-error legacy noImplicitAny
+    return instance[methodName].call(instance, ...executeParams);
   }
 
   private transformPayload(payload: QueryResultFieldValue): ObjectRecord[] {
@@ -211,15 +210,14 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
         executeParams[1],
         transformedPayload,
       );
-    } else {
-      // @ts-expect-error legacy noImplicitAny
-      return instance[methodName].call(
-        instance,
-        executeParams[0],
-        executeParams[1],
-        transformedPayload,
-      );
     }
+    // @ts-expect-error legacy noImplicitAny
+    return instance[methodName].call(
+      instance,
+      executeParams[0],
+      executeParams[1],
+      transformedPayload,
+    );
   }
 
   private registerWorkspaceQueryHook(

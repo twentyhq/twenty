@@ -40,7 +40,7 @@ export const useWidgetPermissions = (
 
   const hasObjectAccess = canReachSomeRecords({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   if (!hasObjectAccess) {

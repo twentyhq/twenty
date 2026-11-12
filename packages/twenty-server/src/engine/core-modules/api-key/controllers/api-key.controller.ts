@@ -95,10 +95,12 @@ export class ApiKeyController {
   ): Promise<ApiKeyEntity | null> {
     const updateData: QueryDeepPartialEntity<ApiKeyEntity> = {};
 
-    if (updateApiKeyDto.name !== undefined)
+    if (updateApiKeyDto.name !== undefined) {
       updateData.name = updateApiKeyDto.name;
-    if (updateApiKeyDto.expiresAt !== undefined)
+    }
+    if (updateApiKeyDto.expiresAt !== undefined) {
       updateData.expiresAt = new Date(updateApiKeyDto.expiresAt);
+    }
     if (updateApiKeyDto.revokedAt !== undefined) {
       updateData.revokedAt = updateApiKeyDto.revokedAt
         ? new Date(updateApiKeyDto.revokedAt)

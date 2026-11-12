@@ -171,7 +171,9 @@ describe('UpgradeSequenceRunnerService — workspace deletion (integration)', ()
       jest
         .spyOn(workspaceStep.command, 'runOnWorkspace')
         .mockImplementation(async ({ workspaceId }) => {
-          if (workspaceId !== WS_4) return;
+          if (workspaceId !== WS_4) {
+            return;
+          }
           const repository = context.dataSource.getRepository(WorkspaceEntity);
           if (deletion === 'soft') {
             await repository.softDelete(workspaceId);
@@ -257,7 +259,9 @@ describe('UpgradeSequenceRunnerService — workspace deletion (integration)', ()
     jest
       .spyOn(workspaceStep.command, 'runOnWorkspace')
       .mockImplementation(async ({ workspaceId }) => {
-        if (workspaceId === WS_4) throw new Error('command failed');
+        if (workspaceId === WS_4) {
+          throw new Error('command failed');
+        }
       });
 
     const report = await context.runner.run({
