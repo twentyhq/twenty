@@ -16,6 +16,13 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type AccessGroupPropagationProgress = {
+  __typename?: 'AccessGroupPropagationProgress';
+  isInProgress: Scalars['Boolean']['output'];
+  remainingRecordCount: Scalars['Int']['output'];
+  totalRecordCount: Scalars['Int']['output'];
+};
+
 export type ActivateWorkspaceInput = {
   /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -6101,6 +6108,7 @@ export type PublicWorkspaceDataSummary = {
 
 export type Query = {
   __typename?: 'Query';
+  accessGroupPropagationProgress: AccessGroupPropagationProgress;
   agentChatChannelRoles: Array<AgentChatChannelRole>;
   agentChatChannelSummaries: Array<AgentChatChannelSummary>;
   agentChatChannelThreadIds: AgentChatChannelThreadIds;

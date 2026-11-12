@@ -1,3 +1,9 @@
+type AccessGroupPropagationProgress {
+  isInProgress: Boolean!
+  remainingRecordCount: Int!
+  totalRecordCount: Int!
+}
+
 input ActivateWorkspaceInput {
   """
   Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
@@ -4305,6 +4311,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  accessGroupPropagationProgress: AccessGroupPropagationProgress!
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!

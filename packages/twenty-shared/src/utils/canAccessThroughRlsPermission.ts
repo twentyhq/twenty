@@ -1,6 +1,6 @@
 import { type ObjectRecordsOperationType } from '@/types/ObjectRecordsOperationType';
 import { type ObjectRecordsPermissions } from '@/types/ObjectRecordsPermissions';
-import { isRowLevelRecordsPermissionsRuleGrantingOperation } from '@/utils/isRowLevelRecordsPermissionsRuleGrantingOperation';
+import { canRlsRuleAccessOperation } from '@/utils/canRlsRuleAccessOperation';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const canAccessThroughRlsPermission = ({
@@ -15,6 +15,6 @@ export const canAccessThroughRlsPermission = ({
   }
 
   return rowLevelRecordsPermissions.some((rule) =>
-    isRowLevelRecordsPermissionsRuleGrantingOperation({ rule, operationType }),
+    canRlsRuleAccessOperation({ rule, operationType }),
   );
 };

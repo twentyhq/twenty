@@ -9,14 +9,16 @@ export const toDatabaseEventTriggerManifestField = ({
   type,
   objectMetadataUniversalIdentifier,
   universalSettings,
+  relationTargetObjectMetadataUniversalIdentifier,
 }: DatabaseEventTriggerManifestLookupField): DatabaseEventTriggerManifestField => ({
   universalIdentifier,
   name,
   type,
   objectUniversalIdentifier: objectMetadataUniversalIdentifier,
-  universalSettings,
   relationType:
     isDefined(universalSettings) && 'relationType' in universalSettings
       ? universalSettings.relationType
       : undefined,
+  relationTargetObjectUniversalIdentifier:
+    relationTargetObjectMetadataUniversalIdentifier ?? undefined,
 });

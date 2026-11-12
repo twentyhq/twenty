@@ -14,16 +14,16 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { buildAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-access-sql-condition.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 
 jest.mock(
-  'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util',
+  'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util',
 );
 jest.mock(
   'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util',
@@ -221,7 +221,7 @@ const gatedSql = ({
 
 describe('buildAccessSQLCondition', () => {
   beforeEach(() => {
-    (renderRowLevelPermissionFilterToSql as jest.Mock).mockImplementation(
+    (renderRlsRecordFilterToSql as jest.Mock).mockImplementation(
       ({ tableAlias }: { tableAlias: string }) => ({
         sql: `"${tableAlias}"."title" = :restricted`,
         parameters: { restricted: 'restricted' },
@@ -513,7 +513,7 @@ describe('buildAccessSQLCondition', () => {
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'read',
-      callerAccessGroupCompactIds: [42, 43],
+      principalsAccessGroupCompactIds: [42, 43],
     });
 
     if (policy.kind !== 'gated') {
@@ -536,8 +536,8 @@ describe('buildAccessSQLCondition', () => {
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'read',
-      callerAccessGroupCompactIds: [42],
-      callerRelatedRecordPathAccessGroupCompactIds: [7],
+      principalsAccessGroupCompactIds: [42],
+      principalsRelatedRecordPathAccessGroupCompactIds: [7],
     });
 
     if (policy.kind !== 'gated') {

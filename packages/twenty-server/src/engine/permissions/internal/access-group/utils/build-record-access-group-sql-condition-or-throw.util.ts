@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessGroupSQLConditionMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-sql-condition-metadata-maps.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { buildRecordFilterForRule } from 'src/engine/permissions/internal/rls/utils/build-row-level-permission-record-filter.util';
-import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { buildRecordFilterForRule } from 'src/engine/permissions/internal/rls/utils/build-rls-record-filter.util';
+import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
 // null when the group reaches every record of the object
@@ -34,16 +34,14 @@ export const buildRecordAccessGroupSQLConditionOrThrow = ({
     memberFieldValues: accessGroup.memberFieldValues ?? {},
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
-    isRelationHopEnabled: isRowLevelPermissionRelationHopEnabled(
-      metadataMaps.featureFlagsMap,
-    ),
+    isRelationHopEnabled: isRlsRelationHopEnabled(metadataMaps.featureFlagsMap),
   });
 
   if (!isDefined(recordFilter)) {
     return null;
   }
 
-  return renderRowLevelPermissionFilterToSql({
+  return renderRlsRecordFilterToSql({
     recordFilter,
     tableAlias,
     objectMetadata: flatObjectMetadata,

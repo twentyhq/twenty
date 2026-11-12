@@ -13803,6 +13803,11 @@ msgstr "구성 요소 종속성을 확인할 수 없습니다. 구성 요소를 
 msgid "The condition of a database event trigger must be text"
 msgstr "데이터베이스 이벤트 트리거의 조건은 텍스트여야 합니다"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
