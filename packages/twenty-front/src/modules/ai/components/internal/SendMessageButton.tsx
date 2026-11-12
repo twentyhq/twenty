@@ -1,6 +1,7 @@
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
+import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { agentChatRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
@@ -25,7 +26,14 @@ export const SendMessageButton = ({
     agentChatInputIsEmptySelector,
   );
 
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
+  const agentChatMessagesLoading = useAtomStateValue(
+    agentChatMessagesLoadingState,
+  );
+  const agentChatRecentThreadsLoading = useAtomStateValue(
+    agentChatRecentThreadsLoadingSelector,
+  );
+  const agentChatIsLoading =
+    agentChatMessagesLoading || agentChatRecentThreadsLoading;
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const agentChatIsStreaming = useAtomFamilyStateValue(

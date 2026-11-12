@@ -5,7 +5,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
+import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { agentChatRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,7 +20,14 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatStandaloneError = () => {
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
+  const agentChatMessagesLoading = useAtomStateValue(
+    agentChatMessagesLoadingState,
+  );
+  const agentChatRecentThreadsLoading = useAtomStateValue(
+    agentChatRecentThreadsLoadingSelector,
+  );
+  const agentChatIsLoading =
+    agentChatMessagesLoading || agentChatRecentThreadsLoading;
 
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,

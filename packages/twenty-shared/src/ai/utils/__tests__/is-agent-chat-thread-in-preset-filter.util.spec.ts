@@ -1,4 +1,4 @@
-import { isAgentChatThreadInFilterStatus } from '@/ai/utils/is-agent-chat-thread-in-filter-status.util';
+import { isAgentChatThreadInPresetFilter } from '@/ai/utils/is-agent-chat-thread-in-preset-filter.util';
 
 const OPEN_STATUS = {
   scope: 'INBOX',
@@ -6,57 +6,57 @@ const OPEN_STATUS = {
   isAssignedToMe: false,
 } as const;
 
-describe('isAgentChatThreadInFilterStatus', () => {
+describe('isAgentChatThreadInPresetFilter', () => {
   it('lists open chats under Open', () => {
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'active',
+        presetFilter: 'active',
       }),
     ).toBe(true);
   });
 
   it('lists open chats waiting on an answer under Needs input', () => {
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'needsInput',
+        presetFilter: 'needsInput',
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'needsInput',
+        presetFilter: 'needsInput',
       }),
     ).toBe(false);
   });
 
   it('lists open chats the member was mentioned in under Mentions', () => {
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: { ...OPEN_STATUS, isMentioned: true },
-        filterStatus: 'mentions',
+        presetFilter: 'mentions',
       }),
     ).toBe(true);
   });
 
   it('lists open chats assigned to the member under Assigned to me', () => {
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: { ...OPEN_STATUS, isAssignedToMe: true },
-        filterStatus: 'assigned',
+        presetFilter: 'assigned',
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null },
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assigned',
+        presetFilter: 'assigned',
       }),
     ).toBe(false);
   });
@@ -72,31 +72,31 @@ describe('isAgentChatThreadInFilterStatus', () => {
     };
 
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: assignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assignedToAnyone',
+        presetFilter: 'assignedToAnyone',
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: unassignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'assignedToAnyone',
+        presetFilter: 'assignedToAnyone',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: unassignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'unassigned',
+        presetFilter: 'unassigned',
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: assignedThread,
         inboxStatus: OPEN_STATUS,
-        filterStatus: 'unassigned',
+        presetFilter: 'unassigned',
       }),
     ).toBe(false);
   });
@@ -109,45 +109,45 @@ describe('isAgentChatThreadInFilterStatus', () => {
     } as const;
 
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: doneStatus,
-        filterStatus: 'needsInput',
+        presetFilter: 'needsInput',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: doneStatus,
-        filterStatus: 'mentions',
+        presetFilter: 'mentions',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: doneStatus,
-        filterStatus: 'assigned',
+        presetFilter: 'assigned',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null, assigneeId: 'member-2' },
         inboxStatus: doneStatus,
-        filterStatus: 'assignedToAnyone',
+        presetFilter: 'assignedToAnyone',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: null, assigneeId: null },
         inboxStatus: doneStatus,
-        filterStatus: 'unassigned',
+        presetFilter: 'unassigned',
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInFilterStatus({
+      isAgentChatThreadInPresetFilter({
         thread: { pendingQuestionMessageId: 'message' },
         inboxStatus: doneStatus,
-        filterStatus: 'done',
+        presetFilter: 'done',
       }),
     ).toBe(true);
   });

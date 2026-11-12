@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { type AgentChatSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
 import { isAgentChatSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
@@ -24,7 +24,7 @@ describe('isAgentChatSelectedThreadListSourceAccessible', () => {
       isAgentChatSelectedThreadListSourceAccessible({
         source: {
           type: 'presetFilter',
-          presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+          presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
         },
         channels: [],
       }),

@@ -9,8 +9,8 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
-export type { AgentChatThreadFilterStatus } from './constants/agent-chat-thread-filter-status.const';
-export { AGENT_CHAT_THREAD_FILTER_STATUS } from './constants/agent-chat-thread-filter-status.const';
+export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
+export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
 export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
@@ -135,7 +135,7 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
-export { computeAgentChatThreadFilterStatusGqlFilter } from './utils/compute-agent-chat-thread-filter-status-gql-filter.util';
+export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
@@ -146,7 +146,7 @@ export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
-export { isAgentChatThreadInFilterStatus } from './utils/is-agent-chat-thread-in-filter-status.util';
+export { isAgentChatThreadInPresetFilter } from './utils/is-agent-chat-thread-in-preset-filter.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';

@@ -5,7 +5,7 @@ import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/A
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 
-export const setAgentChatShownChannelView = (
+export const setAgentChatSelectedChannelView = (
   store: ReturnType<typeof createStore>,
   channelView: AgentChatChannelView | null,
 ) => {

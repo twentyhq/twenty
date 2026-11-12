@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
@@ -356,7 +356,7 @@ describe('AiChatInboxPage', () => {
   it('stays on a done chat the member writes in, though it leaves the done list', () => {
     jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
