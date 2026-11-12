@@ -14,7 +14,7 @@ import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/d
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
-import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   MessageQueueException,
   MessageQueueExceptionCode,
@@ -112,7 +112,12 @@ export class JobMemoryLimiter {
     jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    if (!this.isEnabled()) {
+    if (
+      !this.isEnabled() ||
+      queueName === MessageQueue.accessGroupQueue ||
+      queueName === MessageQueue.workspaceDestroyQueue ||
+      queueName === MessageQueue.deleteCascadeQueue
+    ) {
       return NOT_CHARGED;
     }
 
