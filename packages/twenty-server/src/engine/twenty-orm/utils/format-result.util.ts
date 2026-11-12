@@ -392,8 +392,7 @@ function handleEmptyCompositeFields(
     // oxlint-disable-next-line typescript/no-explicit-any
     const typedFieldValue = fieldValue as Record<string, any>;
 
-    // A required subfield missing from the row was not selected, which says
-    // nothing about the stored value.
+    // A subfield missing from the row was not selected, not stored empty.
     const selectedRequiredPropertyNames = requiredPropertyNames.filter(
       (propertyName) => propertyName in typedFieldValue,
     );
