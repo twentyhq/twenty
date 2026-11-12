@@ -633,6 +633,76 @@ describe('buildRecordFilterForRule with access group member values', () => {
     ).toEqual({ status: { in: ['OPEN'] } });
   });
 
+  it.each([
+    [RowLevelPermissionPredicateOperand.IS, ['sales'], 'sales', true],
+    [
+      RowLevelPermissionPredicateOperand.IS,
+      ['sales', 'support'],
+      'support',
+      true,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.IS,
+      ['sales', 'support'],
+      'legal',
+      false,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.IS_NOT,
+      ['sales', 'support'],
+      'legal',
+      true,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.IS_NOT,
+      ['sales', 'support'],
+      'support',
+      false,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.CONTAINS,
+      ['sal', 'sup'],
+      'support',
+      true,
+    ],
+    [
+      RowLevelPermissionPredicateOperand.IS_EMPTY,
+      ['sales', 'support'],
+      'sales',
+      false,
+    ],
+  ])(
+    'should compare a text field to a member list value by value (%s %j on "%s")',
+    (operand, memberValues, name, expected) => {
+      const filter = buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-text-member-list', USER_ROLE_ID, {
+              operand,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_TEAM_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: memberValues,
+        },
+      });
+
+      expect(
+        isRecordMatchingFilter({
+          record: { id: 'record-1', name, deletedAt: null },
+          filter: filter ?? {},
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
   it('should match nothing when the group holds no value', () => {
     expect(
       buildForAccessGroup({

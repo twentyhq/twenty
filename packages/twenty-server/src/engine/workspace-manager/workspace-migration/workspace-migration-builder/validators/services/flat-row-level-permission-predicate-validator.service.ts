@@ -26,6 +26,11 @@ import {
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
+import {
+  MATCHING_ANY_MEMBER_VALUE_OPERANDS,
+  MATCHING_NO_MEMBER_VALUE_OPERANDS,
+  SINGLE_VALUE_FILTER_TYPES,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/constants/row-level-permission-predicate-member-list.constants';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -662,8 +667,25 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
-    const isRecordFieldFilteredAsRelation =
-      getFilterTypeFromFieldType(fieldMetadata.type) === 'RELATION';
+    const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
+
+    if (
+      SINGLE_VALUE_FILTER_TYPES.includes(filterType) &&
+      (workspaceMemberFieldMetadata.type === FieldMetadataType.ARRAY ||
+        workspaceMemberFieldMetadata.type === FieldMetadataType.MULTI_SELECT) &&
+      !MATCHING_ANY_MEMBER_VALUE_OPERANDS.includes(operand) &&
+      !MATCHING_NO_MEMBER_VALUE_OPERANDS.includes(operand)
+    ) {
+      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
+
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Operand "${operand}" cannot compare a field to the list held by workspace member field "${workspaceMemberFieldName}", use IS, IS_NOT, CONTAINS or DOES_NOT_CONTAIN`,
+        userFriendlyMessage: msg`This operand cannot compare a field to a list of values`,
+      };
+    }
+
+    const isRecordFieldFilteredAsRelation = filterType === 'RELATION';
 
     if (
       isRecordFieldFilteredAsRelation &&

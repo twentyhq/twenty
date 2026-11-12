@@ -23,6 +23,11 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  MATCHING_ANY_MEMBER_VALUE_OPERANDS,
+  MATCHING_NO_MEMBER_VALUE_OPERANDS,
+  SINGLE_VALUE_FILTER_TYPES,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/constants/row-level-permission-predicate-member-list.constants';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
@@ -125,8 +130,9 @@ const buildPredicateRecordFilter = ({
     | CompositeFieldSubFieldName
     | undefined;
   const operand = mapRLSOperandToRecordFilterOperand(predicate.operand);
+  const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
   const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+    filterType,
     subFieldName,
   });
 
@@ -167,28 +173,64 @@ const buildPredicateRecordFilter = ({
     }
   }
 
-  const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
-    recordFilters: [
-      {
-        fieldMetadataId:
-          predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
-        relationTargetFieldMetadataId: isDefined(
-          predicate.relationFieldMetadataId,
-        )
-          ? predicate.fieldMetadataId
-          : undefined,
-        value: convertViewFilterValueToString(predicateValue),
-        operand,
-        subFieldName,
-      },
-    ],
-    recordFilterGroups: [],
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-    filterValueDependencies: { currentWorkspaceMemberId },
-  });
+  const buildValueRecordFilter = (
+    value: RowLevelPermissionPredicateValue,
+  ): RecordGqlOperationFilter | undefined => {
+    const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
+      recordFilters: [
+        {
+          fieldMetadataId:
+            predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
+          relationTargetFieldMetadataId: isDefined(
+            predicate.relationFieldMetadataId,
+          )
+            ? predicate.fieldMetadataId
+            : undefined,
+          value: convertViewFilterValueToString(value),
+          operand,
+          subFieldName,
+        },
+      ],
+      recordFilterGroups: [],
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      filterValueDependencies: { currentWorkspaceMemberId },
+    });
 
-  return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+    return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+  };
+
+  if (
+    !isDefined(predicate.workspaceMemberFieldMetadataId) ||
+    !Array.isArray(predicateValue) ||
+    !SINGLE_VALUE_FILTER_TYPES.includes(filterType)
+  ) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  const isMatchingNoMemberValue = MATCHING_NO_MEMBER_VALUE_OPERANDS.includes(
+    predicate.operand,
+  );
+
+  if (
+    predicateValue.length > 1 &&
+    !isMatchingNoMemberValue &&
+    !MATCHING_ANY_MEMBER_VALUE_OPERANDS.includes(predicate.operand)
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  const valueRecordFilters = predicateValue
+    .map((value) => buildValueRecordFilter(value))
+    .filter(isDefined);
+
+  if (valueRecordFilters.length <= 1) {
+    return valueRecordFilters[0];
+  }
+
+  return isMatchingNoMemberValue
+    ? { and: valueRecordFilters }
+    : { or: valueRecordFilters };
 };
 
 const combineRecordFilters = (
