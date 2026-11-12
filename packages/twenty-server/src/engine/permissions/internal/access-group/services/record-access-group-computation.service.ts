@@ -17,7 +17,6 @@ import {
 import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-of-records-job-name.constant';
 import { type RecomputeRecordAccessGroupIdsOfRecordsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-of-records-job-data.type';
 import { type AccessGroup } from 'src/engine/permissions/internal/access-group/types/access-group.type';
-import { type RecomputeRecordAccessGroupIdsJobData } from 'src/engine/permissions/internal/access-group/types/recompute-record-access-group-ids-job-data.type';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import { buildRecordAccessGroupSQLConditions } from 'src/engine/permissions/internal/access-group/utils/build-record-access-group-sql-conditions.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
@@ -28,9 +27,10 @@ import { findRelationJoinColumnsOrThrow } from 'src/engine/permissions/internal/
 import { isRlsRuleRelationAffectedByUpdate } from 'src/engine/permissions/internal/access-group/utils/is-rls-rule-relation-affected-by-update.util';
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
-import { arePrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/are-private-records-enabled.util';
+import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
+import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
 
 const RECOMPUTE_BATCH_SIZE = 1_000;
 
@@ -41,6 +41,7 @@ export class RecordAccessGroupComputationService {
     private readonly accessGroupRepository: AccessGroupRepository,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
+    private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -48,10 +49,10 @@ export class RecordAccessGroupComputationService {
   async recomputeRecordAccessGroupIdsOfAllObjectRecords({
     workspaceId,
     objectMetadataId,
-  }: Pick<
-    RecomputeRecordAccessGroupIdsJobData,
-    'workspaceId' | 'objectMetadataId'
-  >): Promise<void> {
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.findAfterEvictingLocalCache(
         workspaceId,
@@ -80,6 +81,10 @@ export class RecordAccessGroupComputationService {
         workspaceId,
         objectMetadataId,
         recordIds,
+      });
+      await this.accessGroupPropagationPlanService.trackComputedRecords({
+        workspaceId,
+        recordCount: recordIds.length,
       });
 
       recordIds = await this.recordAccessGroupRepository.findRecordIds({
@@ -145,7 +150,7 @@ export class RecordAccessGroupComputationService {
                     sourceFlatObjectMetadata.id,
                 )
                 .map(({ compactId }) => compactId),
-          isSourcePrivacyApplicable: arePrivateRecordsEnabled({
+          isSourcePrivacyApplicable: isPrivateRecordsEnabled({
             flatObjectMetadata: sourceFlatObjectMetadata,
             featureFlagsMap: metadataMaps.featureFlagsMap,
           }),
@@ -172,7 +177,7 @@ export class RecordAccessGroupComputationService {
     workspaceId,
     objectMetadataId,
     recordIds,
-    propagatedFromObjectMetadataIds,
+    fromRelatedObjectMetadataIds,
   }: RecomputeRecordAccessGroupIdsOfRecordsJobData): Promise<void> {
     for (const recordIdsBatch of chunk(recordIds, RECOMPUTE_BATCH_SIZE)) {
       await this.messageQueueService.add<RecomputeRecordAccessGroupIdsOfRecordsJobData>(
@@ -181,7 +186,7 @@ export class RecordAccessGroupComputationService {
           workspaceId,
           objectMetadataId,
           recordIds: recordIdsBatch,
-          propagatedFromObjectMetadataIds,
+          fromRelatedObjectMetadataIds,
         },
         { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
       );
@@ -216,7 +221,7 @@ export class RecordAccessGroupComputationService {
     );
   }
 
-  async isObjectReachedByRlsRuleRelation({
+  async isObjectReferencedByRlsRuleRelation({
     workspaceId,
     objectMetadataId,
   }: {

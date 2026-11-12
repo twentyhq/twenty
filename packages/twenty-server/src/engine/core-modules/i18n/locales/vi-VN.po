@@ -13803,6 +13803,11 @@ msgstr "Không thể xác minh các phần phụ thuộc của thành phần. H�
 msgid "The condition of a database event trigger must be text"
 msgstr "Điều kiện của trình kích hoạt sự kiện cơ sở dữ liệu phải là văn bản"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts

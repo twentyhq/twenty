@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { canAllRecordsAccessOperation } from 'src/engine/permissions/internal/all-records/utils/can-all-records-access-operation.util';
 import { buildRlsAccessSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-rls-access-sql-condition.util';
-import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { arePrivateRecordsExcludedFromAllRecordsAndRls } from 'src/engine/permissions/internal/private-record/utils/are-private-records-excluded-from-all-records-and-rls.util';
-import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
+import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
 import { combineSQLConditionOutcomesWithAnd } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-and.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { resolveRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-row-access-outcome.util';
@@ -40,7 +40,7 @@ export const buildAccessSQLCondition = ({
     arePrivateRecordsExcludedFromAllRecordsAndRls(sqlRequest)
       ? combineSQLConditionOutcomesWithAnd([
           allRecordsOrRlsSQLCondition,
-          buildRecordPrivacySQLCondition({
+          buildPrivateRecordStateSQLCondition({
             tableAlias: sqlRequest.tableAlias,
             isPrivate: false,
           }),

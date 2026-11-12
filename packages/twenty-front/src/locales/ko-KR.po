@@ -2299,12 +2299,6 @@ msgstr "사용자 지정 공급자 추가"
 msgid "Add details for guests"
 msgstr "게스트 세부 정보 추가"
 
-#. Abbreviation of add direct message, sidebar button
-#. js-lingui-id: An/Fke
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-msgid "Add DM"
-msgstr "DM 추가"
-
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
@@ -7128,10 +7122,15 @@ msgid "Computed at"
 msgstr "계산 시각"
 
 #. js-lingui-id: wpT1VN
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
 msgstr "조건"
+
+#. js-lingui-id: jZ2sd2
+#: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
+msgid "Condition (Optional)"
+msgstr ""
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -8262,12 +8261,12 @@ msgstr "{objectLabelSingular} 생성"
 #. js-lingui-id: RRkWki
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
-msgstr ""
+msgstr "{recordCount}개의 {objectLabel} 만들기"
 
 #. js-lingui-id: TryTER
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
-msgstr ""
+msgstr "{selectedCount} 생성"
 
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
@@ -9717,7 +9716,7 @@ msgstr "{objectLabelPlural} 삭제"
 #. js-lingui-id: CF0F8U
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
-msgstr ""
+msgstr "{recordCount}개의 {objectLabel} 삭제"
 
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -9727,7 +9726,7 @@ msgstr "{relationObjectLabelSingular} 삭제"
 #. js-lingui-id: ++479H
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
-msgstr ""
+msgstr "{selectedCount} 삭제"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9874,7 +9873,7 @@ msgstr "제한 삭제"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Delete message"
-msgstr ""
+msgstr "메시지 삭제"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -10311,6 +10310,11 @@ msgstr "이 브라우저는 받아쓰기를 지원하지 않습니다."
 msgid "Direct message pair identity"
 msgstr "다이렉트 메시지 쌍 식별자"
 
+#. js-lingui-id: 23aX1b
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+msgid "Direct messages"
+msgstr ""
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -10461,9 +10465,7 @@ msgstr "구분선"
 msgid "DMARC policy"
 msgstr "DMARC 정책"
 
-#. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
-#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "DM"
@@ -11045,7 +11047,7 @@ msgstr "연결된 레코드 편집"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Edit message"
-msgstr ""
+msgstr "메시지 편집하기"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -14060,6 +14062,7 @@ msgid "Formats"
 msgstr "형식"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
@@ -19384,6 +19387,11 @@ msgstr "새 대화"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New credit pack"
 msgstr "새 크레딧 팩"
+
+#. js-lingui-id: ctNfZE
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "New direct message"
+msgstr ""
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -27093,6 +27101,7 @@ msgstr "받은 편지함 표시"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "간략히 보기"
 
@@ -27103,6 +27112,7 @@ msgstr "로그 표시"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -30660,7 +30670,7 @@ msgid "Type \"yes\" to confirm."
 msgstr "확인하려면 \"yes\"를 입력하세요."
 
 #. js-lingui-id: XhqvGG
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
 msgstr "필드 이름 또는 함수를 입력하세요"
 
@@ -31300,12 +31310,12 @@ msgstr "{contextStoreNumberOfSelectedRecords}개의 레코드 업데이트"
 #. js-lingui-id: AHNNTF
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
-msgstr ""
+msgstr "{recordCount}개의 {objectLabel} 업데이트"
 
 #. js-lingui-id: ECfdor
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
-msgstr ""
+msgstr "{selectedCount} 업데이트"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
