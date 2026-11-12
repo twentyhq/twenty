@@ -30,7 +30,9 @@ import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPan
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -282,11 +284,17 @@ const meta = {
       agentChatThreadFilterStatusState.atom,
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
     );
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: THREADS.map(({ id }) => id),
-      hasNextPage: false,
-      endCursor: null,
-    });
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        lastLoadedActivityAt: null,
+      },
+    );
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
       Object.fromEntries(

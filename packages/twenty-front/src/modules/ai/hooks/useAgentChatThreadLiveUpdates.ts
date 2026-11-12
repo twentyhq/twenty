@@ -2,8 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThreadFieldUpdateCountsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { agentChatThreadLiveFieldsState } from '@/ai/states/agentChatThreadLiveFieldsState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { applyAgentChatThreadLiveFields } from '@/ai/utils/applyAgentChatThreadLiveFields';
@@ -12,7 +11,7 @@ export const useAgentChatThreadLiveUpdates = () => {
   const store = useStore();
 
   const getLiveUpdateCount = useCallback(
-    () => store.get(agentChatThreadRecordUpdateCountState.atom),
+    () => store.get(agentChatThreadLiveFieldsState.atom).updateCount,
     [store],
   );
 
@@ -24,8 +23,8 @@ export const useAgentChatThreadLiveUpdates = () => {
       threads: AgentChatThreadRecord[];
       updateCount: number;
     }): AgentChatThreadRecord[] => {
-      const fieldUpdateCountsById = store.get(
-        agentChatThreadFieldUpdateCountsState.atom,
+      const { fieldUpdateCountsByThreadId } = store.get(
+        agentChatThreadLiveFieldsState.atom,
       );
 
       return threads.map((thread) => {
@@ -40,7 +39,7 @@ export const useAgentChatThreadLiveUpdates = () => {
         return applyAgentChatThreadLiveFields({
           loadedThread: thread,
           storedThread,
-          fieldUpdateCounts: fieldUpdateCountsById[thread.id] ?? {},
+          fieldUpdateCounts: fieldUpdateCountsByThreadId[thread.id] ?? {},
           updateCountBeforeLoad: updateCount,
         });
       });

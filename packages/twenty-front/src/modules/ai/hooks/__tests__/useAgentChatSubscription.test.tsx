@@ -27,8 +27,10 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
 }));
 const subscribe = jest.fn();
 const disconnect = jest.fn();
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
+jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
+  useLoadAgentChatThreadList: () => ({
+    loadAgentChatThreadList: refreshAgentChatThreads,
+  }),
 }));
 const refreshAiChatUsage = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAiChatUsage', () => ({

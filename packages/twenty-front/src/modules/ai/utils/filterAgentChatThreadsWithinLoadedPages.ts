@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadPagedList } from '@/ai/types/AgentChatThreadPagedList';
+import { type AgentChatThreadList } from '@/ai/types/AgentChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 export const filterAgentChatThreadsWithinLoadedPages = ({
@@ -9,7 +9,7 @@ export const filterAgentChatThreadsWithinLoadedPages = ({
 }: {
   threads: AgentChatThreadRecord[];
   pagedList: Pick<
-    AgentChatThreadPagedList,
+    AgentChatThreadList,
     'threadIds' | 'hasNextPage' | 'lastLoadedActivityAt'
   > | null;
 }): AgentChatThreadRecord[] => {

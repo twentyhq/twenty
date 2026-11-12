@@ -1,7 +1,8 @@
 import { createStore } from 'jotai';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
@@ -24,7 +25,7 @@ const buildThread = ({
   lastActivityAt: LAST_ACTIVITY_AT,
 });
 
-describe('agentChatRecentThreadsSelector', () => {
+describe('agentChatThreadListThreadsFamilySelector for recent chats', () => {
   it('lists own chats and followed channel chats, not channel chats only read', () => {
     const store = createStore();
 
@@ -49,7 +50,13 @@ describe('agentChatRecentThreadsSelector', () => {
     });
 
     expect(
-      store.get(agentChatRecentThreadsSelector.atom).map(({ id }) => id),
+      store
+        .get(
+          agentChatThreadListThreadsFamilySelector.selectorFamily(
+            AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+          ),
+        )
+        .map(({ id }) => id),
     ).toEqual(['own', 'followed-channel-chat']);
   });
 });

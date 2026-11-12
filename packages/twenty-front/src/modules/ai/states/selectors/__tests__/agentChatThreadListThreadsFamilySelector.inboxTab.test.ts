@@ -4,12 +4,13 @@ import {
   type AgentChatThreadFilterStatus,
 } from 'twenty-shared/ai';
 
-import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
-import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
@@ -194,12 +195,17 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
       ),
     ),
   );
-  store.set(agentChatThreadFilterStatusState.atom, filterStatus);
-
-  return store.get(agentChatInboxTabThreadsSelector.atom).map(({ id }) => id);
+  return store
+    .get(
+      agentChatThreadListThreadsFamilySelector.selectorFamily({
+        type: 'inboxTab',
+        filterStatus,
+      }),
+    )
+    .map(({ id }) => id);
 };
 
-describe('agentChatInboxTabThreadsSelector', () => {
+describe('agentChatThreadListThreadsFamilySelector for an inbox tab', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
@@ -226,6 +232,10 @@ describe('agentChatInboxTabThreadsSelector', () => {
 
   it("lists the tab's loaded chats, and none older than its last page", () => {
     const store = createStore();
+    const DONE_SOURCE: AgentChatThreadListSource = {
+      type: 'inboxTab',
+      filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+    };
     const buildThread = ({
       id,
       lastActivityAt,
@@ -274,8 +284,8 @@ describe('agentChatInboxTabThreadsSelector', () => {
       lastActivityAt: null,
     });
     store.set(
-      agentChatInboxTabThreadListFamilyState.atomFamily(
-        AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(DONE_SOURCE),
       ),
       {
         threadIds: ['recent-done', 'older-done', 'quiet-done'],
@@ -290,16 +300,21 @@ describe('agentChatInboxTabThreadsSelector', () => {
       'oldest-done': doneParticipant('oldest-done'),
       'quiet-done': doneParticipant('quiet-done'),
     });
-    store.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
-    );
-
     expect(
-      store.get(agentChatInboxTabThreadsSelector.atom).map(({ id }) => id),
+      store
+        .get(
+          agentChatThreadListThreadsFamilySelector.selectorFamily(DONE_SOURCE),
+        )
+        .map(({ id }) => id),
     ).toEqual(['recent-done', 'older-done', 'quiet-done']);
     expect(
-      store.get(agentChatRecentThreadsSelector.atom).map(({ id }) => id),
+      store
+        .get(
+          agentChatThreadListThreadsFamilySelector.selectorFamily(
+            AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+          ),
+        )
+        .map(({ id }) => id),
     ).toEqual(['recent-done', 'oldest-done']);
   });
 });

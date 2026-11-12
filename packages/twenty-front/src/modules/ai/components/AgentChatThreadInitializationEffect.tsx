@@ -9,12 +9,14 @@ import {
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -33,7 +35,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -76,8 +78,12 @@ export const AgentChatThreadInitializationEffect = () => {
   )
     .map(({ id }) => id)
     .join(',');
-  const agentChatInboxTabThreads = useAtomStateValue(
-    agentChatInboxTabThreadsSelector,
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const agentChatThreadListThreads = useAtomFamilySelectorValue(
+    agentChatThreadListThreadsFamilySelector,
+    { type: 'inboxTab', filterStatus: agentChatThreadFilterStatus },
   );
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
@@ -99,7 +105,10 @@ export const AgentChatThreadInitializationEffect = () => {
     let retryTimeoutId: number | undefined;
 
     const refreshUntilLoaded = async () => {
-      const agentChatThreads = await refreshAgentChatThreads();
+      const agentChatThreads = await loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'refresh',
+      });
 
       if (!isActive || isDefined(agentChatThreads)) {
         return;
@@ -125,7 +134,7 @@ export const AgentChatThreadInitializationEffect = () => {
     areFieldMetadataItemsLoaded,
     canLoadChatThreads,
     favoriteThreadIdsKey,
-    refreshAgentChatThreads,
+    loadAgentChatThreadList,
     store,
   ]);
 
@@ -152,7 +161,7 @@ export const AgentChatThreadInitializationEffect = () => {
     setHasInitializedAgentChatThreads(true);
 
     const sortedThreads = sortChatThreadsByLastActivityDesc(
-      agentChatInboxTabThreads,
+      agentChatThreadListThreads,
     );
 
     if (sortedThreads.length > 0) {
@@ -167,7 +176,7 @@ export const AgentChatThreadInitializationEffect = () => {
       setCurrentAiChatThread(store.get(newAiChatThreadIdState.atom));
     }
   }, [
-    agentChatInboxTabThreads,
+    agentChatThreadListThreads,
     currentAiChatThread,
     agentChatThreadsLoading,
     hasInitializedAgentChatThreads,

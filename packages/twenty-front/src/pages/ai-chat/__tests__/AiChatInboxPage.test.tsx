@@ -21,7 +21,9 @@ import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -110,27 +112,17 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     )),
 }));
 
-jest.mock('@/ai/components/AgentChatInboxTabThreadsFetchMoreTrigger', () => ({
-  AgentChatInboxTabThreadsFetchMoreTrigger: () => null,
+jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
+  AgentChatThreadListFetchMoreTrigger: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
-  AgentChatChannelThreadsLoadEffect: () => null,
+jest.mock('@/ai/components/AgentChatThreadListLoadEffect', () => ({
+  AgentChatThreadListLoadEffect: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatChannelThreadsFetchMoreTrigger', () => ({
-  AgentChatChannelThreadsFetchMoreTrigger: () => null,
-}));
-
-jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
-  useLoadAgentChatChannelThreads: () => ({
-    loadAgentChatChannelThreads: jest.fn(),
-  }),
-}));
-
-jest.mock('@/ai/hooks/useLoadAgentChatInboxTabThreads', () => ({
-  useLoadAgentChatInboxTabThreads: () => ({
-    loadAgentChatInboxTabThreads: jest.fn(),
+jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
+  useLoadAgentChatThreadList: () => ({
+    loadAgentChatThreadList: jest.fn(),
   }),
 }));
 
@@ -284,11 +276,17 @@ describe('AiChatInboxPage', () => {
     THREADS.forEach((thread) =>
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
     );
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: THREADS.map(({ id }) => id),
-      hasNextPage: false,
-      endCursor: null,
-    });
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        lastLoadedActivityAt: null,
+      },
+    );
     // The member's own chats, which they follow
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,

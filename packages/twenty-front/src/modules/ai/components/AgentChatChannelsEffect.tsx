@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
 import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { agentChatThreadLiveFieldsState } from '@/ai/states/agentChatThreadLiveFieldsState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -72,8 +72,8 @@ export const AgentChatChannelsEffect = () => {
     onBrowserEvent: handleChannelOperation,
   });
 
-  const agentChatThreadRecordUpdateCount = useAtomStateValue(
-    agentChatThreadRecordUpdateCountState,
+  const agentChatThreadLiveFields = useAtomStateValue(
+    agentChatThreadLiveFieldsState,
   );
   const agentChatThreadParticipants = useAtomStateValue(
     agentChatThreadParticipantsState,
@@ -87,7 +87,7 @@ export const AgentChatChannelsEffect = () => {
     agentChatThreadParticipants,
     debouncedRefreshSummaries,
     isEnabled,
-    agentChatThreadRecordUpdateCount,
+    agentChatThreadLiveFields,
   ]);
 
   return null;

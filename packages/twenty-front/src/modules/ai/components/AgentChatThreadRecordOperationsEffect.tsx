@@ -6,8 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
@@ -41,7 +43,15 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   );
   const { applyAgentChatThreadUpdate, addAgentChatThread } =
     useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+  const refreshAgentChatThreads = useCallback(
+    () =>
+      loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'refresh',
+      }),
+    [loadAgentChatThreadList],
+  );
   const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const store = useStore();
   const { refreshAgentChatOpenThreadsSummary } =
@@ -98,7 +108,13 @@ export const AgentChatThreadRecordOperationsEffect = () => {
 
           // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
-            store.get(agentChatThreadListState.atom)?.threadIds ?? [];
+            store.get(
+              agentChatThreadListFamilyState.atomFamily(
+                getAgentChatThreadListSourceKey(
+                  AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+                ),
+              ),
+            )?.threadIds ?? [];
 
           if (
             updateInputs.some(

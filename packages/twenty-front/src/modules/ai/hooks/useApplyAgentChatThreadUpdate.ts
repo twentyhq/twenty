@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
-import { agentChatThreadFieldUpdateCountsState } from '@/ai/states/agentChatThreadFieldUpdateCountsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { agentChatThreadLiveFieldsState } from '@/ai/states/agentChatThreadLiveFieldsState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
@@ -21,19 +22,21 @@ export const useApplyAgentChatThreadUpdate = () => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
-      const updateCount =
-        store.get(agentChatThreadRecordUpdateCountState.atom) + 1;
-
-      store.set(agentChatThreadRecordUpdateCountState.atom, updateCount);
       store.set(
-        agentChatThreadFieldUpdateCountsState.atom,
-        (fieldUpdateCountsById) => ({
-          ...fieldUpdateCountsById,
-          [update.id]: {
-            ...fieldUpdateCountsById[update.id],
-            ...Object.fromEntries(
-              Object.keys(update).map((fieldName) => [fieldName, updateCount]),
-            ),
+        agentChatThreadLiveFieldsState.atom,
+        ({ updateCount, fieldUpdateCountsByThreadId }) => ({
+          updateCount: updateCount + 1,
+          fieldUpdateCountsByThreadId: {
+            ...fieldUpdateCountsByThreadId,
+            [update.id]: {
+              ...fieldUpdateCountsByThreadId[update.id],
+              ...Object.fromEntries(
+                Object.keys(update).map((fieldName) => [
+                  fieldName,
+                  updateCount + 1,
+                ]),
+              ),
+            },
           },
         }),
       );
@@ -43,7 +46,10 @@ export const useApplyAgentChatThreadUpdate = () => {
 
   const prependAgentChatThreadToList = useCallback(
     (threadId: string) => {
-      const agentChatThreadList = store.get(agentChatThreadListState.atom);
+      const recentThreadListAtom = agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      );
+      const agentChatThreadList = store.get(recentThreadListAtom);
 
       if (
         agentChatThreadList === null ||
@@ -52,7 +58,7 @@ export const useApplyAgentChatThreadUpdate = () => {
         return;
       }
 
-      store.set(agentChatThreadListState.atom, {
+      store.set(recentThreadListAtom, {
         ...agentChatThreadList,
         threadIds: [threadId, ...agentChatThreadList.threadIds],
       });

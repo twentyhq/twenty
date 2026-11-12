@@ -3,13 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
-import { useLoadAgentChatInboxTabThreads } from '@/ai/hooks/useLoadAgentChatInboxTabThreads';
-import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { agentChatShownThreadListSourceSelector } from '@/ai/states/selectors/agentChatShownThreadListSourceSelector';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -25,21 +23,14 @@ export const AiChatInboxThreadPagination = ({
   onThreadSelect,
 }: AiChatInboxThreadPaginationProps) => {
   const { t } = useLingui();
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
+  const agentChatShownThreadListSource = useAtomStateValue(
+    agentChatShownThreadListSourceSelector,
   );
-  const agentChatInboxTabThreadList = useAtomFamilyStateValue(
-    agentChatInboxTabThreadListFamilyState,
-    agentChatThreadFilterStatus,
+  const agentChatThreadList = useAtomFamilyStateValue(
+    agentChatThreadListFamilyState,
+    getAgentChatThreadListSourceKey(agentChatShownThreadListSource),
   );
-  const { loadAgentChatInboxTabThreads } = useLoadAgentChatInboxTabThreads();
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
-  );
-  const agentChatShownChannelThreadList = useAtomStateValue(
-    agentChatShownChannelThreadListSelector,
-  );
-  const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const index = threads.findIndex(({ id }) => id === threadId);
 
   // A chat opened from a link without being listed has no neighbours
@@ -47,13 +38,12 @@ export const AiChatInboxThreadPagination = ({
     return null;
   }
 
-  const hasMoreThreads = isDefined(agentChatShownChannelView)
-    ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
-    : (agentChatInboxTabThreadList?.hasNextPage ?? false);
+  const hasMoreThreads = agentChatThreadList?.hasNextPage ?? false;
   const fetchMoreThreads = () =>
-    isDefined(agentChatShownChannelView)
-      ? loadAgentChatChannelThreads('fetch-more')
-      : loadAgentChatInboxTabThreads('fetch-more');
+    loadAgentChatThreadList({
+      source: agentChatShownThreadListSource,
+      mode: 'fetch-more',
+    });
   const previousThreadId = index > 0 ? threads[index - 1].id : undefined;
   const nextThreadId =
     index < threads.length - 1 ? threads[index + 1].id : undefined;

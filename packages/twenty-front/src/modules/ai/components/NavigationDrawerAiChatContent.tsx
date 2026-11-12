@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
 import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
@@ -14,9 +14,9 @@ import { NavigationDrawerDirectMessagesSection } from '@/ai/components/Navigatio
 import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
 import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { agentChatDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
@@ -66,7 +66,9 @@ export const NavigationDrawerAiChatContent = () => {
       : { resetNavigationStack: true },
   );
 
-  const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
+  const { threads, loading } = useAgentChatThreadList(
+    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+  );
   const agentChatFavoriteThreads = useAtomStateValue(
     agentChatFavoriteThreadsSelector,
   );
@@ -133,7 +135,11 @@ export const NavigationDrawerAiChatContent = () => {
             />
           )}
         </StyledSectionsContainer>
-        {!isAiChatInboxEnabled && <AgentChatThreadsFetchMoreTrigger />}
+        {!isAiChatInboxEnabled && (
+          <AgentChatThreadListFetchMoreTrigger
+            source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+          />
+        )}
       </StyledThreadList>
     </StyledContainer>
   );
