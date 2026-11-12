@@ -2299,12 +2299,6 @@ msgstr "Thêm nhà cung cấp tùy chỉnh"
 msgid "Add details for guests"
 msgstr "Thêm thông tin chi tiết cho khách"
 
-#. Abbreviation of add direct message, sidebar button
-#. js-lingui-id: An/Fke
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-msgid "Add DM"
-msgstr "Thêm DM"
-
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
@@ -7128,10 +7122,15 @@ msgid "Computed at"
 msgstr "Được tính lúc"
 
 #. js-lingui-id: wpT1VN
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
 msgstr "Điều kiện"
+
+#. js-lingui-id: jZ2sd2
+#: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
+msgid "Condition (Optional)"
+msgstr ""
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -8258,6 +8257,16 @@ msgstr "Tạo {0}"
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
 msgstr "Tạo {objectLabelSingular}"
+
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr "Tạo {recordCount} {objectLabel}"
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr "Tạo {selectedCount}"
 
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
@@ -9704,10 +9713,20 @@ msgstr "Xóa đối tượng {objectLabel}?"
 msgid "Delete {objectLabelPlural}"
 msgstr "Xóa {objectLabelPlural}"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr "Xóa {recordCount} {objectLabel}"
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "Xóa {relationObjectLabelSingular}"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr "Xóa {selectedCount}"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9854,7 +9873,7 @@ msgstr "Xóa giới hạn"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Delete message"
-msgstr ""
+msgstr "Xóa tin nhắn"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -10291,6 +10310,11 @@ msgstr "Đọc chính tả không được hỗ trợ trong trình duyệt này.
 msgid "Direct message pair identity"
 msgstr "Danh tính cặp tin nhắn trực tiếp"
 
+#. js-lingui-id: 23aX1b
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+msgid "Direct messages"
+msgstr ""
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -10441,9 +10465,7 @@ msgstr "Đường phân cách"
 msgid "DMARC policy"
 msgstr "Chính sách DMARC"
 
-#. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
-#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "DM"
@@ -11025,7 +11047,7 @@ msgstr "Chỉnh sửa các bản ghi được liên kết"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Edit message"
-msgstr ""
+msgstr "Chỉnh sửa tin nhắn"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -11434,6 +11456,7 @@ msgstr "Nhân viên"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -14039,6 +14062,7 @@ msgid "Formats"
 msgstr "Định dạng"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
@@ -19364,6 +19388,11 @@ msgstr "Cuộc trò chuyện mới"
 msgid "New credit pack"
 msgstr "Gói tín dụng mới"
 
+#. js-lingui-id: ctNfZE
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "New direct message"
+msgstr ""
+
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "New Email"
@@ -23804,7 +23833,7 @@ msgid "Record-level filter"
 msgstr "Bộ lọc cấp bản ghi"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Bản ghi:"
 
@@ -27072,6 +27101,7 @@ msgstr "Hiện hộp thư đến"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Hiển thị ít hơn"
 
@@ -27082,6 +27112,7 @@ msgstr "Hiển thị nhật ký"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -29644,7 +29675,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "Bản ghi này không còn tồn tại hoặc bạn không thể xem bản ghi đó."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Bản ghi này sẽ bị xóa:"
 
@@ -30639,7 +30670,7 @@ msgid "Type \"yes\" to confirm."
 msgstr "Nhập \"yes\" để xác nhận."
 
 #. js-lingui-id: XhqvGG
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
 msgstr "Nhập tên trường hoặc hàm"
 
@@ -31275,6 +31306,16 @@ msgstr "Cập nhật {0}"
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Cập nhật {contextStoreNumberOfSelectedRecords} bản ghi"
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr "Cập nhật {recordCount} {objectLabel}"
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr "Cập nhật {selectedCount}"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

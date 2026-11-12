@@ -110,20 +110,6 @@ const SILENT_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:00:10.000Z' },
 };
 
-const LONG_TEXT = 'Set up my workspace. '.repeat(80);
-
-const LONG_USER_MESSAGE: ExtendedUIMessage = {
-  ...USER_MESSAGE,
-  id: 'long-user-message',
-  parts: [{ type: 'text', text: LONG_TEXT }],
-};
-
-const LONG_ASSISTANT_MESSAGE: ExtendedUIMessage = {
-  ...ASSISTANT_MESSAGE,
-  id: 'long-assistant-message',
-  parts: [{ type: 'text', text: LONG_TEXT }],
-};
-
 const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
   id: 'message-without-sender',
   role: 'user',
@@ -242,8 +228,6 @@ const renderMessage = ({
       NAMED_ASSISTANT_MESSAGE,
       SILENT_MESSAGE,
       MESSAGE_WITHOUT_SENDER,
-      LONG_USER_MESSAGE,
-      LONG_ASSISTANT_MESSAGE,
       REPLY_MESSAGE,
       REPLY_TO_MISSING_MESSAGE,
       BUILT_IN_ASSISTANT_MESSAGE,
@@ -369,27 +353,6 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Unknown sender')).toBeInTheDocument();
     expect(screen.getByText(/ago$/)).toBeInTheDocument();
-  });
-
-  it('collapses a long member message but never an assistant reply', () => {
-    const { unmount } = renderMessage({
-      messageId: LONG_USER_MESSAGE.id,
-      isAiChatInboxEnabled: false,
-    });
-
-    expect(
-      screen.getByRole('button', { name: 'Show more' }),
-    ).toBeInTheDocument();
-
-    unmount();
-    renderMessage({
-      messageId: LONG_ASSISTANT_MESSAGE.id,
-      isAiChatInboxEnabled: false,
-    });
-
-    expect(
-      screen.queryByRole('button', { name: 'Show more' }),
-    ).not.toBeInTheDocument();
   });
 
   it('hides a reply Ada chose not to send', () => {

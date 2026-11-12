@@ -13803,6 +13803,11 @@ msgstr "Dependențele componentei nu au putut fi verificate. Încercați să cre
 msgid "The condition of a database event trigger must be text"
 msgstr "Condiția unui declanșator de eveniment al bazei de date trebuie să fie text"
 
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts

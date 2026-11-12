@@ -37,8 +37,7 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which imports this module,
-// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
+// Global tokens avoid circular imports through AiAgentExecutionModule.
 
 @Module({
   imports: [
