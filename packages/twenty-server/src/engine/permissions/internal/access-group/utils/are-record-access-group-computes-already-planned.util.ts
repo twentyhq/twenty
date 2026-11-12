@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-// True when the waiting computes already hold the new ones in the same order, so running them covers both plans
 export const areRecordAccessGroupComputesAlreadyPlanned = ({
   waitingObjectMetadataIds,
   objectMetadataIds,

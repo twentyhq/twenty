@@ -8,7 +8,6 @@ type ComputeToPlan = {
   fromRelatedObjectMetadataIds: string[];
 };
 
-// Returns the objects to compute in order: an object comes after the objects it reads through a related record path
 export const planRecordAccessGroupComputes = ({
   objectMetadataIds,
   resolvedRelatedRecordPaths,

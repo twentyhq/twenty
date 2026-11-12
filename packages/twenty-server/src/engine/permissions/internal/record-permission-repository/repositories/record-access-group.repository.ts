@@ -65,8 +65,6 @@ export class RecordAccessGroupRepository {
     }>({
       workspaceId,
       query: {
-        // reltuples is -1 until a table is analyzed and live tuples reset with stats, so take the larger
-        // Joined rather than filtered with IN so an object computed twice is counted twice
         sql: `SELECT SUM(GREATEST("reltuples", pg_stat_get_live_tuples("oid")))::bigint AS "count"
           FROM unnest(:tableExpressions::text[]) AS "tableExpression"
           JOIN pg_class ON pg_class."oid" = to_regclass("tableExpression")`,

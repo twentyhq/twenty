@@ -259,7 +259,6 @@ describe('access group propagation progress (integration)', () => {
           (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
         ),
       );
-    // The plan reads the planner statistics, which a freshly seeded table may not have yet
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 

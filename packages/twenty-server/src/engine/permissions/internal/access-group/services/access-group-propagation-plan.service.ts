@@ -74,7 +74,6 @@ export class AccessGroupPropagationPlanService {
 
       if (
         areRecordAccessGroupComputesAlreadyPlanned({
-          // The first compute may already be running, so it cannot stand for a new one
           waitingObjectMetadataIds: objectMetadataIdsToCompute.slice(1),
           objectMetadataIds: plannedObjectMetadataIds,
         })
@@ -187,7 +186,6 @@ export class AccessGroupPropagationPlanService {
       (await this.cacheStorageService.get<number>(
         this.buildComputedRecordCountCacheKey(workspaceId),
       )) ?? 0;
-    // The plan is an estimate, so the total follows the records actually computed when they exceed it
     const totalRecordCount = Math.max(
       plan.totalRecordCount,
       computedRecordCount,
