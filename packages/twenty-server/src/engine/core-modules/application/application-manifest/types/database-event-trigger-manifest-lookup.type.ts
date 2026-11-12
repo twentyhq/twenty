@@ -9,6 +9,8 @@ export type DatabaseEventTriggerManifestLookupField = Pick<
   | 'type'
   | 'objectMetadataUniversalIdentifier'
   | 'universalSettings'
+  | 'relationTargetObjectMetadataUniversalIdentifier'
+  | 'isActive'
 >;
 
 // Maps are listed by priority: the app's own entities first, then the workspace's

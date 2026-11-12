@@ -381,6 +381,9 @@ export { isValidationRuleReservedName } from './validation-rule/isValidationRule
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
 export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
 export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
+export { renameValidationRuleExpressionFields } from './validation-rule/renameValidationRuleExpressionFields';
+export { renameValidationRuleExpressionToCurrentFieldNames } from './validation-rule/renameValidationRuleExpressionToCurrentFieldNames';
+export { renameValidationRulePath } from './validation-rule/renameValidationRulePath';
 export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
 export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
 export { validationRuleParser } from './validation-rule/validationRuleParser';

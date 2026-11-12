@@ -105,19 +105,19 @@ const StyledEditor = styled.div<{ hasError: boolean }>`
   }
 `;
 
-type SettingsValidationRuleExpressionEditorProps = {
+type ValidationRuleExpressionEditorProps = {
   value: string;
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
 };
 
-export const SettingsValidationRuleExpressionEditor = ({
+export const ValidationRuleExpressionEditor = ({
   value,
   fields,
   editorFields,
   onChange,
-}: SettingsValidationRuleExpressionEditorProps) => {
+}: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
 
   const [helperContext, setHelperContext] =
