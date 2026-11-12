@@ -10,15 +10,11 @@ import {
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
@@ -36,24 +32,27 @@ export const NavigationDrawerAiChatTriageItem = ({
   const { t } = useLingui();
   const location = useLocation();
   const navigate = useNavigateApp();
-  const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
-    useAtomState(agentChatThreadFilterStatusState);
-  const setAgentChatChannelView = useSetAtomState(agentChatChannelViewState);
-  const isChannelShown = isDefined(
-    useAtomStateValue(agentChatShownChannelViewSelector),
-  );
+  const [
+    agentChatSelectedThreadListSource,
+    setAgentChatSelectedThreadListSource,
+  ] = useAtomState(agentChatSelectedThreadListSourceState);
   const { resetRecordSelection } = useResetRecordSelection(
     AI_CHAT_INBOX_INSTANCE_ID,
   );
   const isCurrentFilter =
-    agentChatThreadFilterStatus === filterStatus ||
-    (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
-      isAgentChatOpenThreadFilterStatus(agentChatThreadFilterStatus));
+    agentChatSelectedThreadListSource.type === 'presetFilter' &&
+    (agentChatSelectedThreadListSource.presetFilter === filterStatus ||
+      (filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
+        isAgentChatOpenThreadFilterStatus(
+          agentChatSelectedThreadListSource.presetFilter,
+        )));
 
   const handleClick = () => {
     resetRecordSelection();
-    setAgentChatThreadFilterStatus(filterStatus);
-    setAgentChatChannelView(null);
+    setAgentChatSelectedThreadListSource({
+      type: 'presetFilter',
+      presetFilter: filterStatus,
+    });
     navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
@@ -63,11 +62,7 @@ export const NavigationDrawerAiChatTriageItem = ({
       secondaryLabel={isDefined(count) && count > 0 ? `${count}` : undefined}
       isUnread={isUnread}
       Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
-      active={
-        isAiChatInboxPath(location.pathname) &&
-        !isChannelShown &&
-        isCurrentFilter
-      }
+      active={isAiChatInboxPath(location.pathname) && isCurrentFilter}
       onClick={handleClick}
       triggerEvent="CLICK"
     />

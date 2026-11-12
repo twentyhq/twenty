@@ -30,7 +30,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { type DeferredWorkspaceOperation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import {
   WorkspaceMigrationActionRunnerContext,
@@ -59,7 +59,7 @@ export type ActionHandlerExecuteResult<TMetadataName extends AllMetadataName> =
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >;
     metadataEvents: MetadataEvent[];
-    deferredActions: DeferredWorkspaceMigrationAction[];
+    deferredOperations: DeferredWorkspaceOperation[];
   };
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
@@ -143,9 +143,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     return Promise.resolve();
   }
 
-  protected getDeferredAction(
+  protected getDeferredOperation(
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
-  ): DeferredWorkspaceMigrationAction | undefined {
+  ): DeferredWorkspaceOperation | undefined {
     return undefined;
   }
 
@@ -293,15 +293,15 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
 
-    const deferredAction = this.getDeferredAction({
+    const deferredOperation = this.getDeferredOperation({
       ...context,
       flatAction,
     });
 
-    const deferredActions: DeferredWorkspaceMigrationAction[] = isDefined(
-      deferredAction,
+    const deferredOperations: DeferredWorkspaceOperation[] = isDefined(
+      deferredOperation,
     )
-      ? [deferredAction]
+      ? [deferredOperation]
       : [];
 
     const partialOptimisticCache =
@@ -310,7 +310,7 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 
-    return { partialOptimisticCache, metadataEvents, deferredActions };
+    return { partialOptimisticCache, metadataEvents, deferredOperations };
   }
 
   async rollback(
