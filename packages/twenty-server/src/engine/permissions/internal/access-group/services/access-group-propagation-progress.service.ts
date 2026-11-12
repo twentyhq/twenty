@@ -88,6 +88,17 @@ export class AccessGroupPropagationProgressService {
     });
   }
 
+  // A job the plan did not list as pending still reads as in progress: one queued behind a running recompute of the same object, or one outliving the plan
+  async startRecompute(
+    jobData: RecomputeRecordAccessGroupIdsJobData,
+  ): Promise<void> {
+    await this.cacheStorageService.setAdd(
+      this.buildPendingRecomputesKey(jobData.workspaceId),
+      [buildRecordAccessGroupRecomputeKey(jobData)],
+      ACCESS_GROUP_PROPAGATION_PROGRESS_TTL_MS,
+    );
+  }
+
   async trackRecomputedRecords({
     workspaceId,
     recordCount,

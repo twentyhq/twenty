@@ -36,6 +36,11 @@ export class RecordAccessGroupPropagationService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
+    await this.accessGroupPropagationProgressService.startRecompute({
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
+    });
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId,
