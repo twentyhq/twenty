@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { type EmailAttachment } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -35,7 +36,7 @@ export const useSendPendingChatMessage = () => {
 
     // the upload already toasted the failure; throwing marks the message as failed
     if (!attachments.every(isDefined)) {
-      throw new Error('Some attachments failed to upload');
+      throw new Error(doNotTranslate('Some attachments failed to upload'));
     }
 
     setUploadedAttachmentsByPendingMessageId((currentAttachments) => ({
