@@ -40,7 +40,6 @@ describe('filterAgentChatThreadsWithinLoadedPages', () => {
           pagedList: {
             threadIds: [],
             hasNextPage: false,
-            endCursor: null,
             lastLoadedActivityAt: '2026-10-05T00:00:00.000Z',
           },
         }),
@@ -56,7 +55,6 @@ describe('filterAgentChatThreadsWithinLoadedPages', () => {
           pagedList: {
             threadIds: ['loaded-older', 'loaded-no-activity'],
             hasNextPage: true,
-            endCursor: 'cursor',
             lastLoadedActivityAt: '2026-10-05T00:00:00.000Z',
           },
         }),
@@ -72,7 +70,6 @@ describe('filterAgentChatThreadsWithinLoadedPages', () => {
           pagedList: {
             threadIds: ['loaded-no-activity'],
             hasNextPage: true,
-            endCursor: 'cursor',
             lastLoadedActivityAt: null,
           },
         }),
