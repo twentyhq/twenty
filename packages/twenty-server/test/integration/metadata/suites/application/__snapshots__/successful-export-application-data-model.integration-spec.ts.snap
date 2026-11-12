@@ -42,7 +42,7 @@ exports[`Application export - data model exports the whole application as a stab
     {
       "metadataName": "rowLevelPermissionRule",
       "reason": null,
-      "status": "ENGINE_DERIVED",
+      "status": "EXPORTED",
       "universalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
     },
   ],
@@ -1133,7 +1133,9 @@ exports[`Application export - data model exports the whole application as a stab
       "label": "Test Role",
       "objectPermissions": [
         {
-          "canReadObjectRecords": true,
+          "canDestroyObjectRecords": false,
+          "canReadObjectRecords": false,
+          "canSoftDeleteObjectRecords": false,
           "canUpdateObjectRecords": false,
           "objectUniversalIdentifier": "<TICKET_OBJECT>",
           "universalIdentifier": "<TEST_ROLE_TICKET_OBJECT_PERMISSION>",
@@ -1148,6 +1150,7 @@ exports[`Application export - data model exports the whole application as a stab
           "logicalOperator": "OR",
           "objectUniversalIdentifier": "<TICKET_OBJECT>",
           "position": 0,
+          "rowLevelPermissionRuleUniversalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
           "universalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
         },
         {
@@ -1155,6 +1158,7 @@ exports[`Application export - data model exports the whole application as a stab
           "objectUniversalIdentifier": "<TICKET_OBJECT>",
           "parentPredicateGroupUniversalIdentifier": "<TEST_ROLE_TICKET_PREDICATE_GROUP>",
           "position": 1,
+          "rowLevelPermissionRuleUniversalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
           "universalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
         },
       ],
@@ -1165,8 +1169,20 @@ exports[`Application export - data model exports the whole application as a stab
           "operand": "CONTAINS",
           "position": 0,
           "predicateGroupUniversalIdentifier": "<TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP>",
+          "rowLevelPermissionRuleUniversalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
           "universalIdentifier": "<TEST_ROLE_TICKET_TITLE_PREDICATE>",
           "value": "bug",
+        },
+      ],
+      "rowLevelPermissionRules": [
+        {
+          "canCreateRecords": false,
+          "canDestroyRecords": false,
+          "canReadRecords": true,
+          "canSoftDeleteRecords": false,
+          "canUpdateRecords": false,
+          "objectUniversalIdentifier": "<TICKET_OBJECT>",
+          "universalIdentifier": "9f5ac5f3-0af6-5a36-a833-37ff9743284b",
         },
       ],
       "universalIdentifier": "<TEST_ROLE>",

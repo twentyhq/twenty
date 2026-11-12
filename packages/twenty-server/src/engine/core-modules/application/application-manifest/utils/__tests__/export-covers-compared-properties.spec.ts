@@ -890,11 +890,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
           ),
       }),
     ),
-    renamedProperties: {
-      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
-    },
+    renamedProperties: {},
     workspaceLocalProperties: [],
-    knownGaps: NESTED_ROLE_CHILD_GAPS,
+    knownGaps: {},
   },
   {
     metadataName: 'permissionFlag',

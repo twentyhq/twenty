@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { getShadowedRowLevelPermissionRuleWarnings } from '@/sdk/define/roles/get-shadowed-row-level-permission-rule-warnings';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { validateRowLevelPermissionRules } from '@/sdk/define/roles/validate-row-level-permission-rules';
 
@@ -135,6 +136,12 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
   return createValidationResult({
     config: keepEachPermissionFlagOnce(config),
     errors: [...errors, ...rowLevelPermissionRulesValidation.errors],
-    warnings: rowLevelPermissionRulesValidation.warnings,
+    warnings: [
+      ...rowLevelPermissionRulesValidation.warnings,
+      ...getShadowedRowLevelPermissionRuleWarnings({
+        role: config,
+        rowLevelPermissionRules: config.rowLevelPermissionRules,
+      }),
+    ],
   });
 };

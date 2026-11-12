@@ -148,7 +148,7 @@ describe('Application grant on dev sync', () => {
     });
   });
 
-  it('creates a grant owned by the workspace custom application, equal to the requested role without its RLS', async () => {
+  it('creates a grant owned by the workspace custom application, equal to the requested role with its rule grants on all records', async () => {
     await syncRequestedRole(INITIAL_REQUESTED_ROLE);
 
     const { applicationId, grant } = await findUpsertedApplicationGrantRole();
@@ -178,6 +178,14 @@ describe('Application grant on dev sync', () => {
     expect(requestedSnapshot.rowLevelPermissionPredicates).toHaveLength(1);
     expect(grantSnapshot).toEqual({
       ...requestedSnapshot,
+      objectPermissions: requestedSnapshot.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          canReadObjectRecords: true,
+          canCreateObjectRecords: true,
+          canUpdateObjectRecords: true,
+        }),
+      ),
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
     });
@@ -203,8 +211,16 @@ describe('Application grant on dev sync', () => {
 
     const grantSnapshot = await findRolePermissionSnapshot(grant!.role.id);
 
+    const requestedSnapshot = await findRolePermissionSnapshot(requestedRoleId);
+
     expect(grantSnapshot).toEqual({
-      ...(await findRolePermissionSnapshot(requestedRoleId)),
+      ...requestedSnapshot,
+      objectPermissions: requestedSnapshot.objectPermissions.map(
+        (objectPermission) => ({
+          ...objectPermission,
+          canReadObjectRecords: true,
+        }),
+      ),
       rowLevelPermissionPredicates: [],
       rowLevelPermissionPredicateGroups: [],
     });

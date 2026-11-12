@@ -9,7 +9,16 @@ export const fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermission
     applicationUniversalIdentifier,
     now,
   }: {
-    rowLevelPermissionRuleManifest: RowLevelPermissionRuleManifest;
+    rowLevelPermissionRuleManifest: Pick<
+      RowLevelPermissionRuleManifest,
+      | 'universalIdentifier'
+      | 'objectUniversalIdentifier'
+      | 'canReadRecords'
+      | 'canCreateRecords'
+      | 'canUpdateRecords'
+      | 'canSoftDeleteRecords'
+      | 'canDestroyRecords'
+    >;
     roleUniversalIdentifier: string;
     applicationUniversalIdentifier: string;
     now: string;

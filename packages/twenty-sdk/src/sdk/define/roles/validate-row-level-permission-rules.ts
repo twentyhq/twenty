@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -42,7 +43,7 @@ export const validateRowLevelPermissionRules = ({
   >();
 
   for (const rule of rowLevelPermissionRules) {
-    if (!rule.universalIdentifier) {
+    if (!isNonEmptyString(rule.universalIdentifier)) {
       errors.push('Row level permission rule must have a universalIdentifier');
     } else if (
       objectUniversalIdentifierByRuleUniversalIdentifier.has(
@@ -59,7 +60,7 @@ export const validateRowLevelPermissionRules = ({
       );
     }
 
-    if (!rule.objectUniversalIdentifier) {
+    if (!isNonEmptyString(rule.objectUniversalIdentifier)) {
       errors.push(
         'Row level permission rule must have an objectUniversalIdentifier',
       );
