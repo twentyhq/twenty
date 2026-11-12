@@ -5,9 +5,11 @@ import {
   convertToModelMessages,
   generateText,
   jsonSchema,
+  type LanguageModelUsage,
   NoObjectGeneratedError,
   NoOutputGeneratedError,
   Output,
+  type StepResult,
   type TextStreamPart,
   type ToolSet,
 } from 'ai';
@@ -55,6 +57,7 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { type AgentTurnUsageStep } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
+import { EMPTY_LANGUAGE_MODEL_USAGE } from 'src/engine/metadata-modules/ai/ai-billing/constants/empty-language-model-usage';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
@@ -240,7 +243,8 @@ export class AgentRunTurnService {
           new TransformStream<TextStreamPart<ToolSet>, TextStreamPart<ToolSet>>(
             {
               transform: (part, controller) => {
-                if (part.type === 'error') {
+                // a stop can surface as the provider's abort error, and is recorded as a stop instead
+                if (part.type === 'error' && !abortSignal?.aborted) {
                   streamError ??= part.error;
                 }
 
@@ -276,11 +280,11 @@ export class AgentRunTurnService {
   }): Promise<CompletedAgentRunTurn> {
     const { userWorkspaceId } = executionContext;
     const spenders = buildSpenders({ persona, executionContext });
-    const [text, loopUsage, loopSteps] = await Promise.all([
-      turn.stream.text,
-      turn.stream.usage,
-      turn.stream.steps,
-    ]);
+    const {
+      text,
+      usage: loopUsage,
+      steps: loopSteps,
+    } = await this.readLoopResultOrThrow({ turn, abortSignal });
     const { registeredModel, toolset } = turn;
     const isPaused = endsOnPausingToolCall({
       steps: loopSteps,
@@ -295,9 +299,13 @@ export class AgentRunTurnService {
     let steps = loopSteps;
     let structuredOutputSteps: AgentTurnUsageStep[] = [];
 
+    const isStopped = () => abortSignal?.aborted ?? false;
     // a stopped run fails whatever it returned, so it spends no request on its output
     const isStructuredOutputExpected =
-      isDefined(agentSchema) && !isPaused && !isDefined(stopReason);
+      isDefined(agentSchema) &&
+      !isPaused &&
+      !isDefined(stopReason) &&
+      !isStopped();
 
     if (isStructuredOutputExpected && isStructuredOutputInSameRequest) {
       result = await this.readSameRequestOutputOrThrow(turn);
@@ -324,28 +332,37 @@ export class AgentRunTurnService {
           userWorkspaceId,
           agentId: persona.agentId ?? undefined,
         }),
+      }).catch((error: unknown) => {
+        // a stop during this request ends the run as stopped, which needs no output
+        if (isStopped()) {
+          return null;
+        }
+
+        throw error;
       });
 
-      void this.aiBillingService.calculateAndBillUsage({
-        modelId: registeredModel.modelId,
-        billingInput: { usage: structuredResult.usage },
-        workspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-        spenders,
-      });
+      if (isDefined(structuredResult)) {
+        void this.aiBillingService.calculateAndBillUsage({
+          modelId: registeredModel.modelId,
+          billingInput: { usage: structuredResult.usage },
+          workspaceId,
+          operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+          spenders,
+        });
 
-      usage = mergeLanguageModelUsage(usage, structuredResult.usage);
-      steps = [...steps, ...structuredResult.steps];
-      structuredOutputSteps = structuredResult.steps;
+        usage = mergeLanguageModelUsage(usage, structuredResult.usage);
+        steps = [...steps, ...structuredResult.steps];
+        structuredOutputSteps = structuredResult.steps;
 
-      if (structuredResult.output == null) {
-        throw new AiException(
-          'Failed to generate structured output from execution results',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
-        );
+        if (structuredResult.output == null) {
+          throw new AiException(
+            'Failed to generate structured output from execution results',
+            AiExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        result = structuredResult.output as object;
       }
-
-      result = structuredResult.output as object;
     }
 
     const nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(steps);
@@ -367,6 +384,44 @@ export class AgentRunTurnService {
       creditsUsedMicro: convertDollarsToCreditsMicro(totalCostInDollars),
       structuredOutputSteps,
     };
+  }
+
+  // a stop before the loop's first step ends rejects the stream's results, so a stopped turn reads the steps that finished
+  private async readLoopResultOrThrow({
+    turn,
+    abortSignal,
+  }: {
+    turn: Pick<AgentTurn, 'stream' | 'getFinishedSteps'>;
+    abortSignal: AbortSignal | undefined;
+  }): Promise<{
+    text: string;
+    usage: LanguageModelUsage;
+    steps: StepResult<ToolSet>[];
+  }> {
+    try {
+      const [text, usage, steps] = await Promise.all([
+        turn.stream.text,
+        turn.stream.usage,
+        turn.stream.steps,
+      ]);
+
+      return { text, usage, steps };
+    } catch (error) {
+      if (!abortSignal?.aborted) {
+        throw error;
+      }
+
+      const steps = turn.getFinishedSteps();
+
+      return {
+        text: steps.map((step) => step.text).join(''),
+        usage: steps.reduce(
+          (usage, step) => mergeLanguageModelUsage(usage, step.usage),
+          EMPTY_LANGUAGE_MODEL_USAGE,
+        ),
+        steps,
+      };
+    }
   }
 
   private async readSameRequestOutputOrThrow(

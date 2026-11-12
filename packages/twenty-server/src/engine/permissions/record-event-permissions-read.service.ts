@@ -10,7 +10,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findGrantedRecordIds } from 'src/engine/permissions/internal/combine/utils/find-granted-record-ids.util';
+import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/internal/combine/utils/resolve-event-record-snapshots.util';
 import { getPermissionsPrincipalsRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-role-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
@@ -216,7 +216,7 @@ export class RecordEventPermissionsReadService {
       }
 
       // a destroyed record has no row left to query, so only its last snapshot can be checked
-      return findGrantedRecordIds({
+      return findAccessibleRecordIds({
         principals,
         metadataMaps: await loadMetadataMaps(),
         flatObjectMetadata: objectMetadata,

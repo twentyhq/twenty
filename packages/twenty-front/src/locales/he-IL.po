@@ -1115,7 +1115,7 @@ msgstr "{roleTargetName} תוקצה לתפקיד \"{newRoleName}\"."
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# turn} other {# turns}}"
-msgstr ""
+msgstr "{runCount, plural, one {# סבב} two {# סבבים} other {# סבבים}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2993,7 +2993,7 @@ msgstr "הרצת סוכן"
 #. js-lingui-id: aeu9gE
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Agent sections"
-msgstr ""
+msgstr "מקטעי סוכן"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4870,7 +4870,7 @@ msgstr "ממוצע"
 #. js-lingui-id: RSsxRl
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
-msgstr ""
+msgstr "משך זמן ממוצע"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -8004,7 +8004,7 @@ msgstr "לא ניתן לטעון רשומות קשורות"
 #. js-lingui-id: 3167/q
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Could not load run insights"
-msgstr ""
+msgstr "לא ניתן לטעון תובנות הרצה"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
@@ -8024,7 +8024,7 @@ msgstr "לא ניתן היה לטעון את תהליך העבודה הזה."
 #. js-lingui-id: 6UPqqs
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Could not load turns"
-msgstr ""
+msgstr "לא ניתן לטעון תורות"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8259,6 +8259,16 @@ msgstr "צור {0}"
 msgid "Create {objectLabelSingular}"
 msgstr "צור {objectLabelSingular}"
 
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr "צור {recordCount} {objectLabel}"
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr "צור {selectedCount}"
+
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -8435,6 +8445,11 @@ msgstr "יצירת רשומה"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "יצירת רשומה"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "יצירת אחסון של שיתוף רשומות וקבוצות גישה כטבלאות בבעלות מנוע ההרשאות במקום כאובייקטים. חל רק בעת יצירת סביבת עבודה."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -9699,10 +9714,20 @@ msgstr "למחוק את האובייקט {objectLabel}?"
 msgid "Delete {objectLabelPlural}"
 msgstr "מחיקת {objectLabelPlural}"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr "מחק {recordCount} {objectLabel}"
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "מחיקת {relationObjectLabelSingular}"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr "מחיקת {selectedCount}"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9844,6 +9869,12 @@ msgstr "מחק רמה"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "מחק מגבלה"
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr "מחק הודעה"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -11010,6 +11041,12 @@ msgstr "ערוך קישור"
 msgid "Edit linked records"
 msgstr "ערוך רשומות מקושרות"
 
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr "ערוך הודעה"
+
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Edit navigation"
@@ -11417,6 +11454,7 @@ msgstr "עובדים"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -12763,7 +12801,7 @@ msgstr "נכשל"
 #. js-lingui-id: GUHLDy
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failed · 14d"
-msgstr ""
+msgstr "נכשל · 14 ימים"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13305,7 +13343,7 @@ msgstr "העלאת התמונה נכשלה"
 #. js-lingui-id: D98pOW
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failure rate"
-msgstr ""
+msgstr "שיעור כשל"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -18205,6 +18243,7 @@ msgstr "ערכים מרביים"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "MCP"
 
@@ -18228,6 +18267,11 @@ msgstr "שרת MCP"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "שרתי MCP"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "שרתי MCP אינם זמינים"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20011,7 +20055,7 @@ msgstr "עדיין לא נקבעו אירועים עם {objectName} זה."
 #. js-lingui-id: dAMlIe
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 msgid "No failed runs"
-msgstr ""
+msgstr "אין הרצות שנכשלו"
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -20071,6 +20115,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "אין שדות קלט לפעולה זו"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "אין שדות קלט עבור כלי זה"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20519,7 +20568,7 @@ msgstr "לא הופעל טריגר. הפעל אחת מהאפשרויות למע�
 #. js-lingui-id: 96i2d6
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "No turns yet"
-msgstr ""
+msgstr "אין תורות עדיין"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -22391,6 +22440,11 @@ msgstr "דגל הרשאה"
 msgid "Permission flags"
 msgstr "דגלי הרשאה"
 
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "טבלאות הרשאות"
+
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23512,7 +23566,7 @@ msgstr "אירועים אחרונים (ישן → חדש)"
 #. js-lingui-id: gKFqSG
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Recent failed runs"
-msgstr ""
+msgstr "הרצות שנכשלו לאחרונה"
 
 #. js-lingui-id: dF8kMd
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
@@ -23771,7 +23825,7 @@ msgid "Record-level filter"
 msgstr "מסנן ברמת הרשומה"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "רשומה:"
 
@@ -25099,12 +25153,12 @@ msgstr "הפעלות וכשלים לפי גרסה"
 #. js-lingui-id: +L9ulP
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Runs appear here once this workflow is triggered"
-msgstr ""
+msgstr "ההרצות מופיעות כאן לאחר שזרימת עבודה זו מופעלת"
 
 #. js-lingui-id: NQVS6K
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
-msgstr ""
+msgstr "הרצות ליום"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25971,7 +26025,7 @@ msgstr "צפייה ברשומות מכל הישויות"
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
-msgstr ""
+msgstr "הצגת תורות"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28924,6 +28978,11 @@ msgstr "אישור שרת הדואר אינו תקף"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "לא ניתן היה לטעון את חנות האפליקציות. בדוק את החיבור שלך ונסה שוב."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "לא ניתן היה לטעון את שרתי MCP, ולכן לא ניתן לערוך שלב זה כרגע."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28984,7 +29043,7 @@ msgstr "השם שהנמענים רואים לצד הכתובת שלך. הוא מ
 #. js-lingui-id: op7R9r
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr ""
+msgstr "מספר הימים מהתאריך ועד היום, לפי UTC. שלילי עבור תאריך עתידי."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -29045,6 +29104,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "הדוא\"ל המשותף שברצונך להשתמש בו."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "הכלי פועל ללא ארגומנטים."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29601,7 +29665,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "רשומה זו אינה קיימת עוד או שאין לך אפשרות לראות אותה."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "רשומה זו תימחק:"
 
@@ -29660,6 +29724,11 @@ msgstr "תת-דומיין זה שמור"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "פעולה זו תחזיר מיד {0} קרדיטים מסביבת עבודה זו. לא ניתן לבטל את הביטול לאחר ביצועו."
+
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "כלי זה אינו מוצע עוד על ידי שרת ה-MCP שלו. סנכרנו את כלי השרת או בחרו כלי אחר."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30063,6 +30132,11 @@ msgstr "הכלי נמחק"
 msgid "Tool details: {displayMessage}"
 msgstr "פרטי כלי: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "הכלי לא נמצא"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30361,7 +30435,7 @@ msgstr "אמת כאשר שני הצדדים הם אמת."
 #. js-lingui-id: NYXoie
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
-msgstr ""
+msgstr "אמת כאשר התאריך חל בתקופה הנספרת מהיום, לפי UTC: PAST, NEXT או THIS, כמות ויחידה כגון DAY, WEEK או MONTH. PAST ו-NEXT אינם כוללים את התקופה הנוכחית."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30451,12 +30525,12 @@ msgstr "הפוך את לשונית ה-AI לתיבת דואר נכנס לצורך
 #. js-lingui-id: R3c2/s
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Turns"
-msgstr ""
+msgstr "תורות"
 
 #. js-lingui-id: ZKeDcZ
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "תורות מופיעות כאן לאחר שזרימת עבודה או אפליקציה משתמשת בסוכן זה"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -31222,6 +31296,16 @@ msgstr "עדכון {0}"
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "עדכן {contextStoreNumberOfSelectedRecords} רשומות"
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr "עדכן {recordCount} {objectLabel}"
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr "עדכן {selectedCount}"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -33013,7 +33097,7 @@ msgstr "זרימת עבודה לא נמצאה."
 #. js-lingui-id: fezYCQ
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 msgid "Workflow sections"
-msgstr ""
+msgstr "מקטעי זרימת עבודה"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

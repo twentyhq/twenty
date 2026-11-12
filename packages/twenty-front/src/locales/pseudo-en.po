@@ -8254,6 +8254,16 @@ msgstr ""
 msgid "Create {objectLabelSingular}"
 msgstr ""
 
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr ""
+
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -8429,6 +8439,11 @@ msgstr ""
 #. js-lingui-id: 4JOSed
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
+msgstr ""
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
 msgstr ""
 
 #. js-lingui-id: frmOeu
@@ -9694,9 +9709,19 @@ msgstr ""
 msgid "Delete {objectLabelPlural}"
 msgstr ""
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
 msgstr ""
 
 #. js-lingui-id: wU3o2t
@@ -9838,6 +9863,12 @@ msgstr ""
 #. js-lingui-id: dPwNDl
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
+msgstr ""
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
 msgstr ""
 
 #. js-lingui-id: Wk+A9S
@@ -11005,6 +11036,12 @@ msgstr ""
 msgid "Edit linked records"
 msgstr ""
 
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr ""
+
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Edit navigation"
@@ -11412,6 +11449,7 @@ msgstr ""
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -18164,6 +18202,7 @@ msgstr ""
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr ""
 
@@ -18186,6 +18225,11 @@ msgstr ""
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
+msgstr ""
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
 msgstr ""
 
 #. js-lingui-id: upbzgm
@@ -20029,6 +20073,11 @@ msgstr ""
 #. js-lingui-id: LVdJ+2
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
+msgstr ""
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
 msgstr ""
 
 #. js-lingui-id: sIaDsH
@@ -22350,6 +22399,11 @@ msgstr ""
 msgid "Permission flags"
 msgstr ""
 
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr ""
+
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23730,7 +23784,7 @@ msgid "Record-level filter"
 msgstr ""
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr ""
 
@@ -28883,6 +28937,11 @@ msgstr ""
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr ""
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr ""
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -29003,6 +29062,11 @@ msgstr ""
 #. js-lingui-id: hKKMk0
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
+msgstr ""
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
 msgstr ""
 
 #. js-lingui-id: 9q0gnf
@@ -29560,7 +29624,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr ""
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr ""
 
@@ -29618,6 +29682,11 @@ msgstr ""
 #. placeholder {0}: formatCredits(grantPendingRevocation.amount)
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
+msgstr ""
+
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
 msgstr ""
 
 #. js-lingui-id: MMGDfe
@@ -30020,6 +30089,11 @@ msgstr ""
 #. js-lingui-id: RO68oO
 #: src/modules/ai/components/ThinkingToolStepRow.tsx
 msgid "Tool details: {displayMessage}"
+msgstr ""
+
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
 msgstr ""
 
 #. js-lingui-id: xdA/+p
@@ -31180,6 +31254,16 @@ msgstr ""
 #. js-lingui-id: ymv+je
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
+msgstr ""
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
 msgstr ""
 
 #. js-lingui-id: HELygz

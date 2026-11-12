@@ -2,7 +2,10 @@ import {
   type ObjectRecordsPermissions,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';
-import { canReachAllRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -69,7 +72,7 @@ const intersectObjectRecordsPermissions = (
       ) =>
         otherRolesObjectRecordsPermissions.every(
           (otherRoleObjectRecordsPermissions) =>
-            canReachAllRecords({
+            canAccessThroughAllRecordsPermission({
               objectRecordsPermissions: otherRoleObjectRecordsPermissions,
               operationType,
             }),

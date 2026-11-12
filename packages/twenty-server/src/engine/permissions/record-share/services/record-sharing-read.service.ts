@@ -9,7 +9,10 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -220,16 +223,18 @@ export class RecordSharingReadService {
       isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsReadService.canRoleAccessSomeRecords({
-        principals:
-          await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-            {
-              authContext: args.authContext,
-            },
-          ),
-        objectMetadataId: flatObjectMetadata.id,
-        operationType: 'update',
-      }))
+      (await this.recordPermissionsReadService.canAllRecordsOrRlsAccessOperation(
+        {
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          operationType: 'update',
+        },
+      ))
     );
   }
 
@@ -303,11 +308,11 @@ export class RecordSharingReadService {
         return {
           id,
           label,
-          canRead: canReachSomeRecords({
+          canRead: canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions,
             operationType: 'read',
           }),
-          canUpdate: canReachSomeRecords({
+          canUpdate: canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions,
             operationType: 'update',
           }),

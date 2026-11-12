@@ -5,7 +5,10 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
 export type UseWidgetPermissionsReturn = {
@@ -38,7 +41,7 @@ export const useWidgetPermissions = (
     widget.objectMetadataId,
   );
 
-  const hasObjectAccess = canReachSomeRecords({
+  const hasObjectAccess = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });

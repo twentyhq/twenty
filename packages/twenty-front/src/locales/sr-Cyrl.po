@@ -1115,7 +1115,7 @@ msgstr "{roleTargetName} ће бити додељен у улогу \"{newRoleNa
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
 msgid "{runCount, plural, one {# turn} other {# turns}}"
-msgstr ""
+msgstr "{runCount, plural, one {# потез} few {# потеза} other {# потеза}}"
 
 #. js-lingui-id: dQRNg5
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -2993,7 +2993,7 @@ msgstr "Покретање агента"
 #. js-lingui-id: aeu9gE
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Agent sections"
-msgstr ""
+msgstr "Одељци агента"
 
 #. js-lingui-id: YBbgD0
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -4870,7 +4870,7 @@ msgstr "Просек"
 #. js-lingui-id: RSsxRl
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
-msgstr ""
+msgstr "Просечно трајање"
 
 #. js-lingui-id: CLc4cP
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -8004,7 +8004,7 @@ msgstr "Није могуће учитати повезане записе"
 #. js-lingui-id: 3167/q
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Could not load run insights"
-msgstr ""
+msgstr "Није могуће учитати увиде у извршење"
 
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
@@ -8024,7 +8024,7 @@ msgstr "Није било могуће учитати овај радни ток
 #. js-lingui-id: 6UPqqs
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Could not load turns"
-msgstr ""
+msgstr "Није могуће учитати потезе"
 
 #. js-lingui-id: FR0Fbp
 #: src/modules/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage.tsx
@@ -8259,6 +8259,16 @@ msgstr "Креирај {0}"
 msgid "Create {objectLabelSingular}"
 msgstr "Креирај {objectLabelSingular}"
 
+#. js-lingui-id: RRkWki
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {recordCount} {objectLabel}"
+msgstr "Креирај {recordCount} {objectLabel}"
+
+#. js-lingui-id: TryTER
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Create {selectedCount}"
+msgstr "Креирај {selectedCount}"
+
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
 #: src/modules/validation-rules/components/SettingsValidationRulePreview.tsx
@@ -8435,6 +8445,11 @@ msgstr "Креирај запис"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Креирај запис"
+
+#. js-lingui-id: fYhMZY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
+msgstr "Креирајте складиште дељења записа и приступних група као табеле у власништву механизма за дозволе уместо као објекте. Примењује се само када се креира радни простор."
 
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -9699,10 +9714,20 @@ msgstr "Обриши објекат {objectLabel}?"
 msgid "Delete {objectLabelPlural}"
 msgstr "Обриши {objectLabelPlural}"
 
+#. js-lingui-id: CF0F8U
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {recordCount} {objectLabel}"
+msgstr "Обриши {recordCount} {objectLabel}"
+
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete {relationObjectLabelSingular}"
 msgstr "Обриши {relationObjectLabelSingular}"
+
+#. js-lingui-id: ++479H
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Delete {selectedCount}"
+msgstr "Обриши {selectedCount}"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9844,6 +9869,12 @@ msgstr "Обриши ниво"
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Delete limit"
 msgstr "Обриши ограничење"
+
+#. js-lingui-id: KDfTdX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Delete message"
+msgstr "Обриши поруку"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -11010,6 +11041,12 @@ msgstr "Уреди линк"
 msgid "Edit linked records"
 msgstr "Уреди повезане записе"
 
+#. js-lingui-id: QjH+ZX
+#: src/modules/ai/components/AiChatMessage.tsx
+#: src/modules/ai/components/AiChatMessage.tsx
+msgid "Edit message"
+msgstr "Измени поруку"
+
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
 msgid "Edit navigation"
@@ -11417,6 +11454,7 @@ msgstr "Запослени"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/ai/components/AiChatRecordApprovalReview.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCurrentValue.tsx
 #: src/modules/log-console/components/LogConsoleRecordChangeDetail.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -12763,7 +12801,7 @@ msgstr "Неуспело"
 #. js-lingui-id: GUHLDy
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failed · 14d"
-msgstr ""
+msgstr "Неуспешно · 14 д"
 
 #. js-lingui-id: hGfbkg
 #: src/modules/activities/files/utils/downloadFile.ts
@@ -13305,7 +13343,7 @@ msgstr "Није успело отпремање слике"
 #. js-lingui-id: D98pOW
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Failure rate"
-msgstr ""
+msgstr "Стопа неуспеха"
 
 #. js-lingui-id: K0joU5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthAccountSyncCountersTable.tsx
@@ -18205,6 +18243,7 @@ msgstr "Максималне вредности"
 
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "MCP"
 msgstr "МКП"
 
@@ -18228,6 +18267,11 @@ msgstr "MCP сервер"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "MCP servers"
 msgstr "MCP сервери"
+
+#. js-lingui-id: WgtWCW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP servers unavailable"
+msgstr "MCP сервери нису доступни"
 
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
@@ -20011,7 +20055,7 @@ msgstr "Још нису заказани догађаји са овим {objectN
 #. js-lingui-id: dAMlIe
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentFailedRuns.tsx
 msgid "No failed runs"
-msgstr ""
+msgstr "Нема неуспешних извршења"
 
 #. js-lingui-id: h+tLhU
 #: src/modules/page-layout/widgets/field/components/FieldWidget.tsx
@@ -20071,6 +20115,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 msgid "No input fields for this action"
 msgstr "Нема улазних поља за ову акцију"
+
+#. js-lingui-id: XJwcH2
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "No input fields for this tool"
+msgstr "Нема улазних поља за овај алат"
 
 #. js-lingui-id: sIaDsH
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -20519,7 +20568,7 @@ msgstr "Ниједан окидач није омогућен. Пребацит�
 #. js-lingui-id: 96i2d6
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "No turns yet"
-msgstr ""
+msgstr "Још нема потеза"
 
 #. js-lingui-id: OLsGjz
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -22391,6 +22440,11 @@ msgstr "заставица дозволе"
 msgid "Permission flags"
 msgstr "Заставице дозвола"
 
+#. js-lingui-id: yAZKh+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Permission tables"
+msgstr "Табеле дозвола"
+
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23512,7 +23566,7 @@ msgstr "Недавни догађаји (од најстаријег → нај�
 #. js-lingui-id: gKFqSG
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Recent failed runs"
-msgstr ""
+msgstr "Недавна неуспешна извршења"
 
 #. js-lingui-id: dF8kMd
 #: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
@@ -23771,7 +23825,7 @@ msgid "Record-level filter"
 msgstr "Филтер на нивоу записа"
 
 #. js-lingui-id: jdetKb
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "Record:"
 msgstr "Запис:"
 
@@ -25099,12 +25153,12 @@ msgstr "Покретања и неуспеси по верзији"
 #. js-lingui-id: +L9ulP
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Runs appear here once this workflow is triggered"
-msgstr ""
+msgstr "Извршења се појављују овде када се покрене овај ток рада"
 
 #. js-lingui-id: NQVS6K
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
-msgstr ""
+msgstr "Извршења по дану"
 
 #. js-lingui-id: Y16LgE
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoring.tsx
@@ -25971,7 +26025,7 @@ msgstr "Погледај записе на свим објектима"
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "See Turns"
-msgstr ""
+msgstr "Погледајте потезе"
 
 #. js-lingui-id: boSDrg
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -28924,6 +28978,11 @@ msgstr "Сертификат сервера поште није важећи"
 msgid "The marketplace could not be loaded. Check your connection and try again."
 msgstr "Није могуће учитати маркетплејс. Проверите везу и покушајте поново."
 
+#. js-lingui-id: jDq7X1
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The MCP servers could not be loaded, so this step cannot be edited right now."
+msgstr "MCP сервери нису могли да се учитају, па се овај корак тренутно не може уређивати."
+
 #. js-lingui-id: dlvYjD
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 msgid "The Member role cannot be deleted"
@@ -28984,7 +29043,7 @@ msgstr "Име које примаоци виде поред ваше адрес
 #. js-lingui-id: op7R9r
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of days from the date to today, in UTC. Negative for a date in the future."
-msgstr ""
+msgstr "Број дана од датума до данас, у UTC-у. Негативан за датум у будућности."
 
 #. js-lingui-id: ohrl9q
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -29045,6 +29104,11 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Дељени имејл који желите да користите."
+
+#. js-lingui-id: pO74P8
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "The tool runs without arguments."
+msgstr "Алат се покреће без аргумената."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -29601,7 +29665,7 @@ msgid "This record no longer exists or you cannot see it."
 msgstr "Овај запис више не постоји или не можете да га видите."
 
 #. js-lingui-id: TG0qsx
-#: src/modules/ai/components/internal/AiChatToolCallApprovalRecord.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 msgid "This record will be deleted:"
 msgstr "Овај запис ће бити избрисан:"
 
@@ -29660,6 +29724,11 @@ msgstr "Овај поддомен је резервисан"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
 msgstr "Ово одмах одузима {0} кредита са овог радног простора. Опозивање се не може поништити."
+
+#. js-lingui-id: Q0Ii+3
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "This tool is no longer offered by its MCP server. Sync the server tools or pick another tool."
+msgstr "Овај алат више није доступан на свом MCP серверу. Синхронизујте алате сервера или изаберите други алат."
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -30063,6 +30132,11 @@ msgstr "Алат је обрисан"
 msgid "Tool details: {displayMessage}"
 msgstr "Детаљи алата: {displayMessage}"
 
+#. js-lingui-id: YsAptn
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Tool not found"
+msgstr "Алат није пронађен"
+
 #. js-lingui-id: xdA/+p
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentToolsSection.tsx
@@ -30361,7 +30435,7 @@ msgstr "Тачно када су обе стране тачне."
 #. js-lingui-id: NYXoie
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "True when the date falls in a period counted from today, in UTC: PAST, NEXT or THIS, an amount, and a unit such as DAY, WEEK or MONTH. PAST and NEXT leave out the current period."
-msgstr ""
+msgstr "Тачно је када датум припада периоду који се рачуна од данас, у UTC-у: PAST, NEXT или THIS, износу и јединици као што су DAY, WEEK или MONTH. PAST и NEXT изостављају тренутни период."
 
 #. js-lingui-id: 0onNel
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30451,12 +30525,12 @@ msgstr "Претворите картицу AI у пријемно сандуч�
 #. js-lingui-id: R3c2/s
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 msgid "Turns"
-msgstr ""
+msgstr "Потези"
 
 #. js-lingui-id: ZKeDcZ
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr ""
+msgstr "Потези се појављују овде када ток рада или апликација користи овог агента"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -31222,6 +31296,16 @@ msgstr "Ажурирај {0}"
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer.tsx
 msgid "Update {contextStoreNumberOfSelectedRecords} records"
 msgstr "Измени {contextStoreNumberOfSelectedRecords} записа"
+
+#. js-lingui-id: AHNNTF
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {recordCount} {objectLabel}"
+msgstr "Измени {recordCount} {objectLabel}"
+
+#. js-lingui-id: ECfdor
+#: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
+msgid "Update {selectedCount}"
+msgstr "Ажурирај {selectedCount}"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts
@@ -33013,7 +33097,7 @@ msgstr "Радни процес није пронађен."
 #. js-lingui-id: fezYCQ
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 msgid "Workflow sections"
-msgstr ""
+msgstr "Одељци тока рада"
 
 #. js-lingui-id: 1p/qH4
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx

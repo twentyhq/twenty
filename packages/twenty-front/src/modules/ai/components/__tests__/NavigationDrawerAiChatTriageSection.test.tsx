@@ -7,9 +7,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';

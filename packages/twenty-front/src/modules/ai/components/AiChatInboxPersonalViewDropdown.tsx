@@ -1,14 +1,16 @@
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
+import {
+  AGENT_CHAT_THREAD_FILTER_STATUS,
+  type AgentChatThreadFilterStatus,
+} from 'twenty-shared/ai';
 
 import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
 import { AGENT_CHAT_OPEN_THREAD_FILTER_STATUSES } from '@/ai/constants/AgentChatOpenThreadFilterStatuses';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { isAgentChatOpenThreadFilterStatus } from '@/ai/utils/isAgentChatOpenThreadFilterStatus';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

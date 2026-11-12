@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   inputSchemaToOutputSchema,
+  jsonSchemaToInputSchema,
   SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
 } from 'twenty-shared/logic-function';
 import {
@@ -18,6 +19,7 @@ import {
   WorkflowActionType,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
+  workflowMcpToolActionSettingsSchema,
 } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
@@ -28,6 +30,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -205,6 +208,62 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                           .inputSchema,
                       )[0] ?? {})
                     : {}),
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.MCP_TOOL: {
+        const defaultInput = workflowMcpToolActionSettingsSchema.shape.input
+          .partial({ toolInput: true })
+          .safeParse(defaultSettings?.input);
+
+        if (!defaultInput.success) {
+          throw new WorkflowVersionStepException(
+            'MCP server ID and tool name are required for MCP_TOOL step',
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        const { mcpServerId, toolName, toolInput } = defaultInput.data;
+
+        const { flatMcpServerMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatMcpServerMaps'] },
+          );
+        const flatMcpServer = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: mcpServerId,
+          flatEntityMaps: flatMcpServerMaps,
+        });
+        const tool = flatMcpServer?.tools.find(
+          (candidate) => candidate.name === toolName,
+        );
+
+        if (!isDefined(flatMcpServer) || !isDefined(tool)) {
+          throw new WorkflowVersionStepException(
+            `MCP server ${mcpServerId} has no tool named ${toolName}`,
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: tool.annotations?.title ?? tool.name,
+            type: WorkflowActionType.MCP_TOOL,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              outputSchema: {},
+              expectedOutputSchema: {},
+              input: {
+                mcpServerId,
+                toolName,
+                toolInput:
+                  toolInput ??
+                  getFunctionInputFromInputSchema(
+                    jsonSchemaToInputSchema(tool.inputSchema),
+                  )[0] ??
+                  {},
               },
             },
           },

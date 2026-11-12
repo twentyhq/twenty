@@ -38,13 +38,14 @@ import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-module
 import { type FlatFieldPermission } from 'src/engine/metadata-modules/flat-field-permission/types/flat-field-permission.type';
 import { type FlatRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-rule.type';
 import { buildRowLevelPermissionRules } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/build-row-level-permission-rules.util';
+import { removeDisabledOperationsFromRowLevelPermissionRule } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/remove-disabled-operations-from-row-level-permission-rule.util';
 import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const RULE_GRANT_KEYS = [
+const RULE_OPERATION_KEYS = [
   'canCreateRecords',
   'canReadRecords',
   'canUpdateRecords',
@@ -52,15 +53,15 @@ const RULE_GRANT_KEYS = [
   'canDestroyRecords',
 ] as const;
 
-type RuleGrantKey = (typeof RULE_GRANT_KEYS)[number];
+type RuleOperationKey = (typeof RULE_OPERATION_KEYS)[number];
 
-const withDefinedRuleGrants = (
-  ruleGrants: Partial<Record<RuleGrantKey, boolean>>,
-): Partial<Record<RuleGrantKey, boolean>> =>
+const withDefinedRuleOperations = (
+  ruleOperations: Partial<Record<RuleOperationKey, boolean>>,
+): Partial<Record<RuleOperationKey, boolean>> =>
   Object.fromEntries(
-    RULE_GRANT_KEYS.flatMap((ruleGrantKey) =>
-      isDefined(ruleGrants[ruleGrantKey])
-        ? [[ruleGrantKey, ruleGrants[ruleGrantKey]]]
+    RULE_OPERATION_KEYS.flatMap((ruleOperationKey) =>
+      isDefined(ruleOperations[ruleOperationKey])
+        ? [[ruleOperationKey, ruleOperations[ruleOperationKey]]]
         : [],
     ),
   );
@@ -219,7 +220,7 @@ export class RowLevelPermissionPredicateService {
         flatFieldMetadataMaps,
       });
 
-    const ruleOperations = this.computeRuleOperations({
+    const ruleChanges = this.computeRuleChanges({
       existingGroups,
       existingPredicates,
       groupsToCreate,
@@ -234,18 +235,24 @@ export class RowLevelPermissionPredicateService {
       flatApplication: workspaceCustomFlatApplication,
       flatRowLevelPermissionRuleMaps,
       flatFieldPermissionMaps,
-      ruleGrants: {
-        canCreateRecords: input.canCreateRecords,
-        canReadRecords: input.canReadRecords,
-        canUpdateRecords: input.canUpdateRecords,
-        canSoftDeleteRecords: input.canSoftDeleteRecords,
-        canDestroyRecords: input.canDestroyRecords,
-      },
+      ruleOperations: removeDisabledOperationsFromRowLevelPermissionRule({
+        ruleOperations: {
+          canCreateRecords: input.canCreateRecords,
+          canReadRecords: input.canReadRecords,
+          canUpdateRecords: input.canUpdateRecords,
+          canSoftDeleteRecords: input.canSoftDeleteRecords,
+          canDestroyRecords: input.canDestroyRecords,
+        },
+        flatObjectMetadata: findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: objectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        }),
+      }),
     });
 
     await this.runUpsertMigration({
       workspaceId,
-      ...ruleOperations,
+      ...ruleChanges,
       predicatesToDelete,
       groupsToDelete,
     });
@@ -480,7 +487,7 @@ export class RowLevelPermissionPredicateService {
     };
   }
 
-  private computeRuleOperations({
+  private computeRuleChanges({
     existingGroups,
     existingPredicates,
     groupsToCreate,
@@ -495,7 +502,7 @@ export class RowLevelPermissionPredicateService {
     flatApplication,
     flatRowLevelPermissionRuleMaps,
     flatFieldPermissionMaps,
-    ruleGrants,
+    ruleOperations,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     existingPredicates: FlatRowLevelPermissionPredicate[];
@@ -511,7 +518,7 @@ export class RowLevelPermissionPredicateService {
     flatApplication: FlatApplication;
     flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
     flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
-    ruleGrants: Partial<Pick<FlatRowLevelPermissionRule, RuleGrantKey>>;
+    ruleOperations: Partial<Pick<FlatRowLevelPermissionRule, RuleOperationKey>>;
   }): {
     rulesToCreate: FlatRowLevelPermissionRule[];
     rulesToUpdate: FlatRowLevelPermissionRule[];
@@ -588,7 +595,7 @@ export class RowLevelPermissionPredicateService {
       )
       .map((rule) => ({
         ...rule,
-        ...withDefinedRuleGrants(ruleGrants),
+        ...withDefinedRuleOperations(ruleOperations),
         id: v4(),
         workspaceId,
         applicationId: flatApplication.id,
@@ -598,12 +605,12 @@ export class RowLevelPermissionPredicateService {
     const rulesToUpdate = existingRules.flatMap((existingRule) => {
       const updatedRule = {
         ...existingRule,
-        ...withDefinedRuleGrants(ruleGrants),
+        ...withDefinedRuleOperations(ruleOperations),
       };
 
-      return RULE_GRANT_KEYS.some(
-        (ruleGrantKey) =>
-          updatedRule[ruleGrantKey] !== existingRule[ruleGrantKey],
+      return RULE_OPERATION_KEYS.some(
+        (ruleOperationKey) =>
+          updatedRule[ruleOperationKey] !== existingRule[ruleOperationKey],
       )
         ? [updatedRule]
         : [];

@@ -2,7 +2,7 @@ import {
   type CommandMenuContextApi,
   type ObjectRecordsPermissions,
 } from 'twenty-shared/types';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 // Stored conditional availability expressions read the legacy permission names
 export const getCommandMenuContextApiObjectPermissions = ({
@@ -13,23 +13,23 @@ export const getCommandMenuContextApiObjectPermissions = ({
   objectRecordsPermissions: ObjectRecordsPermissions;
 }): CommandMenuContextApi['objectPermissions'] => ({
   objectMetadataId,
-  canCreateObjectRecords: canReachSomeRecords({
+  canCreateObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'create',
   }),
-  canReadObjectRecords: canReachSomeRecords({
+  canReadObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'read',
   }),
-  canUpdateObjectRecords: canReachSomeRecords({
+  canUpdateObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'update',
   }),
-  canSoftDeleteObjectRecords: canReachSomeRecords({
+  canSoftDeleteObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'softDelete',
   }),
-  canDestroyObjectRecords: canReachSomeRecords({
+  canDestroyObjectRecords: canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions,
     operationType: 'destroy',
   }),
