@@ -9,6 +9,9 @@ describe('isVerifiedOAuthClientName', () => {
     'Twenty\u00a0CLI',
     'Twen\u200bty CLI',
     '\uff34wenty CLI',
+    'Claude',
+    'claude code',
+    'ChatGPT',
   ])('should match "%s"', (name) => {
     expect(isVerifiedOAuthClientName(name)).toBe(true);
   });

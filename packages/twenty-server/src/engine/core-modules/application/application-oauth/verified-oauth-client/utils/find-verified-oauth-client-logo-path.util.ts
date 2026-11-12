@@ -4,6 +4,8 @@ export const findVerifiedOAuthClientLogoPath = (
   universalIdentifier: string,
 ): string | null =>
   VERIFIED_OAUTH_CLIENTS.find(
-    ({ registrationUniversalIdentifier }) =>
-      registrationUniversalIdentifier === universalIdentifier.toLowerCase(),
+    (verifiedClient) =>
+      'registrationUniversalIdentifier' in verifiedClient &&
+      verifiedClient.registrationUniversalIdentifier ===
+        universalIdentifier.toLowerCase(),
   )?.logoPath ?? null;
