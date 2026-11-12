@@ -40,12 +40,7 @@ describe('getWorkflowDiagramTriggerNode', () => {
       const trigger: WorkflowTrigger = {
         type: 'CRON',
         settings: {
-          type: 'DAYS',
-          schedule: {
-            day: 1,
-            hour: 9,
-            minute: 0,
-          },
+          pattern: '0 9 */1 * *',
           outputSchema: {},
         },
       };

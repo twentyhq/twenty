@@ -66,24 +66,11 @@ Not to be confused with \`attachment\`, which stores files.
 
 ## CRON Trigger Settings Schema
 
-For CRON triggers, settings.type must be one of these exact values:
+CRON trigger settings take a cron expression: { pattern: string, outputSchema: {} }. The five fields are minute, hour, day of month, month and day of week.
 
-1. **DAYS** - Daily schedule
-   - Requires: schedule: { day: number (1+), hour: number (0-23), minute: number (0-59) }
-   - Example: { type: "DAYS", schedule: { day: 1, hour: 9, minute: 0 }, outputSchema: {} }
-
-2. **HOURS** - Hourly schedule (USE THIS FOR "EVERY HOUR")
-   - Requires: schedule: { hour: number (1+), minute: number (0-59) }
-   - Example: { type: "HOURS", schedule: { hour: 1, minute: 0 }, outputSchema: {} }
-   - This runs every X hours at Y minutes past the hour
-
-3. **MINUTES** - Minute-based schedule
-   - Requires: schedule: { minute: number (1+) }
-   - Example: { type: "MINUTES", schedule: { minute: 15 }, outputSchema: {} }
-
-4. **CUSTOM** - Custom cron pattern
-   - Requires: pattern: string (cron expression)
-   - Example: { type: "CUSTOM", pattern: "0 * * * *", outputSchema: {} }
+- Every hour on the hour: { pattern: "0 * * * *", outputSchema: {} }
+- Every 15 minutes: { pattern: "*/15 * * * *", outputSchema: {} }
+- Weekdays at 09:00: { pattern: "0 9 * * 1-5", outputSchema: {} }
 
 ## CODE Steps
 

@@ -3,7 +3,7 @@ import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import type { WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { calculateNextExecutionsForMinuteInterval } from '~/utils/cron-to-human/utils/calculateNextExecutionsForMinuteInterval';
-import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/convertScheduleToCronExpression';
+import { computeWorkflowCronScheduleFromCronPattern } from '@/workflow/workflow-trigger/utils/computeWorkflowCronScheduleFromCronPattern';
 import { normalizeCronExpression } from '~/utils/cron-to-human/utils/normalizeCronExpression';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { styled } from '@linaria/react';
@@ -14,24 +14,17 @@ import { formatDateTimeString } from '@/object-record/record-field/ui/utils/form
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useLingui } from '@lingui/react/macro';
 
-const getNextExecutions = (
-  cronExpression: string,
-  trigger?: WorkflowCronTrigger,
-): Date[] => {
+const getNextExecutions = (cronExpression: string): Date[] => {
   try {
     const normalized = normalizeCronExpression(cronExpression);
+    const schedule = computeWorkflowCronScheduleFromCronPattern(cronExpression);
 
     /* For MINUTES type with interval > 30, calculate manually
      because cron's N pattern resets at hour boundaries and doesn't
      represent true continuous intervals for values > 30
      */
-    if (
-      trigger?.settings.type === 'MINUTES' &&
-      trigger.settings.schedule.minute > 30
-    ) {
-      return calculateNextExecutionsForMinuteInterval(
-        trigger.settings.schedule.minute,
-      );
+    if (schedule.type === 'MINUTES' && schedule.schedule.minute > 30) {
+      return calculateNextExecutionsForMinuteInterval(schedule.schedule.minute);
     }
 
     const interval = CronExpressionParser.parse(normalized, {
@@ -102,7 +95,7 @@ export const CronExpressionHelper = ({
     return null;
   }
 
-  const cronExpression = convertScheduleToCronExpression(trigger);
+  const cronExpression = trigger.settings.pattern;
   const customDescription = getTriggerScheduleDescription(
     trigger,
     dateLocale.localeCatalog,
@@ -133,7 +126,7 @@ export const CronExpressionHelper = ({
     );
   }
 
-  const nextExecutions = getNextExecutions(cronExpression, trigger);
+  const nextExecutions = getNextExecutions(cronExpression);
 
   return (
     <StyledContainer>

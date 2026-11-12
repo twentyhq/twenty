@@ -49,7 +49,6 @@ import {
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertPickRecordLoadBalanceConfigIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-pick-record-load-balance-config-is-valid.util';
 import { assertVersionCanBeActivated } from 'src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-trigger/utils/get-workflow-command-menu-item-label.util';
 
 type ResolvedCoreVersion = {
@@ -566,7 +565,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
       ...(isDefined(coreWorkflow.workspaceWorkflowId)
         ? { legacyWorkflowId: coreWorkflow.workspaceWorkflowId }
         : {}),
-      pattern: computeCronPatternFromSchedule(trigger),
+      pattern: trigger.settings.pattern,
       ...buildCoreDispatchIds({
         coreWorkflowVersionId: coreWorkflowVersion.id,
         workspaceWorkflowVersionId:

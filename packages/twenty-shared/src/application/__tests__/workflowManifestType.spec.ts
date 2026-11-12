@@ -541,7 +541,7 @@ describe('workflow manifest cron trigger', () => {
     },
   });
 
-  it('accepts a cron pattern, the shape agents and logic functions use', () => {
+  it('accepts a cron pattern', () => {
     expect(
       workflowManifestSchema.safeParse(withCron({ pattern: '0 9 * * 1-5' }))
         .success,
@@ -559,44 +559,11 @@ describe('workflow manifest cron trigger', () => {
     ]);
   });
 
-  it('accepts every legacy schedule type', () => {
-    for (const settings of [
-      { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 0 } },
-      { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
-      { type: 'MINUTES', schedule: { minute: 15 } },
-      { type: 'CUSTOM', pattern: '0 9 * * 1-5' },
-    ]) {
-      expect(workflowManifestSchema.safeParse(withCron(settings)).success).toBe(
-        true,
-      );
-    }
-  });
-
-  it('rejects a schedule outside the clock', () => {
+  it('rejects a typed schedule', () => {
     const result = workflowManifestSchema.safeParse(
-      withCron({ type: 'DAYS', schedule: { day: 1, hour: 24, minute: 0 } }),
+      withCron({ type: 'DAYS', schedule: { day: 1, hour: 9, minute: 0 } }),
     );
     expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.path).toEqual([
-      'version',
-      'trigger',
-      'settings',
-      'schedule',
-      'hour',
-    ]);
-  });
-
-  it('rejects a schedule key the schedule type does not use', () => {
-    const result = workflowManifestSchema.safeParse(
-      withCron({ type: 'MINUTES', schedule: { minute: 15, hour: 2 } }),
-    );
-    expect(result.success).toBe(false);
-    expect(result.error?.issues[0]?.path).toEqual([
-      'version',
-      'trigger',
-      'settings',
-      'schedule',
-    ]);
   });
 });
 

@@ -87,7 +87,7 @@ A reference Twenty can't resolve fails the install.
 | Type | Runs when | Settings |
 |------|-----------|----------|
 | `MANUAL` | A user launches it | `availability` (optional): `GLOBAL`, or `SINGLE_RECORD` / `BULK_RECORDS` with an `objectUniversalIdentifier`. Adds a command menu entry, with an optional `icon` and `isPinned`. |
-| `CRON` | On a schedule | `pattern`: a cron expression such as `0 9 * * 1`, the same settings as an agent's `CRON` trigger and a logic function's `cronTriggerSettings`. The earlier `type` settings (`DAYS`, `HOURS` or `MINUTES` with a `schedule`, or `CUSTOM` with a `pattern`) are still accepted. |
+| `CRON` | On a schedule | `pattern`: a cron expression such as `0 9 * * 1`, the same settings as an agent's `CRON` trigger and a logic function's `cronTriggerSettings`. |
 | `DATABASE_EVENT` | A record changes | `objectUniversalIdentifier`, `action` (`created`, `updated`, `deleted`, `upserted`), optional `fieldUniversalIdentifiers` to watch (updates and upserts only) and `filter`. |
 | `WEBHOOK` | An HTTP request reaches the workflow URL | `httpMethod` (`GET` or `POST`), and `expectedBody` for `POST`. |
 

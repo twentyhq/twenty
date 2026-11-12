@@ -8,16 +8,18 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Changed
 
-- **Workflow `CRON` triggers take a cron `pattern`**, the same `{ pattern }` settings as agent `CRON` triggers and logic function `cronTriggerSettings`. The `DAYS`, `HOURS`, `MINUTES` and `CUSTOM` settings are still accepted and keep their schedule. `twenty app pull` now writes the pattern.
+- **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
+
+### Breaking Changes
+
+- **Workflow `CRON` triggers take a cron `pattern` only**, the same `{ pattern }` settings as agent `CRON` triggers and logic function `cronTriggerSettings`. The `DAYS`, `HOURS`, `MINUTES` and `CUSTOM` settings are no longer accepted; Twenty 2.59 converts workflows already installed. Rewrite each schedule as its cron expression:
 
   ```diff
   - settings: { type: 'DAYS', schedule: { day: 1, hour: 9, minute: 30 } },
   + settings: { pattern: '30 9 */1 * *' },
+  - settings: { type: 'CUSTOM', pattern: '0 9 * * 1' },
+  + settings: { pattern: '0 9 * * 1' },
   ```
-
-- **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.
-
-### Breaking Changes
 
 - **`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` no longer includes `workflow` or `workflowAutomatedTrigger`.** Workflows live in Twenty's core workflow store, and Twenty 2.58 drops these legacy workspace objects from every workspace, along with any relation fields that point at them. Remove references to both identifiers, including relation fields that target them. To ship a workflow with your app, declare it with `defineWorkflow()`.
 

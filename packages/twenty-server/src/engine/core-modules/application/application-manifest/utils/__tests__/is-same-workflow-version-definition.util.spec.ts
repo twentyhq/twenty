@@ -113,35 +113,6 @@ describe('isSameWorkflowVersionDefinition', () => {
     ).toBe(false);
   });
 
-  it('treats a custom cron pattern and the schedule it maps to as the same', () => {
-    const cronTrigger = (settings: Record<string, unknown>) => ({
-      name: 'On a schedule',
-      type: 'CRON',
-      settings: { outputSchema: {}, ...settings },
-    });
-
-    expect(
-      isSameWorkflowVersionDefinition({
-        left: buildDefinition({
-          trigger: cronTrigger({ type: 'CUSTOM', pattern: '*/10 * * * *' }),
-        }),
-        right: buildDefinition({
-          trigger: cronTrigger({ type: 'MINUTES', schedule: { minute: 10 } }),
-        }),
-      }),
-    ).toBe(true);
-    expect(
-      isSameWorkflowVersionDefinition({
-        left: buildDefinition({
-          trigger: cronTrigger({ type: 'CUSTOM', pattern: '*/10 * * * *' }),
-        }),
-        right: buildDefinition({
-          trigger: cronTrigger({ type: 'MINUTES', schedule: { minute: 5 } }),
-        }),
-      }),
-    ).toBe(false);
-  });
-
   it('treats a null position as a missing one', () => {
     expect(
       isSameWorkflowVersionDefinition({

@@ -49,4 +49,26 @@ describe('workflowRunStateSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it.each([
+    [
+      { type: 'DAYS', schedule: { day: 2, hour: 9, minute: 30 } },
+      '30 9 */2 * *',
+    ],
+    [{ type: 'HOURS', schedule: { hour: 3, minute: 15 } }, '15 */3 * * *'],
+    [{ type: 'MINUTES', schedule: { minute: 10 } }, '*/10 * * * *'],
+    [{ type: 'CUSTOM', pattern: '0 9 * * 1' }, '0 9 * * 1'],
+  ])(
+    'should load a past run whose cron trigger kept a %j schedule as its pattern',
+    (settings, pattern) => {
+      const result = workflowRunStateSchema.shape.flow.shape.trigger.safeParse({
+        name: 'On a schedule',
+        type: 'CRON',
+        settings: { ...settings, outputSchema: {} },
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.data?.settings).toEqual({ pattern, outputSchema: {} });
+    },
+  );
 });

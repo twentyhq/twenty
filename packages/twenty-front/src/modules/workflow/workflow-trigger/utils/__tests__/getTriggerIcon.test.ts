@@ -23,7 +23,7 @@ describe('getTriggerIcon', () => {
     expect(
       getTriggerIcon({
         type: 'CRON',
-        settings: { outputSchema: {}, type: 'CUSTOM', pattern: '' },
+        settings: { outputSchema: {}, pattern: '' },
       }),
     ).toBe('IconClock');
   });

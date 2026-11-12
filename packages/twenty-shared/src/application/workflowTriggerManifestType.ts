@@ -7,7 +7,6 @@ import {
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { isDefined } from '@/utils/validation/isDefined';
-import { workflowCronTriggerSchema } from '@/workflow/schemas/cron-trigger-schema';
 import { stepFilterGroupSchema } from '@/workflow/schemas/step-filter-group-schema';
 import { workflowWebhookTriggerSchema } from '@/workflow/schemas/webhook-trigger-schema';
 
@@ -25,33 +24,9 @@ const manualTriggerAvailabilityManifestSchema = z.discriminatedUnion('type', [
   }),
 ]);
 
-const [
-  dailyCronSettingsSchema,
-  hourlyCronSettingsSchema,
-  minutelyCronSettingsSchema,
-  customCronSettingsSchema,
-] = workflowCronTriggerSchema.shape.settings.options;
-
-// The typed schedules are replaced by a pattern and still accepted
-const cronTriggerSettingsManifestSchema = z.discriminatedUnion('type', [
-  z.strictObject({
-    type: z.undefined().optional(),
-    pattern: z.string().trim().min(1),
-  }),
-  dailyCronSettingsSchema
-    .omit({ outputSchema: true })
-    .extend({ schedule: dailyCronSettingsSchema.shape.schedule.strict() })
-    .strict(),
-  hourlyCronSettingsSchema
-    .omit({ outputSchema: true })
-    .extend({ schedule: hourlyCronSettingsSchema.shape.schedule.strict() })
-    .strict(),
-  minutelyCronSettingsSchema
-    .omit({ outputSchema: true })
-    .extend({ schedule: minutelyCronSettingsSchema.shape.schedule.strict() })
-    .strict(),
-  customCronSettingsSchema.omit({ outputSchema: true }).strict(),
-]);
+const cronTriggerSettingsManifestSchema = z.strictObject({
+  pattern: z.string().trim().min(1),
+});
 
 const [getRequestWebhookSettingsSchema, postRequestWebhookSettingsSchema] =
   workflowWebhookTriggerSchema.shape.settings.options;

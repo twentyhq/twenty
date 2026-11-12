@@ -125,7 +125,7 @@ describe('WorkflowCronTriggerCronJob', () => {
         triggers: [
           {
             type: 'CRON',
-            settings: { type: 'CUSTOM', pattern: '* * * * *' },
+            settings: { pattern: '* * * * *' },
           },
         ],
       }),
@@ -329,48 +329,35 @@ describe('WorkflowCronTriggerCronJob', () => {
       );
     });
 
-    it.each([
-      [
-        { type: 'DAYS', schedule: { day: 2, hour: 9, minute: 30 } },
+    it('should deduplicate on the pattern of the published definition', async () => {
+      mockWorkflowVersionCoreSyncService.findCoreVersionById.mockResolvedValue({
+        id: 'core-version-1',
+        coreWorkflowId: 'workflow-1',
+        workspaceWorkflowVersionId: 'workspace-version-1',
+        status: 'ACTIVE',
+        triggers: [{ type: 'CRON', settings: { pattern: '30 9 */2 * *' } }],
+      });
+      mockCacheStorageService.hashGetValues.mockResolvedValue([
+        JSON.stringify({
+          workspaceId: WORKSPACE_1,
+          workflowId: 'workflow-1',
+          pattern: '* * * * *',
+        }),
+      ]);
+
+      await job.handle();
+
+      expect(
+        mockCronTriggerDeduplicationService.shouldDispatch,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        mockCronTriggerDeduplicationService.shouldDispatch,
+      ).toHaveBeenCalledWith(
+        `workflow-cron:${WORKSPACE_1}:workflow-1`,
         '30 9 */2 * *',
-      ],
-      [{ type: 'HOURS', schedule: { hour: 3, minute: 15 } }, '15 */3 * * *'],
-      [{ type: 'MINUTES', schedule: { minute: 10 } }, '*/10 * * * *'],
-      [{ type: 'CUSTOM', pattern: '0 9 * * 1' }, '0 9 * * 1'],
-    ])(
-      'should deduplicate a %j schedule on the pattern %s computed from the published definition',
-      async (settings, expectedPattern) => {
-        mockWorkflowVersionCoreSyncService.findCoreVersionById.mockResolvedValue(
-          {
-            id: 'core-version-1',
-            coreWorkflowId: 'workflow-1',
-            workspaceWorkflowVersionId: 'workspace-version-1',
-            status: 'ACTIVE',
-            triggers: [{ type: 'CRON', settings }],
-          },
-        );
-        mockCacheStorageService.hashGetValues.mockResolvedValue([
-          JSON.stringify({
-            workspaceId: WORKSPACE_1,
-            workflowId: 'workflow-1',
-            pattern: '* * * * *',
-          }),
-        ]);
-
-        await job.handle();
-
-        expect(
-          mockCronTriggerDeduplicationService.shouldDispatch,
-        ).toHaveBeenCalledTimes(1);
-        expect(
-          mockCronTriggerDeduplicationService.shouldDispatch,
-        ).toHaveBeenCalledWith(
-          `workflow-cron:${WORKSPACE_1}:workflow-1`,
-          expectedPattern,
-          expect.any(Date),
-        );
-      },
-    );
+        expect.any(Date),
+      );
+    });
 
     it('should not rebuild cache on cache hit', async () => {
       mockCacheStorageService.hashGetValues.mockResolvedValue([

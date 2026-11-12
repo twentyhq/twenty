@@ -81,7 +81,7 @@ describe('defineWorkflow', () => {
     expect(defineWorkflow(pulled).errors).toEqual([]);
   });
 
-  it('accepts a cron trigger with the pattern agents and logic functions use', () => {
+  it('accepts a cron trigger with a pattern', () => {
     const scheduledWorkflow: WorkflowManifest = {
       ...workflow,
       version: {
@@ -96,23 +96,6 @@ describe('defineWorkflow', () => {
     };
 
     expect(defineWorkflow(scheduledWorkflow).errors).toEqual([]);
-  });
-
-  it('still accepts a cron trigger with a schedule type', () => {
-    expect(
-      defineWorkflow({
-        ...workflow,
-        version: {
-          ...workflow.version,
-          trigger: {
-            universalIdentifier: workflow.version.trigger.universalIdentifier,
-            type: 'CRON',
-            nextStepIds: [STEP_ID],
-            settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
-          },
-        },
-      }).errors,
-    ).toEqual([]);
   });
 
   it('accepts a workflow flagged as system', () => {

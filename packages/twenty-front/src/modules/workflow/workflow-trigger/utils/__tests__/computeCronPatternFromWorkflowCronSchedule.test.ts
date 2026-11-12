@@ -1,4 +1,4 @@
-import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/utils/computeCronPatternFromWorkflowCronSchedule';
+import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/workflow-trigger/utils/computeCronPatternFromWorkflowCronSchedule';
 
 describe('computeCronPatternFromWorkflowCronSchedule', () => {
   it('runs every N days at the chosen time', () => {
@@ -35,13 +35,5 @@ describe('computeCronPatternFromWorkflowCronSchedule', () => {
         pattern: '0 9 * * 1',
       }),
     ).toBe('0 9 * * 1');
-  });
-
-  it('returns null for an unknown schedule type', () => {
-    expect(
-      computeCronPatternFromWorkflowCronSchedule({
-        type: 'WEEKS',
-      } as never),
-    ).toBeNull();
   });
 });

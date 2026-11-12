@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { workflowCronTriggerSchema } from './cron-trigger-schema';
 import { workflowCreateRecordActionSchema } from './create-record-action-schema';
 import { workflowCreateRecordActionSettingsSchema } from './create-record-action-settings-schema';
 import { workflowFindRecordsActionSchema } from './find-records-action-schema';
@@ -32,9 +33,64 @@ const pastRunUpsertRecordStepSchema = workflowUpsertRecordActionSchema.extend({
   }),
 });
 
+// TODO: remove in 2.61, runs started before 2.59 keep a typed cron schedule until run cleanup purges them after 14 days
+const pastRunCronTriggerSchema = workflowCronTriggerSchema.extend({
+  settings: z
+    .discriminatedUnion('type', [
+      z.object({
+        type: z.literal('DAYS'),
+        schedule: z.object({
+          day: z.number(),
+          hour: z.number(),
+          minute: z.number(),
+        }),
+        outputSchema: z.looseObject({}),
+      }),
+      z.object({
+        type: z.literal('HOURS'),
+        schedule: z.object({ hour: z.number(), minute: z.number() }),
+        outputSchema: z.looseObject({}),
+      }),
+      z.object({
+        type: z.literal('MINUTES'),
+        schedule: z.object({ minute: z.number() }),
+        outputSchema: z.looseObject({}),
+      }),
+      z.object({
+        type: z.literal('CUSTOM'),
+        pattern: z.string(),
+        outputSchema: z.looseObject({}),
+      }),
+    ])
+    .transform((settings) => {
+      switch (settings.type) {
+        case 'DAYS':
+          return {
+            pattern: `${settings.schedule.minute} ${settings.schedule.hour} */${settings.schedule.day} * *`,
+            outputSchema: settings.outputSchema,
+          };
+        case 'HOURS':
+          return {
+            pattern: `${settings.schedule.minute} */${settings.schedule.hour} * * *`,
+            outputSchema: settings.outputSchema,
+          };
+        case 'MINUTES':
+          return {
+            pattern: `*/${settings.schedule.minute} * * * *`,
+            outputSchema: settings.outputSchema,
+          };
+        case 'CUSTOM':
+          return {
+            pattern: settings.pattern,
+            outputSchema: settings.outputSchema,
+          };
+      }
+    }),
+});
+
 export const workflowRunStateSchema = z.object({
   flow: z.object({
-    trigger: workflowTriggerSchema,
+    trigger: z.union([workflowTriggerSchema, pastRunCronTriggerSchema]),
     steps: z.array(
       z.union([
         pastRunFindRecordsStepSchema,

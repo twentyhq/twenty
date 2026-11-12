@@ -1,7 +1,6 @@
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -315,7 +314,7 @@ export class WorkflowCronTriggerCronJob {
           coreWorkflowVersionId: version.id,
           workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
         }),
-        pattern: computeCronPatternFromSchedule(definition),
+        pattern: definition.settings.pattern,
       },
       isApplicationInstalled: !isApplicationInstallPending(
         flatApplicationMaps,

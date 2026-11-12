@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { computeWorkflowCronScheduleFromCronPattern } from 'twenty-shared/workflow';
 
 import {
   type WorkflowManifestFieldReference,
@@ -24,7 +23,7 @@ import {
   WorkflowTriggerType,
   type WorkflowWebhookTrigger,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
+import { assertCronPatternIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-cron-pattern-is-valid.util';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 import { assertNever } from 'src/utils/assert';
 
@@ -113,19 +112,14 @@ const fromCronTriggerManifestOrThrow = (
   trigger: CronTriggerManifest,
 ): WorkflowCronTrigger => {
   const { base, outputSchema } = fromTriggerManifestBase(trigger);
-  const { settings } = trigger;
-  const schedule =
-    settings.type === undefined
-      ? computeWorkflowCronScheduleFromCronPattern(settings.pattern)
-      : settings;
   const cronTrigger = {
     ...base,
     type: WorkflowTriggerType.CRON,
-    settings: { ...schedule, outputSchema },
+    settings: { ...trigger.settings, outputSchema },
   } satisfies WorkflowCronTrigger;
 
   try {
-    computeCronPatternFromSchedule(cronTrigger);
+    assertCronPatternIsValid(cronTrigger.settings.pattern);
   } catch (error) {
     throw new ApplicationException(
       `Workflow trigger: ${error instanceof Error ? error.message : String(error)}`,

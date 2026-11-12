@@ -157,7 +157,6 @@ export type {
   WorkflowConversation,
   WorkflowConversationScope,
 } from './types/WorkflowConversation';
-export type { WorkflowCronTriggerSchedule } from './types/WorkflowCronTriggerSchedule';
 export type { BodyType } from './types/WorkflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
@@ -171,8 +170,6 @@ export type {
 } from './types/WorkflowRunStepLog';
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
-export { computeCronPatternFromWorkflowCronSchedule } from './utils/computeCronPatternFromWorkflowCronSchedule';
-export { computeWorkflowCronScheduleFromCronPattern } from './utils/computeWorkflowCronScheduleFromCronPattern';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';

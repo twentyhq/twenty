@@ -19,8 +19,7 @@ describe('getTestPayloadFromTrigger', () => {
       type: 'CRON',
       name: 'Test',
       settings: {
-        type: 'DAYS',
-        schedule: { day: 1, hour: 0, minute: 0 },
+        pattern: '0 0 */1 * *',
         outputSchema: {},
       },
     };

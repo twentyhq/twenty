@@ -224,7 +224,7 @@ describe('application workflow definitions', () => {
     ).toThrow('Workflow trigger: missing object');
   });
 
-  it('keeps the cron schedule of a scheduled workflow', () => {
+  it('keeps the cron pattern of a scheduled workflow', () => {
     const { version } = convert({
       ...options,
       manifest: {
@@ -235,7 +235,7 @@ describe('application workflow definitions', () => {
             universalIdentifier: TRIGGER_ID,
             type: 'CRON',
             nextStepIds: [STEP_ID],
-            settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+            settings: { pattern: '30 */2 * * *' },
           },
         },
       },
@@ -243,41 +243,9 @@ describe('application workflow definitions', () => {
 
     expect(version.triggers?.[0]).toMatchObject({
       type: 'CRON',
-      settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
+      settings: { pattern: '30 */2 * * *', outputSchema: {} },
     });
   });
-
-  it.each([
-    {
-      pattern: '30 */2 * * *',
-      settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
-    },
-    {
-      pattern: '0 9 * * 1',
-      settings: { type: 'CUSTOM', pattern: '0 9 * * 1' },
-    },
-  ])(
-    'stores the cron pattern $pattern as the schedule the editor opens',
-    ({ pattern, settings }) => {
-      const { version } = convert({
-        ...options,
-        manifest: {
-          ...manifest,
-          version: {
-            ...manifest.version,
-            trigger: {
-              universalIdentifier: TRIGGER_ID,
-              type: 'CRON',
-              nextStepIds: [STEP_ID],
-              settings: { pattern },
-            },
-          },
-        },
-      });
-
-      expect(version.triggers?.[0]).toMatchObject({ type: 'CRON', settings });
-    },
-  );
 
   it('refuses a cron pattern the scheduler cannot parse', () => {
     expect(() =>
@@ -292,26 +260,6 @@ describe('application workflow definitions', () => {
               type: 'CRON',
               nextStepIds: [STEP_ID],
               settings: { pattern: 'every monday' },
-            },
-          },
-        },
-      }),
-    ).toThrow("Workflow trigger: Cron pattern 'every monday' is invalid");
-  });
-
-  it('refuses a custom cron pattern the scheduler cannot parse', () => {
-    expect(() =>
-      convert({
-        ...options,
-        manifest: {
-          ...manifest,
-          version: {
-            ...manifest.version,
-            trigger: {
-              universalIdentifier: TRIGGER_ID,
-              type: 'CRON',
-              nextStepIds: [STEP_ID],
-              settings: { type: 'CUSTOM', pattern: 'every monday' },
             },
           },
         },

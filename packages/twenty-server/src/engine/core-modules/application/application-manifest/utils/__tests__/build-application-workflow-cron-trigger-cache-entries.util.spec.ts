@@ -10,8 +10,7 @@ const SCHEDULE_TRIGGER: WorkflowTrigger = {
   name: 'On a schedule',
   type: WorkflowTriggerType.CRON,
   settings: {
-    type: 'HOURS',
-    schedule: { hour: 2, minute: 30 },
+    pattern: '30 */2 * * *',
     outputSchema: {},
   },
 };

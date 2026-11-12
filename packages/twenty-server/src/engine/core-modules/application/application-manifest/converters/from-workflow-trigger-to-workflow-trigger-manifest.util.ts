@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { type WorkflowTriggerManifest } from 'twenty-shared/application';
 import isEqual from 'lodash.isequal';
 import {
@@ -7,7 +6,6 @@ import {
   isPlainObject,
   sortKeysDeeply,
 } from 'twenty-shared/utils';
-import { computeCronPatternFromWorkflowCronSchedule } from 'twenty-shared/workflow';
 
 import { type WorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { computeWorkflowTriggerManifestDefaults } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-trigger-manifest-defaults.util';
@@ -80,20 +78,10 @@ const fromManualTriggerSettings = ({
   };
 };
 
-const fromCronTriggerSettings = ({
-  settings,
-  resolvers,
-}: {
-  settings: WorkflowCronTrigger['settings'];
-  resolvers: WorkflowManifestInverseReferenceResolvers;
-}) => {
-  const pattern = computeCronPatternFromWorkflowCronSchedule(settings);
+const fromCronTriggerSettings = (settings: WorkflowCronTrigger['settings']) => {
+  const { outputSchema: _outputSchema, ...rest } = settings;
 
-  if (!isNonEmptyString(pattern)) {
-    return resolvers.markUnsupported('cron trigger with an unknown schedule');
-  }
-
-  return { pattern };
+  return rest;
 };
 
 const fromDatabaseEventTriggerSettings = ({
@@ -170,10 +158,7 @@ const fromTriggerSettings = ({
         resolvers,
       });
     case WorkflowTriggerType.CRON:
-      return fromCronTriggerSettings({
-        settings: trigger.settings,
-        resolvers,
-      });
+      return fromCronTriggerSettings(trigger.settings);
     case WorkflowTriggerType.DATABASE_EVENT:
       return fromDatabaseEventTriggerSettings({
         settings: trigger.settings,

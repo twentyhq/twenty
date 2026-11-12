@@ -620,42 +620,6 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
       expectRoundTrip(buildWorkflow({ trigger }));
     });
 
-    it.each([
-      {
-        settings: { type: 'HOURS', schedule: { hour: 2, minute: 30 } },
-        pattern: '30 */2 * * *',
-      },
-      {
-        settings: { type: 'CUSTOM', pattern: '0 9 * * 1' },
-        pattern: '0 9 * * 1',
-      },
-    ] as const)(
-      'exports a legacy $settings.type schedule as its cron pattern',
-      ({ settings, pattern }) => {
-        const synced = syncWorkflow(
-          buildWorkflow({
-            trigger: {
-              universalIdentifier: TRIGGER_ID,
-              type: 'CRON',
-              nextStepIds: [STEP_ID],
-              settings,
-            },
-          }),
-        );
-
-        expect(exportWorkflow(synced)).toEqual({
-          manifest: buildWorkflow({
-            trigger: {
-              universalIdentifier: TRIGGER_ID,
-              type: 'CRON',
-              nextStepIds: [STEP_ID],
-              settings: { pattern },
-            },
-          }),
-        });
-      },
-    );
-
     it('emits the same source whatever the stored key order', () => {
       const synced = syncWorkflow(
         buildWorkflow({
@@ -1138,7 +1102,7 @@ describe('fromFlatWorkflowToWorkflowManifest on versions built in the workflow b
     {
       name: 'Every day at 06:40 UTC',
       type: 'CRON',
-      settings: { type: 'CUSTOM', pattern: '40 6 * * *', outputSchema: {} },
+      settings: { pattern: '40 6 * * *', outputSchema: {} },
     },
     {
       name: 'Company created',

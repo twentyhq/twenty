@@ -104,7 +104,7 @@ describe('useUpdateWorkflowVersionTrigger', () => {
       {
         name: 'CRON Trigger',
         type: 'CRON',
-        settings: { type: 'CUSTOM', pattern: '0 0 * * *', outputSchema: {} },
+        settings: { pattern: '0 0 * * *', outputSchema: {} },
         nextStepIds: [],
       },
       {

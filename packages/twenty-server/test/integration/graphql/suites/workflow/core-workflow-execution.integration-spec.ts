@@ -487,7 +487,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   it('normalizes overlapping old and core cron caches without duplicate runs', async () => {
     const fixture = await createFixture({
       triggerType: 'CRON',
-      triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
+      triggerSettings: { pattern: '* * * * *' },
     });
     const cache = global.app.get<CacheStorageService>(
       CacheStorageNamespace.ModuleWorkflow,
@@ -536,17 +536,17 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     throw new Error('Cron failed to dispatch');
   });
 
-  it('fires an editor schedule once per tick through the shared cron deduplication', async () => {
+  it('fires a cron workflow once per tick across workers', async () => {
     const fixture = await createFixture({
       triggerType: 'CRON',
-      triggerSettings: { type: 'MINUTES', schedule: { minute: 1 } },
+      triggerSettings: { pattern: '*/1 * * * *' },
     });
     const cache = global.app.get<CacheStorageService>(
       CacheStorageNamespace.ModuleWorkflow,
     );
     const cron = global.workflowTestServices.cron;
 
-    // A stale cached pattern that is never due, so a run proves the published schedule is read
+    // A stale cached pattern that is never due, so a run proves the published pattern is read
     jest.spyOn(cache, 'hashGetValues').mockResolvedValue([
       JSON.stringify({
         workspaceId,
@@ -598,7 +598,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    throw new Error('Cron failed to dispatch the editor schedule');
+    throw new Error('Cron failed to dispatch once across workers');
   });
   const waitForStep = async (runId: string, stepId: string, status: string) => {
     for (let attempt = 0; attempt < 600; attempt++) {
@@ -2137,7 +2137,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   it('keeps the published version executable when replacement activation fails', async () => {
     const fixture = await createFixture({
       triggerType: 'CRON',
-      triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
+      triggerSettings: { pattern: '* * * * *' },
     });
     const migrationRunner =
       getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
@@ -2267,7 +2267,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   it('rebuilds cron dispatch after a cache publication failure', async () => {
     const fixture = await createFixture({
       triggerType: 'CRON',
-      triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
+      triggerSettings: { pattern: '* * * * *' },
     });
     await markFixtureVersionAsDraft(fixture);
     const cache = global.app.get<CacheStorageService>(

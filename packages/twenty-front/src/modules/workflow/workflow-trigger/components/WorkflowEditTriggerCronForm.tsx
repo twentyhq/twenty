@@ -9,7 +9,10 @@ import {
   CRON_TRIGGER_INTERVAL_OPTIONS,
   type CronTriggerInterval,
 } from '@/workflow/workflow-trigger/constants/CronTriggerIntervalOptions';
-import { getCronTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSettings';
+import { type WorkflowCronTriggerSchedule } from '@/workflow/workflow-trigger/types/WorkflowCronTriggerSchedule';
+import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/workflow-trigger/utils/computeCronPatternFromWorkflowCronSchedule';
+import { computeWorkflowCronScheduleFromCronPattern } from '@/workflow/workflow-trigger/utils/computeWorkflowCronScheduleFromCronPattern';
+import { getCronTriggerDefaultSchedule } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSchedule';
 import { getTriggerScheduleDescription } from '@/workflow/workflow-trigger/utils/getTriggerScheduleDescription';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNumber } from '@sniptt/guards';
@@ -52,6 +55,25 @@ export const WorkflowEditTriggerCronForm = ({
   const [errorMessages, setErrorMessages] = useState<FormErrorMessages>({});
   const [errorMessagesVisible, setErrorMessagesVisible] = useState(false);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const [schedule, setSchedule] = useState(() =>
+    computeWorkflowCronScheduleFromCronPattern(trigger.settings.pattern),
+  );
+
+  const updateSchedule = (nextSchedule: WorkflowCronTriggerSchedule) => {
+    if (triggerOptions.readonly === true) {
+      return;
+    }
+
+    setSchedule(nextSchedule);
+
+    triggerOptions.onTriggerUpdate({
+      ...trigger,
+      settings: {
+        ...trigger.settings,
+        pattern: computeCronPatternFromWorkflowCronSchedule(nextSchedule),
+      },
+    });
+  };
 
   const customDescription = getTriggerScheduleDescription(
     trigger,
@@ -68,7 +90,7 @@ export const WorkflowEditTriggerCronForm = ({
         <FormSelectFieldInput
           label={t`Trigger interval`}
           hint={t`Cron will be triggered at UTC time`}
-          defaultValue={trigger.settings.type}
+          defaultValue={schedule.type}
           options={CRON_TRIGGER_INTERVAL_OPTIONS.map((option) => ({
             ...option,
             label: t(option.label),
@@ -85,15 +107,20 @@ export const WorkflowEditTriggerCronForm = ({
 
             setErrorMessagesVisible(false);
 
-            triggerOptions.onTriggerUpdate({
-              ...trigger,
-              settings: getCronTriggerDefaultSettings(
-                newTriggerType as CronTriggerInterval,
-              ),
-            });
+            updateSchedule(
+              newTriggerType === 'CUSTOM'
+                ? {
+                    type: 'CUSTOM',
+                    pattern:
+                      computeCronPatternFromWorkflowCronSchedule(schedule),
+                  }
+                : getCronTriggerDefaultSchedule(
+                    newTriggerType as CronTriggerInterval,
+                  ),
+            );
           }}
         />
-        {trigger.settings.type === 'CUSTOM' && (
+        {schedule.type === 'CUSTOM' && (
           <>
             <FormTextFieldInput
               label={t`Expression`}
@@ -102,7 +129,7 @@ export const WorkflowEditTriggerCronForm = ({
               onBlur={onBlur}
               hint={customDescription ?? ''}
               readonly={triggerOptions.readonly}
-              defaultValue={trigger.settings.pattern}
+              defaultValue={schedule.pattern}
               onChange={async (newPattern: string) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -127,13 +154,9 @@ export const WorkflowEditTriggerCronForm = ({
                   CUSTOM: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'CUSTOM',
-                    pattern: newPattern,
-                  },
+                updateSchedule({
+                  type: 'CUSTOM',
+                  pattern: newPattern,
                 });
               }}
             />
@@ -144,13 +167,13 @@ export const WorkflowEditTriggerCronForm = ({
             />
           </>
         )}
-        {trigger.settings.type === 'DAYS' && (
+        {schedule.type === 'DAYS' && (
           <>
             <FormNumberFieldInput
               label={t`Days between triggers`}
               error={errorMessagesVisible ? errorMessages.DAYS_day : undefined}
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.day}
+              defaultValue={schedule.schedule.day}
               onChange={(newDay) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -173,22 +196,13 @@ export const WorkflowEditTriggerCronForm = ({
                   DAYS_day: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'DAYS',
-                    schedule: {
-                      day: newDay,
-                      hour:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.hour
-                          : 0,
-                      minute:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.minute
-                          : 0,
-                    },
+                updateSchedule({
+                  type: 'DAYS',
+                  schedule: {
+                    day: newDay,
+                    hour: schedule.type === 'DAYS' ? schedule.schedule.hour : 0,
+                    minute:
+                      schedule.type === 'DAYS' ? schedule.schedule.minute : 0,
                   },
                 });
               }}
@@ -199,7 +213,7 @@ export const WorkflowEditTriggerCronForm = ({
               label={t`Trigger at hour (UTC)`}
               error={errorMessagesVisible ? errorMessages.DAYS_hour : undefined}
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.hour}
+              defaultValue={schedule.schedule.hour}
               onChange={(newHour) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -222,22 +236,13 @@ export const WorkflowEditTriggerCronForm = ({
                   DAYS_hour: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'DAYS',
-                    schedule: {
-                      day:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.day
-                          : 1,
-                      hour: newHour,
-                      minute:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.minute
-                          : 0,
-                    },
+                updateSchedule({
+                  type: 'DAYS',
+                  schedule: {
+                    day: schedule.type === 'DAYS' ? schedule.schedule.day : 1,
+                    hour: newHour,
+                    minute:
+                      schedule.type === 'DAYS' ? schedule.schedule.minute : 0,
                   },
                 });
               }}
@@ -250,7 +255,7 @@ export const WorkflowEditTriggerCronForm = ({
                 errorMessagesVisible ? errorMessages.DAYS_minute : undefined
               }
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.minute}
+              defaultValue={schedule.schedule.minute}
               onChange={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -273,22 +278,12 @@ export const WorkflowEditTriggerCronForm = ({
                   DAYS_minute: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'DAYS',
-                    schedule: {
-                      day:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.day
-                          : 1,
-                      hour:
-                        trigger.settings.type === 'DAYS'
-                          ? trigger.settings.schedule.hour
-                          : 0,
-                      minute: newMinute,
-                    },
+                updateSchedule({
+                  type: 'DAYS',
+                  schedule: {
+                    day: schedule.type === 'DAYS' ? schedule.schedule.day : 1,
+                    hour: schedule.type === 'DAYS' ? schedule.schedule.hour : 0,
+                    minute: newMinute,
                   },
                 });
               }}
@@ -305,7 +300,7 @@ export const WorkflowEditTriggerCronForm = ({
             />
           </>
         )}
-        {trigger.settings.type === 'HOURS' && (
+        {schedule.type === 'HOURS' && (
           <>
             <FormNumberFieldInput
               label={t`Hours between triggers`}
@@ -313,7 +308,7 @@ export const WorkflowEditTriggerCronForm = ({
                 errorMessagesVisible ? errorMessages.HOURS_hour : undefined
               }
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.hour}
+              defaultValue={schedule.schedule.hour}
               onChange={(newHour) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -336,18 +331,12 @@ export const WorkflowEditTriggerCronForm = ({
                   HOURS_hour: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'HOURS',
-                    schedule: {
-                      hour: newHour,
-                      minute:
-                        trigger.settings.type === 'HOURS'
-                          ? trigger.settings.schedule.minute
-                          : 0,
-                    },
+                updateSchedule({
+                  type: 'HOURS',
+                  schedule: {
+                    hour: newHour,
+                    minute:
+                      schedule.type === 'HOURS' ? schedule.schedule.minute : 0,
                   },
                 });
               }}
@@ -360,7 +349,7 @@ export const WorkflowEditTriggerCronForm = ({
                 errorMessagesVisible ? errorMessages.HOURS_minute : undefined
               }
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.minute}
+              defaultValue={schedule.schedule.minute}
               onChange={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -383,18 +372,12 @@ export const WorkflowEditTriggerCronForm = ({
                   HOURS_minute: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'HOURS',
-                    schedule: {
-                      hour:
-                        trigger.settings.type === 'HOURS'
-                          ? trigger.settings.schedule.hour
-                          : 1,
-                      minute: newMinute,
-                    },
+                updateSchedule({
+                  type: 'HOURS',
+                  schedule: {
+                    hour:
+                      schedule.type === 'HOURS' ? schedule.schedule.hour : 1,
+                    minute: newMinute,
                   },
                 });
               }}
@@ -409,13 +392,13 @@ export const WorkflowEditTriggerCronForm = ({
             />
           </>
         )}
-        {trigger.settings.type === 'MINUTES' && (
+        {schedule.type === 'MINUTES' && (
           <>
             <FormNumberFieldInput
               label={t`Minutes between triggers`}
               error={errorMessagesVisible ? errorMessages.MINUTES : undefined}
               onBlur={onBlur}
-              defaultValue={trigger.settings.schedule.minute}
+              defaultValue={schedule.schedule.minute}
               onChange={(newMinute) => {
                 if (triggerOptions.readonly === true) {
                   return;
@@ -444,14 +427,10 @@ export const WorkflowEditTriggerCronForm = ({
                   MINUTES: undefined,
                 }));
 
-                triggerOptions.onTriggerUpdate({
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    type: 'MINUTES',
-                    schedule: {
-                      minute: newMinute,
-                    },
+                updateSchedule({
+                  type: 'MINUTES',
+                  schedule: {
+                    minute: newMinute,
                   },
                 });
               }}

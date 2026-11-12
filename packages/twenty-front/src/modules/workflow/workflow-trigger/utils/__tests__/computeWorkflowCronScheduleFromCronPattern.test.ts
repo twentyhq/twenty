@@ -1,5 +1,5 @@
-import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/utils/computeCronPatternFromWorkflowCronSchedule';
-import { computeWorkflowCronScheduleFromCronPattern } from '@/workflow/utils/computeWorkflowCronScheduleFromCronPattern';
+import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/workflow-trigger/utils/computeCronPatternFromWorkflowCronSchedule';
+import { computeWorkflowCronScheduleFromCronPattern } from '@/workflow/workflow-trigger/utils/computeWorkflowCronScheduleFromCronPattern';
 
 describe('computeWorkflowCronScheduleFromCronPattern', () => {
   it.each([
@@ -28,13 +28,6 @@ describe('computeWorkflowCronScheduleFromCronPattern', () => {
     expect(computeWorkflowCronScheduleFromCronPattern(pattern)).toEqual({
       type: 'CUSTOM',
       pattern,
-    });
-  });
-
-  it('trims the pattern', () => {
-    expect(computeWorkflowCronScheduleFromCronPattern(' 0 9 * * 1 ')).toEqual({
-      type: 'CUSTOM',
-      pattern: '0 9 * * 1',
     });
   });
 

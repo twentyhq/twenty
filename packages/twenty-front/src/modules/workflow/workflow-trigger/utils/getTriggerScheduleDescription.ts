@@ -2,14 +2,13 @@ import { type Locale } from 'date-fns';
 
 import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { describeCronExpression } from '~/utils/cron-to-human/describeCronExpression';
-import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/convertScheduleToCronExpression';
 import { t } from '@lingui/core/macro';
 
 export const getTriggerScheduleDescription = (
   trigger: WorkflowCronTrigger,
   localeCatalog?: Locale,
 ): string | null => {
-  const cronExpression = convertScheduleToCronExpression(trigger);
+  const cronExpression = trigger.settings.pattern;
 
   if (!cronExpression) {
     return null;

@@ -4,7 +4,6 @@ import { type CachedWorkflowAutomatedTrigger } from 'src/engine/core-modules/wor
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { type DatabaseEventTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 
 export const computeAutomatedTriggerFromWorkflowVersion = ({
   workflowVersion,
@@ -45,7 +44,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
           workspaceWorkflowVersionId,
         }),
         type: AutomatedTriggerType.CRON,
-        settings: { pattern: computeCronPatternFromSchedule(trigger) },
+        settings: { pattern: trigger.settings.pattern },
       };
     case WorkflowTriggerType.MANUAL:
     case WorkflowTriggerType.WEBHOOK:

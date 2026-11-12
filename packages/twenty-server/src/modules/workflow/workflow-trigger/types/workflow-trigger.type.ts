@@ -1,8 +1,8 @@
+import { type CronTriggerSettings } from 'twenty-shared/application';
 import {
   type BulkRecordsAvailability,
   type GlobalAvailability,
   type SingleRecordAvailability,
-  type WorkflowCronTriggerSchedule,
 } from 'twenty-shared/workflow';
 
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
@@ -51,7 +51,7 @@ export type WorkflowManualTrigger = BaseTrigger & {
 
 export type WorkflowCronTrigger = BaseTrigger & {
   type: WorkflowTriggerType.CRON;
-  settings: BaseWorkflowTriggerSettings & WorkflowCronTriggerSchedule;
+  settings: BaseWorkflowTriggerSettings & CronTriggerSettings;
 };
 
 export type WorkflowWebhookTrigger = BaseTrigger & {

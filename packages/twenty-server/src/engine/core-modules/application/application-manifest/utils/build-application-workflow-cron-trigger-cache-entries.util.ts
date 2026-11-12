@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
 import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { computeCronPatternFromSchedule } from 'src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 
 export const buildApplicationWorkflowCronTriggerCacheEntries = ({
@@ -34,7 +33,7 @@ export const buildApplicationWorkflowCronTriggerCacheEntries = ({
         ...(isDefined(version.workflowId)
           ? { legacyWorkflowId: version.workflowId }
           : {}),
-        pattern: computeCronPatternFromSchedule(trigger),
+        pattern: trigger.settings.pattern,
         ...buildCoreDispatchIds({
           coreWorkflowVersionId: version.id,
           workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,

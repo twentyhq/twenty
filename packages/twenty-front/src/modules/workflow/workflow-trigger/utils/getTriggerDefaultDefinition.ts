@@ -7,6 +7,8 @@ import { DATABASE_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Da
 import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/utils/getManualTriggerDefaultSettings';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { computeCronPatternFromWorkflowCronSchedule } from '@/workflow/workflow-trigger/utils/computeCronPatternFromWorkflowCronSchedule';
+import { getCronTriggerDefaultSchedule } from '@/workflow/workflow-trigger/utils/getCronTriggerDefaultSchedule';
 
 // TODO: This needs to be migrated to the server
 export const getTriggerDefaultDefinition = ({
@@ -60,8 +62,9 @@ export const getTriggerDefaultDefinition = ({
         ...baseTriggerDefinition,
         type,
         settings: {
-          type: 'DAYS',
-          schedule: { day: 1, hour: 0, minute: 0 },
+          pattern: computeCronPatternFromWorkflowCronSchedule(
+            getCronTriggerDefaultSchedule('DAYS'),
+          ),
           outputSchema: {},
         },
       };
