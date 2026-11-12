@@ -185,6 +185,27 @@ describe('omitUnreadableFieldsFromEvents', () => {
     expect(event).toBeUndefined();
   });
 
+  it('should keep a field another matching RLS rule leaves readable', () => {
+    const [event] = filter({
+      events: [
+        buildUpdateEvent({
+          recordId: 'record-1',
+          updatedFields: ['name', 'secret'],
+        }),
+      ],
+      recordsPermissions: { objects: { [OBJECT_METADATA_ID]: READ_ACCESS } },
+      unreadableFieldsOnMatchingRecords: [
+        {
+          fieldMetadataIds: ['secret-field-id'],
+          recordFilter: { name: { eq: 'New' } },
+        },
+        { fieldMetadataIds: [], recordFilter: { secret: { eq: 'new' } } },
+      ],
+    });
+
+    expect(event.properties.updatedFields).toEqual(['name', 'secret']);
+  });
+
   it('should keep a field unreadable on an RLS rule the record does not match', () => {
     const [event] = filter({
       events: [
