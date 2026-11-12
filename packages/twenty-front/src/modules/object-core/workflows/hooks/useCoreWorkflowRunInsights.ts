@@ -5,7 +5,13 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { GetCoreWorkflowRunInsightsDocument } from '~/generated/graphql';
 
-export const useCoreWorkflowRunInsights = (coreWorkflowId: string) => {
+export const useCoreWorkflowRunInsights = ({
+  coreWorkflowId,
+  skip,
+}: {
+  coreWorkflowId: string;
+  skip: boolean;
+}) => {
   const apolloCoreClient = useApolloCoreClient();
   const { userTimezone } = useUserTimezone();
 
@@ -15,13 +21,18 @@ export const useCoreWorkflowRunInsights = (coreWorkflowId: string) => {
       client: apolloCoreClient,
       variables: { coreWorkflowId, timeZone: userTimezone },
       fetchPolicy: 'cache-and-network',
+      skip,
     },
   );
 
   useListenToCoreWorkflowRunEvents({
-    coreWorkflowIds: [coreWorkflowId],
+    coreWorkflowIds: skip ? [] : [coreWorkflowId],
     queryId: `core-workflow-run-insights-${coreWorkflowId}`,
-    onRunsChanged: refetch,
+    onRunsChanged: () => {
+      if (!skip) {
+        void refetch();
+      }
+    },
   });
 
   return {
