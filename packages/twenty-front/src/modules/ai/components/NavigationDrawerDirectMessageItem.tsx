@@ -1,3 +1,4 @@
+import { AiChatMemberPresence } from '@/ai/components/AiChatMemberPresence';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -16,13 +17,17 @@ export const NavigationDrawerDirectMessageItem = ({
   <NavigationDrawerItem
     label={directMessage.peer.name}
     Icon={
-      <Avatar
-        name={directMessage.peer.name}
-        src={directMessage.peer.avatarUrl}
-        colorSeed={directMessage.peer.workspaceMemberId}
-        shape="circle"
-        size="md"
-      />
+      <AiChatMemberPresence
+        workspaceMemberId={directMessage.peer.workspaceMemberId}
+      >
+        <Avatar
+          name={directMessage.peer.name}
+          src={directMessage.peer.avatarUrl}
+          colorSeed={directMessage.peer.workspaceMemberId}
+          shape="circle"
+          size="md"
+        />
+      </AiChatMemberPresence>
     }
     active={isActive}
     isUnread={directMessage.isUnread}
