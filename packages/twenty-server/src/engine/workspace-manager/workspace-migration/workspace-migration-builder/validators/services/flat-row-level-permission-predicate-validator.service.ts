@@ -17,6 +17,7 @@ import {
   getFilterValueValidationIssue,
   isDefined,
   isFieldMetadataArrayKind,
+  isFilterValueExpectedAsArray,
   isMorphRelationHead,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
@@ -25,11 +26,9 @@ import {
 } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { RowLevelPermissionPredicateExceptionCode } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
-import { resolveRlsPredicateArrayComparison } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/resolve-rls-predicate-array-comparison.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import {
@@ -136,6 +135,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
         fieldMetadata,
         operand: flatPredicateToValidate.operand,
+        subFieldName: flatPredicateToValidate.subFieldName,
         workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
           workspaceMemberFieldMetadataUniversalIdentifier:
             flatPredicateToValidate.workspaceMemberFieldMetadataUniversalIdentifier,
@@ -380,6 +380,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       const workspaceMemberFieldError = this.getWorkspaceMemberFieldError({
         fieldMetadata,
         operand: updatedPredicate.operand,
+        subFieldName: updatedPredicate.subFieldName,
         workspaceMemberFieldMetadata: this.findWorkspaceMemberFieldMetadata({
           workspaceMemberFieldMetadataUniversalIdentifier:
             updatedPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
@@ -632,11 +633,13 @@ export class FlatRowLevelPermissionPredicateValidatorService {
   private getWorkspaceMemberFieldError({
     fieldMetadata,
     operand,
+    subFieldName,
     workspaceMemberFieldMetadata,
     workspaceMemberFieldMetadataUniversalIdentifier,
   }: {
     fieldMetadata: UniversalFlatFieldMetadata;
     operand: RowLevelPermissionPredicateOperand;
+    subFieldName: string | null | undefined;
     workspaceMemberFieldMetadata: UniversalFlatFieldMetadata | undefined;
     workspaceMemberFieldMetadataUniversalIdentifier: string | null | undefined;
   }) {
@@ -665,33 +668,24 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
-    const memberArrayComparison =
-      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) &&
-      !isCompositeFieldMetadataType(fieldMetadata.type)
-        ? resolveRlsPredicateArrayComparison({
-            fieldType: fieldMetadata.type,
-            operand,
-          })
-        : undefined;
+    const recordFilterOperand = mapRLSOperandToRecordFilterOperand(operand);
 
-    if (memberArrayComparison === 'FIELD_TYPE_NOT_COMPARABLE') {
+    if (
+      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) &&
+      isRecordFilterOperandExpectingValue(recordFilterOperand) &&
+      !isFilterValueExpectedAsArray({
+        filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+        operand: recordFilterOperand,
+        subFieldName,
+      })
+    ) {
       const fieldName = fieldMetadata.name;
       const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
 
       return {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`Field "${fieldName}" cannot be compared to the list held by workspace member field "${workspaceMemberFieldName}"`,
+        message: t`Field "${fieldName}" takes a single value with operand "${operand}", it cannot be compared to the list held by workspace member field "${workspaceMemberFieldName}"`,
         userFriendlyMessage: msg`This field cannot be compared to a list of values`,
-      };
-    }
-
-    if (memberArrayComparison === 'OPERAND_NOT_COMPARABLE') {
-      const workspaceMemberFieldName = workspaceMemberFieldMetadata.name;
-
-      return {
-        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
-        message: t`Operand "${operand}" cannot compare a field to the list held by workspace member field "${workspaceMemberFieldName}", use IS, IS_NOT, CONTAINS or DOES_NOT_CONTAIN`,
-        userFriendlyMessage: msg`This operand cannot compare a field to a list of values`,
       };
     }
 

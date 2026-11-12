@@ -15,7 +15,11 @@ import {
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
+  getFilterValueValidationIssue,
   isDefined,
+  isFilterValueExpectedAsArray,
+  isRecordFilterOperandExpectingValue,
+  isRecordFilterValueValid,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
@@ -23,7 +27,6 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { resolveRlsPredicateArrayComparison } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/resolve-rls-predicate-array-comparison.util';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
@@ -198,47 +201,39 @@ const buildPredicateRecordFilter = ({
 
   if (
     !isDefined(predicate.workspaceMemberFieldMetadataId) ||
-    !Array.isArray(predicateValue)
+    !isRecordFilterOperandExpectingValue(operand) ||
+    isFilterValueExpectedAsArray({ filterType, operand, subFieldName })
   ) {
     return buildValueRecordFilter(predicateValue);
   }
 
-  const arrayComparison = resolveRlsPredicateArrayComparison({
-    fieldType: fieldMetadata.type,
-    operand: predicate.operand,
-  });
-
-  if (
-    arrayComparison === 'ARRAY_AS_A_WHOLE' ||
-    arrayComparison === 'FIELD_TYPE_NOT_COMPARABLE'
-  ) {
-    return buildValueRecordFilter(predicateValue);
-  }
-
-  if (arrayComparison === 'OPERAND_NOT_COMPARABLE') {
-    return predicateValue.length === 1
-      ? buildValueRecordFilter(predicateValue[0])
-      : UNSATISFIABLE_RECORD_FILTER;
-  }
-
-  const valueRecordFilters = predicateValue
-    .map((value) => buildValueRecordFilter(value))
-    .filter(isDefined);
-
-  if (arrayComparison === 'INTERSECTION_OF_VALUES') {
-    return valueRecordFilters.length <= 1
-      ? valueRecordFilters[0]
-      : { and: valueRecordFilters };
-  }
-
-  // Values that give no filter, as blank strings do, must not drop the predicate
-  if (valueRecordFilters.length === 0) {
+  if (Array.isArray(predicateValue) && predicateValue.length > 1) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  return valueRecordFilters.length === 1
-    ? valueRecordFilters[0]
-    : { or: valueRecordFilters };
+  const singleValue = Array.isArray(predicateValue)
+    ? predicateValue[0]
+    : predicateValue;
+
+  // A member value the filter would drop or misread must not widen the rule
+  if (
+    !isRecordFilterValueValid({
+      operand,
+      value: convertViewFilterValueToString(singleValue),
+    }) ||
+    isDefined(
+      getFilterValueValidationIssue({
+        fieldType: fieldMetadata.type,
+        operand,
+        subFieldName,
+        value: singleValue,
+      }),
+    )
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  return buildValueRecordFilter(singleValue);
 };
 
 const combineRecordFilters = (

@@ -199,6 +199,7 @@ export {
   actorSourceFilterValueSchema,
 } from './filter/utils/validation-schemas/filterValueScalarSchemas';
 export {
+  ARRAY_FILTER_VALUE_SCHEMAS,
   FILTER_VALUE_SCHEMAS_MAP,
   COMPOSITE_SUB_FIELD_VALUE_SCHEMAS,
   FILTER_VALUE_FORMAT_HINTS,
@@ -206,6 +207,7 @@ export {
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
 export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { isFilterValueExpectedAsArray } from './filter/utils/validation-schemas/isFilterValueExpectedAsArray';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,

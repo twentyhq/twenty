@@ -636,45 +636,28 @@ describe('buildRecordFilterForRule with access group member values', () => {
 
   it.each([
     [RowLevelPermissionPredicateOperand.IS, ['sales'], 'sales', true],
+    [RowLevelPermissionPredicateOperand.IS, ['sales'], 'support', false],
     [
       RowLevelPermissionPredicateOperand.IS,
       ['sales', 'support'],
-      'support',
-      true,
-    ],
-    [
-      RowLevelPermissionPredicateOperand.IS,
-      ['sales', 'support'],
-      'legal',
+      'sales',
       false,
     ],
     [
       RowLevelPermissionPredicateOperand.IS_NOT,
       ['sales', 'support'],
       'legal',
-      true,
-    ],
-    [
-      RowLevelPermissionPredicateOperand.IS_NOT,
-      ['sales', 'support'],
-      'support',
       false,
     ],
     [
       RowLevelPermissionPredicateOperand.CONTAINS,
       ['sal', 'sup'],
-      'support',
-      true,
-    ],
-    [
-      RowLevelPermissionPredicateOperand.IS_EMPTY,
-      ['sales', 'support'],
       'sales',
       false,
     ],
     [RowLevelPermissionPredicateOperand.IS, [''], 'sales', false],
   ])(
-    'should compare a text field to a member list value by value (%s %j on "%s")',
+    'should give a text field a single member value and match nothing for several (%s %j on "%s")',
     (operand, memberValues, name, expected) => {
       const filter = buildRecordFilterForRule({
         isRelationHopEnabled: false,
