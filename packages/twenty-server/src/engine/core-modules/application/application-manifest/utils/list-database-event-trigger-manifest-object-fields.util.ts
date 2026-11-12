@@ -8,7 +8,7 @@ export const listDatabaseEventTriggerManifestObjectFields = ({
   lookup,
   objectUniversalIdentifier,
 }: {
-  lookup: DatabaseEventTriggerManifestLookup;
+  lookup: Pick<DatabaseEventTriggerManifestLookup, 'fieldMaps'>;
   objectUniversalIdentifier: string;
 }): DatabaseEventTriggerManifestField[] => {
   const fieldsByUniversalIdentifier = new Map<
