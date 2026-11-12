@@ -19,6 +19,10 @@ import { type WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workfl
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
 const WORKFLOW_TRIGGER_JOB_NAME = 'WorkflowTriggerJob';
+const TRIGGER_PAYLOAD = {
+  recordId: 'refused-record-id',
+  properties: { after: { name: 'Refused record' } },
+};
 const SIZE_LIMIT_CONFIG: Record<string, boolean | number> = {
   IS_REDIS_MEMORY_FAIRNESS_ENABLED: true,
   JOB_QUEUE_MAX_JOB_SIZE_BYTES: 1,
@@ -118,7 +122,7 @@ describe('Workflow trigger queue refusal (e2e)', () => {
         workspaceId,
         workflowId: coreWorkflowId,
         coreWorkflowVersionId,
-        payload: {},
+        payload: TRIGGER_PAYLOAD,
       },
       jobOptions: { workspaceId, isWorkspaceJob: true },
     });
@@ -133,6 +137,7 @@ describe('Workflow trigger queue refusal (e2e)', () => {
 
     expect(runs).toHaveLength(1);
     expect(runs[0].status).toBe('FAILED');
+    expect(runs[0].state.stepInfos.trigger.result).toEqual(TRIGGER_PAYLOAD);
     expect(runs[0].state.workflowRunError).toEqual(
       expect.stringContaining(
         'Workflow could not start: trigger job exceeds the 0 MiB queue size limit',

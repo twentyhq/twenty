@@ -19,7 +19,6 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { buildRefusedTriggerPayload } from 'src/modules/workflow/workflow-trigger/utils/build-refused-trigger-payload.util';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 import { buildWorkflowTriggerRefusalError } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-trigger-refusal-error.util';
 
@@ -96,10 +95,7 @@ export class WorkflowTriggerDispatchWorkspaceService {
       await this.coreWorkflowRunnerService.createFailedRun({
         workspaceId,
         coreWorkflowVersionId,
-        payload: buildRefusedTriggerPayload({
-          exception,
-          payload: jobData.payload,
-        }),
+        payload: jobData.payload,
         source: buildWorkflowRunSource(coreWorkflow.name),
         error: buildWorkflowTriggerRefusalError(exception),
       });
