@@ -39,9 +39,9 @@ type IndexOperations = {
   flatEntityToDelete: FlatIndexMetadata[];
 };
 
-@RegisteredWorkspaceCommand('2.58.0', 1794413997499)
+@RegisteredWorkspaceCommand('2.59.0', 1794498818636)
 @Command({
-  name: 'upgrade:2-58:exclude-deleted-records-from-unique-field-indexes',
+  name: 'upgrade:2-59:exclude-deleted-records-from-unique-field-indexes',
   description:
     'Replace the index backing each unique field with a partial index on non-deleted records',
 })

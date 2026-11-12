@@ -7,7 +7,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getIndexUniversalIdentifier } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-workspace-command-1794413997499-exclude-deleted-records-from-unique-field-indexes.command';
+import { type ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794498818636-exclude-deleted-records-from-unique-field-indexes.command';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -46,7 +46,7 @@ const CUSTOM_REFERENCE: UniqueField = {
   columnName: 'reference',
 };
 
-describe('2-58 workspace command - exclude deleted records from unique field indexes (integration)', () => {
+describe('2-59 workspace command - exclude deleted records from unique field indexes (integration)', () => {
   let command: ExcludeDeletedRecordsFromUniqueFieldIndexesCommand;
   let customObjectMetadataId: string;
   let customFieldMetadataId: string;
