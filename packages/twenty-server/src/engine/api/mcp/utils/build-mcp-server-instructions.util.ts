@@ -1,14 +1,6 @@
-import {
-  buildMcpSkillsVersusToolsInstructionLines,
-  buildMcpTwentyPrimitivesInstructionLines,
-  MCP_DASHBOARD_INSTRUCTION_LINES,
-  MCP_DATA_EFFICIENCY_INSTRUCTION_LINES,
-  MCP_EXECUTION_RULES_INSTRUCTION_LINES,
-  MCP_METADATA_TOOLS_INSTRUCTION_LINES,
-  MCP_RESULT_REPORTING_INSTRUCTION_LINES,
-  MCP_VIEW_WEBHOOK_NAVIGATION_TOOLS_INSTRUCTION_LINES,
-  MCP_WORKFLOW_TOOLS_INSTRUCTION_LINE,
-} from 'src/engine/api/mcp/utils/mcp-shared-instruction-lines.util';
+import { MCP_SHARED_INSTRUCTION_LINES } from 'src/engine/api/mcp/constants/mcp-shared-instruction-lines.constant';
+import { buildMcpSkillsVersusToolsInstructionLines } from 'src/engine/api/mcp/utils/build-mcp-skills-versus-tools-instruction-lines.util';
+import { buildMcpTwentyPrimitivesInstructionLines } from 'src/engine/api/mcp/utils/build-mcp-twenty-primitives-instruction-lines.util';
 
 export const buildMcpServerInstructions = ({
   objectNames,
@@ -66,9 +58,9 @@ export const buildMcpServerInstructions = ({
       ? `Non-CRUD tools:`
       : `Non-CRUD tools — use learn_tools for schemas:`,
     `  ACTION:           ${actionToolNames.join(' | ')}`,
-    MCP_WORKFLOW_TOOLS_INSTRUCTION_LINE,
-    ...MCP_METADATA_TOOLS_INSTRUCTION_LINES,
-    ...MCP_VIEW_WEBHOOK_NAVIGATION_TOOLS_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.workflowTools,
+    ...MCP_SHARED_INSTRUCTION_LINES.metadataTools,
+    ...MCP_SHARED_INSTRUCTION_LINES.viewWebhookNavigationTools,
     ...(isDirectMode
       ? [
           `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; listed with the other tools`,
@@ -84,7 +76,7 @@ export const buildMcpServerInstructions = ({
         : `  Tools  = execution (execute_tool)    — let you DO something`,
     ),
     ``,
-    ...MCP_DASHBOARD_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.dashboards,
     ``,
     `Route by intent:`,
     `  Named entity ("Acme company")   → find_many_{objects} to resolve id first, then operate on id`,
@@ -99,9 +91,9 @@ export const buildMcpServerInstructions = ({
       ? `  Non-CRUD task                   → call the matching tool directly`
       : `  Non-CRUD task                   → use tool name from the list above + learn_tools for schema`,
     ``,
-    ...MCP_EXECUTION_RULES_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.executionRules,
     ``,
-    ...MCP_DATA_EFFICIENCY_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.dataEfficiency,
     `  Use batch tools (create_many_*, upsert_many_*, update_many_*) instead of looping single-item calls.`,
     ``,
     `Destructive operations (delete_one, delete_many):`,
@@ -114,6 +106,6 @@ export const buildMcpServerInstructions = ({
       fileUploadUsageLine: `Use that fileId in a FILES value (create_one_attachment file: [{ fileId, label }] and the target*Id, or a FILES field on create_one_* / update_one_*) or in code_interpreter.files. update_many does not copy FILES values; update_one replaces the whole FILES list.`,
     }),
     ``,
-    ...MCP_RESULT_REPORTING_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.resultReporting,
   ].join('\n');
 };

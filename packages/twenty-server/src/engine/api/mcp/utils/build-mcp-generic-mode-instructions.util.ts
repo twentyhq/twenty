@@ -1,14 +1,6 @@
-import {
-  buildMcpSkillsVersusToolsInstructionLines,
-  buildMcpTwentyPrimitivesInstructionLines,
-  MCP_DASHBOARD_INSTRUCTION_LINES,
-  MCP_DATA_EFFICIENCY_INSTRUCTION_LINES,
-  MCP_EXECUTION_RULES_INSTRUCTION_LINES,
-  MCP_METADATA_TOOLS_INSTRUCTION_LINES,
-  MCP_RESULT_REPORTING_INSTRUCTION_LINES,
-  MCP_VIEW_WEBHOOK_NAVIGATION_TOOLS_INSTRUCTION_LINES,
-  MCP_WORKFLOW_TOOLS_INSTRUCTION_LINE,
-} from 'src/engine/api/mcp/utils/mcp-shared-instruction-lines.util';
+import { MCP_SHARED_INSTRUCTION_LINES } from 'src/engine/api/mcp/constants/mcp-shared-instruction-lines.constant';
+import { buildMcpSkillsVersusToolsInstructionLines } from 'src/engine/api/mcp/utils/build-mcp-skills-versus-tools-instruction-lines.util';
+import { buildMcpTwentyPrimitivesInstructionLines } from 'src/engine/api/mcp/utils/build-mcp-twenty-primitives-instruction-lines.util';
 
 // Names no object, skill or app tool: clients that snapshot the instructions reuse them across workspaces
 export const buildMcpGenericModeInstructions = (): string =>
@@ -23,7 +15,8 @@ export const buildMcpGenericModeInstructions = (): string =>
     ``,
     `Record tools take the object as an argument (objectName, singular or plural):`,
     `  Read:  find_records | group_records`,
-    `  Write: create_records | update_record | update_records | upsert_records | delete_records | merge_records`,
+    `  Write: upsert_records | create_records | update_record | update_records | delete_records | merge_records`,
+    `  Prefer upsert_records for most writes: it creates or updates in one call, each record with its own values, matched by id or unique fields.`,
     `  Standard objects include company, person, opportunity, note and task; custom objects work the same way.`,
     ``,
     `Field shapes:`,
@@ -36,15 +29,15 @@ export const buildMcpGenericModeInstructions = (): string =>
     `  An argument error names the offending field: fix it and retry once rather than guessing again.`,
     ``,
     `Metadata tools are listed: call them by name.`,
-    ...MCP_METADATA_TOOLS_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.metadataTools,
     ``,
     `Every other tool is reached through meta-tools:`,
     `  learn_tools(toolNames)              — fetch input schemas before calling tools; pass ALL needed tool names in one call`,
     `  execute_tool(toolName, arguments)   — run a tool by name`,
     `  get_tool_catalog(categories)        — list the tools of ONE category when you do not know which tool exists; never call it unfiltered`,
     `  ACTION:           email, calendar, file upload and campaign tools — get_tool_catalog({ categories: ["ACTION"] })`,
-    MCP_WORKFLOW_TOOLS_INSTRUCTION_LINE,
-    ...MCP_VIEW_WEBHOOK_NAVIGATION_TOOLS_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.workflowTools,
+    ...MCP_SHARED_INSTRUCTION_LINES.viewWebhookNavigationTools,
     `  PAGE_LAYOUT:      dashboards, tabs and widgets`,
     `  LOGIC_FUNCTION:   app_{function_name} — workspace-specific; use list_logic_function_tools to discover`,
     ``,
@@ -53,7 +46,7 @@ export const buildMcpGenericModeInstructions = (): string =>
     ),
     `  Skills may name record tools as {operation}_{object} (e.g. find_many_companies): use the record tool for that operation with objectName instead.`,
     ``,
-    ...MCP_DASHBOARD_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.dashboards,
     ``,
     `Route by intent:`,
     `  Named entity ("Acme company")   → find_records to resolve its id first, then operate on the id`,
@@ -64,9 +57,9 @@ export const buildMcpGenericModeInstructions = (): string =>
     `  Bulk update (same data for all) → update_records`,
     `  Merge duplicate records         → find_records to get their ids, merge_records with dryRun: true to preview, ask the user which record to keep when values conflict, then merge_records. Never copy fields and delete a record: that loses its linked records`,
     ``,
-    ...MCP_EXECUTION_RULES_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.executionRules,
     ``,
-    ...MCP_DATA_EFFICIENCY_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.dataEfficiency,
     `  Create or upsert several records in one call instead of looping.`,
     ``,
     `Destructive operations (delete_records, merge_records):`,
@@ -80,5 +73,5 @@ export const buildMcpGenericModeInstructions = (): string =>
       fileUploadUsageLine: `Use that fileId in a FILES value.`,
     }),
     ``,
-    ...MCP_RESULT_REPORTING_INSTRUCTION_LINES,
+    ...MCP_SHARED_INSTRUCTION_LINES.resultReporting,
   ].join('\n');
