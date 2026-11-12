@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 
 export const convertBulkTextToOptions = (
@@ -17,10 +18,19 @@ export const convertBulkTextToOptions = (
   const listedOptions: FieldMetadataItemOption[] = [];
 
   for (const label of parsedBulkTextOptions) {
-    // try to find an existing option with the same label, so we can keep its id, color, value, and label
-    const existingOption = currentOptions.find(
-      (opt) => opt.label.toLowerCase() === label.toLowerCase(),
+    const optionWithLabel = currentOptions.find(
+      (option) => option.label.toLowerCase() === label.toLowerCase(),
     );
+    // A new option with the value of a kept one would be rejected as a duplicate, so the
+    // line renames that option instead.
+    const optionWithValue = currentOptions.find(
+      (option) =>
+        option.value === computeOptionValueFromLabel(label) &&
+        !listedOptions.some(({ id }) => id === option.id),
+    );
+    const existingOption =
+      optionWithLabel ??
+      (isDefined(optionWithValue) ? { ...optionWithValue, label } : undefined);
 
     if (isDefined(existingOption)) {
       const { isActive: _isActive, ...activeExistingOption } = existingOption;
