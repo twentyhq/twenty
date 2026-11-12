@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Callout, Section } from 'twenty-ui/components';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
