@@ -168,7 +168,6 @@ export const AiChatMessage = ({
     isAiChatInboxEnabled &&
     isUser &&
     isDefined(sender) &&
-    !isOwnMessage &&
     !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;

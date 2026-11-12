@@ -207,6 +207,16 @@ describe('AiChatMessage', () => {
     expect(screen.getAllByText(/ago$/)).toHaveLength(1);
   });
 
+  it('lets the current member quote their own inbox message', () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(screen.getByRole('button', { name: 'Reply' })).toBeInTheDocument();
+  });
+
   it('keeps another member name and one timestamp when signed in', () => {
     renderMessage({
       messageId: USER_MESSAGE.id,
