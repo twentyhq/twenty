@@ -5391,11 +5391,6 @@ msgstr "建立記錄失敗。"
 msgid "Failed to delete file {fileId}"
 msgstr "刪除檔案 {fileId} 失敗"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "無法刪除工作。請稍後再試。"
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

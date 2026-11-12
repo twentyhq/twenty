@@ -5391,11 +5391,6 @@ msgstr "Nepodařilo se vytvořit záznam."
 msgid "Failed to delete file {fileId}"
 msgstr "Nepodařilo se smazat soubor {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Nepodařilo se odstranit úlohy. Zkuste to prosím znovu později."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

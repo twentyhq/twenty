@@ -5391,11 +5391,6 @@ msgstr "レコードの作成に失敗しました。"
 msgid "Failed to delete file {fileId}"
 msgstr "ファイルの削除に失敗しました: {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "ジョブの削除に失敗しました。後でもう一度お試しください。"
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."

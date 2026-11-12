@@ -5391,11 +5391,6 @@ msgstr "Αποτυχία δημιουργίας εγγραφής."
 msgid "Failed to delete file {fileId}"
 msgstr "Απέτυχε η διαγραφή αρχείου {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Αποτυχία διαγραφής εργασιών. Παρακαλώ δοκιμάστε ξανά αργότερα."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
