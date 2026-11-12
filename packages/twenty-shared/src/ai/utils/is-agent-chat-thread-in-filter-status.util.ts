@@ -1,18 +1,16 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
+import { type AgentChatThreadFilterStatus } from '@/ai/constants/agent-chat-thread-filter-status.const';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const isAgentChatThreadInFilterStatus = ({
   thread,
   inboxStatus,
   filterStatus,
 }: {
-  thread: Pick<
-    AgentChatThreadRecord,
-    'pendingQuestionMessageId' | 'assigneeId'
-  >;
+  thread: {
+    pendingQuestionMessageId?: string | null;
+    assigneeId?: string | null;
+  };
   inboxStatus: Pick<
     AgentChatThreadInboxStatus,
     'scope' | 'isMentioned' | 'isAssignedToMe'
