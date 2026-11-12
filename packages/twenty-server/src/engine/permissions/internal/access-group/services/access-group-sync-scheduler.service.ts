@@ -55,27 +55,38 @@ export class AccessGroupSyncSchedulerService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
+    const jobData = {
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
+    };
+
     await this.accessGroupPropagationProgressService.trackScheduledObjectRecompute(
-      {
-        workspaceId,
-        objectMetadataId,
-        propagatedFromObjectMetadataIds,
-      },
+      jobData,
     );
 
-    await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
-      RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
-      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
-      {
-        isWorkspaceJob: true,
-        workspaceId,
-        retryLimit: 3,
-        deduplication: {
-          id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${propagatedFromObjectMetadataIds.length > 0 ? ':propagated' : ''}`,
-          keepLastIfActive: true,
+    try {
+      await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
+        RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
+        jobData,
+        {
+          isWorkspaceJob: true,
+          workspaceId,
+          retryLimit: 3,
+          deduplication: {
+            id: `record-access-group-ids:${workspaceId}:${objectMetadataId}${propagatedFromObjectMetadataIds.length > 0 ? ':propagated' : ''}`,
+            keepLastIfActive: true,
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      // A job the queue rejected never runs, so nothing else would settle its object
+      await this.accessGroupPropagationProgressService.abandonObjectRecompute(
+        jobData,
+      );
+
+      throw error;
+    }
   }
 
   private async scheduleWorkspaceJobIfEnabled({
