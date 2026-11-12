@@ -1,6 +1,5 @@
 import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 // A save rewrites how grants are stored (derived rules, inherited values), so roles are compared on what they grant
@@ -9,9 +8,9 @@ export const getRoleWithoutSaveArtifacts = (
 ): RoleWithPartialMembers => {
   const ruleObjectMetadataIds = [
     ...new Set(
-      (role.rowLevelPermissionPredicates ?? [])
-        .filter((predicate) => !isDefined(predicate.relationFieldMetadataId))
-        .map(({ objectMetadataId }) => objectMetadataId),
+      (role.rowLevelPermissionPredicates ?? []).map(
+        ({ objectMetadataId }) => objectMetadataId,
+      ),
     ),
   ];
 
