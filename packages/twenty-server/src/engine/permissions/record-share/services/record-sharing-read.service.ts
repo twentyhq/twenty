@@ -220,16 +220,18 @@ export class RecordSharingReadService {
       isRecordSharingEnabled({ featureFlagsMap }) &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.recordPermissionsReadService.canRoleAccessSomeRecords({
-        principals:
-          await this.principalPermissionsReadService.resolvePermissionsPrincipals(
-            {
-              authContext: args.authContext,
-            },
-          ),
-        objectMetadataId: flatObjectMetadata.id,
-        operationType: 'update',
-      }))
+      (await this.recordPermissionsReadService.canAllRecordsOrRowLevelPermissionsGrantOperation(
+        {
+          principals:
+            await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+              {
+                authContext: args.authContext,
+              },
+            ),
+          objectMetadataId: flatObjectMetadata.id,
+          operationType: 'update',
+        },
+      ))
     );
   }
 

@@ -93,6 +93,7 @@ const buildSQLCondition = (
 const sharingMetadataMaps = {
   ...metadataMaps,
   featureFlagsMap: {
+    ...metadataMaps.featureFlagsMap,
     [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
   },
 };
@@ -485,6 +486,29 @@ describe('buildPermissionsSQLCondition', () => {
     expect(Object.values(policy.sqlCondition.parameters)).toContainEqual([
       42, 43,
     ]);
+  });
+
+  it('also grants the records holding a group inherited through a related record path', () => {
+    (resolveRlsRuleRecordFilter as jest.Mock).mockReturnValue(NOTE_FILTER);
+    const policy = buildSQLConditionOutcome({
+      principals: readEverything,
+      metadataMaps,
+      tableAlias: 'person',
+      flatObjectMetadata: person,
+      operationType: 'read',
+      callerAccessGroupCompactIds: [42],
+      callerRelatedRecordPathAccessGroupCompactIds: [7],
+    });
+
+    if (policy.kind !== 'gated') {
+      throw new Error('Expected a grant gate');
+    }
+    expect(
+      policy.sqlCondition.sql.split('"person"."_accessGroupIds" && CAST('),
+    ).toHaveLength(3);
+    expect(Object.values(policy.sqlCondition.parameters)).toEqual(
+      expect.arrayContaining([[42], [7]]),
+    );
   });
 
   it('keeps the role rule when the object is not listed through access groups', () => {
