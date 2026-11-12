@@ -4,7 +4,6 @@ import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/
 import { TeamsAssistantDeadlineError } from 'src/features/chat/logic-functions/types/teams-assistant-deadline-error';
 import { TeamsAssistantEmptyResponseError } from 'src/features/chat/logic-functions/types/teams-assistant-empty-response-error';
 
-// Unmapped failures stay generic so no internal error text reaches Teams.
 export const getTeamsAssistantFailureText = (error: unknown): string => {
   if (error instanceof TeamsAssistantDeadlineError) {
     return TEAMS_ASSISTANT_DEADLINE_FAILURE_TEXT;
