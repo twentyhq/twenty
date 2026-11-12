@@ -4,12 +4,11 @@ import { computeAgentChatThreadFilterStatusGqlFilter } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLiveUpdates';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadLastUpdateCountByIdState } from '@/ai/states/agentChatThreadLastUpdateCountByIdState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -22,6 +21,8 @@ export const useLoadAgentChatInboxTabThreads = () => {
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { getLiveUpdateCount, isUpdatedLiveSince } =
+    useAgentChatThreadLiveUpdates();
 
   const loadAgentChatInboxTabThreads = useCallback(
     async (mode: 'refresh' | 'fetch-more') => {
@@ -48,9 +49,7 @@ export const useLoadAgentChatInboxTabThreads = () => {
         return;
       }
 
-      const updateCountBeforeRequest = store.get(
-        agentChatThreadRecordUpdateCountState.atom,
-      );
+      const updateCountBeforeRequest = getLiveUpdateCount();
       const page = await fetchAgentChatThreadsPage({
         lastCursor: isFetchMore ? (listBeforeRequest?.endCursor ?? null) : null,
         threadIdFilter: {
@@ -79,14 +78,13 @@ export const useLoadAgentChatInboxTabThreads = () => {
         return;
       }
 
-      const lastUpdateCountById = store.get(
-        agentChatThreadLastUpdateCountByIdState.atom,
-      );
-
       upsertRecordsInStore({
         partialRecords: page.threads.filter(
           ({ id }) =>
-            (lastUpdateCountById[id] ?? 0) <= updateCountBeforeRequest,
+            !isUpdatedLiveSince({
+              threadId: id,
+              updateCount: updateCountBeforeRequest,
+            }),
         ),
       });
       addAgentChatThreadParticipants(page.participants);
@@ -114,6 +112,8 @@ export const useLoadAgentChatInboxTabThreads = () => {
     [
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
+      getLiveUpdateCount,
+      isUpdatedLiveSince,
       refreshAgentChatThreadPermissions,
       store,
       upsertRecordsInStore,
