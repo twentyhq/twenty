@@ -13,11 +13,9 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 describe('OAuthRegistrationController', () => {
   let controller: OAuthRegistrationController;
-  let isDynamicClientRegistrationEnabled: boolean;
   let applicationRegistrationRepository: {
     create: jest.Mock;
     save: jest.Mock;
@@ -42,7 +40,6 @@ describe('OAuthRegistrationController', () => {
   });
 
   beforeEach(async () => {
-    isDynamicClientRegistrationEnabled = true;
     applicationRegistrationRepository = {
       create: jest.fn((registration) => registration),
       save: jest.fn(async (registration) => ({
@@ -79,10 +76,6 @@ describe('OAuthRegistrationController', () => {
         {
           provide: ApplicationOAuthIdentityService,
           useValue: { findRegistrationByRedirectUris },
-        },
-        {
-          provide: TwentyConfigService,
-          useValue: { get: () => isDynamicClientRegistrationEnabled },
         },
         { provide: HttpExceptionHandlerService, useValue: {} },
       ],
@@ -146,21 +139,5 @@ describe('OAuthRegistrationController', () => {
       ),
     ).resolves.toMatchObject({ error: 'rate_limit_exceeded' });
     expect(response.status).toHaveBeenCalledWith(429);
-  });
-
-  it('refuses to register once dynamic client registration is off', async () => {
-    isDynamicClientRegistrationEnabled = false;
-
-    const response = buildResponse();
-
-    await expect(
-      controller.register(
-        buildBody(['https://claude.ai/api/mcp/auth_callback']),
-        request,
-        response,
-      ),
-    ).resolves.toMatchObject({ error: 'not_found' });
-    expect(response.status).toHaveBeenCalledWith(404);
-    expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
   });
 });
