@@ -1,3 +1,4 @@
+import { getRowLevelPermissionObjectMetadataIds } from '@/settings/roles/role/utils/getRowLevelPermissionObjectMetadataIds';
 import { useUpsertRowLevelPermissionPredicatesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
@@ -175,16 +176,10 @@ export const useSaveDraftRoleToDB = ({
     return createdRoleId;
   };
 
-  const rowLevelPermissionObjectMetadataIds = new Set(
-    (settingsDraftRole.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
-  );
-  const persistedRowLevelPermissionObjectMetadataIds = new Set(
-    (settingsPersistedRole?.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
-  );
+  const rowLevelPermissionObjectMetadataIds =
+    getRowLevelPermissionObjectMetadataIds(settingsDraftRole);
+  const persistedRowLevelPermissionObjectMetadataIds =
+    getRowLevelPermissionObjectMetadataIds(settingsPersistedRole);
 
   // Rules carry the grant of a filtered object, so a change to either side rewrites both
   const shouldSyncObjectRecordsGrants =

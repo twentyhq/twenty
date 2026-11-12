@@ -1,3 +1,4 @@
+import { getRowLevelPermissionObjectMetadataIds } from '@/settings/roles/role/utils/getRowLevelPermissionObjectMetadataIds';
 import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -7,11 +8,7 @@ export const getRoleWithoutSaveArtifacts = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
   const ruleObjectMetadataIds = [
-    ...new Set(
-      (role.rowLevelPermissionPredicates ?? []).map(
-        ({ objectMetadataId }) => objectMetadataId,
-      ),
-    ),
+    ...getRowLevelPermissionObjectMetadataIds(role),
   ];
 
   const objectPermissionsOfObjectsWithoutRule = (

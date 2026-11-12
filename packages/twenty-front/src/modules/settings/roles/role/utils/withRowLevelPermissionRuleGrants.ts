@@ -1,3 +1,4 @@
+import { getRowLevelPermissionObjectMetadataIds } from '@/settings/roles/role/utils/getRowLevelPermissionObjectMetadataIds';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -5,11 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 export const withRowLevelPermissionRuleGrants = (
   role: RoleWithPartialMembers,
 ): RoleWithPartialMembers => {
-  const filteredObjectMetadataIds = new Set(
-    (role.rowLevelPermissionPredicates ?? []).map(
-      ({ objectMetadataId }) => objectMetadataId,
-    ),
-  );
+  const filteredObjectMetadataIds =
+    getRowLevelPermissionObjectMetadataIds(role);
   const rules = (role.rowLevelPermissionRules ?? []).filter(
     ({ objectMetadataId }) => filteredObjectMetadataIds.has(objectMetadataId),
   );
