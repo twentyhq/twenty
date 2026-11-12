@@ -164,7 +164,7 @@ export class AccessGroupPropagationPlanService {
     });
 
     if (hasComputesLeft) {
-      await this.accessGroupSyncSchedulerService.scheduleAccessGroupPropagationPlanRun(
+      await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
         workspaceId,
       );
     }

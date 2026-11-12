@@ -88,7 +88,7 @@ export class AccessGroupSyncService {
       workspaceId,
       objectMetadataIds: objectMetadataIdsToRecompute,
     });
-    await this.accessGroupSyncSchedulerService.scheduleAccessGroupPropagationPlanRun(
+    await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
       workspaceId,
     );
 

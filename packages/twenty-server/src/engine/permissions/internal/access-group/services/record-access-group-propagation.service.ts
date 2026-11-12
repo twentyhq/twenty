@@ -49,7 +49,7 @@ export class RecordAccessGroupPropagationService {
     });
   }
 
-  async planAndScheduleRecomputeOfRelatedRecordPathTargets({
+  async planAndApplyRecomputeOfRelatedRecordPathTargets({
     workspaceId,
   }: {
     workspaceId: string;
@@ -70,7 +70,7 @@ export class RecordAccessGroupPropagationService {
         isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId }),
       ),
     });
-    await this.accessGroupSyncSchedulerService.scheduleAccessGroupPropagationPlanRun(
+    await this.accessGroupSyncSchedulerService.enqueueApplyAccessGroupPropagationPlanJob(
       workspaceId,
     );
   }
