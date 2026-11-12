@@ -55,7 +55,7 @@ const StyledAdvancedSection = styled.div`
 const StyledAdvancedChevron = styled.span`
   display: flex;
 
-  [data-panel-open] & {
+  &[data-open='true'] {
     transform: rotate(180deg);
   }
 `;
@@ -253,7 +253,7 @@ export const WorkflowEditActionMcpTool = ({
                 <Button
                   variant="link"
                   endIcon={
-                    <StyledAdvancedChevron>
+                    <StyledAdvancedChevron data-open={isAdvancedSectionOpen}>
                       <IconChevronDown size={14} />
                     </StyledAdvancedChevron>
                   }
