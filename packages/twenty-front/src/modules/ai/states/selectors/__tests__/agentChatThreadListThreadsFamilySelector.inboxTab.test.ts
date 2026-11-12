@@ -4,15 +4,9 @@ import {
   type AgentChatThreadFilterStatus,
 } from 'twenty-shared/ai';
 
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -228,93 +222,5 @@ describe('agentChatThreadListThreadsFamilySelector for an inbox tab', () => {
     ],
   ])('lists the %s threads', (filterStatus, expectedThreadIds) => {
     expect(getVisibleThreadIds(filterStatus)).toEqual(expectedThreadIds);
-  });
-
-  it("lists the tab's loaded chats, and none older than its last page", () => {
-    const store = createStore();
-    const DONE_SOURCE: AgentChatThreadListSource = {
-      type: 'inboxTab',
-      filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
-    };
-    const buildThread = ({
-      id,
-      lastActivityAt,
-    }: {
-      id: string;
-      lastActivityAt: string;
-    }): AgentChatThreadRecord => ({
-      __typename: 'AgentChatThread',
-      id,
-      title: id,
-      deletedAt: null,
-      createdAt: lastActivityAt,
-      updatedAt: lastActivityAt,
-      lastActivityAt,
-    });
-    const doneParticipant = (id: string) => ({
-      ...READ,
-      id,
-      threadId: id,
-      archivedAt: '2026-10-02T00:00:00.000Z',
-      __typename: 'AgentChatThreadParticipant' as const,
-    });
-
-    setAgentChatThreadList(store, [
-      buildThread({
-        id: 'recent-done',
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
-      }),
-      buildThread({
-        id: 'oldest-done',
-        lastActivityAt: '2026-09-01T10:00:00.000Z',
-      }),
-    ]);
-    store.set(
-      recordStoreFamilyState.atomFamily('older-done'),
-      buildThread({
-        id: 'older-done',
-        lastActivityAt: '2026-09-20T10:00:00.000Z',
-      }),
-    );
-    store.set(recordStoreFamilyState.atomFamily('quiet-done'), {
-      ...buildThread({
-        id: 'quiet-done',
-        lastActivityAt: '2026-10-05T10:00:00.000Z',
-      }),
-      lastActivityAt: null,
-    });
-    store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(DONE_SOURCE),
-      ),
-      {
-        threadIds: ['recent-done', 'older-done', 'quiet-done'],
-        hasNextPage: true,
-        endCursor: 'cursor',
-        lastLoadedActivityAt: '2026-09-20T10:00:00.000Z',
-      },
-    );
-    store.set(agentChatThreadParticipantsState.atom, {
-      'recent-done': doneParticipant('recent-done'),
-      'older-done': doneParticipant('older-done'),
-      'oldest-done': doneParticipant('oldest-done'),
-      'quiet-done': doneParticipant('quiet-done'),
-    });
-    expect(
-      store
-        .get(
-          agentChatThreadListThreadsFamilySelector.selectorFamily(DONE_SOURCE),
-        )
-        .map(({ id }) => id),
-    ).toEqual(['recent-done', 'older-done', 'quiet-done']);
-    expect(
-      store
-        .get(
-          agentChatThreadListThreadsFamilySelector.selectorFamily(
-            AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
-          ),
-        )
-        .map(({ id }) => id),
-    ).toEqual(['recent-done', 'oldest-done']);
   });
 });

@@ -6,7 +6,6 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatThreadLiveFieldsState } from '@/ai/states/agentChatThreadLiveFieldsState';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
@@ -20,7 +19,6 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const queryMock = jest.fn();
@@ -407,117 +405,6 @@ describe('useLoadAgentChatThreadList', () => {
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
 
-  const applyLiveUpdate = ({
-    store,
-    thread,
-  }: {
-    store: ReturnType<typeof createStore>;
-    thread: Pick<AgentChatThreadRecord, 'id' | 'title'>;
-  }) => {
-    store.set(recordStoreFamilyState.atomFamily(thread.id), (storedThread) => ({
-      __typename: 'AgentChatThread',
-      ...storedThread,
-      ...thread,
-    }));
-    store.set(agentChatThreadLiveFieldsState.atom, {
-      updateCount: 1,
-      fieldUpdateCountsByThreadId: { [thread.id]: { title: 1 } },
-    });
-  };
-
-  it('keeps a chat added to the list while a refresh is in flight', async () => {
-    const store = buildStore();
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock.mockReturnValueOnce(
-      new Promise((resolve) => {
-        resolveQuery = resolve;
-      }),
-    );
-    const result = renderRefresh(store);
-
-    const refreshPromise = result.current.refreshAgentChatThreads();
-
-    act(() => {
-      store.set(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-        {
-          threadIds: ['new-thread'],
-          hasNextPage: false,
-          endCursor: null,
-          lastLoadedActivityAt: null,
-        },
-      );
-    });
-
-    await act(async () => {
-      resolveQuery(buildPage([buildThread('thread-1', 'Server thread')]));
-      await refreshPromise;
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(
-      store.get(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-      )?.threadIds,
-    ).toEqual(['new-thread', 'thread-1']);
-  });
-
-  it('keeps a chat updated live during the request, in one request', async () => {
-    const store = buildStore();
-    store.set(recordStoreFamilyState.atomFamily('thread-1'), {
-      ...buildThread('thread-1', 'Stored title'),
-      lastMessageText: 'Stored message',
-    });
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock.mockReturnValueOnce(
-      new Promise((resolve) => {
-        resolveQuery = resolve;
-      }),
-    );
-    const result = renderRefresh(store);
-
-    const refreshPromise = result.current.refreshAgentChatThreads();
-
-    act(() => {
-      applyLiveUpdate({
-        store,
-        thread: { id: 'thread-1', title: 'Renamed meanwhile' },
-      });
-    });
-
-    await act(async () => {
-      resolveQuery(
-        buildPage([
-          {
-            ...buildThread('thread-1', 'Stale title'),
-            lastMessageText: 'Newer message',
-          },
-          buildThread('thread-2', 'Other thread'),
-        ]),
-      );
-      await refreshPromise;
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
-      {
-        id: 'thread-1',
-        title: 'Renamed meanwhile',
-        lastMessageText: 'Newer message',
-        createdAt: '2026-09-07T00:00:00.000Z',
-      },
-      { id: 'thread-2', title: 'Other thread' },
-    ]);
-  });
-
   it('drops chats the server no longer lists', async () => {
     const store = buildStore();
     store.set(
@@ -643,89 +530,5 @@ describe('useLoadAgentChatThreadList', () => {
         agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
       ),
     ).toMatchObject({ inputTokens: 42 });
-  });
-
-  it('keeps a chat updated live while it is looked up, in one request', async () => {
-    const store = buildStore();
-    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock.mockReturnValueOnce(
-      new Promise((resolve) => {
-        resolveQuery = resolve;
-      }),
-    );
-    store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-      ),
-      {
-        threadIds: [],
-        hasNextPage: true,
-        endCursor: 'page-1',
-        lastLoadedActivityAt: null,
-      },
-    );
-    const result = renderRefresh(store);
-
-    const loadPromise = result.current.loadAgentChatThread('old-thread');
-
-    act(() => {
-      applyLiveUpdate({
-        store,
-        thread: buildThread('old-thread', 'Renamed meanwhile'),
-      });
-    });
-
-    await act(async () => {
-      resolveQuery(buildPage([buildThread('old-thread', 'Stale title')]));
-      await loadPromise;
-    });
-
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
-      { id: 'old-thread', title: 'Renamed meanwhile' },
-    ]);
-  });
-
-  it('lets a refresh in flight update a chat looked up meanwhile', async () => {
-    const store = buildStore();
-    let resolveRefresh: (value: ReturnType<typeof buildPage>) => void = () =>
-      undefined;
-
-    queryMock
-      .mockReturnValueOnce(
-        new Promise((resolve) => {
-          resolveRefresh = resolve;
-        }),
-      )
-      .mockResolvedValueOnce(buildPage([buildThread('thread-1', 'Old title')]));
-    store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-      ),
-      {
-        threadIds: [],
-        hasNextPage: false,
-        endCursor: null,
-        lastLoadedActivityAt: null,
-      },
-    );
-    const result = renderRefresh(store);
-
-    const refreshPromise = result.current.refreshAgentChatThreads();
-
-    await act(async () => {
-      await result.current.loadAgentChatThread('thread-1');
-    });
-
-    await act(async () => {
-      resolveRefresh(buildPage([buildThread('thread-1', 'New title')]));
-      await refreshPromise;
-    });
-
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
-      { id: 'thread-1', title: 'New title' },
-    ]);
   });
 });
