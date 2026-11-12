@@ -77,12 +77,10 @@ const buildService = async ({
       {
         provide: WorkspaceCacheService,
         useValue: {
-          getOrRecompute: jest
-            .fn()
-            .mockResolvedValue({
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            }),
+          getOrRecompute: jest.fn().mockResolvedValue({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
         },
       },
       {

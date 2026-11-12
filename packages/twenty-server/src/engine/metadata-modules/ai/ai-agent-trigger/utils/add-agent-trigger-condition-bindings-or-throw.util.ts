@@ -37,7 +37,7 @@ const buildInvalidConditionException = ({
 const toEventConditionKey = ({
   eventName,
   condition,
-}: AgentDatabaseEventTrigger['settings']) =>
+}: Pick<AgentDatabaseEventTrigger['settings'], 'eventName' | 'condition'>) =>
   JSON.stringify([eventName, condition]);
 
 // Agent validation sees no object metadata, so conditions are compiled where agents are written
