@@ -1,3 +1,8 @@
+import { type ValidationRuleBindings } from 'twenty-shared/types';
+import {
+  isDefined,
+  renameValidationRuleExpressionToCurrentFieldNames,
+} from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -8,19 +13,28 @@ import { useValidationRuleFields } from '@/validation-rules/hooks/useValidationR
 type RecordEventConditionEditorProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   condition: string;
+  conditionBindings?: ValidationRuleBindings;
   onConditionChange: (condition: string) => void;
   isReadOnly: boolean;
 };
 
 export const RecordEventConditionEditor = ({
   objectMetadataItem,
-  condition,
+  condition: storedCondition,
+  conditionBindings,
   onConditionChange,
   isReadOnly,
 }: RecordEventConditionEditorProps) => {
   const { fields, editorFields } = useValidationRuleFields({
     objectMetadataItem,
   });
+  const condition = isDefined(conditionBindings)
+    ? renameValidationRuleExpressionToCurrentFieldNames({
+        expression: storedCondition,
+        bindings: conditionBindings,
+        fields,
+      })
+    : storedCondition;
 
   if (isReadOnly) {
     return <ValidationRuleExpressionText expression={condition} />;

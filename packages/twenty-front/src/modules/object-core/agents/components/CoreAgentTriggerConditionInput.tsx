@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
@@ -8,6 +9,7 @@ import { RecordEventConditionEditor } from '@/validation-rules/components/Record
 type CoreAgentTriggerConditionInputProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   condition: string;
+  conditionBindings?: ValidationRuleBindings;
   onConditionChange: (condition: string) => void;
   isReadOnly: boolean;
 };
@@ -15,6 +17,7 @@ type CoreAgentTriggerConditionInputProps = {
 export const CoreAgentTriggerConditionInput = ({
   objectMetadataItem,
   condition,
+  conditionBindings,
   onConditionChange,
   isReadOnly,
 }: CoreAgentTriggerConditionInputProps) => {
@@ -30,6 +33,7 @@ export const CoreAgentTriggerConditionInput = ({
       <RecordEventConditionEditor
         objectMetadataItem={objectMetadataItem}
         condition={condition}
+        conditionBindings={conditionBindings}
         onConditionChange={onConditionChange}
         isReadOnly={isReadOnly}
       />

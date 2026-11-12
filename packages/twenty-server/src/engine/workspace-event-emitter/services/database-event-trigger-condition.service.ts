@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { compositeTypeDefinitions } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  type ValidationRuleBindings,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -70,6 +73,7 @@ export class DatabaseEventTriggerConditionService {
     eventName,
     watchedFields,
     condition,
+    conditionBindings,
     authContext,
   }: {
     workspaceId: string;
@@ -78,6 +82,7 @@ export class DatabaseEventTriggerConditionService {
     eventName: string;
     watchedFields?: string[];
     condition?: string | null;
+    conditionBindings?: ValidationRuleBindings;
     authContext: PermissionsAuthContext;
   }) {
     if (!isNonEmptyString(condition)) {
@@ -215,6 +220,7 @@ export class DatabaseEventTriggerConditionService {
       eventName,
       watchedFields,
       condition,
+      conditionBindings,
       fields: buildValidationRuleFieldDescriptors({
         objectMetadataId: objectMetadata.id,
         flatObjectMetadataMaps,
