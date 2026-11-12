@@ -10,14 +10,19 @@ import { filePreviewGalleryFilesState } from '@/ui/field/display/states/filePrev
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+type OpenFilePreviewGalleryArgs = {
+  file: FieldFilesValue;
+  galleryFiles: FieldFilesValue[];
+};
+
 export const useOpenFilePreview = () => {
   const store = useStore();
   const hasDownloadPermission = useHasPermissionFlag(
     PermissionFlagType.DOWNLOAD_FILE,
   );
 
-  const openFilePreview = useCallback(
-    (file: FieldFilesValue, galleryFiles: FieldFilesValue[] = []) => {
+  const openFilePreviewGallery = useCallback(
+    ({ file, galleryFiles }: OpenFilePreviewGalleryArgs) => {
       if (!store.get(isAttachmentPreviewEnabledState.atom)) {
         if (hasDownloadPermission && isNonEmptyString(file.url)) {
           downloadFile(file.url, file.label ?? 'file');
@@ -32,5 +37,11 @@ export const useOpenFilePreview = () => {
     [store, hasDownloadPermission],
   );
 
-  return { openFilePreview };
+  const openFilePreview = useCallback(
+    (file: FieldFilesValue) =>
+      openFilePreviewGallery({ file, galleryFiles: [] }),
+    [openFilePreviewGallery],
+  );
+
+  return { openFilePreview, openFilePreviewGallery };
 };

@@ -19,10 +19,13 @@ const PHOTOS: FieldFilesValue[] = [1, 2, 3, 4, 5, 6].map((photoNumber) => ({
   url: `https://example.com/photo-${photoNumber}.png`,
 }));
 
-const renderImageGrid = (files: FieldFilesValue[]) => {
+const renderImageGrid = (
+  files: FieldFilesValue[],
+  { isAttachmentPreviewEnabled = true } = {},
+) => {
   const store = createStore();
 
-  store.set(isAttachmentPreviewEnabledState.atom, true);
+  store.set(isAttachmentPreviewEnabledState.atom, isAttachmentPreviewEnabled);
 
   render(
     <Provider store={store}>
@@ -85,6 +88,17 @@ describe('ChatMessageImageGrid', () => {
 
     expect(await getPreviewTitle()).toHaveTextContent('photo-5.png');
     expect(screen.getByText('5 / 6')).toBeInTheDocument();
+  });
+
+  it('shows every image when the preview is disabled', () => {
+    renderImageGrid(PHOTOS, { isAttachmentPreviewEnabled: false });
+
+    expect(
+      screen.getByRole('button', { name: 'photo-6.png' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /more images/ }),
+    ).not.toBeInTheDocument();
   });
 
   it('starts the preview on the clicked tile', async () => {

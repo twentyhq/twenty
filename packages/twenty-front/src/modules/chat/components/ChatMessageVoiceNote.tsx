@@ -23,17 +23,17 @@ const StyledVoiceNote = styled.div`
   width: fit-content;
 `;
 
-type ChatThreadMessageVoiceNoteProps = {
+type ChatMessageVoiceNoteProps = {
   src: string;
   label: string;
   onError: () => void;
 };
 
-export const ChatThreadMessageVoiceNote = ({
+export const ChatMessageVoiceNote = ({
   src,
   label,
   onError,
-}: ChatThreadMessageVoiceNoteProps) => {
+}: ChatMessageVoiceNoteProps) => {
   const { t } = useLingui();
   const audioElementRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);

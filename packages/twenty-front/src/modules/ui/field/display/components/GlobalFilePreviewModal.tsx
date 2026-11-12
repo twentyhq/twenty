@@ -57,21 +57,20 @@ export const GlobalFilePreviewModal = () => {
   );
   const galleryPosition = galleryIndex + 1;
   const galleryLength = filePreviewGalleryFiles.length;
-  const previousGalleryFile = filePreviewGalleryFiles[galleryIndex - 1];
-  const nextGalleryFile = filePreviewGalleryFiles[galleryIndex + 1];
+  const isBrowsingGallery = galleryLength > 1 && galleryIndex >= 0;
+  const previousGalleryFile = isBrowsingGallery
+    ? filePreviewGalleryFiles[galleryIndex - 1]
+    : undefined;
+  const nextGalleryFile = isBrowsingGallery
+    ? filePreviewGalleryFiles[galleryIndex + 1]
+    : undefined;
 
-  const navigation =
-    galleryLength > 1 && galleryIndex >= 0
-      ? {
-          positionLabel: t`${galleryPosition} / ${galleryLength}`,
-          onPrevious: isDefined(previousGalleryFile)
-            ? () => setFilePreview(previousGalleryFile)
-            : undefined,
-          onNext: isDefined(nextGalleryFile)
-            ? () => setFilePreview(nextGalleryFile)
-            : undefined,
-        }
-      : undefined;
+  const handlePrevious = isDefined(previousGalleryFile)
+    ? () => setFilePreview(previousGalleryFile)
+    : undefined;
+  const handleNext = isDefined(nextGalleryFile)
+    ? () => setFilePreview(nextGalleryFile)
+    : undefined;
 
   return (
     <>
@@ -84,7 +83,13 @@ export const GlobalFilePreviewModal = () => {
         documentUrl={filePreview.url ?? ''}
         documentExtension={filePreview.extension ?? ''}
         onClose={handleClose}
-        navigation={navigation}
+        positionLabel={
+          isBrowsingGallery
+            ? t`${galleryPosition} / ${galleryLength}`
+            : undefined
+        }
+        onPrevious={handlePrevious}
+        onNext={handleNext}
         onDownload={hasDownloadPermission ? handleDownload : undefined}
         downloadLabel={t`Download file`}
         loadingFallback={

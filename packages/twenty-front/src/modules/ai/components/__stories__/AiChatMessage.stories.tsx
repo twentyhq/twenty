@@ -42,6 +42,7 @@ import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamil
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -999,6 +1000,9 @@ const mockUserMessageWithManyImages: ExtendedUIMessage = {
 };
 
 export const UserMessageWithManyImages: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isAttachmentPreviewEnabledState.atom, true);
+  },
   parameters: {
     isInboxEnabled: true,
     messages: [mockUserMessageWithManyImages],

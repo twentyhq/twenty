@@ -69,12 +69,6 @@ const StyledNavigationPosition = styled.span`
   font-variant-numeric: tabular-nums;
 `;
 
-type FilePreviewDialogNavigation = {
-  positionLabel: string;
-  onPrevious?: () => void;
-  onNext?: () => void;
-};
-
 type FilePreviewDialogProps = {
   dialogId: string;
   scrollWrapperId: string;
@@ -83,7 +77,9 @@ type FilePreviewDialogProps = {
   documentUrl: string;
   documentExtension?: string;
   onClose: () => void;
-  navigation?: FilePreviewDialogNavigation;
+  positionLabel?: string;
+  onPrevious?: () => void;
+  onNext?: () => void;
   onDownload?: () => void;
   downloadLabel: string;
   loadingFallback: ReactNode;
@@ -97,12 +93,16 @@ export const FilePreviewDialog = ({
   documentUrl,
   documentExtension,
   onClose,
-  navigation,
+  positionLabel,
+  onPrevious,
+  onNext,
   onDownload,
   downloadLabel,
   loadingFallback,
 }: FilePreviewDialogProps) => {
   const { t } = useLingui();
+  const hasNavigation = isDefined(positionLabel);
+
   return (
     <DialogInstance
       dialogId={dialogId}
@@ -112,11 +112,11 @@ export const FilePreviewDialog = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup onKeyDown={onKeyDown} size="lg">
-          {isDefined(navigation) && (
+          {hasNavigation && (
             <FilePreviewDialogNavigationHotkeysEffect
               dialogId={dialogId}
-              onPrevious={navigation.onPrevious}
-              onNext={navigation.onNext}
+              onPrevious={onPrevious}
+              onNext={onNext}
             />
           )}
           <StyledPreviewLayout>
@@ -125,23 +125,23 @@ export const FilePreviewDialog = ({
                 {title}
               </Dialog.Title>
               <StyledActions>
-                {isDefined(navigation) && (
+                {hasNavigation && (
                   <StyledNavigation>
                     <IconButton
                       aria-label={t`Previous file`}
-                      disabled={!isDefined(navigation.onPrevious)}
-                      onClick={navigation.onPrevious}
+                      disabled={!isDefined(onPrevious)}
+                      onClick={onPrevious}
                       size="sm"
                     >
                       <IconChevronLeft />
                     </IconButton>
                     <StyledNavigationPosition>
-                      {navigation.positionLabel}
+                      {positionLabel}
                     </StyledNavigationPosition>
                     <IconButton
                       aria-label={t`Next file`}
-                      disabled={!isDefined(navigation.onNext)}
-                      onClick={navigation.onNext}
+                      disabled={!isDefined(onNext)}
+                      onClick={onNext}
                       size="sm"
                     >
                       <IconChevronRight />

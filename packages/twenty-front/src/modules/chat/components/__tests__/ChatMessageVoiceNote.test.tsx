@@ -3,12 +3,12 @@ import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { ChatThreadMessageVoiceNote } from '@/activities/emails/components/ChatThreadMessageVoiceNote';
+import { ChatMessageVoiceNote } from '@/chat/components/ChatMessageVoiceNote';
 
 const renderVoiceNote = (onError = jest.fn()) =>
   render(
     <I18nProvider i18n={i18n}>
-      <ChatThreadMessageVoiceNote
+      <ChatMessageVoiceNote
         src="https://files.test/voice-note.m4a"
         label="voice-note.m4a"
         onError={onError}
@@ -16,7 +16,7 @@ const renderVoiceNote = (onError = jest.fn()) =>
     </I18nProvider>,
   );
 
-describe('ChatThreadMessageVoiceNote', () => {
+describe('ChatMessageVoiceNote', () => {
   it('shows the pause action while the voice note plays and resets when its source reloads', async () => {
     const user = userEvent.setup();
     const play = jest

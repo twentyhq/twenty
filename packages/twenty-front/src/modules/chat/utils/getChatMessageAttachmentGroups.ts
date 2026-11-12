@@ -1,23 +1,21 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 
-import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 
-type AgentChatAttachmentGroups = {
+type ChatMessageAttachmentGroups = {
   gridImages: FieldFilesValue[];
   standaloneAttachments: FieldFilesValue[];
 };
 
-export const getAgentChatAttachmentGroups = (
-  fileParts: ExtendedFileUIPart[],
-): AgentChatAttachmentGroups => {
-  const attachments = fileParts.map(getAgentChatFilePartFieldFilesValue);
+export const getChatMessageAttachmentGroups = (
+  attachments: FieldFilesValue[],
+): ChatMessageAttachmentGroups => {
   const images = attachments.filter(
     (attachment) =>
       isNonEmptyString(attachment.url) &&
+      attachment.isDeleted !== true &&
       getFieldFilesValueCategory(attachment) === FILE_CATEGORIES.IMAGE,
   );
 

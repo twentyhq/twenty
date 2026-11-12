@@ -7,17 +7,16 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { ChatThreadMessageAttachment } from '@/activities/emails/components/ChatThreadMessageAttachment';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai/constants/AiChatUserMessageMaxWidth';
-import { getAgentChatAttachmentGroups } from '@/ai/utils/getAgentChatAttachmentGroups';
+import { getAgentChatFilePartFieldFilesValue } from '@/ai/utils/getAgentChatFilePartFieldFilesValue';
 
 import { AiChatMessageAuthorHeader } from '@/ai/components/AiChatMessageAuthorHeader';
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { ChatMessageImageGrid } from '@/chat/components/ChatMessageImageGrid';
+import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -54,14 +53,6 @@ const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
     isUser ? `min(100%, ${AI_CHAT_USER_MESSAGE_MAX_WIDTH})` : '100%'};
   min-width: 0;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
-`;
-
-const StyledFilesContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-top: ${themeCssVariables.spacing[2]};
 `;
 
 type AiChatUserMessageTextProps = {
@@ -154,9 +145,9 @@ export const AiChatMessage = ({
   const shouldShowError =
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
-  const { gridImages, standaloneAttachments } = getAgentChatAttachmentGroups(
-    agentChatMessage.parts.filter(isExtendedFileUIPart),
-  );
+  const attachments = agentChatMessage.parts
+    .filter(isExtendedFileUIPart)
+    .map(getAgentChatFilePartFieldFilesValue);
   const messageText =
     agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (
@@ -212,21 +203,11 @@ export const AiChatMessage = ({
           ) : (
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
-          {isNonEmptyArray(gridImages) && (
-            <StyledFilesContainer>
-              <ChatMessageImageGrid files={gridImages} />
-            </StyledFilesContainer>
-          )}
-          {isNonEmptyArray(standaloneAttachments) && (
-            <StyledFilesContainer>
-              {standaloneAttachments.map((attachment) => (
-                // TODO: Refactor AgentChat and Message component lib
-                <ChatThreadMessageAttachment
-                  key={attachment.fileId}
-                  file={attachment}
-                />
-              ))}
-            </StyledFilesContainer>
+          {isNonEmptyArray(attachments) && (
+            <ChatMessageAttachments
+              files={attachments}
+              isRightAligned={isRightAligned}
+            />
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
         </StyledMessageContainer>

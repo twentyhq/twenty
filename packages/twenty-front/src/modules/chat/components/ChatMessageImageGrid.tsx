@@ -2,8 +2,10 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ChatMessageImageGridTile } from '@/chat/components/ChatMessageImageGridTile';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useOpenFilePreview } from '@/ui/field/display/hooks/useOpenFilePreview';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const CHAT_MESSAGE_IMAGE_GRID_TILE_MAX_SIZE = '140px';
 const CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT = 4;
@@ -21,9 +23,15 @@ type ChatMessageImageGridProps = {
 };
 
 export const ChatMessageImageGrid = ({ files }: ChatMessageImageGridProps) => {
-  const { openFilePreview } = useOpenFilePreview();
+  const { openFilePreviewGallery } = useOpenFilePreview();
+  const isAttachmentPreviewEnabled = useAtomStateValue(
+    isAttachmentPreviewEnabledState,
+  );
 
-  const visibleFiles = files.slice(0, CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT);
+  // without the preview there is no way to browse hidden images, so show them all
+  const visibleFiles = isAttachmentPreviewEnabled
+    ? files.slice(0, CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT)
+    : files;
   const lastVisibleIndex = visibleFiles.length - 1;
   const hasHiddenImages = files.length > visibleFiles.length;
   const columnCount =
@@ -40,7 +48,7 @@ export const ChatMessageImageGrid = ({ files }: ChatMessageImageGridProps) => {
               ? files.length - lastVisibleIndex
               : undefined
           }
-          onClick={() => openFilePreview(file, files)}
+          onClick={() => openFilePreviewGallery({ file, galleryFiles: files })}
         />
       ))}
     </StyledGrid>
