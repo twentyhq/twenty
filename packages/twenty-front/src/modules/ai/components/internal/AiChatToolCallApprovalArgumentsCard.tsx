@@ -10,7 +10,9 @@ import { AiChatToolCallApprovalArgumentsEditor } from '@/ai/components/internal/
 import { AiChatToolCallApprovalCardLayout } from '@/ai/components/internal/AiChatToolCallApprovalCardLayout';
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
+import { AiChatToolCallApprovalToolFrontComponent } from '@/ai/components/internal/AiChatToolCallApprovalToolFrontComponent';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
+import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -32,6 +34,10 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   > | null>(proposal.arguments);
 
   const { template, objectNameSingular, recordId } = proposal;
+
+  const toolFrontComponentId = useFrontComponentIdByToolName().get(
+    proposal.toolName,
+  );
 
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
     setToolArguments((previousArguments) => ({
@@ -99,11 +105,28 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           onChange={handleRecordFieldChange}
         />
       )}
-      {template === 'generic' && (
+      {template === 'generic' && !isDefined(toolFrontComponentId) && (
         <AiChatToolCallApprovalArgumentsEditor
           defaultArguments={proposal.arguments}
           readonly={isAnswering}
           onChange={setToolArguments}
+        />
+      )}
+      {template === 'generic' && isDefined(toolFrontComponentId) && (
+        <AiChatToolCallApprovalToolFrontComponent
+          frontComponentId={toolFrontComponentId}
+          toolCallId={toolCallId}
+          toolName={proposal.toolName}
+          toolArguments={toolArguments ?? proposal.arguments}
+          isAnswering={isAnswering}
+          onToolArgumentsChange={setToolArguments}
+          unavailableFallback={
+            <AiChatToolCallApprovalArgumentsEditor
+              defaultArguments={proposal.arguments}
+              readonly={isAnswering}
+              onChange={setToolArguments}
+            />
+          }
         />
       )}
     </AiChatToolCallApprovalCardLayout>

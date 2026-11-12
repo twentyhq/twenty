@@ -35,6 +35,7 @@ type FrontComponentRendererProps = {
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
   shouldPreventPageZoom?: boolean;
@@ -52,6 +53,7 @@ type FrontComponentRendererContentProps = {
   objectNameSingular?: string;
   timelineActivityId?: string;
   toolCall?: FrontComponentToolCall;
+  onToolCallArgumentsChange?: (toolArguments: Record<string, unknown>) => void;
   loadingFallback?: ReactNode;
   unavailableFallback?: ReactNode;
   shouldPreventPageZoom?: boolean;
@@ -65,6 +67,7 @@ export const FrontComponentRenderer = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   loadingFallback,
   unavailableFallback,
   shouldPreventPageZoom,
@@ -96,6 +99,7 @@ export const FrontComponentRenderer = ({
           objectNameSingular={objectNameSingular}
           timelineActivityId={timelineActivityId}
           toolCall={toolCall}
+          onToolCallArgumentsChange={onToolCallArgumentsChange}
           loadingFallback={loadingFallback}
           unavailableFallback={unavailableFallback}
           shouldPreventPageZoom={shouldPreventPageZoom}
@@ -113,6 +117,7 @@ const FrontComponentRendererContent = ({
   objectNameSingular,
   timelineActivityId,
   toolCall,
+  onToolCallArgumentsChange,
   loadingFallback,
   unavailableFallback,
   shouldPreventPageZoom,
@@ -142,6 +147,7 @@ const FrontComponentRendererContent = ({
     objectNameSingular,
     timelineActivityId,
     toolCall,
+    onToolCallArgumentsChange,
     colorScheme,
   });
 

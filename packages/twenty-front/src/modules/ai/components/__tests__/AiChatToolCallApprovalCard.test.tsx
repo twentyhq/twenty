@@ -56,6 +56,37 @@ jest.mock('@/ai/components/AiChatFrontComponentPreviewContent', () => ({
   ),
 }));
 
+const mockFrontComponentIdByToolName = jest.fn(
+  (): Map<string, string> => new Map(),
+);
+jest.mock('@/ai/hooks/useFrontComponentIdByToolName', () => ({
+  useFrontComponentIdByToolName: () => mockFrontComponentIdByToolName(),
+}));
+
+type ToolFrontComponentStubProps = {
+  toolArguments: Record<string, unknown>;
+  onToolArgumentsChange: (toolArguments: Record<string, unknown>) => void;
+};
+
+// the app's component runs in a sandboxed worker, so a stub plays its part
+jest.mock(
+  '@/ai/components/internal/AiChatToolCallApprovalToolFrontComponent',
+  () => ({
+    AiChatToolCallApprovalToolFrontComponent: ({
+      toolArguments,
+      onToolArgumentsChange,
+    }: ToolFrontComponentStubProps) => (
+      <button
+        onClick={() =>
+          onToolArgumentsChange({ ...toolArguments, decision: 'DECLINE' })
+        }
+      >
+        Decline instead
+      </button>
+    ),
+  }),
+);
+
 const mockUsePreview = jest.fn();
 jest.mock('@/ai/hooks/useAiChatFrontComponentPreview', () => ({
   useAiChatFrontComponentPreview: (draftId: string) => mockUsePreview(draftId),
@@ -100,6 +131,41 @@ describe('AiChatToolCallApprovalCard', () => {
       .mockReset()
       .mockReturnValue({ preview: { isCurrent: true }, isRendered: true });
     mockIsFeatureEnabled.mockReset().mockReturnValue(true);
+    mockFrontComponentIdByToolName.mockReset().mockReturnValue(new Map());
+  });
+
+  it("shows the tool's front component instead of the raw arguments and approves what it sets", async () => {
+    const user = userEvent.setup();
+    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    mockFrontComponentIdByToolName.mockReturnValue(
+      new Map([['app_tool_decide_cal_booking', 'front-component-1']]),
+    );
+
+    renderCard({
+      proposal: {
+        toolName: 'app_tool_decide_cal_booking',
+        toolLabel: 'tool-decide-cal-booking',
+        summary: 'Approve the meeting with Gregory',
+        arguments: { bookingId: 'booking-1', decision: 'APPROVE' },
+        template: 'generic',
+      },
+    });
+
+    expect(
+      screen.queryByRole('textbox', { name: 'Arguments' }),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Decline instead' }));
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: {
+          decision: 'approve',
+          arguments: { bookingId: 'booking-1', decision: 'DECLINE' },
+        },
+      }),
+    );
   });
 
   it('shows what the call does and which tool it runs', () => {
