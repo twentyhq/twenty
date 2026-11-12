@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { msg } from '@lingui/core/macro';
 import { Queue } from 'bullmq';
@@ -12,6 +13,8 @@ import {
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
 type JobOperationResult = {
@@ -20,10 +23,13 @@ type JobOperationResult = {
   error?: string;
 };
 
-// Bypasses the job memory limiter on purpose, so administrators can always retry or delete jobs
+// Retries bypass the job memory limiter on purpose, so administrators can always retry jobs
 @Injectable()
 export class AdminPanelQueueService {
-  constructor(private readonly redisClient: RedisClientService) {}
+  constructor(
+    private readonly redisClient: RedisClientService,
+    private readonly moduleRef: ModuleRef,
+  ) {}
 
   async getQueueJobs(
     queueName: MessageQueue,
@@ -202,54 +208,33 @@ export class AdminPanelQueueService {
     deletedCount: number;
     results: JobOperationResult[];
   }> {
-    const redis = this.redisClient.getQueueClient();
-    const queue = new Queue(queueName, {
-      connection: redis,
-      prefix: this.redisClient.getQueuePrefix(),
-    });
+    const messageQueueService = this.moduleRef.get<MessageQueueService>(
+      getQueueToken(queueName),
+      { strict: false },
+    );
+    const results: JobOperationResult[] = [];
 
-    try {
-      const results: JobOperationResult[] = [];
-      let deletedCount = 0;
+    for (const jobId of jobIds) {
+      try {
+        const isRemoved = await messageQueueService.removeJob(jobId);
 
-      for (const jobId of jobIds) {
-        const job = await queue.getJob(jobId);
-
-        if (!job) {
-          results.push({
-            jobId,
-            success: false,
-            error: 'Job not found',
-          });
-          continue;
-        }
-
-        try {
-          await job.remove();
-          deletedCount++;
-          results.push({
-            jobId,
-            success: true,
-          });
-        } catch (error) {
-          results.push({
-            jobId,
-            success: false,
-            error: error instanceof Error ? error.message : String(error),
-          });
-        }
+        results.push(
+          isRemoved
+            ? { jobId, success: true }
+            : { jobId, success: false, error: 'Job not found' },
+        );
+      } catch (error) {
+        results.push({
+          jobId,
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
-
-      return { deletedCount, results };
-    } catch (error) {
-      throw new InternalServerError(
-        `Failed to delete jobs in queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
-        {
-          userFriendlyMessage: msg`Failed to delete jobs. Please try again later.`,
-        },
-      );
-    } finally {
-      await queue.close();
     }
+
+    return {
+      deletedCount: results.filter(({ success }) => success).length,
+      results,
+    };
   }
 }

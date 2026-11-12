@@ -13,6 +13,6 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   // of creating a new one (used by the UI's "Reconnect" action).
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
-  codeVerifier: string | null;
+  flowSecretId: string | null;
   iat?: number;
 };

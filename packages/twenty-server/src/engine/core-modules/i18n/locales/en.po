@@ -2955,6 +2955,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chats tied to the opportunity"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Choose an active tab and a widget position matching its layout mode."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -5381,11 +5386,6 @@ msgstr "Failed to create record."
 msgid "Failed to delete file {fileId}"
 msgstr "Failed to delete file {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Failed to delete jobs. Please try again later."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6157,6 +6157,11 @@ msgstr "frontComponentId must not be set when engineComponentKey is TRIGGER_WORK
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Frontend component not found."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -14860,6 +14865,11 @@ msgstr "This file upload has already been finalized."
 msgid "This form no longer waits for an answer."
 msgstr "This form no longer waits for an answer."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "This frontend component is not available on this page layout."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -17221,6 +17231,11 @@ msgstr "Who receives the access"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Why the access was granted"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Widget configuration is required."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
