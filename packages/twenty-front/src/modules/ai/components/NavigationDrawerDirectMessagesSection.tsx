@@ -1,16 +1,14 @@
 import { NavigationDrawerDirectMessageItem } from '@/ai/components/NavigationDrawerDirectMessageItem';
 import { AI_CHAT_INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesCollapsedMaxCount';
 import { AI_CHAT_INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesExpandedMaxCount';
-import { DIRECT_MESSAGE_MEMBER_PICKER_DROPDOWN_ID } from '@/ai/constants/DirectMessageMemberPickerDropdownId';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 
@@ -31,7 +29,6 @@ export const NavigationDrawerDirectMessagesSection = ({
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const [isShowingMore, setIsShowingMore] = useState(false);
-  const { openDropdown } = useOpenDropdown();
 
   const collapsedDirectMessages = getVisibleDirectMessageSidebarItems({
     directMessages,
@@ -71,21 +68,6 @@ export const NavigationDrawerDirectMessagesSection = ({
           variant="tertiary"
           aria-expanded={isShowingMore}
           onClick={() => setIsShowingMore(!isShowingMore)}
-          triggerEvent="CLICK"
-          preventCollapseOnMobile
-        />
-      )}
-      {isNavigationDrawerContentExpanded && (
-        <NavigationDrawerItem
-          label={t`Add direct message`}
-          Icon={IconPlus}
-          variant="tertiary"
-          onClick={() =>
-            openDropdown({
-              dropdownComponentInstanceIdFromProps:
-                DIRECT_MESSAGE_MEMBER_PICKER_DROPDOWN_ID,
-            })
-          }
           triggerEvent="CLICK"
           preventCollapseOnMobile
         />
