@@ -368,10 +368,13 @@ describe('useRefreshAgentChatThreads', () => {
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
 
-  const applyLiveUpdate = (
-    store: ReturnType<typeof createStore>,
-    thread: Pick<AgentChatThreadRecord, 'id' | 'title'>,
-  ) => {
+  const applyLiveUpdate = ({
+    store,
+    thread,
+  }: {
+    store: ReturnType<typeof createStore>;
+    thread: Pick<AgentChatThreadRecord, 'id' | 'title'>;
+  }) => {
     store.set(recordStoreFamilyState.atomFamily(thread.id), (storedThread) => ({
       __typename: 'AgentChatThread',
       ...storedThread,
@@ -436,7 +439,10 @@ describe('useRefreshAgentChatThreads', () => {
     const refreshPromise = result.current.refreshAgentChatThreads();
 
     act(() => {
-      applyLiveUpdate(store, { id: 'thread-1', title: 'Renamed meanwhile' });
+      applyLiveUpdate({
+        store,
+        thread: { id: 'thread-1', title: 'Renamed meanwhile' },
+      });
     });
 
     await act(async () => {
@@ -586,7 +592,10 @@ describe('useRefreshAgentChatThreads', () => {
     const loadPromise = result.current.loadAgentChatThread('old-thread');
 
     act(() => {
-      applyLiveUpdate(store, buildThread('old-thread', 'Renamed meanwhile'));
+      applyLiveUpdate({
+        store,
+        thread: buildThread('old-thread', 'Renamed meanwhile'),
+      });
     });
 
     await act(async () => {

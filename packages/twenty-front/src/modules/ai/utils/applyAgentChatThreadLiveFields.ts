@@ -13,14 +13,9 @@ export const applyAgentChatThreadLiveFields = ({
 }): AgentChatThreadRecord => ({
   ...loadedThread,
   ...Object.fromEntries(
-    Object.entries(fieldUpdateCounts)
-      .filter(
-        ([fieldName, fieldUpdateCount]) =>
-          fieldUpdateCount > updateCountBeforeLoad && fieldName in storedThread,
-      )
-      .map(([fieldName]) => [
-        fieldName,
-        storedThread[fieldName as keyof AgentChatThreadRecord],
-      ]),
+    Object.entries(storedThread).filter(
+      ([fieldName]) =>
+        (fieldUpdateCounts[fieldName] ?? 0) > updateCountBeforeLoad,
+    ),
   ),
 });

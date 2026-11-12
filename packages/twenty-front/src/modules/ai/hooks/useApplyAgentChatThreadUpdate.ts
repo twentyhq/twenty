@@ -41,7 +41,7 @@ export const useApplyAgentChatThreadUpdate = () => {
     [store, upsertRecordsInStore],
   );
 
-  const listAgentChatThread = useCallback(
+  const prependAgentChatThreadToList = useCallback(
     (threadId: string) => {
       const agentChatThreadList = store.get(agentChatThreadListState.atom);
 
@@ -63,9 +63,9 @@ export const useApplyAgentChatThreadUpdate = () => {
   const addAgentChatThread = useCallback(
     (thread: AgentChatThreadUpdate) => {
       applyAgentChatThreadUpdate(thread);
-      listAgentChatThread(thread.id);
+      prependAgentChatThreadToList(thread.id);
     },
-    [applyAgentChatThreadUpdate, listAgentChatThread],
+    [applyAgentChatThreadUpdate, prependAgentChatThreadToList],
   );
 
   const addLoadedAgentChatThread = useCallback(
@@ -73,9 +73,9 @@ export const useApplyAgentChatThreadUpdate = () => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
       });
-      listAgentChatThread(thread.id);
+      prependAgentChatThreadToList(thread.id);
     },
-    [listAgentChatThread, upsertRecordsInStore],
+    [prependAgentChatThreadToList, upsertRecordsInStore],
   );
 
   return {
