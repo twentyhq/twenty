@@ -66,6 +66,14 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   const isFieldAllowed = (fieldMetadataId: string) => {
     const fieldPermission = getFieldPermission(fieldMetadataId);
 
+    // The server always lets the label identifier be read, whatever is stored for it
+    if (
+      mode === 'read' &&
+      objectMetadataItem.labelIdentifierFieldMetadataId === fieldMetadataId
+    ) {
+      return true;
+    }
+
     if (fieldPermission?.canReadFieldValue === false) {
       return false;
     }
