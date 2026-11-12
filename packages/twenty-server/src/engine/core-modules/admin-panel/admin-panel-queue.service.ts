@@ -23,7 +23,7 @@ type JobOperationResult = {
   error?: string;
 };
 
-// Bypasses the job memory limiter on purpose, so administrators can always retry or delete jobs
+// Retries bypass the job memory limiter on purpose, so administrators can always retry jobs
 @Injectable()
 export class AdminPanelQueueService {
   constructor(

@@ -517,6 +517,9 @@ export const createMemoryHarness = async ({
     lockJob: (jobId: string) => {
       mockBullMQ.lockedJobIds.add(jobId);
     },
+    markFinished: async (jobId: string) => {
+      await redis.hset(buildJobKey(jobId), 'finishedOn', Date.now());
+    },
     onBeforeRemove: (beforeRemove: () => Promise<void>) => {
       mockBullMQ.beforeRemove = beforeRemove;
     },

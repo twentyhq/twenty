@@ -247,6 +247,7 @@ export class JobMemoryLimiter {
       queueName,
       groupKeys,
       script: JOB_MEMORY_RESTORE_SCRIPT,
+      leadingKeys: [this.options.getJobKey({ queueName, jobId })],
       args: [this.buildMember({ queueName, jobId }), sizeBytes],
       action: `restore the job memory of job ${jobId}`,
     });
@@ -420,12 +421,14 @@ export class JobMemoryLimiter {
     queueName,
     groupKeys,
     script,
+    leadingKeys = [],
     args,
     action,
   }: {
     queueName: MessageQueue;
     groupKeys: string[];
     script: string;
+    leadingKeys?: string[];
     args: (string | number)[];
     action: string;
   }): Promise<void> {
@@ -439,7 +442,10 @@ export class JobMemoryLimiter {
       await runRedisScript({
         client: await this.options.getClient(queueName),
         script,
-        keys: chargedGroupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
+        keys: [
+          ...leadingKeys,
+          ...chargedGroupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
+        ],
         args,
       });
     } catch (error) {

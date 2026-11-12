@@ -1088,8 +1088,7 @@ export class BullMQDriver
       ? { queueName, jobId, groupKeys: memoryGroupKeys }
       : undefined;
 
-    // Released while the job still exists, so a re-enqueue of its id is deduplicated
-    // instead of being admitted on this reservation
+    // Released while the job exists, so a re-enqueue of its id is deduplicated, not admitted on this charge
     if (isDefined(chargedJob)) {
       await this.jobMemoryLimiter.release(chargedJob);
     }

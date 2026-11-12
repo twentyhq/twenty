@@ -764,6 +764,20 @@ describe('BullMQDriver job memory scenarios', () => {
       );
     });
 
+    it('a locked job that finishes during the deletion is not charged back', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+      harness.lockJob('deleted-id');
+      harness.onBeforeRemove(() => harness.markFinished('deleted-id'));
+
+      await expect(harness.removeJob('deleted-id')).rejects.toThrow(
+        'Job deleted-id is locked',
+      );
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+
     it('an unknown job is reported as not removed', async () => {
       const harness = await createMemoryHarness();
 
