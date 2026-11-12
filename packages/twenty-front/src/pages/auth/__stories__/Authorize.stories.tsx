@@ -136,7 +136,9 @@ export const VerifiedClient: Story = {
     await canvas.findByText('Connect Twenty CLI to your account', undefined, {
       timeout: 5000,
     });
-    await canvas.findByText('Verified by Twenty as the official Twenty CLI');
+    await canvas.findByText(
+      'Registered with Twenty as the official Twenty CLI. Only continue if you started this connection from Twenty CLI.',
+    );
   },
 };
 
@@ -168,7 +170,7 @@ export const UnverifiedClientBorrowingAVerifiedName: Story = {
       'This app calls itself Twenty CLI, but Twenty could not confirm it is. Only continue if you started this connection from Twenty CLI.',
     );
     expect(
-      canvas.queryByText('Verified by Twenty as the official Twenty CLI'),
+      canvas.queryByText(/Registered with Twenty as the official/),
     ).not.toBeInTheDocument();
   },
 };

@@ -4,7 +4,6 @@ import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-module
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
-// The identifier alone is not proof: only the row the server seeds for itself has no owner, creator or secret
 export const isVerifiedOAuthClientRegistration = ({
   universalIdentifier,
   sourceType,

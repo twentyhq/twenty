@@ -1,17 +1,14 @@
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
 import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-const StyledVerifiedNotice = styled.p`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
+const StyledVerifiedNotice = styled.div`
+  align-items: flex-start;
   display: flex;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  margin: 0;
   padding-left: ${themeCssVariables.spacing[1]};
 `;
 
@@ -43,7 +40,12 @@ export const AuthorizeClientIdentityNotice = ({
         <StyledVerifiedIcon>
           <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
         </StyledVerifiedIcon>
-        <Trans>Verified by Twenty as the official {appName}</Trans>
+        <Text size="sm" color="secondary">
+          <Trans>
+            Registered with Twenty as the official {appName}. Only continue if
+            you started this connection from {appName}.
+          </Trans>
+        </Text>
       </StyledVerifiedNotice>
     );
   }
