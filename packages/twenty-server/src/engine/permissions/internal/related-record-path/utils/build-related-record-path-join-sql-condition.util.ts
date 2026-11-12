@@ -18,13 +18,13 @@ export type BuildEntrySQLCondition = (args: {
   tableAlias: string;
 }) => SQLCondition | boolean;
 
-export const buildRelatedRecordPathsSQLCondition = ({
+export const buildRelatedRecordPathJoinSQLCondition = ({
   workspaceId,
   flatObjectMetadata,
   tableAlias,
   metadataMaps,
   buildEntrySQLCondition,
-  canRelatedRecordPathsReachObject,
+  canRelatedRecordPathExtendAccessToObject,
   isRecordPrivacyApplicable,
   isUncorrelated = false,
 }: {
@@ -33,7 +33,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
   tableAlias: string;
   metadataMaps: PermissionsMetadataMaps;
   buildEntrySQLCondition: BuildEntrySQLCondition;
-  canRelatedRecordPathsReachObject: (
+  canRelatedRecordPathExtendAccessToObject: (
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
   isRecordPrivacyApplicable: (
@@ -123,7 +123,7 @@ export const buildRelatedRecordPathsSQLCondition = ({
     if (
       entrySQLCondition === true ||
       visitedObjectMetadataIds.has(flatObjectMetadata.id) ||
-      !canRelatedRecordPathsReachObject(flatObjectMetadata)
+      !canRelatedRecordPathExtendAccessToObject(flatObjectMetadata)
     ) {
       return entrySQLCondition;
     }

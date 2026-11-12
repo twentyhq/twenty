@@ -5,8 +5,8 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group.type';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { findRelatedRecordPathsGrantingOperation } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-granting-operation.util';
-import { canRelatedRecordPathsReachObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-paths-reach-object.util';
+import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
+import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRowLevelPermissionRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-row-level-permission-relation-hop-enabled.util';
 import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/internal/rls/types/row-level-permission-workspace-member.type';
@@ -29,14 +29,14 @@ export const buildCallerRelatedRecordPathAccessGroupsOrThrow = ({
     flatObjectMetadata.id,
   ];
 
-  return findRelatedRecordPathsGrantingOperation(request).flatMap(
+  return findRelatedRecordPathsExtendingAccess(request).flatMap(
     ({ isInherent, sourceFlatObjectMetadata }) => {
       const sourceRequest = {
         ...request,
         flatObjectMetadata: sourceFlatObjectMetadata,
       };
 
-      if (!canRelatedRecordPathsReachObject(sourceRequest)) {
+      if (!canRelatedRecordPathExtendAccessToObject(sourceRequest)) {
         return [];
       }
 
