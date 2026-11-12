@@ -327,28 +327,6 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       });
     });
 
-    it('leaves an existing rule inactive when a field it reads only as previous left the workspace', () => {
-      const maps = buildMaps();
-      const previousRule = { ...RULE, expression: 'previous.employees > 0' };
-
-      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
-        undefined;
-      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
-        buildExistingRule({
-          expression: previousRule.expression,
-          bindings: { 'previous.employees': 'employees' },
-        });
-
-      addValidationRuleManifestsToFlatEntityMapsOrThrow({
-        validationRules: [previousRule],
-        ownerFlatApplication: OWNER_APPLICATION,
-        inferDeletionFromMissingEntities: true,
-        ...maps,
-        now: NOW,
-      });
-      expect(syncedRule(maps)).toMatchObject({ isActive: false });
-    });
-
     it('fails with a clear error when the application removed the field itself', () => {
       const maps = buildMaps();
 

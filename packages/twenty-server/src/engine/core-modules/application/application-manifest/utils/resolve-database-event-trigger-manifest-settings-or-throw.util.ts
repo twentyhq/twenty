@@ -11,16 +11,17 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { computeDatabaseEventWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-database-event-watched-field-name.util';
 import { type DatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-lookup.type';
+import { computeWorkflowWatchedFieldName } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-watched-field-name.util';
 import { findDatabaseEventTriggerManifestField } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-field.util';
 import { findDatabaseEventTriggerManifestObjectNameSingular } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-object-name-singular.util';
 import { findDatabaseEventTriggerManifestObjectUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/find-database-event-trigger-manifest-object-universal-identifier.util';
-import { listDatabaseEventTriggerManifestConditionFields } from 'src/engine/core-modules/application/application-manifest/utils/list-database-event-trigger-manifest-condition-fields.util';
+import { listDatabaseEventTriggerManifestObjectFields } from 'src/engine/core-modules/application/application-manifest/utils/list-database-event-trigger-manifest-object-fields.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { toDatabaseEventTriggerConditionField } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
 
 const ANY_OBJECT = '*';
 
@@ -58,12 +59,15 @@ const compileConditionOrThrow = ({
     });
   }
 
+  const fields = listDatabaseEventTriggerManifestObjectFields({
+    lookup,
+    objectUniversalIdentifier,
+  })
+    .map(toDatabaseEventTriggerConditionField)
+    .filter(isDefined);
   const compilation = compileValidationRuleExpression({
     expression: condition,
-    fields: listDatabaseEventTriggerManifestConditionFields({
-      lookup,
-      objectUniversalIdentifier,
-    }),
+    fields,
   });
 
   return compilation.isValid
@@ -171,13 +175,13 @@ export const resolveDatabaseEventTriggerManifestSettingsOrThrow = ({
         });
       }
 
-      const watchedFieldName = computeDatabaseEventWatchedFieldName(field);
+      const watchedFieldName = computeWorkflowWatchedFieldName(field);
 
       return isDefined(watchedFieldName)
         ? watchedFieldName
         : throwInvalidTrigger({
             subject,
-            reason: `${field.name} cannot be watched: only a relation to a single record, or one target of a morph relation, changes on update`,
+            reason: `${field.name} cannot be watched, only relations to a single record change on update`,
           });
     },
   );

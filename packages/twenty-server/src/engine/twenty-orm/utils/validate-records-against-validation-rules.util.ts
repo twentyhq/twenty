@@ -2,10 +2,7 @@
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
-import {
-  getValidationRulePreviousValueFieldPath,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -73,14 +70,22 @@ const findLiveRelatedRecords = async <TEntity extends ObjectLiteral>({
 const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
   repository,
   tableShape,
-  bindingPaths,
-  records,
+  validationRules,
+  rawWrittenRecords,
 }: {
   repository: WorkspaceRepository<TEntity>;
   tableShape: WorkspaceTableShape;
-  bindingPaths: string[];
-  records: ObjectRecord[];
+  validationRules: FlatValidationRule[];
+  rawWrittenRecords: ObjectRecord[];
 }): Promise<ObjectRecord[]> => {
+  const bindingPaths = [
+    ...new Set(
+      validationRules.flatMap((validationRule) =>
+        Object.keys(validationRule.bindings),
+      ),
+    ),
+  ];
+
   const referencedRelationShapes = bindingPaths
     .map((bindingPath) => tableShape.relationShapeByFieldName[bindingPath])
     .filter(isDefined)
@@ -89,6 +94,8 @@ const attachRelatedRecords = async <TEntity extends ObjectLiteral>({
         relationShape.relationType === RelationType.MANY_TO_ONE &&
         isNonEmptyString(relationShape.joinColumnName),
     );
+
+  const records = repository.formatResult<ObjectRecord[]>(rawWrittenRecords);
 
   for (const relationShape of referencedRelationShapes) {
     const joinColumnName = relationShape.joinColumnName ?? '';
@@ -155,18 +162,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     return;
   }
 
-  const bindingPaths = [
-    ...new Set(
-      validationRules.flatMap((validationRule) =>
-        Object.keys(validationRule.bindings),
-      ),
-    ),
-  ];
-
-  const previousBindingPaths = bindingPaths
-    .map(getValidationRulePreviousValueFieldPath)
-    .filter(isDefined);
-  const recordBeforeWriteById = new Map(
+  const previousRecordById = new Map(
     recordsBeforeWrite
       .filter((recordBeforeWrite) => isNonEmptyString(recordBeforeWrite.id))
       .map((recordBeforeWrite) => [
@@ -217,37 +213,21 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
       VALIDATION_RULE_MAX_REPORTED_VIOLATIONS;
     chunkStart += VALIDATION_RULE_RECORD_CHUNK_SIZE
   ) {
-    const chunkRecordIds = recordIds.slice(
-      chunkStart,
-      chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
-    );
     const rawWrittenRecords =
       await repository.findRecordSnapshotsBypassingPermissions({
         fieldNames,
-        ids: chunkRecordIds,
+        ids: recordIds.slice(
+          chunkStart,
+          chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
+        ),
       });
-    const previousRecords = await attachRelatedRecords({
-      repository,
-      tableShape,
-      bindingPaths: previousBindingPaths,
-      records: chunkRecordIds
-        .map((recordId) => recordBeforeWriteById.get(recordId))
-        .filter(isDefined)
-        .map((recordBeforeWrite) => ({ ...recordBeforeWrite })),
-    });
-    const previousRecordById = new Map(
-      previousRecords.map((previousRecord) => [
-        String(previousRecord.id),
-        previousRecord,
-      ]),
-    );
 
     const chunkResult = computeRecordValidationRuleViolations({
       records: await attachRelatedRecords({
         repository,
         tableShape,
-        bindingPaths,
-        records: repository.formatResult<ObjectRecord[]>(rawWrittenRecords),
+        validationRules,
+        rawWrittenRecords,
       }),
       validationRules: validationRulesWithActiveErrorField,
       fields,

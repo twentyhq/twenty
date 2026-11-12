@@ -1,6 +1,6 @@
 import { isDefined, isValidationRuleReservedName } from 'twenty-shared/utils';
 
-import { ValidationRuleExpressionText } from '@/validation-rules/components/ValidationRuleExpressionText';
+import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
 import { SettingsValidationRuleFieldChip } from '@/validation-rules/components/SettingsValidationRuleFieldChip';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { computeValidationRuleEditorSegments } from '@/validation-rules/utils/computeValidationRuleEditorSegments';
@@ -33,7 +33,7 @@ export const SettingsValidationRuleExampleExpression = ({
       {segments.map((segment, index) => {
         if (segment.type === 'text') {
           return (
-            <ValidationRuleExpressionText
+            <SettingsValidationRuleExpressionText
               key={index}
               expression={segment.text}
             />
@@ -50,7 +50,10 @@ export const SettingsValidationRuleExampleExpression = ({
             iconName={editorField.iconName}
           />
         ) : (
-          <ValidationRuleExpressionText key={index} expression={segment.path} />
+          <SettingsValidationRuleExpressionText
+            key={index}
+            expression={segment.path}
+          />
         );
       })}
     </>

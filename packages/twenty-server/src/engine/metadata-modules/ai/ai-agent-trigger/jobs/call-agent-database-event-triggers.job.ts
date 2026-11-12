@@ -20,7 +20,8 @@ import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata
 import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
+import { buildDatabaseEventTriggerConditionFields } from 'src/engine/workspace-event-emitter/utils/build-database-event-trigger-condition-fields.util';
+import { filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -32,7 +33,6 @@ export class CallAgentDatabaseEventTriggersJob {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
-    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
   ) {}
 
   @Process(CallAgentDatabaseEventTriggersJob.name)
@@ -43,12 +43,17 @@ export class CallAgentDatabaseEventTriggersJob {
       objectMetadata,
     } = workspaceEventBatch;
 
-    const { flatAgentMaps, flatApplicationMaps, flatRoleTargetByAgentIdMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatAgentMaps',
-        'flatApplicationMaps',
-        'flatRoleTargetByAgentIdMaps',
-      ]);
+    const {
+      flatAgentMaps,
+      flatApplicationMaps,
+      flatRoleTargetByAgentIdMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatAgentMaps',
+      'flatApplicationMaps',
+      'flatRoleTargetByAgentIdMaps',
+      'flatFieldMetadataMaps',
+    ]);
 
     const matchingAgentTriggers = findAgentDatabaseEventTriggersMatchingEvent({
       flatAgentMaps,
@@ -58,6 +63,11 @@ export class CallAgentDatabaseEventTriggersJob {
     if (matchingAgentTriggers.length === 0) {
       return;
     }
+
+    const conditionFields = buildDatabaseEventTriggerConditionFields({
+      flatObjectMetadata: objectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     for (const { flatAgent, trigger } of matchingAgentTriggers) {
       const application = flatApplicationMaps.byId[flatAgent.applicationId];
@@ -88,16 +98,12 @@ export class CallAgentDatabaseEventTriggersJob {
         });
 
       const { events: eventsToRunOn, conditionErrorMessage } =
-        await this.databaseEventTriggerConditionService.filterMatchingEvents({
-          workspaceId,
-          objectMetadata,
+        filterEventsMatchingDatabaseEventTrigger({
           events: readableEvents,
           eventName,
           watchedFields: trigger.settings.updatedFields,
           condition: trigger.settings.condition,
-          conditionBindings: trigger.settings.conditionBindings,
-          application,
-          agentId: flatAgent.id,
+          fields: conditionFields,
         });
 
       if (isDefined(conditionErrorMessage)) {

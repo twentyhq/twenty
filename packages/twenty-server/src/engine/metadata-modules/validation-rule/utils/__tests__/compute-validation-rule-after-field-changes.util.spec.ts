@@ -99,31 +99,6 @@ describe('computeValidationRuleAfterFieldChanges', () => {
     });
   });
 
-  it('should rename a field read on the previous related record', () => {
-    expect(
-      computeValidationRuleAfterFieldChanges({
-        validationRule: {
-          ...COMPANY_RULE,
-          expression: 'previous.company.employees > company.employees',
-          bindings: {
-            ...COMPANY_RULE.bindings,
-            'previous.company': COMPANY_UNIVERSAL_IDENTIFIER,
-            'previous.company.employees': EMPLOYEES_UNIVERSAL_IDENTIFIER,
-          },
-        },
-        fieldChanges: [rename(EMPLOYEES_UNIVERSAL_IDENTIFIER, 'headcount')],
-      }),
-    ).toMatchObject({
-      expression: 'previous.company.headcount > company.headcount',
-      bindings: {
-        company: COMPANY_UNIVERSAL_IDENTIFIER,
-        'company.headcount': EMPLOYEES_UNIVERSAL_IDENTIFIER,
-        'previous.company': COMPANY_UNIVERSAL_IDENTIFIER,
-        'previous.company.headcount': EMPLOYEES_UNIVERSAL_IDENTIFIER,
-      },
-    });
-  });
-
   it('should rename a field read through its previous value', () => {
     expect(
       computeValidationRuleAfterFieldChanges({

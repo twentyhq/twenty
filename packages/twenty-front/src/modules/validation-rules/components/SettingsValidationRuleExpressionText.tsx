@@ -16,15 +16,15 @@ const StyledToken = styled.span<{
   color: ${({ kind }) => VALIDATION_RULE_HIGHLIGHT_COLORS[kind]};
 `;
 
-type ValidationRuleExpressionTextProps = {
+type SettingsValidationRuleExpressionTextProps = {
   expression: string;
   className?: string;
 };
 
-export const ValidationRuleExpressionText = ({
+export const SettingsValidationRuleExpressionText = ({
   expression,
   className,
-}: ValidationRuleExpressionTextProps) => {
+}: SettingsValidationRuleExpressionTextProps) => {
   const highlights = computeValidationRuleExpressionHighlights(expression);
 
   const parts = highlights.reduce<{

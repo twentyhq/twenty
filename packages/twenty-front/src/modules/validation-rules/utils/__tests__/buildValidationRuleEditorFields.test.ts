@@ -80,36 +80,10 @@ describe('buildValidationRuleEditorFields', () => {
     ).toMatchObject({ parentLabel: 'Previous › Amount' });
   });
 
-  it('should offer the previous value of a relation and of its fields', () => {
-    expect(paths).toEqual(
-      expect.arrayContaining([
-        'previous.company',
-        'previous.company.employees',
-      ]),
+  it('should not offer previous values read through a relation', () => {
+    expect(paths.some((path) => path.startsWith('previous.company'))).toBe(
+      false,
     );
-  });
-
-  it('should offer each morph target as a relation to one record', () => {
-    const taskTarget = getMockObjectMetadataItemOrThrow('taskTarget');
-    const taskTargetPaths = buildValidationRuleEditorFields({
-      objectMetadataItem: taskTarget,
-      objectMetadataItems,
-    }).map(({ path }) => path);
-    const descriptors = buildValidationRuleFieldDescriptors({
-      objectMetadataItem: taskTarget,
-      objectMetadataItems,
-    });
-
-    expect(taskTargetPaths).toEqual(
-      expect.arrayContaining(['targetCompany', 'targetCompany.employees']),
-    );
-    expect(
-      taskTargetPaths.filter(
-        (path) =>
-          !resolveValidationRuleIdentifierPath({ path, fields: descriptors })
-            .isResolved,
-      ),
-    ).toEqual([]);
   });
 
   describe('when icons are empty', () => {

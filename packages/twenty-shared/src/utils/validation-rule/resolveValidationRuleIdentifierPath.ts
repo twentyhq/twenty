@@ -2,11 +2,11 @@ import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNow
 import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from '@/constants/ValidationRulePreviousVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
-import { isValidationRuleToOneRelationField } from '@/utils/validation-rule/isValidationRuleToOneRelationField';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type ValidationRuleIdentifierPathError = {
@@ -65,25 +65,84 @@ const buildNotAValueError = (
   errorParams: { path },
 });
 
-const isRelationField = (field: ValidationRuleFieldDescriptor) =>
-  field.type === FieldMetadataType.RELATION ||
-  field.type === FieldMetadataType.MORPH_RELATION;
-
-const resolveFieldPath = ({
+const resolvePreviousValuePath = ({
   path,
-  segments,
+  memberSegments,
   fields,
-  bindingPrefix,
 }: {
   path: string;
-  segments: string[];
+  memberSegments: string[];
   fields: ValidationRuleFieldDescriptor[];
-  bindingPrefix: string;
 }): ResolveValidationRuleIdentifierPathResult => {
-  const [rootSegment, ...memberSegments] = segments;
+  const [fieldSegment, ...subfieldSegments] = memberSegments;
+
+  if (!isDefined(fieldSegment)) {
+    return { isResolved: false, ...buildNotAValueError(path) };
+  }
+
+  const field = fields.find(
+    (candidateField) => candidateField.name === fieldSegment,
+  );
+
+  if (!isDefined(field)) {
+    return {
+      isResolved: false,
+      errorMessage: `Unknown field "${fieldSegment}"`,
+      errorCode: 'UNKNOWN_FIELD',
+      errorParams: { fieldName: fieldSegment },
+    };
+  }
+
+  if (
+    field.type === FieldMetadataType.RELATION ||
+    field.type === FieldMetadataType.MORPH_RELATION
+  ) {
+    return {
+      isResolved: false,
+      errorMessage: `"${path}" reads a relation, but previous values only cover this record's own fields`,
+      errorCode: 'PREVIOUS_VALUE_OF_RELATION',
+      errorParams: { path },
+    };
+  }
+
+  const subfieldError = resolveSubfieldSegments({
+    field,
+    subfieldSegments,
+    path,
+  });
+
+  return !isDefined(subfieldError)
+    ? {
+        isResolved: true,
+        bindings: {
+          [`${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${fieldSegment}`]:
+            field.universalIdentifier,
+        },
+      }
+    : { isResolved: false, ...subfieldError };
+};
+
+export const resolveValidationRuleIdentifierPath = ({
+  path,
+  fields,
+}: {
+  path: string;
+  fields: ValidationRuleFieldDescriptor[];
+}): ResolveValidationRuleIdentifierPathResult => {
+  const [rootSegment, ...memberSegments] = path.split('.');
 
   if (!isDefined(rootSegment)) {
     return { isResolved: false, ...buildNotAValueError(path) };
+  }
+
+  if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
+    return memberSegments.length === 0
+      ? { isResolved: true, bindings: {} }
+      : { isResolved: false, ...buildNotAValueError(path) };
+  }
+
+  if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
+    return resolvePreviousValuePath({ path, memberSegments, fields });
   }
 
   const rootField = fields.find((field) => field.name === rootSegment);
@@ -97,11 +156,11 @@ const resolveFieldPath = ({
     };
   }
 
-  const rootBinding = {
-    [`${bindingPrefix}${rootSegment}`]: rootField.universalIdentifier,
-  };
+  const isRelationField =
+    rootField.type === FieldMetadataType.RELATION ||
+    rootField.type === FieldMetadataType.MORPH_RELATION;
 
-  if (!isRelationField(rootField)) {
+  if (!isRelationField) {
     const subfieldError = resolveSubfieldSegments({
       field: rootField,
       subfieldSegments: memberSegments,
@@ -109,11 +168,18 @@ const resolveFieldPath = ({
     });
 
     return !isDefined(subfieldError)
-      ? { isResolved: true, bindings: rootBinding }
+      ? {
+          isResolved: true,
+          bindings: { [rootSegment]: rootField.universalIdentifier },
+        }
       : { isResolved: false, ...subfieldError };
   }
 
-  if (!isValidationRuleToOneRelationField(rootField)) {
+  if (
+    rootField.type === FieldMetadataType.MORPH_RELATION ||
+    rootField.relationType !== RelationType.MANY_TO_ONE ||
+    !isDefined(rootField.relationTargetFields)
+  ) {
     return {
       isResolved: false,
       errorMessage: `"${rootSegment}" is not a to-one relation`,
@@ -125,10 +191,13 @@ const resolveFieldPath = ({
   const [targetFieldSegment, ...targetSubfieldSegments] = memberSegments;
 
   if (!isDefined(targetFieldSegment)) {
-    return { isResolved: true, bindings: rootBinding };
+    return {
+      isResolved: true,
+      bindings: { [rootSegment]: rootField.universalIdentifier },
+    };
   }
 
-  const targetField = rootField.relationTargetFields?.find(
+  const targetField = rootField.relationTargetFields.find(
     (field) => field.name === targetFieldSegment,
   );
 
@@ -144,7 +213,10 @@ const resolveFieldPath = ({
     };
   }
 
-  if (isRelationField(targetField)) {
+  if (
+    targetField.type === FieldMetadataType.RELATION ||
+    targetField.type === FieldMetadataType.MORPH_RELATION
+  ) {
     return {
       isResolved: false,
       errorMessage: `"${path}" goes more than one relation deep`,
@@ -163,42 +235,10 @@ const resolveFieldPath = ({
     ? {
         isResolved: true,
         bindings: {
-          ...rootBinding,
-          [`${bindingPrefix}${rootSegment}.${targetFieldSegment}`]:
+          [rootSegment]: rootField.universalIdentifier,
+          [`${rootSegment}.${targetFieldSegment}`]:
             targetField.universalIdentifier,
         },
       }
     : { isResolved: false, ...subfieldError };
-};
-
-export const resolveValidationRuleIdentifierPath = ({
-  path,
-  fields,
-}: {
-  path: string;
-  fields: ValidationRuleFieldDescriptor[];
-}): ResolveValidationRuleIdentifierPathResult => {
-  const [rootSegment, ...memberSegments] = path.split('.');
-
-  if (rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME) {
-    return memberSegments.length === 0
-      ? { isResolved: true, bindings: {} }
-      : { isResolved: false, ...buildNotAValueError(path) };
-  }
-
-  if (rootSegment === VALIDATION_RULE_PREVIOUS_VARIABLE_NAME) {
-    return resolveFieldPath({
-      path,
-      segments: memberSegments,
-      fields,
-      bindingPrefix: `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.`,
-    });
-  }
-
-  return resolveFieldPath({
-    path,
-    segments: path.split('.'),
-    fields,
-    bindingPrefix: '',
-  });
 };

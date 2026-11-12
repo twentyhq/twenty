@@ -75,14 +75,7 @@ export const buildValidationRuleFieldDescriptors = (
 ): ValidationRuleFieldDescriptor[] =>
   findFlatFieldMetadatasOfObject(args).map((flatFieldMetadata) => {
     if (
-      !isFlatFieldMetadataOfType(
-        flatFieldMetadata,
-        FieldMetadataType.RELATION,
-      ) &&
-      !isFlatFieldMetadataOfType(
-        flatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
+      !isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
     ) {
       return toScalarFieldDescriptor(flatFieldMetadata);
     }

@@ -4,7 +4,6 @@ import { type DatabaseEventTriggerManifestField } from 'src/engine/core-modules/
 import { type DatabaseEventTriggerManifestLookup } from 'src/engine/core-modules/application/application-manifest/types/database-event-trigger-manifest-lookup.type';
 import { toDatabaseEventTriggerManifestField } from 'src/engine/core-modules/application/application-manifest/utils/to-database-event-trigger-manifest-field.util';
 
-// Dispatch compiles conditions against active fields only
 export const listDatabaseEventTriggerManifestObjectFields = ({
   lookup,
   objectUniversalIdentifier,
@@ -21,7 +20,6 @@ export const listDatabaseEventTriggerManifestObjectFields = ({
     for (const field of Object.values(maps.byUniversalIdentifier)) {
       if (
         isDefined(field) &&
-        field.isActive !== false &&
         field.objectMetadataUniversalIdentifier === objectUniversalIdentifier &&
         !fieldsByUniversalIdentifier.has(field.universalIdentifier)
       ) {

@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { type ValidationRuleManifest } from 'twenty-shared/application';
-import { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   RelationType,
@@ -158,7 +157,10 @@ const buildFieldDescriptors = ({
   (
     activeFieldsByObjectUniversalIdentifier.get(objectUniversalIdentifier) ?? []
   ).map((field) => {
-    if (!isMorphOrRelationUniversalFlatFieldMetadata(field)) {
+    if (
+      !isMorphOrRelationUniversalFlatFieldMetadata(field) ||
+      field.type !== FieldMetadataType.RELATION
+    ) {
       return toScalarFieldDescriptor(field);
     }
 
@@ -255,13 +257,9 @@ const findUnavailableField = ({
     return undefined;
   }
 
-  const boundPath = isDefined(relationFieldName)
-    ? `${relationFieldName}.${name}`
-    : name;
   const boundFieldUniversalIdentifier =
-    existingFlatValidationRule.bindings[boundPath] ??
     existingFlatValidationRule.bindings[
-      `${VALIDATION_RULE_PREVIOUS_VARIABLE_NAME}.${boundPath}`
+      isDefined(relationFieldName) ? `${relationFieldName}.${name}` : name
     ];
 
   if (!isDefined(boundFieldUniversalIdentifier)) {

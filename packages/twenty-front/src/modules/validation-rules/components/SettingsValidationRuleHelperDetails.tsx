@@ -33,7 +33,6 @@ const StyledHeader = styled.div`
 const StyledTitleRow = styled.div`
   align-items: center;
   display: flex;
-  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
 `;

@@ -44,6 +44,8 @@ export const getValidationRuleErrorMessage = ({
       return t`Unknown field "${fieldName}" on "${relationFieldName}"`;
     case 'RELATION_TOO_DEEP':
       return t`"${path}" goes more than one relation deep`;
+    case 'PREVIOUS_VALUE_OF_RELATION':
+      return t`"${path}" reads a relation, but previous values only cover this record's own fields`;
     case 'NON_BOOLEAN_RESULT':
       return t`Expression did not return true or false`;
     case 'INCOMPLETE_EXPRESSION':

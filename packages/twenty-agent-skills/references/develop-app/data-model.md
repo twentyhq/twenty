@@ -142,7 +142,7 @@ export default defineValidationRule({
 });
 ```
 
-To check a transition, read the value stored before the update with `previous('stage')` in the builder, or `previous.stage` in a string. On creation every previous value is empty. `previous('company.employees')` reads the record a relation pointed to before the update, as it is now. A morph relation reads each target as its own relation: `targetCompany.employees`.
+To check a transition, read the value stored before the update with `previous('stage')` in the builder, or `previous.stage` in a string. On creation every previous value is empty. `previous` reads the object's own fields and their composite subfields, not relations.
 
 ```ts
 const { eq, field, notEq, or, previous } = ruleExpression;
