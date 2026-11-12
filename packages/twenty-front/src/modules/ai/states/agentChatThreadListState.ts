@@ -8,10 +8,7 @@ export type AgentChatThreadFilterStatusPage = {
   endCursor: string | null;
 };
 
-export type AgentChatThreadList = {
-  threadIds: string[];
-  hasNextPage: boolean;
-  endCursor: string | null;
+export type AgentChatThreadList = AgentChatThreadFilterStatusPage & {
   filterStatusPages?: Partial<
     Record<AgentChatThreadFilterStatus, AgentChatThreadFilterStatusPage>
   >;
