@@ -1,12 +1,12 @@
 import {
   FieldMetadataType,
-  type RecordGqlOperationFilter,
   RelationType,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -694,11 +694,14 @@ describe('buildRecordFilterForRule with access group member values', () => {
         },
       });
 
-      expect(filter).not.toBeNull();
+      if (!isDefined(filter)) {
+        throw new Error('Expected a filter to be built');
+      }
+
       expect(
         isRecordMatchingFilter({
           record: { id: 'record-1', name, deletedAt: null },
-          filter: filter as RecordGqlOperationFilter,
+          filter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
         }),
