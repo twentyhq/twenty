@@ -3460,6 +3460,11 @@ msgstr "Tilkoblingsleverandør med navnet {0} finnes allerede for denne applikas
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Tilkoblingsleverandør med typen 'custom' må referere til en authorize- og en callback-logikkfunksjon"
 
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr ""
+
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth' is missing oauthConfig"
@@ -9753,6 +9758,11 @@ msgstr "OAuth-tilgang ble nektet."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth-tilkoblingsleverandør mangler sin oauth config-blokk"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr ""
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts

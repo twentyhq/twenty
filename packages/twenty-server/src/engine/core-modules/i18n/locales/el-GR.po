@@ -3460,6 +3460,11 @@ msgstr "Υπάρχει ήδη πάροχος σύνδεσης με το όνομ
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Ο πάροχος σύνδεσης με τύπο 'custom' πρέπει να αναφέρεται σε μια λογική συνάρτηση authorize και callback"
 
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr ""
+
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth' is missing oauthConfig"
@@ -9753,6 +9758,11 @@ msgstr "Η πρόσβαση OAuth απορρίφθηκε."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "Στον πάροχο σύνδεσης OAuth λείπει το μπλοκ ρυθμίσεων OAuth"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr ""
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
