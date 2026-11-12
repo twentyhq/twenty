@@ -1,3 +1,4 @@
+import { getRootPredicateGroupId } from '@/settings/roles/role/utils/getRootPredicateGroupId';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -19,29 +20,6 @@ export type RowLevelPermissionRulesToSave = {
   predicates: RowLevelPermissionPredicate[];
   predicateGroups: RowLevelPermissionPredicateGroup[];
   ruleGrants: RowLevelPermissionRuleGrant[];
-};
-
-const getRootPredicateGroupId = ({
-  predicateGroupId,
-  predicateGroupById,
-}: {
-  predicateGroupId: string;
-  predicateGroupById: Map<string, RowLevelPermissionPredicateGroup>;
-}) => {
-  const visitedPredicateGroupIds = new Set<string>();
-  let predicateGroup = predicateGroupById.get(predicateGroupId);
-
-  while (
-    isDefined(predicateGroup?.parentRowLevelPermissionPredicateGroupId) &&
-    !visitedPredicateGroupIds.has(predicateGroup.id)
-  ) {
-    visitedPredicateGroupIds.add(predicateGroup.id);
-    predicateGroup = predicateGroupById.get(
-      predicateGroup.parentRowLevelPermissionPredicateGroupId,
-    );
-  }
-
-  return predicateGroup?.id;
 };
 
 // A rule without any predicate would match every record, so its root group is not saved
