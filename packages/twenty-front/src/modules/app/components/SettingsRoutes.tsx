@@ -774,6 +774,14 @@ const SettingsRoleCreate = lazy(() =>
   ),
 );
 
+const SettingsRoleObjectLevel = lazy(() =>
+  import('~/pages/settings/members/roles/SettingsRoleObjectLevel').then(
+    (module) => ({
+      default: module.SettingsRoleObjectLevel,
+    }),
+  ),
+);
+
 const SettingsRoleEdit = lazy(() =>
   import('~/pages/settings/members/roles/SettingsRoleEdit').then((module) => ({
     default: module.SettingsRoleEdit,
@@ -1137,6 +1145,11 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.RoleDetail}
         element={<SettingsRoleEdit />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.RoleObjectLevel}
+        element={<SettingsRoleObjectLevel />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route

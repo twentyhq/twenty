@@ -37,7 +37,7 @@ export const getRowLevelPermissionRulesSaveError = (
     });
 
   if (hasRuleWithoutFilter) {
-    return t`Each rule needs at least one filter`;
+    return t`Each rule needs at least one condition`;
   }
 
   const hasFilterWithoutValue = predicates.some(
@@ -51,7 +51,7 @@ export const getRowLevelPermissionRulesSaveError = (
   );
 
   if (hasFilterWithoutValue) {
-    return t`A rule filter is missing its value`;
+    return t`A rule condition is missing its value`;
   }
 
   return undefined;

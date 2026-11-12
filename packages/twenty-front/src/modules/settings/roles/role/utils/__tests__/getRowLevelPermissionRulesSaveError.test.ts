@@ -49,7 +49,7 @@ describe('getRowLevelPermissionRulesSaveError', () => {
         rowLevelPermissionPredicateGroups: [rootGroup],
         rowLevelPermissionPredicates: [],
       }),
-    ).toBe('Each rule needs at least one filter');
+    ).toBe('Each rule needs at least one condition');
   });
 
   it('should refuse a filter without value', () => {
@@ -58,7 +58,7 @@ describe('getRowLevelPermissionRulesSaveError', () => {
         rowLevelPermissionPredicateGroups: [rootGroup],
         rowLevelPermissionPredicates: [buildPredicate({ value: null })],
       }),
-    ).toBe('A rule filter is missing its value');
+    ).toBe('A rule condition is missing its value');
   });
 
   it('should accept a complete rule', () => {

@@ -146,9 +146,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
               <CommandMenuButton
                 command={{
                   Icon: IconPlus,
-                  label: t`Add filter`,
-                  shortLabel: t`Add filter`,
-                  key: 'add-filter',
+                  label: t`Add condition`,
+                  shortLabel: t`Add condition`,
+                  key: 'add-condition',
                 }}
                 onClick={() => handleAddFilter(rootRecordFilterGroup)}
               />
@@ -159,9 +159,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
             startIcon={<IconFilter />}
             size="sm"
             onClick={handleCreateFirstFilter}
-            aria-label={t`Add filter`}
+            aria-label={t`Add condition`}
             variant="outline"
-          >{t`Add filter`}</Button>
+          >{t`Add condition`}</Button>
         )}
       </AdvancedFilterContext.Provider>
     );

@@ -2,7 +2,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
 import { SettingsRolePermissionsObjectActionsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect';
-import { SettingsRolePermissionsObjectRuleEditor } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectRuleEditor';
 import { SettingsRolePermissionsObjectFieldsSelect } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect';
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
@@ -20,21 +19,20 @@ import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissi
 import { getRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/objects-permissions/utils/getRowLevelPermissionRuleLabel';
 import { getRuleGrantedKeys } from '@/settings/roles/role-permissions/objects-permissions/utils/getRuleGrantedKeys';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { settingsRoleExpandedRuleIdsFamilyState } from '@/settings/roles/states/settingsRoleExpandedRuleIdsFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Fragment } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { IconChevronDown, IconChevronUp, IconPlus } from 'twenty-ui/icon';
+import { SettingsPath, StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledPanel = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -64,14 +62,17 @@ type SettingsRolePermissionsObjectOverridePanelProps = {
   roleId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
   isEditable: boolean;
+  fromAgentId?: string;
 };
 
 export const SettingsRolePermissionsObjectOverridePanel = ({
   roleId,
   objectMetadataItem,
   isEditable,
+  fromAgentId,
 }: SettingsRolePermissionsObjectOverridePanelProps) => {
   const { t } = useLingui();
+  const navigateSettings = useNavigateSettings();
   const theme = useTheme();
 
   const settingsDraftRole = useAtomFamilyStateValue(
@@ -86,15 +87,6 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     useRowLevelPermissionRulesInDraftRole(roleId);
 
   const { removeObjectOverride } = useSettingsRoleObjectOverrides(roleId);
-
-  const settingsRoleExpandedRuleIds = useAtomFamilyStateValue(
-    settingsRoleExpandedRuleIdsFamilyState,
-    roleId,
-  );
-  const setSettingsRoleExpandedRuleIds = useSetAtomFamilyState(
-    settingsRoleExpandedRuleIdsFamilyState,
-    roleId,
-  );
 
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
     useObjectMetadataItem({
@@ -154,21 +146,19 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
     );
   };
 
-  const toggleRuleExpanded = (rootPredicateGroupId: string) => {
-    setSettingsRoleExpandedRuleIds((currentIds) =>
-      currentIds.includes(rootPredicateGroupId)
-        ? currentIds.filter((id) => id !== rootPredicateGroupId)
-        : [...currentIds, rootPredicateGroupId],
+  const openRulePage = (rootPredicateGroupId: string) => {
+    navigateSettings(
+      SettingsPath.RoleObjectLevel,
+      { roleId, objectMetadataId: objectMetadataItem.id },
+      {
+        ruleId: rootPredicateGroupId,
+        ...(isDefined(fromAgentId) ? { fromAgent: fromAgentId } : {}),
+      },
     );
   };
 
   const handleNewRule = () => {
-    const rootPredicateGroupId = createRule(objectMetadataItem.id);
-
-    setSettingsRoleExpandedRuleIds((currentIds) => [
-      ...currentIds,
-      rootPredicateGroupId,
-    ]);
+    openRulePage(createRule(objectMetadataItem.id));
   };
 
   return (
@@ -228,70 +218,52 @@ export const SettingsRolePermissionsObjectOverridePanel = ({
               workspaceMemberObjectMetadataItem,
             });
 
-            const isRuleExpanded = settingsRoleExpandedRuleIds.includes(
-              rootPredicateGroup.id,
-            );
-            const RuleChevronIcon = isRuleExpanded
-              ? IconChevronUp
-              : IconChevronDown;
-
             return (
-              <Fragment key={rootPredicateGroup.id}>
-                <TableRow
-                  gridTemplateColumns={
-                    OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS
+              <TableRow
+                key={rootPredicateGroup.id}
+                gridTemplateColumns={
+                  OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS
+                }
+                onClick={
+                  isEditable
+                    ? () => openRulePage(rootPredicateGroup.id)
+                    : undefined
+                }
+              >
+                <TableCell
+                  color={
+                    isNonEmptyString(ruleLabel)
+                      ? themeCssVariables.font.color.primary
+                      : themeCssVariables.font.color.tertiary
                   }
-                  ariaExpanded={isRuleExpanded}
-                  onClick={
-                    isEditable
-                      ? () => toggleRuleExpanded(rootPredicateGroup.id)
-                      : undefined
-                  }
+                  overflow="hidden"
                 >
-                  <TableCell
-                    color={
-                      isNonEmptyString(ruleLabel)
-                        ? themeCssVariables.font.color.primary
-                        : themeCssVariables.font.color.tertiary
+                  <OverflowingTextWithTooltip
+                    text={
+                      isNonEmptyString(ruleLabel) ? ruleLabel : t`No condition`
                     }
-                    overflow="hidden"
-                  >
-                    <OverflowingTextWithTooltip
-                      text={
-                        isNonEmptyString(ruleLabel) ? ruleLabel : t`No filter`
-                      }
-                    />
-                  </TableCell>
-                  <TableCell onClick={(event) => event.stopPropagation()}>
-                    <SettingsRolePermissionsObjectActionsSelect
-                      dropdownId={`settings-role-rule-actions-${rootPredicateGroup.id}`}
-                      selectedKeys={getRuleGrantedKeys(rootPredicateGroup)}
-                      onChange={(selectedKeys) =>
-                        setRuleGrantedKeys({
-                          rootPredicateGroupId: rootPredicateGroup.id,
-                          grantedKeys: selectedKeys,
-                        })
-                      }
-                      disabled={!isEditable}
-                    />
-                  </TableCell>
-                  <TableCell
-                    align="right"
-                    color={themeCssVariables.font.color.tertiary}
-                  >
-                    {isEditable && (
-                      <RuleChevronIcon size={theme.icon.size.md} />
-                    )}
-                  </TableCell>
-                </TableRow>
-                {isEditable && isRuleExpanded && (
-                  <SettingsRolePermissionsObjectRuleEditor
-                    roleId={roleId}
-                    objectMetadataItem={objectMetadataItem}
-                    ruleRootGroupId={rootPredicateGroup.id}
                   />
-                )}
-              </Fragment>
+                </TableCell>
+                <TableCell onClick={(event) => event.stopPropagation()}>
+                  <SettingsRolePermissionsObjectActionsSelect
+                    dropdownId={`settings-role-rule-actions-${rootPredicateGroup.id}`}
+                    selectedKeys={getRuleGrantedKeys(rootPredicateGroup)}
+                    onChange={(selectedKeys) =>
+                      setRuleGrantedKeys({
+                        rootPredicateGroupId: rootPredicateGroup.id,
+                        grantedKeys: selectedKeys,
+                      })
+                    }
+                    disabled={!isEditable}
+                  />
+                </TableCell>
+                <TableCell
+                  align="right"
+                  color={themeCssVariables.font.color.tertiary}
+                >
+                  {isEditable && <IconChevronRight size={theme.icon.size.md} />}
+                </TableCell>
+              </TableRow>
             );
           })}
         </>
