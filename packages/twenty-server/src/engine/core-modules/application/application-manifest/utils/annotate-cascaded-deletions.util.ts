@@ -1,9 +1,8 @@
-import { isArray, isNonEmptyString, isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
-import { capitalize, isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_MANY_TO_ONE_METADATA_RELATIONS } from 'src/engine/metadata-modules/flat-entity/constant/all-many-to-one-metadata-relations.constant';
-import { ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/constants/all-jsonb-properties-with-serialized-relation-by-metadata-name.constant';
 
 type AnnotatableAction = {
   type: string;
@@ -20,82 +19,24 @@ type ManyToOneRelation = {
 export type CascadeAnnotatedAction<TAction extends AnnotatableAction> =
   TAction & { cascadedFromUniversalIdentifier?: string };
 
-const getManyToOneRelations = (
-  metadataName: AllMetadataName,
-): ManyToOneRelation[] =>
+const getRequiredParentReferences = (action: AnnotatableAction) =>
   Object.values<ManyToOneRelation | null>(
-    ALL_MANY_TO_ONE_METADATA_RELATIONS[metadataName],
-  ).filter(isDefined);
+    ALL_MANY_TO_ONE_METADATA_RELATIONS[action.metadataName],
+  )
+    .filter(isDefined)
+    .filter((relation) => !relation.isNullable)
+    .map((relation) => action.flatEntity?.[relation.universalForeignKey])
+    .filter(isNonEmptyString);
 
-const collectNestedStrings = (value: unknown): string[] => {
-  if (isString(value)) {
-    return [value];
-  }
-
-  if (isArray(value)) {
-    return value.flatMap(collectNestedStrings);
-  }
-
-  return isPlainObject(value)
-    ? Object.values(value).flatMap(collectNestedStrings)
-    : [];
-};
-
-const getIndexFieldReferences = (flatEntity: Record<string, unknown>) => {
-  const indexFields = flatEntity.universalFlatIndexFieldMetadatas;
-
-  return isArray(indexFields)
-    ? indexFields
-        .filter(isPlainObject)
-        .map((indexField) => indexField.fieldMetadataUniversalIdentifier)
-    : [];
-};
-
-const getSerializedRelationReferences = ({
-  metadataName,
-  flatEntity,
+// A deletion's cause is the deletion that made the side-effect engine emit it,
+// otherwise a deleted parent it cannot exist without.
+export const annotateCascadedDeletions = <TAction extends AnnotatableAction>({
+  actions,
+  deletionTriggerByUniversalIdentifier = {},
 }: {
-  metadataName: AllMetadataName;
-  flatEntity: Record<string, unknown>;
-}) =>
-  Object.values<string>(
-    ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME[
-      metadataName
-    ],
-  ).flatMap((property) =>
-    collectNestedStrings(flatEntity[`universal${capitalize(property)}`]),
-  );
-
-// Declared entities follow non-null foreign keys only; server-generated ones follow every reference.
-const getParentReferences = (action: AnnotatableAction) => {
-  const flatEntity = action.flatEntity ?? {};
-  const relations = getManyToOneRelations(action.metadataName);
-  const requiredReferences = [
-    ...relations
-      .filter((relation) => !relation.isNullable)
-      .map((relation) => flatEntity[relation.universalForeignKey]),
-    ...getIndexFieldReferences(flatEntity),
-  ];
-
-  if (flatEntity.isSystemSideEffect !== true) {
-    return requiredReferences.filter(isNonEmptyString);
-  }
-
-  return [
-    ...requiredReferences,
-    ...relations
-      .filter((relation) => relation.isNullable)
-      .map((relation) => flatEntity[relation.universalForeignKey]),
-    ...getSerializedRelationReferences({
-      metadataName: action.metadataName,
-      flatEntity,
-    }),
-  ].filter(isNonEmptyString);
-};
-
-export const annotateCascadedDeletions = <TAction extends AnnotatableAction>(
-  actions: TAction[],
-): CascadeAnnotatedAction<TAction>[] => {
+  actions: TAction[];
+  deletionTriggerByUniversalIdentifier?: Record<string, string>;
+}): CascadeAnnotatedAction<TAction>[] => {
   const deletionByUniversalIdentifier = new Map<string, TAction>();
 
   for (const action of actions) {
@@ -107,32 +48,33 @@ export const annotateCascadedDeletions = <TAction extends AnnotatableAction>(
     }
   }
 
-  const findParent = (action: TAction) =>
-    getParentReferences(action)
+  const findCause = (action: TAction) =>
+    [
+      deletionTriggerByUniversalIdentifier[action.universalIdentifier ?? ''],
+      ...getRequiredParentReferences(action),
+    ]
+      .filter(isNonEmptyString)
       .map((reference) => deletionByUniversalIdentifier.get(reference))
-      .find((parent) => isDefined(parent) && parent !== action);
+      .find((cause) => isDefined(cause) && cause !== action);
 
-  // A reference loop has no root, so every deletion in it stays listed.
   const findRoot = (action: TAction) => {
     const visited = new Set<TAction>([action]);
-    let root = findParent(action);
+    let root: TAction | undefined;
 
-    while (isDefined(root)) {
-      const parent = findParent(root);
-
-      if (!isDefined(parent)) {
-        return root;
-      }
-
-      if (visited.has(parent)) {
+    for (
+      let cause = findCause(action);
+      isDefined(cause);
+      cause = findCause(cause)
+    ) {
+      if (visited.has(cause)) {
         return undefined;
       }
 
-      visited.add(root);
-      root = parent;
+      visited.add(cause);
+      root = cause;
     }
 
-    return undefined;
+    return root;
   };
 
   return actions.map((action) => {

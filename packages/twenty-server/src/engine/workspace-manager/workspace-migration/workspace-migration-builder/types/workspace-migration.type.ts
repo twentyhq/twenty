@@ -6,4 +6,6 @@ export type WorkspaceMigration<
 > = {
   actions: TActions[];
   applicationUniversalIdentifier: string;
+  // Generated deletions mapped to the deletion that made the side-effect engine emit them.
+  deletionTriggerByUniversalIdentifier?: Record<string, string>;
 };

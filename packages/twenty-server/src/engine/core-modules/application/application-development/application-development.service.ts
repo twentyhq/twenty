@@ -183,7 +183,7 @@ export class ApplicationDevelopmentService {
       return {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
-        actions: annotateCascadedDeletions(workspaceMigration.actions),
+        actions: annotateCascadedDeletions(workspaceMigration),
       };
     }
 
@@ -304,7 +304,7 @@ export class ApplicationDevelopmentService {
     return {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
-      actions: annotateCascadedDeletions(workspaceMigration.actions),
+      actions: annotateCascadedDeletions(workspaceMigration),
     };
   }
 

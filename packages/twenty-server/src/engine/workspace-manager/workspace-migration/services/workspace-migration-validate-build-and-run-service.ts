@@ -353,6 +353,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
     let resolvedFlatEntityOperationRecordByMetadataName =
       allFlatEntityOperationRecordByMetadataName;
+    let deletionTriggerByUniversalIdentifier: Record<string, string> = {};
 
     if (!skipSideEffectExpandEngine) {
       const sideEffectExpansionResult =
@@ -370,23 +371,38 @@ export class WorkspaceMigrationValidateBuildAndRunService {
 
       resolvedFlatEntityOperationRecordByMetadataName =
         sideEffectExpansionResult.allFlatEntityOperationRecordByMetadataName;
+      deletionTriggerByUniversalIdentifier =
+        sideEffectExpansionResult.deletionTriggerByUniversalIdentifier;
     }
 
-    return await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
-      allFlatEntityOperationRecordByMetadataName:
-        resolvedFlatEntityOperationRecordByMetadataName,
-      workspaceId,
-      isSystemBuild,
-      applicationUniversalIdentifier,
-      applicationDefaultRoleUniversalIdentifier,
-      providedIdByUniversalIdentifierByMetadataName:
-        idByUniversalIdentifierByMetadataName,
-      dryRun,
-      shouldDeferActions,
-      flatApplicationMaps,
-      allRelatedFlatEntityMaps,
-      allMetadataNameCacheToCompute,
-    });
+    const result =
+      await this.computeAndRunWorkspaceMigrationFromResolvedOperations({
+        allFlatEntityOperationRecordByMetadataName:
+          resolvedFlatEntityOperationRecordByMetadataName,
+        workspaceId,
+        isSystemBuild,
+        applicationUniversalIdentifier,
+        applicationDefaultRoleUniversalIdentifier,
+        providedIdByUniversalIdentifierByMetadataName:
+          idByUniversalIdentifierByMetadataName,
+        dryRun,
+        shouldDeferActions,
+        flatApplicationMaps,
+        allRelatedFlatEntityMaps,
+        allMetadataNameCacheToCompute,
+      });
+
+    if (result.status === 'fail') {
+      return result;
+    }
+
+    return {
+      ...result,
+      workspaceMigration: {
+        ...result.workspaceMigration,
+        deletionTriggerByUniversalIdentifier,
+      },
+    };
   }
 
   private async computeAndRunWorkspaceMigrationFromResolvedOperations({
