@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { DeferredWorkspaceOperationQueueService } from 'src/engine/metadata-modules/deferred-workspace-operation/services/deferred-workspace-operation-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
@@ -19,6 +20,7 @@ const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
 @Injectable()
 export class AccessGroupPropagationPlanService {
   constructor(
+    private readonly cacheLockService: CacheLockService,
     private readonly deferredWorkspaceOperationQueueService: DeferredWorkspaceOperationQueueService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
@@ -44,24 +46,6 @@ export class AccessGroupPropagationPlanService {
       return;
     }
 
-    const waitingComputePayloads =
-      await this.deferredWorkspaceOperationQueueService.findOperationPayloads({
-        workspaceId,
-        name: COMPUTE_OPERATION_NAME,
-        statuses: ['PENDING'],
-      });
-
-    if (
-      areRecordAccessGroupComputesAlreadyPlanned({
-        waitingObjectMetadataIds: waitingComputePayloads.map(
-          ({ objectMetadataId }) => objectMetadataId,
-        ),
-        objectMetadataIds: plannedObjectMetadataIds,
-      })
-    ) {
-      return;
-    }
-
     const recordCountByObjectMetadataId =
       await this.recordAccessGroupRepository.estimateRecordCountByObjectMetadataId(
         {
@@ -77,20 +61,44 @@ export class AccessGroupPropagationPlanService {
         },
       );
 
-    await this.deferredWorkspaceOperationQueueService.persistAndEnqueue({
-      workspaceId,
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      deferredOperations: plannedObjectMetadataIds.map((objectMetadataId) => ({
-        name: COMPUTE_OPERATION_NAME,
-        payload: {
-          objectMetadataId,
-          plannedRecordCount:
-            recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
-          computedRecordCount: 0,
-        },
-      })),
-    });
+    await this.cacheLockService.withLock(async () => {
+      const waitingComputePayloads =
+        await this.deferredWorkspaceOperationQueueService.findOperationPayloads(
+          {
+            workspaceId,
+            name: COMPUTE_OPERATION_NAME,
+            statuses: ['PENDING'],
+          },
+        );
+
+      if (
+        areRecordAccessGroupComputesAlreadyPlanned({
+          waitingObjectMetadataIds: waitingComputePayloads.map(
+            ({ objectMetadataId }) => objectMetadataId,
+          ),
+          objectMetadataIds: plannedObjectMetadataIds,
+        })
+      ) {
+        return;
+      }
+
+      await this.deferredWorkspaceOperationQueueService.persistAndEnqueue({
+        workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        deferredOperations: plannedObjectMetadataIds.map(
+          (objectMetadataId) => ({
+            name: COMPUTE_OPERATION_NAME,
+            payload: {
+              objectMetadataId,
+              plannedRecordCount:
+                recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
+              computedRecordCount: 0,
+            },
+          }),
+        ),
+      });
+    }, `access-group-propagation-plan:${workspaceId}`);
   }
 
   async trackComputedRecords({
