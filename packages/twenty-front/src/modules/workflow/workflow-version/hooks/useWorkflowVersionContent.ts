@@ -18,6 +18,9 @@ export const useWorkflowVersionContent = (workflowVersionId?: string) => {
     client: apolloCoreClient,
     variables: { coreWorkflowVersionId: workflowVersionId ?? '' },
     fetchPolicy: 'cache-and-network',
+    // A deduplicated refetch resolves with an in-flight read that may have
+    // been sent before the write this refetch is meant to pick up.
+    context: { queryDeduplication: false },
     skip: !isDefined(workflowVersionId),
   });
   const content = useMemo<WorkflowVersionContent | undefined>(() => {
