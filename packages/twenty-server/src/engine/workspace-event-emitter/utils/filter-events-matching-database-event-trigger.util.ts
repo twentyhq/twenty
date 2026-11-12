@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RelationType,
+  type ValidationRuleBindings,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
 import {
@@ -11,6 +12,7 @@ import {
   getValidationRulePreviousValueFieldPath,
   getValidationRuleRecordsFromDatabaseEvent,
   isDefined,
+  renameValidationRuleExpressionToCurrentFieldNames,
 } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -196,7 +198,8 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
   events,
   eventName,
   watchedFields,
-  condition,
+  condition: storedCondition,
+  conditionBindings,
   fields,
   findRelatedRecords,
 }: {
@@ -204,6 +207,7 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
   eventName: string;
   watchedFields?: string[];
   condition?: string;
+  conditionBindings?: ValidationRuleBindings;
   fields: ValidationRuleFieldDescriptor[];
   findRelatedRecords?: FindDatabaseEventRelatedRecords;
 }): Promise<DatabaseEventTriggerMatch<TEvent>> => {
@@ -213,9 +217,17 @@ export const filterEventsMatchingDatabaseEventTrigger = async <
     watchedFields,
   });
 
-  if (!isNonEmptyString(condition)) {
+  if (!isNonEmptyString(storedCondition)) {
     return { events: eventsWithWatchedFields };
   }
+
+  const condition = isDefined(conditionBindings)
+    ? renameValidationRuleExpressionToCurrentFieldNames({
+        expression: storedCondition,
+        bindings: conditionBindings,
+        fields,
+      })
+    : storedCondition;
 
   // Compiling against the object's fields also rejects a field a wildcard trigger's object lacks
   const compilation = compileValidationRuleExpression({
