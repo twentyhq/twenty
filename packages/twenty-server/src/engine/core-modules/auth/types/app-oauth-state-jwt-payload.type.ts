@@ -15,7 +15,7 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   redirectLocation: string | null;
   // Points at the PKCE verifier kept server-side, so the redirect URL never carries it
   flowSecretId: string | null;
-  // TODO: remove after 2.58, only read from states signed before the verifier moved server-side
+  // TODO: remove after 2.59, only read from states signed before the verifier moved server-side
   codeVerifier?: string | null;
   iat?: number;
 };
