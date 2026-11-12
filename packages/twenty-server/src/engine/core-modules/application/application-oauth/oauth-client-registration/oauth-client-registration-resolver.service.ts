@@ -83,7 +83,8 @@ export class OAuthClientRegistrationResolverService {
     };
   }
 
-  private findRegistrationByOAuthClientId(oAuthClientId: string) {
+  // Also for revocation, which must not depend on the client's document still being reachable
+  findRegistrationByOAuthClientId(oAuthClientId: string) {
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId },
     });

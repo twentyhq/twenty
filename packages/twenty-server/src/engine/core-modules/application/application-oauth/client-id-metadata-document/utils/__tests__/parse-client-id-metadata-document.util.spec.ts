@@ -64,19 +64,40 @@ describe('parseClientIdMetadataDocument', () => {
     ).toEqual({ error: 'client_id does not match the document URL' });
   });
 
-  it('rejects a client that cannot authenticate as a public client', () => {
-    expect(
-      parseClientIdMetadataDocument({
-        clientIdMetadataDocumentUrl: CHATGPT_DOCUMENT.client_id,
-        rawDocument: {
-          ...CHATGPT_DOCUMENT,
-          token_endpoint_auth_methods_supported: ['private_key_jwt'],
-        },
-      }),
-    ).toEqual({
-      error: 'Unsupported token_endpoint_auth_method: private_key_jwt',
-    });
-  });
+  it.each([
+    {
+      case: 'a list without "none", whatever its preferred method',
+      overrides: { token_endpoint_auth_methods_supported: ['private_key_jwt'] },
+    },
+    {
+      case: 'a list without "none" and no preferred method',
+      overrides: {
+        token_endpoint_auth_method: undefined,
+        token_endpoint_auth_methods_supported: ['private_key_jwt'],
+      },
+    },
+    {
+      case: 'a list that is not a list',
+      overrides: { token_endpoint_auth_methods_supported: 'none' },
+    },
+    {
+      case: 'a preferred method other than "none" and no list',
+      overrides: {
+        token_endpoint_auth_method: 'private_key_jwt',
+        token_endpoint_auth_methods_supported: undefined,
+      },
+    },
+  ])(
+    'rejects a client that cannot authenticate as a public client: $case',
+    ({ overrides }) => {
+      expect(
+        parseClientIdMetadataDocument({
+          clientIdMetadataDocumentUrl: CHATGPT_DOCUMENT.client_id,
+          rawDocument: { ...CHATGPT_DOCUMENT, ...overrides },
+        }),
+      ).toEqual({ error: 'The client cannot authenticate as a public client' });
+    },
+  );
 
   it('rejects a document carrying a shared secret', () => {
     expect(

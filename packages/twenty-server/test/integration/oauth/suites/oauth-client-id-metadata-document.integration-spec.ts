@@ -256,6 +256,41 @@ describe('OAuth client ID metadata documents (integration)', () => {
       expect(findAuthorizationCode(response)).toEqual(expect.any(String));
     });
 
+    it('should still revoke a refresh token while the document is withdrawn', async () => {
+      const authorization = await requestAuthorization({
+        clientId: WEB_CLIENT_DOCUMENT.clientId,
+        redirectUrl: WEB_CLIENT_CALLBACK,
+      });
+      const exchangeResponse = await postToken({
+        grant_type: 'authorization_code',
+        code: findAuthorizationCode(authorization),
+        client_id: WEB_CLIENT_DOCUMENT.clientId,
+        code_verifier: CODE_VERIFIER,
+        redirect_uri: WEB_CLIENT_CALLBACK,
+      }).expect(200);
+      const refreshToken = exchangeResponse.body.refresh_token;
+
+      findDocumentSpy.mockResolvedValue(null);
+
+      await request(baseUrl)
+        .post('/oauth/revoke')
+        .send({ token: refreshToken, client_id: WEB_CLIENT_DOCUMENT.clientId })
+        .expect(200);
+
+      findDocumentSpy.mockImplementation(
+        async (clientId) =>
+          DOCUMENTS.find((document) => document.clientId === clientId) ?? null,
+      );
+
+      const refreshResponse = await postToken({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: WEB_CLIENT_DOCUMENT.clientId,
+      }).expect(400);
+
+      expect(refreshResponse.body.error).toBe('invalid_grant');
+    });
+
     it('should stop accepting the client once its document is withdrawn', async () => {
       await requestAuthorization({
         clientId: WEB_CLIENT_DOCUMENT.clientId,

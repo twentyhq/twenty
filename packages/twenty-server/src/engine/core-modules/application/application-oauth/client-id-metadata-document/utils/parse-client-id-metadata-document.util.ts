@@ -28,16 +28,16 @@ export const parseClientIdMetadataDocument = ({
   const tokenEndpointAuthMethod = rawDocument.token_endpoint_auth_method;
   const tokenEndpointAuthMethodsSupported =
     rawDocument.token_endpoint_auth_methods_supported;
-  const canAuthenticateAsPublicClient =
-    !isDefined(tokenEndpointAuthMethod) ||
-    tokenEndpointAuthMethod === 'none' ||
-    (Array.isArray(tokenEndpointAuthMethodsSupported) &&
-      tokenEndpointAuthMethodsSupported.includes('none'));
+  // The list, when the document has one, is the full statement of what the client supports
+  const canAuthenticateAsPublicClient = isDefined(
+    tokenEndpointAuthMethodsSupported,
+  )
+    ? Array.isArray(tokenEndpointAuthMethodsSupported) &&
+      tokenEndpointAuthMethodsSupported.includes('none')
+    : !isDefined(tokenEndpointAuthMethod) || tokenEndpointAuthMethod === 'none';
 
   if (!canAuthenticateAsPublicClient) {
-    return {
-      error: `Unsupported token_endpoint_auth_method: ${String(tokenEndpointAuthMethod)}`,
-    };
+    return { error: 'The client cannot authenticate as a public client' };
   }
 
   const redirectUris = rawDocument.redirect_uris;

@@ -446,15 +446,18 @@ export class OAuthService {
     let applicationRegistration: ApplicationRegistrationEntity | undefined;
 
     if (clientId) {
-      const clientValidation = await this.validateClient(clientId);
+      const registration =
+        await this.oAuthClientRegistrationResolverService.findRegistrationByOAuthClientId(
+          clientId,
+        );
 
-      if ('error' in clientValidation) {
+      if (!isDefined(registration)) {
         return { success: false };
       }
 
       if (clientSecret) {
         const secretError = await this.validateClientSecret(
-          clientValidation,
+          registration,
           clientSecret,
         );
 
@@ -463,7 +466,7 @@ export class OAuthService {
         }
       }
 
-      applicationRegistration = clientValidation;
+      applicationRegistration = registration;
     }
 
     try {
