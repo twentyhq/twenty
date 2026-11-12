@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
@@ -18,6 +19,7 @@ const StyledTileButton = styled.button`
   justify-content: center;
   overflow: hidden;
   padding: 0;
+  position: relative;
 
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
@@ -32,35 +34,58 @@ const StyledTileImage = styled.img`
   width: 100%;
 `;
 
+const StyledHiddenImageCount = styled.span`
+  align-items: center;
+  background: ${themeCssVariables.background.overlaySecondary};
+  color: ${themeCssVariables.font.color.inverted};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.xl};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+`;
+
 type ChatMessageImageGridTileProps = {
   file: FieldFilesValue;
-  onClick: (file: FieldFilesValue) => void;
+  hiddenImageCount?: number;
+  onClick: () => void;
 };
 
 export const ChatMessageImageGridTile = ({
   file,
+  hiddenImageCount,
   onClick,
 }: ChatMessageImageGridTileProps) => {
+  const { t } = useLingui();
   const [failedImageUrl, setFailedImageUrl] = useState<string | undefined>();
 
   const hasImageFailedToLoad =
     isDefined(failedImageUrl) && failedImageUrl === file.url;
+  const hasHiddenImages = isDefined(hiddenImageCount);
 
   return (
     <StyledTileButton
       type="button"
-      aria-label={file.label}
-      onClick={() => onClick(file)}
+      aria-label={
+        hasHiddenImages ? t`Show ${hiddenImageCount} more images` : file.label
+      }
+      onClick={onClick}
     >
       {hasImageFailedToLoad ? (
         <FileIcon fileCategory={FILE_CATEGORIES.IMAGE} />
       ) : (
         <StyledTileImage
           src={file.url}
-          alt={file.label}
+          alt={hasHiddenImages ? '' : file.label}
           loading="lazy"
           onError={() => setFailedImageUrl(file.url)}
         />
+      )}
+      {hasHiddenImages && (
+        <StyledHiddenImageCount aria-hidden>
+          +{hiddenImageCount}
+        </StyledHiddenImageCount>
       )}
     </StyledTileButton>
   );

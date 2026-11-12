@@ -978,3 +978,53 @@ export const UserMessageWithImages: Story = {
     await expect(canvas.getByText('brief.pdf')).toBeVisible();
   },
 };
+
+const mockUserMessageWithManyImages: ExtendedUIMessage = {
+  id: 'msg-user-many-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'All the photos from the offsite.' },
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AgentChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-photo-${photoNumber}`,
+      filename: `photo-${photoNumber}.png`,
+      mediaType: 'image/png',
+      url: IMAGE_URL_MOCK,
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithManyImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithManyImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithManyImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const showMoreButton = await canvas.findByRole('button', {
+      name: 'Show 3 more images',
+    });
+
+    await expect(
+      canvas.getByRole('button', { name: 'photo-3.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'photo-5.png' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(showMoreButton);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'photo-6.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Show 3 more images' }),
+    ).not.toBeInTheDocument();
+  },
+};
