@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadLiveFieldsState } from '@/ai/states/agentChatThreadLiveFieldsState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
@@ -23,22 +23,8 @@ export const useApplyAgentChatThreadUpdate = () => {
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
       store.set(
-        agentChatThreadLiveFieldsState.atom,
-        ({ updateCount, fieldUpdateCountsByThreadId }) => ({
-          updateCount: updateCount + 1,
-          fieldUpdateCountsByThreadId: {
-            ...fieldUpdateCountsByThreadId,
-            [update.id]: {
-              ...fieldUpdateCountsByThreadId[update.id],
-              ...Object.fromEntries(
-                Object.keys(update).map((fieldName) => [
-                  fieldName,
-                  updateCount + 1,
-                ]),
-              ),
-            },
-          },
-        }),
+        agentChatThreadRecordUpdateCountState.atom,
+        (updateCount) => updateCount + 1,
       );
     },
     [store, upsertRecordsInStore],

@@ -7,7 +7,6 @@ import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { AGENT_CHAT_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/ai/constants/AgentChatChannelThreadListPageSize';
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLiveUpdates';
 import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
@@ -19,6 +18,7 @@ import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agent
 import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { mergeLoadedAgentChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
 import { mergeAgentChatThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -48,8 +48,6 @@ export const useLoadAgentChatThreadList = () => {
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { getLiveUpdateCount, applyLiveUpdatesSince } =
-    useAgentChatThreadLiveUpdates();
   const { captureAgentChatSession } = useCaptureAgentChatSession();
 
   const fetchThreadsByIds = useCallback(
@@ -202,7 +200,6 @@ export const useLoadAgentChatThreadList = () => {
 
       store.set(loadCountAtom, loadCount);
 
-      const updateCountBeforeRequest = getLiveUpdateCount();
       const page = await fetchListPage({
         source,
         lastCursor: isFetchMore ? (listBeforeRequest?.endCursor ?? null) : null,
@@ -252,10 +249,17 @@ export const useLoadAgentChatThreadList = () => {
       }
 
       upsertRecordsInStore({
-        partialRecords: applyLiveUpdatesSince({
-          threads: [...page.threads, ...unlistedFavoritesPage.threads],
-          updateCount: updateCountBeforeRequest,
-        }),
+        partialRecords: [...page.threads, ...unlistedFavoritesPage.threads].map(
+          (loadedThread) =>
+            mergeLoadedAgentChatThread({
+              loadedThread,
+              storedThread: store.get(
+                agentChatThreadRecordFamilySelector.selectorFamily(
+                  loadedThread.id,
+                ),
+              ),
+            }),
+        ),
       });
       addAgentChatThreadParticipants([
         ...page.participants,
@@ -290,11 +294,9 @@ export const useLoadAgentChatThreadList = () => {
     },
     [
       addAgentChatThreadParticipants,
-      applyLiveUpdatesSince,
       captureAgentChatSession,
       fetchListPage,
       fetchThreadsByIds,
-      getLiveUpdateCount,
       refreshAgentChatThreadPermissions,
       store,
       upsertRecordsInStore,

@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLiveUpdates';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeLoadedAgentChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 export const useLoadAgentChatThread = () => {
@@ -18,13 +19,10 @@ export const useLoadAgentChatThread = () => {
   const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
   const { addAgentChatThreadParticipants } =
     useAddAgentChatThreadParticipants();
-  const { getLiveUpdateCount, applyLiveUpdatesSince } =
-    useAgentChatThreadLiveUpdates();
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
   const loadAgentChatThread = useCallback(
     async (threadId: string) => {
-      const updateCountBeforeRequest = getLiveUpdateCount();
       const page = await fetchAgentChatThreadsPage({
         lastCursor: null,
         threadIdFilter: { id: { eq: threadId } },
@@ -42,9 +40,11 @@ export const useLoadAgentChatThread = () => {
 
       await refreshAgentChatThreadPermissions([thread.id]);
 
-      const [loadedThread] = applyLiveUpdatesSince({
-        threads: [thread],
-        updateCount: updateCountBeforeRequest,
+      const loadedThread = mergeLoadedAgentChatThread({
+        loadedThread: thread,
+        storedThread: store.get(
+          agentChatThreadRecordFamilySelector.selectorFamily(thread.id),
+        ),
       });
 
       addLoadedAgentChatThread(loadedThread);
@@ -64,8 +64,6 @@ export const useLoadAgentChatThread = () => {
       addLoadedAgentChatThread,
       addAgentChatThreadParticipants,
       fetchAgentChatThreadsPage,
-      applyLiveUpdatesSince,
-      getLiveUpdateCount,
       refreshAgentChatThreadPermissions,
       store,
     ],

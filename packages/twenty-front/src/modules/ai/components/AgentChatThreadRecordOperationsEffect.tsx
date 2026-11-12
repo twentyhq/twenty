@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
@@ -26,12 +27,18 @@ const AGENT_CHAT_THREADS_OPERATION_SIGNATURE = {
 const toThreadUpdate = ({
   recordId,
   updatedFields,
+  updatedRecord,
 }: ObjectRecordOperationUpdateInput): Partial<AgentChatThreadRecord> & {
   id: string;
-} => ({
-  id: recordId,
-  ...(Object.assign({}, ...updatedFields) as Partial<AgentChatThreadRecord>),
-});
+} => {
+  const updatedAt = updatedRecord?.updatedAt;
+
+  return {
+    id: recordId,
+    ...(isString(updatedAt) ? { updatedAt } : {}),
+    ...(Object.assign({}, ...updatedFields) as Partial<AgentChatThreadRecord>),
+  };
+};
 
 export const AgentChatThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
