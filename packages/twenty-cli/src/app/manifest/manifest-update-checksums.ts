@@ -1,5 +1,9 @@
 import { relative } from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import {
+  type Manifest,
+  OUTPUT_DIR,
+  type SourceFileManifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,8 +34,8 @@ export const manifestUpdateChecksums = ({
   builtFileInfos,
   outputDir = OUTPUT_DIR,
 }: UpdateManifestChecksumParams): Manifest => {
-  let result = structuredClone(manifest);
-  result.sourceFiles = [];
+  const sourceFiles: SourceFileManifest[] = [];
+  let result = { ...structuredClone(manifest), sourceFiles };
   for (const {
     builtPath,
     fileFolder,
@@ -40,7 +44,7 @@ export const manifestUpdateChecksums = ({
   } of builtFileInfos.values()) {
     const rootBuiltPath = relative(outputDir, builtPath);
     if (fileFolder === FileFolder.Source) {
-      result.sourceFiles?.push({
+      result.sourceFiles.push({
         filePath: rootBuiltPath.replaceAll('\\', '/'),
         checksum,
       });
@@ -131,7 +135,7 @@ export const manifestUpdateChecksums = ({
     }
   }
 
-  result.sourceFiles?.sort((first, second) =>
+  result.sourceFiles.sort((first, second) =>
     first.filePath.localeCompare(second.filePath),
   );
 
