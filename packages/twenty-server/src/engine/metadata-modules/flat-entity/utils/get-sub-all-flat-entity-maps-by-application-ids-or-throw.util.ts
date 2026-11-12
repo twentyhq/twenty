@@ -9,6 +9,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/restrict-field-metadata-options-to-slice-option-rows-through-mutation.util';
 import { pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation } from 'src/engine/metadata-modules/flat-entity/utils/prune-dangling-foreign-key-aggregators-in-all-flat-entity-maps-through-mutation.util';
 
 export const getSubAllFlatEntityMapsByApplicationIdsOrThrow = ({
@@ -44,6 +45,10 @@ export const getSubAllFlatEntityMapsByApplicationIdsOrThrow = ({
   }
 
   pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation({
+    allFlatEntityMapsToMutate: subAllFlatEntityMaps,
+  });
+
+  restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation({
     allFlatEntityMapsToMutate: subAllFlatEntityMaps,
   });
 

@@ -6,6 +6,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { fromFieldMetadataEntityToOrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-orm-flat-field-metadata.util';
+import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
@@ -21,6 +22,17 @@ const ORM_FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
   indexFieldMetadata: {
     columns: ['id', 'fieldMetadataId', 'subFieldName'],
     groupBy: ['indexMetadataId'],
+  },
+  fieldMetadataOption: {
+    columns: [
+      'id',
+      'universalIdentifier',
+      'value',
+      'label',
+      'color',
+      'position',
+    ],
+    groupBy: ['fieldMetadataId'],
   },
 } as const satisfies WorkspaceCacheRowsRequirement;
 
@@ -40,6 +52,7 @@ export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCache
       fieldMetadata: fieldMetadatas,
       index: indexMetadatas,
       indexFieldMetadata: indexFieldMetadatas,
+      fieldMetadataOption: fieldMetadataOptions,
     } = rows;
 
     const uniqueFieldMetadataIds = computeUniqueFieldMetadataIdsFromIndexes(
@@ -55,7 +68,16 @@ export class WorkspaceOrmFlatFieldMetadataMapCacheService extends WorkspaceCache
     for (const fieldMetadataEntity of fieldMetadatas) {
       const ormFlatFieldMetadata =
         fromFieldMetadataEntityToOrmFlatFieldMetadata({
-          entity: fieldMetadataEntity,
+          entity: {
+            ...fieldMetadataEntity,
+            options: resolveFieldMetadataOptionsFromRows({
+              fieldMetadataEntity,
+              fieldMetadataOptionRows:
+                fieldMetadataOptions.byFieldMetadataId.get(
+                  fieldMetadataEntity.id,
+                ),
+            }),
+          },
           isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
         });
 

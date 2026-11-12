@@ -226,6 +226,67 @@ describe('field metadata option rows follow field options', () => {
     );
   });
 
+  it('reads the options of a field from its rows', async () => {
+    const { data } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'readFromRowsField',
+        label: 'Read From Rows Field',
+        isLabelSyncedWithName: false,
+        options: [
+          { label: 'Open', value: 'OPEN', color: 'green', position: 0 },
+          { label: 'Closed', value: 'CLOSED', color: 'red', position: 1 },
+        ],
+      },
+      gqlFields: 'id options',
+    });
+    const fieldMetadataId: string = data.createOneField.id;
+    const [openOption, closedOption] = data.createOneField
+      .options as StoredOption[];
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."fieldMetadataOption" SET label = 'Open in rows'
+        WHERE "fieldMetadataId" = $1 AND value = 'OPEN'`,
+      [fieldMetadataId],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatFieldMetadataMaps',
+      'flatFieldMetadataOptionMaps',
+    ]);
+
+    try {
+      const { data: updateData } = await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { label: 'Read From Rows Field Renamed' },
+        },
+        gqlFields: 'id options',
+      });
+
+      expect(updateData.updateOneField.options).toEqual([
+        { ...openOption, label: 'Open in rows' },
+        closedOption,
+      ]);
+    } finally {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldMetadataId },
+      });
+    }
+  });
+
   it('rejects an option id already used by another field', async () => {
     const { data: createData } = await createOneFieldMetadata({
       expectToFail: false,

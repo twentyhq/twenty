@@ -17,6 +17,8 @@ const EXTRA_AFFECTED_METADATA_NAMES: Partial<
   Record<AllMetadataName, AllMetadataName[]>
 > = {
   index: ['objectMetadata', 'fieldMetadata'],
+  // A field's options are derived from its option rows
+  fieldMetadataOption: ['fieldMetadata'],
 };
 
 // Their deletion cascades row-level permission predicates in the database, which fields aggregate

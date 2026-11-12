@@ -9,6 +9,8 @@ import {
   FlatUpdateFieldMetadataOptionAction,
   UniversalUpdateFieldMetadataOptionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/types/workspace-migration-field-metadata-option-action.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -19,6 +21,12 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   'update',
   'fieldMetadataOption',
 ) {
+  constructor(
+    private readonly fieldMetadataOptionEnumSchemaService: FieldMetadataOptionEnumSchemaService,
+  ) {
+    super();
+  }
+
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateFieldMetadataOptionAction>,
   ): Promise<FlatUpdateFieldMetadataOptionAction> {
@@ -58,8 +66,24 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   }
 
   async executeForWorkspaceSchema(
-    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldMetadataOptionAction>,
+    context: WorkspaceMigrationActionRunnerContext<
+      FlatUpdateFieldMetadataOptionAction,
+      UniversalUpdateFieldMetadataOptionAction
+    >,
   ): Promise<void> {
-    return;
+    await this.fieldMetadataOptionEnumSchemaService.applyEnumChangeOfOptionAction(
+      {
+        fieldMetadataUniversalIdentifier:
+          findFlatEntityByUniversalIdentifier({
+          universalIdentifier: context.action.universalIdentifier,
+          flatEntityMaps: context.allFlatEntityMaps.flatFieldMetadataOptionMaps,
+        })?.fieldMetadataUniversalIdentifier,
+        fieldMetadataOptionEnumChangeTracker:
+          context.fieldMetadataOptionEnumChangeTracker,
+        allFlatEntityMaps: context.allFlatEntityMaps,
+        queryRunner: context.queryRunner,
+        workspaceId: context.workspaceId,
+      },
+    );
   }
 }

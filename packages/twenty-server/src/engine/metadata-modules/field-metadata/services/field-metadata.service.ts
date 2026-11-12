@@ -53,13 +53,31 @@ export class FieldMetadataService {
     objectMetadataId?: string;
     limit: number;
   }): Promise<FieldMetadataEntity[]> {
-    return this.fieldMetadataRepository.find(workspaceId, {
-      where: {
-        ...(isDefined(fieldMetadataId) ? { id: fieldMetadataId } : {}),
-        ...(isDefined(objectMetadataId) ? { objectMetadataId } : {}),
+    const fieldMetadataEntities = await this.fieldMetadataRepository.find(
+      workspaceId,
+      {
+        where: {
+          ...(isDefined(fieldMetadataId) ? { id: fieldMetadataId } : {}),
+          ...(isDefined(objectMetadataId) ? { objectMetadataId } : {}),
+        },
+        take: limit,
       },
-      take: limit,
-    });
+    );
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    // Options live in fieldMetadataOption rows, which the flat maps already resolved
+    return fieldMetadataEntities.map((fieldMetadataEntity) =>
+      Object.assign(fieldMetadataEntity, {
+        options:
+          flatFieldMetadataMaps.byUniversalIdentifier[
+            fieldMetadataEntity.universalIdentifier
+          ]?.options ?? fieldMetadataEntity.options,
+      }),
+    );
   }
 
   async createOneField({

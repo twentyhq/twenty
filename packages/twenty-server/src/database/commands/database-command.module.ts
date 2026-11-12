@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { CheckFieldMetadataOptionRowsCommand } from 'src/database/commands/check-field-metadata-option-rows.command';
 import { CronRegisterAllCommand } from 'src/database/commands/cron-register-all.command';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { SecretEncryptionRotationModule } from 'src/database/commands/secret-encryption-rotation/secret-encryption-rotation.module';
@@ -131,7 +130,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
     UpdateFeatureFlagCommand,
-    CheckFieldMetadataOptionRowsCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })

@@ -1,0 +1,43 @@
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
+import { ENUM_FIELD_TYPES } from 'src/engine/metadata-modules/field-metadata/types/enum-field-metadata-type.type';
+
+export type FieldMetadataOptionRowForOptions = Pick<
+  FieldMetadataOptionEntity,
+  'universalIdentifier' | 'value' | 'label' | 'color' | 'position'
+>;
+
+// A field without rows predates the option table or its backfill, so its stored options still stand.
+export const resolveFieldMetadataOptionsFromRows = ({
+  fieldMetadataEntity,
+  fieldMetadataOptionRows,
+}: {
+  fieldMetadataEntity: Pick<FieldMetadataEntity, 'type' | 'options'>;
+  fieldMetadataOptionRows: FieldMetadataOptionRowForOptions[] | undefined;
+}): FieldMetadataEntity['options'] => {
+  if (
+    !(ENUM_FIELD_TYPES as readonly FieldMetadataType[]).includes(
+      fieldMetadataEntity.type,
+    ) ||
+    !isNonEmptyArray(fieldMetadataOptionRows)
+  ) {
+    return fieldMetadataEntity.options;
+  }
+
+  return [...fieldMetadataOptionRows]
+    .sort(
+      (first, second) =>
+        first.position - second.position ||
+        first.universalIdentifier.localeCompare(second.universalIdentifier),
+    )
+    .map(({ universalIdentifier, value, label, color, position }) => ({
+      id: universalIdentifier,
+      value,
+      label,
+      position,
+      ...(isDefined(color) ? { color } : {}),
+    })) as FieldMetadataEntity['options'];
+};
