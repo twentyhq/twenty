@@ -44,6 +44,14 @@ This typechecks and bundles the app into a temporary CLI snapshot. Use `--json` 
 
 Builds retain frontend and logic-function entry files, their imported local helpers and types, local TypeScript configuration, and nested CSS and assets. Original paths and bytes are preserved in a source inventory. Dependencies in `node_modules`, unrelated files, and imports outside the app directory (including symlink targets) are excluded from the inventory. These exclusions do not prevent existing apps from building. If you use `package.json#files`, include these retained sources or publishing reports the missing files. Older installed packages need to be rebuilt and published to gain this inventory. This does not yet expand which files `twenty app pull` restores.
 
+### Source inventory compatibility
+
+Uploading the complete source inventory requires Twenty server **2.59.0 or later**. Upgrade the server before using `twenty app apply` or `twenty app dev` with imported CSS, JavaScript, images, or fonts. Older servers accept only `.ts`, `.tsx`, and `.json` in the source folder and reject the additional file types. Local builds still work without a server; this CLI does not automatically omit sources for older servers.
+
+### Source and bundle path conflicts
+
+If a build reports `Application source <path> collides with a built application file`, an original file would overwrite generated output. For example, `src/run.ts` produces `src/run.mjs`, so another entry cannot import an existing source file at `src/run.mjs`. Rename the imported file (for example, to `src/run-helper.mjs`) and update its imports, then build again. The CLI stops before copying the conflicting file.
+
 ## Deploying to a server (tarball)
 
 For apps you don't want publicly available — proprietary tools, enterprise-only integrations, or experimental builds — you can deploy a tarball directly to a Twenty server.

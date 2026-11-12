@@ -124,20 +124,23 @@ export const collectApplicationSourceFiles = ({
         ts.sys,
         resolutionCache,
       ).resolvedModule;
-      if (isDefined(resolved)) {
-        if (!resolved.isExternalLibraryImport) {
-          addFile(resolved.resolvedFileName);
-        }
-      } else if (imported.fileName.startsWith('.')) {
-        const assetPath = resolve(dirname(path), imported.fileName);
-        if (existsSync(assetPath)) {
-          addFile(assetPath);
-        } else {
-          throw new Error(
-            `Cannot preserve missing application source ${imported.fileName} imported by ${path}`,
-          );
-        }
+      if (resolved?.isExternalLibraryImport) {
+        continue;
       }
+      if (isDefined(resolved)) {
+        addFile(resolved.resolvedFileName);
+        continue;
+      }
+      if (!imported.fileName.startsWith('.')) {
+        continue;
+      }
+      const assetPath = resolve(dirname(path), imported.fileName);
+      if (!existsSync(assetPath)) {
+        throw new Error(
+          `Cannot preserve missing application source ${imported.fileName} imported by ${path}`,
+        );
+      }
+      addFile(assetPath);
     }
   }
 

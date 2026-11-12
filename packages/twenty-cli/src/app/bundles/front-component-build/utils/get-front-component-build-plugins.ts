@@ -1,13 +1,12 @@
 import type * as esbuild from 'esbuild';
 import {
-  createCssInjectionPlugin,
   createJsxRuntimeRemoteWrapperPlugin,
   createSharedDependenciesShimPlugin,
   type SharedDependenciesBuildContext,
 } from 'twenty-shared/front-component-build';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
+import { createAppCssInjectionPlugin } from '@/app/bundles/front-component-build/css-injection-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
 import { createPreactAliasPlugin } from '../preact-alias-plugin';
 
@@ -33,8 +32,7 @@ export const getFrontComponentBuildPlugins = (
   ),
   ...(options?.usePreact ? [createPreactAliasPlugin()] : []),
   jsxTransformToRemoteDomWorkerFormatPlugin,
-  createCssInjectionPlugin({
-    getBuildPlugins: getWatchInputPlugins,
+  createAppCssInjectionPlugin({
     onSourceFiles: options?.onSourceFiles,
   }),
 ];

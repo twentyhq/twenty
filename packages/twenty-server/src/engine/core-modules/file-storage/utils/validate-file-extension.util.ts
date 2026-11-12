@@ -8,9 +8,7 @@ import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/
 export const validateFileExtension = ({
   resourcePath,
   fileFolder,
-  allowedExtensions = ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-    fileFolder as keyof typeof ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER
-  ],
+  allowedExtensions = ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[fileFolder],
 }: {
   resourcePath: string;
   fileFolder: FileFolder | ServerFileFolder;
