@@ -1,16 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
+import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
+import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
+import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatMessageQuoteSourceFamilySelector } from '@/ai/states/selectors/agentChatMessageQuoteSourceFamilySelector';
+import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
+import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
 import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const AiChatComposerQuote = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -21,10 +23,11 @@ export const AiChatComposerQuote = () => {
     useAtomFamilyState(agentChatQuotedMessageIdFamilyState, {
       threadId: currentAiChatThread,
     });
-  const quotedMessageSource = useAtomFamilySelectorValue(
-    agentChatMessageQuoteSourceFamilySelector,
+  const quotedMessage = useAtomFamilySelectorValue(
+    agentChatThreadMessageFamilySelector,
     { threadId: agentChatDisplayedThread, messageId: agentChatQuotedMessageId },
   );
+  const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
 
   if (!isDefined(agentChatQuotedMessageId)) {
     return null;
@@ -32,7 +35,7 @@ export const AiChatComposerQuote = () => {
 
   const removeQuote = () => setAgentChatQuotedMessageId(null);
 
-  if (!isDefined(quotedMessageSource)) {
+  if (!isDefined(quotedMessage) || !isDefined(quotedMessageAuthor)) {
     return (
       <AiChatComposerQuotePreview
         source={{ status: 'unavailable' }}
@@ -42,27 +45,28 @@ export const AiChatComposerQuote = () => {
     );
   }
 
-  const { messageId, sender, authorName, excerpt } = quotedMessageSource;
-
   return (
-    <AiChatComposerQuotePreview
-      source={{
-        status: 'available',
-        messageId,
-        authorName,
-        authorAvatar: (
-          <Avatar
-            name={authorName}
-            colorSeed={sender?.id}
-            src={getAbsoluteImageUrl(sender?.avatarUrl)}
-            size="sm"
-            shape="circle"
+    <AiChatMessageAuthorResolver author={quotedMessageAuthor}>
+      {(author) => {
+        const { messageId, excerpt } = getAgentChatMessageQuoteSource({
+          message: quotedMessage,
+          author,
+        });
+
+        return (
+          <AiChatComposerQuotePreview
+            source={{
+              status: 'available',
+              messageId,
+              authorName: author.name,
+              authorAvatar: <AiChatMessageAuthorAvatar author={author} />,
+              excerpt,
+            }}
+            onRemove={removeQuote}
+            onNavigateToMessage={scrollToAgentChatMessage}
           />
-        ),
-        excerpt,
+        );
       }}
-      onRemove={removeQuote}
-      onNavigateToMessage={scrollToAgentChatMessage}
-    />
+    </AiChatMessageAuthorResolver>
   );
 };

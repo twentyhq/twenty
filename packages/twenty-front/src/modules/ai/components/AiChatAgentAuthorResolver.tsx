@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { type ReactNode } from 'react';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
+import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   FindChatMessageAgentDocument,
@@ -13,15 +14,15 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const AGENT_DETAILS_ERROR_TOAST_DEDUPE_KEY = 'agent-details-query-error';
 
-type AiChatAgentMessageHeaderProps = {
+type AiChatAgentAuthorResolverProps = {
   agentId: string;
-  createdAt: Date | string;
+  children: (author: AgentChatMessageAuthor) => ReactNode;
 };
 
-export const AiChatAgentMessageHeader = ({
+export const AiChatAgentAuthorResolver = ({
   agentId,
-  createdAt,
-}: AiChatAgentMessageHeaderProps) => {
+  children,
+}: AiChatAgentAuthorResolverProps) => {
   const { t } = useLingui();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { data, error } = useQuery(FindChatMessageAgentDocument, {
@@ -33,7 +34,6 @@ export const AiChatAgentMessageHeader = ({
     isGraphqlErrorOfType(error, 'NOT_FOUND') ||
     isGraphqlErrorOfType(error, 'FORBIDDEN');
   const unexpectedError = isAgentUnavailable ? undefined : error;
-  const agentName = data?.findOneAgent.label ?? t`Agent`;
 
   return (
     <>
@@ -42,18 +42,12 @@ export const AiChatAgentMessageHeader = ({
         message={t`Failed to load agent details.`}
         dedupeKey={AGENT_DETAILS_ERROR_TOAST_DEDUPE_KEY}
       />
-      <ChatMessageHeader
-        avatar={
-          <Avatar
-            colorSeed={agentId}
-            name={agentName}
-            size="sm"
-            shape="circle"
-          />
-        }
-        name={agentName}
-        createdAt={createdAt}
-      />
+      {children(
+        getAgentChatAgentAuthor({
+          agentId,
+          agentName: data?.findOneAgent.label,
+        }),
+      )}
     </>
   );
 };

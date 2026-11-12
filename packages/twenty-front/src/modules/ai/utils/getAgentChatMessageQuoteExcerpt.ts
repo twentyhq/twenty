@@ -9,9 +9,11 @@ const LEADING_QUOTE_REGEX = /^(?:>[^\n]*\n?)+/;
 export const getAgentChatMessageQuoteExcerpt = (
   message: Pick<ExtendedUIMessage, 'parts'>,
 ) => {
-  const fullText = (
-    message.parts.find((part) => part.type === 'text')?.text ?? ''
-  ).trim();
+  // an assistant turn interleaves text with tool calls, so all its text parts are what it said
+  const fullText = message.parts
+    .flatMap((part) => (part.type === 'text' ? [part.text.trim()] : []))
+    .filter(isNonEmptyString)
+    .join('\n\n');
   const textWithoutLeadingQuote = fullText
     .replace(LEADING_QUOTE_REGEX, '')
     .trim();

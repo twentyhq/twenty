@@ -1,8 +1,8 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
+import { type AgentChatMessageAuthorContext } from '@/ai/types/AgentChatMessageAuthorContext';
 import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
+import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -11,12 +11,14 @@ export const findAgentChatQuotedMessage = ({
   messages,
   replyMessageId,
   quote,
-  workspaceMembers,
+  authorContext,
 }: {
   messages: ExtendedUIMessage[];
   replyMessageId: string;
   quote: Pick<AgentChatMessageQuote, 'authorName' | 'excerpt'>;
-  workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
+  authorContext: AgentChatMessageAuthorContext<
+    Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>
+  >;
 }) => {
   const replyMessageIndex = messages.findIndex(
     ({ id }) => id === replyMessageId,
@@ -27,19 +29,15 @@ export const findAgentChatQuotedMessage = ({
   }
 
   return messages.slice(0, replyMessageIndex).findLast((message) => {
-    if (message.role !== AGENT_MESSAGE_ROLE.USER) {
-      return false;
-    }
-
-    const { sender, authorName, excerpt } = getAgentChatMessageQuoteSource({
+    const { author, excerpt } = getAgentChatMessageQuoteSource({
       message,
-      workspaceMembers,
+      author: getAgentChatMessageAuthor({ message, authorContext }),
     });
 
-    // a sender who left the workspace no longer resolves to the name the quote was written with
+    // a placeholder name (former member, agent not loaded here) cannot be compared
     return (
       excerpt === quote.excerpt &&
-      (!isDefined(sender) || authorName === quote.authorName)
+      (!author.isNameResolved || author.name === quote.authorName)
     );
   });
 };

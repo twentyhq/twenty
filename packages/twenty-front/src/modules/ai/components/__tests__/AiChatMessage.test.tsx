@@ -7,6 +7,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -151,16 +152,55 @@ const REPLY_TO_MISSING_MESSAGE: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T08:02:00.000Z' },
 };
 
+const BUILT_IN_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'built-in-assistant-message',
+  role: 'assistant',
+  parts: [{ type: 'text', text: 'Three deals are at risk.' }],
+  metadata: { createdAt: '2026-10-15T08:03:00.000Z', isBuiltInAssistant: true },
+};
+
+const TOOL_ONLY_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'tool-only-assistant-message',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-find_companies',
+      toolCallId: 'call-2',
+      state: 'output-available',
+      input: {},
+      output: { success: true },
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:04:00.000Z', isBuiltInAssistant: true },
+};
+
+const REPLY_TO_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-to-assistant-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Ada:** Three deals are at risk.\n\nWhich ones?',
+    },
+  ],
+  metadata: {
+    createdAt: '2026-10-15T08:05:00.000Z',
+    senderWorkspaceMemberId: MEMBER_ID,
+  },
+};
+
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
   currentWorkspaceMemberId,
   error,
+  withComposerQuote = false,
 }: {
   messageId: string;
   isAiChatInboxEnabled: boolean;
   currentWorkspaceMemberId?: string;
   error?: Error;
+  withComposerQuote?: boolean;
 }) => {
   jotaiStore.set(
     currentWorkspaceMemberState.atom,
@@ -201,6 +241,9 @@ const renderMessage = ({
       LONG_ASSISTANT_MESSAGE,
       REPLY_MESSAGE,
       REPLY_TO_MISSING_MESSAGE,
+      BUILT_IN_ASSISTANT_MESSAGE,
+      TOOL_ONLY_ASSISTANT_MESSAGE,
+      REPLY_TO_ASSISTANT_MESSAGE,
     ],
   );
 
@@ -208,6 +251,7 @@ const renderMessage = ({
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <AiChatMessage messageId={messageId} error={error} />
+        {withComposerQuote && <AiChatComposerQuote />}
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -407,5 +451,55 @@ describe('AiChatMessage', () => {
     expect(
       screen.queryByRole('button', { name: 'View original message' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('lets a member quote the assistant by its name', async () => {
+    renderMessage({
+      messageId: BUILT_IN_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      withComposerQuote: true,
+    });
+
+    expect(screen.getAllByText('Ada')).toHaveLength(1);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getAllByText('Three deals are at risk.')).toHaveLength(2);
+    expect(
+      screen.getByRole('button', { name: 'Remove quote' }),
+    ).toBeInTheDocument();
+  });
+
+  it('lets a member quote an assistant turn without text', async () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      withComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getByText('No text content')).toBeInTheDocument();
+  });
+
+  it('opens the assistant message a reply quotes', async () => {
+    renderMessage({
+      messageId: REPLY_TO_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.getByText('Which ones?')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View original message' }),
+    );
+
+    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(
+      BUILT_IN_ASSISTANT_MESSAGE.id,
+    );
   });
 });

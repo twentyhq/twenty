@@ -35,4 +35,23 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
       }),
     ).toBe('Yes, on it.');
   });
+
+  it('keeps the text an assistant wrote around its tool calls', () => {
+    expect(
+      getAgentChatMessageQuoteExcerpt({
+        parts: [
+          { type: 'reasoning', text: 'Looking for deals.' },
+          { type: 'text', text: 'Let me check.' },
+          {
+            type: 'tool-find_opportunities',
+            toolCallId: 'call-1',
+            state: 'output-available',
+            input: {},
+            output: {},
+          },
+          { type: 'text', text: 'Five deals close this week.' },
+        ],
+      }),
+    ).toBe('Let me check.\n\nFive deals close this week.');
+  });
 });

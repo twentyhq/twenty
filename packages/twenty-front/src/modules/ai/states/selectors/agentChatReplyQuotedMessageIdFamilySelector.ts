@@ -1,10 +1,10 @@
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
 import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { findAgentChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
 import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const agentChatReplyQuotedMessageIdFamilySelector =
@@ -29,7 +29,7 @@ export const agentChatReplyQuotedMessageIdFamilySelector =
             messages,
             replyMessageId,
             quote,
-            workspaceMembers: get(currentWorkspaceMembersState),
+            authorContext: get(agentChatMessageAuthorContextSelector),
           })?.id ?? null
         );
       },

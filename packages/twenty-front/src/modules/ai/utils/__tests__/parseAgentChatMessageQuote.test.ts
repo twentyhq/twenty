@@ -49,4 +49,20 @@ describe('parseAgentChatMessageQuote', () => {
   it('ignores a quote with no reply below it', () => {
     expect(parseAgentChatMessageQuote('> **Marco Rossi:** On it.')).toBe(null);
   });
+
+  it('reads back a quote of a message without text', () => {
+    expect(
+      parseAgentChatMessageQuote(
+        prependAgentChatQuoteToText({
+          text: 'Thanks for the update.',
+          authorName: 'Ada',
+          excerpt: '',
+        }),
+      ),
+    ).toEqual({
+      authorName: 'Ada',
+      excerpt: '',
+      replyText: 'Thanks for the update.',
+    });
+  });
 });

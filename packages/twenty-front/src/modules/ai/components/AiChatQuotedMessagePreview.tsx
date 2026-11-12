@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -64,7 +65,13 @@ export const AiChatQuotedMessagePreview = ({
           {source.authorName}
         </Text>
       </StyledHeader>
-      <LazyMarkdownRenderer text={source.excerpt} noImage />
+      {isNonEmptyString(source.excerpt) ? (
+        <LazyMarkdownRenderer text={source.excerpt} noImage />
+      ) : (
+        <Text size="sm" color="tertiary">
+          {t`No text content`}
+        </Text>
+      )}
       {isDefined(onNavigateToMessage) && isDefined(messageId) && (
         <StyledNavigation>
           <Button

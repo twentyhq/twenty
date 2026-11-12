@@ -17,34 +17,41 @@ const MARCO = {
 const buildMessage = ({
   id,
   text,
-  senderWorkspaceMemberId = JULIA.id,
   role = 'user',
+  metadata = { senderWorkspaceMemberId: JULIA.id },
 }: {
   id: string;
   text: string;
-  senderWorkspaceMemberId?: string;
   role?: ExtendedUIMessage['role'];
+  metadata?: ExtendedUIMessage['metadata'];
 }): ExtendedUIMessage => ({
   id,
   role,
   parts: [{ type: 'text', text }],
-  metadata: { createdAt: '2026-10-15T08:00:00.000Z', senderWorkspaceMemberId },
+  metadata: { createdAt: '2026-10-15T08:00:00.000Z', ...metadata },
 });
 
 const REPLY = buildMessage({
   id: 'reply',
   text: '> **Julia Martin:** On it.\n\nThanks!',
-  senderWorkspaceMemberId: MARCO.id,
+  metadata: { senderWorkspaceMemberId: MARCO.id },
 });
 
 const QUOTE = { authorName: 'Julia Martin', excerpt: 'On it.' };
 
-const findQuotedMessageId = (messages: ExtendedUIMessage[]) =>
+const findQuotedMessageId = (
+  messages: ExtendedUIMessage[],
+  quote: { authorName: string; excerpt: string } = QUOTE,
+) =>
   findAgentChatQuotedMessage({
     messages,
     replyMessageId: REPLY.id,
-    quote: QUOTE,
-    workspaceMembers: [JULIA, MARCO],
+    quote,
+    authorContext: {
+      workspaceMembers: [JULIA, MARCO],
+      assistantDisplayName: 'Ada',
+      currentWorkspace: null,
+    },
   })?.id;
 
 describe('findAgentChatQuotedMessage', () => {
@@ -73,7 +80,7 @@ describe('findAgentChatQuotedMessage', () => {
         buildMessage({
           id: 'other-author',
           text: 'On it.',
-          senderWorkspaceMemberId: MARCO.id,
+          metadata: { senderWorkspaceMemberId: MARCO.id },
         }),
         REPLY,
       ]),
@@ -86,7 +93,7 @@ describe('findAgentChatQuotedMessage', () => {
         buildMessage({
           id: 'original',
           text: 'On it.',
-          senderWorkspaceMemberId: 'former-member-id',
+          metadata: { senderWorkspaceMemberId: 'former-member-id' },
         }),
         REPLY,
       ]),
@@ -113,12 +120,63 @@ describe('findAgentChatQuotedMessage', () => {
     ).toBe('original');
   });
 
-  it('ignores assistant messages', () => {
+  it('finds a message from the built-in assistant by its name', () => {
+    const assistantMessage = buildMessage({
+      id: 'assistant',
+      text: 'On it.',
+      role: 'assistant',
+      metadata: { isBuiltInAssistant: true },
+    });
+
     expect(
-      findQuotedMessageId([
-        buildMessage({ id: 'assistant', text: 'On it.', role: 'assistant' }),
-        REPLY,
-      ]),
-    ).toBeUndefined();
+      findQuotedMessageId([assistantMessage, REPLY], {
+        authorName: 'Ada',
+        excerpt: 'On it.',
+      }),
+    ).toBe('assistant');
+    expect(findQuotedMessageId([assistantMessage, REPLY])).toBeUndefined();
+  });
+
+  it('finds an agent message by the quoted text alone', () => {
+    expect(
+      findQuotedMessageId(
+        [
+          buildMessage({
+            id: 'agent',
+            text: 'On it.',
+            role: 'assistant',
+            metadata: { agentId: 'agent-id' },
+          }),
+          REPLY,
+        ],
+        { authorName: 'Sales agent', excerpt: 'On it.' },
+      ),
+    ).toBe('agent');
+  });
+
+  it('finds a message without text from an empty excerpt', () => {
+    expect(
+      findQuotedMessageId(
+        [
+          buildMessage({ id: 'original', text: 'On it.' }),
+          {
+            id: 'tool-only',
+            role: 'assistant',
+            parts: [
+              {
+                type: 'tool-find_companies',
+                toolCallId: 'call-1',
+                state: 'output-available',
+                input: {},
+                output: {},
+              },
+            ],
+            metadata: { isBuiltInAssistant: true },
+          },
+          REPLY,
+        ],
+        { authorName: 'Ada', excerpt: '' },
+      ),
+    ).toBe('tool-only');
   });
 });

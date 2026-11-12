@@ -1,7 +1,7 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
+import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
 import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 export const getAgentChatMessageQuoteSource = <
@@ -11,21 +11,12 @@ export const getAgentChatMessageQuoteSource = <
   >,
 >({
   message,
-  workspaceMembers,
+  author,
 }: {
-  message: Pick<ExtendedUIMessage, 'parts' | 'metadata'>;
-  workspaceMembers: TWorkspaceMember[];
-}) => {
-  const sender = workspaceMembers.find(
-    ({ id }) => id === message.metadata?.senderWorkspaceMemberId,
-  );
-
-  return {
-    sender,
-    authorName: getAgentChatSenderLabel({
-      sender,
-      isCurrentWorkspaceMember: false,
-    }),
-    excerpt: getAgentChatMessageQuoteExcerpt(message),
-  };
-};
+  message: Pick<ExtendedUIMessage, 'id' | 'parts'>;
+  author: AgentChatMessageAuthor<TWorkspaceMember>;
+}) => ({
+  messageId: message.id,
+  author,
+  excerpt: getAgentChatMessageQuoteExcerpt(message),
+});

@@ -10,19 +10,19 @@ export const parseAgentChatMessageQuote = (
   text: string,
 ): AgentChatMessageQuote | null => {
   const lines = text.split('\n');
-  const quoteLineCount = lines.findIndex((line) => !line.startsWith('>'));
+  const firstReplyLineIndex = lines.findIndex((line) => !line.startsWith('>'));
 
-  if (quoteLineCount <= 0 || lines[quoteLineCount] !== '') {
+  if (firstReplyLineIndex <= 0 || lines[firstReplyLineIndex] !== '') {
     return null;
   }
 
   const quote = lines
-    .slice(0, quoteLineCount)
+    .slice(0, firstReplyLineIndex)
     .map((line) => line.replace(/^> ?/, ''))
     .join('\n');
   const quoteHeaderMatch = quote.match(QUOTE_HEADER_REGEX);
   const replyText = lines
-    .slice(quoteLineCount + 1)
+    .slice(firstReplyLineIndex + 1)
     .join('\n')
     .trim();
 

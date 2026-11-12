@@ -35,12 +35,15 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { agentChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/agentChatUnconfirmedFirstMessageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
-import { agentChatMessageQuoteSourceFamilySelector } from '@/ai/states/selectors/agentChatMessageQuoteSourceFamilySelector';
+import { agentChatMessageAuthorContextSelector } from '@/ai/states/selectors/agentChatMessageAuthorContextSelector';
+import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
 import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
@@ -64,6 +67,7 @@ import {
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
+  FindChatMessageAgentDocument,
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
   FeatureFlagKey,
@@ -133,16 +137,36 @@ export const useAgentChat = () => {
       threadId,
     });
     const quotedMessageId = store.get(quotedMessageIdAtom);
-    const quotedMessageSource = store.get(
-      agentChatMessageQuoteSourceFamilySelector.selectorFamily({
+    const quotedMessage = store.get(
+      agentChatThreadMessageFamilySelector.selectorFamily({
         threadId,
         messageId: quotedMessageId,
       }),
     );
+    const quotedAgentId = quotedMessage?.metadata?.agentId;
+    // the composer preview has already loaded the agent, so its name is cached
+    const quotedAgentName = isDefined(quotedAgentId)
+      ? (apolloClient.cache.readQuery({
+          query: FindChatMessageAgentDocument,
+          variables: { id: quotedAgentId },
+        })?.findOneAgent.label ?? undefined)
+      : undefined;
+    const quotedMessageSource = isDefined(quotedMessage)
+      ? getAgentChatMessageQuoteSource({
+          message: quotedMessage,
+          author: getAgentChatMessageAuthor({
+            message: quotedMessage,
+            authorContext: store.get(
+              agentChatMessageAuthorContextSelector.atom,
+            ),
+            agentName: quotedAgentName,
+          }),
+        })
+      : null;
     const contentToSend = isDefined(quotedMessageSource)
       ? prependAgentChatQuoteToText({
           text: draftText,
-          authorName: quotedMessageSource.authorName,
+          authorName: quotedMessageSource.author.name,
           excerpt: quotedMessageSource.excerpt,
         })
       : draftText;

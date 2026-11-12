@@ -172,8 +172,7 @@ export const AiChatMessage = ({
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
   const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
-  const canReply =
-    isAiChatInboxEnabled && isUser && isDefined(sender) && !isReadOnly;
+  const canReply = isAiChatInboxEnabled && !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
@@ -225,10 +224,7 @@ export const AiChatMessage = ({
       >
         {hasHeader && (
           <AiChatMessageAuthorHeader
-            metadata={agentChatMessage.metadata}
-            role={agentChatMessage.role}
-            sender={sender}
-            messageId={messageId}
+            message={agentChatMessage}
             createdAt={createdAt}
           />
         )}

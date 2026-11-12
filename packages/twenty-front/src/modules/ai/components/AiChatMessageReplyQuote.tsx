@@ -5,15 +5,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
+import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
 import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
+import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessageQuoteSourceFamilySelector } from '@/ai/states/selectors/agentChatMessageQuoteSourceFamilySelector';
+import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
 import { agentChatReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/agentChatReplyQuotedMessageIdFamilySelector';
 import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const StyledQuoteContainer = styled.div<{ isClickable: boolean }>`
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -49,25 +51,32 @@ export const AiChatMessageReplyQuote = ({
     agentChatReplyQuotedMessageIdFamilySelector,
     { replyMessageId },
   );
-  const quotedMessageSource = useAtomFamilySelectorValue(
-    agentChatMessageQuoteSourceFamilySelector,
+  const quotedMessage = useAtomFamilySelectorValue(
+    agentChatThreadMessageFamilySelector,
     { threadId: agentChatDisplayedThread, messageId: quotedMessageId },
   );
-  const sender = quotedMessageSource?.sender;
+  const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
 
-  const preview = (
+  const preview = isDefined(quotedMessageAuthor) ? (
+    <AiChatMessageAuthorResolver author={quotedMessageAuthor}>
+      {(author) => (
+        <AiChatQuotedMessagePreview
+          source={{
+            status: 'available',
+            authorName: quote.authorName,
+            authorAvatar: <AiChatMessageAuthorAvatar author={author} />,
+            excerpt: quote.excerpt,
+          }}
+        />
+      )}
+    </AiChatMessageAuthorResolver>
+  ) : (
     <AiChatQuotedMessagePreview
       source={{
         status: 'available',
         authorName: quote.authorName,
         authorAvatar: (
-          <Avatar
-            name={quote.authorName}
-            colorSeed={sender?.id}
-            src={getAbsoluteImageUrl(sender?.avatarUrl)}
-            size="sm"
-            shape="circle"
-          />
+          <Avatar name={quote.authorName} size="sm" shape="circle" />
         ),
         excerpt: quote.excerpt,
       }}
