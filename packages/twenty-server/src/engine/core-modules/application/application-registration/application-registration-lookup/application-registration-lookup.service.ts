@@ -14,12 +14,19 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+
+const OAUTH_REDIRECT_URIS_CACHE_TTL_MS = 5 * 60 * 1000;
 
 @Injectable()
 export class ApplicationRegistrationLookupService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectCacheStorage(CacheStorageNamespace.EngineOAuthClientRedirectUris)
+    private readonly oAuthRedirectUrisCacheStorage: CacheStorageService,
   ) {}
 
   async findOneByIdOrThrow({
@@ -55,13 +62,36 @@ export class ApplicationRegistrationLookupService {
   async findOAuthRedirectUrisByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<string[]> {
+    const cachedRedirectUris =
+      await this.oAuthRedirectUrisCacheStorage.get<string[]>(
+        universalIdentifier,
+      );
+
+    if (isDefined(cachedRedirectUris)) {
+      return cachedRedirectUris;
+    }
+
     const applicationRegistration =
       await this.applicationRegistrationRepository.findOne({
         select: ['oAuthRedirectUris'],
         where: { universalIdentifier },
       });
 
-    return applicationRegistration?.oAuthRedirectUris ?? [];
+    const redirectUris = applicationRegistration?.oAuthRedirectUris ?? [];
+
+    await this.oAuthRedirectUrisCacheStorage.set(
+      universalIdentifier,
+      redirectUris,
+      OAUTH_REDIRECT_URIS_CACHE_TTL_MS,
+    );
+
+    return redirectUris;
+  }
+
+  async invalidateOAuthRedirectUrisCache(
+    universalIdentifier: string,
+  ): Promise<void> {
+    await this.oAuthRedirectUrisCacheStorage.del(universalIdentifier);
   }
 
   async findOneOwnedByWorkspaceOrThrow({

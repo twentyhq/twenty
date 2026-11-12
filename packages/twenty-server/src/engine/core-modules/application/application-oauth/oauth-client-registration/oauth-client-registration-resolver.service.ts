@@ -17,9 +17,7 @@ import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-mo
 import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules/application/application-oauth/constants/public-oauth-client-registration-values.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 @Injectable()
@@ -29,8 +27,7 @@ export class OAuthClientRegistrationResolverService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
     private readonly throttlerService: ThrottlerService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineMcpClientMode)
-    private readonly mcpClientModeCacheStorage: CacheStorageService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
   ) {}
 
   async throttleClientIdMetadataDocumentFetchOrThrow({
@@ -121,7 +118,7 @@ export class OAuthClientRegistrationResolverService {
           existingRegistration.id,
           documentFields,
         );
-        await this.mcpClientModeCacheStorage.del(
+        await this.applicationRegistrationLookupService.invalidateOAuthRedirectUrisCache(
           existingRegistration.universalIdentifier,
         );
       }

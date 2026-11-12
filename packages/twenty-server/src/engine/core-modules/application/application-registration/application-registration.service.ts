@@ -74,9 +74,6 @@ import {
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -148,8 +145,6 @@ export class ApplicationRegistrationService {
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineMcpClientMode)
-    private readonly mcpClientModeCacheStorage: CacheStorageService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -625,7 +620,9 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.update(id, updateData);
 
     if (isDefined(update.oAuthRedirectUris)) {
-      await this.mcpClientModeCacheStorage.del(universalIdentifier);
+      await this.applicationRegistrationLookupService.invalidateOAuthRedirectUrisCache(
+        universalIdentifier,
+      );
     }
 
     await this.invalidateMarketplaceAppsCache();
