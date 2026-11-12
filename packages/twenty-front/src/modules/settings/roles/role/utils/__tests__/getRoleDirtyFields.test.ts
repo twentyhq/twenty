@@ -135,7 +135,7 @@ describe('getRoleDirtyFields', () => {
           roleId: role.id,
           objectMetadataId: 'pet',
           fieldMetadataId: 'bio',
-          canReadFieldValue: null,
+          canReadFieldValue: null as boolean | null,
           canUpdateFieldValue: false,
         },
       ],
@@ -144,5 +144,14 @@ describe('getRoleDirtyFields', () => {
     expect(
       getRoleDirtyFields(buildRole('temporary-id'), buildRole('server-id')),
     ).toEqual({});
+
+    const draftWithUnreadableField = buildRole('temporary-id');
+    draftWithUnreadableField.fieldPermissions[0].canReadFieldValue = false;
+
+    expect(
+      Object.keys(
+        getRoleDirtyFields(draftWithUnreadableField, buildRole('server-id')),
+      ),
+    ).toEqual(['fieldPermissions']);
   });
 });

@@ -1,4 +1,5 @@
-import { hasSameFieldRestrictions } from '@/settings/roles/role/utils/hasSameFieldRestrictions';
+import { getUneditableFieldMetadataIds } from '@/settings/roles/role/utils/getUneditableFieldMetadataIds';
+import { getUnreadableFieldMetadataIds } from '@/settings/roles/role/utils/getUnreadableFieldMetadataIds';
 import { getRoleWithoutSaveArtifacts } from '@/settings/roles/role/utils/getRoleWithoutSaveArtifacts';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isDefined } from 'twenty-shared/utils';
@@ -24,16 +25,24 @@ export const getRoleDirtyFields = (
     draftRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
     persistedRole.permissionFlags?.map(({ flag }) => flag).sort() ?? [],
   );
-  const hasUnchangedFieldRestrictions = hasSameFieldRestrictions({
-    firstRole: draftRole,
-    secondRole: persistedRole,
-  });
+  const hasSameUnreadableFields = isDeeplyEqual(
+    getUnreadableFieldMetadataIds(draftRole),
+    getUnreadableFieldMetadataIds(persistedRole),
+  );
+  const hasSameUneditableFields = isDeeplyEqual(
+    getUneditableFieldMetadataIds(draftRole),
+    getUneditableFieldMetadataIds(persistedRole),
+  );
 
   return Object.fromEntries(
     Object.entries(dirtyFields).filter(
       ([key]) =>
         !(key === 'permissionFlags' && hasSamePermissionFlags) &&
-        !(key === 'fieldPermissions' && hasUnchangedFieldRestrictions),
+        !(
+          key === 'fieldPermissions' &&
+          hasSameUnreadableFields &&
+          hasSameUneditableFields
+        ),
     ),
   );
 };
