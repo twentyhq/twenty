@@ -175,9 +175,10 @@ export const createBoundedFetch =
     try {
       // Starts the request synchronously when there are no proxy headers, so an
       // abort right after the call still reaches fetch.
-      let response = await send(
-        isDefined(proxyHeaders) ? await proxyHeaders.read(signal) : {},
-      );
+      const proxyHeaderValues = isDefined(proxyHeaders)
+        ? await proxyHeaders.read(signal)
+        : {};
+      let response = await send(proxyHeaderValues);
 
       // The proxy rejected the request before Twenty saw it, so replaying it
       // once with renewed headers is safe; stream bodies cannot be replayed.
@@ -187,7 +188,7 @@ export const createBoundedFetch =
         isProxyRejection(response, url)
       ) {
         await response.body?.cancel();
-        proxyHeaders.renew();
+        proxyHeaders.renew(proxyHeaderValues);
         response = await send(await proxyHeaders.read(signal));
       }
 

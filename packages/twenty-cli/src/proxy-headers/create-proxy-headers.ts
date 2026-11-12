@@ -14,25 +14,42 @@ export const createProxyHeaders = ({
       : { read: async () => headers, isRenewable: false, renew: () => {} };
   }
 
-  let commandHeaders: Promise<Record<string, string>> | undefined;
+  let pendingHeaders: Promise<Record<string, string>> | undefined;
+  let currentHeaders: Record<string, string> | undefined;
 
   return {
-    read: async (signal) => {
-      commandHeaders ??= runProxyHeaderCommand({
-        command: headerCommand,
-        signal,
-      });
+    read: (signal) => {
+      if (!isDefined(pendingHeaders)) {
+        const attempt = runProxyHeaderCommand({
+          command: headerCommand,
+          signal,
+        }).then((commandHeaders) => ({ ...headers, ...commandHeaders }));
 
-      try {
-        return { ...headers, ...(await commandHeaders) };
-      } catch (error) {
-        commandHeaders = undefined;
-        throw error;
+        pendingHeaders = attempt;
+        currentHeaders = undefined;
+        attempt.then(
+          (resolvedHeaders) => {
+            if (pendingHeaders === attempt) {
+              currentHeaders = resolvedHeaders;
+            }
+          },
+          () => {
+            if (pendingHeaders === attempt) {
+              pendingHeaders = undefined;
+            }
+          },
+        );
       }
+
+      return pendingHeaders;
     },
     isRenewable: true,
-    renew: () => {
-      commandHeaders = undefined;
+    // Concurrent rejections of the same headers share one renewal.
+    renew: (rejectedHeaders) => {
+      if (currentHeaders === rejectedHeaders) {
+        pendingHeaders = undefined;
+        currentHeaders = undefined;
+      }
     },
   };
 };

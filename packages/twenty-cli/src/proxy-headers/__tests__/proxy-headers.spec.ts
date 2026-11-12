@@ -2,6 +2,7 @@ import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { isDefined } from 'twenty-shared/utils';
 import {
   afterAll,
   afterEach,
@@ -276,7 +277,7 @@ describe('proxy headers', () => {
     expect(read).not.toHaveBeenCalled();
   });
 
-  it('runs a header command once per invocation until it is renewed', async () => {
+  it('shares one header command run between concurrent reads and renewals', async () => {
     const counterPath = join(home, 'header-command-runs');
     const proxyHeaders = createProxyHeaders({
       headers: { 'x-team': 'platform' },
@@ -284,19 +285,28 @@ describe('proxy headers', () => {
     });
     const signal = new AbortController().signal;
 
-    expect(await proxyHeaders?.read(signal)).toEqual({
+    const [firstHeaders, secondHeaders] = await Promise.all([
+      proxyHeaders?.read(signal),
+      proxyHeaders?.read(signal),
+    ]);
+
+    expect(firstHeaders).toEqual({
       'x-team': 'platform',
       'cf-access-token': 'token-1',
     });
-    expect(await proxyHeaders?.read(signal)).toMatchObject({
-      'cf-access-token': 'token-1',
-    });
+    expect(secondHeaders).toBe(firstHeaders);
 
-    proxyHeaders?.renew();
+    if (!isDefined(firstHeaders) || !isDefined(secondHeaders)) {
+      throw new Error('Expected proxy headers.');
+    }
 
-    expect(await proxyHeaders?.read(signal)).toMatchObject({
-      'cf-access-token': 'token-2',
-    });
+    proxyHeaders?.renew(firstHeaders);
+    const renewedHeaders = await proxyHeaders?.read(signal);
+    proxyHeaders?.renew(secondHeaders);
+
+    expect(renewedHeaders).toMatchObject({ 'cf-access-token': 'token-2' });
+    expect(await proxyHeaders?.read(signal)).toBe(renewedHeaders);
+    expect(await readFile(counterPath, 'utf8')).toBe('2');
   });
 
   it('keeps proxy settings out of app worker environments', () => {

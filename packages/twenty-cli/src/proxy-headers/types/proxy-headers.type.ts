@@ -1,5 +1,5 @@
 export type ProxyHeaders = {
   read: (signal: AbortSignal) => Promise<Record<string, string>>;
   isRenewable: boolean;
-  renew: () => void;
+  renew: (rejectedHeaders: Record<string, string>) => void;
 };
