@@ -108,6 +108,17 @@ for await (const event of streamConversation({ ...conversation, signal })) {
 - The first event once connected is a `keepalive`: read the history then. The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; stream again to resume. It can start before the first run reaches the conversation.
 - Both need an application token and reach only the app's own conversations. Turns a member opened elsewhere, such as in the chat, show only their text, in the history, live and in the agent's next run, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless. Turns the app ran as a member stay whole when the app reads on its own. Requires `"engines": { "twenty": ">=2.56.0" }`.
 
+## Roles And Record Permissions
+
+- Declare what a role can do on records in `recordsPermissions` of `defineRole` / `defineApplicationRole`:
+  - `canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`, `canSoftDeleteAllRecords`, `canDestroyAllRecords` at its top level apply to every object. Create follows update when unset.
+  - `objects` lists what differs for one object (`objectUniversalIdentifier`): the same five grants for all its records, `unreadableFields` and `uneditableFields` (field universal identifiers), and `rowLevelRecordsPermissions`.
+  - A row-level rule grants `canReadRecords`, `canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords` on the records matched by the `predicates` and `predicateGroups` nested in it. Give every rule, predicate and group a stable `universalIdentifier`.
+- An all-records grant wins over a rule. When the role grants an operation for every object, set the object's `can…AllRecords` to `false` for the operations its rules restrict; `defineRole` warns about a shadowed rule.
+- A rule with `unreadableFields` or `uneditableFields` needs at least one predicate group.
+- `canReadAllObjectRecords` and its siblings, `objectPermissions`, `fieldPermissions`, `rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups` on a role are deprecated. They still build, with a warning, and are converted to `recordsPermissions`.
+- An app with roles is built to require `"engines": { "twenty": ">=2.59.0" }`: older servers ignore `recordsPermissions`.
+
 ## AI Generate
 
 `ai.generate` calls a model with no agent and no conversation. Import it from `twenty-sdk/logic-function`.
@@ -136,7 +147,7 @@ const { object } = await ai.generate({
 });
 ```
 
-- Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach.
+- Without a `scope` the model gets no data tools. A `scope` (`AiRunScope`, e.g. `objectPermissions`) grants tools on those objects, and can only narrow what the caller may already reach. A scope keeps `canReadAllObjectRecords`, `objectPermissions` and `fieldPermissions`; it does not take a role's `recordsPermissions`.
 - The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. From a logic function it follows the default clients: the person who triggered the run, within the app's role, or the app when nobody did. The app needs a default role with the AI permission flag.
 - `modelId` is optional; the workspace default model is used when unset.
 - It returns `{ success, text, object, error, runId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `runId` for the recorded run and `usage` as `{ inputTokens, outputTokens }`, which counts the steps that finished before a failure too. A run that fails comes back as `success: false` rather than a throw (a call that cannot start a run, such as invalid input, still throws), so check `success`.
