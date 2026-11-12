@@ -179,12 +179,14 @@ export class FilesFieldService {
   async copyFileIntoFilesField({
     fileId,
     workspaceId,
-    fieldMetadataId,
+    ...fieldMetadataReference
   }: {
     fileId: string;
     workspaceId: string;
-    fieldMetadataId: string;
-  }): Promise<FileEntity> {
+  } & (
+    | { fieldMetadataId: string }
+    | { fieldMetadataUniversalIdentifier: string }
+  )): Promise<FileEntity> {
     const sourceFile = await this.fileRepository.findOne(workspaceId, {
       where: { id: fileId },
     });
@@ -211,7 +213,13 @@ export class FilesFieldService {
       workspaceId,
       {
         select: ['applicationId', 'universalIdentifier'],
-        where: { id: fieldMetadataId },
+        where:
+          'fieldMetadataId' in fieldMetadataReference
+            ? { id: fieldMetadataReference.fieldMetadataId }
+            : {
+                universalIdentifier:
+                  fieldMetadataReference.fieldMetadataUniversalIdentifier,
+              },
       },
     );
 

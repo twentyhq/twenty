@@ -280,6 +280,7 @@ export type {
 } from './runAgentType';
 export type {
   SendAppMessageRecipient,
+  SendAppMessageAttachment,
   SendAppMessageEmail,
   SendAppMessagePayload,
   SendAppMessageResult,

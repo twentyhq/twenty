@@ -7,7 +7,15 @@ import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadCom
 
 const mockSendAppChannelMessage = jest.fn();
 
+jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
+  AgentChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
+}));
+
 describe('ChatThreadComposer', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('retries a failed message with the same idempotency key', async () => {
     mockSendAppChannelMessage
       .mockRejectedValueOnce(new Error('Network error'))
@@ -71,5 +79,52 @@ describe('ChatThreadComposer', () => {
     await waitFor(() =>
       expect(screen.queryByText('Hello')).not.toBeInTheDocument(),
     );
+  });
+
+  it('sends attached files without text and keeps them on retry', async () => {
+    mockSendAppChannelMessage
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockResolvedValueOnce(undefined);
+
+    const onMessageSent = jest.fn().mockResolvedValue(undefined);
+    const deck = new File(['deck'], 'deck.pdf', { type: 'application/pdf' });
+
+    const { container } = render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          canAttachFiles
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={onMessageSent}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+
+    const fileInput = container.querySelector('input[type="file"]');
+
+    if (!(fileInput instanceof HTMLInputElement)) {
+      throw new Error('The composer file input is missing');
+    }
+
+    await userEvent.upload(fileInput, deck);
+
+    expect(screen.getByText('deck.pdf')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
+
+    await waitFor(() => expect(onMessageSent).toHaveBeenCalledTimes(1));
+
+    const [firstCall, secondCall] = mockSendAppChannelMessage.mock.calls;
+
+    expect(firstCall[0].text).toBe('');
+    expect(firstCall[0].files).toHaveLength(1);
+    expect(firstCall[0].files[0]).toBe(deck);
+    expect(secondCall[0].id).toBe(firstCall[0].id);
+    expect(secondCall[0].files[0]).toBe(deck);
   });
 });
