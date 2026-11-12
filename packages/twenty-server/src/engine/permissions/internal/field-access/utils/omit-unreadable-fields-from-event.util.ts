@@ -5,7 +5,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { type FieldsHiddenOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/fields-hidden-on-matching-records.type';
-import { composeRecordFieldMetadataIds } from 'src/engine/permissions/internal/field-access/utils/compose-record-field-metadata-ids.util';
+import { findUnreadableFieldMetadataIdsOnRecords } from 'src/engine/permissions/internal/field-access/utils/find-unreadable-field-metadata-ids-on-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { filterFieldNamesInEventProperties } from 'src/engine/permissions/utils/filter-field-names-in-event-properties.util';
@@ -55,10 +55,10 @@ export const omitUnreadableFieldsFromEvent = <
   const { properties } = event;
   const unreadableFieldNames = new Set(
     [
-      ...composeRecordFieldMetadataIds({
+      ...findUnreadableFieldMetadataIdsOnRecords({
         flatObjectMetadata: objectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
-        objectFieldMetadataIds:
+        objectUnreadableFieldMetadataIds:
           recordsPermissions.objects[objectMetadata.id]?.unreadableFields ?? [],
         // A record leaving an RLS rule still shows unreadable values in its before state
         records: [
