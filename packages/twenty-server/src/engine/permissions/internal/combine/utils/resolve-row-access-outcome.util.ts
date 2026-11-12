@@ -2,11 +2,11 @@
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
 import { hasHypotheticalRecordShare } from 'src/engine/permissions/internal/record-share/utils/has-hypothetical-record-share.util';
-import { canRecordShareGrantOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-grant-operation.util';
+import { canRecordShareAccessOperation } from 'src/engine/permissions/internal/record-share/utils/can-record-share-access-operation.util';
 import { isObjectOperationDeniedToPrincipals } from 'src/engine/permissions/internal/combine/utils/is-object-operation-denied-to-principals.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 
-export const resolvePermissionsRowAccessOutcome = (
+export const resolveRowAccessOutcome = (
   request: PermissionsRowAccessRequest,
 ): boolean | undefined => {
   if (
@@ -17,7 +17,7 @@ export const resolvePermissionsRowAccessOutcome = (
   }
 
   if (
-    canRecordShareGrantOperation({
+    canRecordShareAccessOperation({
       flatObjectMetadata: request.flatObjectMetadata,
       featureFlagsMap: request.metadataMaps.featureFlagsMap,
       operationType: request.operationType,

@@ -3,17 +3,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolvePermissionsShareGrant } from 'src/engine/permissions/internal/record-share/utils/resolve-permissions-share-grant.util';
+import { resolveRecordShareAccessRequirement } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-access-requirement.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/internal/record-share/utils/resolve-record-ids-shared-with-principals.util';
 
-export const findRecordIdsGrantedByShare = async ({
+export const findRecordIdsAccessibleThroughRecordShare = async ({
   records,
   context,
   ...request
 }: PermissionsRowAccessEvaluationRequest): Promise<string[]> => {
-  const shareGrant = resolvePermissionsShareGrant(request);
+  const recordShareAccessRequirement =
+    resolveRecordShareAccessRequirement(request);
 
-  if (!isDefined(shareGrant) || records.length === 0) {
+  if (!isDefined(recordShareAccessRequirement) || records.length === 0) {
     return [];
   }
 
@@ -23,8 +24,8 @@ export const findRecordIdsGrantedByShare = async ({
       objectMetadataId: request.flatObjectMetadata.id,
       recordIds,
     }),
-    principalIds: shareGrant.principalIds,
-    accessLevels: shareGrant.accessLevels,
+    principalIds: recordShareAccessRequirement.principalIds,
+    accessLevels: recordShareAccessRequirement.accessLevels,
   });
   return recordIds.filter((recordId) => sharedRecordIds.has(recordId));
 };

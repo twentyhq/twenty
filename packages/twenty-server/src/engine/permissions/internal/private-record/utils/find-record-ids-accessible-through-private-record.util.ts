@@ -3,15 +3,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { resolvePermissionsCreatorWorkspaceMemberId } from 'src/engine/permissions/internal/private-record/utils/resolve-permissions-creator-workspace-member-id.util';
+import { resolvePrivateRecordCreatorWorkspaceMemberId } from 'src/engine/permissions/internal/private-record/utils/resolve-private-record-creator-workspace-member-id.util';
 import { resolvePrivateRecordState } from 'src/engine/permissions/internal/private-record/utils/resolve-private-record-state.util';
 
-export const findRecordIdsGrantedByCreator = async ({
+export const findRecordIdsAccessibleThroughPrivateRecord = async ({
   records,
   context,
   ...request
 }: PermissionsRowAccessEvaluationRequest): Promise<string[]> => {
-  const workspaceMemberId = resolvePermissionsCreatorWorkspaceMemberId(request);
+  const workspaceMemberId =
+    resolvePrivateRecordCreatorWorkspaceMemberId(request);
 
   if (!isDefined(workspaceMemberId) || records.length === 0) {
     return [];
