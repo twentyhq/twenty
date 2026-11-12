@@ -105,6 +105,8 @@ Once connected, the MCP server lists the tools your connection can use, with the
 
 This needs a client that loads tools on demand, as Claude, Claude Code, Codex and OpenCode do by default. A client that loads every tool definition up front, including Claude Code with tool search turned off, can run out of context.
 
+ChatGPT OAuth connections default to meta mode at `/mcp`, keeping the published plugin's tool catalog stable across workspaces. For direct tools on a custom ChatGPT connection, use `/mcp?mode=direct`.
+
 ### Meta mode
 
 For clients that load every tool up front, connect to `/mcp?mode=meta`. It lists a few meta-tools instead:
@@ -115,6 +117,8 @@ For clients that load every tool up front, connect to `/mcp?mode=meta`. It lists
 Record operation names follow a grammar, so an assistant can build them without a discovery call: `find_many_companies`, `find_one_person`, `update_one_opportunity`. If a name is wrong, `learn_tools` reports it under `notFound` along with the closest matching names.
 
 For anything else, `get_tool_catalog` browses the remaining tools one category at a time. It is a fallback: an unfiltered call returns hundreds of operations and most assistants will truncate the response.
+
+Because `execute_tool` can update or delete records, clients may ask you to confirm calls routed through it, including reads.
 
 ## Permissions
 
