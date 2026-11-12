@@ -88,7 +88,6 @@ export class WorkflowTriggerDispatchWorkspaceService {
       await this.coreWorkflowRunnerService.createFailedRun({
         workspaceId,
         coreWorkflowVersionId,
-        // the refused payload is what overflowed the queue, so it is not persisted on the run either
         payload:
           exception.code === MessageQueueExceptionCode.JOB_TOO_LARGE
             ? {}

@@ -173,6 +173,7 @@ export class CoreWorkflowRunnerService {
       triggerPayload: payload,
       error,
       workspaceId,
+      shouldSkipEventEmission: true,
     });
   }
 
