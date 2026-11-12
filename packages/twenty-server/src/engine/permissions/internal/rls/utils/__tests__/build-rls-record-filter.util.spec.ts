@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  type RecordGqlOperationFilter,
   RelationType,
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -693,10 +694,11 @@ describe('buildRecordFilterForRule with access group member values', () => {
         },
       });
 
+      expect(filter).not.toBeNull();
       expect(
         isRecordMatchingFilter({
           record: { id: 'record-1', name, deletedAt: null },
-          filter: filter ?? {},
+          filter: filter as RecordGqlOperationFilter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
         }),

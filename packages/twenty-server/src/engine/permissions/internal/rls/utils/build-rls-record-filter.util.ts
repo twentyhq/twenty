@@ -23,11 +23,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  MATCHING_ANY_MEMBER_VALUE_OPERANDS,
-  MATCHING_NO_MEMBER_VALUE_OPERANDS,
-  SINGLE_VALUE_FILTER_TYPES,
-} from 'src/engine/metadata-modules/row-level-permission-predicate/constants/row-level-permission-predicate-member-list.constants';
+import { MATCHING_ANY_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-any-member-value-operands.constant';
+import { MATCHING_NO_MEMBER_VALUE_OPERANDS } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/matching-no-member-value-operands.constant';
+import { SINGLE_VALUE_FILTER_TYPES } from 'src/engine/metadata-modules/row-level-permission-predicate/constants/single-value-filter-types.constant';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
