@@ -38,6 +38,6 @@ export const getRoleDirtyFields = (
   };
 
   return Object.fromEntries(
-    Object.entries(dirtyFields).filter(([key]) => isSameByKey[key] !== true),
+    Object.entries(dirtyFields).filter(([key]) => !isSameByKey[key]),
   );
 };
