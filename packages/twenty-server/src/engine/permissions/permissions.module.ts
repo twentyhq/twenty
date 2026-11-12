@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AccessGroupPropagationProgressReadService } from 'src/engine/permissions/access-group-propagation-progress-read.service';
 import { AccessGroupReadModule } from 'src/engine/permissions/internal/access-group/access-group-read.module';
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
@@ -33,6 +34,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RelatedRecordPathReadModule,
   ],
   providers: [
+    AccessGroupPropagationProgressReadService,
     SettingPermissionsService,
     PermissionsMetadataMapsService,
     PrincipalPermissionsReadService,
@@ -46,6 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
+    AccessGroupPropagationProgressReadService,
     PrincipalPermissionsReadService,
     RecordAccessGroupWriteService,
     RecordEventPermissionsReadService,

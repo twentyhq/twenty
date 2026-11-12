@@ -6,6 +6,7 @@ import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/int
 import { RecomputeRecordAccessGroupIdsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids.job';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
+import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
@@ -23,6 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
+    AccessGroupPropagationProgressService,
     RecordAccessGroupComputationService,
     RecordAccessGroupMetadataMapsService,
     RecordAccessGroupPropagationService,
@@ -35,6 +37,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SyncAccessGroupsJob,
   ],
   exports: [
+    AccessGroupPropagationProgressService,
     AccessGroupSyncService,
     RecordAccessGroupComputationService,
     RecordAccessGroupPropagationService,

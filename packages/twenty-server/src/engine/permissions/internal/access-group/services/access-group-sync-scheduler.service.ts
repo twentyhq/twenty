@@ -7,6 +7,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
 import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-job-name.constant';
 import { RECOMPUTE_RELATED_RECORD_PATH_TARGETS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-related-record-path-targets-job-name.constant';
 import { SYNC_ACCESS_GROUPS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/sync-access-groups-job-name.constant';
@@ -21,6 +22,7 @@ export class AccessGroupSyncSchedulerService {
     @InjectMessageQueue(MessageQueue.accessGroupQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
   ) {}
 
   async isEnabled(workspaceId: string): Promise<boolean> {
@@ -53,6 +55,12 @@ export class AccessGroupSyncSchedulerService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
+    await this.accessGroupPropagationProgressService.trackObjectRecompute({
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
+    });
+
     await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
       RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
       { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
@@ -78,6 +86,10 @@ export class AccessGroupSyncSchedulerService {
     if (!(await this.isEnabled(workspaceId))) {
       return;
     }
+
+    await this.accessGroupPropagationProgressService.addPendingSync(
+      workspaceId,
+    );
 
     await this.messageQueueService.add<
       SyncAccessGroupsJobData | RecomputeRelatedRecordPathTargetsJobData

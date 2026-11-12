@@ -174,6 +174,7 @@ export class SyncDriver implements MessageQueueDriver {
       name,
       data,
       retryLimit: 0,
+      attemptsMade: 0,
       updateProgress: async () => {},
       updateData: async (updatedData) => {
         job.data = updatedData;

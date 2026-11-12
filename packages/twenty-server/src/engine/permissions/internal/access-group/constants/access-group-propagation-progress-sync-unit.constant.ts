@@ -1,0 +1,1 @@
+export const ACCESS_GROUP_PROPAGATION_PROGRESS_SYNC_UNIT = 'sync';

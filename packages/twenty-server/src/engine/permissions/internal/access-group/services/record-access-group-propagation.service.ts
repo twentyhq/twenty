@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { AccessGroupPropagationProgressService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-progress.service';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
@@ -26,6 +27,7 @@ export class RecordAccessGroupPropagationService {
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
     private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
+    private readonly accessGroupPropagationProgressService: AccessGroupPropagationProgressService,
   ) {}
 
   async recomputeRecordAccessGroupIdsOfAllObjectRecordsAndPropagate({
@@ -34,7 +36,7 @@ export class RecordAccessGroupPropagationService {
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
     await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-      { workspaceId, objectMetadataId },
+      { workspaceId, objectMetadataId, propagatedFromObjectMetadataIds },
     );
 
     const metadataMaps =
@@ -61,6 +63,13 @@ export class RecordAccessGroupPropagationService {
         objectMetadataId,
       ],
       metadataMaps,
+    });
+
+    // Finished after the following objects are tracked, so the progress never looks idle in between
+    await this.accessGroupPropagationProgressService.finishObjectRecompute({
+      workspaceId,
+      objectMetadataId,
+      propagatedFromObjectMetadataIds,
     });
   }
 
