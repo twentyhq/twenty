@@ -7,6 +7,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ACCESS_GROUP_PROPAGATION_PROGRESS_STALE_AFTER_MS } from 'src/engine/permissions/internal/access-group/constants/access-group-propagation-progress-stale-after-ms.constant';
 import { ACCESS_GROUP_PROPAGATION_PROGRESS_SYNC_UNIT } from 'src/engine/permissions/internal/access-group/constants/access-group-propagation-progress-sync-unit.constant';
@@ -56,10 +57,41 @@ export class AccessGroupPropagationProgressService {
     });
   }
 
-  // Sets rather than adds, so a deduplicated job or a retry never counts an object twice
-  async trackObjectRecompute(
+  // Estimated, and never zero, so scheduling stays cheap and the object reads as pending until its job counts it
+  async trackScheduledObjectRecompute(
+    jobData: RecomputeRecordAccessGroupIdsJobData,
+  ): Promise<void> {
+    await this.setObjectRecordCount({
+      jobData,
+      countRecords: async (countArgs) =>
+        Math.max(
+          1,
+          await this.recordAccessGroupRepository.estimateRecordCount(countArgs),
+        ),
+    });
+  }
+
+  async trackStartedObjectRecompute(
     jobData: RecomputeRecordAccessGroupIdsJobData,
   ): Promise<number> {
+    return this.setObjectRecordCount({
+      jobData,
+      countRecords: (countArgs) =>
+        this.recordAccessGroupRepository.countRecords(countArgs),
+    });
+  }
+
+  // Sets rather than adds, so a deduplicated job or a retry never counts an object twice
+  private async setObjectRecordCount({
+    jobData,
+    countRecords,
+  }: {
+    jobData: RecomputeRecordAccessGroupIdsJobData;
+    countRecords: (countArgs: {
+      workspaceId: string;
+      flatObjectMetadata: FlatObjectMetadata;
+    }) => Promise<number>;
+  }): Promise<number> {
     const { workspaceId, objectMetadataId } = jobData;
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -74,10 +106,7 @@ export class AccessGroupPropagationProgressService {
       return 0;
     }
 
-    const recordCount = await this.recordAccessGroupRepository.countRecords({
-      workspaceId,
-      flatObjectMetadata,
-    });
+    const recordCount = await countRecords({ workspaceId, flatObjectMetadata });
 
     await this.applyUpdates({
       workspaceId,

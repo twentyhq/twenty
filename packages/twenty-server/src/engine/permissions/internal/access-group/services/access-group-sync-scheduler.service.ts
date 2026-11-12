@@ -55,11 +55,13 @@ export class AccessGroupSyncSchedulerService {
     objectMetadataId,
     propagatedFromObjectMetadataIds = [],
   }: RecomputeRecordAccessGroupIdsJobData): Promise<void> {
-    await this.accessGroupPropagationProgressService.trackObjectRecompute({
-      workspaceId,
-      objectMetadataId,
-      propagatedFromObjectMetadataIds,
-    });
+    await this.accessGroupPropagationProgressService.trackScheduledObjectRecompute(
+      {
+        workspaceId,
+        objectMetadataId,
+        propagatedFromObjectMetadataIds,
+      },
+    );
 
     await this.messageQueueService.add<RecomputeRecordAccessGroupIdsJobData>(
       RECOMPUTE_RECORD_ACCESS_GROUP_IDS_JOB_NAME,
@@ -91,12 +93,21 @@ export class AccessGroupSyncSchedulerService {
       workspaceId,
     );
 
-    await this.messageQueueService.add<
-      SyncAccessGroupsJobData | RecomputeRelatedRecordPathTargetsJobData
-    >(
-      jobName,
-      { workspaceId },
-      { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
-    );
+    try {
+      await this.messageQueueService.add<
+        SyncAccessGroupsJobData | RecomputeRelatedRecordPathTargetsJobData
+      >(
+        jobName,
+        { workspaceId },
+        { isWorkspaceJob: true, workspaceId, retryLimit: 3 },
+      );
+    } catch (error) {
+      // A job the queue rejected never runs, so nothing else would settle its pending sync
+      await this.accessGroupPropagationProgressService.removePendingSync(
+        workspaceId,
+      );
+
+      throw error;
+    }
   }
 }

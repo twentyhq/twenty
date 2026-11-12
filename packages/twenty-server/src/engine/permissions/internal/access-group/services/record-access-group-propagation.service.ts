@@ -43,11 +43,20 @@ export class RecordAccessGroupPropagationService {
     // A pass only ever takes back the records it counted when it started, so an
     // object scheduled again meanwhile keeps the records of its next pass
     let untrackedRecordCount =
-      await this.accessGroupPropagationProgressService.trackObjectRecompute(
+      await this.accessGroupPropagationProgressService.trackStartedObjectRecompute(
         jobData,
       );
-    const trackRecomputedRecords = async (recordCount: number) => {
-      const trackedRecordCount = Math.min(recordCount, untrackedRecordCount);
+    const trackRecomputedRecords = async ({
+      recordCount,
+      heldBackRecordCount,
+    }: {
+      recordCount: number;
+      heldBackRecordCount: number;
+    }) => {
+      const trackedRecordCount = Math.max(
+        0,
+        Math.min(recordCount, untrackedRecordCount - heldBackRecordCount),
+      );
 
       untrackedRecordCount -= trackedRecordCount;
       await this.accessGroupPropagationProgressService.trackRecomputedRecords({
@@ -60,7 +69,9 @@ export class RecordAccessGroupPropagationService {
       {
         workspaceId,
         objectMetadataId,
-        onRecordsRecomputed: trackRecomputedRecords,
+        // One record stays counted until the following objects are tracked, so the progress never looks idle in between
+        onRecordsRecomputed: (recordCount) =>
+          trackRecomputedRecords({ recordCount, heldBackRecordCount: 1 }),
       },
     );
 
@@ -90,8 +101,10 @@ export class RecordAccessGroupPropagationService {
       metadataMaps,
     });
 
-    // Settled after the following objects are tracked, so the progress never looks idle in between
-    await trackRecomputedRecords(untrackedRecordCount);
+    await trackRecomputedRecords({
+      recordCount: untrackedRecordCount,
+      heldBackRecordCount: 0,
+    });
   }
 
   async scheduleRecomputeOfRelatedRecordPathTargets({

@@ -2,8 +2,7 @@
 
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
-// ARGV: now, stale after ms, then (command, field, value) triplets.
-// Drops the units no job touched for a while, and the whole hash once nothing remains.
+// ARGV: now, stale after ms, then (command, field, value) triplets
 export const APPLY_ACCESS_GROUP_PROPAGATION_PROGRESS_SCRIPT: CacheScript = {
   name: 'access-group:apply-propagation-progress',
   source: `

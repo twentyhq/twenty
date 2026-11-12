@@ -77,6 +77,33 @@ export class RecordAccessGroupRepository {
     return Number(count);
   }
 
+  async estimateRecordCount({
+    workspaceId,
+    flatObjectMetadata,
+  }: {
+    workspaceId: string;
+    flatObjectMetadata: FlatObjectMetadata;
+  }): Promise<number> {
+    const [row] = await this.recordPermissionQueryService.execute<{
+      count: string;
+    }>({
+      workspaceId,
+      query: {
+        // reltuples is -1 until a table is analyzed and live tuples reset with stats, so take the larger
+        sql: `SELECT GREATEST("reltuples", pg_stat_get_live_tuples("oid"))::bigint AS "count"
+          FROM pg_class WHERE "oid" = to_regclass(:tableExpression)`,
+        parameters: {
+          tableExpression: buildWorkspaceTableExpression({
+            workspaceId,
+            tableName: computeObjectTargetTable(flatObjectMetadata),
+          }),
+        },
+      },
+    });
+
+    return Math.max(0, Number(row?.count ?? 0));
+  }
+
   async findRelatedRecordIds({
     workspaceId,
     sourceFlatObjectMetadata,

@@ -24,20 +24,20 @@ export class SyncAccessGroupsJob {
       retryLimit,
     }: Pick<MessageQueueJobRetryContext, 'attemptsMade' | 'retryLimit'>,
   ): Promise<void> {
-    let isRetried = false;
-
     try {
       await this.accessGroupSyncService.syncAccessGroups(workspaceId);
     } catch (error) {
-      isRetried = attemptsMade < retryLimit;
-
-      throw error;
-    } finally {
-      if (!isRetried) {
+      if (attemptsMade >= retryLimit) {
         await this.accessGroupPropagationProgressService.removePendingSync(
           workspaceId,
         );
       }
+
+      throw error;
     }
+
+    await this.accessGroupPropagationProgressService.removePendingSync(
+      workspaceId,
+    );
   }
 }

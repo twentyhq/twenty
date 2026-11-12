@@ -24,22 +24,22 @@ export class RecomputeRelatedRecordPathTargetsJob {
       retryLimit,
     }: Pick<MessageQueueJobRetryContext, 'attemptsMade' | 'retryLimit'>,
   ): Promise<void> {
-    let isRetried = false;
-
     try {
       await this.recordAccessGroupPropagationService.scheduleRecomputeOfRelatedRecordPathTargets(
         jobData,
       );
     } catch (error) {
-      isRetried = attemptsMade < retryLimit;
-
-      throw error;
-    } finally {
-      if (!isRetried) {
+      if (attemptsMade >= retryLimit) {
         await this.accessGroupPropagationProgressService.removePendingSync(
           jobData.workspaceId,
         );
       }
+
+      throw error;
     }
+
+    await this.accessGroupPropagationProgressService.removePendingSync(
+      jobData.workspaceId,
+    );
   }
 }
