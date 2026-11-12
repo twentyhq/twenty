@@ -132,4 +132,53 @@ describe('row level permission rule grants', () => {
       canSoftDeleteRecords: false,
     });
   });
+
+  it('should refuse rule grants that do not target one root group each', async () => {
+    const objectMetadataId = await findObjectMetadataIdByName('company');
+    const rootGroupId = v4();
+    const childGroupId = v4();
+
+    const upsertWithRuleGrantTargets = (rootPredicateGroupIds: string[]) =>
+      upsertRowLevelPermissionPredicates({
+        expectToFail: true,
+        input: {
+          roleId,
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [
+            {
+              id: rootGroupId,
+              objectMetadataId,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            },
+            {
+              id: childGroupId,
+              objectMetadataId,
+              parentRowLevelPermissionPredicateGroupId: rootGroupId,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            },
+          ],
+          canReadRecords: true,
+          ruleGrants: rootPredicateGroupIds.map((rootPredicateGroupId) => ({
+            rootPredicateGroupId,
+            canReadRecords: true,
+            canUpdateRecords: true,
+          })),
+        },
+      });
+
+    for (const rootPredicateGroupIds of [
+      [v4()],
+      [childGroupId],
+      [rootGroupId, rootGroupId],
+    ]) {
+      const { errors } = await upsertWithRuleGrantTargets(
+        rootPredicateGroupIds,
+      );
+
+      expect(errors?.[0]?.message).toContain('Rule grants target');
+    }
+  });
 });

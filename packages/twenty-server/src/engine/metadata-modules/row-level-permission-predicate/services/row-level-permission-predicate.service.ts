@@ -225,6 +225,17 @@ export class RowLevelPermissionPredicateService {
       flatEntityMaps: flatObjectMetadataMaps,
     });
 
+    const ruleGrantRootGroupIds = (input.ruleGrants ?? []).map(
+      ({ rootPredicateGroupId }) => rootPredicateGroupId,
+    );
+
+    if (new Set(ruleGrantRootGroupIds).size !== ruleGrantRootGroupIds.length) {
+      throw new RowLevelPermissionPredicateException(
+        'Rule grants target the same root predicate group more than once',
+        RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      );
+    }
+
     const ruleChanges = this.computeRuleChanges({
       existingGroups,
       existingPredicates,
@@ -577,6 +588,23 @@ export class RowLevelPermissionPredicateService {
       toUpdate: groupsToUpdate,
       toDelete: groupsToDelete,
     });
+
+    const rootGroupIds = new Set(
+      groups
+        .filter(
+          (group) => !isDefined(group.parentRowLevelPermissionPredicateGroupId),
+        )
+        .map(({ id }) => id),
+    );
+
+    for (const rootPredicateGroupId of ruleOperationsByRootPredicateGroupId.keys()) {
+      if (!rootGroupIds.has(rootPredicateGroupId)) {
+        throw new RowLevelPermissionPredicateException(
+          `Rule grants target ${rootPredicateGroupId}, which is not a root predicate group of this role and object`,
+          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        );
+      }
+    }
     const predicates = keepAfterUpsert({
       existing: existingPredicates,
       toCreate: predicatesToCreate,
