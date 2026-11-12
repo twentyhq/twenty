@@ -7130,7 +7130,7 @@ msgstr "Condição"
 #. js-lingui-id: jZ2sd2
 #: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
 msgid "Condition (Optional)"
-msgstr ""
+msgstr "Condição (Opcional)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -10313,7 +10313,7 @@ msgstr "Identidade do par de mensagens diretas"
 #. js-lingui-id: 23aX1b
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Direct messages"
-msgstr ""
+msgstr "Mensagens diretas"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19391,7 +19391,7 @@ msgstr "Novo pacote de créditos"
 #. js-lingui-id: ctNfZE
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "New direct message"
-msgstr ""
+msgstr "Nova mensagem direta"
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -19600,6 +19600,11 @@ msgstr "Próxima cobrança {totalRenewDate}. O valor da fatura pode variar se vo
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Próximo chat"
+
+#. js-lingui-id: SKW82h
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Next file"
+msgstr "Próximo arquivo"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -20915,6 +20920,11 @@ msgstr "Não iniciado"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Não sincronizado"
+
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "Ainda não"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -22269,7 +22279,7 @@ msgid "Path"
 msgstr "Caminho"
 
 #. js-lingui-id: IgrLD/
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22694,7 +22704,7 @@ msgid "Plans"
 msgstr "Planos"
 
 #. js-lingui-id: T91vKp
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Reproduzir"
@@ -22937,6 +22947,11 @@ msgstr "Aprovação anterior"
 #: src/modules/ai/components/AiChatInboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Chat anterior"
+
+#. js-lingui-id: QY5Szd
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Previous file"
+msgstr "Arquivo anterior"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23447,6 +23462,16 @@ msgstr "Ler e gravar {target}"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read and write data model configuration"
 msgstr "Ler e gravar a configuração do modelo de dados"
+
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "Lido por {readerCount} de {recipientCount}"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "Lido por {readerNames}"
 
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -27033,6 +27058,11 @@ msgstr "Alterar o rótulo também deve alterar o nome da API?"
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 msgid "Show {0}"
 msgstr "Mostrar {0}"
+
+#. js-lingui-id: TsjNI1
+#: src/modules/chat/components/ChatMessageImageGridTile.tsx
+msgid "Show {hiddenImageCount} more images"
+msgstr "Mostrar mais {hiddenImageCount} imagens"
 
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
