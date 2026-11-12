@@ -5,7 +5,8 @@ import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessa
 import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
@@ -62,7 +63,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const { refreshAiChatUsage } = useRefreshAiChatUsage();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
@@ -378,7 +379,10 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           'NOT_FOUND',
         ),
       );
-      void refreshAgentChatThreads();
+      void loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'refresh',
+      });
     };
 
     const dispose = sseClient.subscribe<OnAgentChatEventSubscription>(
@@ -496,7 +500,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     sseClient,
     resubscribeNonce,
     store,
-    refreshAgentChatThreads,
+    loadAgentChatThreadList,
     refreshAgentChatThreadPermissions,
     refreshAiChatUsage,
     applyAgentChatThreadUpdate,
