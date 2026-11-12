@@ -7130,7 +7130,7 @@ msgstr "Condizione"
 #. js-lingui-id: jZ2sd2
 #: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
 msgid "Condition (Optional)"
-msgstr ""
+msgstr "Condizione (Opzionale)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -10313,7 +10313,7 @@ msgstr "Identità della coppia nei messaggi diretti"
 #. js-lingui-id: 23aX1b
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Direct messages"
-msgstr ""
+msgstr "Messaggi diretti"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19391,7 +19391,7 @@ msgstr "Nuovo pacchetto di crediti"
 #. js-lingui-id: ctNfZE
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "New direct message"
-msgstr ""
+msgstr "Nuovo messaggio diretto"
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -19604,7 +19604,7 @@ msgstr "Chat successiva"
 #. js-lingui-id: SKW82h
 #: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Next file"
-msgstr ""
+msgstr "File successivo"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -20924,7 +20924,7 @@ msgstr "Non sincronizzato"
 #. js-lingui-id: 5xvHen
 #: src/modules/ai/components/AiChatMessageReceipt.tsx
 msgid "Not yet"
-msgstr ""
+msgstr "Non ancora"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -22951,7 +22951,7 @@ msgstr "Chat precedente"
 #. js-lingui-id: QY5Szd
 #: src/modules/ui/field/display/components/FilePreviewDialog.tsx
 msgid "Previous file"
-msgstr ""
+msgstr "File precedente"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23466,12 +23466,12 @@ msgstr "Leggi e scrivi la configurazione del modello dati"
 #. js-lingui-id: RXivwU
 #: src/modules/ai/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerCount} of {recipientCount}"
-msgstr ""
+msgstr "Letto da {readerCount} di {recipientCount}"
 
 #. js-lingui-id: bgP1Ip
 #: src/modules/ai/components/AiChatMessageReceipt.tsx
 msgid "Read by {readerNames}"
-msgstr ""
+msgstr "Letto da {readerNames}"
 
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
@@ -27062,7 +27062,7 @@ msgstr "Mostra {0}"
 #. js-lingui-id: TsjNI1
 #: src/modules/chat/components/ChatMessageImageGridTile.tsx
 msgid "Show {hiddenImageCount} more images"
-msgstr ""
+msgstr "Mostra altre {hiddenImageCount} immagini"
 
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx

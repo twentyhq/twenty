@@ -2963,7 +2963,7 @@ msgstr "Fırsatla ilgili sohbetler"
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
-msgstr ""
+msgstr "Etkin bir sekme ve düzen moduna uygun bir bileşen konumu seçin."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5391,11 +5391,6 @@ msgstr "Kayıt oluşturulamadı."
 msgid "Failed to delete file {fileId}"
 msgstr "Dosya {fileId} silinemedi"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "İşler silinemedi. Lütfen daha sonra tekrar deneyin."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6171,7 +6166,7 @@ msgstr "Ön uç bileşen oluşturucu isteği 6 MiB sınırını aşıyor. Uygula
 #. js-lingui-id: SOTpsW
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Frontend component not found."
-msgstr ""
+msgstr "Ön uç bileşeni bulunamadı."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13816,7 +13811,7 @@ msgstr "Bir veritabanı olay tetikleyicisinin koşulu metin olmalıdır"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Bir aracı tetikleyicisinin koşulu geçersizdir"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14878,7 +14873,7 @@ msgstr "Bu form artık bir yanıt beklemiyor."
 #. js-lingui-id: phhLXX
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "This frontend component is not available on this page layout."
-msgstr ""
+msgstr "Bu ön uç bileşeni bu sayfa düzeninde kullanılamaz."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17245,7 +17240,7 @@ msgstr "Erişimin neden verildiği"
 #. js-lingui-id: ciRAJR
 #: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
 msgid "Widget configuration is required."
-msgstr ""
+msgstr "Widget yapılandırması gerekli."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

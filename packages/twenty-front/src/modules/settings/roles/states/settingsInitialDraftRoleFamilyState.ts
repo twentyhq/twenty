@@ -3,11 +3,11 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 
 // Saved role the draft was last reconciled with, kept outside components so a
 // remounted surface can still tell a clean draft from one with unsaved edits
-export const settingsDraftRoleBaseFamilyState = createAtomFamilyState<
+export const settingsInitialDraftRoleFamilyState = createAtomFamilyState<
   RoleWithPartialMembers | undefined,
   string
 >({
-  key: 'settingsDraftRoleBaseFamilyState',
+  key: 'settingsInitialDraftRoleFamilyState',
   scope: 'routed-flow',
   defaultValue: undefined,
 });

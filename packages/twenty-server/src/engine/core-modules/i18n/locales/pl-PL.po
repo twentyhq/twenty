@@ -2963,7 +2963,7 @@ msgstr "Czaty powiązane ze szansą"
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
-msgstr ""
+msgstr "Wybierz aktywną kartę i pozycję widżetu odpowiadającą jego trybowi układu."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5391,11 +5391,6 @@ msgstr "Nie udało się utworzyć rekordu."
 msgid "Failed to delete file {fileId}"
 msgstr "Nie udało się usunąć pliku {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Nie udało się usunąć zadań. Spróbuj ponownie później."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6171,7 +6166,7 @@ msgstr "Żądanie kreatora komponentów frontendowych przekracza limit 6 MiB. Zm
 #. js-lingui-id: SOTpsW
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Frontend component not found."
-msgstr ""
+msgstr "Nie znaleziono komponentu frontendu."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13816,7 +13811,7 @@ msgstr "Warunek wyzwalacza zdarzenia bazy danych musi być tekstem"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Warunek wyzwalacza agenta jest nieprawidłowy"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14878,7 +14873,7 @@ msgstr "Ten formularz nie oczekuje już na odpowiedź."
 #. js-lingui-id: phhLXX
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "This frontend component is not available on this page layout."
-msgstr ""
+msgstr "Ten komponent frontendu nie jest dostępny w tym układzie strony."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17245,7 +17240,7 @@ msgstr "Dlaczego przyznano dostęp"
 #. js-lingui-id: ciRAJR
 #: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
 msgid "Widget configuration is required."
-msgstr ""
+msgstr "Wymagana jest konfiguracja widżetu."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

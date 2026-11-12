@@ -2963,7 +2963,7 @@ msgstr "Các cuộc trò chuyện gắn với cơ hội"
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
-msgstr ""
+msgstr "Chọn một tab đang hoạt động và vị trí tiện ích khớp với chế độ bố cục của tab đó."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5391,11 +5391,6 @@ msgstr "Tạo bản ghi thất bại."
 msgid "Failed to delete file {fileId}"
 msgstr "Không thể xóa tệp {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Không thể xóa các công việc. Vui lòng thử lại sau."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -6171,7 +6166,7 @@ msgstr "Yêu cầu trình tạo thành phần giao diện người dùng vượt
 #. js-lingui-id: SOTpsW
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Frontend component not found."
-msgstr ""
+msgstr "Không tìm thấy thành phần giao diện người dùng."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13816,7 +13811,7 @@ msgstr "Điều kiện của trình kích hoạt sự kiện cơ sở dữ liệ
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Điều kiện của trình kích hoạt tác tử không hợp lệ"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14878,7 +14873,7 @@ msgstr "Biểu mẫu này không còn chờ câu trả lời."
 #. js-lingui-id: phhLXX
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "This frontend component is not available on this page layout."
-msgstr ""
+msgstr "Thành phần giao diện người dùng này không khả dụng trên bố cục trang này."
 
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -17245,7 +17240,7 @@ msgstr "Lý do quyền truy cập được cấp"
 #. js-lingui-id: ciRAJR
 #: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
 msgid "Widget configuration is required."
-msgstr ""
+msgstr "Yêu cầu cấu hình tiện ích."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts
