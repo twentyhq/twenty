@@ -205,8 +205,14 @@ describe('access group propagation progress (integration)', () => {
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let roleId: string;
+  const personId = v4();
 
   beforeAll(async () => {
+    // Other specs empty the person table, and a compute over no record never reaches a batch
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id") VALUES ($1)`,
+      [personId],
+    );
     recordAccessGroupComputationService =
       getAppProviderByClassName<RecordAccessGroupComputationService>(
         'RecordAccessGroupComputationService',
@@ -260,6 +266,10 @@ describe('access group propagation progress (integration)', () => {
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
     await waitForAllJobsToFinish();
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [personId],
+    );
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
     );
