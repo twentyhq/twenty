@@ -7,6 +7,7 @@ import { AGENT_CHAT_INBOX_FILTER_STATUS_MAX_LOAD_ATTEMPTS } from '@/ai/constants
 import { useRefreshAgentChatThreadsInFilterStatus } from '@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // Also runs after a refresh, which replaces the list along with its tab pages
@@ -16,6 +17,9 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
     agentChatThreadFilterStatusState,
   );
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
+  const isChannelViewShown = isDefined(
+    useAtomStateValue(agentChatShownChannelViewSelector),
+  );
   const { refreshAgentChatThreadsInFilterStatus } =
     useRefreshAgentChatThreadsInFilterStatus();
   const isListLoaded = isDefined(agentChatThreadList);
@@ -24,7 +28,7 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
   );
 
   useEffect(() => {
-    if (!isListLoaded || isFilterStatusLoaded) {
+    if (!isListLoaded || isFilterStatusLoaded || isChannelViewShown) {
       return;
     }
 
@@ -74,6 +78,7 @@ export const AgentChatInboxFilterStatusThreadsEffect = () => {
     };
   }, [
     agentChatThreadFilterStatus,
+    isChannelViewShown,
     isFilterStatusLoaded,
     isListLoaded,
     refreshAgentChatThreadsInFilterStatus,
