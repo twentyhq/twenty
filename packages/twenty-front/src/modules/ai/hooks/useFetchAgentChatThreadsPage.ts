@@ -39,10 +39,10 @@ export const useFetchAgentChatThreadsPage = () => {
   const fetchAgentChatThreadsPage = useCallback(
     async ({
       lastCursor,
-      threadIdFilter,
+      filter,
     }: {
       lastCursor: string | null;
-      threadIdFilter?: RecordGqlOperationFilter;
+      filter?: RecordGqlOperationFilter;
     }) => {
       const hasAiPermission = store.get(permissionFlagMapSelector.atom)[
         PermissionFlagType.AI
@@ -94,8 +94,8 @@ export const useFetchAgentChatThreadsPage = () => {
             objectPermissionsByObjectMetadataId,
           }),
           variables: {
-            filter: isDefined(threadIdFilter)
-              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
+            filter: isDefined(filter)
+              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, filter] }
               : AGENT_CHAT_THREAD_LIST_FILTER,
             orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,

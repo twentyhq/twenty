@@ -2,12 +2,14 @@ import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
-import { useFetchMoreAgentChatThreads } from '@/ai/hooks/useFetchMoreAgentChatThreads';
+import { useFetchMoreAgentChatThreadsInFilterStatus } from '@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 
 export const useFetchMoreAgentChatInboxShownThreads = () => {
   const store = useStore();
-  const { fetchMoreAgentChatThreads } = useFetchMoreAgentChatThreads();
+  const { fetchMoreAgentChatThreadsInFilterStatus } =
+    useFetchMoreAgentChatThreadsInFilterStatus();
   const { loadAgentChatChannelThreads } = useLoadAgentChatChannelThreads();
 
   const fetchMoreAgentChatInboxShownThreads = () => {
@@ -20,7 +22,9 @@ export const useFetchMoreAgentChatInboxShownThreads = () => {
       return;
     }
 
-    void fetchMoreAgentChatThreads();
+    void fetchMoreAgentChatThreadsInFilterStatus(
+      store.get(agentChatThreadFilterStatusState.atom),
+    );
   };
 
   return { fetchMoreAgentChatInboxShownThreads };

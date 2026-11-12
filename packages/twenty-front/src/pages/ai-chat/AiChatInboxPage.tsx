@@ -12,6 +12,7 @@ import { IconChevronLeft, IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { AgentChatInboxFilterStatusThreadsEffect } from '@/ai/components/AgentChatInboxFilterStatusThreadsEffect';
 import { AgentChatChannelThreadsFetchMoreTrigger } from '@/ai/components/AgentChatChannelThreadsFetchMoreTrigger';
 import { AgentChatChannelThreadsLoadEffect } from '@/ai/components/AgentChatChannelThreadsLoadEffect';
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
@@ -32,6 +33,7 @@ import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInb
 import { useFetchMoreAgentChatInboxShownThreads } from '@/ai/hooks/useFetchMoreAgentChatInboxShownThreads';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
@@ -118,6 +120,9 @@ const AiChatInboxPageContent = () => {
   const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
@@ -262,6 +267,7 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
+      <AgentChatInboxFilterStatusThreadsEffect />
       <AgentChatChannelThreadsLoadEffect />
       <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
@@ -322,7 +328,9 @@ const AiChatInboxPageContent = () => {
                     {isDefined(agentChatShownChannelView) ? (
                       <AgentChatChannelThreadsFetchMoreTrigger />
                     ) : (
-                      <AgentChatThreadsFetchMoreTrigger />
+                      <AgentChatThreadsFetchMoreTrigger
+                        filterStatus={agentChatThreadFilterStatus}
+                      />
                     )}
                   </StyledThreadList>
                   {!isMobile && (

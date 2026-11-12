@@ -28,7 +28,7 @@ export const useLoadAgentChatThread = () => {
         );
         const page = await fetchAgentChatThreadsPage({
           lastCursor: null,
-          threadIdFilter: { id: { eq: threadId } },
+          filter: { id: { eq: threadId } },
         });
 
         if (!isDefined(page)) {

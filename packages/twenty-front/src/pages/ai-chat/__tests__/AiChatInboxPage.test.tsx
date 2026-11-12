@@ -128,9 +128,15 @@ jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useFetchMoreAgentChatThreads', () => ({
-  useFetchMoreAgentChatThreads: () => ({
-    fetchMoreAgentChatThreads: jest.fn(),
+jest.mock('@/ai/hooks/useRefreshAgentChatThreadsInFilterStatus', () => ({
+  useRefreshAgentChatThreadsInFilterStatus: () => ({
+    refreshAgentChatThreadsInFilterStatus: jest.fn(),
+  }),
+}));
+
+jest.mock('@/ai/hooks/useFetchMoreAgentChatThreadsInFilterStatus', () => ({
+  useFetchMoreAgentChatThreadsInFilterStatus: () => ({
+    fetchMoreAgentChatThreadsInFilterStatus: jest.fn(),
   }),
 }));
 

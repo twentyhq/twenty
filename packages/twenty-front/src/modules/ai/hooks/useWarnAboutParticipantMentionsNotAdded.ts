@@ -34,7 +34,7 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
       const verificationPage = shouldVerifyInitialRecipients
         ? await fetchAgentChatThreadsPage({
             lastCursor: null,
-            threadIdFilter: { id: { eq: threadId } },
+            filter: { id: { eq: threadId } },
           }).catch((error) => {
             logError(error);
 
