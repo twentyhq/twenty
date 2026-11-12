@@ -256,8 +256,8 @@ describe('access group propagation progress (integration)', () => {
       .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
       .mdel(
         [
-          'pending-computes',
-          'planned-computes',
+          'pending-object-computes',
+          'planned-object-computes',
           'total-record-count',
           'computed-record-count',
         ].map(
