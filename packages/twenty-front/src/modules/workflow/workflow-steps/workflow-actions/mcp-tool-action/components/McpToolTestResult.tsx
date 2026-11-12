@@ -2,6 +2,7 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { type McpToolTestData } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/McpToolTestData';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isEmptyObject } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components/data-display';
 import { Callout } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -53,6 +54,16 @@ export const McpToolTestResult = ({
         status="error"
         title={t`The tool call failed`}
         description={output.error}
+      />
+    );
+  }
+
+  if (isEmptyObject(output.result)) {
+    return (
+      <Callout
+        status="neutral"
+        title={t`No output returned`}
+        description={t`The tool ran but returned no fields, so the expected output was left unchanged.`}
       />
     );
   }

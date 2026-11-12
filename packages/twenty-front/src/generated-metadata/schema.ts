@@ -3419,13 +3419,6 @@ export type McpServerTool = {
   name: Scalars['String']['output'];
 };
 
-export type McpServerToolTestResult = {
-  __typename?: 'McpServerToolTestResult';
-  error?: Maybe<Scalars['String']['output']>;
-  result?: Maybe<Scalars['JSON']['output']>;
-  success: Scalars['Boolean']['output'];
-};
-
 export type MessageCampaignBodyConfiguration = {
   __typename?: 'MessageCampaignBodyConfiguration';
   configurationType: WidgetConfigurationType;
@@ -3888,7 +3881,6 @@ export type Mutation = {
   syncApplication: WorkspaceMigration;
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   syncMcpServerTools: McpServer;
-  testMcpServerTool: McpServerToolTestResult;
   trackAnalytics: Analytics;
   transferApplicationRegistrationOwnership: ApplicationRegistration;
   triggerAddPeopleToMessageListJob: TriggerAddPeopleToMessageListJobResult;
@@ -5089,11 +5081,6 @@ export type MutationSyncApplicationArgs = {
 
 export type MutationSyncMcpServerToolsArgs = {
   id: Scalars['UUID']['input'];
-};
-
-
-export type MutationTestMcpServerToolArgs = {
-  input: TestMcpServerToolInput;
 };
 
 
@@ -7485,12 +7472,6 @@ export type SyncAppMessageFoldersInput = {
 export type TasksConfiguration = {
   __typename?: 'TasksConfiguration';
   configurationType: WidgetConfigurationType;
-};
-
-export type TestMcpServerToolInput = {
-  mcpServerId: Scalars['UUID']['input'];
-  toolArguments?: InputMaybe<Scalars['JSON']['input']>;
-  toolName: Scalars['String']['input'];
 };
 
 export type TimelineActivityType = {

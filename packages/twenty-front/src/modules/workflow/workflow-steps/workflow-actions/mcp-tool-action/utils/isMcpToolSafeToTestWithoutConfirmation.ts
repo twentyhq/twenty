@@ -1,10 +1,9 @@
-import { isObject } from '@sniptt/guards';
+type McpToolAnnotations = {
+  readOnlyHint?: boolean | null;
+};
 
 export const isMcpToolSafeToTestWithoutConfirmation = ({
   annotations,
 }: {
-  annotations?: unknown;
-}): boolean =>
-  isObject(annotations) &&
-  'readOnlyHint' in annotations &&
-  annotations.readOnlyHint === true;
+  annotations?: McpToolAnnotations | null;
+}): boolean => annotations?.readOnlyHint === true;

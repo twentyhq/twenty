@@ -10,13 +10,13 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
+import { WorkflowStepTestVariableInput } from '@/workflow/workflow-steps/components/WorkflowStepTestVariableInput';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 import { useMcpToolStepForm } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useMcpToolStepForm';
 import { McpToolExpectedOutputAdvancedSection } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolExpectedOutputAdvancedSection';
 import { McpToolTestResult } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult';
-import { McpToolTestVariableInput } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestVariableInput';
 import { WORKFLOW_MCP_TOOL_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/constants/WorkflowMcpToolTabListComponentId';
 import { useTestMcpTool } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool';
 import { type WorkflowMcpToolTabId } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/WorkflowMcpToolTabId';
@@ -78,7 +78,8 @@ export const WorkflowEditActionMcpTool = ({
   );
   const { openDialog } = useDialog();
   const testConfirmationDialogId = `mcp-tool-test-confirmation-${action.id}`;
-  const { testMcpTool, isTesting, mcpToolTestData } = useTestMcpTool(action.id);
+  const { testMcpTool, setTestVariableValue, isTesting, mcpToolTestData } =
+    useTestMcpTool(action.id);
 
   const { mcpServerId, toolName } = settings.input;
   const mcpServer = mcpServers.find(
@@ -123,12 +124,15 @@ export const WorkflowEditActionMcpTool = ({
       return;
     }
 
-    updateSettings({ ...settings, expectedOutputSchema: testResult });
+    updateSettings((latestSettings) => ({
+      ...latestSettings,
+      expectedOutputSchema: testResult,
+    }));
     flushPendingSave();
   };
 
   const handleTestClick = async () => {
-    if (actionOptions.readonly === true || !isDefined(tool)) {
+    if (actionOptions.readonly || !isDefined(tool)) {
       return;
     }
 
@@ -146,7 +150,7 @@ export const WorkflowEditActionMcpTool = ({
   }
 
   const hasInputFields = Object.keys(toolInput).length > 0;
-  const hasTabs = actionOptions.readonly !== true;
+  const hasTabs = !actionOptions.readonly;
   const isTestTabActive = hasTabs && activeTabId === TEST_TAB_ID;
   const mcpServerLabel = mcpServer?.label ?? '';
 
@@ -159,7 +163,11 @@ export const WorkflowEditActionMcpTool = ({
     <WorkflowStepBody>
       {isTestTabActive ? (
         <StyledContainer>
-          <McpToolTestVariableInput action={{ ...action, settings }} />
+          <WorkflowStepTestVariableInput
+            step={{ ...action, settings }}
+            variableValues={mcpToolTestData.variableValues}
+            onVariableChange={setTestVariableValue}
+          />
           <McpToolTestResult
             output={mcpToolTestData.output}
             isTesting={isTesting}

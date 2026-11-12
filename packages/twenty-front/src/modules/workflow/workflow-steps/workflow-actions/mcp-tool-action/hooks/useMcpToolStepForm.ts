@@ -1,6 +1,9 @@
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
-import { useEffect, useState } from 'react';
+import { isFunction } from '@sniptt/guards';
+import { useEffect, useRef, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+
+type McpToolStepSettings = WorkflowMcpToolAction['settings'];
 
 type UseMcpToolStepFormProps = {
   action: WorkflowMcpToolAction;
@@ -14,6 +17,8 @@ export const useMcpToolStepForm = ({
   onActionUpdate,
 }: UseMcpToolStepFormProps) => {
   const [settings, setSettings] = useState(action.settings);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const latestSettingsRef = useRef(action.settings);
 
   const saveAction = useDebouncedCallback(
     (updatedSettings: WorkflowMcpToolAction['settings']) => {
@@ -33,8 +38,15 @@ export const useMcpToolStepForm = ({
   }, [saveAction]);
 
   const updateSettings = (
-    updatedSettings: WorkflowMcpToolAction['settings'],
+    update:
+      | McpToolStepSettings
+      | ((latestSettings: McpToolStepSettings) => McpToolStepSettings),
   ) => {
+    const updatedSettings = isFunction(update)
+      ? update(latestSettingsRef.current)
+      : update;
+
+    latestSettingsRef.current = updatedSettings;
     setSettings(updatedSettings);
     saveAction(updatedSettings);
   };

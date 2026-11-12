@@ -1,7 +1,9 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
 import { convertFlatVariablesToNestedContext } from '@/workflow/workflow-steps/utils/convertFlatVariablesToNestedContext';
+import { TEST_MCP_TOOL_STEP } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/graphql/mutations/testMcpToolStep';
 import { mcpToolTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/states/mcpToolTestDataFamilyState';
 import { type McpToolTestData } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/McpToolTestData';
 import { useMutation } from '@apollo/client/react';
@@ -9,11 +11,15 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isPlainObject, resolveInput } from 'twenty-shared/utils';
 import { type JsonObject } from 'type-fest';
-import { TestMcpServerToolDocument } from '~/generated-metadata/graphql';
+import {
+  type TestMcpToolStepMutation,
+  type TestMcpToolStepMutationVariables,
+} from '~/generated/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useTestMcpTool = (actionId: string) => {
   const { t } = useLingui();
+  const apolloCoreClient = useApolloCoreClient();
   const [isTesting, setIsTesting] = useState(false);
   const mcpToolTestData = useAtomFamilyStateValue(
     mcpToolTestDataFamilyState,
@@ -23,10 +29,29 @@ export const useTestMcpTool = (actionId: string) => {
     mcpToolTestDataFamilyState,
     actionId,
   );
-  const [testMcpServerTool] = useMutation(TestMcpServerToolDocument);
+  const [testMcpToolStep] = useMutation<
+    TestMcpToolStepMutation,
+    TestMcpToolStepMutationVariables
+  >(TEST_MCP_TOOL_STEP, { client: apolloCoreClient });
 
   const setOutput = (output: McpToolTestData['output']) => {
     setMcpToolTestData((previousTestData) => ({ ...previousTestData, output }));
+  };
+
+  const setTestVariableValue = ({
+    variablePath,
+    value,
+  }: {
+    variablePath: string;
+    value: string;
+  }) => {
+    setMcpToolTestData((previousTestData) => ({
+      ...previousTestData,
+      variableValues: {
+        ...previousTestData.variableValues,
+        [variablePath]: value,
+      },
+    }));
   };
 
   const testMcpTool = async ({
@@ -44,11 +69,11 @@ export const useTestMcpTool = (actionId: string) => {
 
     try {
       const toolArguments = resolveInput(
-        toolInput,
+        structuredClone(toolInput),
         convertFlatVariablesToNestedContext(mcpToolTestData.variableValues),
       );
 
-      const { data } = await testMcpServerTool({
+      const { data } = await testMcpToolStep({
         variables: {
           input: {
             mcpServerId,
@@ -58,7 +83,7 @@ export const useTestMcpTool = (actionId: string) => {
         },
       });
 
-      const testResult = data?.testMcpServerTool;
+      const testResult = data?.testMcpToolStep;
 
       if (testResult?.success !== true) {
         setOutput({
@@ -69,9 +94,7 @@ export const useTestMcpTool = (actionId: string) => {
         return undefined;
       }
 
-      const result: JsonObject = isPlainObject(testResult.result)
-        ? (testResult.result as JsonObject)
-        : {};
+      const result: JsonObject = testResult.result ?? {};
 
       setOutput({ status: 'success', result });
 
@@ -91,5 +114,5 @@ export const useTestMcpTool = (actionId: string) => {
     }
   };
 
-  return { testMcpTool, isTesting, mcpToolTestData };
+  return { testMcpTool, setTestVariableValue, isTesting, mcpToolTestData };
 };

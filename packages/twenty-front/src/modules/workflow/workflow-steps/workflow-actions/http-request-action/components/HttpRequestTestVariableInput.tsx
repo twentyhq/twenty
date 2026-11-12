@@ -1,20 +1,10 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { type WorkflowStep } from '@/workflow/types/Workflow';
-import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
-import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { WorkflowStepTestVariableInput } from '@/workflow/workflow-steps/components/WorkflowStepTestVariableInput';
+import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
-
-const StyledVariableInputsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 type HttpRequestTestVariableInputProps = {
   httpRequestFormData: HttpRequestFormData;
@@ -51,41 +41,17 @@ export const HttpRequestTestVariableInput = ({
     },
   };
 
-  const variablesUsed = getWorkflowVariablesUsedInStep({ step: mockStep });
-  const variableArray = Array.from(variablesUsed);
-
-  const handleVariableChange = (variablePath: string, value: string) => {
-    setHttpRequestTestData((prev) => ({
-      ...prev,
-      variableValues: {
-        ...prev.variableValues,
-        [variablePath]: value,
-      },
-    }));
-  };
-
-  if (variableArray.length === 0) {
-    return null;
-  }
-
   return (
-    <FormFieldInputContainer>
-      <StyledVariableInputsContainer>
-        {variableArray.map((variablePath) => (
-          <FormTextFieldInput
-            key={variablePath}
-            label={`${variablePath}`}
-            placeholder={t`Enter test value`}
-            readonly={readonly}
-            defaultValue={
-              httpRequestTestData.variableValues[variablePath] || ''
-            }
-            onChange={(value) =>
-              handleVariableChange(variablePath, value || '')
-            }
-          />
-        ))}
-      </StyledVariableInputsContainer>
-    </FormFieldInputContainer>
+    <WorkflowStepTestVariableInput
+      step={mockStep}
+      variableValues={httpRequestTestData.variableValues}
+      readonly={readonly}
+      onVariableChange={({ variablePath, value }) =>
+        setHttpRequestTestData((prev) => ({
+          ...prev,
+          variableValues: { ...prev.variableValues, [variablePath]: value },
+        }))
+      }
+    />
   );
 };

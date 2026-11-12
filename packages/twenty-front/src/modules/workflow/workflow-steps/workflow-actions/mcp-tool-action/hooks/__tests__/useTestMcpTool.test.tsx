@@ -8,18 +8,25 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
-const mockTestMcpServerTool = jest.fn();
+const mockTestMcpToolStep = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useMutation: () => [mockTestMcpServerTool],
+  useMutation: () => [mockTestMcpToolStep],
+}));
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({}),
 }));
 
-const TOOL_CALL = {
+const buildToolCall = () => ({
   mcpServerId: 'mcp-server-id',
   toolName: 'search_docs',
-  toolInput: { query: '{{trigger.properties.after.name}}', limit: 5 },
-};
+  toolInput: {
+    query: '{{trigger.properties.after.name}}',
+    limit: 5,
+    tags: ['{{trigger.properties.after.name}}'],
+  },
+});
 
 const wrapper = ({ children }: { children: ReactNode }) => (
   <Provider store={jotaiStore}>{children}</Provider>
@@ -28,7 +35,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('useTestMcpTool', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockTestMcpServerTool.mockReset();
+    mockTestMcpToolStep.mockReset();
   });
 
   it('replaces workflow variables with their test values before calling the tool', async () => {
@@ -38,27 +45,30 @@ describe('useTestMcpTool', () => {
       variableValues: { 'trigger.properties.after.name': 'Acme' },
       output: { status: 'idle' },
     });
-    mockTestMcpServerTool.mockResolvedValue({
-      data: { testMcpServerTool: { success: true, result: { total: 1 } } },
+    mockTestMcpToolStep.mockResolvedValue({
+      data: { testMcpToolStep: { success: true, result: { total: 1 } } },
     });
+    const toolCall = buildToolCall();
 
     const { result } = renderHook(() => useTestMcpTool(actionId), {
       wrapper,
     });
 
     await act(async () => {
-      await result.current.testMcpTool(TOOL_CALL);
+      await result.current.testMcpTool(toolCall);
     });
 
-    expect(mockTestMcpServerTool).toHaveBeenCalledWith({
+    expect(mockTestMcpToolStep).toHaveBeenCalledTimes(1);
+    expect(mockTestMcpToolStep).toHaveBeenCalledWith({
       variables: {
         input: {
           mcpServerId: 'mcp-server-id',
           toolName: 'search_docs',
-          toolArguments: { query: 'Acme', limit: 5 },
+          toolArguments: { query: 'Acme', limit: 5, tags: ['Acme'] },
         },
       },
     });
+    expect(toolCall.toolInput).toEqual(buildToolCall().toolInput);
     expect(result.current.mcpToolTestData.output).toEqual({
       status: 'success',
       result: { total: 1 },
@@ -66,14 +76,14 @@ describe('useTestMcpTool', () => {
   });
 
   it('reports a request failure as a test error', async () => {
-    mockTestMcpServerTool.mockRejectedValue(new Error('Network down'));
+    mockTestMcpToolStep.mockRejectedValue(new Error('Network down'));
 
     const { result } = renderHook(() => useTestMcpTool('failing-action'), {
       wrapper,
     });
 
     await act(async () => {
-      await result.current.testMcpTool(TOOL_CALL);
+      await result.current.testMcpTool(buildToolCall());
     });
 
     expect(result.current.isTesting).toBe(false);

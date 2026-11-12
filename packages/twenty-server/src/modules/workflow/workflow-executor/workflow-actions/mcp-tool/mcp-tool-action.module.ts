@@ -4,6 +4,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { McpServerClientModule } from 'src/engine/metadata-modules/mcp-server/mcp-server-client.module';
 import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool.workflow-action';
+import { McpToolStepTestService } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { McpToolWorkflowAction } from 'src/modules/workflow/workflow-executor/wo
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     McpServerClientModule,
   ],
-  providers: [McpToolWorkflowAction],
-  exports: [McpToolWorkflowAction],
+  providers: [McpToolWorkflowAction, McpToolStepTestService],
+  exports: [McpToolWorkflowAction, McpToolStepTestService],
 })
 export class McpToolActionModule {}

@@ -14,11 +14,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { type FunctionInput } from 'twenty-shared/workflow';
 
 const mockUseFindManyMcpServers = jest.fn();
-const mockTestMcpServerTool = jest.fn();
+const mockTestMcpToolStep = jest.fn();
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
-  useMutation: () => [mockTestMcpServerTool],
+  useMutation: () => [mockTestMcpToolStep],
+}));
+jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
+  useApolloCoreClient: () => ({}),
 }));
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({ copyToClipboard: jest.fn() }),
@@ -87,12 +90,6 @@ jest.mock(
   }),
 );
 jest.mock(
-  '@/workflow/workflow-steps/components/WorkflowExpectedOutputBodyInput',
-  () => ({
-    WorkflowExpectedOutputBodyInput: () => <div>Expected Output Body</div>,
-  }),
-);
-jest.mock(
   '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields',
   () => ({
     WorkflowEditActionCodeFields: ({
@@ -113,10 +110,13 @@ jest.mock(
   }),
 );
 
-const buildStep = (
-  toolName: string,
-  toolInput: WorkflowMcpToolAction['settings']['input']['toolInput'] = {},
-): WorkflowMcpToolAction => ({
+const buildStep = ({
+  toolName,
+  toolInput = {},
+}: {
+  toolName: string;
+  toolInput?: WorkflowMcpToolAction['settings']['input']['toolInput'];
+}): WorkflowMcpToolAction => ({
   id: `mcp-step-${toolName}`,
   name: 'Search docs',
   type: 'MCP_TOOL',
@@ -149,7 +149,7 @@ const clickTestButton = async () => {
 
 describe('WorkflowEditActionMcpTool', () => {
   beforeEach(() => {
-    mockTestMcpServerTool.mockReset();
+    mockTestMcpToolStep.mockReset();
     resetJotaiStore();
   });
 
@@ -158,7 +158,7 @@ describe('WorkflowEditActionMcpTool', () => {
 
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('search_docs')}
+        action={buildStep({ toolName: 'search_docs' })}
         actionOptions={{ onActionUpdate }}
       />,
       { wrapper },
@@ -184,7 +184,7 @@ describe('WorkflowEditActionMcpTool', () => {
   it('tells the author when the server no longer offers the tool', () => {
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('delete_docs')}
+        action={buildStep({ toolName: 'delete_docs' })}
         actionOptions={{ readonly: true }}
       />,
       { wrapper },
@@ -202,7 +202,7 @@ describe('WorkflowEditActionMcpTool', () => {
 
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('search_docs')}
+        action={buildStep({ toolName: 'search_docs' })}
         actionOptions={{ readonly: true }}
       />,
       { wrapper },
@@ -212,27 +212,11 @@ describe('WorkflowEditActionMcpTool', () => {
     expect(screen.queryByText('Tool not found')).not.toBeInTheDocument();
   });
 
-  it('keeps the manual expected output collapsed until the author opens it', async () => {
-    render(
-      <WorkflowEditActionMcpTool
-        action={buildStep('search_docs')}
-        actionOptions={{ onActionUpdate: jest.fn() }}
-      />,
-      { wrapper },
-    );
-
-    expect(screen.queryByText('Expected Output Body')).not.toBeInTheDocument();
-
-    await userEvent.click(screen.getByRole('button', { name: 'Advanced' }));
-
-    expect(screen.getByText('Expected Output Body')).toBeVisible();
-  });
-
   it('runs a read-only tool without confirmation and saves its result as the expected output', async () => {
     const onActionUpdate = jest.fn();
-    mockTestMcpServerTool.mockResolvedValue({
+    mockTestMcpToolStep.mockResolvedValue({
       data: {
-        testMcpServerTool: {
+        testMcpToolStep: {
           success: true,
           result: { total: 2, pages: [{ title: 'Invoices' }] },
           error: null,
@@ -242,7 +226,10 @@ describe('WorkflowEditActionMcpTool', () => {
 
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('search_docs', { query: 'invoices', cursor: null })}
+        action={buildStep({
+          toolName: 'search_docs',
+          toolInput: { query: 'invoices', cursor: null },
+        })}
         actionOptions={{ onActionUpdate }}
       />,
       { wrapper },
@@ -251,7 +238,8 @@ describe('WorkflowEditActionMcpTool', () => {
     await openTestTab();
     await clickTestButton();
 
-    expect(mockTestMcpServerTool).toHaveBeenCalledWith({
+    expect(mockTestMcpToolStep).toHaveBeenCalledTimes(1);
+    expect(mockTestMcpToolStep).toHaveBeenCalledWith({
       variables: {
         input: {
           mcpServerId: 'mcp-server-id',
@@ -262,6 +250,7 @@ describe('WorkflowEditActionMcpTool', () => {
     });
     expect(await screen.findByText('Output saved')).toBeVisible();
     expect(screen.getByText('total')).toBeVisible();
+    expect(onActionUpdate).toHaveBeenCalledTimes(1);
     expect(onActionUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         settings: expect.objectContaining({
@@ -273,9 +262,9 @@ describe('WorkflowEditActionMcpTool', () => {
 
   it('asks for confirmation before running a tool that is not marked read-only', async () => {
     const onActionUpdate = jest.fn();
-    mockTestMcpServerTool.mockResolvedValue({
+    mockTestMcpToolStep.mockResolvedValue({
       data: {
-        testMcpServerTool: {
+        testMcpToolStep: {
           success: true,
           result: { id: 'doc-1' },
           error: null,
@@ -285,7 +274,10 @@ describe('WorkflowEditActionMcpTool', () => {
 
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('create_doc', { title: 'Roadmap' })}
+        action={buildStep({
+          toolName: 'create_doc',
+          toolInput: { title: 'Roadmap' },
+        })}
         actionOptions={{ onActionUpdate }}
       />,
       { wrapper },
@@ -295,45 +287,93 @@ describe('WorkflowEditActionMcpTool', () => {
     await clickTestButton();
 
     expect(await screen.findByText('Run this tool for real?')).toBeVisible();
-    expect(mockTestMcpServerTool).not.toHaveBeenCalled();
+    expect(mockTestMcpToolStep).not.toHaveBeenCalled();
 
     await userEvent.click(screen.getByRole('button', { name: 'Run tool' }));
 
-    await waitFor(() => expect(mockTestMcpServerTool).toHaveBeenCalledTimes(1));
-    await waitFor(() =>
-      expect(onActionUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          settings: expect.objectContaining({
-            expectedOutputSchema: { id: 'doc-1' },
-          }),
+    await waitFor(() => expect(mockTestMcpToolStep).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(onActionUpdate).toHaveBeenCalledTimes(1));
+    expect(onActionUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        settings: expect.objectContaining({
+          expectedOutputSchema: { id: 'doc-1' },
         }),
-      ),
+      }),
     );
   });
 
-  it('does not run the tool when the confirmation is cancelled', async () => {
+  it('keeps the arguments edited while the test was running', async () => {
+    const onActionUpdate = jest.fn();
+    let finishTest: (value: unknown) => void = () => {};
+    mockTestMcpToolStep.mockReturnValue(
+      new Promise((resolve) => {
+        finishTest = resolve;
+      }),
+    );
+
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('create_doc', { title: 'Roadmap' })}
-        actionOptions={{ onActionUpdate: jest.fn() }}
+        action={buildStep({
+          toolName: 'search_docs',
+          toolInput: { query: 'invoices', cursor: null },
+        })}
+        actionOptions={{ onActionUpdate }}
       />,
       { wrapper },
     );
 
     await openTestTab();
     await clickTestButton();
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Cancel' }),
+    await userEvent.click(screen.getByRole('tab', { name: 'Settings' }));
+    await userEvent.type(screen.getByLabelText('query'), '-2024');
+
+    finishTest({
+      data: {
+        testMcpToolStep: { success: true, result: { total: 2 }, error: null },
+      },
+    });
+
+    await waitFor(() =>
+      expect(onActionUpdate).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          settings: expect.objectContaining({
+            input: expect.objectContaining({
+              toolInput: { query: 'invoices-2024', cursor: null },
+            }),
+            expectedOutputSchema: { total: 2 },
+          }),
+        }),
+      ),
+    );
+  });
+
+  it('leaves the expected output alone when the tool returns nothing', async () => {
+    const onActionUpdate = jest.fn();
+    mockTestMcpToolStep.mockResolvedValue({
+      data: { testMcpToolStep: { success: true, result: {}, error: null } },
+    });
+
+    render(
+      <WorkflowEditActionMcpTool
+        action={buildStep({ toolName: 'search_docs' })}
+        actionOptions={{ onActionUpdate }}
+      />,
+      { wrapper },
     );
 
-    expect(mockTestMcpServerTool).not.toHaveBeenCalled();
+    await openTestTab();
+    await clickTestButton();
+
+    expect(await screen.findByText('No output returned')).toBeVisible();
+    expect(screen.queryByText('Output saved')).not.toBeInTheDocument();
+    expect(onActionUpdate).not.toHaveBeenCalled();
   });
 
   it('shows the tool error and keeps the expected output when the test fails', async () => {
     const onActionUpdate = jest.fn();
-    mockTestMcpServerTool.mockResolvedValue({
+    mockTestMcpToolStep.mockResolvedValue({
       data: {
-        testMcpServerTool: {
+        testMcpToolStep: {
           success: false,
           result: null,
           error: 'Query is required',
@@ -343,7 +383,7 @@ describe('WorkflowEditActionMcpTool', () => {
 
     render(
       <WorkflowEditActionMcpTool
-        action={buildStep('search_docs')}
+        action={buildStep({ toolName: 'search_docs' })}
         actionOptions={{ onActionUpdate }}
       />,
       { wrapper },

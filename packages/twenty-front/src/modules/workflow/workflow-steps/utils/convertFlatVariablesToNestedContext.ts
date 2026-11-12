@@ -1,3 +1,5 @@
+import { isPlainObject } from 'twenty-shared/utils';
+
 export const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: unknown;
 }): Record<string, unknown> => {
@@ -7,12 +9,17 @@ export const convertFlatVariablesToNestedContext = (flatVariables: {
     const parts = key.split('.');
     let current = result;
 
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      if (!(part in current)) {
-        current[part] = {};
+    for (const part of parts.slice(0, -1)) {
+      const existingNode = current[part];
+
+      if (isPlainObject(existingNode)) {
+        current = existingNode;
+      } else {
+        const node: Record<string, unknown> = {};
+
+        current[part] = node;
+        current = node;
       }
-      current = current[part] as Record<string, unknown>;
     }
 
     current[parts[parts.length - 1]] = value;
