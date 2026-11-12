@@ -140,14 +140,18 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       continue;
     }
 
-    // A field created before the option table exists has no rows yet
+    const rowOptionValues = optionValuesByFieldMetadataUniversalIdentifier.get(
+      fieldMetadataUniversalIdentifier,
+    );
+    const storedOptionValues = (universalFlatFieldMetadata.options ?? []).map(
+      ({ value }) => value,
+    );
+    // Same rule as reads: the stored options stand while one of them has no row
     const optionValues =
-      optionValuesByFieldMetadataUniversalIdentifier.get(
-        fieldMetadataUniversalIdentifier,
-      ) ??
-      new Set(
-        (universalFlatFieldMetadata.options ?? []).map(({ value }) => value),
-      );
+      isDefined(rowOptionValues) &&
+      storedOptionValues.every((value) => rowOptionValues.has(value))
+        ? rowOptionValues
+        : new Set(storedOptionValues);
 
     const defaultValues: unknown[] = Array.isArray(
       universalFlatFieldMetadata.defaultValue,
