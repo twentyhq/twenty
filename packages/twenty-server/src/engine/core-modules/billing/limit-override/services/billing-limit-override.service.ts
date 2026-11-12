@@ -63,7 +63,7 @@ export class BillingLimitOverrideService {
       input,
       isOperator: true,
       writeAlongside: isBillingEnabled
-        ? async (entityManager, usageLimit) => {
+        ? async ({ entityManager, usageLimit }) => {
             await this.billingArrangementService.insertArrangement({
               workspaceId,
               arrangement: {
@@ -103,7 +103,7 @@ export class BillingLimitOverrideService {
       usageLimitId,
       isOperator: true,
       writeAlongside: this.twentyConfigService.get('IS_BILLING_ENABLED')
-        ? (entityManager) =>
+        ? ({ entityManager }) =>
             this.endLimitOverrides({
               entityManager,
               workspaceId,

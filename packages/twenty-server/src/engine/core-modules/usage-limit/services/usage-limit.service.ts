@@ -36,10 +36,10 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type WriteAlongside = (
-  entityManager: EntityManager,
-  usageLimit: UsageLimitEntity,
-) => Promise<void>;
+type WriteAlongside = (args: {
+  entityManager: EntityManager;
+  usageLimit: UsageLimitEntity;
+}) => Promise<void>;
 
 @Injectable()
 export class UsageLimitService {
@@ -104,7 +104,10 @@ export class UsageLimitService {
           where: scope,
         });
 
-        await writeAlongside?.(entityManager, insertedUsageLimit);
+        await writeAlongside?.({
+          entityManager,
+          usageLimit: insertedUsageLimit,
+        });
 
         return insertedUsageLimit;
       },
@@ -313,7 +316,7 @@ export class UsageLimitService {
         );
       }
 
-      await writeAlongside?.(entityManager, usageLimit);
+      await writeAlongside?.({ entityManager, usageLimit });
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
