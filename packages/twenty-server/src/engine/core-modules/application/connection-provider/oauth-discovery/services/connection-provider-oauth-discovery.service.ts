@@ -16,7 +16,7 @@ import {
   resourceUrlFromServerUrl,
 } from '@modelcontextprotocol/sdk/shared/auth-utils.js';
 import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
@@ -279,10 +279,10 @@ export class ConnectionProviderOAuthDiscoveryService {
       authorizationServerMetadata,
       resourceMetadata,
     } = storedClient.discoveryState;
-    const scopes =
-      scope?.split(/\s+/).filter(Boolean) ??
-      resourceMetadata?.scopes_supported ??
-      [];
+    const probedScopes = scope?.split(/\s+/).filter(Boolean) ?? [];
+    const scopes = isNonEmptyArray(probedScopes)
+      ? probedScopes
+      : (resourceMetadata?.scopes_supported ?? []);
 
     return {
       authorizationEndpoint:
