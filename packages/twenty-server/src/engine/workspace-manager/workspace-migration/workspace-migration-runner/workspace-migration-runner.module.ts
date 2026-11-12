@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
-import { DeferredWorkspaceOperationEntity } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.entity';
+import { DeferredWorkspaceOperationModule } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
-import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
 import { RetryFailedDeferredWorkspaceOperationsCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/retry-failed-deferred-workspace-operations.command';
@@ -28,7 +26,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     DiscoveryModule,
     WorkspaceCacheModule,
-    TypeOrmModule.forFeature([DeferredWorkspaceOperationEntity]),
+    DeferredWorkspaceOperationModule,
     WorkspaceIteratorModule,
     MetricsModule,
   ],
@@ -39,7 +37,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceOperationRunnerService,
     DeferredWorkspaceOperationRecoveryService,
     InFlightDeferredWorkspaceOperationsService,
-    provideWorkspaceScopedRepository(DeferredWorkspaceOperationEntity),
     DeferredWorkspaceOperationGaugeService,
     FlatCacheInvalidateCommand,
     RetryFailedDeferredWorkspaceOperationsCommand,

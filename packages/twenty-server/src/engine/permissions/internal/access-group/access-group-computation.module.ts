@@ -3,7 +3,8 @@ import { Module } from '@nestjs/common';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-related-record-path-targets.job';
-import { ApplyAccessGroupPropagationPlanJob } from 'src/engine/permissions/internal/access-group/jobs/apply-access-group-propagation-plan.job';
+import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
+import { DeferredWorkspaceOperationModule } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.module';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
@@ -19,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     CacheLockModule,
+    DeferredWorkspaceOperationModule,
     RecordPermissionRepositoryModule,
     RelatedRecordPathReadModule,
     WorkspaceCacheModule,
@@ -31,7 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AccessGroupSyncService,
     AccessGroupSyncListener,
     AccessGroupSyncSchedulerService,
-    ApplyAccessGroupPropagationPlanJob,
+    ComputeRecordAccessGroupIdsDeferredOperationHandlerService,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
     RecomputeRelatedRecordPathTargetsJob,
     SyncAccessGroupsJob,

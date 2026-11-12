@@ -13,8 +13,6 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type AccessGroupReadService } from 'src/engine/permissions/internal/access-group/services/access-group-read.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
@@ -241,13 +239,6 @@ describe('access group propagation progress (integration)', () => {
       expectToFail: false,
     });
     await waitForAllJobsToFinish();
-    await global.app
-      .get<CacheStorageService>(CacheStorageNamespace.EnginePermissions)
-      .mdel(
-        ['plan', 'computed-record-count'].map(
-          (key) => `access-group-propagation:${SEED_APPLE_WORKSPACE_ID}:${key}`,
-        ),
-      );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 

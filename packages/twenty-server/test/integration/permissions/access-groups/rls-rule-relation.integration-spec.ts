@@ -155,6 +155,7 @@ describe('RLS rules through a relation (integration)', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
     });
+    await waitForAllJobsToFinish();
   };
 
   const assignPersonRuleThroughCompanyName = async () => {
