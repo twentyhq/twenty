@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -199,12 +199,18 @@ const buildPredicateRecordFilter = ({
     return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
   };
 
-  if (
-    !isDefined(predicate.workspaceMemberFieldMetadataId) ||
-    !isRecordFilterOperandExpectingValue(operand) ||
-    isFilterValueExpectedAsArray({ filterType, operand, subFieldName })
-  ) {
+  if (!isDefined(predicate.workspaceMemberFieldMetadataId)) {
     return buildValueRecordFilter(predicateValue);
+  }
+
+  if (!isRecordFilterOperandExpectingValue(operand)) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (isFilterValueExpectedAsArray({ filterType, operand, subFieldName })) {
+    return buildValueRecordFilter(
+      isString(predicateValue) ? [predicateValue] : predicateValue,
+    );
   }
 
   if (Array.isArray(predicateValue) && predicateValue.length > 1) {

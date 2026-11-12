@@ -692,6 +692,27 @@ describe('buildRecordFilterForRule with access group member values', () => {
     },
   );
 
+  it('should give a select field a single member value as a one item list', () => {
+    expect(
+      buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-select-member-text', USER_ROLE_ID, {
+              fieldMetadataId: STATUS_FIELD_ID,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
   it('should match nothing when the group holds no value', () => {
     expect(
       buildForAccessGroup({
