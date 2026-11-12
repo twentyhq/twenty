@@ -55,23 +55,31 @@ export class ApplicationAuthorizationService {
   }): Promise<string | undefined> {
     const now = new Date();
 
-    await this.applicationAuthorizationRepository.upsert(
-      {
-        userId,
-        workspaceId,
-        userWorkspaceId,
-        applicationId,
-        scopes,
-        lastAuthorizedAt: now,
-        consentId: v4(),
-        lastUsedAt: now,
-        revokedAt: null,
-      },
-      {
-        conflictPaths: ['userId', 'applicationId'],
-        skipUpdateIfNoValuesChanged: false,
-      },
+    // A consent on top of an active one keeps its consentId, so the member's other sessions keep refreshing
+    const { affected } = await this.applicationAuthorizationRepository.update(
+      { userId, applicationId, revokedAt: IsNull() },
+      { workspaceId, userWorkspaceId, scopes, lastUsedAt: now },
     );
+
+    if (!isDefined(affected) || affected === 0) {
+      await this.applicationAuthorizationRepository.upsert(
+        {
+          userId,
+          workspaceId,
+          userWorkspaceId,
+          applicationId,
+          scopes,
+          lastAuthorizedAt: now,
+          consentId: v4(),
+          lastUsedAt: now,
+          revokedAt: null,
+        },
+        {
+          conflictPaths: ['userId', 'applicationId'],
+          skipUpdateIfNoValuesChanged: false,
+        },
+      );
+    }
 
     // Read back rather than trust the generated value: the column is dropped from writes until its upgrade runs
     const authorization = await this.applicationAuthorizationRepository.findOne(

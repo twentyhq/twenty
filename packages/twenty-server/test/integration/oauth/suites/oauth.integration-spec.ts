@@ -1096,6 +1096,31 @@ describe('OAuth (integration)', () => {
       expect(revokedRefresh.body.error).toBe('invalid_grant');
     });
 
+    it('should keep an earlier refresh token working when the user authorizes again without revoking', async () => {
+      const { refreshToken: earlierRefreshToken } = await exchangeForTokens();
+      const earlierAuthorization = await findAuthorization();
+
+      await new Promise((resolve) => setTimeout(resolve, 1100));
+
+      const { refreshToken } = await exchangeForTokens('read');
+
+      const authorization = await findAuthorization();
+
+      expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.lastAuthorizedAt).toEqual(
+        earlierAuthorization.lastAuthorizedAt,
+      );
+
+      for (const token of [earlierRefreshToken, refreshToken]) {
+        await postToken({
+          grant_type: 'refresh_token',
+          refresh_token: token,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        }).expect(200);
+      }
+    });
+
     it('should exchange and refresh before the consentId upgrade command has run', async () => {
       const hiddenColumns = jest
         .spyOn(
