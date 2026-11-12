@@ -55,6 +55,15 @@ const mockWorkflowCoreSyncService = {
 
 const mockWorkflowVersionCoreSyncService = {
   findCoreVersionById: jest.fn(),
+  resolveDispatchedCoreVersionId: jest.fn(
+    async ({
+      coreWorkflowVersionId,
+      lastPublishedCoreWorkflowVersionId,
+    }: {
+      coreWorkflowVersionId?: string | null;
+      lastPublishedCoreWorkflowVersionId?: string | null;
+    }) => coreWorkflowVersionId ?? lastPublishedCoreWorkflowVersionId,
+  ),
 };
 
 const mockCoreWorkflowRunnerService = {

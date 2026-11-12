@@ -75,11 +75,16 @@ export class WorkflowTriggerDispatchWorkspaceService {
           workspaceId,
           workflowId,
         );
-      const coreWorkflowVersionId = await this.resolveCoreWorkflowVersionId({
-        jobData,
-        lastPublishedCoreWorkflowVersionId:
-          coreWorkflow?.lastPublishedCoreWorkflowVersionId,
-      });
+      const coreWorkflowVersionId =
+        await this.workflowVersionCoreSyncService.resolveDispatchedCoreVersionId(
+          {
+            workspaceId,
+            coreWorkflowVersionId: jobData.coreWorkflowVersionId,
+            workspaceWorkflowVersionId: jobData.workspaceWorkflowVersionId,
+            lastPublishedCoreWorkflowVersionId:
+              coreWorkflow?.lastPublishedCoreWorkflowVersionId,
+          },
+        );
 
       if (!isDefined(coreWorkflow) || !isDefined(coreWorkflowVersionId)) {
         throw new WorkflowTriggerException(
@@ -108,31 +113,5 @@ export class WorkflowTriggerDispatchWorkspaceService {
         workspace: { id: workspaceId },
       });
     }
-  }
-
-  private async resolveCoreWorkflowVersionId({
-    jobData,
-    lastPublishedCoreWorkflowVersionId,
-  }: {
-    jobData: Pick<
-      WorkflowTriggerJobData,
-      'workspaceId' | 'coreWorkflowVersionId' | 'workspaceWorkflowVersionId'
-    >;
-    lastPublishedCoreWorkflowVersionId?: string | null;
-  }): Promise<string | null | undefined> {
-    if (isDefined(jobData.coreWorkflowVersionId)) {
-      return jobData.coreWorkflowVersionId;
-    }
-
-    if (isDefined(jobData.workspaceWorkflowVersionId)) {
-      return (
-        await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
-          jobData.workspaceId,
-          jobData.workspaceWorkflowVersionId,
-        )
-      )?.id;
-    }
-
-    return lastPublishedCoreWorkflowVersionId;
   }
 }
