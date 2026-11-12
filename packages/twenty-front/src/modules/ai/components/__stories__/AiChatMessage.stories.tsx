@@ -35,6 +35,7 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
+import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -44,6 +45,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -1024,5 +1026,153 @@ export const AgentLookupFailure: Story = {
     ).toBeVisible();
     expect(body.getAllByText('Failed to load agent details.')).toHaveLength(1);
     expect(canvas.getAllByText('Agent')).toHaveLength(2);
+  },
+};
+
+const mockImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-dashboard',
+  filename: 'dashboard.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
+const mockSecondImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-team',
+  filename: 'team.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
+const mockBrokenImageFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-broken',
+  filename: 'broken.png',
+  mediaType: 'image/png',
+  url: 'data:image/png;base64,broken',
+};
+
+const mockPdfFilePart: AgentChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-brief',
+  filename: 'brief.pdf',
+  mediaType: 'application/pdf',
+  url: 'https://example.com/brief.pdf',
+};
+
+const mockUserMessageWithImage: ExtendedUIMessage = {
+  id: 'msg-user-image',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Here is the dashboard and the brief.' },
+    mockImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+const mockUserMessageWithImages: ExtendedUIMessage = {
+  id: 'msg-user-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Screenshots from the review.' },
+    mockImageFilePart,
+    mockSecondImageFilePart,
+    mockBrokenImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithImage: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithImage],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithImage.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
+  },
+};
+
+export const UserMessageWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'team.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'broken.png' }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('img', { name: 'broken.png' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
+  },
+};
+
+const mockUserMessageWithManyImages: ExtendedUIMessage = {
+  id: 'msg-user-many-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'All the photos from the offsite.' },
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AgentChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-photo-${photoNumber}`,
+      filename: `photo-${photoNumber}.png`,
+      mediaType: 'image/png',
+      url: IMAGE_URL_MOCK,
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithManyImages: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isAttachmentPreviewEnabledState.atom, true);
+  },
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithManyImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithManyImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show 3 more images' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'photo-3.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'photo-5.png' }),
+    ).not.toBeInTheDocument();
   },
 };
