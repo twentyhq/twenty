@@ -53,7 +53,6 @@ export const ChatMessageVoiceNote = ({
 
     if (audioElement?.paused === true) {
       audioElement.play().catch((error: unknown) => {
-        // Pausing or reloading can interrupt play without a media failure.
         if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }

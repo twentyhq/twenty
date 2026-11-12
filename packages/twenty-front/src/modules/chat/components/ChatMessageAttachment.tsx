@@ -50,7 +50,6 @@ type ChatMessageAttachmentProps = {
 
 export const ChatMessageAttachment = ({ file }: ChatMessageAttachmentProps) => {
   const { openFilePreview } = useOpenFilePreview();
-  // keyed on the url so a refreshed signed url gets another chance to load
   const [failedMediaUrl, setFailedMediaUrl] = useState<string | undefined>();
 
   const hasMediaFailedToLoad =

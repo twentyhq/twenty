@@ -27,7 +27,6 @@ export const ChatMessageImageGrid = ({ files }: ChatMessageImageGridProps) => {
     isAttachmentPreviewEnabledState,
   );
 
-  // without the preview there is no way to browse hidden images, so show them all
   const visibleFiles = isAttachmentPreviewEnabled
     ? files.slice(0, CHAT_MESSAGE_IMAGE_GRID_MAX_TILE_COUNT)
     : files;
