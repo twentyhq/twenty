@@ -38,7 +38,7 @@ export interface WorkspaceInternalContext {
   >;
   recordFieldPermissions: Pick<
     RecordFieldPermissionsReadService,
-    'findUnreadableFieldsOnMatchingRecords'
+    'buildUnreadableFieldsSQLConditions'
   >;
   recordAccessGroupWrite: Pick<
     RecordAccessGroupWriteService,

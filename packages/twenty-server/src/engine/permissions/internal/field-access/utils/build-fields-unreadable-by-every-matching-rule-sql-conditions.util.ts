@@ -13,7 +13,7 @@ const combineWithOr = (sqlConditions: SQLCondition[]): SQLCondition =>
     ? sqlConditions[0]
     : combineSQLConditions({ sqlConditions, operator: 'OR' });
 
-export const buildFieldsHiddenByEveryMatchingRuleSQLConditions = (
+export const buildFieldsUnreadableByEveryMatchingRuleSQLConditions = (
   rlsRuleSQLConditions: RlsRuleFieldsSQLCondition[],
 ): RlsRuleFieldsSQLCondition[] => {
   const fieldMetadataIds = [

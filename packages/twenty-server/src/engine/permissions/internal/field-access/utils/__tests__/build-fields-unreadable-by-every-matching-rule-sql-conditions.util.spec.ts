@@ -1,9 +1,9 @@
-import { buildFieldsHiddenByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-hidden-by-every-matching-rule-sql-conditions.util';
+import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 
-describe('buildFieldsHiddenByEveryMatchingRuleSQLConditions', () => {
+describe('buildFieldsUnreadableByEveryMatchingRuleSQLConditions', () => {
   it('should hide a field where a rule hiding it matches and no rule showing it does', () => {
     expect(
-      buildFieldsHiddenByEveryMatchingRuleSQLConditions([
+      buildFieldsUnreadableByEveryMatchingRuleSQLConditions([
         { fieldMetadataIds: [], sqlCondition: { sql: 'full', parameters: {} } },
         {
           fieldMetadataIds: ['body-field-id'],

@@ -5,17 +5,17 @@ import { type RlsRule } from 'src/engine/permissions/internal/rls/utils/build-rl
 import { findRlsRulesAccessingOperation } from 'src/engine/permissions/internal/rls/utils/find-rls-rules-accessing-operation.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
-const OPERATION_TYPE_BY_FIELD_LIST = {
+const OPERATION_TYPE_BY_INACCESSIBLE_FIELDS_KEY = {
   unreadableFields: 'read',
   uneditableFields: 'update',
 } as const;
 
 // Rules listing nothing are returned too: one of them matching a record makes a field visible
-export const findRlsRuleFields = ({
+export const findRlsRuleInaccessibleFields = ({
   principals,
   metadataMaps,
   objectMetadataId,
-  fieldList,
+  inaccessibleFieldsKey,
 }: {
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: Pick<
@@ -26,26 +26,27 @@ export const findRlsRuleFields = ({
     | 'featureFlagsMap'
   >;
   objectMetadataId: string;
-  fieldList: 'unreadableFields' | 'uneditableFields';
+  inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';
 }): {
   rowLevelPermissionRule: RlsRule;
   fieldMetadataIds: string[];
 }[] => {
-  const rlsRuleFields = (
+  const rlsRuleInaccessibleFields = (
     findRlsRulesAccessingOperation({
       principals,
       metadataMaps,
       objectMetadataId,
-      operationType: OPERATION_TYPE_BY_FIELD_LIST[fieldList],
+      operationType:
+        OPERATION_TYPE_BY_INACCESSIBLE_FIELDS_KEY[inaccessibleFieldsKey],
     }) ?? []
   ).map((rowLevelPermissionRule) => ({
     rowLevelPermissionRule,
-    fieldMetadataIds: rowLevelPermissionRule[fieldList],
+    fieldMetadataIds: rowLevelPermissionRule[inaccessibleFieldsKey],
   }));
 
-  return rlsRuleFields.some(({ fieldMetadataIds }) =>
+  return rlsRuleInaccessibleFields.some(({ fieldMetadataIds }) =>
     isNonEmptyArray(fieldMetadataIds),
   )
-    ? rlsRuleFields
+    ? rlsRuleInaccessibleFields
     : [];
 };

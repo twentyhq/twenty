@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
-import { buildFieldsHiddenByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-hidden-by-every-matching-rule-sql-conditions.util';
-import { findRlsRuleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-fields.util';
+import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
+import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
@@ -28,20 +28,20 @@ export class RecordFieldPermissionsReadService {
   ) {}
 
   findUnreadableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findObjectFieldMetadataIds({
+    return this.findObjectInaccessibleFieldMetadataIds({
       ...question,
-      fieldList: 'unreadableFields',
+      inaccessibleFieldsKey: 'unreadableFields',
     });
   }
 
   findUneditableFields(question: ObjectQuestion): Promise<Set<string>> {
-    return this.findObjectFieldMetadataIds({
+    return this.findObjectInaccessibleFieldMetadataIds({
       ...question,
-      fieldList: 'uneditableFields',
+      inaccessibleFieldsKey: 'uneditableFields',
     });
   }
 
-  async findUnreadableFieldsOnMatchingRecords({
+  async buildUnreadableFieldsSQLConditions({
     principals,
     objectMetadataId,
     tableAlias,
@@ -52,23 +52,23 @@ export class RecordFieldPermissionsReadService {
       return [];
     }
 
-    const rlsRuleFields = findRlsRuleFields({
+    const rlsRuleInaccessibleFields = findRlsRuleInaccessibleFields({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
         { principals },
       ),
       objectMetadataId,
-      fieldList: 'unreadableFields',
+      inaccessibleFieldsKey: 'unreadableFields',
     });
 
-    if (!isNonEmptyArray(rlsRuleFields)) {
+    if (!isNonEmptyArray(rlsRuleInaccessibleFields)) {
       return [];
     }
 
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
 
-    const rlsRuleSQLConditions = rlsRuleFields.map(
+    const rlsRuleSQLConditions = rlsRuleInaccessibleFields.map(
       ({ rowLevelPermissionRule, fieldMetadataIds }) => ({
         fieldMetadataIds,
         sqlCondition: renderRlsRecordFilterToSql({
@@ -85,17 +85,17 @@ export class RecordFieldPermissionsReadService {
       }),
     );
 
-    return buildFieldsHiddenByEveryMatchingRuleSQLConditions(
+    return buildFieldsUnreadableByEveryMatchingRuleSQLConditions(
       rlsRuleSQLConditions,
     );
   }
 
-  private async findObjectFieldMetadataIds({
+  private async findObjectInaccessibleFieldMetadataIds({
     principals,
     objectMetadataId,
-    fieldList,
+    inaccessibleFieldsKey,
   }: ObjectQuestion & {
-    fieldList: 'unreadableFields' | 'uneditableFields';
+    inaccessibleFieldsKey: 'unreadableFields' | 'uneditableFields';
   }): Promise<Set<string>> {
     if (!isDefined(principals)) {
       return new Set();
@@ -115,7 +115,7 @@ export class RecordFieldPermissionsReadService {
       return new Set(flatObjectMetadata.fieldIds);
     }
 
-    return new Set(objectRecordsPermissions[fieldList]);
+    return new Set(objectRecordsPermissions[inaccessibleFieldsKey]);
   }
 
   private async findObjectMetadataOrThrow({

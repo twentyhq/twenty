@@ -1,3 +1,4 @@
-import { type RlsRuleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields-on-matching-records.type';
+import { type InaccessibleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/inaccessible-fields-on-matching-records.type';
 
-export type UneditableFieldsOnMatchingRecords = RlsRuleFieldsOnMatchingRecords;
+export type UneditableFieldsOnMatchingRecords =
+  InaccessibleFieldsOnMatchingRecords;

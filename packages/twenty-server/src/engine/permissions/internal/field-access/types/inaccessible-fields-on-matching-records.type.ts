@@ -1,6 +1,6 @@
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-export type RlsRuleFieldsOnMatchingRecords = {
+export type InaccessibleFieldsOnMatchingRecords = {
   fieldMetadataIds: string[];
   recordFilter: RecordGqlOperationFilter;
 };

@@ -3,21 +3,21 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RlsRuleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/rls-rule-fields-on-matching-records.type';
+import { type InaccessibleFieldsOnMatchingRecords } from 'src/engine/permissions/internal/field-access/types/inaccessible-fields-on-matching-records.type';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
-export const findFieldMetadataIdsListedByEveryMatchingRlsRule = ({
+export const findInaccessibleFieldMetadataIdsOnRecord = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   record,
-  rlsRuleFieldLists,
+  inaccessibleFieldsOnMatchingRecords,
 }: {
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   record: object;
-  rlsRuleFieldLists: RlsRuleFieldsOnMatchingRecords[];
+  inaccessibleFieldsOnMatchingRecords: InaccessibleFieldsOnMatchingRecords[];
 }): string[] => {
-  const fieldListsOfMatchingRules = rlsRuleFieldLists
+  const inaccessibleFieldsOfMatchingRules = inaccessibleFieldsOnMatchingRecords
     .filter(({ recordFilter }) =>
       isRecordMatchingFilter({
         record,
@@ -29,12 +29,12 @@ export const findFieldMetadataIdsListedByEveryMatchingRlsRule = ({
     )
     .map(({ fieldMetadataIds }) => fieldMetadataIds);
 
-  if (!isNonEmptyArray(fieldListsOfMatchingRules)) {
+  if (!isNonEmptyArray(inaccessibleFieldsOfMatchingRules)) {
     return [];
   }
 
-  return fieldListsOfMatchingRules[0].filter((fieldMetadataId) =>
-    fieldListsOfMatchingRules.every((fieldMetadataIds) =>
+  return inaccessibleFieldsOfMatchingRules[0].filter((fieldMetadataId) =>
+    inaccessibleFieldsOfMatchingRules.every((fieldMetadataIds) =>
       fieldMetadataIds.includes(fieldMetadataId),
     ),
   );
