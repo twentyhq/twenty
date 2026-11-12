@@ -46,12 +46,16 @@ export const AiChatQuotedMessagePreview = ({
   const theme = useTheme();
 
   const isAvailable = source.status === 'available';
-  const excerpt =
-    isAvailable && isNonEmptyString(source.excerpt)
+
+  const getExcerpt = () => {
+    if (source.status !== 'available') {
+      return t`Original message unavailable`;
+    }
+
+    return isNonEmptyString(source.excerpt)
       ? source.excerpt
-      : isAvailable
-        ? t`No text content`
-        : t`Original message unavailable`;
+      : t`No text content`;
+  };
 
   return (
     <StyledReply>
@@ -75,7 +79,7 @@ export const AiChatQuotedMessagePreview = ({
       )}
       <StyledExcerpt>
         <Text size="sm" color="tertiary" truncate>
-          {excerpt}
+          {getExcerpt()}
         </Text>
       </StyledExcerpt>
     </StyledReply>

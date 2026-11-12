@@ -4,6 +4,7 @@ import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -377,17 +378,26 @@ export const MemberTypingInSidePanel: Story = {
   },
 };
 
+const initializeInboxChatWithTeammate = (
+  getMessages: (teammateId: string | undefined) => ExtendedUIMessage[],
+) => {
+  initializeNewAiChatStory({ isInboxEnabled: true });
+
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+  const teammate = jotaiStore
+    .get(currentWorkspaceMembersState.atom)
+    .find(({ name }) => name.firstName === 'Jane');
+
+  jotaiStore.set(
+    agentChatMessagesFamilyState.atomFamily({ threadId }),
+    getMessages(teammate?.id),
+  );
+};
+
 export const ReplyToTeammate: Story = {
   ...FullPageNewChat,
   beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: true });
-
-    const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
-    const teammate = jotaiStore
-      .get(currentWorkspaceMembersState.atom)
-      .find(({ name }) => name.firstName === 'Jane');
-
-    jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+    initializeInboxChatWithTeammate((teammateId) => [
       {
         id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
         role: 'user',
@@ -397,7 +407,7 @@ export const ReplyToTeammate: Story = {
             text: 'On it. Their procurement asked for a security review.',
           },
         ],
-        metadata: { senderWorkspaceMemberId: teammate?.id },
+        metadata: { senderWorkspaceMemberId: teammateId },
       },
     ]);
   },
@@ -418,14 +428,7 @@ export const ReplyToTeammate: Story = {
 export const OpenOriginalFromReply: Story = {
   ...FullPageNewChat,
   beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: true });
-
-    const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
-    const teammate = jotaiStore
-      .get(currentWorkspaceMembersState.atom)
-      .find(({ name }) => name.firstName === 'Jane');
-
-    jotaiStore.set(agentChatMessagesFamilyState.atomFamily({ threadId }), [
+    initializeInboxChatWithTeammate((teammateId) => [
       {
         id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
         role: 'user',
@@ -435,7 +438,7 @@ export const OpenOriginalFromReply: Story = {
             text: 'On it. Their procurement asked for a security review.',
           },
         ],
-        metadata: { senderWorkspaceMemberId: teammate?.id },
+        metadata: { senderWorkspaceMemberId: teammateId },
       },
       {
         id: '20202020-8d2f-4b1a-8e3c-4a5b6c7d8e92',
@@ -446,7 +449,7 @@ export const OpenOriginalFromReply: Story = {
             text: '> **Jane Doe:** On it. Their procurement asked for a security review.\n\nThanks, I will loop in our security lead.',
           },
         ],
-        metadata: { senderWorkspaceMemberId: teammate?.id },
+        metadata: { senderWorkspaceMemberId: teammateId },
       },
     ]);
   },
