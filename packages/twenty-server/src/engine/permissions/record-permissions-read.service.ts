@@ -48,15 +48,15 @@ import { canAllRecordsAccessOperation } from 'src/engine/permissions/internal/al
 import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
-import { canRelatedRecordPathsReachObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-paths-reach-object.util';
+import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
-import { canRelatedRecordPathGrantOperation } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-grant-operation.util';
+import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
   type BuildEntrySQLCondition,
-  buildRelatedRecordPathsSQLCondition,
-} from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-paths-sql-condition.util';
+  buildRelatedRecordPathJoinSQLCondition,
+} from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-join-sql-condition.util';
 import { buildAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-access-sql-condition.util';
 import {
   PermissionsException,
@@ -167,7 +167,7 @@ export class RecordPermissionsReadService {
     if (
       canAllRecordsAccessOperation(request) ||
       canRlsAccessOperation(request) ||
-      canRelatedRecordPathGrantOperation(request)
+      canRelatedRecordPathExtendAccess(request)
     ) {
       return true;
     }
@@ -367,13 +367,13 @@ export class RecordPermissionsReadService {
       callerRelatedRecordPathAccessGroupCompactIds,
     });
 
-    if (!canRelatedRecordPathGrantOperation(objectAccessRequest)) {
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
       return sqlCondition;
     }
 
     return combineSQLConditionOutcomesWithOr([
       sqlCondition,
-      this.buildRelatedRecordPathsSQLCondition({
+      this.buildRelatedRecordPathJoinSQLCondition({
         ...objectAccessRequest,
         tableAlias,
         isUncorrelated: true,
@@ -414,7 +414,7 @@ export class RecordPermissionsReadService {
     const objectAccessRequest =
       await this.findObjectAccessRequestOrThrow(question);
 
-    if (!canRelatedRecordPathGrantOperation(objectAccessRequest)) {
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
       return this.buildRecordsAccessSQLCondition({
         objectAccessRequest,
         tableAlias,
@@ -718,7 +718,7 @@ export class RecordPermissionsReadService {
       });
     }
 
-    return this.buildRelatedRecordPathsSQLCondition({
+    return this.buildRelatedRecordPathJoinSQLCondition({
       principals,
       metadataMaps,
       flatObjectMetadata,
@@ -738,7 +738,7 @@ export class RecordPermissionsReadService {
     });
   }
 
-  private buildRelatedRecordPathsSQLCondition({
+  private buildRelatedRecordPathJoinSQLCondition({
     principals,
     metadataMaps,
     flatObjectMetadata,
@@ -751,15 +751,15 @@ export class RecordPermissionsReadService {
     buildEntrySQLCondition: BuildEntrySQLCondition;
     isUncorrelated?: boolean;
   }): SQLCondition | boolean {
-    return buildRelatedRecordPathsSQLCondition({
+    return buildRelatedRecordPathJoinSQLCondition({
       workspaceId: principals.workspaceId,
       flatObjectMetadata,
       tableAlias,
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
-      canRelatedRecordPathsReachObject: (reachedFlatObjectMetadata) =>
-        canRelatedRecordPathsReachObject({
+      canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
+        canRelatedRecordPathExtendAccessToObject({
           principals,
           metadataMaps,
           flatObjectMetadata: reachedFlatObjectMetadata,

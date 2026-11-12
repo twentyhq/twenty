@@ -7,7 +7,7 @@ import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 
-export const findRelatedRecordPathsGrantingOperation = ({
+export const findRelatedRecordPathsExtendingAccess = ({
   metadataMaps,
   flatObjectMetadata,
   operationType,

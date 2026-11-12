@@ -4,7 +4,7 @@ import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/inte
 import { areLimitingRolesReachingAllRecords } from 'src/engine/permissions/internal/role/utils/are-limiting-roles-reaching-all-records.util';
 import { isObjectOperationDisabledToPrincipals } from 'src/engine/permissions/internal/role/utils/is-object-operation-disabled-to-principals.util';
 
-export const canRelatedRecordPathsReachObject = (
+export const canRelatedRecordPathExtendAccessToObject = (
   request: PermissionsObjectAccessRequest,
 ): boolean =>
   !isObjectOperationDisabledToPrincipals(request) &&

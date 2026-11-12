@@ -12,7 +12,7 @@ import { combineSQLConditionOutcomesWithAnd } from 'src/engine/permissions/inter
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { resolveRowAccessOutcome } from 'src/engine/permissions/internal/combine/utils/resolve-row-access-outcome.util';
 import { buildPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-access-sql-condition.util';
-import { buildPermissionsRelatedRecordPathSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-permissions-related-record-path-sql-condition.util';
+import { buildRelatedRecordPathAccessGroupsSQLCondition } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-access-groups-sql-condition.util';
 import { buildRecordShareAccessSQLCondition } from 'src/engine/permissions/internal/record-share/utils/build-record-share-access-sql-condition.util';
 
 export const buildAccessSQLCondition = ({
@@ -48,6 +48,6 @@ export const buildAccessSQLCondition = ({
       : allRecordsOrRlsSQLCondition,
     buildRecordShareAccessSQLCondition(sqlRequest) ?? false,
     buildPrivateRecordAccessSQLCondition(sqlRequest) ?? false,
-    buildPermissionsRelatedRecordPathSQLCondition(sqlRequest) ?? false,
+    buildRelatedRecordPathAccessGroupsSQLCondition(sqlRequest) ?? false,
   ]);
 };

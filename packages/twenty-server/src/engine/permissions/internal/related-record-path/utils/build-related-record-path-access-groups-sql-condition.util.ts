@@ -9,7 +9,7 @@ import { combineSQLConditions } from 'src/engine/permissions/internal/record-per
 import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-record-access-groups-sql-condition.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
-export const buildPermissionsRelatedRecordPathSQLCondition = (
+export const buildRelatedRecordPathAccessGroupsSQLCondition = (
   request: PermissionsRowAccessSqlRequest,
 ): SQLCondition | undefined => {
   const { tableAlias, callerRelatedRecordPathAccessGroupCompactIds } = request;
