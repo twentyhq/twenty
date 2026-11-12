@@ -300,8 +300,8 @@ import { AddAvatarToAgentFastInstanceCommand } from 'src/database/commands/upgra
 import { AddWorkflowAndAgentNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794298453467-add-workflow-and-agent-navigation-menu-items';
 import { AddRowLevelPermissionRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794327249159-add-row-level-permission-rule-table';
 import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794337540366-add-row-level-permission-rule-links';
-import { AddConsentIdToApplicationAuthorizationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794379944635-add-consent-id-to-application-authorization';
-import { MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-slow-1794379944636-move-claude-and-chatgpt-to-their-app-packages';
+import { AddConsentIdToApplicationAuthorizationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794475687817-add-consent-id-to-application-authorization';
+import { MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-slow-1794475687818-move-claude-and-chatgpt-to-their-app-packages';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
