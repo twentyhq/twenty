@@ -1,10 +1,9 @@
-import { useFilterObjectMetadataItemsWithPermissionOverride } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useFilterObjectWithPermissionOverride';
 import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useObjectMetadataItemsThatCanHavePermission';
 import { SettingsRolePermissionsAddObjectDropdown } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown';
 import { SettingsRolePermissionsAllObjectsCard } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard';
 import { SettingsRolePermissionsObjectOverrideRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow';
 import { OBJECT_OVERRIDE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/objects-permissions/constants/ObjectOverrideTableGridTemplateColumns';
-import { getObjectRowLevelPermissionRules } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectRowLevelPermissionRules';
+import { hasObjectPermissionOverride } from '@/settings/roles/role-permissions/objects-permissions/utils/hasObjectPermissionOverride';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsRoleListedObjectOverrideIdsFamilyState } from '@/settings/roles/states/settingsRoleListedObjectOverrideIdsFamilyState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -47,9 +46,6 @@ export const SettingsRolePermissionsObjectsSection = ({
   const { objectMetadataItemsThatCanHavePermission } =
     useObjectMetadataItemsThatCanHavePermission();
 
-  const { filterObjectMetadataItemsWithPermissionOverride } =
-    useFilterObjectMetadataItemsWithPermissionOverride({ roleId });
-
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -59,11 +55,10 @@ export const SettingsRolePermissionsObjectsSection = ({
     objectMetadataItemsThatCanHavePermission.filter(
       (objectMetadataItem) =>
         settingsRoleListedObjectOverrideIds.includes(objectMetadataItem.id) ||
-        filterObjectMetadataItemsWithPermissionOverride(objectMetadataItem) ||
-        getObjectRowLevelPermissionRules({
+        hasObjectPermissionOverride({
           role: settingsDraftRole,
           objectMetadataId: objectMetadataItem.id,
-        }).length > 0,
+        }),
     );
 
   const addableObjectMetadataItems =
