@@ -21209,6 +21209,11 @@ msgstr "Odatdagidan chetda"
 msgid "Official app"
 msgstr "Rasmiy ilova"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr ""
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -21335,6 +21340,11 @@ msgstr "Bitta obuna bitta ishlab chiqarish instansiyasini va bitta ehtimoliy ste
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
 msgstr "Odamlar o'rtasidagi yakkama-yakka suhbatlar"
+
+#. js-lingui-id: oXOSPE
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
