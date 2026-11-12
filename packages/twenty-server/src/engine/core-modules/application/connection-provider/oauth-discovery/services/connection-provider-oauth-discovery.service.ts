@@ -25,7 +25,6 @@ import { ConnectionProviderOAuthClientService } from 'src/engine/core-modules/ap
 import { type OAuthDiscoveryStoredClient } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-stored-client.type';
 import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
-import { buildOAuthDiscoveryFetch } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-fetch.util';
 import { isStoredOAuthClientUsable } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/is-stored-oauth-client-usable.util';
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/connection-provider/types/resolved-oauth-client.type';
@@ -33,6 +32,8 @@ import { type OAuthDiscoveryConnectionProvider } from 'src/engine/core-modules/a
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS = 15_000;
 
 type DiscoveryTarget = {
   provider: OAuthDiscoveryConnectionProvider;
@@ -374,9 +375,9 @@ export class ConnectionProviderOAuthDiscoveryService {
   }
 
   private buildFetch(workspaceId: string): FetchLike {
-    return buildOAuthDiscoveryFetch({
-      secureHttpClientService: this.secureHttpClientService,
-      workspaceId,
+    return this.secureHttpClientService.createFetchLike({
+      context: { workspaceId, source: 'connection-provider' },
+      timeoutMs: OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS,
     });
   }
 }
