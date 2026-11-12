@@ -56,6 +56,7 @@ export class OAuthService {
     clientSecret?: string;
     codeVerifier?: string;
     redirectUri: string;
+    resource?: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
     const {
       authorizationCode,
@@ -63,6 +64,7 @@ export class OAuthService {
       clientSecret,
       codeVerifier,
       redirectUri,
+      resource,
     } = params;
 
     if (!authorizationCode) {
@@ -164,6 +166,19 @@ export class OAuthService {
           'redirect_uri does not match the one used in the authorization request',
         );
       }
+    }
+
+    const storedResource = authCodeToken.context?.resource;
+
+    if (
+      isDefined(storedResource) &&
+      isDefined(resource) &&
+      resource !== storedResource
+    ) {
+      return this.errorResponse(
+        'invalid_target',
+        'resource does not match the one used in the authorization request',
+      );
     }
 
     const storedCodeChallenge = authCodeToken.context?.codeChallenge;
