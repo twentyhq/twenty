@@ -2299,12 +2299,6 @@ msgstr "Ajouter un fournisseur personnalisé"
 msgid "Add details for guests"
 msgstr "Ajoutez des détails pour les invités"
 
-#. Abbreviation of add direct message, sidebar button
-#. js-lingui-id: An/Fke
-#: src/modules/ai/components/DirectMessageMemberPicker.tsx
-msgid "Add DM"
-msgstr "Ajouter un MP"
-
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Add Email"
@@ -7128,10 +7122,15 @@ msgid "Computed at"
 msgstr "Calculé le"
 
 #. js-lingui-id: wpT1VN
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
 msgstr "Condition"
+
+#. js-lingui-id: jZ2sd2
+#: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
+msgid "Condition (Optional)"
+msgstr ""
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -8262,12 +8261,12 @@ msgstr "Créer {objectLabelSingular}"
 #. js-lingui-id: RRkWki
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {recordCount} {objectLabel}"
-msgstr ""
+msgstr "Créer {recordCount} {objectLabel}"
 
 #. js-lingui-id: TryTER
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Create {selectedCount}"
-msgstr ""
+msgstr "Créer {selectedCount}"
 
 #. js-lingui-id: jmGqEp
 #. placeholder {0}: objectMetadataItem.labelPlural
@@ -9717,7 +9716,7 @@ msgstr "Supprimer {objectLabelPlural}"
 #. js-lingui-id: CF0F8U
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {recordCount} {objectLabel}"
-msgstr ""
+msgstr "Supprimer {recordCount} {objectLabel}"
 
 #. js-lingui-id: j8kv91
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
@@ -9727,7 +9726,7 @@ msgstr "Supprimer {relationObjectLabelSingular}"
 #. js-lingui-id: ++479H
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Delete {selectedCount}"
-msgstr ""
+msgstr "Supprimer {selectedCount}"
 
 #. js-lingui-id: wU3o2t
 #: src/modules/marketplace/utils/getRecordAccessLabel.ts
@@ -9874,7 +9873,7 @@ msgstr "Supprimer la limite"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Delete message"
-msgstr ""
+msgstr "Supprimer le message"
 
 #. js-lingui-id: Wk+A9S
 #: src/modules/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems.tsx
@@ -10311,6 +10310,11 @@ msgstr "La dictée n'est pas prise en charge dans ce navigateur."
 msgid "Direct message pair identity"
 msgstr "Identité de la paire de messages directs"
 
+#. js-lingui-id: 23aX1b
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+msgid "Direct messages"
+msgstr ""
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -10461,9 +10465,7 @@ msgstr "Séparateur"
 msgid "DMARC policy"
 msgstr "Politique DMARC"
 
-#. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
-#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "MP"
@@ -11045,7 +11047,7 @@ msgstr "Modifier les enregistrements associés"
 #: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatMessage.tsx
 msgid "Edit message"
-msgstr ""
+msgstr "Modifier le message"
 
 #. js-lingui-id: PWLkwC
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
@@ -14060,6 +14062,7 @@ msgid "Formats"
 msgstr "Formats"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 msgid "Former member"
@@ -19384,6 +19387,11 @@ msgstr "Nouvelle conversation"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New credit pack"
 msgstr "Nouveau pack de crédits"
+
+#. js-lingui-id: ctNfZE
+#: src/modules/ai/components/DirectMessageMemberPicker.tsx
+msgid "New direct message"
+msgstr ""
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -27093,6 +27101,7 @@ msgstr "Afficher la boîte de réception"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Afficher moins"
 
@@ -27103,6 +27112,7 @@ msgstr "Afficher les journaux"
 
 #. js-lingui-id: fMPkxb
 #: src/modules/ai/components/AiChatUserMessageCollapsibleContent.tsx
+#: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -30662,7 +30672,7 @@ msgid "Type \"yes\" to confirm."
 msgstr "Saisissez \"yes\" pour confirmer."
 
 #. js-lingui-id: XhqvGG
-#: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
+#: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Type a field name or a function"
 msgstr "Saisissez un nom de champ ou une fonction"
 
@@ -31302,12 +31312,12 @@ msgstr "Mettre à jour {contextStoreNumberOfSelectedRecords} enregistrements"
 #. js-lingui-id: AHNNTF
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {recordCount} {objectLabel}"
-msgstr ""
+msgstr "Mettre à jour {recordCount} {objectLabel}"
 
 #. js-lingui-id: ECfdor
 #: src/modules/ai/components/AiChatRecordApprovalDeck.tsx
 msgid "Update {selectedCount}"
-msgstr ""
+msgstr "Mettre à jour {selectedCount}"
 
 #. js-lingui-id: HELygz
 #: src/modules/marketplace/utils/buildPermissionSummaryFromRoleManifest.ts

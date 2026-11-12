@@ -450,7 +450,7 @@ For permanent deletes, use `.destroyed`.
 | `condition`                 | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet. `previous.<field>` reads it before an update. Needs `objectUniversalIdentifier`. |
 | `batchMode`                 | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
 
-The build fails when an object or field is unknown, or when the condition reads a field the object does not have. A condition reads the record's own fields; a many-to-one relation is read through its id, such as `companyId`.
+The build fails when an object or field is unknown, or when the condition reads a field the object does not have. A condition reads the record the way the API returns it, like a validation rule: `company.id` for the related company, `company.employees > 100` for one of its fields. Related fields are read when the event is dispatched, with the application's permissions, so a related record the application cannot read counts as empty. `previous.` only covers the record's own fields.
 
 <Note>
   The earlier `databaseEventTriggerSettings`, with `eventName` (such as

@@ -2,10 +2,10 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
-import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/rls/utils/build-record-access-groups-sql-condition.util';
+import { type PermissionsRowAccessSqlRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
+import { buildRecordAccessGroupsSQLCondition } from 'src/engine/permissions/internal/access-group/utils/build-record-access-groups-sql-condition.util';
 import { canRlsAccessOperation } from 'src/engine/permissions/internal/rls/utils/can-rls-access-operation.util';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-row-level-permission-filter-to-sql.util';
+import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { resolveRlsRuleRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
@@ -18,14 +18,14 @@ const buildRlsRulesSQLCondition = (
     return null;
   }
 
-  if (isDefined(request.callerAccessGroupCompactIds)) {
+  if (isDefined(request.principalsAccessGroupCompactIds)) {
     return buildRecordAccessGroupsSQLCondition({
       tableAlias: request.tableAlias,
-      callerAccessGroupCompactIds: request.callerAccessGroupCompactIds,
+      principalsAccessGroupCompactIds: request.principalsAccessGroupCompactIds,
     });
   }
 
-  return renderRowLevelPermissionFilterToSql({
+  return renderRlsRecordFilterToSql({
     recordFilter: rlsRuleRecordFilter,
     tableAlias: request.tableAlias,
     objectMetadata: request.flatObjectMetadata,
