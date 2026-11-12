@@ -1,3 +1,4 @@
+import { getFieldPermissionUniversalIdentifier } from 'twenty-shared/application';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 import { buildObjectRecordsPermissionsManifests } from 'src/engine/core-modules/application/application-manifest/utils/build-object-records-permissions-manifests.util';
@@ -21,10 +22,19 @@ const buildRule = ({
   ],
 });
 
-const DERIVED_IDENTITY = {
-  universalIdentifier: 'derived',
-  derivedUniversalIdentifier: 'derived',
+const OWNER = {
+  applicationUniversalIdentifier: '20202020-0000-4000-8000-000000000001',
+  roleUniversalIdentifier: 'role',
 };
+
+const withDerivedIdentifier = (fieldUniversalIdentifier: string) => ({
+  ...OWNER,
+  fieldUniversalIdentifier,
+  universalIdentifier: getFieldPermissionUniversalIdentifier({
+    ...OWNER,
+    fieldUniversalIdentifier,
+  }),
+});
 
 describe('buildObjectRecordsPermissionsManifests', () => {
   it('should gather the all records permissions, field restrictions and rules of each object, add an entry for an object without all records permissions, and name a field permission whose identifier is not derived', () => {
@@ -51,19 +61,17 @@ describe('buildObjectRecordsPermissionsManifests', () => {
         fieldRestrictions: [
           {
             objectUniversalIdentifier: 'task',
-            fieldUniversalIdentifier: 'secret',
+            ...withDerivedIdentifier('secret'),
             rowLevelPermissionRuleUniversalIdentifier: null,
             canReadFieldValue: false,
             canUpdateFieldValue: false,
-            ...DERIVED_IDENTITY,
           },
           {
             objectUniversalIdentifier: 'company',
-            fieldUniversalIdentifier: 'revenue',
+            ...withDerivedIdentifier('revenue'),
             rowLevelPermissionRuleUniversalIdentifier: 'company-rule',
             canReadFieldValue: null,
             canUpdateFieldValue: false,
-            ...DERIVED_IDENTITY,
           },
           {
             objectUniversalIdentifier: 'note',
@@ -71,8 +79,8 @@ describe('buildObjectRecordsPermissionsManifests', () => {
             rowLevelPermissionRuleUniversalIdentifier: null,
             canReadFieldValue: false,
             canUpdateFieldValue: null,
+            ...OWNER,
             universalIdentifier: 'note-body-permission',
-            derivedUniversalIdentifier: 'derived',
           },
         ],
       }),

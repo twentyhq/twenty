@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
   type FieldRestrictionsManifest,
-  getFieldPermissionUniversalIdentifier,
   type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
@@ -44,7 +43,8 @@ type RoleChildren = {
     canReadFieldValue: boolean | null;
     canUpdateFieldValue: boolean | null;
     universalIdentifier: string;
-    derivedUniversalIdentifier: string;
+    applicationUniversalIdentifier: string;
+    roleUniversalIdentifier: string;
   }[];
   permissionFlagUniversalIdentifiers: string[];
 };
@@ -213,15 +213,9 @@ export const reconstructRolesManifest = ({
         canReadFieldValue: flatFieldPermission.canReadFieldValue ?? null,
         canUpdateFieldValue: flatFieldPermission.canUpdateFieldValue ?? null,
         universalIdentifier: flatFieldPermission.universalIdentifier,
-        derivedUniversalIdentifier: getFieldPermissionUniversalIdentifier({
-          applicationUniversalIdentifier:
-            flatFieldPermission.applicationUniversalIdentifier,
-          roleUniversalIdentifier: flatFieldPermission.roleUniversalIdentifier,
-          fieldUniversalIdentifier:
-            flatFieldPermission.fieldMetadataUniversalIdentifier,
-          rowLevelPermissionPredicateGroupUniversalIdentifier:
-            flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
-        }),
+        applicationUniversalIdentifier:
+          flatFieldPermission.applicationUniversalIdentifier,
+        roleUniversalIdentifier: flatFieldPermission.roleUniversalIdentifier,
       });
     }
   }

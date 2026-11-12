@@ -1,5 +1,6 @@
 import {
   type FieldRestrictionsManifest,
+  getFieldPermissionUniversalIdentifier,
   type ObjectRecordsPermissionsManifest,
   type RowLevelPermissionRuleManifest,
 } from 'twenty-shared/application';
@@ -17,12 +18,18 @@ type FieldRestriction = {
   canReadFieldValue: boolean | null;
   canUpdateFieldValue: boolean | null;
   universalIdentifier: string;
-  derivedUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
+  roleUniversalIdentifier: string;
 };
 
-const buildFieldLists = (
-  fieldRestrictions: FieldRestriction[],
-): FieldRestrictionsManifest => {
+// The import stores a rule's field permissions on its first predicate group, which decides their derived identifier
+const buildFieldLists = ({
+  fieldRestrictions,
+  predicateGroupUniversalIdentifier,
+}: {
+  fieldRestrictions: FieldRestriction[];
+  predicateGroupUniversalIdentifier: string | null;
+}): FieldRestrictionsManifest => {
   const unreadableFields = fieldRestrictions
     .filter(({ canReadFieldValue }) => canReadFieldValue === false)
     .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
@@ -31,8 +38,20 @@ const buildFieldLists = (
     .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
   const fieldPermissionIdentifiers = fieldRestrictions
     .filter(
-      ({ universalIdentifier, derivedUniversalIdentifier }) =>
-        universalIdentifier !== derivedUniversalIdentifier,
+      ({
+        universalIdentifier,
+        applicationUniversalIdentifier,
+        roleUniversalIdentifier,
+        fieldUniversalIdentifier,
+      }) =>
+        universalIdentifier !==
+        getFieldPermissionUniversalIdentifier({
+          applicationUniversalIdentifier,
+          roleUniversalIdentifier,
+          fieldUniversalIdentifier,
+          rowLevelPermissionPredicateGroupUniversalIdentifier:
+            predicateGroupUniversalIdentifier,
+        }),
     )
     .map(({ fieldUniversalIdentifier, universalIdentifier }) => ({
       fieldUniversalIdentifier,
@@ -94,26 +113,29 @@ export const buildObjectRecordsPermissionsManifests = ({
           ...rule
         }) => ({
           ...rule,
-          ...buildFieldLists(
-            fieldRestrictions.filter(
+          ...buildFieldLists({
+            fieldRestrictions: fieldRestrictions.filter(
               ({ rowLevelPermissionRuleUniversalIdentifier }) =>
                 rowLevelPermissionRuleUniversalIdentifier ===
                 rule.universalIdentifier,
             ),
-          ),
+            predicateGroupUniversalIdentifier:
+              rule.predicateGroups?.[0]?.universalIdentifier ?? null,
+          }),
         }),
       );
 
     return {
       ...objectRecordsPermissions,
-      ...buildFieldLists(
-        fieldRestrictions.filter(
+      ...buildFieldLists({
+        fieldRestrictions: fieldRestrictions.filter(
           (fieldRestriction) =>
             fieldRestriction.objectUniversalIdentifier ===
               objectUniversalIdentifier &&
             fieldRestriction.rowLevelPermissionRuleUniversalIdentifier === null,
         ),
-      ),
+        predicateGroupUniversalIdentifier: null,
+      }),
       ...(isNonEmptyArray(rowLevelRecordsPermissions)
         ? { rowLevelRecordsPermissions }
         : {}),
