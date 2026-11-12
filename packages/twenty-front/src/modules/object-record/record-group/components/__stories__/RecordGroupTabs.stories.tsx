@@ -155,16 +155,18 @@ export const SelectsAGroup: Story = {
       expect(canvas.getByRole('tab', { name: /Contacted/ })).toBeVisible();
     });
 
+    const tabs = canvas.getAllByRole('tab');
     const allTab = canvas.getByRole('tab', { name: /All/ });
-    expect(allTab).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[tabs.length - 1]).toBe(allTab);
 
     const contactedTab = canvas.getByRole('tab', { name: /Contacted/ });
     expect(contactedTab).toHaveTextContent('214');
-
-    await userEvent.click(contactedTab);
-
     expect(contactedTab).toHaveAttribute('aria-selected', 'true');
-    expect(allTab).toHaveAttribute('aria-selected', 'false');
+
+    await userEvent.click(allTab);
+
+    expect(allTab).toHaveAttribute('aria-selected', 'true');
+    expect(contactedTab).toHaveAttribute('aria-selected', 'false');
   },
 };
 

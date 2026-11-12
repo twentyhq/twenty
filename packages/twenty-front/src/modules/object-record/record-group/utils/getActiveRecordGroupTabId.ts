@@ -17,5 +17,5 @@ export const getActiveRecordGroupTabId = ({
     return selectedRecordGroupId;
   }
 
-  return ALL_RECORD_GROUPS_TAB_ID;
+  return visibleRecordGroupIds[0] ?? ALL_RECORD_GROUPS_TAB_ID;
 };
