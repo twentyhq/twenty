@@ -1,5 +1,5 @@
-export const AGENT_CHAT_THREAD_FILTER_STATUS = {
-  ACTIVE: 'active',
+export const AGENT_CHAT_THREAD_PRESET_FILTER = {
+  OPEN: 'active',
   NEEDS_INPUT: 'needsInput',
   MENTIONS: 'mentions',
   ASSIGNED_TO_ME: 'assigned',
@@ -9,5 +9,5 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS = {
   DONE: 'done',
 } as const;
 
-export type AgentChatThreadFilterStatus =
-  (typeof AGENT_CHAT_THREAD_FILTER_STATUS)[keyof typeof AGENT_CHAT_THREAD_FILTER_STATUS];
+export type AgentChatThreadPresetFilter =
+  (typeof AGENT_CHAT_THREAD_PRESET_FILTER)[keyof typeof AGENT_CHAT_THREAD_PRESET_FILTER];

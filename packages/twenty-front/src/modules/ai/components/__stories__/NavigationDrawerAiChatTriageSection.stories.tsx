@@ -3,11 +3,11 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -97,10 +97,10 @@ const meta: Meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    setAgentChatShownChannelView(jotaiStore, null);
+    setAgentChatSelectedChannelView(jotaiStore, null);
     jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
     });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
@@ -134,7 +134,7 @@ export const OpenRestoresEveryOpenChat: Story = {
       jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     });
     await expect(isSelectedThreadSelected()).toBe(false);
     await expect(
@@ -152,7 +152,7 @@ export const SnoozedClearsSelection: Story = {
       jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
     });
     await expect(isSelectedThreadSelected()).toBe(false);
     await expect(

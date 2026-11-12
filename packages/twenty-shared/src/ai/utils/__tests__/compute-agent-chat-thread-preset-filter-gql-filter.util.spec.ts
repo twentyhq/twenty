@@ -1,5 +1,5 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/agent-chat-thread-filter-status.const';
-import { computeAgentChatThreadFilterStatusGqlFilter } from '@/ai/utils/compute-agent-chat-thread-filter-status-gql-filter.util';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from '@/ai/constants/agent-chat-thread-preset-filter.const';
+import { computeAgentChatThreadPresetFilterGqlFilter } from '@/ai/utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
@@ -29,21 +29,21 @@ const collectParticipantFilters = (filter: unknown): unknown[] => {
 };
 
 const computeFilter = (
-  filterStatus: Parameters<
-    typeof computeAgentChatThreadFilterStatusGqlFilter
-  >[0]['filterStatus'],
+  presetFilter: Parameters<
+    typeof computeAgentChatThreadPresetFilterGqlFilter
+  >[0]['presetFilter'],
 ): RecordGqlOperationFilter =>
-  computeAgentChatThreadFilterStatusGqlFilter({
-    filterStatus,
+  computeAgentChatThreadPresetFilterGqlFilter({
+    presetFilter,
     workspaceMemberId: WORKSPACE_MEMBER_ID,
   });
 
-describe('computeAgentChatThreadFilterStatusGqlFilter', () => {
-  it.each(Object.values(AGENT_CHAT_THREAD_FILTER_STATUS))(
+describe('computeAgentChatThreadPresetFilterGqlFilter', () => {
+  it.each(Object.values(AGENT_CHAT_THREAD_PRESET_FILTER))(
     'reads only the member own participant row for %s',
-    (filterStatus) => {
+    (presetFilter) => {
       const participantFilters = collectParticipantFilters(
-        computeFilter(filterStatus),
+        computeFilter(presetFilter),
       );
 
       expect(participantFilters.length).toBeGreaterThan(0);
@@ -85,8 +85,8 @@ describe('computeAgentChatThreadFilterStatusGqlFilter', () => {
     ['unassigned', { is: 'NULL' }],
   ] as const)(
     'filters open chats on their assignee for %s',
-    (filterStatus, assigneeId) => {
-      expect(computeFilter(filterStatus)).toEqual({
+    (presetFilter, assigneeId) => {
+      expect(computeFilter(presetFilter)).toEqual({
         assigneeId,
         participants: OPEN_PARTICIPANT,
       });

@@ -1,4 +1,4 @@
-import { type AgentChatThreadFilterStatus } from '@/ai/constants/agent-chat-thread-filter-status.const';
+import { type AgentChatThreadPresetFilter } from '@/ai/constants/agent-chat-thread-preset-filter.const';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
 const throughParticipants = (
@@ -6,11 +6,11 @@ const throughParticipants = (
 ): RecordGqlOperationFilter => ({ participants: participantFilter });
 
 // Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
-export const computeAgentChatThreadFilterStatusGqlFilter = ({
-  filterStatus,
+export const computeAgentChatThreadPresetFilterGqlFilter = ({
+  presetFilter,
   workspaceMemberId,
 }: {
-  filterStatus: AgentChatThreadFilterStatus;
+  presetFilter: AgentChatThreadPresetFilter;
   workspaceMemberId: string;
 }): RecordGqlOperationFilter => {
   const memberParticipant = { workspaceMemberId: { eq: workspaceMemberId } };
@@ -43,7 +43,7 @@ export const computeAgentChatThreadFilterStatusGqlFilter = ({
     }),
   ];
 
-  switch (filterStatus) {
+  switch (presetFilter) {
     case 'active':
       return throughParticipants(openParticipant);
     case 'needsInput':
