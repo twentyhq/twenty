@@ -20916,6 +20916,11 @@ msgstr "Not started"
 msgid "Not synced"
 msgstr "Not synced"
 
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "Not yet"
+
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -23452,6 +23457,16 @@ msgstr "Read and write {target}"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read and write data model configuration"
 msgstr "Read and write data model configuration"
+
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "Read by {readerCount} of {recipientCount}"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "Read by {readerNames}"
 
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
