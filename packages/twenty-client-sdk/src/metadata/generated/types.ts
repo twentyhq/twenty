@@ -4451,6 +4451,9 @@ export default {
             "shouldHideEmptyGroups": [
                 1
             ],
+            "tabFieldMetadataId": [
+                557
+            ],
             "type": [
                 683
             ],
@@ -15273,6 +15276,9 @@ export default {
             "shouldHideEmptyGroups": [
                 1
             ],
+            "tabFieldMetadataId": [
+                557
+            ],
             "translations": [
                 389
             ],
@@ -15723,6 +15729,9 @@ export default {
             ],
             "shouldHideEmptyGroups": [
                 1
+            ],
+            "tabFieldMetadataId": [
+                557
             ],
             "type": [
                 683
@@ -16415,6 +16424,9 @@ export default {
             ],
             "shouldHideEmptyGroups": [
                 1
+            ],
+            "tabFieldMetadataId": [
+                557
             ],
             "type": [
                 683

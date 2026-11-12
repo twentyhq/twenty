@@ -1963,6 +1963,7 @@ input CreateViewInput {
   position: Float = 0
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
+  tabFieldMetadataId: UUID
   type: ViewType = TABLE
   visibility: ViewVisibility
 }
@@ -5745,6 +5746,7 @@ input UpdateViewInput {
   position: Float
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean
+  tabFieldMetadataId: UUID
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
   visibility: ViewVisibility
@@ -5969,6 +5971,7 @@ input UpsertViewWidgetViewSettingsInput {
   """
   openRecordIn: ViewOpenRecordIn
   shouldHideEmptyGroups: Boolean
+  tabFieldMetadataId: UUID
 
   """
   The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed.
@@ -6289,6 +6292,7 @@ type View {
   position: Float!
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
+  tabFieldMetadataId: UUID
   type: ViewType!
   universalIdentifier: UUID!
   updatedAt: DateTime!
