@@ -309,6 +309,19 @@ export class MessagingMessageService {
 
         await messageRepository.insert(messagesToCreate);
 
+        // Sync can import a just-sent message before the outbound path saves it
+        for (const message of messages) {
+          const existingMessage = messageAccumulatorMap.get(
+            message.externalId,
+          )?.existingMessageInDB;
+
+          if (isDefined(existingMessage) && isDefined(message.createdBy)) {
+            await messageRepository.update(existingMessage.id, {
+              createdBy: message.createdBy,
+            });
+          }
+        }
+
         const sentDraftsToRefresh = Array.from(messageAccumulatorMap.values())
           .map((accumulator) => accumulator.sentDraftToRefresh)
           .filter(isDefined);

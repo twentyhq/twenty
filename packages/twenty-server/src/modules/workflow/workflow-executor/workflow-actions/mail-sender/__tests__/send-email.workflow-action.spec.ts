@@ -457,6 +457,7 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithSender(WORKSPACE_MEMBER_ID);
 
+      expect(mockSendEmailTool.execute).toHaveBeenCalledTimes(1);
       expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
