@@ -42,6 +42,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 import { styled } from '@linaria/react';
@@ -59,6 +60,10 @@ const StyledConversationContainer = styled.div`
   gap: 24px;
   max-width: 700px;
   padding: 24px;
+`;
+
+const StyledScrollableConversationContainer = styled.div`
+  height: 480px;
 `;
 
 const mockUserMessage: ExtendedUIMessage = {
@@ -373,6 +378,41 @@ Before changing anything, list what you plan to do and ask me to confirm. Keep f
   ],
 };
 
+const mockUsageReportUserMessage: ExtendedUIMessage = {
+  ...mockUserMessage,
+  id: 'msg-user-usage-report',
+  parts: [
+    {
+      type: 'text',
+      text: [
+        'Issue with cached input figures:',
+        'Context window',
+        '(79.8k/1.1M) 7.6%',
+        'Last message',
+        'Input tokens',
+        '230.3k',
+        'Cached input',
+        '221.3k',
+        'Output tokens',
+        '3.1k',
+        'Conversation',
+        'Input tokens',
+        '2.2M',
+        'Cached input',
+        '1158169187212206570221278',
+        'Output tokens',
+        '31k',
+      ].join('\n\n'),
+    },
+  ],
+};
+
+const mockLongAssistantMessage: ExtendedUIMessage = {
+  ...mockUsageReportUserMessage,
+  id: 'msg-assistant-long',
+  role: 'assistant',
+};
+
 const MEMBER_MENTION = `[[record:workspaceMember:${mockedWorkspaceMemberData.id}:Charles Test]]`;
 const ESCAPED_MEMBER_MENTION = MEMBER_MENTION.replaceAll('[', '\\[').replaceAll(
   ']',
@@ -429,6 +469,8 @@ ${ENCODED_PROTECTED_CHAT_REFERENCE_MARKER}${ESCAPED_MEMBER_MENTION}`,
 const allMockMessages = [
   mockUserMessage,
   mockLongUserMessage,
+  mockUsageReportUserMessage,
+  mockLongAssistantMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -645,36 +687,70 @@ export const TeammateMessageHasNoOwnActions: Story = {
 
 export const LongUserMessage: Story = {
   render: () => (
-    <StyledConversationContainer>
-      <AiChatMessage messageId={mockLongUserMessage.id} />
-      <AiChatMessage messageId={mockUserMessage.id} />
-    </StyledConversationContainer>
+    <StyledScrollableConversationContainer>
+      <ScrollWrapper componentInstanceId="ai-chat-message-long-user-message">
+        <StyledConversationContainer>
+          <AiChatMessage messageId={mockLongUserMessage.id} />
+          <AiChatMessage messageId={mockUsageReportUserMessage.id} />
+          <AiChatMessage messageId={mockLongAssistantMessage.id} />
+          <AiChatMessage messageId={mockUserMessage.id} />
+        </StyledConversationContainer>
+      </ScrollWrapper>
+    </StyledScrollableConversationContainer>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const showMoreButton = await canvas.findByRole('button', {
-      name: 'Show more',
-    });
 
-    await expect(
-      canvas.getAllByRole('button', { name: 'Show more' }),
-    ).toHaveLength(1);
-    await expect(showMoreButton).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(canvas.getAllByRole('button', { name: 'Show more' })).toHaveLength(
+        2,
+      ),
+    );
 
     await userEvent.tab();
 
     await expect(
       canvas.getByRole('link', { name: 'pipeline guide' }),
     ).toHaveFocus();
-    await expect(
-      await canvas.findByRole('button', { name: 'Show less' }),
-    ).toHaveAttribute('aria-expanded', 'true');
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+    const longPromptToggleButton = await canvas.findByRole('button', {
+      name: 'Show less',
+    });
 
+    await expect(longPromptToggleButton).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+
+    await userEvent.click(longPromptToggleButton);
+
+    await expect(longPromptToggleButton).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+
+    const usageReportToggleButton = canvas.getAllByRole('button', {
+      name: 'Show more',
+    })[1];
+
+    await userEvent.click(usageReportToggleButton);
+
+    await expect(usageReportToggleButton).toHaveAccessibleName('Show less');
+
+    usageReportToggleButton.scrollIntoView({ block: 'end' });
+
+    const toggleTopBeforeCollapseInPx =
+      usageReportToggleButton.getBoundingClientRect().top;
+
+    await userEvent.click(usageReportToggleButton);
+
+    await expect(usageReportToggleButton).toHaveAccessibleName('Show more');
     await expect(
-      await canvas.findByRole('button', { name: 'Show more' }),
-    ).toHaveAttribute('aria-expanded', 'false');
+      Math.abs(
+        usageReportToggleButton.getBoundingClientRect().top -
+          toggleTopBeforeCollapseInPx,
+      ),
+    ).toBeLessThan(2);
   },
 };
 
