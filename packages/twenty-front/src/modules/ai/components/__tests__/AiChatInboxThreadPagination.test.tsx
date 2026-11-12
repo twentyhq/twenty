@@ -8,7 +8,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
 import { agentChatChannelThreadListState } from '@/ai/states/agentChatChannelThreadListState';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
+import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
 import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import {
   jotaiStore,
@@ -47,13 +47,17 @@ const renderPagination = ({
   hasNextPage: boolean;
   onThreadSelect?: (threadId: string) => void;
 }) => {
-  jotaiStore.set(agentChatInboxTabThreadListState.atom, {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
-    threadIds: THREADS.map(({ id }) => id),
-    hasNextPage,
-    endCursor: null,
-    lastLoadedActivityAt: null,
-  });
+  jotaiStore.set(
+    agentChatInboxTabThreadListFamilyState.atomFamily(
+      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    ),
+    {
+      threadIds: THREADS.map(({ id }) => id),
+      hasNextPage,
+      endCursor: null,
+      lastLoadedActivityAt: null,
+    },
+  );
 
   return render(
     <JotaiProvider store={jotaiStore}>

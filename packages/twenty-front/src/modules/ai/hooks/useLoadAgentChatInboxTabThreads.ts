@@ -8,9 +8,8 @@ import { useAgentChatThreadLiveUpdates } from '@/ai/hooks/useAgentChatThreadLive
 import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
 import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
+import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 
@@ -31,24 +30,14 @@ export const useLoadAgentChatInboxTabThreads = () => {
       const filterStatus = store.get(agentChatThreadFilterStatusState.atom);
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
       const { isSameSession } = captureAgentChatSession();
-      const isShownTab = () =>
-        isSameSession() &&
-        !isDefined(store.get(agentChatShownChannelViewSelector.atom)) &&
-        store.get(agentChatThreadFilterStatusState.atom) === filterStatus;
-
-      if (!isShownTab() || !isDefined(workspaceMemberId)) {
-        return;
-      }
-
-      const listBeforeRequest = store.get(
-        agentChatInboxTabThreadListState.atom,
-      );
+      const listAtom =
+        agentChatInboxTabThreadListFamilyState.atomFamily(filterStatus);
+      const listBeforeRequest = store.get(listAtom);
       const isFetchMore = mode === 'fetch-more';
 
       if (
-        isFetchMore &&
-        (listBeforeRequest?.filterStatus !== filterStatus ||
-          !listBeforeRequest.hasNextPage)
+        !isDefined(workspaceMemberId) ||
+        (isFetchMore && !listBeforeRequest?.hasNextPage)
       ) {
         return;
       }
@@ -74,10 +63,8 @@ export const useLoadAgentChatInboxTabThreads = () => {
       await refreshAgentChatThreadPermissions(page.threads.map(({ id }) => id));
 
       if (
-        !isShownTab() ||
-        (isFetchMore &&
-          store.get(agentChatInboxTabThreadListState.atom) !==
-            listBeforeRequest)
+        !isSameSession() ||
+        (isFetchMore && store.get(listAtom) !== listBeforeRequest)
       ) {
         return;
       }
@@ -95,8 +82,7 @@ export const useLoadAgentChatInboxTabThreads = () => {
         : [];
       const lastPageThread = page.threads.at(-1);
 
-      store.set(agentChatInboxTabThreadListState.atom, {
-        filterStatus,
+      store.set(listAtom, {
         threadIds: [
           ...previousThreadIds,
           ...page.threads

@@ -1,13 +1,13 @@
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const agentChatVisibleThreads = useAtomStateValue(
-    agentChatVisibleThreadsSelector,
+  const agentChatInboxTabThreads = useAtomStateValue(
+    agentChatInboxTabThreadsSelector,
   );
   const { selectAiChatThread } = useSelectAiChatThread();
 
@@ -17,7 +17,7 @@ export const useOpenAskAiThread = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const openAskAiThread = (threadId: string) => {
-    const thread = agentChatVisibleThreads.find(
+    const thread = agentChatInboxTabThreads.find(
       (visibleThread) => visibleThread.id === threadId,
     );
 

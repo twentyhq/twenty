@@ -5,10 +5,12 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { useLoadAgentChatChannelThreads } from '@/ai/hooks/useLoadAgentChatChannelThreads';
 import { useLoadAgentChatInboxTabThreads } from '@/ai/hooks/useLoadAgentChatInboxTabThreads';
-import { agentChatShownInboxTabThreadListSelector } from '@/ai/states/selectors/agentChatShownInboxTabThreadListSelector';
+import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type AiChatInboxThreadPaginationProps = {
@@ -23,8 +25,12 @@ export const AiChatInboxThreadPagination = ({
   onThreadSelect,
 }: AiChatInboxThreadPaginationProps) => {
   const { t } = useLingui();
-  const agentChatShownInboxTabThreadList = useAtomStateValue(
-    agentChatShownInboxTabThreadListSelector,
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const agentChatInboxTabThreadList = useAtomFamilyStateValue(
+    agentChatInboxTabThreadListFamilyState,
+    agentChatThreadFilterStatus,
   );
   const { loadAgentChatInboxTabThreads } = useLoadAgentChatInboxTabThreads();
   const agentChatShownChannelView = useAtomStateValue(
@@ -43,7 +49,7 @@ export const AiChatInboxThreadPagination = ({
 
   const hasMoreThreads = isDefined(agentChatShownChannelView)
     ? (agentChatShownChannelThreadList?.hasNextPage ?? false)
-    : (agentChatShownInboxTabThreadList?.hasNextPage ?? false);
+    : (agentChatInboxTabThreadList?.hasNextPage ?? false);
   const fetchMoreThreads = () =>
     isDefined(agentChatShownChannelView)
       ? loadAgentChatChannelThreads('fetch-more')

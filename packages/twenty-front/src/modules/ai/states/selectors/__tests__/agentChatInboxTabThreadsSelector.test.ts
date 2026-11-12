@@ -4,12 +4,12 @@ import {
   type AgentChatThreadFilterStatus,
 } from 'twenty-shared/ai';
 
-import { agentChatInboxTabThreadListState } from '@/ai/states/agentChatInboxTabThreadListState';
+import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
@@ -196,10 +196,10 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   );
   store.set(agentChatThreadFilterStatusState.atom, filterStatus);
 
-  return store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id);
+  return store.get(agentChatInboxTabThreadsSelector.atom).map(({ id }) => id);
 };
 
-describe('agentChatVisibleThreadsSelector', () => {
+describe('agentChatInboxTabThreadsSelector', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
@@ -273,13 +273,17 @@ describe('agentChatVisibleThreadsSelector', () => {
       }),
       lastActivityAt: null,
     });
-    store.set(agentChatInboxTabThreadListState.atom, {
-      filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
-      threadIds: ['recent-done', 'older-done', 'quiet-done'],
-      hasNextPage: true,
-      endCursor: 'cursor',
-      lastLoadedActivityAt: '2026-09-20T10:00:00.000Z',
-    });
+    store.set(
+      agentChatInboxTabThreadListFamilyState.atomFamily(
+        AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      ),
+      {
+        threadIds: ['recent-done', 'older-done', 'quiet-done'],
+        hasNextPage: true,
+        endCursor: 'cursor',
+        lastLoadedActivityAt: '2026-09-20T10:00:00.000Z',
+      },
+    );
     store.set(agentChatThreadParticipantsState.atom, {
       'recent-done': doneParticipant('recent-done'),
       'older-done': doneParticipant('older-done'),
@@ -292,7 +296,7 @@ describe('agentChatVisibleThreadsSelector', () => {
     );
 
     expect(
-      store.get(agentChatVisibleThreadsSelector.atom).map(({ id }) => id),
+      store.get(agentChatInboxTabThreadsSelector.atom).map(({ id }) => id),
     ).toEqual(['recent-done', 'older-done', 'quiet-done']);
     expect(
       store.get(agentChatRecentThreadsSelector.atom).map(({ id }) => id),

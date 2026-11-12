@@ -7,7 +7,7 @@ import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
@@ -43,7 +43,7 @@ export const useLeaveRemovedAiChatThread = () => {
 
     const nextThreadId =
       sortChatThreadsByLastActivityDesc(
-        store.get(agentChatVisibleThreadsSelector.atom),
+        store.get(agentChatInboxTabThreadsSelector.atom),
       )[0]?.id ?? newAiChatThreadId;
     store.set(currentAiChatThreadState.atom, nextThreadId);
     projectAiChatThreadToUrl(nextThreadId);

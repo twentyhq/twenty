@@ -14,7 +14,7 @@ import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState
 import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -76,8 +76,8 @@ export const AgentChatThreadInitializationEffect = () => {
   )
     .map(({ id }) => id)
     .join(',');
-  const agentChatVisibleThreads = useAtomStateValue(
-    agentChatVisibleThreadsSelector,
+  const agentChatInboxTabThreads = useAtomStateValue(
+    agentChatInboxTabThreadsSelector,
   );
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
@@ -152,7 +152,7 @@ export const AgentChatThreadInitializationEffect = () => {
     setHasInitializedAgentChatThreads(true);
 
     const sortedThreads = sortChatThreadsByLastActivityDesc(
-      agentChatVisibleThreads,
+      agentChatInboxTabThreads,
     );
 
     if (sortedThreads.length > 0) {
@@ -167,7 +167,7 @@ export const AgentChatThreadInitializationEffect = () => {
       setCurrentAiChatThread(store.get(newAiChatThreadIdState.atom));
     }
   }, [
-    agentChatVisibleThreads,
+    agentChatInboxTabThreads,
     currentAiChatThread,
     agentChatThreadsLoading,
     hasInitializedAgentChatThreads,

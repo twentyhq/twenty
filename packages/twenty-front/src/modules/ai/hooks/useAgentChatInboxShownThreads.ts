@@ -3,9 +3,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatChannelVisibleThreadsSelector } from '@/ai/states/selectors/agentChatChannelVisibleThreadsSelector';
 import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
-import { agentChatShownInboxTabThreadListSelector } from '@/ai/states/selectors/agentChatShownInboxTabThreadListSelector';
+import { agentChatInboxTabThreadListFamilyState } from '@/ai/states/agentChatInboxTabThreadListFamilyState';
+import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatInboxTabThreadsSelector } from '@/ai/states/selectors/agentChatInboxTabThreadsSelector';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useAgentChatInboxShownThreads = () => {
@@ -15,20 +17,24 @@ export const useAgentChatInboxShownThreads = () => {
   const agentChatShownChannelThreadList = useAtomStateValue(
     agentChatShownChannelThreadListSelector,
   );
-  const agentChatShownInboxTabThreadList = useAtomStateValue(
-    agentChatShownInboxTabThreadListSelector,
+  const agentChatThreadFilterStatus = useAtomStateValue(
+    agentChatThreadFilterStatusState,
+  );
+  const agentChatInboxTabThreadList = useAtomFamilyStateValue(
+    agentChatInboxTabThreadListFamilyState,
+    agentChatThreadFilterStatus,
   );
   const isChannelView = isDefined(agentChatShownChannelView);
   const { threads, loading: isThreadListLoading } = useChatThreads(
     isChannelView
       ? agentChatChannelVisibleThreadsSelector
-      : agentChatVisibleThreadsSelector,
+      : agentChatInboxTabThreadsSelector,
   );
 
   const isShownListLoaded = isDefined(
     isChannelView
       ? agentChatShownChannelThreadList
-      : agentChatShownInboxTabThreadList,
+      : agentChatInboxTabThreadList,
   );
   const isLoading = isThreadListLoading || !isShownListLoaded;
 
