@@ -52,7 +52,6 @@ export const resolveBillingPeriodBoundaryUpdate = ({
     return { currentPeriodStart, currentPeriodEnd, currentPeriodMaxSeats };
   }
 
-  // The renewal seat sync sets the period's starting seats; the quantity it replaces belongs to the closed period.
   if (renewalPeriodStart?.getTime() === incomingPeriodStart.getTime()) {
     return { currentPeriodMaxSeats: null };
   }

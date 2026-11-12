@@ -443,7 +443,6 @@ export class BillingSubscriptionUpdateService {
       return;
     }
 
-    // Lowering the period's max seats is the one write the subscription webhook could undo, so it takes the webhook's lock.
     await this.cacheLockService.withLock(
       syncSubscriptionToDatabase,
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),

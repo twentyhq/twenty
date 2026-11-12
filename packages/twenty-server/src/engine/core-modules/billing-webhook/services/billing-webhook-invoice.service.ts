@@ -116,26 +116,27 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    // Stripe's own clock, comparable to subscription boundaries without skew
-    const invoiceCreatedAt = new Date(invoiceCreatedAtInSeconds * 1000);
+    const boundary = resolveBillingTransitionBoundary({
+      invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+    });
 
-    await this.processRollover({ subscription, invoiceCreatedAt });
+    await this.processRollover({ subscription, boundary });
 
     await this.enqueueSeatSyncForSeatArrangements({
-      subscription,
-      invoiceCreatedAt,
+      workspaceId: subscription.workspaceId,
+      renewalPeriodStart: boundary,
     });
   }
 
   private async enqueueSeatSyncForSeatArrangements({
-    subscription,
-    invoiceCreatedAt,
+    workspaceId,
+    renewalPeriodStart,
   }: {
-    subscription: BillingSubscriptionEntity;
-    invoiceCreatedAt: Date;
+    workspaceId: string;
+    renewalPeriodStart: Date;
   }) {
-    const { workspaceId } = subscription;
-
     const seatArrangements =
       await this.billingSeatService.findSeatArrangements(workspaceId);
 
@@ -145,14 +146,7 @@ export class BillingWebhookInvoiceService {
 
     await this.billingMessageQueueService.add<UpdateSubscriptionQuantityJobData>(
       UpdateSubscriptionQuantityJob.name,
-      {
-        workspaceId,
-        renewalPeriodStartMs: resolveBillingTransitionBoundary({
-          invoiceCreatedAt,
-          subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
-          subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
-        }).getTime(),
-      },
+      { workspaceId, renewalPeriodStartMs: renewalPeriodStart.getTime() },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         workspaceId,
@@ -163,10 +157,10 @@ export class BillingWebhookInvoiceService {
 
   private async processRollover({
     subscription,
-    invoiceCreatedAt,
+    boundary,
   }: {
     subscription: BillingSubscriptionEntity;
-    invoiceCreatedAt: Date;
+    boundary: Date;
   }): Promise<void> {
     const workspaceExists = await this.workspaceRepository.exists({
       where: { id: subscription.workspaceId },
@@ -176,12 +170,6 @@ export class BillingWebhookInvoiceService {
     if (!workspaceExists) {
       return;
     }
-
-    const boundary = resolveBillingTransitionBoundary({
-      invoiceCreatedAt,
-      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
-      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
-    });
 
     // Only needed while subscriptions predating previousPeriodStart transition for the first time
     const ledgerPeriodStart =
