@@ -11,13 +11,11 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import {
-  type McpServerToolLookup,
-  McpToolCallService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-call.service';
+import { McpToolCallService } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-call.service';
+import { type WorkflowMcpServerToolLookup } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/types/workflow-mcp-server-tool-lookup.type';
 
 const LOOKUP_FAILURES: Record<
-  Exclude<McpServerToolLookup['status'], 'found'>,
+  Exclude<WorkflowMcpServerToolLookup['status'], 'found'>,
   {
     code: WorkflowVersionStepExceptionCode;
     userFriendlyMessage: MessageDescriptor;

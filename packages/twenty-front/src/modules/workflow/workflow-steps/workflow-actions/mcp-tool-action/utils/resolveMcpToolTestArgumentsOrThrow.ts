@@ -3,7 +3,7 @@ import { convertFlatVariablesToNestedContext } from '@/workflow/workflow-steps/u
 import { t } from '@lingui/core/macro';
 import { isPlainObject, resolveInput } from 'twenty-shared/utils';
 
-export const resolveMcpToolTestArguments = ({
+export const resolveMcpToolTestArgumentsOrThrow = ({
   toolInput,
   variableValues,
 }: {

@@ -5,7 +5,7 @@ import { type WorkflowMcpToolAction } from '@/workflow/types/Workflow';
 import { TEST_MCP_TOOL_STEP } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/graphql/mutations/testMcpToolStep';
 import { mcpToolTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/states/mcpToolTestDataFamilyState';
 import { type McpToolTestData } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/types/McpToolTestData';
-import { resolveMcpToolTestArguments } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArguments';
+import { resolveMcpToolTestArgumentsOrThrow } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -56,7 +56,7 @@ export const useTestMcpTool = (actionId: string) => {
           input: {
             mcpServerId,
             toolName,
-            toolArguments: resolveMcpToolTestArguments({
+            toolArguments: resolveMcpToolTestArgumentsOrThrow({
               toolInput,
               variableValues: mcpToolTestData.variableValues,
             }),

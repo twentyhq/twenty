@@ -1,6 +1,6 @@
-import { resolveMcpToolTestArguments } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArguments';
+import { resolveMcpToolTestArgumentsOrThrow } from '@/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow';
 
-describe('resolveMcpToolTestArguments', () => {
+describe('resolveMcpToolTestArgumentsOrThrow', () => {
   it('fills the variables from their test values without touching the saved input', () => {
     const toolInput = {
       query: '{{trigger.properties.after.name}}',
@@ -8,7 +8,7 @@ describe('resolveMcpToolTestArguments', () => {
       tags: ['{{trigger.properties.after.name}}'],
     };
 
-    const toolArguments = resolveMcpToolTestArguments({
+    const toolArguments = resolveMcpToolTestArgumentsOrThrow({
       toolInput,
       variableValues: { 'trigger.properties.after.name': 'Acme' },
     });
