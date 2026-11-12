@@ -4,7 +4,6 @@ import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/co
 
 const TWENTY_WEBSITE_URL = 'https://twenty.com';
 
-// A public client: PKCE protects the code exchange, so there is no secret to leak.
 export const buildOAuthDiscoveryClientMetadata = (
   serverUrl: string,
 ): OAuthClientMetadata => ({

@@ -17,7 +17,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
+import { ADD_OAUTH_DISCOVERY_TO_CONNECTION_PROVIDER_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-oauth-discovery-to-connection-provider-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 

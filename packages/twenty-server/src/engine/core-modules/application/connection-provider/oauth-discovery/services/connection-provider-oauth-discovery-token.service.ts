@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import {
   auth,
@@ -26,6 +26,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class ConnectionProviderOAuthDiscoveryTokenService {
+  private readonly logger = new Logger(
+    ConnectionProviderOAuthDiscoveryTokenService.name,
+  );
+
   constructor(
     private readonly oauthClientService: ConnectionProviderOAuthClientService,
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -126,7 +130,7 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
         error instanceof InvalidClientError ||
         error instanceof UnauthorizedClientError
       ) {
-        await this.oauthClientService.deleteClient({
+        await this.deleteRejectedClient({
           connectionProviderId: provider.id,
           workspaceId,
           clientId: storedClient.clientInformation.client_id,
@@ -141,6 +145,21 @@ export class ConnectionProviderOAuthDiscoveryTokenService {
       }
 
       throw error;
+    }
+  }
+
+  // The server's rejection is the error worth surfacing; a failed cleanup must not turn it into a transient one.
+  private async deleteRejectedClient(target: {
+    connectionProviderId: string;
+    workspaceId: string;
+    clientId: string;
+  }): Promise<void> {
+    try {
+      await this.oauthClientService.deleteClient(target);
+    } catch (error) {
+      this.logger.warn(
+        `Could not delete the rejected OAuth client of connection provider ${target.connectionProviderId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 

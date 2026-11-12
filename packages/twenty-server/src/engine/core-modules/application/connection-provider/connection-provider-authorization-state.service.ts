@@ -94,7 +94,6 @@ export class ConnectionProviderAuthorizationStateService {
     return verified;
   }
 
-  // Single use: the atomic claim lets only one of two concurrent callbacks through
   async consumeFlowSecretsOrThrow(
     flowSecretId: string,
   ): Promise<ConnectionProviderFlowSecrets> {
