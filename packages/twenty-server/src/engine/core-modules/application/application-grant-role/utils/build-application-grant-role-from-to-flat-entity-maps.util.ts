@@ -5,7 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4, v5 } from 'uuid';
 
-import { addRowLevelPermissionRuleGrantsToObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-row-level-permission-rule-grants-to-object-permissions.util';
+import { buildApplicationGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-object-permissions.util';
 import { computeApplicationGrantRoleLabel } from 'src/engine/core-modules/application/application-grant-role/utils/compute-application-grant-role-label.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -336,7 +336,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
     ]),
     ...rolePermissionUniversalFlatEntityMaps,
     flatObjectPermissionMaps: toUniversalFlatEntityMaps(
-      addRowLevelPermissionRuleGrantsToObjectPermissions({
+      buildApplicationGrantRoleObjectPermissions({
         objectPermissions: Object.values(
           rolePermissionUniversalFlatEntityMaps.flatObjectPermissionMaps
             .byUniversalIdentifier,

@@ -1,4 +1,4 @@
-import { addRowLevelPermissionRuleGrantsToObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-row-level-permission-rule-grants-to-object-permissions.util';
+import { buildApplicationGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-object-permissions.util';
 
 const NO_GRANTS = {
   canReadObjectRecords: false,
@@ -30,10 +30,10 @@ const buildObjectPermission = ({
   grants: typeof NO_GRANTS | Record<keyof typeof NO_GRANTS, boolean | null>;
 }) => ({ objectMetadataUniversalIdentifier, isAdded: true, ...grants });
 
-describe('addRowLevelPermissionRuleGrantsToObjectPermissions', () => {
+describe('buildApplicationGrantRoleObjectPermissions', () => {
   it('should grant on all records every operation a rule of the object grants', () => {
     expect(
-      addRowLevelPermissionRuleGrantsToObjectPermissions({
+      buildApplicationGrantRoleObjectPermissions({
         objectPermissions: [
           {
             objectMetadataUniversalIdentifier: 'company',
@@ -79,7 +79,7 @@ describe('addRowLevelPermissionRuleGrantsToObjectPermissions', () => {
 
   it('should add an object permission for a rule on an object that has none, keeping the role grants', () => {
     expect(
-      addRowLevelPermissionRuleGrantsToObjectPermissions({
+      buildApplicationGrantRoleObjectPermissions({
         objectPermissions: [],
         rules: [
           {

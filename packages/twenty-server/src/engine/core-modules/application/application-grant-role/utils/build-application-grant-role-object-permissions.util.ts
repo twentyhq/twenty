@@ -14,7 +14,7 @@ type ObjectRecordsGrants = Pick<
 >;
 
 // A limiting role carries no RLS, so an operation one of its rules grants becomes an all-records grant
-export const addRowLevelPermissionRuleGrantsToObjectPermissions = <
+export const buildApplicationGrantRoleObjectPermissions = <
   TObjectPermission extends ObjectRecordsGrants & {
     objectMetadataUniversalIdentifier: string;
   },
