@@ -28,7 +28,10 @@ type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
 >;
 
-const buildManifest = (options: SelectFieldOptions) => {
+const buildManifest = (
+  options: SelectFieldOptions,
+  selectFieldLabel = 'Status',
+) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
     nameSingular: 'optionOverridesSubject',
@@ -46,7 +49,7 @@ const buildManifest = (options: SelectFieldOptions) => {
       {
         universalIdentifier: SELECT_FIELD_ID,
         name: 'status',
-        label: 'Status',
+        label: selectFieldLabel,
         type: FieldMetadataType.SELECT,
         options,
       },
@@ -217,6 +220,14 @@ describe('Sync application keeps the option edits a workspace made on its fields
     });
 
     expect((await findSelectField()).options).toEqual(workspaceEditedOptions);
+    expect(await findSelectFieldOptionRows()).toEqual(workspaceEditedRows);
+
+    // A field-only change carries no option operations, so the workspace option must survive it.
+    await syncApplication({
+      manifest: buildManifest(MANIFEST_OPTIONS, 'State'),
+      expectToFail: false,
+    });
+
     expect(await findSelectFieldOptionRows()).toEqual(workspaceEditedRows);
 
     await syncApplication({
