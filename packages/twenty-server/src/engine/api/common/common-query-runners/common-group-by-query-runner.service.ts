@@ -50,6 +50,8 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -86,6 +88,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       authContext,
       permissionsPrincipals,
     } = queryRunnerContext;
@@ -119,6 +122,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       workspaceId: authContext.workspace.id,
       commonQueryParser,
       permissionsPrincipals,
@@ -200,6 +204,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     unreadableFieldMetadataIds,
     appliedFilters,
     workspaceId,
@@ -208,6 +213,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     unreadableFieldMetadataIds: Set<string>;
     appliedFilters: ObjectRecordFilter;
     workspaceId: string;
@@ -270,7 +276,10 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         name: field.name,
         type: field.type,
         label: field.label,
-        options: field.options as PartialFieldMetadataItemOption[],
+        options: resolveFlatFieldMetadataOptionsFromCachedMaps({
+          flatFieldMetadata: field,
+          flatFieldMetadataOptionMaps,
+        }) as PartialFieldMetadataItemOption[],
       }));
 
     const filtersFromView = this.filterArgProcessor.process({
@@ -319,6 +328,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     workspaceId,
     commonQueryParser,
     permissionsPrincipals,
@@ -329,6 +339,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     workspaceId: string;
     commonQueryParser: GraphqlQueryParser;
     permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
@@ -341,6 +352,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         unreadableFieldMetadataIds:
           await this.recordFieldPermissionsReadService.findUnreadableFields({
             principals: permissionsPrincipals,

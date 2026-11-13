@@ -1,6 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -29,6 +30,7 @@ const transform = ({
   transformToPieChartData({
     filteredRawResults,
     groupByField,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     configuration,
     userTimezone: 'UTC',
     firstDayOfTheWeek: CalendarStartDay.SUNDAY,

@@ -1,4 +1,5 @@
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -6,9 +7,11 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import {
   type FieldManifest,
   type ObjectManifest,
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -237,5 +240,65 @@ describe('Sync application after a workspace edit re-keyed its field options', (
       },
     ]);
     expect(await findSubjectStatus(archivedSubjectId)).toBe('ARCHIVED');
+  }, 60000);
+
+  it('fails when another application holds a value the app now ships', async () => {
+    const invalidateOptionCaches = () =>
+      getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
+      ]);
+
+    await globalThis.testDataSource.query(
+      `INSERT INTO core."fieldMetadataOption"
+          ("workspaceId", "universalIdentifier", "fieldMetadataId", "applicationId", value, label, color, position)
+        SELECT field."workspaceId", gen_random_uuid(), field.id, application.id, 'ARCHIVED', 'Archived', 'gray', 2
+        FROM core."fieldMetadata" field
+        JOIN core.application application
+          ON application."workspaceId" = field."workspaceId"
+          AND application."universalIdentifier" = $3
+        WHERE field."workspaceId" = $1 AND field."universalIdentifier" = $2`,
+      [
+        SEED_APPLE_WORKSPACE_ID,
+        SELECT_FIELD_ID,
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ],
+    );
+    await invalidateOptionCaches();
+
+    try {
+      const { errors } = await syncApplication({
+        manifest: buildManifest([
+          OPEN_OPTION,
+          CLOSED_OPTION,
+          {
+            id: ARCHIVED_OPTION_ID,
+            value: 'ARCHIVED',
+            label: 'Archived',
+            color: 'gray',
+            position: 2,
+          },
+        ]),
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toBe(
+        `Option value ARCHIVED of field status is already used by an option of application ${TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER}`,
+      );
+      expect(await findSelectFieldOptionRows()).toMatchObject([
+        ...APP_OPTION_ROWS,
+        { value: 'ARCHIVED', isOwnedByTestApp: false },
+      ]);
+    } finally {
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."fieldMetadataOption"
+          WHERE "workspaceId" = $1 AND value = 'ARCHIVED'
+            AND "fieldMetadataId" = $2`,
+        [SEED_APPLE_WORKSPACE_ID, await findSelectFieldId()],
+      );
+      await invalidateOptionCaches();
+    }
   }, 60000);
 });

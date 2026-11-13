@@ -252,7 +252,9 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+      return fromFlatFieldMetadataToFieldMetadataDto({
+        flatFieldMetadataWithResolvedOptions: flatFieldMetadata,
+      });
     } catch (error) {
       return fieldMetadataGraphqlApiExceptionHandler(error);
     }
@@ -270,7 +272,9 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+      return fromFlatFieldMetadataToFieldMetadataDto({
+        flatFieldMetadataWithResolvedOptions: flatFieldMetadata,
+      });
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
@@ -292,7 +296,9 @@ export class FieldMetadataResolver {
         workspaceId,
       });
 
-      return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
+      return fromFlatFieldMetadataToFieldMetadataDto({
+        flatFieldMetadataWithResolvedOptions: flatFieldMetadata,
+      });
     } catch (error) {
       fieldMetadataGraphqlApiExceptionHandler(error);
     }

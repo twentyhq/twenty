@@ -151,6 +151,7 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       ({ value }) => value,
     );
     // Same rule as reads: the stored options stand while one of them has no row
+    // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
     const optionValues =
       isDefined(rowOptionValues) &&
       storedOptionValues.every((value) => rowOptionValues.has(value))

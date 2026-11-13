@@ -1,5 +1,5 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
-import { type EnumFieldMetadataType } from 'twenty-shared/types';
+import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -15,8 +15,8 @@ const NO_VIEW_GROUP_POSITION = -1;
 
 type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
   fromFlatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>;
-  toOptions: FlatFieldMetadata<EnumFieldMetadataType>['options'];
-} & Pick<AllFlatEntityMaps, 'flatViewMaps' | 'flatViewGroupMaps'>;
+} & FromTo<FlatFieldMetadata<EnumFieldMetadataType>['options'], 'options'> &
+  Pick<AllFlatEntityMaps, 'flatViewMaps' | 'flatViewGroupMaps'>;
 
 export type FlatViewGroupsToDeleteUpdateAndCreate = {
   flatViewGroupsToDelete: FlatViewGroup[];
@@ -27,6 +27,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   flatViewMaps,
   flatViewGroupMaps,
   fromFlatFieldMetadata,
+  fromOptions,
   toOptions,
 }: RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs): FlatViewGroupsToDeleteUpdateAndCreate => {
   const {
@@ -36,9 +37,7 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
   } = compareTwoFlatFieldMetadataEnumOptions({
     compareLabel: false,
     // An inactive option has no group, so deactivating removes it and reactivating recreates it.
-    fromOptions: fromFlatFieldMetadata.options.filter(
-      isFieldMetadataOptionActive,
-    ),
+    fromOptions: fromOptions.filter(isFieldMetadataOptionActive),
     toOptions: toOptions.filter(isFieldMetadataOptionActive),
   });
 

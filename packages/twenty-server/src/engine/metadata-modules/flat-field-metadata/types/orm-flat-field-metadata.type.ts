@@ -12,7 +12,7 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'name',
   'label',
   'defaultValue',
-  'options',
+  'fieldMetadataOptionUniversalIdentifiers',
   'settings',
   'isNullable',
   'isUnique',
@@ -30,9 +30,20 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
 export type OrmFlatFieldMetadataKey =
   (typeof ORM_FLAT_FIELD_METADATA_KEYS)[number];
 
+type FlatFieldMetadataOptionsKey<T extends FieldMetadataType> = Extract<
+  keyof FlatFieldMetadata<T>,
+  'options'
+>;
+
 export type OrmFlatFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = Pick<
   FlatFieldMetadata<T>,
   Extract<keyof FlatFieldMetadata<T>, OrmFlatFieldMetadataKey>
->;
+> &
+  // Named storedOptions so readers resolve through resolveFlatFieldMetadataOptions; full flat fields still fit.
+  // TODO: remove storedOptions once 2.59 has run on every workspace, together with the options column drop.
+  (
+    | { storedOptions: FlatFieldMetadata<T>[FlatFieldMetadataOptionsKey<T>] }
+    | Pick<FlatFieldMetadata<T>, FlatFieldMetadataOptionsKey<T>>
+  );

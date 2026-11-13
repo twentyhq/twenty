@@ -126,7 +126,8 @@ export class FieldMetadataEntity<
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
 
-  // TODO: drop once nothing reads it; options come from fieldMetadataOption rows and this copy is still written.
+  // Write input and rollout fallback only: read options through resolveFlatFieldMetadataOptions.
+  // TODO: drop the column once 2.59 has run on every workspace.
   @Column('jsonb', { nullable: true })
   options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 

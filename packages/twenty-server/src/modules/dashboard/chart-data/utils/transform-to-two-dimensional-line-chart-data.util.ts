@@ -6,6 +6,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -30,6 +31,7 @@ export const transformToTwoDimensionalLineChartData = ({
   primaryAxisGroupByField,
   secondaryAxisGroupByField,
   aggregateField,
+  flatFieldMetadataOptionMaps,
   configuration,
   userTimezone,
   firstDayOfTheWeek,
@@ -42,6 +44,7 @@ export const transformToTwoDimensionalLineChartData = ({
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: LineChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -59,6 +62,7 @@ export const transformToTwoDimensionalLineChartData = ({
     applyGapFilling({
       data: filteredRawResults,
       primaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       omitNullValues: configuration.omitNullValues ?? false,
       isDescOrder,
@@ -66,8 +70,14 @@ export const transformToTwoDimensionalLineChartData = ({
       splitMultiValueFields: configuration.splitMultiValueFields,
     });
 
-  const primarySelectOptions = getSelectOptions(primaryAxisGroupByField);
-  const secondarySelectOptions = getSelectOptions(secondaryAxisGroupByField);
+  const primarySelectOptions = getSelectOptions({
+    fieldMetadata: primaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
+  });
+  const secondarySelectOptions = getSelectOptions({
+    fieldMetadata: secondaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
+  });
 
   const convertedFirstDayOfTheWeek =
     convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
@@ -83,6 +93,7 @@ export const transformToTwoDimensionalLineChartData = ({
     rawResults: gapFilledResults,
     primaryAxisGroupByField,
     secondaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
     primaryDateGranularity: configuration.primaryAxisDateGranularity,
     primarySubFieldName: configuration.primaryAxisGroupBySubFieldName,
     secondaryDateGranularity: configuration.secondaryAxisGroupByDateGranularity,

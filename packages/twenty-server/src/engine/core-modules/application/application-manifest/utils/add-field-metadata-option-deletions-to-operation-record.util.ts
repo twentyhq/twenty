@@ -8,13 +8,10 @@ export const addFieldMetadataOptionDeletionsToOperationRecord = ({
   allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
   flatFieldMetadataOptionsToDelete: FlatFieldMetadataOption[];
 }): AllFlatEntityOperationRecordByMetadataName => {
-  if (flatFieldMetadataOptionsToDelete.length === 0) {
-    return allFlatEntityOperationRecordByMetadataName;
-  }
-
   const fieldMetadataOptionOperationRecord =
     allFlatEntityOperationRecordByMetadataName.fieldMetadataOption;
 
+  // Set even when empty: a sync passes every option operation it wants explicitly.
   return {
     ...allFlatEntityOperationRecordByMetadataName,
     fieldMetadataOption: {

@@ -59,11 +59,19 @@ export class PieChartDataService {
         );
       }
 
-      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+      } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+            flatMapsKeys: [
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+              'flatFieldMetadataOptionMaps',
+            ],
           },
         );
 
@@ -151,6 +159,7 @@ export class PieChartDataService {
       return transformToPieChartData({
         filteredRawResults: resolvedResults,
         groupByField,
+        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:

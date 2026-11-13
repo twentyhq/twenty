@@ -5,6 +5,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
+import { FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
 import { PIE_CHART_MAXIMUM_NUMBER_OF_SLICES } from 'src/modules/dashboard/chart-data/constants/pie-chart-maximum-number-of-slices.constant';
@@ -18,6 +19,7 @@ import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/so
 export const transformToPieChartData = ({
   filteredRawResults,
   groupByField,
+  flatFieldMetadataOptionMaps,
   configuration,
   userTimezone,
   firstDayOfTheWeek,
@@ -28,12 +30,16 @@ export const transformToPieChartData = ({
     aggregateValue: number;
   }>;
   groupByField: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: PieChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
   relationLabelResolution: RelationLabelResolution | undefined;
 }): PieChartDataDTO => {
-  const selectOptions = getSelectOptions(groupByField);
+  const selectOptions = getSelectOptions({
+    fieldMetadata: groupByField,
+    flatFieldMetadataOptionMaps,
+  });
 
   const convertedFirstDayOfTheWeek =
     convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
@@ -45,6 +51,7 @@ export const transformToPieChartData = ({
     processOneDimensionalResults({
       rawResults: filteredRawResults,
       primaryAxisGroupByField: groupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.dateGranularity,
       subFieldName: configuration.groupBySubFieldName,
       userTimezone,

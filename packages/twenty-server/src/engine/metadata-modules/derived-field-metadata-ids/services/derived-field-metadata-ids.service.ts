@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeResolvedOptionsByFieldMetadataId } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-resolved-options-by-field-metadata-id.util';
 import { computeSearchableFieldMetadataIdsFromFlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/compute-searchable-field-metadata-ids-from-flat-search-field-metadata-maps.util';
 import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 
@@ -18,6 +17,7 @@ export class DerivedFieldMetadataIdsService {
       flatIndexMaps,
       flatSearchFieldMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -26,6 +26,7 @@ export class DerivedFieldMetadataIdsService {
             'flatIndexMaps',
             'flatSearchFieldMetadataMaps',
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
           ],
         },
       );
@@ -37,12 +38,10 @@ export class DerivedFieldMetadataIdsService {
         computeSearchableFieldMetadataIdsFromFlatSearchFieldMetadataMaps(
           flatSearchFieldMetadataMaps,
         ),
-      optionsByFieldMetadataId: new Map(
-        Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-          .filter(isDefined)
-          .filter(({ options }) => isDefined(options))
-          .map(({ id, options }) => [id, options]),
-      ),
+      optionsByFieldMetadataId: computeResolvedOptionsByFieldMetadataId({
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+      }),
     };
   }
 }

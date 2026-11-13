@@ -10,7 +10,6 @@ import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/f
 import { compactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/compact-flat-field-metadata-maps.util';
 import { expandFlatFieldMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/expand-flat-field-metadata-maps-or-throw.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
-import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { computeUniqueFieldMetadataIdsFromIndexes } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-indexes.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -59,17 +58,7 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     groupBy: ['fieldMetadataId'],
   },
   fieldMetadataOption: {
-    columns: [
-      'id',
-      'universalIdentifier',
-      'applicationId',
-      'value',
-      'label',
-      'color',
-      'position',
-      'isActive',
-      'overrides',
-    ],
+    columns: ['id', 'universalIdentifier'],
     groupBy: ['fieldMetadataId'],
   },
   rowLevelPermissionPredicate: {
@@ -140,17 +129,12 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
 
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
+    // Entries keep the stored options column as is: readers resolve options from the option rows.
+    // TODO: drop the stored options copy once 2.59 has run on every workspace, together with the options column drop.
     for (const fieldMetadataEntity of fieldMetadatas) {
       const flatFieldMetadata = fromFieldMetadataEntityToFlatFieldMetadata({
         entity: {
           ...fieldMetadataEntity,
-          options: resolveFieldMetadataOptionsFromRows({
-            fieldMetadataEntity,
-            fieldMetadataOptionRows: fieldMetadataOptions.byFieldMetadataId.get(
-              fieldMetadataEntity.id,
-            ),
-            shouldRowsCoverStoredOptions: true,
-          }),
           viewFields:
             viewFields.byFieldMetadataId.get(fieldMetadataEntity.id) || [],
           viewFilters:

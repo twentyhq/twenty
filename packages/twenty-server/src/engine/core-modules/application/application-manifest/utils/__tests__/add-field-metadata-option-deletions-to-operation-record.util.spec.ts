@@ -22,15 +22,19 @@ const buildFlatFieldMetadataOption = (
 });
 
 describe('addFieldMetadataOptionDeletionsToOperationRecord', () => {
-  it('returns the record unchanged when there is nothing to delete', () => {
-    const allFlatEntityOperationRecordByMetadataName = {};
-
+  it('declares an empty option record when there is nothing to delete', () => {
     expect(
       addFieldMetadataOptionDeletionsToOperationRecord({
-        allFlatEntityOperationRecordByMetadataName,
+        allFlatEntityOperationRecordByMetadataName: {},
         flatFieldMetadataOptionsToDelete: [],
       }),
-    ).toBe(allFlatEntityOperationRecordByMetadataName);
+    ).toEqual({
+      fieldMetadataOption: {
+        flatEntityToCreate: {},
+        flatEntityToUpdate: {},
+        flatEntityToDelete: {},
+      },
+    });
   });
 
   it('adds the deletions next to the existing option operations', () => {

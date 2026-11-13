@@ -1,5 +1,6 @@
 import { FieldMetadataType, FirstDayOfTheWeek } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 
@@ -43,6 +44,7 @@ describe('processTwoDimensionalResults', () => {
         ],
         primaryAxisGroupByField: relationFieldMetadata,
         secondaryAxisGroupByField: selectFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         userTimezone,
         firstDayOfTheWeek,
         primaryRelationLabelResolution: {
@@ -76,6 +78,7 @@ describe('processTwoDimensionalResults', () => {
         ],
         primaryAxisGroupByField: selectFieldMetadata,
         secondaryAxisGroupByField: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         userTimezone,
         firstDayOfTheWeek,
         primaryRelationLabelResolution: undefined,
@@ -100,6 +103,7 @@ describe('processTwoDimensionalResults', () => {
       ],
       primaryAxisGroupByField: relationFieldMetadata,
       secondaryAxisGroupByField: selectFieldMetadata,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       userTimezone,
       firstDayOfTheWeek,
       primaryRelationLabelResolution: undefined,

@@ -19,6 +19,7 @@ export const validateFlatViewFilterUpdate = ({
   optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
     flatViewFilterMaps: optimisticFlatViewFilterMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatViewFilterGroupMaps,
   },
 }: FlatEntityUpdateValidationArgs<
@@ -126,6 +127,7 @@ export const validateFlatViewFilterUpdate = ({
     ) {
       const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
         referencedFieldMetadata,
+        flatFieldMetadataOptionMaps,
         operand: updatedFlatViewFilter.operand,
         value: updatedFlatViewFilter.value,
       });
