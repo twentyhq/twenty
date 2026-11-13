@@ -17,6 +17,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { computeResolvedOptionsByFieldMetadataId } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-resolved-options-by-field-metadata-id.util';
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -72,21 +73,18 @@ export class FieldMetadataService {
         'flatFieldMetadataOptionMaps',
       ]);
 
-    return fieldMetadataEntities.map((fieldMetadataEntity) => {
-      const flatFieldMetadata =
-        flatFieldMetadataMaps.byUniversalIdentifier[
-          fieldMetadataEntity.universalIdentifier
-        ];
-
-      return Object.assign(fieldMetadataEntity, {
-        options: isDefined(flatFieldMetadata)
-          ? resolveFlatFieldMetadataOptions({
-              flatFieldMetadata,
-              flatFieldMetadataOptionMaps,
-            })
-          : fieldMetadataEntity.options,
-      });
+    const optionsByFieldMetadataId = computeResolvedOptionsByFieldMetadataId({
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     });
+
+    return fieldMetadataEntities.map((fieldMetadataEntity) =>
+      Object.assign(fieldMetadataEntity, {
+        options:
+          optionsByFieldMetadataId.get(fieldMetadataEntity.id) ??
+          fieldMetadataEntity.options,
+      }),
+    );
   }
 
   private resolveFlatFieldMetadataWithOptions({
