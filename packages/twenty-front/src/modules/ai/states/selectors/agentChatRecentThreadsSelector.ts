@@ -1,21 +1,22 @@
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-
-// Every chat the member can open, except channel chats they never followed
 export const agentChatRecentThreadsSelector = createAtomSelector<
   AgentChatThreadRecord[]
 >({
   key: 'agentChatRecentThreadsSelector',
   get: ({ get }) =>
-    get(agentChatThreadsSelector).filter(
-      (thread) =>
-        !isDefined(thread.deletedAt) &&
-        (!isDefined(thread.channelId) ||
-          get(agentChatThreadInboxStatusFamilySelector, thread.id).scope !==
-            'NONE'),
-    ),
+    (
+      get(
+        agentChatThreadListFamilyState,
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      )?.threadIds ?? []
+    )
+      .map((threadId) => get(agentChatThreadRecordFamilySelector, threadId))
+      .filter(isDefined),
 });

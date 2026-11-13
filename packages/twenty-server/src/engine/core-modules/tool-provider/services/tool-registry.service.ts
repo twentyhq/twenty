@@ -2,9 +2,9 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import * as Sentry from '@sentry/node';
 import { type ToolSet, jsonSchema } from 'ai';
-import { type ToolCategory } from 'twenty-shared/ai';
+import { ToolCategory } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -17,6 +17,7 @@ import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handl
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
+import { type DatabaseCrudOperation } from 'src/engine/core-modules/tool-provider/constants/database-crud-operation.const';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
@@ -25,6 +26,7 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
+import { findDatabaseCrudToolIndexEntry } from 'src/engine/core-modules/tool-provider/utils/find-database-crud-tool-index-entry.util';
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -343,48 +345,135 @@ export class ToolRegistryService {
     context: ToolContext,
     options?: { compactOutput?: boolean; spillLargeOutput?: boolean },
   ): Promise<ToolOutput> {
+    return this.executeOrBuildFailure({
+      toolName,
+      context,
+      execute: async () => {
+        const fullContext = this.buildContextFromToolContext(context);
+
+        const index = await this.getCatalog(fullContext);
+        const entry = index.find((indexEntry) => indexEntry.name === toolName);
+
+        if (!isDefined(entry)) {
+          const similarToolNames = findSimilarToolNames(
+            toolName,
+            index.map((indexEntry) => indexEntry.name),
+          );
+          const suggestionHint =
+            similarToolNames.length > 0
+              ? ` Did you mean: ${similarToolNames.join(', ')}?`
+              : '';
+
+          return {
+            success: false,
+            message: `Tool "${toolName}" not found`,
+            error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
+          };
+        }
+
+        return this.executeCatalogEntry({ entry, args, fullContext, options });
+      },
+    });
+  }
+
+  async resolveAndExecuteDatabaseCrud({
+    objectName,
+    operation,
+    args,
+    context,
+  }: {
+    objectName: string;
+    operation: DatabaseCrudOperation;
+    args: Record<string, unknown>;
+    context: ToolContext;
+  }): Promise<ToolOutput> {
+    return this.executeOrBuildFailure({
+      toolName: operation,
+      context,
+      execute: async () => {
+        const fullContext = this.buildContextFromToolContext(context);
+
+        const lookup = findDatabaseCrudToolIndexEntry({
+          toolIndex: await this.getCatalog(fullContext, {
+            categories: [ToolCategory.DATABASE_CRUD],
+          }),
+          objectName,
+          operation,
+        });
+
+        switch (lookup.status) {
+          case 'found':
+            return this.executeCatalogEntry({
+              entry: lookup.entry,
+              args,
+              fullContext,
+            });
+          case 'operationNotAvailable':
+            return {
+              success: false,
+              message: `Operation "${operation}" is not available on "${lookup.objectNameSingular}"`,
+              error: `Operation "${operation}" is not available on "${lookup.objectNameSingular}": the object does not support it or your role does not allow it. Do not retry it.`,
+            };
+          case 'objectNotFound':
+            return {
+              success: false,
+              message: `Object "${objectName}" not found`,
+              error: `Object "${objectName}" not found.${
+                lookup.similarObjectNames.length > 0
+                  ? ` Did you mean: ${lookup.similarObjectNames.join(', ')}?`
+                  : ''
+              } Call list_object_metadata_names for the objects of this workspace.`,
+            };
+          default:
+            return assertUnreachable(lookup);
+        }
+      },
+    });
+  }
+
+  private async executeCatalogEntry({
+    entry,
+    args,
+    fullContext,
+    options,
+  }: {
+    entry: ToolIndexEntry;
+    args: Record<string, unknown> | undefined;
+    fullContext: ToolProviderContext;
+    options?: { compactOutput?: boolean; spillLargeOutput?: boolean };
+  }): Promise<ToolOutput> {
+    const result = await this.toolExecutorService.dispatch(
+      entry,
+      args,
+      fullContext,
+    );
+
+    const compacted = options?.compactOutput
+      ? (compactToolOutput(result) as ToolOutput)
+      : result;
+
+    const inlined = options?.spillLargeOutput
+      ? await this.toolOutputSpillService.spillIfTooLarge(
+          compacted,
+          { workspaceId: fullContext.workspaceId },
+          { toolName: entry.name },
+        )
+      : compacted;
+
+    return normalizeToolOutputToJsonValues(inlined);
+  }
+
+  private async executeOrBuildFailure({
+    toolName,
+    context,
+    execute,
+  }: {
+    toolName: string;
+    context: ToolContext;
+    execute: () => Promise<ToolOutput>;
+  }): Promise<ToolOutput> {
     try {
-      const fullContext = this.buildContextFromToolContext(context);
-
-      const index = await this.getCatalog(fullContext);
-      const entry = index.find((indexEntry) => indexEntry.name === toolName);
-
-      if (!entry) {
-        const similarToolNames = findSimilarToolNames(
-          toolName,
-          index.map((indexEntry) => indexEntry.name),
-        );
-        const suggestionHint =
-          similarToolNames.length > 0
-            ? ` Did you mean: ${similarToolNames.join(', ')}?`
-            : '';
-
-        return {
-          success: false,
-          message: `Tool "${toolName}" not found`,
-          error: `Tool "${toolName}" not found.${suggestionHint} Pass your best candidate name to learn_tools to confirm it before executing.`,
-        };
-      }
-
-      const result = await this.toolExecutorService.dispatch(
-        entry,
-        args,
-        fullContext,
-      );
-
-      const compacted = options?.compactOutput
-        ? (compactToolOutput(result) as ToolOutput)
-        : result;
-
-      const inlined = options?.spillLargeOutput
-        ? await this.toolOutputSpillService.spillIfTooLarge(
-            compacted,
-            { workspaceId: fullContext.workspaceId },
-            { toolName },
-          )
-        : compacted;
-
-      return normalizeToolOutputToJsonValues(inlined);
+      return await execute();
     } catch (error) {
       const { output, shouldCapture } = buildToolExecutionFailure({
         error,

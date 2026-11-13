@@ -9,10 +9,10 @@ exports[`Sync application should surface the root cause when a unique index cann
         "applicationUniversalIdentifier": Any<String>,
         "createdAt": Any<String>,
         "indexType": "BTREE",
-        "indexWhereClause": null,
+        "indexWhereClause": ""deletedAt" IS NULL",
         "isSystemSideEffect": true,
         "isUnique": true,
-        "name": "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8",
+        "name": "IDX_UNIQUE_fd0f097483b5cf217466cacb1f5",
         "objectMetadataUniversalIdentifier": Any<String>,
         "universalFlatIndexFieldMetadatas": [
           {
@@ -39,13 +39,13 @@ exports[`Sync application should surface the root cause when a unique index cann
       },
       "workspaceSchema": {
         "code": "23505",
-        "message": "could not create unique index "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8"",
+        "message": "could not create unique index "IDX_UNIQUE_fd0f097483b5cf217466cacb1f5"",
       },
     },
     "exceptionEventId": Any<String>,
     "userFriendlyMessage": "Migration execution failed.",
   },
-  "message": "Migration action 'create' for 'index' (universalIdentifier: 67c6811e-9c4e-578a-ad3a-ea4ef152c0fd) failed: [workspaceSchema] could not create unique index "IDX_UNIQUE_85951922a2bfc9f7811d8c5cdb8" (pg code: 23505, detail: Key ("externalId")=(DUPLICATED-VALUE) is duplicated.)",
+  "message": "Migration action 'create' for 'index' (universalIdentifier: 7d5b1a32-6967-5b62-a03a-aeb67ff391b1) failed: [workspaceSchema] could not create unique index "IDX_UNIQUE_fd0f097483b5cf217466cacb1f5" (pg code: 23505, detail: Key ("externalId")=(DUPLICATED-VALUE) is duplicated.)",
   "name": "GraphQLError",
 }
 `;

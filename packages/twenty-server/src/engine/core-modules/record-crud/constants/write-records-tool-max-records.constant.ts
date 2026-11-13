@@ -1,0 +1,1 @@
+export const WRITE_RECORDS_TOOL_MAX_RECORDS = 20;

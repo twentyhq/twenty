@@ -1,7 +1,9 @@
+import { PROXY_HEADER_ENVIRONMENT_VARIABLE } from '@/proxy-headers/constants/proxy-header-environment-variable.constant';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 
 const SCRUBBED_ENVIRONMENT_VARIABLES = new Set<string>([
   ...Object.values(TARGET_ENVIRONMENT_VARIABLE),
+  ...Object.values(PROXY_HEADER_ENVIRONMENT_VARIABLE),
   'TWENTY_APP_ACCESS_TOKEN',
   'TWENTY_APP_APPLICATION_ACCESS_TOKEN',
 ]);

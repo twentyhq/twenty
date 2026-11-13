@@ -10,7 +10,7 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Doctor](#diagnose-your-setup)
 - [Open](#open-the-workspace)
 - [Metadata](#inspect-the-data-model)
-- [Records](#read-records)
+- [Records](#read-records) and [export](#export-records)
 - [Local development environment](#run-a-local-development-environment)
 - [App init](#create-an-app) and [add](#add-definitions-to-an-app)
 - [Build and typecheck](#build-and-check-an-app)
@@ -179,6 +179,68 @@ or `NO_PROXY=*` to bypass it for all hosts. Proxies must support HTTP CONNECT.
 For a corporate certificate authority, set `NODE_EXTRA_CA_CERTS` before starting
 the CLI. TLS certificate verification stays enabled.
 
+## Authenticating proxies
+
+When an identity-aware proxy such as Cloudflare Access, Google IAP, Pomerium or
+oauth2-proxy sits in front of the server, the CLI's requests reach the proxy's
+sign-in page instead of Twenty and fail with `PROXY_AUTH_REQUIRED` (exit 3).
+Give the CLI the proxy's credentials as HTTP headers, either fixed values or a
+command that prints fresh ones:
+
+```bash
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Both options are saved on the remote as `proxyHeaders` and `proxyHeaderCommand`
+and apply to every later command that uses it. Passing an option replaces the
+saved value; an empty value removes it. Logout keeps them; `twenty remote remove`
+deletes them. When `--replace` points a remote at another URL, saved proxy
+settings are not carried over unless you pass them again.
+
+The command runs through your shell when a request first needs it, at most once
+per CLI invocation, and must print one `Name: value` line per header within 60
+seconds. If the proxy rejects the headers (a redirect to its sign-in page, or a
+401/403 that is not a Twenty JSON response), the CLI runs the command again and
+retries the request once; the proxy rejected it before Twenty received it.
+Command headers take precedence over fixed headers of the same name.
+
+For CI and other environments without a saved remote, set
+`TWENTY_PROXY_HEADERS` (one `Name: value` per line) and
+`TWENTY_PROXY_HEADER_COMMAND`. They also apply to saved remotes: environment
+headers override saved headers of the same name, and the environment command
+replaces the saved one. Neither is passed to app workers.
+
+```bash
+export TWENTY_PROXY_HEADERS="CF-Access-Client-Id: $CLIENT_ID
+CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Proxy headers are only sent to the host of the selected connection's API URL,
+including app uploads that the server receives itself, and never to other hosts
+such as pre-signed storage URLs. They cannot replace headers the CLI sets itself,
+including `Authorization`; proxies that need their own bearer token, such as
+Google IAP, accept it in `Proxy-Authorization`. Proxy settings are only read from
+`~/.twenty/config.json`, the environment and command options, never from an app
+project. Errors never include header values or the command's output, only the
+end of its standard error.
+
+Recipes:
+
+| Proxy                            | Setting                                                                                                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cloudflare Access, as a user     | `--proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=<url>)"'` after `cloudflared access login <url>`                                           |
+| Cloudflare Access, service token | `--proxy-header "CF-Access-Client-Id: …" --proxy-header "CF-Access-Client-Secret: …"`                                                                                      |
+| Google IAP                       | A `--proxy-header-command` that prints `Proxy-Authorization: Bearer <token>` with an OIDC token for the IAP client ID, for example from `gcloud auth print-identity-token` |
+| Pomerium, oauth2-proxy           | The bearer or session header your deployment accepts, from its own CLI or a service account                                                                                |
+
+Without changing CLI settings, a local tunnel such as `cloudflared access tcp`
+also works: point the remote at the tunnel's `localhost` address.
+
 ## Diagnose your setup
 
 ```bash
@@ -189,7 +251,7 @@ twenty doctor --offline
 
 `doctor` checks the running CLI and Node version, executable ownership and precedence on PATH, configuration, the selected connection, and an app's installed SDK authoring exports. It works without an app or saved remote; unavailable optional checks are marked `skipped`. Use `--path` to require a specific app. PATH inspection does not execute binaries or inspect shell aliases, functions or command caches; package-manager wrappers whose owner cannot be determined are reported as unknown.
 
-By default it sends one read-only request to the selected workspace's metadata endpoint to check access. This does not prove access to every object or app operation. `--offline` disables network requests. Doctor never imports app or SDK code, builds an app, installs packages, repairs files, or refreshes credentials. An expired OAuth access token skips the network check: it produces a warning when a refresh token is saved (renewal remains unverified), or a failure when there is none. Renew through `twenty auth status` for the same remote, or sign in again.
+By default it sends one read-only request to the selected workspace's metadata endpoint to check access. This does not prove access to every object or app operation. `--offline` disables network requests. The network check runs a configured proxy header command; `--offline` does not. Doctor never imports app or SDK code, builds an app, installs packages, repairs files, or refreshes credentials. An expired OAuth access token skips the network check: it produces a warning when a refresh token is saved (renewal remains unverified), or a failure when there is none. Renew through `twenty auth status` for the same remote, or sign in again.
 
 Each check has an `id`, `status` (`pass`, `warning`, `fail`, or `skipped`), message, and optional code, hint and details. Failed checks exit 1 with `DOCTOR_FAILED`; JSON includes the checklist in `error.details.checks`. Otherwise exit 0, with the same checklist in `data.checks`, including warnings and skipped checks. Human output includes the full checklist in either case. Ctrl+C exits 130. Output omits credentials, server response bodies and user identity information, but includes local paths and the selected API URL.
 
@@ -241,6 +303,24 @@ These commands resolve the same exact singular/plural API names as metadata insp
 `--all` reads every remaining page, including when starting from `--cursor`. Human/JSON results are limited to 10,000 records and 16 MiB of serialized payload; human tables are also bounded. Exceeding a limit returns `RESULT_LIMIT_EXCEEDED` (exit 2), with no partial success. Every HTTP response is separately limited to 16 MiB, including in NDJSON mode.
 
 Use explicit `--format ndjson` for larger traversals. It emits numbered `start`, `record`, page `progress`, and terminal `result`/`error` events, reading one page at a time and waiting for stdout when the reader is slow. `resumeCursor` advances only after a complete page has been written. After a partial page or a failure, resume with the last reported cursor and the same filter/order; records from the partial page may repeat. With no completed page, use the original cursor or restart without one. A stream without a terminal event is incomplete. Without `--all`, NDJSON still reads only one page.
+
+## Export records
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+twenty data export people --order-by 'name.lastName[AscNullsLast]' --output people.csv --format ndjson
+```
+
+`data export` runs a server-side CSV export, follows progress and immediately downloads the result. It requires `EXPORT_CSV`, access to the object's metadata and records, and a server supporting asynchronous record export. API-key connections require a server that supports API keys for record export; browser-authenticated connections use the same user permissions as other commands.
+
+`--fields` selects active field API names in CSV order. By default, all active non-system fields are selected. The server always includes `Id` first, expands composite fields into columns and exports many-to-one relations as IDs. Filters and ordering use the REST expression syntax from `data list`, converted to the export subscription's input. Row and field permissions still apply on the server.
+
+`--output` is required and names a file, not stdout. Existing files are preserved unless `--force` is passed. CSV bytes stream to a private temporary file in the destination directory, with a 1 GiB limit and a 15-minute download timeout. The destination appears, or is replaced with `--force`, only after the download finishes. On failure or cancellation, the CLI attempts to remove the temporary file and preserves an existing destination. On systems with POSIX permissions, the saved CSV remains readable and writable only by its owner (mode `0600`). Without `--force`, the destination filesystem must support hard links; for filesystems such as exFAT, choose another destination or pass `--force` to allow replacement.
+
+Human output shows an updating percentage bar in an interactive terminal and the saved file's size. Redirected output, CI and terminals with `TERM=dumb` use plain progress lines. JSON returns one result containing the export ID, object, output path, byte count and elapsed time. NDJSON emits `start`, percentage `progress`, and terminal `result` or `error` events. CSV contents are written only to the output file.
+
+Keep the command connected until it finishes. Downloads use the same credential that started the export and the server's short-lived, single-use link. If generation or download is interrupted, run the export again; there is no resume or redownload command.
 
 ## Create an app
 
@@ -502,7 +582,7 @@ failures restore the previous files and baseline.
 
 Failures in reconciliation report `error.details.outcome`: `unchanged` after an acknowledged refusal, cancellation before writing or successful rollback; `unknown` if a worker stops without acknowledging completion or rollback fails; `pulled` if writes and baseline completed but temporary-file cleanup failed. An interrupted worker can leave files partially written; inspect the changes and retained `.twenty/cli/pull-backup-*` files before retrying. A failed rollback also reports `backupDirectory`. Ctrl+C exits 130 unless the worker acknowledges a completed commit, in which case pull returns its result.
 
-The current export contains metadata, translations, stored dependency files and front component entry source. Public assets and logic-function source are not exported yet. Workflows are written as `defineWorkflow` files in `src/workflows`; a workflow changed in the workflow builder, or one using steps or references an application cannot declare, is reported as a coverage gap and its local file is kept. The workspace Custom application is published from the builder too, so its workflows are written from their active version, and apply publishes a changed definition as a new version. Skills and agents are written as `defineSkill` and `defineAgent` files in `src/skills` and `src/agents`; one the server cannot reproduce from a definition, such as an agent on more than one role, is reported as a coverage gap and its local file is kept. Front components are restored as their original TSX, preserving identifiers and supported page-layout widget references. Components with missing source are reported as coverage gaps and kept locally. Imports are preserved, but imported local files are not pulled yet. Restore missing dependencies before building or applying. Logic-function code and unsupported metadata are not regenerated. Pull restores `package.json` and `yarn.lock` from the application’s `dependencies` folder. If the exported package omits `twenty-sdk`, as the workspace Custom application does, pull keeps your local SDK dependency. Only declared front component sources and the dependency pair are accepted; other exported files are refused before writing. Dependency files and front component sources unchanged on the workspace keep local edits; changed remote files replace them and report overwritten edits. Missing remote files leave local files untouched. The installed generated client is left alone; pull never installs dependencies. Run `yarn install` after pulling dependency changes. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
+The current export contains metadata, translations, stored dependency files, public assets and front component entry source. Logic-function source is not exported yet. Workflows are written as `defineWorkflow` files in `src/workflows`; a workflow changed in the workflow builder, or one using steps or references an application cannot declare, is reported as a coverage gap and its local file is kept. The workspace Custom application is published from the builder too, so its workflows are written from their active version, and apply publishes a changed definition as a new version. Skills and agents are written as `defineSkill` and `defineAgent` files in `src/skills` and `src/agents`; one the server cannot reproduce from a definition, such as an agent on more than one role, is reported as a coverage gap and its local file is kept. Front components are restored as their original TSX, preserving identifiers and supported page-layout widget references. Components with missing source are reported as coverage gaps and kept locally. Imports are preserved, but imported local files are not pulled yet. Restore missing dependencies before building or applying. Logic-function code and unsupported metadata are not regenerated. Pull restores `package.json` and `yarn.lock` from the application’s `dependencies` folder. If the exported package omits `twenty-sdk`, as the workspace Custom application does, pull keeps your local SDK dependency. Only declared front component sources, the dependency pair and `public-asset` files under `public/` are accepted; record attachments and other files are refused before writing. Images and fonts are restored as bytes. Dependency files, public assets and front component sources unchanged on the workspace keep local edits; changed remote files replace them and report overwritten edits. Missing remote files leave local files untouched. The installed generated client is left alone; pull never installs dependencies. Run `yarn install` after pulling dependency changes. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
 
 ## Install a registered app
 

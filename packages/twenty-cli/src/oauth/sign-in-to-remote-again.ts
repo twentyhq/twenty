@@ -69,6 +69,7 @@ export const signInToRemoteAgain = async ({
 
   const credentials = await signInWithBrowser({
     apiUrl: target.apiUrl,
+    proxyHeaders: target.proxyHeaders,
     output,
     signal,
   });

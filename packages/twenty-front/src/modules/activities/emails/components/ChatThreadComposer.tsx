@@ -10,9 +10,11 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
+import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThreadComposerDraft';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,6 +78,7 @@ type ChatThreadComposerProps = {
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
   canAttachFiles?: boolean;
+  draftKey?: string;
 };
 
 export const ChatThreadComposer = ({
@@ -86,10 +89,11 @@ export const ChatThreadComposer = ({
   onSendMessage,
   onMessageSent,
   canAttachFiles = false,
+  draftKey,
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useChatThreadComposerDraft(draftKey);
   const [files, setFiles] = useState<File[]>([]);
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
@@ -101,25 +105,37 @@ export const ChatThreadComposer = ({
     !isSendDisabled &&
     (isNonEmptyString(text) || isNonEmptyArray(files));
 
-  const setPendingMessageStatus = (
+  const updatePendingMessage = (
     id: string,
-    status: PendingChatMessage['status'] | null,
+    update: Pick<PendingChatMessage, 'status' | 'errorMessage'>,
   ) =>
     setPendingMessages((currentPendingMessages) =>
-      status === null
-        ? currentPendingMessages.filter((message) => message.id !== id)
-        : currentPendingMessages.map((message) =>
-            message.id === id ? { ...message, status } : message,
-          ),
+      currentPendingMessages.map((message) =>
+        message.id === id ? { ...message, ...update } : message,
+      ),
+    );
+
+  const discardPendingMessage = (id: string) =>
+    setPendingMessages((currentPendingMessages) =>
+      currentPendingMessages.filter((message) => message.id !== id),
     );
 
   const send = async (pendingMessage: PendingChatMessage) => {
-    setPendingMessageStatus(pendingMessage.id, 'sending');
+    updatePendingMessage(pendingMessage.id, {
+      status: 'sending',
+      errorMessage: undefined,
+    });
 
     try {
       await onSendMessage(pendingMessage);
-    } catch {
-      setPendingMessageStatus(pendingMessage.id, 'failed');
+    } catch (error) {
+      updatePendingMessage(pendingMessage.id, {
+        status: 'failed',
+        errorMessage:
+          error instanceof Error
+            ? getErrorMessageFromApolloError(error)
+            : undefined,
+      });
 
       return;
     }
@@ -140,7 +156,7 @@ export const ChatThreadComposer = ({
       return;
     }
 
-    setPendingMessageStatus(pendingMessage.id, 'sent');
+    updatePendingMessage(pendingMessage.id, { status: 'sent' });
   };
 
   const handleSubmit = () => {
@@ -196,9 +212,9 @@ export const ChatThreadComposer = ({
             <ChatThreadPendingMessage
               key={pendingMessage.id}
               pendingMessage={pendingMessage}
-              isRetryDisabled={isSendDisabled}
+              isRetryDisabled={isSendDisabled || isDisconnected}
               onRetry={send}
-              onDiscard={({ id }) => setPendingMessageStatus(id, null)}
+              onDiscard={({ id }) => discardPendingMessage(id)}
             />
           ))}
         </StyledPendingMessages>

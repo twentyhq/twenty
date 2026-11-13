@@ -1506,6 +1506,9 @@ export const STANDARD_OBJECTS = {
       agentIndex: {
         universalIdentifier: '606e8ba3-f322-426b-bef8-2208f67a541a',
       },
+      agentIdCreatedAtIndex: {
+        universalIdentifier: '39fbc85e-22ec-4279-8c67-f3f0850b68c9',
+      },
       threadIndex: {
         universalIdentifier: '7d351559-4546-4307-ba28-de9fc4c40ef4',
       },

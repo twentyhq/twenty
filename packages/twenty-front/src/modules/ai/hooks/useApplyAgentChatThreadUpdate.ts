@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -28,26 +30,49 @@ export const useApplyAgentChatThreadUpdate = () => {
     [store, upsertRecordsInStore],
   );
 
-  const addAgentChatThread = useCallback(
-    (thread: AgentChatThreadUpdate) => {
-      applyAgentChatThreadUpdate(thread);
-
-      const agentChatThreadList = store.get(agentChatThreadListState.atom);
+  const prependAgentChatThreadToList = useCallback(
+    (threadId: string) => {
+      const recentThreadListAtom = agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      );
+      const agentChatThreadList = store.get(recentThreadListAtom);
 
       if (
         agentChatThreadList === null ||
-        agentChatThreadList.threadIds.includes(thread.id)
+        agentChatThreadList.threadIds.includes(threadId)
       ) {
         return;
       }
 
-      store.set(agentChatThreadListState.atom, {
+      store.set(recentThreadListAtom, {
         ...agentChatThreadList,
-        threadIds: [thread.id, ...agentChatThreadList.threadIds],
+        threadIds: [threadId, ...agentChatThreadList.threadIds],
       });
     },
-    [applyAgentChatThreadUpdate, store],
+    [store],
   );
 
-  return { applyAgentChatThreadUpdate, addAgentChatThread };
+  const addAgentChatThread = useCallback(
+    (thread: AgentChatThreadUpdate) => {
+      applyAgentChatThreadUpdate(thread);
+      prependAgentChatThreadToList(thread.id);
+    },
+    [applyAgentChatThreadUpdate, prependAgentChatThreadToList],
+  );
+
+  const addLoadedAgentChatThread = useCallback(
+    (thread: AgentChatThreadUpdate) => {
+      upsertRecordsInStore({
+        partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
+      });
+      prependAgentChatThreadToList(thread.id);
+    },
+    [prependAgentChatThreadToList, upsertRecordsInStore],
+  );
+
+  return {
+    applyAgentChatThreadUpdate,
+    addAgentChatThread,
+    addLoadedAgentChatThread,
+  };
 };

@@ -122,6 +122,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     category: 'Productivity',
     logoUrl: null,
     websiteUrl: null,
+    connectUrl: null,
     aboutDescription: null,
     pricingDescription: null,
     termsUrl: null,
