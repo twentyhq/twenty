@@ -1,4 +1,7 @@
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import {
+  buildBaseManifest,
+  type InstallableManifest,
+} from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildFrontComponentManifest } from 'test/integration/metadata/suites/application/utils/build-front-component-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
@@ -48,8 +51,8 @@ const BILLING_SETTINGS_MENU_ITEM: SettingsMenuItemManifest = {
 
 const buildManifest = (
   settingsMenuItems: SettingsMenuItemManifest[],
-  overrides?: Partial<Manifest>,
-): Manifest =>
+  overrides?: Partial<InstallableManifest>,
+): InstallableManifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,

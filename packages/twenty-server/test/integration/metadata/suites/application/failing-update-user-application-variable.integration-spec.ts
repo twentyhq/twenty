@@ -1,3 +1,4 @@
+import { type InstallableApplicationManifest } from 'twenty-shared/application';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -38,7 +39,7 @@ describe('Updating the workspace value of a user application variable should fai
               scope: 'USER',
             },
           },
-        },
+        } satisfies InstallableApplicationManifest,
       },
       expectToFail: false,
     });

@@ -1,5 +1,12 @@
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type InstallableApplicationManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
+
+export type InstallableManifest = Manifest & {
+  application: InstallableApplicationManifest;
+};
 
 export const buildBaseManifest = ({
   appId,
@@ -8,8 +15,8 @@ export const buildBaseManifest = ({
 }: {
   appId: string;
   roleId: string;
-  overrides?: Partial<Manifest>;
-}): Manifest => ({
+  overrides?: Partial<InstallableManifest>;
+}): InstallableManifest => ({
   application: {
     universalIdentifier: appId,
     defaultRoleUniversalIdentifier: roleId,

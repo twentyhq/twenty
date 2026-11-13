@@ -63,6 +63,7 @@ const FIXTURES = [
   'function-execute-app',
   'shared-dependencies-app',
   'invalid-app',
+  'oauth-client-app',
 ];
 
 const json = (value: unknown): unknown => JSON.parse(JSON.stringify(value));
@@ -365,6 +366,23 @@ export default defineFrontComponent({
     await writeFile(join(appPath, 'locales/de-DE.json'), '{');
     await writeFile(join(appPath, 'locales/klingon.json'), '{}');
     await compareManifest(appPath);
+  }, 60000);
+
+  it('rejects an app that declares an OAuth client and ships entities', async () => {
+    const appPath = await copyFixture('oauth-client-app');
+
+    await cp(
+      join(FIXTURES_DIRECTORY, 'minimal-app', 'my.role.ts'),
+      join(appPath, 'my.role.ts'),
+    );
+    const result = await compareManifest(appPath);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.errors).toContain(
+        'An application that declares an OAuth client installs nothing, so it cannot ship roles',
+      );
+    }
   }, 60000);
 
   it('matches duplicate identifier diagnostics and empty lockfile failures', async () => {

@@ -1,5 +1,9 @@
 import { relative } from 'path';
-import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import {
+  isOAuthClientApplication,
+  type Manifest,
+  OUTPUT_DIR,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -72,6 +76,7 @@ export const manifestUpdateChecksums = ({
         result.application.frontComponentSharedDependencies;
 
       if (
+        !isOAuthClientApplication(result.application) &&
         isDefined(sharedDependencies) &&
         sharedDependencies.builtPath === rootBuiltPath
       ) {

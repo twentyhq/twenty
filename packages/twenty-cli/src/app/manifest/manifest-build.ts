@@ -66,6 +66,7 @@ import {
   type TimelineActivityTypeManifest,
   type ViewManifest,
   type WorkflowManifest,
+  isOAuthClientApplication,
 } from 'twenty-shared/application';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -608,6 +609,53 @@ export const buildManifest = async (
     publicAssetsFilePaths.push(relativePath);
   }
 
+  const entityFilePaths: EntityFilePaths = {
+    application: applicationFilePaths,
+    objects: objectsFilePaths,
+    fields: fieldsFilePaths,
+    indexes: indexesFilePaths,
+    validationRules: validationRulesFilePaths,
+    permissionFlags: permissionFlagsFilePaths,
+    roles: rolesFilePaths,
+    skills: skillsFilePaths,
+    agents: agentsFilePaths,
+    workflows: workflowsFilePaths,
+    connectionProviders: connectionProvidersFilePaths,
+    messagingProviders: messagingProvidersFilePaths,
+    mcpServers: mcpServersFilePaths,
+    relatedRecordPaths: relatedRecordPathsFilePaths,
+    logicFunctions: logicFunctionsFilePaths,
+    frontComponents: frontComponentsFilePaths,
+    publicAssets: publicAssetsFilePaths,
+    views: viewsFilePaths,
+    viewFields: viewFieldsFilePaths,
+    navigationMenuItems: navigationMenuItemsFilePaths,
+    pageLayouts: pageLayoutsFilePaths,
+    pageLayoutTabs: pageLayoutTabsFilePaths,
+    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
+    commandMenuItems: commandMenuItemsFilePaths,
+    timelineActivityTypes: timelineActivityTypesFilePaths,
+    settingsMenuItems: settingsMenuItemsFilePaths,
+  };
+
+  const isOAuthClientApplicationConfig =
+    isDefined(applicationConfig) && isOAuthClientApplication(applicationConfig);
+
+  const shippedEntityKinds = Object.entries(entityFilePaths)
+    .filter(
+      ([entityKind, filePaths]) =>
+        entityKind !== 'application' &&
+        entityKind !== 'publicAssets' &&
+        filePaths.length > 0,
+    )
+    .map(([entityKind]) => entityKind);
+
+  if (isOAuthClientApplicationConfig && shippedEntityKinds.length > 0) {
+    errors.push(
+      `An application that declares an OAuth client installs nothing, so it cannot ship ${shippedEntityKinds.join(', ')}`,
+    );
+  }
+
   if (!applicationConfig) {
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
@@ -682,7 +730,11 @@ export const buildManifest = async (
       ? applicationRoleUniversalIdentifiers[0]
       : undefined);
 
-  if (applicationConfig && !resolvedDefaultRoleUniversalIdentifier) {
+  if (
+    applicationConfig &&
+    !isOAuthClientApplicationConfig &&
+    !resolvedDefaultRoleUniversalIdentifier
+  ) {
     errors.push(
       'Application must declare a default role: either pass `defaultRoleUniversalIdentifier` to defineApplication() or mark a role file with defineApplicationRole()',
     );
@@ -712,51 +764,72 @@ export const buildManifest = async (
     );
   }
 
-  const application: ApplicationManifest | undefined =
-    applicationConfig && resolvedDefaultRoleUniversalIdentifier
-      ? (() => {
-          const {
-            logoUrl: _logoUrl,
-            screenshots: _screenshots,
-            ...applicationConfigRest
-          } = applicationConfig;
+  const buildApplicationManifest = (): ApplicationManifest | undefined => {
+    if (!isDefined(applicationConfig)) {
+      return undefined;
+    }
 
-          return {
-            ...applicationConfigRest,
-            logo: applicationConfig.logo,
-            galleryImages: applicationConfig.galleryImages ?? [],
-            defaultRoleUniversalIdentifier:
-              resolvedDefaultRoleUniversalIdentifier,
-            aboutDescription: readmeContent,
-            yarnLockChecksum: null,
-            packageJsonChecksum: '',
-            requiredServerVersionRange: getEngineVersionRange(appPath),
-            ...(postInstallLogicFunctions.length >= 1
-              ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
-              : {}),
-            ...(preInstallLogicFunctions.length >= 1
-              ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
-              : {}),
-            ...(uninstallLogicFunctions.length >= 1
-              ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
-              : {}),
-            ...(isDefined(healthCheckLogicFunction)
-              ? { healthCheckLogicFunction }
-              : {}),
-            ...(settingsFrontComponentUniversalIdentifiers.length >= 1
-              ? {
-                  settingsFrontComponent: {
-                    universalIdentifier:
-                      settingsFrontComponentUniversalIdentifiers[0],
-                  },
-                }
-              : {}),
-            ...(isDefined(sharedDependencies)
-              ? { frontComponentSharedDependencies: sharedDependencies }
-              : {}),
-          };
-        })()
-      : undefined;
+    const listing = {
+      logo: applicationConfig.logo,
+      galleryImages: applicationConfig.galleryImages ?? [],
+      aboutDescription: readmeContent,
+      yarnLockChecksum: null,
+      packageJsonChecksum: '',
+      requiredServerVersionRange: getEngineVersionRange(appPath),
+    };
+
+    if (isOAuthClientApplication(applicationConfig)) {
+      const {
+        logoUrl: _logoUrl,
+        screenshots: _screenshots,
+        defaultRoleUniversalIdentifier: _defaultRoleUniversalIdentifier,
+        ...oAuthClientApplicationConfigRest
+      } = applicationConfig;
+
+      return { ...oAuthClientApplicationConfigRest, ...listing };
+    }
+
+    if (!isDefined(resolvedDefaultRoleUniversalIdentifier)) {
+      return undefined;
+    }
+
+    const {
+      logoUrl: _logoUrl,
+      screenshots: _screenshots,
+      ...applicationConfigRest
+    } = applicationConfig;
+
+    return {
+      ...applicationConfigRest,
+      ...listing,
+      defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+      ...(postInstallLogicFunctions.length >= 1
+        ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+        : {}),
+      ...(preInstallLogicFunctions.length >= 1
+        ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+        : {}),
+      ...(uninstallLogicFunctions.length >= 1
+        ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
+        : {}),
+      ...(isDefined(healthCheckLogicFunction)
+        ? { healthCheckLogicFunction }
+        : {}),
+      ...(settingsFrontComponentUniversalIdentifiers.length >= 1
+        ? {
+            settingsFrontComponent: {
+              universalIdentifier:
+                settingsFrontComponentUniversalIdentifiers[0],
+            },
+          }
+        : {}),
+      ...(isDefined(sharedDependencies)
+        ? { frontComponentSharedDependencies: sharedDependencies }
+        : {}),
+    };
+  };
+
+  const application = buildApplicationManifest();
 
   const byId = <TEntity extends { universalIdentifier: string }>(
     a: TEntity,
@@ -798,35 +871,6 @@ export const buildManifest = async (
         validationRules: validationRules.sort(byId),
         relatedRecordPaths: relatedRecordPaths.sort(byId),
       };
-
-  const entityFilePaths: EntityFilePaths = {
-    application: applicationFilePaths,
-    objects: objectsFilePaths,
-    fields: fieldsFilePaths,
-    indexes: indexesFilePaths,
-    validationRules: validationRulesFilePaths,
-    permissionFlags: permissionFlagsFilePaths,
-    roles: rolesFilePaths,
-    skills: skillsFilePaths,
-    agents: agentsFilePaths,
-    workflows: workflowsFilePaths,
-    connectionProviders: connectionProvidersFilePaths,
-    messagingProviders: messagingProvidersFilePaths,
-    mcpServers: mcpServersFilePaths,
-    relatedRecordPaths: relatedRecordPathsFilePaths,
-    logicFunctions: logicFunctionsFilePaths,
-    frontComponents: frontComponentsFilePaths,
-    publicAssets: publicAssetsFilePaths,
-    views: viewsFilePaths,
-    viewFields: viewFieldsFilePaths,
-    navigationMenuItems: navigationMenuItemsFilePaths,
-    pageLayouts: pageLayoutsFilePaths,
-    pageLayoutTabs: pageLayoutTabsFilePaths,
-    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
-    commandMenuItems: commandMenuItemsFilePaths,
-    timelineActivityTypes: timelineActivityTypesFilePaths,
-    settingsMenuItems: settingsMenuItemsFilePaths,
-  };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };
 };

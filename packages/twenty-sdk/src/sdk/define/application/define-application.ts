@@ -26,6 +26,15 @@ import { normalizeApplicationAssets } from '@/sdk/define/application/utils/norma
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
+const INSTALL_ONLY_APPLICATION_OPTIONS = [
+  'defaultRoleUniversalIdentifier',
+  'requestedCapabilities',
+  'requestedIframeMediaPermissions',
+  'applicationVariables',
+  'billing',
+  'serverVariables',
+] as const satisfies (keyof ApplicationConfig)[];
+
 export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   const errors = [];
   const warnings = [];
@@ -216,6 +225,16 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
 
   if (isDefined(config.oAuthClient)) {
     errors.push(...validateApplicationOAuthClient(config.oAuthClient));
+
+    const installOptions = INSTALL_ONLY_APPLICATION_OPTIONS.filter((option) =>
+      isDefined(config[option]),
+    );
+
+    if (isNonEmptyArray(installOptions)) {
+      errors.push(
+        `An application that declares an OAuth client installs nothing, so it cannot set ${installOptions.join(', ')}`,
+      );
+    }
   }
 
   const { category } = config;

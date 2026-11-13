@@ -10,7 +10,10 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import {
+  buildBaseManifest,
+  type InstallableManifest,
+} from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
@@ -31,7 +34,7 @@ const DELAY_STEP_ID = randomUUID();
 const FUNCTION_ID = randomUUID();
 const WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
-const MANIFEST: Manifest = buildBaseManifest({
+const MANIFEST: InstallableManifest = buildBaseManifest({
   appId: APP_ID,
   roleId: ROLE_ID,
   overrides: {

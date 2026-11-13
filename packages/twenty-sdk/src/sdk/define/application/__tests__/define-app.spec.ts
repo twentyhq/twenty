@@ -601,6 +601,27 @@ describe('defineApplication', () => {
     expect(result.errors).toEqual([]);
   });
 
+  it('should return error when an OAuth client application sets an install option', () => {
+    // @ts-expect-error an application that declares an OAuth client has no role
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+      oAuthClient: {
+        clientIdMetadataDocumentUrls: [
+          'https://client.example.com/oauth/client.json',
+        ],
+        connectUrl: 'https://client.example.com/connect',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'An application that declares an OAuth client installs nothing, so it cannot set defaultRoleUniversalIdentifier',
+    );
+  });
+
   it('should return error when an OAuth client connect URL is not https', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',

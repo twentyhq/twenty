@@ -1,7 +1,9 @@
-import { type ApplicationManifest } from 'twenty-shared/application';
+import {
+  type InstallableApplicationManifest,
+  type OAuthClientApplicationManifest,
+} from 'twenty-shared/application';
 
-export type ApplicationConfig = Omit<
-  ApplicationManifest,
+type ApplicationConfigOmittedKey =
   | 'packageJsonChecksum'
   | 'yarnLockChecksum'
   | 'requiredServerVersionRange'
@@ -9,10 +11,25 @@ export type ApplicationConfig = Omit<
   | 'preInstallLogicFunction'
   | 'settingsFrontComponent'
   | 'defaultRoleUniversalIdentifier'
-  | 'aboutDescription'
+  | 'aboutDescription';
+
+export type InstallableApplicationConfig = Omit<
+  InstallableApplicationManifest,
+  ApplicationConfigOmittedKey
 > & {
   /**
    * @deprecated Use `defineApplicationRole()` in your role file instead.
    */
   defaultRoleUniversalIdentifier?: string;
 };
+
+export type OAuthClientApplicationConfig = Omit<
+  OAuthClientApplicationManifest,
+  ApplicationConfigOmittedKey
+> & {
+  defaultRoleUniversalIdentifier?: never;
+};
+
+export type ApplicationConfig =
+  | InstallableApplicationConfig
+  | OAuthClientApplicationConfig;

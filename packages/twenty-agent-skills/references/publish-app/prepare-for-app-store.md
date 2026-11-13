@@ -197,7 +197,7 @@ oAuthClient: {
 },
 ```
 
-`clientIdMetadataDocumentUrls` are the https URLs the client presents as its `client_id`, written exactly as it sends them. `connectUrl` is the https page where a member starts connecting; `{mcpServerUrl}` is replaced by the server's MCP endpoint. The marketplace page then shows **Connect** in place of **Install**, and each member connects with their own account and permissions. A member's connection is shown under the app only once the app is listed, and declaring a client does not mark it as verified on the consent screen.
+`clientIdMetadataDocumentUrls` are the https URLs the client presents as its `client_id`, written exactly as it sends them. `connectUrl` is the https page where a member starts connecting; `{mcpServerUrl}` is replaced by the server's MCP endpoint. The marketplace page then shows **Connect** in place of **Install**, and each member connects with their own account and permissions. A member's connection is shown under the app only once the app is listed, and declaring a client does not mark it as verified on the consent screen. Such an app installs nothing: it declares no role, ships no objects, logic functions, front components or other entities, and cannot set `applicationVariables`, `serverVariables`, `billing`, `requestedCapabilities` or `requestedIframeMediaPermissions`. The `defineApplication()` types reject the combination and the build fails on it.
 
 Only set `aboutDescription` when the marketplace About tab should differ from the npm README. Otherwise keep one source of truth in `README.md`. The About tab renders markdown text only: images and raw HTML (badges, `<div>` blocks) are not rendered, so keep the marketplace-facing content in plain markdown.
 

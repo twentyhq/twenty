@@ -13,15 +13,9 @@ import { type ApplicationVariables } from './applicationVariablesType';
 import { type ServerVariables } from './server-variables.type';
 import { type SyncableEntityOptions } from './syncableEntityOptionsType';
 
-export type ApplicationManifest = SyncableEntityOptions & {
-  defaultRoleUniversalIdentifier: string;
+type ApplicationManifestListing = SyncableEntityOptions & {
   displayName: string;
   description: string;
-  requestedCapabilities?: ApplicationCapability[];
-  requestedIframeMediaPermissions?: IframeMediaPermission[];
-  applicationVariables?: ApplicationVariables;
-  billing?: ApplicationBilling;
-  serverVariables?: ServerVariables;
   author?: string;
   category?: ApplicationCategory;
   /**
@@ -39,7 +33,17 @@ export type ApplicationManifest = SyncableEntityOptions & {
   termsUrl?: string;
   emailSupport?: string;
   issueReportUrl?: string;
-  oAuthClient?: ApplicationOAuthClient;
+  packageJsonChecksum: string;
+  yarnLockChecksum: string | null;
+  requiredServerVersionRange?: string | null;
+};
+
+type ApplicationManifestInstallOptions = {
+  requestedCapabilities?: ApplicationCapability[];
+  requestedIframeMediaPermissions?: IframeMediaPermission[];
+  applicationVariables?: ApplicationVariables;
+  billing?: ApplicationBilling;
+  serverVariables?: ServerVariables;
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;
@@ -51,7 +55,22 @@ export type ApplicationManifest = SyncableEntityOptions & {
    * as `settingsFrontComponent`) instead. This property is ignored.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
-  packageJsonChecksum: string;
-  yarnLockChecksum: string | null;
-  requiredServerVersionRange?: string | null;
 };
+
+export type InstallableApplicationManifest = ApplicationManifestListing &
+  ApplicationManifestInstallOptions & {
+    defaultRoleUniversalIdentifier: string;
+    oAuthClient?: never;
+  };
+
+// Nothing is installed: the client acts with the permissions of the member who connects it
+export type OAuthClientApplicationManifest = ApplicationManifestListing & {
+  [Key in keyof ApplicationManifestInstallOptions]?: never;
+} & {
+  oAuthClient: ApplicationOAuthClient;
+  defaultRoleUniversalIdentifier?: never;
+};
+
+export type ApplicationManifest =
+  | InstallableApplicationManifest
+  | OAuthClientApplicationManifest;

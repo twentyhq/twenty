@@ -1,7 +1,10 @@
 import { createHash } from 'crypto';
 
 import { TEST_APPLICATION_PACKAGE_JSON_CHECKSUM } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
-import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import {
+  buildBaseManifest,
+  type InstallableManifest,
+} from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { installedApplicationHealthChecksQueryFactory } from 'test/integration/metadata/suites/application/utils/installed-application-health-checks-query-factory.util';
@@ -61,7 +64,7 @@ const buildHealthCheckManifest = ({
   runOnUserPreferences,
 }: {
   runOnUserPreferences?: boolean;
-}): Manifest =>
+}): InstallableManifest =>
   buildBaseManifest({
     appId: APPLICATION_UNIVERSAL_IDENTIFIER,
     roleId: ROLE_UNIVERSAL_IDENTIFIER,

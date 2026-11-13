@@ -58,7 +58,11 @@ export type {
 } from './applicationHealthType';
 export { isApplicationHealthCheckResult } from './applicationHealthType';
 export type { ApplicationOAuthClient } from './applicationOAuthClientType';
-export type { ApplicationManifest } from './applicationType';
+export type {
+  InstallableApplicationManifest,
+  OAuthClientApplicationManifest,
+  ApplicationManifest,
+} from './applicationType';
 export type {
   ApplicationVariableType,
   ApplicationVariableOption,
@@ -340,6 +344,7 @@ export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionS
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
+export { isOAuthClientApplication } from './utils/isOAuthClientApplication';
 export { isReservedSettingsMenuItemSlug } from './utils/isReservedSettingsMenuItemSlug';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,

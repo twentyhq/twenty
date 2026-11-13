@@ -1,6 +1,10 @@
 import crypto from 'crypto';
 
 import gql from 'graphql-tag';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
@@ -43,6 +47,7 @@ describe('Marketplace application that declares an OAuth client', () => {
   const marketplaceAppUniversalIdentifier = crypto.randomUUID();
   const marketplaceAppRegistrationId = crypto.randomUUID();
   const clientRegistrationId = crypto.randomUUID();
+  const developedApplicationUniversalIdentifier = crypto.randomUUID();
   const clientApplicationId = crypto.randomUUID();
   const clientIdMetadataDocumentUrl = `https://client.example.com/oauth/${crypto.randomUUID()}.json`;
 
@@ -163,6 +168,9 @@ describe('Marketplace application that declares an OAuth client', () => {
       `DELETE FROM core."applicationRegistration" WHERE id IN ($1, $2)`,
       [marketplaceAppRegistrationId, clientRegistrationId],
     );
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: developedApplicationUniversalIdentifier,
+    });
     await invalidateMarketplaceCatalog();
   });
 
@@ -189,6 +197,43 @@ describe('Marketplace application that declares an OAuth client', () => {
       universalIdentifier: marketplaceAppUniversalIdentifier,
       connectUrl: CONNECT_URL,
     });
+  });
+
+  it('should refuse to install the application in a workspace', async () => {
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: developedApplicationUniversalIdentifier,
+      name: 'Developed OAuth Client App',
+      description: 'App that declares an OAuth client',
+      sourcePath: 'developed-oauth-client-app',
+    });
+
+    const { application, ...baseManifest } = buildBaseManifest({
+      appId: developedApplicationUniversalIdentifier,
+      roleId: crypto.randomUUID(),
+      overrides: { roles: [] },
+    });
+
+    const { errors } = await syncApplication({
+      manifest: {
+        ...baseManifest,
+        application: {
+          universalIdentifier: application.universalIdentifier,
+          displayName: application.displayName,
+          description: application.description,
+          packageJsonChecksum: application.packageJsonChecksum,
+          yarnLockChecksum: application.yarnLockChecksum,
+          oAuthClient: {
+            clientIdMetadataDocumentUrls: [clientIdMetadataDocumentUrl],
+            connectUrl: CONNECT_URL,
+          },
+        },
+      },
+      expectToFail: true,
+    });
+
+    expect(errors[0].message).toBe(
+      'An application that declares an OAuth client installs nothing: members connect it themselves',
+    );
   });
 
   it('should attach a connection of the declared client to the application', async () => {

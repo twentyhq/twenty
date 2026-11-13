@@ -271,5 +271,6 @@ export default defineApplication({
 - Each member connects with their own account, and the client acts with that member's permissions.
 - A member's connection is shown under your app only once the app is listed in the marketplace, and only when no other listed app declares the same document URL.
 - Declaring a client does not mark it as verified on the consent screen. That list is kept by the server.
+- An app that declares a client installs nothing. It declares no [role](/developers/extend/apps/config/roles) and cannot ship objects, fields, logic functions, front components or any other entity, nor set `applicationVariables`, `serverVariables`, `billing`, `requestedCapabilities` or `requestedIframeMediaPermissions`. The types of `defineApplication()` reject the combination and the manifest build fails on it.
 
 <PageBanner illustration="card-page-application-config" />

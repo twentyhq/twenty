@@ -6,7 +6,10 @@ import { updateMyUserApplicationVariable } from 'test/integration/metadata/suite
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { findFrontComponent } from 'test/integration/metadata/suites/front-component/utils/find-front-component.util';
 import { findFrontComponents } from 'test/integration/metadata/suites/front-component/utils/find-front-components.util';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  type InstallableApplicationManifest,
+  type Manifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -52,7 +55,7 @@ const buildManifest = (): Manifest => {
           scope: 'USER',
         },
       },
-    },
+    } satisfies InstallableApplicationManifest,
     frontComponents: [
       {
         universalIdentifier: FRONT_COMPONENT_ID,

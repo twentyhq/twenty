@@ -1,6 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  isOAuthClientApplication,
+  type Manifest,
+} from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
@@ -81,6 +84,13 @@ export class ApplicationSyncService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
+    if (isOAuthClientApplication(manifest.application)) {
+      throw new ApplicationException(
+        'An application that declares an OAuth client installs nothing: members connect it themselves',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
       findReservedVariableNamesInApplicationManifest(manifest.application);

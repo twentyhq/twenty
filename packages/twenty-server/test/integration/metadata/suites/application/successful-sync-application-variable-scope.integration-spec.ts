@@ -3,7 +3,10 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { type ApplicationVariableScope } from 'twenty-shared/application';
+import {
+  type ApplicationVariableScope,
+  type InstallableApplicationManifest,
+} from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,7 +43,7 @@ const syncRecordMyMeetingsVariable = async ({
             scope,
           },
         },
-      },
+      } satisfies InstallableApplicationManifest,
     },
     expectToFail: false,
   });

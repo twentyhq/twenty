@@ -4,6 +4,7 @@ import { planPullWrites } from '@/app/pull/plan-pull-writes';
 import { preparePullEntities } from '@/app/pull/prepare-pull-entities';
 import { type ScannedSourceFile } from '@/app/source/scan-project-source-files';
 import {
+  type InstallableApplicationManifest,
   type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
@@ -97,7 +98,9 @@ const buildObject = ({
   ],
 });
 
-const buildManifest = (objects: ObjectManifest[]): Manifest => ({
+const buildManifest = (
+  objects: ObjectManifest[],
+): Manifest & { application: InstallableApplicationManifest } => ({
   ...EMPTY_MANIFEST,
   application: {
     universalIdentifier: APP_UID,
