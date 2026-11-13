@@ -1,13 +1,13 @@
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
+import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
   sectionId: string;
   title: string;
-  threads: AgentChatThreadListItem[];
+  threads: InboxThreadListItemData[];
   currentThreadId: string | null;
-  onThreadClick: (thread: AgentChatThreadListItem) => void;
+  onThreadClick: (thread: InboxThreadListItemData) => void;
 };
 
 export const NavigationDrawerAiChatThreadSection = ({

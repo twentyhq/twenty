@@ -13,16 +13,19 @@
 4. Add the Microsoft Graph delegated permissions below and obtain administrator
    consent where required by your organization.
 
-| Permission                         | Purpose                                                        |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `User.Read`                        | Identify the connected Microsoft account                       |
-| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes              |
-| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting and its subject |
-| `OnlineMeetingTranscript.Read.All` | List and download the transcripts of those meetings            |
+| Permission                         | Purpose                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| `User.Read`                        | Identify the connected Microsoft account                                            |
+| `User.ReadBasic.All`               | List and search the organization directory to link Teams users to workspace members |
+| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes                                   |
+| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting and its subject                      |
+| `OnlineMeetingTranscript.Read.All` | List and download the transcripts of those meetings                                 |
 
 The connection also requests `openid`, `profile`, `email`, and `offline_access`
 for account identity and refresh tokens. It uses the authorization code flow
-with PKCE through Twenty's connection provider.
+with PKCE through Twenty's connection provider. A permission added after a
+connection was created, such as `User.ReadBasic.All`, only takes effect once
+that connection is reconnected.
 
 These OAuth credentials are separate from the `TEAMS_BOT_*` credentials used by
 the chat Bot Connector. They are optional at registration so Teams can be

@@ -39,15 +39,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const secondVisibleRecordField = visibleRecordFields[1];
   const canMove = isLabelIdentifier !== true;
   const canMoveLeft =
-    recordField.fieldMetadataItemId !==
-      secondVisibleRecordField?.fieldMetadataItemId && canMove;
+    recordField.id !== secondVisibleRecordField?.id && canMove;
 
   const lastVisibleRecordField =
     visibleRecordFields[visibleRecordFields.length - 1];
 
-  const canMoveRight =
-    recordField.fieldMetadataItemId !==
-      lastVisibleRecordField?.fieldMetadataItemId && canMove;
+  const canMoveRight = recordField.id !== lastVisibleRecordField?.id && canMove;
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -63,7 +60,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
       return;
     }
 
-    moveTableColumn('left', recordField.fieldMetadataItemId);
+    moveTableColumn('left', recordField.id);
   };
 
   const handleColumnMoveRight = () => {
@@ -71,12 +68,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
       return;
     }
 
-    moveTableColumn('right', recordField.fieldMetadataItemId);
+    moveTableColumn('right', recordField.id);
   };
 
   const handleColumnVisibility = async () => {
     await changeRecordFieldVisibility({
       fieldMetadataId: recordField.fieldMetadataItemId,
+      recordFieldId: recordField.id,
       isVisible: false,
     });
   };

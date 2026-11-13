@@ -8,6 +8,7 @@ import { gql } from 'graphql-tag';
 import { type Repository } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -42,21 +43,15 @@ const CREATE_WORKSPACE_USAGE_LIMIT = gql`
   mutation CreateWorkspaceUsageLimit(
     $workspaceId: UUID!
     $payload: CreateUsageLimitInput!
+    $endsAt: DateTime
   ) {
-    createWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
+    createWorkspaceUsageLimit(
+      workspaceId: $workspaceId
+      payload: $payload
+      endsAt: $endsAt
+    ) {
       id
       limitValue
-    }
-  }
-`;
-
-const UPDATE_WORKSPACE_USAGE_LIMIT = gql`
-  mutation UpdateWorkspaceUsageLimit(
-    $workspaceId: UUID!
-    $payload: UpdateUsageLimitInput!
-  ) {
-    updateWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
-      id
     }
   }
 `;
@@ -85,6 +80,21 @@ const STORAGE_STOCK_PAYLOAD = {
   limitValue: 5_000_000,
   burstValue: null,
 };
+
+const USER_CREDIT_QUOTA_PAYLOAD = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.ALL,
+  spenderType: 'userWorkspace',
+  spenderId: null,
+  limitKind: 'quota',
+  periodCount: 1,
+  periodUnit: 'week',
+  unit: UsageUnit.USER_CREDIT,
+  limitValue: 3_000_000,
+  burstValue: null,
+};
+
+const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 
 describe('Workspace usage limits from the admin panel', () => {
   const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
@@ -120,6 +130,12 @@ describe('Workspace usage limits from the admin panel', () => {
 
   afterEach(async () => {
     await usageLimitRepository.delete({ workspaceId: SEED_APPLE_WORKSPACE_ID });
+
+    if (isBillingEnabled) {
+      await getCoreRepository<BillingArrangementEntity>(
+        BillingArrangementEntity,
+      ).delete({ workspaceId: SEED_APPLE_WORKSPACE_ID });
+    }
   });
 
   it('lists the instance defaults that apply to the workspace', async () => {
@@ -178,6 +194,55 @@ describe('Workspace usage limits from the admin panel', () => {
     );
   });
 
+  (isBillingEnabled ? it.skip : it)(
+    'refuses an end date when billing is disabled',
+    async () => {
+      const response = await makeAdminPanelApiRequest({
+        query: CREATE_WORKSPACE_USAGE_LIMIT,
+        variables: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload: STORAGE_STOCK_PAYLOAD,
+          endsAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        },
+      });
+
+      expect(response.body.errors).toBeDefined();
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    },
+  );
+
+  it('lets an operator override the AI credits each member gets per week, even without a default value', async () => {
+    const response = await makeAdminPanelApiRequest({
+      query: CREATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: USER_CREDIT_QUOTA_PAYLOAD,
+      },
+    });
+
+    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
+
+    jestExpectToBeDefined(usageLimitId);
+
+    const workspaceUsageLimits = await findWorkspaceUsageLimits();
+
+    expect(workspaceUsageLimits.defaults).toContainEqual(
+      expect.objectContaining({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.ALL,
+        spenderType: 'userWorkspace',
+        unit: UsageUnit.USER_CREDIT,
+        limitValue: null,
+        isOverridable: true,
+        overriddenByUsageLimitId: usageLimitId,
+      }),
+    );
+  });
+
   it('lets an operator remove the override it created', async () => {
     const createResponse = await makeAdminPanelApiRequest({
       query: CREATE_WORKSPACE_USAGE_LIMIT,
@@ -231,17 +296,6 @@ describe('Workspace usage limits from the admin panel', () => {
         {
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           payload: STORAGE_STOCK_PAYLOAD,
-        },
-      ],
-      [
-        'update',
-        UPDATE_WORKSPACE_USAGE_LIMIT,
-        {
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          payload: {
-            id: '3a2f1e5c-6b7d-4e8f-9a0b-1c2d3e4f5a6b',
-            payload: STORAGE_STOCK_PAYLOAD,
-          },
         },
       ],
       [

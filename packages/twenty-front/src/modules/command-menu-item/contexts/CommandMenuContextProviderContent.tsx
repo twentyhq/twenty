@@ -104,7 +104,7 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    const isAiChatInboxHeader =
+    const isInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
         StandardObjectNameSingular.AgentChatThread &&
@@ -158,7 +158,7 @@ export const CommandMenuContextProviderContent = ({
             ...item,
             isPinned:
               item.isPinned ||
-              (isAiChatInboxHeader &&
+              (isInboxHeader &&
                 item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
           },
           commandMenuContextApiForAvailability,
