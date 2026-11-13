@@ -4,8 +4,10 @@ import { deleteApprovedAccessDomain } from 'test/integration/graphql/utils/delet
 import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get-access-token-for-credentials.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
+import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   countUserWorkspaceMemberships,
   deleteUserByEmail,
@@ -39,6 +41,7 @@ const YCOMBINATOR_INVITE_HASH = 'yc.dev-invite-hash';
 const YC_MEMBER_EMAIL = 'phil.schiler@apple.dev';
 const NON_YC_MEMBER_EMAIL = 'scott.forstall@apple.dev';
 const YC_ADMIN_EMAIL = 'tim@apple.dev';
+const UNVERIFIED_ACCOUNT_PASSWORD = 'Password123!';
 
 describe('SAML callback sign-in', () => {
   const identityProviderCredentials: SelfSignedSamlCredentials =
@@ -226,7 +229,10 @@ describe('SAML callback sign-in', () => {
       unverifiedEmail = `unverified-${uuidv4()}@acme.test`;
 
       await signUp({
-        input: { email: unverifiedEmail, password: 'Password123!' },
+        input: {
+          email: unverifiedEmail,
+          password: UNVERIFIED_ACCOUNT_PASSWORD,
+        },
         expectToFail: false,
       });
     });
@@ -289,6 +295,38 @@ describe('SAML callback sign-in', () => {
           workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
         }),
       ).toBe(0);
+    });
+
+    it('signs a member in without verifying their password account', async () => {
+      assertIsDefinedOrThrow(unverifiedEmail);
+
+      const joinResponse = await makeMetadataApiRequest(
+        signUpInWorkspaceOperationFactory({
+          email: unverifiedEmail,
+          password: UNVERIFIED_ACCOUNT_PASSWORD,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+          workspaceInviteHash: YCOMBINATOR_INVITE_HASH,
+        }),
+        null,
+      );
+
+      expect(joinResponse.body.errors).toBeUndefined();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
+
+      identityProviderId = await registerSelfSignedSamlIdentityProvider({
+        workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+        credentials: identityProviderCredentials,
+      });
+
+      const redirectUrl = await postSelfSignedSamlAssertion({
+        identityProviderId,
+        email: unverifiedEmail,
+        credentials: identityProviderCredentials,
+      });
+
+      expect(redirectUrl.searchParams.get('errorMessage')).toBeNull();
+      expect(await exchangeLoginToken(redirectUrl)).toBeDefined();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
     });
   });
 

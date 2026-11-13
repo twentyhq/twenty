@@ -2,10 +2,12 @@ import { getAccessTokenForCredentials } from 'test/integration/graphql/utils/get
 import { clearInvitationSendingThrottle } from 'test/integration/graphql/utils/clear-invitation-sending-throttle.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { deleteWorkspaceInvitationsByEmail } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
+import { signUpInWorkspaceOperationFactory } from 'test/integration/graphql/utils/sign-up-in-workspace-operation-factory.util';
 import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { sendInvitations } from 'test/integration/graphql/suites/user-session/utils/send-invitations.util';
 import { createOneOidcIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/create-one-oidc-identity-provider.util';
 import { deleteOneSsoIdentityProvider } from 'test/integration/metadata/suites/sso-identity-provider/utils/delete-one-sso-identity-provider.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   countUserWorkspaceMemberships,
   deleteUserByEmail,
@@ -34,6 +36,7 @@ const YCOMBINATOR_INVITE_HASH = 'yc.dev-invite-hash';
 // Phil is a member of both Apple and YCombinator; Scott is a member of Apple only.
 const YC_MEMBER_EMAIL = 'phil.schiler@apple.dev';
 const NON_YC_MEMBER_EMAIL = 'scott.forstall@apple.dev';
+const UNVERIFIED_ACCOUNT_PASSWORD = 'Password123!';
 
 describe('OIDC callback sign-in', () => {
   let localOidcIssuer: LocalOidcIssuer;
@@ -190,7 +193,10 @@ describe('OIDC callback sign-in', () => {
       unverifiedEmail = `unverified-${uuidv4()}@acme.test`;
 
       await signUp({
-        input: { email: unverifiedEmail, password: 'Password123!' },
+        input: {
+          email: unverifiedEmail,
+          password: UNVERIFIED_ACCOUNT_PASSWORD,
+        },
         expectToFail: false,
       });
     });
@@ -249,6 +255,34 @@ describe('OIDC callback sign-in', () => {
           workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
         }),
       ).toBe(0);
+    });
+
+    it('signs a member in without verifying their password account', async () => {
+      assertIsDefinedOrThrow(unverifiedEmail);
+
+      const joinResponse = await makeMetadataApiRequest(
+        signUpInWorkspaceOperationFactory({
+          email: unverifiedEmail,
+          password: UNVERIFIED_ACCOUNT_PASSWORD,
+          workspaceId: SEED_YCOMBINATOR_WORKSPACE_ID,
+          workspaceInviteHash: YCOMBINATOR_INVITE_HASH,
+        }),
+        null,
+      );
+
+      expect(joinResponse.body.errors).toBeUndefined();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
+
+      identityProviderId = await registerLocalOidcIdentityProvider();
+
+      const redirectUrl = await signInWithLocalOidcIssuer({
+        identityProviderId,
+        email: unverifiedEmail,
+      });
+
+      expect(redirectUrl.searchParams.get('errorMessage')).toBeNull();
+      expect(await exchangeLoginToken(redirectUrl)).toBeDefined();
+      expect(await getUserIsEmailVerified(unverifiedEmail)).toBe(false);
     });
   });
 
