@@ -27,7 +27,7 @@ describe('Marketplace application that declares an OAuth client', () => {
   const clientApplicationId = crypto.randomUUID();
   const clientIdMetadataDocumentUrl = `https://client.example.com/oauth/${crypto.randomUUID()}.json`;
 
-  let ds: DataSource;
+  let dataSource: DataSource;
 
   const invalidateMarketplaceCatalog = () =>
     getAppProviderByClassName<CoreEntityCacheService>(
@@ -35,7 +35,7 @@ describe('Marketplace application that declares an OAuth client', () => {
     ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
 
   const setMarketplaceAppListed = async (isListed: boolean) => {
-    await ds.query(
+    await dataSource.query(
       `UPDATE core."applicationRegistration" SET "isListed" = $1 WHERE id = $2`,
       [isListed, marketplaceAppRegistrationId],
     );
@@ -56,9 +56,9 @@ describe('Marketplace application that declares an OAuth client', () => {
   };
 
   beforeAll(async () => {
-    ds = global.testDataSource;
+    dataSource = global.testDataSource;
 
-    await ds.query(
+    await dataSource.query(
       `INSERT INTO core."applicationRegistration"
         (id, "universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris",
          "oAuthScopes", "workspaceId", "sourceType", "sourcePackage",
@@ -84,7 +84,7 @@ describe('Marketplace application that declares an OAuth client', () => {
       ],
     );
 
-    await ds.query(
+    await dataSource.query(
       `INSERT INTO core."applicationRegistration"
         (id, "universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris",
          "oAuthScopes", "workspaceId", "sourceType")
@@ -99,7 +99,7 @@ describe('Marketplace application that declares an OAuth client', () => {
       ],
     );
 
-    await ds.query(
+    await dataSource.query(
       `INSERT INTO core."application"
         (id, "universalIdentifier", name, "workspaceId",
          "applicationRegistrationId", "sourceType", "sourcePath",
@@ -114,7 +114,7 @@ describe('Marketplace application that declares an OAuth client', () => {
       ],
     );
 
-    await ds.query(
+    await dataSource.query(
       `INSERT INTO core."applicationAuthorization"
         ("userId", "workspaceId", "userWorkspaceId", "applicationId", scopes,
          "lastAuthorizedAt", "lastUsedAt")
@@ -133,14 +133,14 @@ describe('Marketplace application that declares an OAuth client', () => {
   });
 
   afterAll(async () => {
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."applicationAuthorization" WHERE "applicationId" = $1`,
       [clientApplicationId],
     );
-    await ds.query(`DELETE FROM core."application" WHERE id = $1`, [
+    await dataSource.query(`DELETE FROM core."application" WHERE id = $1`, [
       clientApplicationId,
     ]);
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."applicationRegistration" WHERE id IN ($1, $2)`,
       [marketplaceAppRegistrationId, clientRegistrationId],
     );
@@ -237,9 +237,10 @@ describe('Marketplace application that declares an OAuth client', () => {
 
     expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBeNull();
 
-    await ds.query(`DELETE FROM core."applicationRegistration" WHERE id = $1`, [
-      hiddenRegistrationId,
-    ]);
+    await dataSource.query(
+      `DELETE FROM core."applicationRegistration" WHERE id = $1`,
+      [hiddenRegistrationId],
+    );
     await invalidateMarketplaceCatalog();
 
     expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBe(

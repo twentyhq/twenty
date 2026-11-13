@@ -68,7 +68,11 @@ import {
   type WorkflowManifest,
   isOAuthClientApplication,
 } from 'twenty-shared/application';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 const loadSources = (appPath: string): Promise<string[]> =>
   listApplicationSourceFiles(appPath);
@@ -803,19 +807,19 @@ export const buildManifest = async (
       ...applicationConfigRest,
       ...listing,
       defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
-      ...(postInstallLogicFunctions.length >= 1
+      ...(isNonEmptyArray(postInstallLogicFunctions)
         ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
         : {}),
-      ...(preInstallLogicFunctions.length >= 1
+      ...(isNonEmptyArray(preInstallLogicFunctions)
         ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
         : {}),
-      ...(uninstallLogicFunctions.length >= 1
+      ...(isNonEmptyArray(uninstallLogicFunctions)
         ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
         : {}),
       ...(isDefined(healthCheckLogicFunction)
         ? { healthCheckLogicFunction }
         : {}),
-      ...(settingsFrontComponentUniversalIdentifiers.length >= 1
+      ...(isNonEmptyArray(settingsFrontComponentUniversalIdentifiers)
         ? {
             settingsFrontComponent: {
               universalIdentifier:

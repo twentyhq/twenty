@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ApplicationOAuthClient } from '@/application/applicationOAuthClientType';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { getUrlSafely } from '@/utils/getUrlSafely';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const getClientIdMetadataDocumentUrlErrors = (
   clientIdMetadataDocumentUrl: unknown,
@@ -13,7 +14,7 @@ const getClientIdMetadataDocumentUrlErrors = (
 
   const url = getUrlSafely(clientIdMetadataDocumentUrl);
 
-  if (url === null || url.href !== clientIdMetadataDocumentUrl) {
+  if (!isDefined(url) || url.href !== clientIdMetadataDocumentUrl) {
     return [
       `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must be a canonical URL`,
     ];

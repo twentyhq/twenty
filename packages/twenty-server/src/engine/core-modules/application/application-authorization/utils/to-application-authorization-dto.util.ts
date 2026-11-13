@@ -2,7 +2,37 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { findVerifiedOAuthClientForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-registration.util';
+
+const findMarketplaceAppUniversalIdentifier = ({
+  applicationRegistration,
+  marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl,
+}: {
+  applicationRegistration: ApplicationRegistrationEntity | null | undefined;
+  marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl: Record<
+    string,
+    string
+  >;
+}): string | null => {
+  if (!isDefined(applicationRegistration)) {
+    return null;
+  }
+
+  const verifiedOAuthClient = findVerifiedOAuthClientForRegistration(
+    applicationRegistration,
+  );
+
+  if (isDefined(verifiedOAuthClient)) {
+    return verifiedOAuthClient.marketplaceAppUniversalIdentifier;
+  }
+
+  return (
+    marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl[
+      applicationRegistration.oAuthClientId
+    ] ?? null
+  );
+};
 
 export const toApplicationAuthorizationDTO = ({
   authorization,
@@ -24,14 +54,10 @@ export const toApplicationAuthorizationDTO = ({
     applicationName: authorization.application.name,
     applicationUniversalIdentifier:
       authorization.application.universalIdentifier,
-    marketplaceAppUniversalIdentifier: isDefined(applicationRegistration)
-      ? (findVerifiedOAuthClientForRegistration(applicationRegistration)
-          ?.marketplaceAppUniversalIdentifier ??
-        marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl[
-          applicationRegistration.oAuthClientId
-        ] ??
-        null)
-      : null,
+    marketplaceAppUniversalIdentifier: findMarketplaceAppUniversalIdentifier({
+      applicationRegistration,
+      marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl,
+    }),
     scopes: authorization.scopes,
     lastAuthorizedAt: authorization.lastAuthorizedAt,
     lastUsedAt: authorization.lastUsedAt,
