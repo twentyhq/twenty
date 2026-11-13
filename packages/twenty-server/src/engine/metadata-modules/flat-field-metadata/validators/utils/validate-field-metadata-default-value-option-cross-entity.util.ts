@@ -23,7 +23,10 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
     flatFieldMetadataOptionMaps,
   },
   orchestratorActionsReport,
+  isWorkspaceCaller,
 }: {
+  // A workspace deactivation must not fail another application's sync, so only the workspace is held to it.
+  isWorkspaceCaller: boolean;
   fromFlatFieldMetadataOptionMaps:
     | MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>
     | undefined;
@@ -101,12 +104,14 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       optionValues,
     );
 
-    const isActiveOverride = readAuthoredOverrideProperty({
-      metadataName: 'fieldMetadataOption',
-      overrides: flatFieldMetadataOption.overrides,
-      path: ['isActive'],
-      authorContext: { ownerApplicationUniversalIdentifier: undefined },
-    });
+    const isActiveOverride = isWorkspaceCaller
+      ? readAuthoredOverrideProperty({
+          metadataName: 'fieldMetadataOption',
+          overrides: flatFieldMetadataOption.overrides,
+          path: ['isActive'],
+          authorContext: { ownerApplicationUniversalIdentifier: undefined },
+        })
+      : undefined;
 
     if (
       (isBoolean(isActiveOverride)

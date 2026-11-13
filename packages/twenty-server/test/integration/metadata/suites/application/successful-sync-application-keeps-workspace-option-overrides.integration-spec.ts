@@ -28,10 +28,15 @@ type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
 >;
 
-const buildManifest = (
-  options: SelectFieldOptions,
+const buildManifest = ({
+  options,
   selectFieldLabel = 'Status',
-) => {
+  selectFieldDefaultValue,
+}: {
+  options: SelectFieldOptions;
+  selectFieldLabel?: string;
+  selectFieldDefaultValue?: string;
+}) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
     nameSingular: 'optionOverridesSubject',
@@ -52,6 +57,9 @@ const buildManifest = (
         label: selectFieldLabel,
         type: FieldMetadataType.SELECT,
         options,
+        ...(selectFieldDefaultValue !== undefined
+          ? { defaultValue: selectFieldDefaultValue }
+          : {}),
       },
     ],
   };
@@ -87,12 +95,26 @@ const MANIFEST_OPTIONS: SelectFieldOptions = [
   },
 ];
 
+const FINAL_MANIFEST_OPTIONS: SelectFieldOptions = [
+  { ...MANIFEST_OPTIONS[0], label: 'Opened' },
+  MANIFEST_OPTIONS[1],
+  MANIFEST_OPTIONS[2],
+  {
+    id: PENDING_OPTION_ID,
+    value: 'PENDING',
+    label: 'Pending',
+    color: 'yellow',
+    position: 3,
+  },
+];
+
 const findSelectField = async (): Promise<{
   id: string;
   options: { value: string }[];
+  defaultValue: unknown;
 }> => {
   const [selectField] = await globalThis.testDataSource.query(
-    `SELECT id, options FROM core."fieldMetadata"
+    `SELECT id, options, "defaultValue" FROM core."fieldMetadata"
       WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
     [SEED_APPLE_WORKSPACE_ID, SELECT_FIELD_ID],
   );
@@ -143,7 +165,7 @@ describe('Sync application keeps the option edits a workspace made on its fields
 
   it('keeps overrides, deactivations and workspace options across syncs', async () => {
     await syncApplication({
-      manifest: buildManifest(MANIFEST_OPTIONS),
+      manifest: buildManifest({ options: MANIFEST_OPTIONS }),
       expectToFail: false,
     });
 
@@ -215,7 +237,7 @@ describe('Sync application keeps the option edits a workspace made on its fields
     ]);
 
     await syncApplication({
-      manifest: buildManifest(MANIFEST_OPTIONS),
+      manifest: buildManifest({ options: MANIFEST_OPTIONS }),
       expectToFail: false,
     });
 
@@ -224,25 +246,17 @@ describe('Sync application keeps the option edits a workspace made on its fields
 
     // A field-only change carries no option operations, so the workspace option must survive it.
     await syncApplication({
-      manifest: buildManifest(MANIFEST_OPTIONS, 'State'),
+      manifest: buildManifest({
+        options: MANIFEST_OPTIONS,
+        selectFieldLabel: 'State',
+      }),
       expectToFail: false,
     });
 
     expect(await findSelectFieldOptionRows()).toEqual(workspaceEditedRows);
 
     await syncApplication({
-      manifest: buildManifest([
-        { ...MANIFEST_OPTIONS[0], label: 'Opened' },
-        MANIFEST_OPTIONS[1],
-        MANIFEST_OPTIONS[2],
-        {
-          id: PENDING_OPTION_ID,
-          value: 'PENDING',
-          label: 'Pending',
-          color: 'yellow',
-          position: 3,
-        },
-      ]),
+      manifest: buildManifest({ options: FINAL_MANIFEST_OPTIONS }),
       expectToFail: false,
     });
 
@@ -287,5 +301,16 @@ describe('Sync application keeps the option edits a workspace made on its fields
       'PAUSED',
       'PENDING',
     ]);
+
+    // The workspace deactivated PAUSED; the app making it its default must still sync.
+    await syncApplication({
+      manifest: buildManifest({
+        options: FINAL_MANIFEST_OPTIONS,
+        selectFieldDefaultValue: "'PAUSED'",
+      }),
+      expectToFail: false,
+    });
+
+    expect((await findSelectField()).defaultValue).toBe("'PAUSED'");
   }, 120000);
 });

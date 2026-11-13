@@ -13,6 +13,7 @@ import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manag
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation } from 'src/engine/workspace-manager/workspace-migration/utils/validate-universal-identifier-cross-entity-uniqueness-through-report-mutation.util';
 
 export const crossEntityTransversalValidation = ({
@@ -21,8 +22,14 @@ export const crossEntityTransversalValidation = ({
   preDeletionFlatViewFieldMaps,
   fromFlatFieldMetadataMaps,
   fromFlatFieldMetadataOptionMaps,
+  buildOptions,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
+  buildOptions: Pick<
+    WorkspaceMigrationValidationBuildOptions,
+    | 'applicationUniversalIdentifier'
+    | 'workspaceCustomApplicationUniversalIdentifier'
+  >;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
   fromFlatFieldMetadataMaps:
@@ -63,6 +70,9 @@ export const crossEntityTransversalValidation = ({
       fromFlatFieldMetadataOptionMaps,
       optimisticUniversalFlatMaps,
       orchestratorActionsReport,
+      isWorkspaceCaller:
+        buildOptions.applicationUniversalIdentifier ===
+        buildOptions.workspaceCustomApplicationUniversalIdentifier,
     });
 
   const { navigationMenuItem } =
