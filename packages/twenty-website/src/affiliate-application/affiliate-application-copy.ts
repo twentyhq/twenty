@@ -16,7 +16,6 @@ export const AFFILIATE_APPLICATION_COPY = {
     countrySearchEmpty: msg`No matching country.`,
     promotionPlan: msg`How you plan to promote Twenty`,
     promotionPlanPlaceholder: msg`Reviews, tutorials, migration guides, client recommendations…`,
-    isIntegrationPartner: msg`I'm already a Twenty integration partner`,
   },
   errors: {
     name: msg`Please enter your full name.`,

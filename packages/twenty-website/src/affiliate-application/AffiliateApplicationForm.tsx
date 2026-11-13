@@ -126,7 +126,6 @@ type FormState = {
   audienceSize: string;
   country: string;
   promotionPlan: string;
-  isIntegrationPartner: boolean;
   acceptsTerms: boolean;
 };
 
@@ -138,7 +137,6 @@ const INITIAL_STATE: FormState = {
   audienceSize: '',
   country: '',
   promotionPlan: '',
-  isIntegrationPartner: false,
   acceptsTerms: false,
 };
 
@@ -158,7 +156,6 @@ function buildRequestBody(state: FormState) {
     ...(isNonEmptyString(trimmedAudience) && { audienceSize: trimmedAudience }),
     ...(isNonEmptyString(trimmedCountry) && { country: trimmedCountry }),
     ...(isNonEmptyString(trimmedPlan) && { promotionPlan: trimmedPlan }),
-    ...(state.isIntegrationPartner && { isIntegrationPartner: true }),
     acceptsTerms: state.acceptsTerms,
   };
 }
@@ -316,17 +313,6 @@ export function AffiliateApplicationForm() {
       <FullWidth>
         <Footer>
           <CheckboxStack>
-            <CheckboxLabel>
-              <input
-                checked={state.isIntegrationPartner}
-                name="isIntegrationPartner"
-                onChange={(event) =>
-                  setField('isIntegrationPartner', event.target.checked)
-                }
-                type="checkbox"
-              />
-              {i18n._(COPY.fields.isIntegrationPartner)}
-            </CheckboxLabel>
             {/* A div, not a label: a link inside a label makes a click ambiguous. */}
             <CheckboxLabel as="div">
               <input

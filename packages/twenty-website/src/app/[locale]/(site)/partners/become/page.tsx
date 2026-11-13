@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { PartnerApplicationModalRoot } from '@/partner-application';
 import { getCommunityStats } from '@/platform/community';
 import {
@@ -14,6 +15,7 @@ import { CaseStudyPromo } from '@/sections/case-study-promo';
 import { BecomePartnerFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PartnerHero } from '@/sections/partner-hero';
+import { PartnerLevels, ProgramSwitchStrip } from '@/sections/partner-programs';
 import { PartnerSignoff } from '@/sections/partner-signoff';
 import { PartnerTestimonials } from '@/sections/testimonials';
 import { TrustedBy } from '@/sections/trusted-by';
@@ -38,7 +40,7 @@ export default async function BecomePartnerPage({
           [
             { name: 'Home', path: '/' },
             { name: 'Partners', path: '/partners' },
-            { name: 'Become a partner', path: '/partners/become' },
+            { name: 'Become an integrator', path: '/partners/become' },
           ],
           locale,
         )}
@@ -46,6 +48,7 @@ export default async function BecomePartnerPage({
       <Menu communityStats={communityStats} />
       <main>
         <PartnerHero />
+        <PartnerLevels />
         <PartnerTestimonials />
         {/* TrustedBy + CaseStudyPromo form one continuous frame: the promo
             `connectsUp` into the band, so this adjacency is load-bearing —
@@ -53,6 +56,12 @@ export default async function BecomePartnerPage({
         <TrustedBy />
         <CaseStudyPromo />
         <PartnerSignoff />
+        <ProgramSwitchStrip
+          heading={msg`You create content, *not implementations?*`}
+          body={msg`Creators, communities and tech partners earn 20% on every team they bring to Twenty.`}
+          label={msg`See the creator program`}
+          href="/affiliate-partners"
+        />
         <BecomePartnerFaq />
       </main>
     </PartnerApplicationModalRoot>

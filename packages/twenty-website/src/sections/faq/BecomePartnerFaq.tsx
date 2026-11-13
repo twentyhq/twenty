@@ -34,7 +34,7 @@ export function BecomePartnerFaq() {
           <Eyebrow>{i18n._(msg`Questions`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`Becoming *a Twenty partner*`)}
+              {i18n._(msg`Becoming *a Twenty integrator*`)}
             </Heading>
           </HeadingMeasure>
         </SectionIntro>
