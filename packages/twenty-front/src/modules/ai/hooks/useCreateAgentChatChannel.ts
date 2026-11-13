@@ -1,20 +1,20 @@
 import { useCallback } from 'react';
 
-import { useRunAgentChatChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
+import { useRunInboxChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
 import { CreateAgentChatChannelDocument } from '~/generated-metadata/graphql';
 
-export const useCreateAgentChatChannel = () => {
-  const { runAgentChatChannelMutation } = useRunAgentChatChannelMutation();
+export const useCreateInboxChannel = () => {
+  const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
   const createAgentChatChannel = useCallback(
     async (name: string) =>
       (
-        await runAgentChatChannelMutation({
+        await runInboxChannelMutation({
           mutation: CreateAgentChatChannelDocument,
           variables: { input: { name } },
         })
       )?.createAgentChatChannel.id,
-    [runAgentChatChannelMutation],
+    [runInboxChannelMutation],
   );
 
   return { createAgentChatChannel };

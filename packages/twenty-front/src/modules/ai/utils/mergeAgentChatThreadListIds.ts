@@ -1,4 +1,4 @@
-export const mergeAgentChatThreadListIds = ({
+export const mergeInboxThreadListIds = ({
   mode,
   threadIdsBeforeRequest,
   currentThreadIds,

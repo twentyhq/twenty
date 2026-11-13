@@ -1,4 +1,4 @@
-export const AGENT_CHAT_QUICK_REACTION_EMOJIS = [
+export const AI_CHAT_QUICK_REACTION_EMOJIS = [
   '👍',
   '👀',
   '✅',

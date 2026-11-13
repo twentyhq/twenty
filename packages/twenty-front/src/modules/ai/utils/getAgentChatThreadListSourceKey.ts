@@ -1,8 +1,8 @@
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { getInboxChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 
-export const getAgentChatThreadListSourceKey = (
-  source: AgentChatThreadListSource,
+export const getInboxThreadListSourceKey = (
+  source: InboxThreadListSource,
 ): string => {
   switch (source.type) {
     case 'recent':
@@ -10,6 +10,6 @@ export const getAgentChatThreadListSourceKey = (
     case 'presetFilter':
       return `presetFilter:${source.presetFilter}`;
     case 'channel':
-      return `channel:${getAgentChatChannelViewKey(source.channelView)}`;
+      return `channel:${getInboxChannelViewKey(source.channelView)}`;
   }
 };

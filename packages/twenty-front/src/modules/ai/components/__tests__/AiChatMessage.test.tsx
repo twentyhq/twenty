@@ -1,16 +1,22 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -36,6 +42,10 @@ jest.mock('@/ai/components/AiChatAssistantMessageRenderer', () => ({
   ),
 }));
 
+jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
+}));
+
 jest.mock('@/ai/components/AiChatMessageReactionPicker', () => ({
   AiChatMessageReactionPicker: () => null,
 }));
@@ -50,6 +60,10 @@ jest.mock('@/ai/components/AiChatErrorRenderer', () => ({
 
 jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
+}));
+
+jest.mock('@/ai/utils/scrollToAgentChatMessage', () => ({
+  scrollToAiChatMessage: jest.fn(),
 }));
 
 const THREAD_ID = '1b8e5c2a-4d3f-4a6b-9c7e-2f1d0a9b8c71';
@@ -103,16 +117,79 @@ const MESSAGE_WITHOUT_SENDER: ExtendedUIMessage = {
   metadata: { createdAt: '2026-10-15T07:00:00.000Z' },
 };
 
+const REPLY_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Julia Martin:** Which deals close this week?\n\nThe Acme renewal does.',
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:01:00.000Z' },
+};
+
+const REPLY_TO_MISSING_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-to-missing-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Julia Martin:** Who owns Stripe?\n\nI do.',
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:02:00.000Z' },
+};
+
+const BUILT_IN_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'built-in-assistant-message',
+  role: 'assistant',
+  parts: [{ type: 'text', text: 'Three deals are at risk.' }],
+  metadata: { createdAt: '2026-10-15T08:03:00.000Z', isBuiltInAssistant: true },
+};
+
+const TOOL_ONLY_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'tool-only-assistant-message',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-find_companies',
+      toolCallId: 'call-2',
+      state: 'output-available',
+      input: {},
+      output: { success: true },
+    },
+  ],
+  metadata: { createdAt: '2026-10-15T08:04:00.000Z', isBuiltInAssistant: true },
+};
+
+const REPLY_TO_ASSISTANT_MESSAGE: ExtendedUIMessage = {
+  id: 'reply-to-assistant-message',
+  role: 'user',
+  parts: [
+    {
+      type: 'text',
+      text: '> **Ada:** Three deals are at risk.\n\nWhich ones?',
+    },
+  ],
+  metadata: {
+    createdAt: '2026-10-15T08:05:00.000Z',
+    senderWorkspaceMemberId: MEMBER_ID,
+  },
+};
+
 const renderMessage = ({
   messageId,
   isAiChatInboxEnabled,
   currentWorkspaceMemberId,
   error,
+  hasComposerQuote = false,
 }: {
   messageId: string;
   isAiChatInboxEnabled: boolean;
   currentWorkspaceMemberId?: string;
   error?: Error;
+  hasComposerQuote?: boolean;
 }) => {
   jotaiStore.set(
     currentWorkspaceMemberState.atom,
@@ -140,15 +217,22 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
+  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
-    agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     [
       USER_MESSAGE,
       ASSISTANT_MESSAGE,
       NAMED_ASSISTANT_MESSAGE,
       SILENT_MESSAGE,
       MESSAGE_WITHOUT_SENDER,
+      REPLY_MESSAGE,
+      REPLY_TO_MISSING_MESSAGE,
+      BUILT_IN_ASSISTANT_MESSAGE,
+      TOOL_ONLY_ASSISTANT_MESSAGE,
+      REPLY_TO_ASSISTANT_MESSAGE,
     ],
   );
 
@@ -156,6 +240,7 @@ const renderMessage = ({
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
         <AiChatMessage messageId={messageId} error={error} />
+        {hasComposerQuote && <AiChatComposerQuote />}
       </I18nProvider>
     </JotaiProvider>,
   );
@@ -163,6 +248,7 @@ const renderMessage = ({
 
 describe('AiChatMessage', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceMemberState.atom, null);
   });
@@ -189,6 +275,16 @@ describe('AiChatMessage', () => {
     expect(screen.queryByText('You')).not.toBeInTheDocument();
     expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
     expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+  });
+
+  it('lets the current member quote their own inbox message', () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(screen.getByRole('button', { name: 'Reply' })).toBeInTheDocument();
   });
 
   it('keeps another member name and one timestamp when signed in', () => {
@@ -278,5 +374,152 @@ describe('AiChatMessage', () => {
     expect(
       screen.getByText('The connection to the assistant was lost'),
     ).toBeInTheDocument();
+  });
+
+  it('opens the original message from the quote a reply starts with', async () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: true });
+
+    expect(screen.getByText('The Acme renewal does.')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View original message' }),
+    );
+
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+  });
+
+  it('names the current member "You" when a reply quotes their own message', () => {
+    renderMessage({
+      messageId: REPLY_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+    });
+
+    expect(screen.getByText('You')).toBeInTheDocument();
+    expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
+  });
+
+  it('shows "Replying to You" when the composer quotes an own message', async () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getByText('Replying to')).toBeInTheDocument();
+    expect(screen.getByText('You')).toBeInTheDocument();
+  });
+
+  it('hides the reply bar while switching to another chat', async () => {
+    renderMessage({
+      messageId: USER_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+    expect(screen.getByText('Replying to')).toBeInTheDocument();
+
+    act(() => {
+      jotaiStore.set(currentAiChatThreadState.atom, 'another-thread');
+      jotaiStore.set(
+        aiChatQuotedMessageIdFamilyState.atomFamily({
+          threadId: 'another-thread',
+        }),
+        USER_MESSAGE.id,
+      );
+    });
+
+    expect(screen.queryByText('Replying to')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Original message unavailable'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('opens the original message from the keyboard', async () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: true });
+
+    screen.getByRole('button', { name: 'View original message' }).focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+  });
+
+  it('shows a quote whose original is missing without a way to open it', () => {
+    renderMessage({
+      messageId: REPLY_TO_MISSING_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.getByText('Who owns Stripe?')).toBeInTheDocument();
+    expect(screen.getByText('I do.')).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'View original message' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('leaves a quote-shaped message as written outside the inbox', () => {
+    renderMessage({ messageId: REPLY_MESSAGE.id, isAiChatInboxEnabled: false });
+
+    expect(
+      screen.getByText(/\*\*Julia Martin:\*\* Which deals close this week\?/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'View original message' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('lets a member quote the assistant by its name', async () => {
+    renderMessage({
+      messageId: BUILT_IN_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    expect(screen.getAllByText('Ada')).toHaveLength(1);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getAllByText('Three deals are at risk.')).toHaveLength(2);
+    expect(
+      screen.getByRole('button', { name: 'Remove quote' }),
+    ).toBeInTheDocument();
+  });
+
+  it('lets a member quote an assistant turn without text', async () => {
+    renderMessage({
+      messageId: TOOL_ONLY_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+      currentWorkspaceMemberId: MEMBER_ID,
+      hasComposerQuote: true,
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reply' }));
+
+    expect(screen.getAllByText('Ada')).toHaveLength(2);
+    expect(screen.getByText('No text content')).toBeInTheDocument();
+  });
+
+  it('opens the assistant message a reply quotes', async () => {
+    renderMessage({
+      messageId: REPLY_TO_ASSISTANT_MESSAGE.id,
+      isAiChatInboxEnabled: true,
+    });
+
+    expect(screen.getByText('Which ones?')).toBeInTheDocument();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View original message' }),
+    );
+
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(
+      BUILT_IN_ASSISTANT_MESSAGE.id,
+    );
   });
 });

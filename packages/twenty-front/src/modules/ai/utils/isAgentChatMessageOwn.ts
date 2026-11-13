@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
-export const isAgentChatMessageOwn = ({
+export const isAiChatMessageOwn = ({
   message,
   currentWorkspaceMemberId,
   isSenderlessUserMessageOwn,

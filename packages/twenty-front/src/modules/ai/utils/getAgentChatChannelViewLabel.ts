@@ -1,22 +1,22 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
-import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
+import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/ai/constants/AgentChatThreadPresetFilterLabels';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
+import { findInboxChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
+import { getInboxChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
 
-export const getAgentChatChannelViewLabel = (
+export const getInboxChannelViewLabel = (
   channelView: Pick<
-    AgentChatChannelView,
+    InboxChannelView,
     'channelStatus' | 'assignment' | 'filter'
   >,
 ) => {
-  const openViewItem = findAgentChatChannelOpenViewItem(channelView);
+  const openViewItem = findInboxChannelOpenViewItem(channelView);
 
   if (isDefined(openViewItem)) {
-    return t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[openViewItem.filterStatus]);
+    return t(INBOX_THREAD_PRESET_FILTER_LABELS[openViewItem.presetFilter]);
   }
 
-  return t(getAgentChatChannelNavigationItemOrThrow(channelView).label);
+  return t(getInboxChannelNavigationItemOrThrow(channelView).label);
 };

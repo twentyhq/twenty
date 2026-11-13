@@ -7,7 +7,7 @@ import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadP
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isAiChatInboxPath';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
@@ -24,7 +24,7 @@ export const useProjectAiChatThreadToUrl = ({
   const projectAiChatThreadToUrl = useCallback(
     (threadId: string) => {
       const pathname = window.location.pathname;
-      const isOnInboxPage = isAiChatInboxPath(pathname);
+      const isOnInboxPage = isInboxPath(pathname);
       const isInboxClosed = isMatchingPathname(
         pathname,
         getAppPath(AppPath.AiChatInbox, { threadId: null }),

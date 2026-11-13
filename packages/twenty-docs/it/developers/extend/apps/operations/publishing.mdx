@@ -42,6 +42,16 @@ twenty app build
 
 Esegue il controllo dei tipi e raggruppa l'app in uno snapshot temporaneo della CLI. Usa `--json` per esaminare il manifest e i metadati dell'artefatto. `twenty app publish` crea il pacchetto stesso; non è necessaria una build separata del tarball.
 
+Le build mantengono i file di ingresso del frontend e delle funzioni logiche, i relativi helper e tipi locali importati, la configurazione TypeScript locale e CSS e risorse annidati. I percorsi e i byte originali vengono conservati in un inventario delle sorgenti. Le dipendenze in `node_modules`, i file non correlati e le importazioni esterne alla directory dell'app (inclusi i target dei collegamenti simbolici) sono esclusi dall'inventario. Queste esclusioni non impediscono la build delle app esistenti. Se utilizzi `package.json#files`, includi queste sorgenti conservate, altrimenti la pubblicazione segnalerà i file mancanti. I pacchetti installati meno recenti devono essere ricompilati e pubblicati per ottenere questo inventario. Ciò non amplia ancora i file ripristinati da `twenty app pull`.
+
+### Compatibilità dell'inventario dei sorgenti
+
+Il caricamento dell'inventario completo dei sorgenti richiede Twenty server **2.59.0 o versione successiva**. Aggiorna il server prima di utilizzare `twenty app apply` o `twenty app dev` con CSS, JavaScript, immagini o font importati. I server meno recenti accettano solo `.ts`, `.tsx` e `.json` nella cartella dei sorgenti e rifiutano i tipi di file aggiuntivi. Le build locali funzionano comunque senza un server; questa CLI non omette automaticamente i sorgenti per i server meno recenti.
+
+### Conflitti tra percorsi dei sorgenti e dei bundle
+
+Se una build segnala `Application source \<path> collides with a built application file`, un file originale sovrascriverebbe l'output generato. Ad esempio, `src/run.ts` produce `src/run.mjs`, quindi un'altra voce non può importare un file sorgente esistente in `src/run.mjs`. Rinomina il file importato (ad esempio, in `src/run-helper.mjs`) e aggiorna le relative importazioni, quindi esegui nuovamente la build. La CLI si interrompe prima di copiare il file in conflitto.
+
 ## Distribuzione su un server (tarball)
 
 Per le app che non vuoi rendere pubbliche — strumenti proprietari, integrazioni solo aziendali o build sperimentali — puoi distribuire un tarball direttamente su un server Twenty.

@@ -1,9 +1,9 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { type AgentChatSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
+import { type InboxSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
 
-export const AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE: AgentChatSelectedThreadListSource =
+export const INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE: InboxSelectedThreadListSource =
   {
     type: 'presetFilter',
-    presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
   };

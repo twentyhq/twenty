@@ -1,16 +1,16 @@
 import { isAfter } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
 // Activity after the chat was filed reopens it, as for a member's own copy
-export const getAgentChatThreadChannelStatus = ({
+export const getInboxThreadChannelStatus = ({
   lastActivityAt,
   channelArchivedAt,
   channelSnoozedUntil,
 }: Pick<
-  AgentChatThreadRecord,
+  AiChatThreadRecord,
   'lastActivityAt' | 'channelArchivedAt' | 'channelSnoozedUntil'
 >): AgentChatChannelThreadStatus => {
   if (

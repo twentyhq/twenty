@@ -4,13 +4,13 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
-import { AiChatInboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
-import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
-import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
-import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { InboxChannelViewDropdown } from '@/ai/components/AiChatInboxChannelViewDropdown';
+import { InboxLayoutDropdown } from '@/ai/components/AiChatInboxLayoutDropdown';
+import { InboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTriageCommandMenuItems';
+import { InboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
+import { InboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -19,18 +19,18 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type AiChatInboxListHeaderProps = {
+type InboxListHeaderProps = {
   selectedThreadCount: number;
   isSecondaryPaneShown: boolean;
 };
 
-export const AiChatInboxListHeader = ({
+export const InboxListHeader = ({
   selectedThreadCount,
   isSecondaryPaneShown,
-}: AiChatInboxListHeaderProps) => {
+}: InboxListHeaderProps) => {
   const { t } = useLingui();
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const inboxSelectedChannelView = useAtomStateValue(
+    inboxSelectedChannelViewSelector,
   );
   const isMobile = useIsMobile();
   const { switchToNewChat } = useSwitchToNewAiChat({
@@ -43,17 +43,15 @@ export const AiChatInboxListHeader = ({
     switchToNewChat();
   };
 
-  const viewDropdown = isDefined(agentChatShownChannelView) ? (
-    <AiChatInboxChannelViewDropdown channelView={agentChatShownChannelView} />
+  const viewDropdown = isDefined(inboxSelectedChannelView) ? (
+    <InboxChannelViewDropdown channelView={inboxSelectedChannelView} />
   ) : (
-    <AiChatInboxPersonalViewDropdown />
+    <InboxPersonalViewDropdown />
   );
 
   return (
     <PageCardHeader
-      title={
-        <AiChatInboxViewHeading selectedThreadCount={selectedThreadCount} />
-      }
+      title={<InboxViewHeading selectedThreadCount={selectedThreadCount} />}
       actionButton={
         selectedThreadCount > 0 ? (
           <>
@@ -61,16 +59,16 @@ export const AiChatInboxListHeader = ({
               displayType="button"
               containerType={CommandMenuItemContainerType.IndexPageHeader}
             >
-              <AiChatInboxTriageCommandMenuItems>
+              <InboxTriageCommandMenuItems>
                 <PinnedCommandMenuItemButtons />
-              </AiChatInboxTriageCommandMenuItems>
+              </InboxTriageCommandMenuItems>
             </CommandMenuContextProvider>
             {viewDropdown}
             <SidePanelToggleButton />
           </>
         ) : (
           <>
-            {!isMobile && <AiChatInboxLayoutDropdown />}
+            {!isMobile && <InboxLayoutDropdown />}
             {viewDropdown}
             <Button
               size="sm"

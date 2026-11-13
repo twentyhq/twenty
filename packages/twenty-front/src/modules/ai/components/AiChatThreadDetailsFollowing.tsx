@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
-import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { useExecuteInboxThreadStatusAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,15 +19,15 @@ export const AiChatThreadDetailsFollowing = ({
 }: AiChatThreadDetailsFollowingProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     threadId,
   );
   const { isSubscribed, isAssignedToMe } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
+    inboxThreadMemberStateFamilySelector,
     threadId,
   );
-  const { executeAgentChatThreadInboxAction, isPending } =
-    useExecuteAgentChatThreadInboxAction();
+  const { executeInboxThreadStatusAction, isPending } =
+    useExecuteInboxThreadStatusAction();
 
   if (!isDefined(currentWorkspaceMember)) {
     return null;
@@ -38,7 +38,7 @@ export const AiChatThreadDetailsFollowing = ({
     !isDefined(thread?.deletedAt) && !isAssigneeFollowing;
 
   const handleFollowingChange = (isFollowing: boolean) =>
-    executeAgentChatThreadInboxAction({
+    executeInboxThreadStatusAction({
       threadIds: [threadId],
       action: isFollowing
         ? AgentChatInboxAction.SUBSCRIBE

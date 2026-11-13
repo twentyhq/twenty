@@ -1,36 +1,36 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
-import { AI_CHAT_THREAD_INBOX_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadInboxActionByTriageStatus';
-import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
-import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { InboxThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
+import { INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadInboxActionByTriageStatus';
+import { useInboxThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
+import { useExecuteInboxThreadStatusAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
+import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 
-type AiChatThreadRowTriageProps = {
+type InboxThreadRowTriageProps = {
   threadId: string;
 };
 
-export const AiChatThreadRowTriage = ({
+export const InboxThreadRowTriage = ({
   threadId,
-}: AiChatThreadRowTriageProps) => {
-  const { status, isInChannel } = useAiChatThreadTriage({ threadId });
-  const { executeAgentChatThreadInboxAction, isPending } =
-    useExecuteAgentChatThreadInboxAction();
+}: InboxThreadRowTriageProps) => {
+  const { status, isInChannel } = useInboxThreadTriage({ threadId });
+  const { executeInboxThreadStatusAction, isPending } =
+    useExecuteInboxThreadStatusAction();
 
   if (!isDefined(status)) {
     return null;
   }
 
-  const moveToStatus = (nextStatus: AiChatThreadTriageStatus) => {
-    void executeAgentChatThreadInboxAction({
+  const moveToStatus = (nextStatus: InboxThreadTriageStatus) => {
+    void executeInboxThreadStatusAction({
       threadIds: [threadId],
-      action: AI_CHAT_THREAD_INBOX_ACTION_BY_TRIAGE_STATUS[nextStatus],
+      action: INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS[nextStatus],
       isInChannel,
     });
   };
 
   return (
-    <AiChatThreadTriageButtons
+    <InboxThreadTriageButtons
       status={status}
       isPending={isPending}
       onSnooze={() => moveToStatus('snoozed')}

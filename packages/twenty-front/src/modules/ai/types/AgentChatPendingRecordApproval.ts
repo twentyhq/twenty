@@ -1,6 +1,6 @@
 import { type ProposedToolCall } from 'twenty-shared/ai';
 
-export type AgentChatPendingRecordApproval = {
+export type AiChatPendingRecordApproval = {
   toolCallId: string;
   proposal: ProposedToolCall & { objectNameSingular: string } & (
       | { template: 'recordCreate' }

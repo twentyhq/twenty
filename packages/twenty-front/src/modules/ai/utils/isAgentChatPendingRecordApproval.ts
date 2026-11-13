@@ -1,12 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
-import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { type AiChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
-export const isAgentChatPendingRecordApproval = (
-  pendingToolCall: AgentChatPendingToolCall,
-): pendingToolCall is AgentChatPendingToolCall &
-  AgentChatPendingRecordApproval => {
+export const isAiChatPendingRecordApproval = (
+  pendingToolCall: AiChatPendingToolCall,
+): pendingToolCall is AiChatPendingToolCall & AiChatPendingRecordApproval => {
   if (pendingToolCall.kind !== 'toolCallApproval') {
     return false;
   }

@@ -309,6 +309,9 @@ export class WorkspaceResolver {
   )
   @AllowSuspendedWorkspace()
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
+    await this.workspaceService.assertWorkspaceDeletionKeepsServerAdminOrThrow(
+      id,
+    );
     await this.workspaceService.suspendWorkspace(id);
     return this.workspaceService.deleteWorkspace(id, true);
   }

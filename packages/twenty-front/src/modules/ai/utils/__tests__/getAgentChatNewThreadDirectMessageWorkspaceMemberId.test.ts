@@ -1,4 +1,4 @@
-import { getAgentChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAgentChatNewThreadDirectMessageWorkspaceMemberId';
+import { getInboxNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAgentChatNewThreadDirectMessageWorkspaceMemberId';
 
 const JANE = { workspaceMemberId: 'jane', label: 'Jane' };
 const BOB = { workspaceMemberId: 'bob', label: 'Bob' };
@@ -15,18 +15,16 @@ const ONE_PERSON_WITHOUT_ADA = {
   participantMentions: [],
 };
 
-describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
+describe('getInboxNewThreadDirectMessageWorkspaceMemberId', () => {
   it('returns the only person addressed when Ada and channels are left out', () => {
     expect(
-      getAgentChatNewThreadDirectMessageWorkspaceMemberId(
-        ONE_PERSON_WITHOUT_ADA,
-      ),
+      getInboxNewThreadDirectMessageWorkspaceMemberId(ONE_PERSON_WITHOUT_ADA),
     ).toBe('jane');
   });
 
   it('counts a person picked and mentioned once', () => {
     expect(
-      getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+      getInboxNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
         participantMentions: [JANE],
       }),
@@ -35,7 +33,7 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
 
   it('returns the person mentioned when no recipient is picked', () => {
     expect(
-      getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+      getInboxNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
         initialRecipients: [],
         participantMentions: [JANE],
@@ -60,7 +58,7 @@ describe('getAgentChatNewThreadDirectMessageWorkspaceMemberId', () => {
     ['two people are addressed', { participantMentions: [BOB] }],
   ])('returns nothing when %s', (_, overrides) => {
     expect(
-      getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+      getInboxNewThreadDirectMessageWorkspaceMemberId({
         ...ONE_PERSON_WITHOUT_ADA,
         ...overrides,
       }),

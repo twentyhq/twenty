@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { isSilentAgentChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
+import { isSilentAiChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 
 const NO_REPLY_PART = {
   type: 'tool-no_reply',
@@ -15,10 +15,10 @@ const buildMessage = (
   parts: ExtendedUIMessage['parts'],
 ): ExtendedUIMessage => ({ id: 'message', role, parts });
 
-describe('isSilentAgentChatMessage', () => {
+describe('isSilentAiChatMessage', () => {
   it('treats an assistant message that only chose not to reply as silent', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [{ type: 'step-start' }, NO_REPLY_PART]),
       ),
     ).toBe(true);
@@ -26,7 +26,7 @@ describe('isSilentAgentChatMessage', () => {
 
   it('shows an assistant message that also wrote text', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [
           NO_REPLY_PART,
           { type: 'text', text: 'Noted.' },
@@ -37,7 +37,7 @@ describe('isSilentAgentChatMessage', () => {
 
   it('shows an assistant message that also asked a question', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [
           NO_REPLY_PART,
           {
@@ -53,7 +53,7 @@ describe('isSilentAgentChatMessage', () => {
 
   it('shows an ordinary assistant reply', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [{ type: 'text', text: 'Done.' }]),
       ),
     ).toBe(false);
@@ -61,7 +61,7 @@ describe('isSilentAgentChatMessage', () => {
 
   it('shows an assistant message that also ran another tool', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [
           {
             type: 'tool-execute_tool',
@@ -78,7 +78,7 @@ describe('isSilentAgentChatMessage', () => {
 
   it('shows an assistant message whose no_reply call failed', () => {
     expect(
-      isSilentAgentChatMessage(
+      isSilentAiChatMessage(
         buildMessage('assistant', [
           {
             type: 'tool-no_reply',

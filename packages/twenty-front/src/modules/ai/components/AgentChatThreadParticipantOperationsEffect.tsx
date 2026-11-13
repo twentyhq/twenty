@@ -3,11 +3,11 @@ import { useCallback, useMemo } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
-import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
+import { useRefreshInboxOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
+import { mergeAiChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
@@ -19,10 +19,10 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 // The member's inbox state follows what they do in their other tabs and
 // devices, and snoozes the server ends
-export const AgentChatThreadParticipantOperationsEffect = () => {
+export const AiChatThreadParticipantOperationsEffect = () => {
   const store = useStore();
-  const { refreshAgentChatOpenThreadsSummary } =
-    useRefreshAgentChatOpenThreadsSummary();
+  const { refreshInboxOpenThreadsSummary } =
+    useRefreshInboxOpenThreadsSummary();
   const participantObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -62,30 +62,22 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
         participants: AgentChatThreadParticipantFieldsFragment[],
       ) => {
         store.set(
-          agentChatThreadStreamedParticipantsState.atom,
+          aiChatThreadStreamedParticipantsState.atom,
           (streamedParticipants) =>
-            mergeAgentChatThreadParticipants(
-              streamedParticipants,
-              participants,
-            ),
+            mergeAiChatThreadParticipants(streamedParticipants, participants),
         );
-        store.set(
-          agentChatThreadParticipantsState.atom,
-          (loadedParticipants) =>
-            isDefined(loadedParticipants)
-              ? mergeAgentChatThreadParticipants(
-                  loadedParticipants,
-                  participants,
-                )
-              : loadedParticipants,
+        store.set(aiChatThreadParticipantsState.atom, (loadedParticipants) =>
+          isDefined(loadedParticipants)
+            ? mergeAiChatThreadParticipants(loadedParticipants, participants)
+            : loadedParticipants,
         );
-        refreshAgentChatOpenThreadsSummary();
+        refreshInboxOpenThreadsSummary();
       };
 
       switch (operation.type) {
         case 'create-one': {
           applyParticipants([
-            getAgentChatThreadParticipantFromRecord(operation.createdRecord),
+            getAiChatThreadParticipantFromRecord(operation.createdRecord),
           ]);
           return;
         }
@@ -100,13 +92,13 @@ export const AgentChatThreadParticipantOperationsEffect = () => {
             updateInputs
               .map(({ updatedRecord }) => updatedRecord)
               .filter(isDefined)
-              .map(getAgentChatThreadParticipantFromRecord),
+              .map(getAiChatThreadParticipantFromRecord),
           );
           return;
         }
       }
     },
-    [refreshAgentChatOpenThreadsSummary, store],
+    [refreshInboxOpenThreadsSummary, store],
   );
 
   useListenToObjectRecordOperationBrowserEvent({

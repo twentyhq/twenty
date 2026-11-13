@@ -1,13 +1,13 @@
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { isAgentChatThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { isInboxThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-const OPEN_CHANNEL_VIEW: AgentChatChannelView = {
+const OPEN_CHANNEL_VIEW: InboxChannelView = {
   channelId: 'channel-1',
   channelStatus: AgentChatChannelThreadStatus.OPEN,
   assignment: AgentChatChannelAssignmentFilter.ANY,
@@ -15,8 +15,8 @@ const OPEN_CHANNEL_VIEW: AgentChatChannelView = {
 };
 
 const buildThread = (
-  thread: Partial<AgentChatThreadRecord> = {},
-): AgentChatThreadRecord => ({
+  thread: Partial<AiChatThreadRecord> = {},
+): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id: 'thread-1',
   title: null,
@@ -31,10 +31,10 @@ const buildThread = (
   ...thread,
 });
 
-describe('isAgentChatThreadInChannelView', () => {
+describe('isInboxThreadInChannelView', () => {
   it('lists open chats of the channel', () => {
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread(),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
@@ -45,7 +45,7 @@ describe('isAgentChatThreadInChannelView', () => {
 
   it('leaves out chats of other channels and deleted chats', () => {
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread({ channelId: 'channel-2' }),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
@@ -53,7 +53,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread({ deletedAt: '2026-01-02T00:00:00.000Z' }),
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
@@ -68,7 +68,7 @@ describe('isAgentChatThreadInChannelView', () => {
     });
 
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: doneThread,
         channelView: OPEN_CHANNEL_VIEW,
         currentWorkspaceMemberId: 'member-1',
@@ -76,7 +76,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: doneThread,
         channelView: {
           ...OPEN_CHANNEL_VIEW,
@@ -92,7 +92,7 @@ describe('isAgentChatThreadInChannelView', () => {
     const assignedThread = buildThread({ assigneeId: 'member-1' });
 
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: assignedThread,
         channelView: {
           ...OPEN_CHANNEL_VIEW,
@@ -103,7 +103,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(false);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: assignedThread,
         channelView: {
           ...OPEN_CHANNEL_VIEW,
@@ -114,7 +114,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: assignedThread,
         channelView: {
           ...OPEN_CHANNEL_VIEW,
@@ -133,7 +133,7 @@ describe('isAgentChatThreadInChannelView', () => {
     };
 
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread({ assigneeId: 'member-2' }),
         channelView,
         currentWorkspaceMemberId: 'member-1',
@@ -141,7 +141,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread(),
         channelView,
         currentWorkspaceMemberId: 'member-1',
@@ -157,7 +157,7 @@ describe('isAgentChatThreadInChannelView', () => {
     };
 
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread({ pendingQuestionMessageId: 'message-1' }),
         channelView,
         currentWorkspaceMemberId: 'member-1',
@@ -165,7 +165,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread(),
         channelView,
         currentWorkspaceMemberId: 'member-1',
@@ -181,7 +181,7 @@ describe('isAgentChatThreadInChannelView', () => {
     };
 
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread(),
         channelView,
         currentWorkspaceMemberId: 'member-1',
@@ -189,7 +189,7 @@ describe('isAgentChatThreadInChannelView', () => {
       }),
     ).toBe(true);
     expect(
-      isAgentChatThreadInChannelView({
+      isInboxThreadInChannelView({
         thread: buildThread(),
         channelView,
         currentWorkspaceMemberId: 'member-1',

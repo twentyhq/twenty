@@ -1,9 +1,9 @@
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
@@ -20,7 +20,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread');
+    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread');
     jotaiStore.set(currentAiChatThreadState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',
@@ -35,7 +35,7 @@ describe('Shared chat execution controls', () => {
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
     (canUpdate, senderWorkspaceMemberId, expected) => {
-      setAgentChatThreadPermissions({
+      setAiChatThreadPermissions({
         store: jotaiStore,
         threadId: 'thread',
         permissions: {
@@ -46,7 +46,7 @@ describe('Shared chat execution controls', () => {
         },
       });
       jotaiStore.set(
-        agentChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
+        aiChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
         [
           {
             id: 'message',

@@ -1,13 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
-import { AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
-import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
+import { InboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
+import { INBOX_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
+import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/ai/constants/AgentChatThreadPresetFilterIcons';
+import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/ai/constants/AgentChatThreadPresetFilterLabels';
+import { useOpenInboxChannel } from '@/ai/hooks/useOpenAgentChatChannel';
+import { inboxChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
+import { findInboxChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   AgentChatChannelAssignmentFilter,
@@ -15,25 +15,25 @@ import {
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-type AiChatInboxChannelViewDropdownProps = {
-  channelView: AgentChatChannelView;
+type InboxChannelViewDropdownProps = {
+  channelView: InboxChannelView;
 };
 
-export const AiChatInboxChannelViewDropdown = ({
+export const InboxChannelViewDropdown = ({
   channelView,
-}: AiChatInboxChannelViewDropdownProps) => {
+}: InboxChannelViewDropdownProps) => {
   const { t } = useLingui();
-  const { openAgentChatChannel } = useOpenAgentChatChannel();
-  const channelSummary = useAtomStateValue(agentChatChannelSummariesState)[
+  const { openInboxChannel } = useOpenInboxChannel();
+  const channelSummary = useAtomStateValue(inboxChannelSummariesState)[
     channelView.channelId
   ];
-  const selectedOpenViewItem = findAgentChatChannelOpenViewItem(channelView);
+  const selectedOpenViewItem = findInboxChannelOpenViewItem(channelView);
 
   const handleSelect = ({
     assignment,
     filter,
-  }: Pick<AgentChatChannelView, 'assignment' | 'filter'>) => {
-    openAgentChatChannel({
+  }: Pick<InboxChannelView, 'assignment' | 'filter'>) => {
+    openInboxChannel({
       channelId: channelView.channelId,
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment,
@@ -42,17 +42,15 @@ export const AiChatInboxChannelViewDropdown = ({
   };
 
   return (
-    <AiChatInboxFilterDropdown
+    <InboxFilterDropdown
       isFiltered={
         channelView.assignment !== AgentChatChannelAssignmentFilter.ANY ||
         channelView.filter !== AgentChatChannelThreadFilter.ANY
       }
-      options={AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS.map((openViewItem) => ({
-        key: openViewItem.filterStatus,
-        label: t(
-          AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[openViewItem.filterStatus],
-        ),
-        Icon: AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[openViewItem.filterStatus],
+      options={INBOX_CHANNEL_OPEN_VIEW_ITEMS.map((openViewItem) => ({
+        key: openViewItem.presetFilter,
+        label: t(INBOX_THREAD_PRESET_FILTER_LABELS[openViewItem.presetFilter]),
+        Icon: INBOX_THREAD_PRESET_FILTER_ICONS[openViewItem.presetFilter],
         count: channelSummary?.[openViewItem.countKey],
         isSelected: openViewItem === selectedOpenViewItem,
         onSelect: () => handleSelect(openViewItem),

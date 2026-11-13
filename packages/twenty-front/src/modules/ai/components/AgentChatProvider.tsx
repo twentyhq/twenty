@@ -1,24 +1,24 @@
 import { type ReactNode, Suspense } from 'react';
 
-import { AgentChatChannelsEffect } from '@/ai/components/AgentChatChannelsEffect';
-import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
-import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
-import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
-import { AgentChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
-import { AgentChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
+import { InboxChannelsEffect } from '@/ai/components/AgentChatChannelsEffect';
+import { AiChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
+import { AiChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
+import { AiChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
+import { AiChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
+import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
 
-type AgentChatProviderProps = {
+type AiChatProviderProps = {
   children: ReactNode;
 };
 
-export const AgentChatProvider = ({ children }: AgentChatProviderProps) => (
+export const AiChatProvider = ({ children }: AiChatProviderProps) => (
   <Suspense fallback={null}>
-    <AgentChatThreadInitializationEffect />
-    <AgentChatThreadRecordOperationsEffect />
-    <AgentChatThreadParticipantOperationsEffect />
-    <AgentChatChannelsEffect />
-    <AgentChatRuntimeEffects />
-    <AgentChatToolIndexInvalidationEffect />
+    <AiChatThreadInitializationEffect />
+    <AiChatThreadRecordOperationsEffect />
+    <AiChatThreadParticipantOperationsEffect />
+    <InboxChannelsEffect />
+    <AiChatRuntimeEffects />
+    <AiChatToolIndexInvalidationEffect />
     {children}
   </Suspense>
 );

@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { agentChatOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
+import { aiChatOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledPresence = styled.span`
@@ -37,19 +37,18 @@ export const AiChatMemberPresence = ({
   children,
 }: AiChatMemberPresenceProps) => {
   const { t } = useLingui();
-  const agentChatOnlineWorkspaceMemberIds = useAtomStateValue(
-    agentChatOnlineWorkspaceMemberIdsState,
+  const aiChatOnlineWorkspaceMemberIds = useAtomStateValue(
+    aiChatOnlineWorkspaceMemberIdsState,
   );
 
   if (
-    !isDefined(agentChatOnlineWorkspaceMemberIds) ||
+    !isDefined(aiChatOnlineWorkspaceMemberIds) ||
     !isDefined(workspaceMemberId)
   ) {
     return children;
   }
 
-  const isOnline =
-    agentChatOnlineWorkspaceMemberIds.includes(workspaceMemberId);
+  const isOnline = aiChatOnlineWorkspaceMemberIds.includes(workspaceMemberId);
 
   return (
     <StyledPresence>

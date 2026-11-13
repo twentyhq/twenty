@@ -1,6 +1,6 @@
-import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
+import { accumulateAiChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 const storedThread = {
   conversationSize: 120,
@@ -12,9 +12,9 @@ const storedThread = {
   totalOutputCredits: 50000,
 };
 
-describe('getAgentChatUsageFromThread', () => {
+describe('getAiChatUsageFromThread', () => {
   it('restores cumulative usage in display credits without the last message', () => {
-    expect(getAgentChatUsageFromThread(storedThread)).toEqual({
+    expect(getAiChatUsageFromThread(storedThread)).toEqual({
       conversationSize: 120,
       contextWindowTokens: 1000,
       inputTokens: 250,
@@ -28,7 +28,7 @@ describe('getAgentChatUsageFromThread', () => {
 
   it('restores a cached input total that live record events send as a string', () => {
     expect(
-      getAgentChatUsageFromThread({
+      getAiChatUsageFromThread({
         ...storedThread,
         totalCacheReadTokens: '1158169',
       })?.cachedInputTokens,
@@ -36,14 +36,14 @@ describe('getAgentChatUsageFromThread', () => {
   });
 
   it('adds later messages to a restored string total instead of appending them', () => {
-    const restoredUsage = getAgentChatUsageFromThread({
+    const restoredUsage = getAiChatUsageFromThread({
       ...storedThread,
       totalCacheReadTokens: '1158169',
     });
 
     const usageAfterMessages = [187212, 206570, 221278].reduce(
       (usage, cachedInputTokens) =>
-        accumulateAgentChatUsage(
+        accumulateAiChatUsage(
           usage,
           {
             inputTokens: 0,
@@ -66,7 +66,7 @@ describe('getAgentChatUsageFromThread', () => {
 
   it('does not show a breakdown for an unused thread', () => {
     expect(
-      getAgentChatUsageFromThread({ ...storedThread, conversationSize: 0 }),
+      getAiChatUsageFromThread({ ...storedThread, conversationSize: 0 }),
     ).toBeNull();
   });
 });

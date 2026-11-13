@@ -12,10 +12,10 @@ import {
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { AGENT_CHAT_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
-import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
+import { INBOX_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
+import { INBOX_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -31,11 +31,11 @@ import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFla
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-export const useFetchAgentChatThreadsPage = () => {
+export const useFetchAiChatThreadsPage = () => {
   const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
 
-  const fetchAgentChatThreadsPage = useCallback(
+  const fetchAiChatThreadsPage = useCallback(
     async ({
       lastCursor,
       threadIdFilter,
@@ -92,13 +92,13 @@ export const useFetchAgentChatThreadsPage = () => {
           query: generateFindManyRecordsQuery({
             objectMetadataItem: chatObjectMetadataItem,
             objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
-            recordGqlFields: AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS,
+            recordGqlFields: INBOX_THREAD_LIST_RECORD_GQL_FIELDS,
             objectPermissionsByObjectMetadataId,
           }),
           variables: {
             filter: isDefined(threadIdFilter)
-              ? { and: [AGENT_CHAT_THREAD_LIST_FILTER, threadIdFilter] }
-              : AGENT_CHAT_THREAD_LIST_FILTER,
+              ? { and: [INBOX_THREAD_LIST_FILTER, threadIdFilter] }
+              : INBOX_THREAD_LIST_FILTER,
             orderBy: [{ lastActivityAt: 'DescNullsLast' }],
             limit: QUERY_MAX_RECORDS,
             lastCursor,
@@ -118,7 +118,7 @@ export const useFetchAgentChatThreadsPage = () => {
       }
 
       const records = getRecordsFromRecordConnection<
-        AgentChatThreadRecord & { participants?: ObjectRecord[] }
+        AiChatThreadRecord & { participants?: ObjectRecord[] }
       >({ recordConnection: connection });
 
       return {
@@ -132,7 +132,7 @@ export const useFetchAgentChatThreadsPage = () => {
             (participant) =>
               participant.workspaceMemberId === currentWorkspaceMemberId,
           )
-          .map(getAgentChatThreadParticipantFromRecord),
+          .map(getAiChatThreadParticipantFromRecord),
         hasNextPage: connection.pageInfo.hasNextPage ?? false,
         endCursor: connection.pageInfo.endCursor ?? null,
       };
@@ -140,5 +140,5 @@ export const useFetchAgentChatThreadsPage = () => {
     [apolloCoreClient, store],
   );
 
-  return { fetchAgentChatThreadsPage };
+  return { fetchAiChatThreadsPage };
 };

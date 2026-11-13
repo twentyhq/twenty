@@ -3,7 +3,7 @@ import { IconCircleCheck, IconCircleDashed, IconZzz } from 'twenty-ui/icon';
 
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
-export const AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS = [
+export const INBOX_CHANNEL_NAVIGATION_ITEMS = [
   {
     channelStatus: AgentChatChannelThreadStatus.OPEN,
     label: msg`Open`,

@@ -4,8 +4,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -23,7 +23,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 const setThreadError = (error: Error | CombinedGraphQLErrors) => {
   jotaiStore.set(
-    agentChatErrorFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatErrorFamilyState.atomFamily({ threadId: THREAD_ID }),
     error,
   );
 };
@@ -63,7 +63,7 @@ const renderHasReachedAiChatCreditsCap = () =>
 describe('useHasReachedAiChatCreditsCap', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   });
 
   it('should return false when the workspace has credits left and the thread has no error', () => {

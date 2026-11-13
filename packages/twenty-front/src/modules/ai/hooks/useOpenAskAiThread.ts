@@ -1,19 +1,19 @@
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const agentChatSelectedThreadListSource = useAtomStateValue(
-    agentChatSelectedThreadListSourceState,
+  const inboxSelectedThreadListSource = useAtomStateValue(
+    inboxSelectedThreadListSourceState,
   );
-  const agentChatThreadListThreads = useAtomFamilySelectorValue(
-    agentChatThreadListThreadsFamilySelector,
-    agentChatSelectedThreadListSource,
+  const inboxThreadListThreads = useAtomFamilySelectorValue(
+    inboxThreadListThreadsFamilySelector,
+    inboxSelectedThreadListSource,
   );
   const { selectAiChatThread } = useSelectAiChatThread();
 
@@ -23,7 +23,7 @@ export const useOpenAskAiThread = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const openAskAiThread = (threadId: string) => {
-    const thread = agentChatThreadListThreads.find(
+    const thread = inboxThreadListThreads.find(
       (visibleThread) => visibleThread.id === threadId,
     );
 

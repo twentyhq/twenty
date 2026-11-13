@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
-import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { InboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
@@ -15,8 +15,8 @@ const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 const renderEffect = (shownChannelId: string | null) => {
   const store = createStore();
 
-  store.set(agentChatNewThreadChannelIdState.atom, 'previous-channel-id');
-  setAgentChatShownChannelView(
+  store.set(inboxNewThreadChannelIdState.atom, 'previous-channel-id');
+  setInboxSelectedChannelView(
     store,
     shownChannelId === null
       ? null
@@ -30,23 +30,23 @@ const renderEffect = (shownChannelId: string | null) => {
 
   render(
     <JotaiProvider store={store}>
-      <AiChatInboxNewThreadChannelEffect />
+      <InboxNewThreadChannelEffect />
     </JotaiProvider>,
   );
 
   return store;
 };
 
-describe('AiChatInboxNewThreadChannelEffect', () => {
+describe('InboxNewThreadChannelEffect', () => {
   it('files the new chat into the channel the inbox shows', () => {
     const store = renderEffect(CHANNEL_ID);
 
-    expect(store.get(agentChatNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
+    expect(store.get(inboxNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
   });
 
   it('keeps the new chat out of any channel when the inbox shows none', () => {
     const store = renderEffect(null);
 
-    expect(store.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
+    expect(store.get(inboxNewThreadChannelIdState.atom)).toBeNull();
   });
 });

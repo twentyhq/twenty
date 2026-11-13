@@ -6,18 +6,18 @@ import {
   IconLayoutSidebarRight,
 } from 'twenty-ui/icon';
 
-import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
-import { type AiChatInboxLayout } from '@/ai/types/AiChatInboxLayout';
+import { INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { type InboxLayout } from '@/ai/types/AiChatInboxLayout';
 
-export const AI_CHAT_INBOX_LAYOUT_OPTIONS: Record<
-  AiChatInboxLayout,
+export const INBOX_LAYOUT_OPTIONS: Record<
+  InboxLayout,
   { Icon: IconComponent; label: MessageDescriptor }
 > = {
-  [AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW]: {
+  [INBOX_LAYOUT.SPLIT_VIEW]: {
     Icon: IconLayoutSidebarRight,
     label: msg`Split view`,
   },
-  [AI_CHAT_INBOX_LAYOUT.RECORD_PAGE]: {
+  [INBOX_LAYOUT.RECORD_PAGE]: {
     Icon: IconAddressBook,
     label: msg`Record page`,
   },

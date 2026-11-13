@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useAgentChatInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
+import { useInboxViewHeading } from '@/ai/hooks/useAgentChatInboxViewHeading';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 
@@ -29,18 +29,17 @@ const StyledChannelView = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
-type AiChatInboxViewHeadingProps = {
+type InboxViewHeadingProps = {
   selectedThreadCount?: number;
 };
 
-export const AiChatInboxViewHeading = ({
+export const InboxViewHeading = ({
   selectedThreadCount = 0,
-}: AiChatInboxViewHeadingProps) => {
+}: InboxViewHeadingProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
-  const { HeadingIcon, headingLabel, channelViewLabel } =
-    useAgentChatInboxViewHeading();
+  const { HeadingIcon, headingLabel, channelViewLabel } = useInboxViewHeading();
 
   if (!isDefined(channelViewLabel)) {
     return (

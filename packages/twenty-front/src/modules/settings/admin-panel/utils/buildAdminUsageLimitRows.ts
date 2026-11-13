@@ -25,7 +25,9 @@ export const buildAdminUsageLimitRows = (
       const override = isDefined(usageLimitDefault.overriddenByUsageLimitId)
         ? usageLimitById.get(usageLimitDefault.overriddenByUsageLimitId)
         : undefined;
-      const defaultValue = Number(usageLimitDefault.limitValue);
+      const defaultValue = isDefined(usageLimitDefault.limitValue)
+        ? Number(usageLimitDefault.limitValue)
+        : null;
 
       return {
         id: `usage-limit-default-${index}`,

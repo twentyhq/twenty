@@ -5,23 +5,23 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
-type AgentChatThreadChannelCopy = Pick<
-  AgentChatThreadRecord,
+type InboxThreadChannelCopy = Pick<
+  AiChatThreadRecord,
   'channelArchivedAt' | 'channelSnoozedUntil'
 >;
 
-export const useUpdateAgentChatThreadChannelCopy = () => {
+export const useUpdateInboxThreadChannelCopy = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
 
-  const updateAgentChatThreadChannelCopy = useCallback(
+  const updateInboxThreadChannelCopy = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
       variables,
@@ -29,18 +29,18 @@ export const useUpdateAgentChatThreadChannelCopy = () => {
     }: {
       mutation: TypedDocumentNode<unknown, TVariables>;
       variables: TVariables;
-      optimisticChannelCopy: AgentChatThreadChannelCopy;
+      optimisticChannelCopy: InboxThreadChannelCopy;
     }) => {
       const { threadId } = variables;
       const getThread = () =>
-        store.get(agentChatThreadRecordFamilySelector.selectorFamily(threadId));
+        store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId));
       const previousThread = getThread();
 
       if (!isDefined(previousThread)) {
         return;
       }
 
-      applyAgentChatThreadUpdate({ id: threadId, ...optimisticChannelCopy });
+      applyAiChatThreadUpdate({ id: threadId, ...optimisticChannelCopy });
 
       try {
         await client.mutate({ mutation, variables });
@@ -56,7 +56,7 @@ export const useUpdateAgentChatThreadChannelCopy = () => {
           currentThread?.channelSnoozedUntil ===
             optimisticChannelCopy.channelSnoozedUntil
         ) {
-          applyAgentChatThreadUpdate({
+          applyAiChatThreadUpdate({
             id: threadId,
             channelArchivedAt: previousThread.channelArchivedAt ?? null,
             channelSnoozedUntil: previousThread.channelSnoozedUntil ?? null,
@@ -64,8 +64,8 @@ export const useUpdateAgentChatThreadChannelCopy = () => {
         }
       }
     },
-    [applyAgentChatThreadUpdate, client, enqueueToast, store],
+    [applyAiChatThreadUpdate, client, enqueueToast, store],
   );
 
-  return { updateAgentChatThreadChannelCopy };
+  return { updateInboxThreadChannelCopy };
 };

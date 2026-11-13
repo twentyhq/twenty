@@ -1,7 +1,7 @@
 import { atom, createStore } from 'jotai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
@@ -51,7 +51,7 @@ const buildStore = (navigationMenuItems: unknown[]) => {
   return store;
 };
 
-describe('agentChatFavoriteThreadsSelector', () => {
+describe('inboxFavoriteThreadsSelector', () => {
   it("lists the member's chat favorites in their order", () => {
     const store = buildStore([
       buildFavorite({
@@ -82,7 +82,7 @@ describe('agentChatFavoriteThreadsSelector', () => {
       }),
     ]);
 
-    expect(store.get(agentChatFavoriteThreadsSelector.atom)).toEqual([
+    expect(store.get(inboxFavoriteThreadsSelector.atom)).toEqual([
       { id: 'chat-1', title: 'First', deletedAt: null },
       { id: 'chat-2', title: 'Second', deletedAt: null },
     ]);
@@ -117,7 +117,7 @@ describe('agentChatFavoriteThreadsSelector', () => {
       deletedAt: '2026-09-30T00:00:00.000Z',
     });
 
-    expect(store.get(agentChatFavoriteThreadsSelector.atom)).toEqual([
+    expect(store.get(inboxFavoriteThreadsSelector.atom)).toEqual([
       { id: 'chat-1', title: 'New title', deletedAt: null },
     ]);
   });

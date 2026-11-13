@@ -1,21 +1,19 @@
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { useMarkAgentChatThreadAsDoneInChannel } from '@/ai/hooks/useMarkAgentChatThreadAsDoneInChannel';
-import { useReopenAgentChatThreadInChannel } from '@/ai/hooks/useReopenAgentChatThreadInChannel';
-import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
+import { useMarkInboxThreadAsDoneInChannel } from '@/ai/hooks/useMarkAgentChatThreadAsDoneInChannel';
+import { useReopenInboxThreadInChannel } from '@/ai/hooks/useReopenAgentChatThreadInChannel';
+import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-export const useExecuteAgentChatThreadInboxAction = () => {
+export const useExecuteInboxThreadStatusAction = () => {
   const [isPending, setIsPending] = useState(false);
-  const { updateAgentChatThreadInboxState } =
-    useUpdateAgentChatThreadInboxState();
+  const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
   const { markAgentChatThreadAsDoneInChannel } =
-    useMarkAgentChatThreadAsDoneInChannel();
-  const { reopenAgentChatThreadInChannel } =
-    useReopenAgentChatThreadInChannel();
+    useMarkInboxThreadAsDoneInChannel();
+  const { reopenAgentChatThreadInChannel } = useReopenInboxThreadInChannel();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
@@ -43,7 +41,7 @@ export const useExecuteAgentChatThreadInboxAction = () => {
     await updateAgentChatThreadInboxState({ threadIds, action });
   };
 
-  const executeAgentChatThreadInboxAction = async ({
+  const executeInboxThreadStatusAction = async ({
     threadIds,
     action,
     isInChannel,
@@ -75,5 +73,5 @@ export const useExecuteAgentChatThreadInboxAction = () => {
     }
   };
 
-  return { executeAgentChatThreadInboxAction, isPending };
+  return { executeInboxThreadStatusAction, isPending };
 };

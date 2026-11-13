@@ -4,5 +4,5 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 
 export type AgentRunCallerContext = {
   authContext: WorkspaceAuthContext;
-  actorContext?: ActorMetadata;
+  actorMetadata?: ActorMetadata;
 };

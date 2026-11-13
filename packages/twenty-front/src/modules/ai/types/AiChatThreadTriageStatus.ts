@@ -1,1 +1,1 @@
-export type AiChatThreadTriageStatus = 'open' | 'snoozed' | 'done';
+export type InboxThreadTriageStatus = 'open' | 'snoozed' | 'done';

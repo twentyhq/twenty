@@ -1,10 +1,10 @@
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
-import { getAiChatThreadTriageStatus } from '@/ai/utils/getAiChatThreadTriageStatus';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
+import { getInboxThreadTriageStatus } from '@/ai/utils/getAiChatThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -13,9 +13,9 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isAiChatInboxPath';
 
-export const useAiChatThreadTriage = ({
+export const useInboxThreadTriage = ({
   threadId,
   channelIdOutsideInbox,
 }: {
@@ -26,28 +26,27 @@ export const useAiChatThreadTriage = ({
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const agentChatThreadParticipants = useAtomStateValue(
-    agentChatThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const location = useLocation();
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const inboxSelectedChannelView = useAtomStateValue(
+    inboxSelectedChannelViewSelector,
   );
-  const channelId = isAiChatInboxPath(location.pathname)
-    ? (agentChatShownChannelView?.channelId ?? null)
+  const channelId = isInboxPath(location.pathname)
+    ? (inboxSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusByThreadIdFamilySelector,
+    inboxThreadMemberStateByThreadIdFamilySelector,
     { threadIds: [threadId], channelId },
   );
   const isInChannel = inboxStatus?.isChannelCopy ?? false;
 
   return {
-    status: getAiChatThreadTriageStatus({
+    status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded:
-        isInChannel || isDefined(agentChatThreadParticipants),
+      areParticipantsLoaded: isInChannel || isDefined(aiChatThreadParticipants),
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,

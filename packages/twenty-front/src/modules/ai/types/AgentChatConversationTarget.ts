@@ -1,6 +1,6 @@
 import { type SearchRecord } from '~/generated/graphql';
 
-export type AgentChatConversationTarget = Pick<
+export type AiChatConversationTarget = Pick<
   SearchRecord,
   'objectNameSingular' | 'recordId'
 >;

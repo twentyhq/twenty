@@ -5,13 +5,13 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
-import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { InboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
+import { InboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -64,15 +64,15 @@ const PersonalViewStory = () => {
       aria-label="Inbox header"
       data-pathname={pathname}
     >
-      <AiChatInboxViewHeading selectedThreadCount={selectedRecordIds.length} />
-      <AiChatInboxPersonalViewDropdown />
+      <InboxViewHeading selectedThreadCount={selectedRecordIds.length} />
+      <InboxPersonalViewDropdown />
     </StyledHeader>
   );
 };
 
 const meta = {
   title: 'Modules/AI/AiChatInboxPersonalViewDropdown',
-  component: AiChatInboxPersonalViewDropdown,
+  component: InboxPersonalViewDropdown,
   decorators: [
     (Story) => (
       <MockedProvider
@@ -101,7 +101,7 @@ const meta = {
         ]}
       >
         <RecordSelectionComponentInstanceContext.Provider
-          value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
+          value={{ instanceId: INBOX_INSTANCE_ID }}
         >
           <Story />
         </RecordSelectionComponentInstanceContext.Provider>
@@ -129,27 +129,27 @@ const meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    setAgentChatShownChannelView(jotaiStore, null);
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    setInboxSelectedChannelView(jotaiStore, null);
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        instanceId: INBOX_INSTANCE_ID,
         familyKey: NO_RECORD_GROUP_FAMILY_KEY,
       }),
       [SELECTED_THREAD_ID],
     );
     jotaiStore.set(
       isRecordSelectedComponentFamilyState.atomFamily({
-        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        instanceId: INBOX_INSTANCE_ID,
         familyKey: SELECTED_THREAD_ID,
       }),
       true,
     );
   },
-} satisfies Meta<typeof AiChatInboxPersonalViewDropdown>;
+} satisfies Meta<typeof InboxPersonalViewDropdown>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -211,10 +211,10 @@ export const SwitchViews: Story = {
       canvas.getByRole('region', { name: 'Inbox header' }),
     ).toHaveAttribute('data-pathname', '/inbox');
     await expect(
-      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+      jotaiStore.get(inboxSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
     });
 
     await userEvent.click(trigger);
@@ -243,9 +243,9 @@ export const SwitchViews: Story = {
 
 export const FromSnoozed: Story = {
   beforeEach: () => {
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
     });
   },
   play: async ({ canvasElement }) => {
@@ -261,10 +261,10 @@ export const FromSnoozed: Story = {
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();
     await expect(
-      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+      jotaiStore.get(inboxSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS,
     });
   },
 };

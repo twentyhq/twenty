@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import {
@@ -15,25 +15,23 @@ import {
 } from '~/generated-metadata/graphql';
 import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
-export const useOpenAgentChatChannel = () => {
+export const useOpenInboxChannel = () => {
   const store = useStore();
   const navigate = useNavigateApp();
-  const { resetRecordSelection } = useResetRecordSelection(
-    AI_CHAT_INBOX_INSTANCE_ID,
-  );
+  const { resetRecordSelection } = useResetRecordSelection(INBOX_INSTANCE_ID);
 
-  const openAgentChatChannel = useCallback(
+  const openInboxChannel = useCallback(
     ({
       channelId,
       channelStatus = AgentChatChannelThreadStatus.OPEN,
       assignment = AgentChatChannelAssignmentFilter.ANY,
       filter = AgentChatChannelThreadFilter.ANY,
-    }: Pick<AgentChatChannelView, 'channelId'> &
+    }: Pick<InboxChannelView, 'channelId'> &
       Partial<
-        Pick<AgentChatChannelView, 'channelStatus' | 'assignment' | 'filter'>
+        Pick<InboxChannelView, 'channelStatus' | 'assignment' | 'filter'>
       >) => {
       resetRecordSelection();
-      store.set(agentChatSelectedThreadListSourceState.atom, {
+      store.set(inboxSelectedThreadListSourceState.atom, {
         type: 'channel',
         channelView: { channelId, channelStatus, assignment, filter },
       });
@@ -47,5 +45,5 @@ export const useOpenAgentChatChannel = () => {
     [navigate, resetRecordSelection, store],
   );
 
-  return { openAgentChatChannel };
+  return { openInboxChannel };
 };

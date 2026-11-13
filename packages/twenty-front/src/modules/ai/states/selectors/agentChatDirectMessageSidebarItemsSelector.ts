@@ -1,10 +1,10 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { inboxRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
-import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
+import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -12,14 +12,14 @@ import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomS
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
+export const inboxDirectMessageSidebarItemsSelector = createAtomSelector<
   DirectMessageSidebarItem[]
 >({
-  key: 'agentChatDirectMessageSidebarItemsSelector',
+  key: 'inboxDirectMessageSidebarItemsSelector',
   get: ({ get }) => {
     const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
     const workspaceMembers = get(currentWorkspaceMembersState);
-    const directMessageThreads = get(agentChatThreadsSelector).filter(
+    const directMessageThreads = get(inboxRecentThreadsSelector).filter(
       (thread) =>
         !isDefined(thread.deletedAt) &&
         thread.conversationType ===
@@ -29,7 +29,7 @@ export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
     return sortChatThreadsByLastActivityDesc(directMessageThreads).map(
       (thread) => {
         const [peerWorkspaceMemberId] =
-          getAgentChatDirectMessagePeerWorkspaceMemberIds({
+          getInboxDirectMessagePeerWorkspaceMemberIds({
             thread,
             currentWorkspaceMemberId,
           });
@@ -37,7 +37,7 @@ export const agentChatDirectMessageSidebarItemsSelector = createAtomSelector<
           ({ id }) => id === peerWorkspaceMemberId,
         );
         const { isUnread } = get(
-          agentChatThreadInboxStatusFamilySelector,
+          inboxThreadMemberStateFamilySelector,
           thread.id,
         );
 

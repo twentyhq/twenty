@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { findAgentChatChannelFavoriteNavigationMenuItem } from '@/ai/utils/findAgentChatChannelFavoriteNavigationMenuItem';
+import { findInboxChannelFavoriteNavigationMenuItem } from '@/ai/utils/findAgentChatChannelFavoriteNavigationMenuItem';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-export const useRemoveAgentChatChannelFromFavorites = () => {
+export const useRemoveInboxChannelFromFavorites = () => {
   const { navigationMenuItems } = useNavigationMenuItemsData();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const removeAgentChatChannelFromFavorites = (channelId: string) => {
+  const removeInboxChannelFromFavorites = (channelId: string) => {
     const favoriteNavigationMenuItem =
-      findAgentChatChannelFavoriteNavigationMenuItem({
+      findInboxChannelFavoriteNavigationMenuItem({
         navigationMenuItems,
         channelId,
       });
@@ -22,5 +22,5 @@ export const useRemoveAgentChatChannelFromFavorites = () => {
     void deleteManyNavigationMenuItems([favoriteNavigationMenuItem.id]);
   };
 
-  return { removeAgentChatChannelFromFavorites };
+  return { removeInboxChannelFromFavorites };
 };

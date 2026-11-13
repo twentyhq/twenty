@@ -7,7 +7,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { sleep } from '~/utils/sleep';
 
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
-import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { aiChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -57,7 +57,7 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     resetJotaiStore();
     jest.clearAllMocks();
     jotaiStore.set(
-      agentChatUISessionStartTimeState.atom,
+      aiChatUISessionStartTimeState.atom,
       Temporal.Instant.from(SESSION_START),
     );
   });

@@ -285,6 +285,9 @@ export class CalendarSaveEventsService {
       {
         savedParticipantIds,
         participantsOfLinkedEvents,
+        resourceHandles: fetchedCalendarEvents.flatMap(
+          (event) => event.resourceHandles,
+        ),
         calendarEventIds,
         calendarChannel,
         connectedAccount,

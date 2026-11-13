@@ -1,18 +1,18 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
+import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 
-export const agentChatFavoriteChannelsSelector = createAtomSelector<
+export const inboxFavoriteChannelsSelector = createAtomSelector<
   AgentChatChannel[]
 >({
-  key: 'agentChatFavoriteChannelsSelector',
+  key: 'inboxFavoriteChannelsSelector',
   get: ({ get }) => {
     const accessibleChannelById = new Map(
-      get(agentChatAccessibleChannelsSelector).map((channel) => [
+      get(inboxAccessibleChannelsSelector).map((channel) => [
         channel.id,
         channel,
       ]),

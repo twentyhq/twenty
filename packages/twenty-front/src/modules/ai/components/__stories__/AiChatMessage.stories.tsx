@@ -22,11 +22,11 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
-import { type AgentChatThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
-import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
+import { type AiChatThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -38,12 +38,12 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
-import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -490,7 +490,7 @@ const allMockMessages = [
   mockNamedAssistantMessage,
 ];
 
-const AgentChatMessagesSetterEffect = ({
+const AiChatMessagesSetterEffect = ({
   messages,
   isInboxEnabled,
   assistantProfile,
@@ -504,23 +504,21 @@ const AgentChatMessagesSetterEffect = ({
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
     const previousCurrentThread = store.get(currentAiChatThreadState.atom);
-    const previousDisplayedThread = store.get(
-      agentChatDisplayedThreadState.atom,
-    );
+    const previousDisplayedThread = store.get(aiChatDisplayedThreadState.atom);
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(agentChatThreadVisitState.atom);
-    const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
-    const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+    const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
       messageId: mockTeammateMessage.id,
     });
 
     store.set(currentAiChatThreadState.atom, currentThreadId);
-    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
+    store.set(aiChatDisplayedThreadState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -537,7 +535,7 @@ const AgentChatMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(agentChatThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: currentThreadId,
       isUnread: true,
       isKeptUnread: false,
@@ -555,12 +553,12 @@ const AgentChatMessagesSetterEffect = ({
 
     return () => {
       store.set(currentAiChatThreadState.atom, previousCurrentThread);
-      store.set(agentChatDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(aiChatDisplayedThreadState.atom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(agentChatThreadVisitState.atom, previousVisit);
+      store.set(aiChatThreadVisitState.atom, previousVisit);
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };
@@ -569,9 +567,9 @@ const AgentChatMessagesSetterEffect = ({
   return null;
 };
 
-const AgentChatMessagesDecorator: Decorator = (Story, { parameters }) => (
+const AiChatMessagesDecorator: Decorator = (Story, { parameters }) => (
   <>
-    <AgentChatMessagesSetterEffect
+    <AiChatMessagesSetterEffect
       messages={parameters.messages ?? allMockMessages}
       isInboxEnabled={parameters.isInboxEnabled ?? false}
       assistantProfile={
@@ -591,7 +589,7 @@ const meta: Meta<typeof AiChatMessage> = {
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
-    AgentChatMessagesDecorator,
+    AiChatMessagesDecorator,
   ],
   parameters: {
     container: { width: 700 },
@@ -622,7 +620,7 @@ const playInWritableThread = async (play: () => Promise<void>) => {
   );
   const previousObjectMetadataItems = jotaiStore.get(objectMetadataItemsAtom);
 
-  setAgentChatThreadPermissions({
+  setAiChatThreadPermissions({
     store: jotaiStore,
     threadId,
     permissions: {
@@ -883,8 +881,8 @@ export const MultiplayerConversation: Story = {
 
 const READ_RECEIPTS_THREAD_ID = 'conversation-presentation-story';
 
-const seedReadPositions = (readPositions: AgentChatThreadReadPosition[]) => {
-  const readPositionsAtom = agentChatThreadReadPositionsFamilyState.atomFamily({
+const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
+  const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
     threadId: READ_RECEIPTS_THREAD_ID,
   });
 
@@ -944,10 +942,9 @@ export const SendingThenSentReceipt: Story = {
   },
   args: { messageId: mockUserMessage.id },
   beforeEach: () => {
-    const isSendingMessageAtom =
-      agentChatIsSendingMessageFamilyState.atomFamily({
-        threadId: READ_RECEIPTS_THREAD_ID,
-      });
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: READ_RECEIPTS_THREAD_ID,
+    });
     const resetReadPositions = seedReadPositions([
       { workspaceMemberId: mockTeammate.id, lastReadAt: null },
     ]);
@@ -967,7 +964,7 @@ export const SendingThenSentReceipt: Story = {
     ).toBeVisible();
 
     jotaiStore.set(
-      agentChatIsSendingMessageFamilyState.atomFamily({
+      aiChatIsSendingMessageFamilyState.atomFamily({
         threadId: READ_RECEIPTS_THREAD_ID,
       }),
       false,
@@ -1152,7 +1149,7 @@ export const AgentLookupFailure: Story = {
   },
 };
 
-const mockImageFilePart: AgentChatFileUIPart = {
+const mockImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-dashboard',
   filename: 'dashboard.png',
@@ -1160,7 +1157,7 @@ const mockImageFilePart: AgentChatFileUIPart = {
   url: IMAGE_URL_MOCK,
 };
 
-const mockSecondImageFilePart: AgentChatFileUIPart = {
+const mockSecondImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-team',
   filename: 'team.png',
@@ -1168,7 +1165,7 @@ const mockSecondImageFilePart: AgentChatFileUIPart = {
   url: IMAGE_URL_MOCK,
 };
 
-const mockBrokenImageFilePart: AgentChatFileUIPart = {
+const mockBrokenImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-broken',
   filename: 'broken.png',
@@ -1176,7 +1173,7 @@ const mockBrokenImageFilePart: AgentChatFileUIPart = {
   url: 'data:image/png;base64,broken',
 };
 
-const mockPdfFilePart: AgentChatFileUIPart = {
+const mockPdfFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-brief',
   filename: 'brief.pdf',
@@ -1262,7 +1259,7 @@ const mockUserMessageWithManyImages: ExtendedUIMessage = {
   role: 'user',
   parts: [
     { type: 'text', text: 'All the photos from the offsite.' },
-    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AgentChatFileUIPart => ({
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AiChatFileUIPart => ({
       type: 'file',
       fileId: `file-photo-${photoNumber}`,
       filename: `photo-${photoNumber}.png`,
@@ -1297,5 +1294,128 @@ export const UserMessageWithManyImages: Story = {
     await expect(
       canvas.queryByRole('button', { name: 'photo-5.png' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+const getSizedImageUrlMock = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#dbeafe"/><rect x="1" y="1" width="${width - 2}" height="${height - 2}" fill="none" stroke="#3b82f6" stroke-width="2"/></svg>`,
+  )}`;
+
+const getUserMessageWithImagesMock = ({
+  id,
+  text,
+  images,
+  senderWorkspaceMemberId = mockedWorkspaceMemberData.id,
+}: {
+  id: string;
+  text: string;
+  images: { filename: string; width: number; height: number }[];
+  senderWorkspaceMemberId?: string;
+}): ExtendedUIMessage => ({
+  id,
+  role: 'user',
+  parts: [
+    { type: 'text', text },
+    ...images.map(({ filename, width, height }): AiChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-${filename}`,
+      filename,
+      mediaType: 'image/png',
+      url: getSizedImageUrlMock({ width, height }),
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId,
+  },
+});
+
+const mockOwnMessagesWithImages = [
+  getUserMessageWithImagesMock({
+    id: 'msg-own-portrait',
+    text: 'Portrait screenshot from the mobile app',
+    images: [{ filename: 'portrait.png', width: 390, height: 844 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-landscape',
+    text: 'Landscape',
+    images: [{ filename: 'landscape.png', width: 1600, height: 200 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-small',
+    text: 'Small logo for the company record',
+    images: [{ filename: 'small.png', width: 48, height: 48 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-two-images',
+    text: 'Two',
+    images: [
+      { filename: 'first.png', width: 1440, height: 900 },
+      { filename: 'second.png', width: 390, height: 844 },
+    ],
+  }),
+];
+
+const mockTeammateMessageWithImage = getUserMessageWithImagesMock({
+  id: 'msg-teammate-landscape',
+  text: 'Reply',
+  images: [{ filename: 'teammate-landscape.png', width: 1600, height: 200 }],
+  senderWorkspaceMemberId: mockTeammate.id,
+});
+
+const mockMessagesWithImages = [
+  ...mockOwnMessagesWithImages,
+  mockTeammateMessageWithImage,
+];
+
+export const MessagesWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: mockMessagesWithImages,
+  },
+  render: () => (
+    <StyledConversationContainer>
+      {mockMessagesWithImages.map((message) => (
+        <AiChatMessage key={message.id} messageId={message.id} />
+      ))}
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const [text, lastImageName] of [
+      ['Portrait screenshot from the mobile app', 'portrait.png'],
+      ['Landscape', 'landscape.png'],
+      ['Small logo for the company record', 'small.png'],
+      ['Two', 'second.png'],
+    ]) {
+      const image = await canvas.findByRole('img', { name: lastImageName });
+
+      await expect(image).toBeVisible();
+
+      const ownTextToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right -
+        canvas.getByText(text).getBoundingClientRect().right;
+
+      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
+    }
+
+    const teammateImage = await canvas.findByRole('img', {
+      name: 'teammate-landscape.png',
+    });
+    const teammateImageToTextLeftEdgeGapInPx =
+      canvas.getByText('Reply').getBoundingClientRect().left -
+      teammateImage.getBoundingClientRect().left;
+
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeGreaterThanOrEqual(0);
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeLessThan(16);
   },
 };

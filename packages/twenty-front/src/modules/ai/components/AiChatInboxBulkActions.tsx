@@ -17,7 +17,7 @@ const StyledCount = styled.span`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatInboxBulkActionsProps = {
+type InboxBulkActionsProps = {
   selectedCount: number;
   onDone?: () => void;
   onSnooze?: () => void;
@@ -26,14 +26,14 @@ type AiChatInboxBulkActionsProps = {
   disabled?: boolean;
 };
 
-export const AiChatInboxBulkActions = ({
+export const InboxBulkActions = ({
   selectedCount,
   onDone,
   onSnooze,
   onClearSelection,
   onMarkAllDone,
   disabled = false,
-}: AiChatInboxBulkActionsProps) => {
+}: InboxBulkActionsProps) => {
   const { t } = useLingui();
 
   if (selectedCount === 0) {

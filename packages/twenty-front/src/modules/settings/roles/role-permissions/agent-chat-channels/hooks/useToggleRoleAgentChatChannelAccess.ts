@@ -1,21 +1,21 @@
-import { useRoleAgentChatChannelIds } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelIds';
-import { settingsDraftRoleAgentChatChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
+import { useRoleInboxChannelIds } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelIds';
+import { settingsDraftRoleInboxChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-export const useToggleRoleAgentChatChannelAccess = (roleId: string) => {
-  const roleAgentChatChannelIds = useRoleAgentChatChannelIds(roleId);
-  const setSettingsDraftRoleAgentChatChannelAccess = useSetAtomFamilyState(
-    settingsDraftRoleAgentChatChannelAccessFamilyState,
+export const useToggleRoleInboxChannelAccess = (roleId: string) => {
+  const roleInboxChannelIds = useRoleInboxChannelIds(roleId);
+  const setSettingsDraftRoleInboxChannelAccess = useSetAtomFamilyState(
+    settingsDraftRoleInboxChannelAccessFamilyState,
     roleId,
   );
 
-  const toggleRoleAgentChatChannelAccess = (channelId: string) =>
-    setSettingsDraftRoleAgentChatChannelAccess(
-      (settingsDraftRoleAgentChatChannelAccess) => ({
-        ...settingsDraftRoleAgentChatChannelAccess,
-        [channelId]: !roleAgentChatChannelIds.includes(channelId),
+  const toggleRoleInboxChannelAccess = (channelId: string) =>
+    setSettingsDraftRoleInboxChannelAccess(
+      (settingsDraftRoleInboxChannelAccess) => ({
+        ...settingsDraftRoleInboxChannelAccess,
+        [channelId]: !roleInboxChannelIds.includes(channelId),
       }),
     );
 
-  return { toggleRoleAgentChatChannelAccess };
+  return { toggleRoleInboxChannelAccess };
 };

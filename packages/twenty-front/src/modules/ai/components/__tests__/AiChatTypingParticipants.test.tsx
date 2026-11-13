@@ -5,9 +5,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -36,7 +36,7 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   jotaiStore.set(
-    agentChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
       threadId: THREAD_ID,
     }),
     typingWorkspaceMemberIds,
@@ -56,9 +56,9 @@ describe('AiChatTypingParticipants', () => {
     resetJotaiStore();
 
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
         {
           id: 'message-id',

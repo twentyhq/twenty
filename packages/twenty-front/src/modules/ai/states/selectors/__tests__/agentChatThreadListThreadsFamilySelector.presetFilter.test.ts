@@ -1,12 +1,12 @@
 import { createStore } from 'jotai';
 import {
-  AGENT_CHAT_THREAD_FILTER_STATUS,
-  type AgentChatThreadFilterStatus,
+  AGENT_CHAT_THREAD_PRESET_FILTER,
+  type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -163,10 +163,10 @@ const THREADS: {
   },
 ];
 
-const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
+const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
   const store = createStore();
 
-  setAgentChatThreadList(
+  setInboxThreadList(
     store,
     THREADS.map(
       ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) => ({
@@ -182,7 +182,7 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
     ),
   );
   store.set(
-    agentChatThreadParticipantsState.atom,
+    aiChatThreadParticipantsState.atom,
     Object.fromEntries(
       THREADS.filter(({ participant }) => participant !== undefined).map(
         ({ id, participant }) => [id, { id, threadId: id, ...participant! }],
@@ -191,18 +191,18 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   );
   return store
     .get(
-      agentChatThreadListThreadsFamilySelector.selectorFamily({
+      inboxThreadListThreadsFamilySelector.selectorFamily({
         type: 'presetFilter',
-        presetFilter: filterStatus,
+        presetFilter,
       }),
     )
     .map(({ id }) => id);
 };
 
-describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
+describe('inboxThreadListThreadsFamilySelector for a preset filter', () => {
   it.each([
     [
-      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
       [
         'read',
         'archived-then-active',
@@ -213,14 +213,14 @@ describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
         'mentioned',
       ],
     ],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT, ['needs-input']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS, ['mentioned']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT, ['needs-input']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS, ['mentioned']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED, ['snoozed']],
     [
-      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
       ['archived', 'done-needs-input', 'unsubscribed-then-active'],
     ],
-  ])('lists the %s threads', (filterStatus, expectedThreadIds) => {
-    expect(getVisibleThreadIds(filterStatus)).toEqual(expectedThreadIds);
+  ])('lists the %s threads', (presetFilter, expectedThreadIds) => {
+    expect(getVisibleThreadIds(presetFilter)).toEqual(expectedThreadIds);
   });
 });

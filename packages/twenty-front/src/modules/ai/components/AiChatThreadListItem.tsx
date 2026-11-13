@@ -8,17 +8,17 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
-import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
+import { InboxThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
-import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { useInboxThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -31,27 +31,27 @@ const StyledActivityTime = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-type AiChatThreadListItemProps = {
-  thread: AgentChatThreadRecord;
-  variant?: AiChatThreadListVariant;
+type InboxThreadListItemProps = {
+  thread: AiChatThreadRecord;
+  variant?: InboxThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (
-    thread: AgentChatThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onCheckboxClick?: (
-    thread: AgentChatThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onContextMenu?: (
-    thread: AgentChatThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onDetach?: () => void;
 };
 
-export const AiChatThreadListItem = ({
+export const InboxThreadListItem = ({
   thread,
   variant = 'default',
   isSelected,
@@ -60,9 +60,9 @@ export const AiChatThreadListItem = ({
   onCheckboxClick,
   onContextMenu,
   onDetach,
-}: AiChatThreadListItemProps) => {
+}: InboxThreadListItemProps) => {
   const { t } = useLingui();
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`Untitled`,
   });
@@ -82,15 +82,15 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-  const { status: triageStatus } = useAiChatThreadTriage({
+  const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
     { threadId: thread.id },
   );
   const { hasContent: hasSubtitleContent } =
-    useAgentChatThreadSubtitleContent(thread);
+    useAiChatThreadSubtitleContent(thread);
   const isCompact = variant === 'compact';
   const shouldShowMore =
     isDefined(onDetach) ||
@@ -107,7 +107,7 @@ export const AiChatThreadListItem = ({
       isChecked={isChecked}
       isEditing={isRenaming}
       isActionMenuOpen={isDropdownOpen}
-      isStreaming={agentChatIsStreaming}
+      isStreaming={aiChatIsStreaming}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
@@ -156,7 +156,7 @@ export const AiChatThreadListItem = ({
       activityTime={
         !isRenaming && (
           <StyledActivityTime>
-            <AiChatThreadChannelIcon thread={thread} />
+            <InboxThreadChannelIcon thread={thread} />
             <AiChatThreadActivityTime thread={thread} variant={variant} />
           </StyledActivityTime>
         )

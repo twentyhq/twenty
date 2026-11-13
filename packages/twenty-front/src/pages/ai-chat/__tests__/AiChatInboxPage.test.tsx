@@ -1,4 +1,7 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_THREAD_PRESET_FILTER,
+  AgentChatThreadConversationType,
+} from 'twenty-shared/ai';
 
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
@@ -16,17 +19,18 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -35,13 +39,18 @@ import {
   resetJotaiStore,
   jotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
+  AgentChatChannelThreadStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
-import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
+import { InboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
+const buildThread = (id: string, title: string): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -67,7 +76,7 @@ jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatThreadList', () => ({
-  AiChatThreadList: ({
+  InboxThreadList: ({
     threads,
     selectedThreadIds,
     checkedThreadIds,
@@ -75,19 +84,19 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     onThreadCheckboxClick,
     onThreadContextMenu,
   }: {
-    threads: AgentChatThreadRecord[];
+    threads: AiChatThreadRecord[];
     selectedThreadIds: string[];
     checkedThreadIds: string[];
     onThreadClick: (
-      thread: AgentChatThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
     onThreadCheckboxClick?: (
-      thread: AgentChatThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
     onThreadContextMenu?: (
-      thread: AgentChatThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
   }) =>
@@ -113,21 +122,21 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
 }));
 
 jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
-  AgentChatThreadListFetchMoreTrigger: () => null,
+  InboxThreadListFetchMoreTrigger: () => null,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadListLoadEffect', () => ({
-  AgentChatThreadListLoadEffect: () => null,
+  InboxThreadListLoadEffect: () => null,
 }));
 
 jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
-  useLoadAgentChatThreadList: () => ({
-    loadAgentChatThreadList: jest.fn(),
+  useLoadInboxThreadList: () => ({
+    loadInboxThreadList: jest.fn(),
   }),
 }));
 
 jest.mock('@/ai/hooks/useAgentChatOpenThreadsSummary', () => ({
-  useAgentChatOpenThreadsSummary: () => ({
+  useInboxOpenThreadsSummary: () => ({
     openThreadCount: 0,
     unreadOpenThreadCount: 0,
     needsInputThreadCount: 0,
@@ -223,13 +232,18 @@ jest.mock(
   () => ({ PinnedCommandMenuItemButtons: () => null }),
 );
 
-let mockIsAiChatInboxEnabled = true;
+let mockIsInboxEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: () => mockIsInboxEnabled,
 }));
 
 const [firstThread, secondThread, thirdThread] = THREADS;
+
+const DIRECT_MESSAGE: AiChatThreadRecord = {
+  ...buildThread('8c3d5e7f-1a2b-4c6d-9e8f-0a1b2c3d4e5f', 'Marie Stoppa'),
+  conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+};
 
 const renderInbox = (path = `/inbox/${firstThread.id}`) =>
   render(
@@ -238,7 +252,7 @@ const renderInbox = (path = `/inbox/${firstThread.id}`) =>
         <MemoryRouter initialEntries={[path]}>
           <MemoryRouterAppNavigatorProvider>
             <Routes>
-              <Route path={AppPath.AiChatInbox} element={<AiChatInboxPage />} />
+              <Route path={AppPath.AiChatInbox} element={<InboxPage />} />
               <Route
                 path={AppPath.AiChat}
                 element={<div>Chat page without the inbox</div>}
@@ -264,7 +278,7 @@ const getTargetedThreadIds = (contextStoreInstanceId: string) =>
     }),
   );
 
-describe('AiChatInboxPage', () => {
+describe('InboxPage', () => {
   beforeAll(() => {
     Element.prototype.scrollIntoView = jest.fn();
   });
@@ -277,8 +291,8 @@ describe('AiChatInboxPage', () => {
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
     );
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       ),
       {
         threadIds: THREADS.map(({ id }) => id),
@@ -289,7 +303,7 @@ describe('AiChatInboxPage', () => {
     );
     // The member's own chats, which they follow
     jotaiStore.set(
-      agentChatThreadParticipantsState.atom,
+      aiChatThreadParticipantsState.atom,
       Object.fromEntries(
         THREADS.map(({ id, updatedAt }) => [
           id,
@@ -309,11 +323,11 @@ describe('AiChatInboxPage', () => {
       ),
     );
     isMobile = false;
-    mockIsAiChatInboxEnabled = true;
+    mockIsInboxEnabled = true;
   });
 
   it('sends the inbox to the chat page while the inbox feature flag is off', () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
 
     renderInbox();
 
@@ -354,12 +368,12 @@ describe('AiChatInboxPage', () => {
   });
 
   it('stays on a done chat the member writes in, though it leaves the done list', () => {
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
     jotaiStore.set(
-      agentChatThreadParticipantsState.atom,
+      aiChatThreadParticipantsState.atom,
       Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
@@ -401,7 +415,7 @@ describe('AiChatInboxPage', () => {
     });
 
     expect(screen.getByText('2 chats selected')).toBeInTheDocument();
-    expect(getTargetedThreadIds(AI_CHAT_INBOX_INSTANCE_ID)).toEqual({
+    expect(getTargetedThreadIds(INBOX_INSTANCE_ID)).toEqual({
       mode: 'selection',
       selectedRecordIds: [firstThread.id, thirdThread.id],
     });
@@ -479,16 +493,15 @@ describe('AiChatInboxPage', () => {
     fireEvent.contextMenu(screen.getByRole('button', { name: 'Third chat' }));
 
     expect(screen.getByText('2 chats selected')).toBeInTheDocument();
-    expect(getTargetedThreadIds(AI_CHAT_INBOX_INSTANCE_ID)).toEqual({
+    expect(getTargetedThreadIds(INBOX_INSTANCE_ID)).toEqual({
       mode: 'selection',
       selectedRecordIds: [secondThread.id, thirdThread.id],
     });
     expect(
       jotaiStore.get(
         isDropdownOpenComponentState.atomFamily({
-          instanceId: getCommandMenuDropdownIdFromCommandMenuId(
-            AI_CHAT_INBOX_INSTANCE_ID,
-          ),
+          instanceId:
+            getCommandMenuDropdownIdFromCommandMenuId(INBOX_INSTANCE_ID),
         }),
       ),
     ).toBe(true);
@@ -549,7 +562,7 @@ describe('AiChatInboxPage', () => {
     });
     unmount();
 
-    expect(getTargetedThreadIds(AI_CHAT_INBOX_INSTANCE_ID)).toEqual({
+    expect(getTargetedThreadIds(INBOX_INSTANCE_ID)).toEqual({
       mode: 'selection',
       selectedRecordIds: [],
     });
@@ -568,8 +581,8 @@ describe('AiChatInboxPage', () => {
     );
     await userEvent.click(await screen.findByText('Record page'));
 
-    expect(jotaiStore.get(aiChatInboxLayoutState.atom)).toBe(
-      AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+    expect(jotaiStore.get(inboxLayoutState.atom)).toBe(
+      INBOX_LAYOUT.RECORD_PAGE,
     );
     expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
     expect(
@@ -577,12 +590,48 @@ describe('AiChatInboxPage', () => {
     ).toBeInTheDocument();
   });
 
-  describe('in record page layout', () => {
+  describe('with a direct message open while a channel is selected', () => {
     beforeEach(() => {
       jotaiStore.set(
-        aiChatInboxLayoutState.atom,
-        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+        recordStoreFamilyState.atomFamily(DIRECT_MESSAGE.id),
+        DIRECT_MESSAGE,
       );
+      setInboxSelectedChannelView(jotaiStore, {
+        channelId: '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f',
+        channelStatus: AgentChatChannelThreadStatus.OPEN,
+        assignment: AgentChatChannelAssignmentFilter.ANY,
+        filter: AgentChatChannelThreadFilter.ANY,
+      });
+    });
+
+    it('hides the channel list', () => {
+      renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
+
+      expect(
+        screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'Conversation list' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('leaves the channel out of the breadcrumb in record page layout', () => {
+      jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.RECORD_PAGE);
+
+      renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
+
+      expect(
+        screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', { name: /Open/ }),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe('in record page layout', () => {
+    beforeEach(() => {
+      jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.RECORD_PAGE);
     });
 
     it('shows a new chat in place of the list', () => {

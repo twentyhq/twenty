@@ -1,45 +1,45 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
-import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { getAgentChatChannelViewLabel } from '@/ai/utils/getAgentChatChannelViewLabel';
+import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/ai/constants/AgentChatThreadPresetFilterIcons';
+import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/ai/constants/AgentChatThreadPresetFilterLabels';
+import { useInboxChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { getInboxChannelViewLabel } from '@/ai/utils/getAgentChatChannelViewLabel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useAgentChatInboxViewHeading = () => {
+export const useInboxViewHeading = () => {
   const { t } = useLingui();
-  const agentChatSelectedThreadListSource = useAtomStateValue(
-    agentChatSelectedThreadListSourceState,
+  const inboxSelectedThreadListSource = useAtomStateValue(
+    inboxSelectedThreadListSourceState,
   );
-  const agentChatShownChannelView =
-    agentChatSelectedThreadListSource.type === 'channel'
-      ? agentChatSelectedThreadListSource.channelView
+  const inboxSelectedChannelView =
+    inboxSelectedThreadListSource.type === 'channel'
+      ? inboxSelectedThreadListSource.channelView
       : undefined;
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
-    ({ id }) => id === agentChatShownChannelView?.channelId,
+  const channel = useAtomStateValue(inboxChannelsState)?.find(
+    ({ id }) => id === inboxSelectedChannelView?.channelId,
   );
-  const ChannelIcon = useAgentChatChannelIcon(channel?.icon);
+  const ChannelIcon = useInboxChannelIcon(channel?.icon);
 
-  if (agentChatSelectedThreadListSource.type === 'presetFilter') {
+  if (inboxSelectedThreadListSource.type === 'presetFilter') {
     return {
       HeadingIcon:
-        AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[
-          agentChatSelectedThreadListSource.presetFilter
+        INBOX_THREAD_PRESET_FILTER_ICONS[
+          inboxSelectedThreadListSource.presetFilter
         ],
       headingLabel: t(
-        AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
-          agentChatSelectedThreadListSource.presetFilter
+        INBOX_THREAD_PRESET_FILTER_LABELS[
+          inboxSelectedThreadListSource.presetFilter
         ],
       ),
       channelViewLabel: undefined,
     };
   }
 
-  const channelViewLabel = getAgentChatChannelViewLabel(
-    agentChatSelectedThreadListSource.channelView,
+  const channelViewLabel = getInboxChannelViewLabel(
+    inboxSelectedThreadListSource.channelView,
   );
 
   if (!isDefined(channel)) {

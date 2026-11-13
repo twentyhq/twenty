@@ -4,16 +4,16 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const agentChatFavoriteThreadsSelector = createAtomSelector<
-  AgentChatThreadListItem[]
+export const inboxFavoriteThreadsSelector = createAtomSelector<
+  InboxThreadListItemData[]
 >({
-  key: 'agentChatFavoriteThreadsSelector',
+  key: 'inboxFavoriteThreadsSelector',
   get: ({ get }) => {
     const chatObjectMetadataItem = get(objectMetadataItemFamilySelector, {
       objectName: StandardObjectNameSingular.AgentChatThread,
@@ -42,7 +42,7 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
 
         // The loaded chat carries its latest title and deletion, which the favorite's identifier doesn't follow.
         const loadedThread = get(
-          agentChatThreadRecordFamilySelector,
+          aiChatThreadRecordFamilySelector,
           item.targetRecordId,
         );
 

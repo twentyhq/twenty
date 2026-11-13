@@ -22,6 +22,7 @@ describe('listApplicationSourceFiles', () => {
       'dist/output.ts',
       '.twenty/cli/snapshot.ts',
       'notes.md',
+      'public/downloads/example.ts',
     ]) {
       await mkdir(dirname(join(appPath, file)), { recursive: true });
       await writeFile(join(appPath, file), '');
