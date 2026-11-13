@@ -6,6 +6,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
+  getDeclaredLegacyRoleRecordsPermissionsKeys,
   normalizeLegacyCompliantRoleManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
@@ -369,6 +370,25 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     };
 
     for (const role of manifest.roles) {
+      // A predicate that has no rule yet is still exported in the legacy properties
+      const conflictingLegacyKeys = getDeclaredLegacyRoleRecordsPermissionsKeys(
+        { role },
+      ).filter(
+        (legacyKey) =>
+          legacyKey !== 'rowLevelPermissionPredicates' &&
+          legacyKey !== 'rowLevelPermissionPredicateGroups',
+      );
+
+      if (
+        isDefined(role.recordsPermissions) &&
+        conflictingLegacyKeys.length > 0
+      ) {
+        throw new ApplicationException(
+          `Role "${role.universalIdentifier}" declares recordsPermissions together with the legacy properties ${conflictingLegacyKeys.join(', ')}`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+
       const roleManifest = normalizeLegacyCompliantRoleManifest({
         role,
         applicationUniversalIdentifier,

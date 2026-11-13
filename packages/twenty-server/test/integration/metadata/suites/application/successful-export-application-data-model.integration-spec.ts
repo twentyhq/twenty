@@ -1436,41 +1436,37 @@ describe('Application export - data model', () => {
       expect(data.exportApplication.manifest.roles).toContainEqual(
         expect.objectContaining({
           label: 'Export Custom Application Recruiter',
-          objectPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-            }),
-          ],
-          fieldPermissions: [
-            expect.objectContaining({
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              canUpdateFieldValue: false,
-            }),
-          ],
-          rowLevelPermissionPredicateGroups: [
-            expect.objectContaining({
-              universalIdentifier: predicateGroupId,
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            }),
-          ],
-          rowLevelPermissionPredicates: [
-            expect.objectContaining({
-              universalIdentifier: keptPredicateId,
-              objectUniversalIdentifier:
-                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value: 'Engineer',
-              predicateGroupUniversalIdentifier: predicateGroupId,
-              position: 0,
-            }),
-          ],
+          recordsPermissions: expect.objectContaining({
+            objects: [
+              expect.objectContaining({
+                objectUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+                canReadAllRecords: true,
+                canUpdateAllRecords: false,
+                uneditableFields: [expect.any(String)],
+                rowLevelRecordsPermissions: [
+                  expect.objectContaining({
+                    predicateGroups: [
+                      expect.objectContaining({
+                        universalIdentifier: predicateGroupId,
+                        logicalOperator:
+                          RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                        predicates: [
+                          expect.objectContaining({
+                            universalIdentifier: keptPredicateId,
+                            operand:
+                              RowLevelPermissionPredicateOperand.CONTAINS,
+                            value: 'Engineer',
+                            position: 0,
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
           permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],
         }),
       );
@@ -1489,19 +1485,7 @@ describe('Application export - data model', () => {
       });
 
       expect(dryRun.errors).toBeUndefined();
-      // TODO(@charlesBochet): expect no action once the export declares rules, a re-sync moves the object grant onto the rule
-      expect(dryRun.data.syncApplication.actions).toMatchObject([
-        {
-          metadataName: 'objectPermission',
-          type: 'update',
-          update: { canReadObjectRecords: false },
-        },
-        {
-          metadataName: 'rowLevelPermissionRule',
-          type: 'update',
-          update: { canReadRecords: true },
-        },
-      ]);
+      expect(dryRun.data.syncApplication.actions).toEqual([]);
 
       const deletionInferringDryRun = await syncApplication({
         manifest: data.exportApplication.manifest,

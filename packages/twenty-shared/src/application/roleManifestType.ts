@@ -104,6 +104,17 @@ export type LegacyRoleRecordsPermissionsManifest = {
   rowLevelPermissionPredicateGroups?: LegacyRowLevelPermissionPredicateGroupManifest[];
 };
 
+export const LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS = [
+  'canReadAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
+  'objectPermissions',
+  'fieldPermissions',
+  'rowLevelPermissionPredicates',
+  'rowLevelPermissionPredicateGroups',
+] as const satisfies (keyof LegacyRoleRecordsPermissionsManifest)[];
+
 type RoleManifestBase = SyncableEntityOptions &
   Pick<
     RolePermissionGrants,
@@ -126,5 +137,8 @@ export type RoleManifest = RoleManifestBase & {
   };
 };
 
+// The deprecated properties are read for manifests built before recordsPermissions
 export type LegacyCompliantRoleManifest = RoleManifestBase &
-  LegacyRoleRecordsPermissionsManifest;
+  LegacyRoleRecordsPermissionsManifest & {
+    recordsPermissions?: RoleRecordsPermissionsManifest;
+  };

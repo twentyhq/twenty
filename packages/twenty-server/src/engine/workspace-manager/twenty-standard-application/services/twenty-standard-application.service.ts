@@ -144,6 +144,7 @@ export class TwentyStandardApplicationService {
     await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: twentyStandardFlatApplication.id,
+      isRequestedRoleDeclaredWithLegacyProperties: false,
     });
 
     await this.seedStandardObjectInitialViewsOrThrow({

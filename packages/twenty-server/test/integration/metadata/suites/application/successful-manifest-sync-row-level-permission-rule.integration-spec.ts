@@ -14,6 +14,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
+const TEST_RULE_ID = uuidv4();
 const TEST_PREDICATE_ID = uuidv4();
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -31,7 +32,7 @@ const companyNamePredicate = {
 const buildManifest = (
   role: Pick<
     LegacyCompliantRoleManifest,
-    'objectPermissions' | 'rowLevelPermissionPredicates'
+    'objectPermissions' | 'recordsPermissions' | 'rowLevelPermissionPredicates'
   >,
 ): Manifest =>
   buildBaseManifest({
@@ -59,6 +60,29 @@ const manifestWithoutRule = buildManifest({
   rowLevelPermissionPredicates: [companyNamePredicate],
 });
 
+const {
+  objectUniversalIdentifier: _objectUniversalIdentifier,
+  ...companyNameRulePredicate
+} = companyNamePredicate;
+
+const manifestWithRule = buildManifest({
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+        canUpdateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: TEST_RULE_ID,
+            canReadRecords: true,
+            predicates: [companyNameRulePredicate],
+          },
+        ],
+      },
+    ],
+  },
+});
+
 type RuleRow = {
   universalIdentifier: string;
   canReadRecords: boolean;
@@ -68,13 +92,15 @@ type RuleRow = {
   canDestroyRecords: boolean;
   canReadObjectRecords: boolean | null;
   canUpdateObjectRecords: boolean | null;
+  predicateId: string;
 };
 
 const findRuleRows = async (): Promise<RuleRow[]> =>
   globalThis.testDataSource.query(
     `SELECT rule."universalIdentifier", rule."canReadRecords", rule."canCreateRecords",
             rule."canUpdateRecords", rule."canSoftDeleteRecords", rule."canDestroyRecords",
-            "objectPermission"."canReadObjectRecords", "objectPermission"."canUpdateObjectRecords"
+            "objectPermission"."canReadObjectRecords", "objectPermission"."canUpdateObjectRecords",
+            predicate.id AS "predicateId"
      FROM core."rowLevelPermissionRule" rule
      JOIN core."role" role ON role.id = rule."roleId"
      JOIN core."rowLevelPermissionPredicate" predicate
@@ -86,7 +112,7 @@ const findRuleRows = async (): Promise<RuleRow[]> =>
     [TEST_ROLE_ID, SEED_APPLE_WORKSPACE_ID],
   );
 
-describe('Manifest sync - row level permission rules derived from role predicates', () => {
+describe('Manifest sync - row level permission rules declared on a role', () => {
   beforeEach(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -122,6 +148,35 @@ describe('Manifest sync - row level permission rules derived from role predicate
         canReadObjectRecords: false,
         canUpdateObjectRecords: false,
       },
+    ]);
+  }, 60000);
+
+  it('writes the all records grants of an object and its rule with nested predicates', async () => {
+    await syncApplication({ manifest: manifestWithRule, expectToFail: false });
+
+    expect(await findRuleRows()).toMatchObject([
+      {
+        universalIdentifier: TEST_RULE_ID,
+        canReadRecords: true,
+        canUpdateRecords: false,
+        canReadObjectRecords: null,
+        canUpdateObjectRecords: true,
+      },
+    ]);
+  }, 60000);
+
+  it('keeps the predicate when a manifest moves it into a rule', async () => {
+    await syncApplication({
+      manifest: manifestWithoutRule,
+      expectToFail: false,
+    });
+
+    const [{ predicateId }] = await findRuleRows();
+
+    await syncApplication({ manifest: manifestWithRule, expectToFail: false });
+
+    expect(await findRuleRows()).toMatchObject([
+      { universalIdentifier: TEST_RULE_ID, predicateId, canReadRecords: true },
     ]);
   }, 60000);
 });

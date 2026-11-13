@@ -1,6 +1,6 @@
 import {
-  type LegacyObjectPermissionManifest,
   normalizeLegacyCompliantRoleManifest,
+  type ObjectRecordsPermissionsManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
@@ -16,6 +16,14 @@ const OBJECT_PERMISSION_UID = '44444444-4444-4444-8444-444444444444';
 const PERMISSION_FLAG_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-14T10:00:00.000Z';
 
+const ALL_RECORDS_PERMISSIONS = {
+  canReadAllRecords: true,
+  canCreateAllRecords: false,
+  canUpdateAllRecords: false,
+  canSoftDeleteAllRecords: false,
+  canDestroyAllRecords: false,
+};
+
 const ROLE_MANIFEST: LegacyCompliantRoleManifest = {
   universalIdentifier: ROLE_UID,
   label: 'Support',
@@ -24,19 +32,16 @@ const ROLE_MANIFEST: LegacyCompliantRoleManifest = {
   canUpdateAllSettings: false,
   canAccessAllTools: true,
   canAccessAllAgentChatChannels: false,
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
+  recordsPermissions: ALL_RECORDS_PERMISSIONS,
 };
 
-const OBJECT_PERMISSION_MANIFEST: LegacyObjectPermissionManifest = {
+const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
   universalIdentifier: OBJECT_PERMISSION_UID,
   objectUniversalIdentifier: OBJECT_UID,
-  canReadObjectRecords: true,
+  canReadAllRecords: true,
 };
 
 const forward = (roleManifest: LegacyCompliantRoleManifest) =>
@@ -98,14 +103,17 @@ describe('fromFlatRoleToLegacyCompliantRoleManifest', () => {
       fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: forward(ROLE_MANIFEST),
         children: {
-          objectPermissions: [OBJECT_PERMISSION_MANIFEST],
-          fieldPermissions: [],
+          objectsRecordsPermissions: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
+          rowLevelPermissionPredicates: [],
           permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
         },
       }),
     ).toStrictEqual({
       ...ROLE_MANIFEST,
-      objectPermissions: [OBJECT_PERMISSION_MANIFEST],
+      recordsPermissions: {
+        ...ALL_RECORDS_PERMISSIONS,
+        objects: [OBJECT_RECORDS_PERMISSIONS_MANIFEST],
+      },
       permissionFlagUniversalIdentifiers: [PERMISSION_FLAG_UID],
     });
   });

@@ -275,6 +275,7 @@ export type {
   RoleManifest,
   LegacyCompliantRoleManifest,
 } from './roleManifestType';
+export { LEGACY_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS } from './roleManifestType';
 export type {
   ObjectPermissionGrant,
   FieldPermissionGrant,
@@ -346,6 +347,7 @@ export type {
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export { getDeclaredLegacyRoleRecordsPermissionsKeys } from './utils/getDeclaredLegacyRoleRecordsPermissionsKeys';
 export type {
   EffectiveObjectPermissions,
   ObjectRecordsPermissionGrants,
