@@ -118,6 +118,34 @@ export const RecordTableAggregateFooterCell = ({
   // A total over a lookup counts a related record once per row that links to it
   const isLookupColumn = isDefined(recordField.relationTargetFieldMetadataId);
 
+  const getFooterContent = () => {
+    if (isLookupColumn) {
+      return null;
+    }
+
+    if (!isFooterReadOnly) {
+      return (
+        <RecordTableColumnFooterWithDropdown
+          currentRecordGroupId={currentRecordGroupId}
+          isFirstCell={isFirstCell}
+        />
+      );
+    }
+
+    if (!hasAggregateOperationForViewField) {
+      return null;
+    }
+
+    return (
+      <RecordTableColumnAggregateFooterValue
+        fieldMetadataId={fieldMetadataId}
+        dropdownId={`${viewFieldId}-footer-readonly`}
+      />
+    );
+  };
+
+  const footerContent = getFooterContent();
+
   return (
     <StyledColumnFooterCell
       columnWidth={recordField.size + 1}
@@ -131,19 +159,7 @@ export const RecordTableAggregateFooterCell = ({
       <StyledColumnFootContainer
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
-        {isLookupColumn ? null : isFooterReadOnly ? (
-          hasAggregateOperationForViewField ? (
-            <RecordTableColumnAggregateFooterValue
-              fieldMetadataId={fieldMetadataId}
-              dropdownId={`${viewFieldId}-footer-readonly`}
-            />
-          ) : null
-        ) : (
-          <RecordTableColumnFooterWithDropdown
-            currentRecordGroupId={currentRecordGroupId}
-            isFirstCell={isFirstCell}
-          />
-        )}
+        {footerContent}
       </StyledColumnFootContainer>
     </StyledColumnFooterCell>
   );

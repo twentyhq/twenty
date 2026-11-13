@@ -2,6 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordTableCellLookupRelatedRecordEffect } from '@/object-record/record-column-lookup/components/RecordTableCellLookupRelatedRecordEffect';
+import { findRecordFieldLookupTargetFieldMetadataItem } from '@/object-record/record-column-lookup/utils/findRecordFieldLookupTargetFieldMetadataItem';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -50,9 +51,12 @@ export const RecordTableCellLookupFieldContext = ({
     objectMetadataItems,
   });
 
-  const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
-    (field) => field.id === recordField.relationTargetFieldMetadataId,
-  );
+  const lookupTargetFieldMetadataItem =
+    findRecordFieldLookupTargetFieldMetadataItem({
+      recordField,
+      fieldMetadataItem,
+      objectMetadataItems,
+    });
 
   if (
     !isDefined(relationObjectMetadataItem) ||
