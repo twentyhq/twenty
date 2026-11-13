@@ -109,8 +109,8 @@ export const MENU: {
           href: '/partners/integrators',
           icon: IconHeartHandshake,
           preview: {
-            image: '/images/menu/partners.webp',
-            imageAlt: msg`Twenty partner ecosystem`,
+            image: '/images/menu/integrators.webp',
+            imageAlt: msg`Blue monitor illustration`,
             imagePosition: 'center',
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Grow your practice with Twenty`,
