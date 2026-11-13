@@ -1,4 +1,4 @@
-import { type DeprecatedRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
+import { type LegacyRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 
 import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
@@ -13,7 +13,7 @@ const PARENT_PREDICATE_GROUP_UID = '44444444-4444-4444-8444-444444444444';
 const PREDICATE_GROUP_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-15T10:00:00.000Z';
 
-const PREDICATE_GROUP_MANIFEST: Required<DeprecatedRowLevelPermissionPredicateGroupManifest> =
+const PREDICATE_GROUP_MANIFEST: Required<LegacyRowLevelPermissionPredicateGroupManifest> =
   {
     universalIdentifier: PREDICATE_GROUP_UID,
     objectUniversalIdentifier: OBJECT_UID,
@@ -23,7 +23,7 @@ const PREDICATE_GROUP_MANIFEST: Required<DeprecatedRowLevelPermissionPredicateGr
   };
 
 const forward = (
-  rowLevelPermissionPredicateGroupManifest: DeprecatedRowLevelPermissionPredicateGroupManifest,
+  rowLevelPermissionPredicateGroupManifest: LegacyRowLevelPermissionPredicateGroupManifest,
 ) =>
   fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
     {

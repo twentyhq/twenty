@@ -7,7 +7,7 @@ import {
   type LegacyCompliantRoleManifest,
   getReachableObjectPermissionsFromRoleManifest,
   getRecordsPermissionsFromRoleManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -201,7 +201,7 @@ export class MarketplaceQueryService {
     role: LegacyCompliantRoleManifest;
     applicationUniversalIdentifier: string;
   }): MarketplaceAppRoleDTO {
-    const normalizedRole = normalizeRoleManifestRecordsPermissions({
+    const normalizedRole = normalizeLegacyCompliantRoleManifest({
       role,
       applicationUniversalIdentifier,
     });

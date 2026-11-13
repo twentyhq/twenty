@@ -4,7 +4,7 @@ import {
   getRowLevelPermissionPredicatesFromRoleManifest,
   type Manifest,
   type RoleManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -28,7 +28,7 @@ const NO_MANIFEST_CANDIDATES: ManifestEntityCandidate[] = [];
 
 const getNormalizedRoles = (manifest: Manifest): RoleManifest[] =>
   (manifest.roles ?? []).map((role) =>
-    normalizeRoleManifestRecordsPermissions({
+    normalizeLegacyCompliantRoleManifest({
       role,
       applicationUniversalIdentifier: manifest.application.universalIdentifier,
     }),

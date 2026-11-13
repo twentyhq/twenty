@@ -1,6 +1,6 @@
 import {
   type RoleManifest,
-  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
 } from '@/application/roleManifestType';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { getRowLevelPermissionPredicatesFromRoleManifest } from '@/application/utils/getRowLevelPermissionPredicatesFromRoleManifest';
@@ -23,7 +23,7 @@ const getGroupOperatorPath = ({
 }: {
   groupsByUniversalIdentifier: Map<
     string,
-    DeprecatedRowLevelPermissionPredicateGroupManifest
+    LegacyRowLevelPermissionPredicateGroupManifest
   >;
   predicateGroupUniversalIdentifier: string | null | undefined;
 }): string[] => {

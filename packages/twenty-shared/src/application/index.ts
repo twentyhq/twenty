@@ -254,10 +254,10 @@ export type { RecordEventTriggerManifestSettings } from './recordEventTriggerMan
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
-  DeprecatedObjectPermissionManifest,
-  DeprecatedFieldPermissionManifest,
-  DeprecatedRowLevelPermissionPredicateGroupManifest,
-  DeprecatedRowLevelPermissionPredicateManifest,
+  LegacyObjectPermissionManifest,
+  LegacyFieldPermissionManifest,
+  LegacyRowLevelPermissionPredicateGroupManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,
@@ -266,7 +266,7 @@ export type {
   ObjectRecordsPermissionsManifest,
   RoleRecordsPermissionsManifest,
   RowLevelPermissionRuleManifest,
-  DeprecatedRoleRecordsPermissionsManifest,
+  LegacyRoleRecordsPermissionsManifest,
   RoleManifest,
   LegacyCompliantRoleManifest,
 } from './roleManifestType';
@@ -363,7 +363,7 @@ export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontC
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
-export { normalizeRoleManifestRecordsPermissions } from './utils/normalizeRoleManifestRecordsPermissions';
+export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

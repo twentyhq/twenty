@@ -59,7 +59,7 @@ import {
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
   type LegacyCompliantRoleManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -705,7 +705,7 @@ export const buildManifest = async (
       ...validateAgentRolesWithinApplicationRole({
         agents,
         roles: roles.map((role) =>
-          normalizeRoleManifestRecordsPermissions({
+          normalizeLegacyCompliantRoleManifest({
             role,
             applicationUniversalIdentifier:
               applicationConfig.universalIdentifier,

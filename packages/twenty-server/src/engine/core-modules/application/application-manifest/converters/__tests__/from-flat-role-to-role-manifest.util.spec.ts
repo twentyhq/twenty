@@ -1,6 +1,6 @@
 import {
-  type DeprecatedObjectPermissionManifest,
-  normalizeRoleManifestRecordsPermissions,
+  type LegacyObjectPermissionManifest,
+  normalizeLegacyCompliantRoleManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
@@ -33,7 +33,7 @@ const ROLE_MANIFEST: LegacyCompliantRoleManifest = {
   canBeAssignedToApiKeys: true,
 };
 
-const OBJECT_PERMISSION_MANIFEST: DeprecatedObjectPermissionManifest = {
+const OBJECT_PERMISSION_MANIFEST: LegacyObjectPermissionManifest = {
   universalIdentifier: OBJECT_PERMISSION_UID,
   objectUniversalIdentifier: OBJECT_UID,
   canReadObjectRecords: true,
@@ -41,7 +41,7 @@ const OBJECT_PERMISSION_MANIFEST: DeprecatedObjectPermissionManifest = {
 
 const forward = (roleManifest: LegacyCompliantRoleManifest) =>
   fromRoleManifestToUniversalFlatRole({
-    roleManifest: normalizeRoleManifestRecordsPermissions({
+    roleManifest: normalizeLegacyCompliantRoleManifest({
       role: roleManifest,
       applicationUniversalIdentifier: APP_UID,
     }),

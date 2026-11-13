@@ -1,6 +1,6 @@
 import {
-  type DeprecatedRowLevelPermissionPredicateGroupManifest,
-  type DeprecatedRowLevelPermissionPredicateManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
+  type LegacyRowLevelPermissionPredicateManifest,
   type RowLevelPermissionRuleManifest,
   type RowLevelPermissionRulePredicateGroupManifest,
   type RowLevelPermissionRulePredicateManifest,
@@ -11,9 +11,9 @@ export type RowLevelPermissionRuleLink = {
 };
 
 export type FlattenedRowLevelPermissionRuleManifests = {
-  predicateGroups: (DeprecatedRowLevelPermissionPredicateGroupManifest &
+  predicateGroups: (LegacyRowLevelPermissionPredicateGroupManifest &
     RowLevelPermissionRuleLink)[];
-  predicates: (DeprecatedRowLevelPermissionPredicateManifest &
+  predicates: (LegacyRowLevelPermissionPredicateManifest &
     RowLevelPermissionRuleLink)[];
 };
 

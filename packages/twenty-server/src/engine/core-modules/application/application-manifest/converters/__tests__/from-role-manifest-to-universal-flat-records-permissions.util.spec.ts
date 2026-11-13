@@ -1,6 +1,6 @@
 import {
   type RoleManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import {
@@ -29,14 +29,14 @@ const convert = ({
     now: NOW,
   });
 
-const convertDeprecated = (
+const convertLegacy = (
   roleManifest: Omit<
     LegacyCompliantRoleManifest,
     'universalIdentifier' | 'label'
   >,
 ) =>
   convert(
-    normalizeRoleManifestRecordsPermissions({
+    normalizeLegacyCompliantRoleManifest({
       role: { ...ROLE, ...roleManifest },
       applicationUniversalIdentifier: APPLICATION,
     }),
@@ -169,9 +169,9 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
     expect(objectPermissions).toEqual([]);
   });
 
-  it('should convert the deprecated properties before writing them', () => {
+  it('should convert the legacy properties before writing them', () => {
     const { objectPermissions, fieldPermissions, rules, predicates } =
-      convertDeprecated({
+      convertLegacy({
         objectPermissions: [
           {
             objectUniversalIdentifier: 'company',

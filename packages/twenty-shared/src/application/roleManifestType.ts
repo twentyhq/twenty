@@ -10,13 +10,13 @@ import {
   type RowLevelPermissionPredicateValue,
 } from '@/types';
 
-export type DeprecatedObjectPermissionManifest =
-  Partial<SyncableEntityOptions> & ObjectPermissionGrant;
+export type LegacyObjectPermissionManifest = Partial<SyncableEntityOptions> &
+  ObjectPermissionGrant;
 
-export type DeprecatedFieldPermissionManifest = Partial<SyncableEntityOptions> &
+export type LegacyFieldPermissionManifest = Partial<SyncableEntityOptions> &
   FieldPermissionGrant;
 
-export type DeprecatedRowLevelPermissionPredicateGroupManifest =
+export type LegacyRowLevelPermissionPredicateGroupManifest =
   SyncableEntityOptions & {
     objectUniversalIdentifier: string;
     logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator;
@@ -24,7 +24,7 @@ export type DeprecatedRowLevelPermissionPredicateGroupManifest =
     position?: number | null;
   };
 
-export type DeprecatedRowLevelPermissionPredicateManifest =
+export type LegacyRowLevelPermissionPredicateManifest =
   SyncableEntityOptions & {
     objectUniversalIdentifier: string;
     fieldUniversalIdentifier: string;
@@ -38,7 +38,7 @@ export type DeprecatedRowLevelPermissionPredicateManifest =
   };
 
 export type RowLevelPermissionRulePredicateManifest = Omit<
-  DeprecatedRowLevelPermissionPredicateManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   'objectUniversalIdentifier' | 'predicateGroupUniversalIdentifier'
 >;
 
@@ -93,15 +93,15 @@ export type RowLevelPermissionRuleManifest =
     objectUniversalIdentifier: string;
   };
 
-export type DeprecatedRoleRecordsPermissionsManifest = {
+export type LegacyRoleRecordsPermissionsManifest = {
   canReadAllObjectRecords?: boolean;
   canUpdateAllObjectRecords?: boolean;
   canSoftDeleteAllObjectRecords?: boolean;
   canDestroyAllObjectRecords?: boolean;
-  objectPermissions?: DeprecatedObjectPermissionManifest[];
-  fieldPermissions?: DeprecatedFieldPermissionManifest[];
-  rowLevelPermissionPredicates?: DeprecatedRowLevelPermissionPredicateManifest[];
-  rowLevelPermissionPredicateGroups?: DeprecatedRowLevelPermissionPredicateGroupManifest[];
+  objectPermissions?: LegacyObjectPermissionManifest[];
+  fieldPermissions?: LegacyFieldPermissionManifest[];
+  rowLevelPermissionPredicates?: LegacyRowLevelPermissionPredicateManifest[];
+  rowLevelPermissionPredicateGroups?: LegacyRowLevelPermissionPredicateGroupManifest[];
 };
 
 type RoleManifestBase = SyncableEntityOptions &
@@ -127,4 +127,4 @@ export type RoleManifest = RoleManifestBase & {
 };
 
 export type LegacyCompliantRoleManifest = RoleManifestBase &
-  DeprecatedRoleRecordsPermissionsManifest;
+  LegacyRoleRecordsPermissionsManifest;

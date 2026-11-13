@@ -60,9 +60,9 @@ export type PermissionFlagConfig = LooseEnumValues<StrictPermissionFlagConfig>;
 export type PermissionFlagManifest =
   LooseEnumValues<SharedApplication.PermissionFlagManifest>;
 export type RowLevelPermissionPredicateGroupManifest =
-  LooseEnumValues<SharedApplication.DeprecatedRowLevelPermissionPredicateGroupManifest>;
+  LooseEnumValues<SharedApplication.LegacyRowLevelPermissionPredicateGroupManifest>;
 export type RowLevelPermissionPredicateManifest =
-  LooseEnumValues<SharedApplication.DeprecatedRowLevelPermissionPredicateManifest>;
+  LooseEnumValues<SharedApplication.LegacyRowLevelPermissionPredicateManifest>;
 export type SendInboxMessageInput =
   LooseEnumValues<SharedApplication.SendInboxMessageInput>;
 export type SettingsFrontComponentConfig =

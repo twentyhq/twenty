@@ -4,7 +4,7 @@ import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/va
 import {
   type AgentManifest,
   type RoleManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -18,7 +18,7 @@ const PERSON_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.person.universalIdentifier;
 const buildRole = (
   overrides: Partial<LegacyCompliantRoleManifest> = {},
 ): RoleManifest =>
-  normalizeRoleManifestRecordsPermissions({
+  normalizeLegacyCompliantRoleManifest({
     role: {
       universalIdentifier: AGENT_ROLE_UNIVERSAL_IDENTIFIER,
       label: 'Agent role',

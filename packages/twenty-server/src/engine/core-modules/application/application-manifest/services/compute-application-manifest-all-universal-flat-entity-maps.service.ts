@@ -6,7 +6,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
-  normalizeRoleManifestRecordsPermissions,
+  normalizeLegacyCompliantRoleManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
@@ -362,7 +362,7 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     }
 
     for (const role of manifest.roles) {
-      const roleManifest = normalizeRoleManifestRecordsPermissions({
+      const roleManifest = normalizeLegacyCompliantRoleManifest({
         role,
         applicationUniversalIdentifier,
       });

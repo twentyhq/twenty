@@ -1,8 +1,8 @@
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 import { type UniversalFlatRowLevelPermissionRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-rule.type';
 
-// TODO(@charlesBochet): remove once the export declares rules, the deprecated shape can only carry their grants on the object
-export const addRowLevelPermissionRuleGrantsToFlatObjectPermission = ({
+// TODO(@charlesBochet): remove once the export declares rules, the legacy shape can only carry their grants on the object
+export const addRowLevelPermissionRuleGrantsToLegacyObjectPermission = ({
   flatObjectPermission,
   flatRowLevelPermissionRules,
 }: {

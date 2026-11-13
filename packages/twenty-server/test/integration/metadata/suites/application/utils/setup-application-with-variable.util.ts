@@ -5,7 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import {
   type ApplicationVariableScope,
-  type DeprecatedObjectPermissionManifest,
+  type LegacyObjectPermissionManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,7 +40,7 @@ export const setupApplicationWithVariable = async ({
   permissionFlagUniversalIdentifiers?: string[];
   // An application-owned role can only be granted object permissions through
   // its own manifest; upserting them afterwards is refused.
-  objectPermissions?: DeprecatedObjectPermissionManifest[];
+  objectPermissions?: LegacyObjectPermissionManifest[];
 }): Promise<ApplicationWithVariable> => {
   const applicationUniversalIdentifier = uuidv4();
   const roleUniversalIdentifier = uuidv4();

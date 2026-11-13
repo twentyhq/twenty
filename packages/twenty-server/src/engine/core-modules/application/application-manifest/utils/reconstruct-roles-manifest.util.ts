@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type DeprecatedFieldPermissionManifest,
-  type DeprecatedObjectPermissionManifest,
+  type LegacyFieldPermissionManifest,
+  type LegacyObjectPermissionManifest,
   type PermissionFlagManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
@@ -10,7 +10,7 @@ import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/cor
 import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
 import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
-import { addRowLevelPermissionRuleGrantsToFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/utils/add-row-level-permission-rule-grants-to-flat-object-permission.util';
+import { addRowLevelPermissionRuleGrantsToLegacyObjectPermission } from 'src/engine/core-modules/application/application-manifest/utils/add-row-level-permission-rule-grants-to-legacy-object-permission.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
   type ChildMetadataName,
@@ -33,8 +33,8 @@ type FlatRoleChild =
   | UniversalFlatRolePermissionFlag;
 
 type RoleChildren = {
-  objectPermissions: DeprecatedObjectPermissionManifest[];
-  fieldPermissions: DeprecatedFieldPermissionManifest[];
+  objectPermissions: LegacyObjectPermissionManifest[];
+  fieldPermissions: LegacyFieldPermissionManifest[];
   permissionFlagUniversalIdentifiers: string[];
 };
 
@@ -159,7 +159,7 @@ export const reconstructRolesManifest = ({
       )?.objectPermissions.push(
         fromFlatObjectPermissionToObjectPermissionManifest({
           flatObjectPermission:
-            addRowLevelPermissionRuleGrantsToFlatObjectPermission({
+            addRowLevelPermissionRuleGrantsToLegacyObjectPermission({
               flatObjectPermission,
               flatRowLevelPermissionRules,
             }),

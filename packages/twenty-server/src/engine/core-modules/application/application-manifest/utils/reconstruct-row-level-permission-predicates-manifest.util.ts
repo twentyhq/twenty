@@ -1,6 +1,6 @@
 import {
-  type DeprecatedRowLevelPermissionPredicateGroupManifest,
-  type DeprecatedRowLevelPermissionPredicateManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
+  type LegacyRowLevelPermissionPredicateManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -60,11 +60,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 }): {
   predicateGroupsByRoleUniversalIdentifier: Map<
     string,
-    DeprecatedRowLevelPermissionPredicateGroupManifest[]
+    LegacyRowLevelPermissionPredicateGroupManifest[]
   >;
   predicatesByRoleUniversalIdentifier: Map<
     string,
-    DeprecatedRowLevelPermissionPredicateManifest[]
+    LegacyRowLevelPermissionPredicateManifest[]
   >;
   coverage: ApplicationExportCoverageEntry[];
 } => {
@@ -163,11 +163,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 
   const predicateGroupsByRoleUniversalIdentifier = new Map<
     string,
-    DeprecatedRowLevelPermissionPredicateGroupManifest[]
+    LegacyRowLevelPermissionPredicateGroupManifest[]
   >();
   const predicatesByRoleUniversalIdentifier = new Map<
     string,
-    DeprecatedRowLevelPermissionPredicateManifest[]
+    LegacyRowLevelPermissionPredicateManifest[]
   >();
 
   for (const flatRowLevelPermissionPredicateGroup of sortFlatEntitiesByUniversalIdentifier(

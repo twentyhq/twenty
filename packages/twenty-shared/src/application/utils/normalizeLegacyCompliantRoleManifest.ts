@@ -1,11 +1,11 @@
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 import {
   type AllRecordsPermissionsManifest,
-  type DeprecatedFieldPermissionManifest,
+  type LegacyFieldPermissionManifest,
   type RoleManifest,
   type ObjectRecordsPermissionsManifest,
   type LegacyCompliantRoleManifest,
-  type DeprecatedRowLevelPermissionPredicateGroupManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
   type RowLevelPermissionRuleManifest,
 } from '@/application/roleManifestType';
 import { nestRowLevelPermissionRuleManifests } from '@/application/utils/nestRowLevelPermissionRuleManifests';
@@ -40,7 +40,7 @@ const findTopLevelPredicateGroupUniversalIdentifier = ({
   predicateGroupUniversalIdentifier: string;
   predicateGroupByUniversalIdentifier: Map<
     string,
-    DeprecatedRowLevelPermissionPredicateGroupManifest
+    LegacyRowLevelPermissionPredicateGroupManifest
   >;
 }): string => {
   const visitedUniversalIdentifiers = new Set<string>();
@@ -68,7 +68,7 @@ const addFieldPermissionToObject = ({
   fieldPermission,
 }: {
   object: ObjectRecordsPermissionsManifest;
-  fieldPermission: DeprecatedFieldPermissionManifest;
+  fieldPermission: LegacyFieldPermissionManifest;
 }): ObjectRecordsPermissionsManifest => {
   const { fieldUniversalIdentifier, universalIdentifier } = fieldPermission;
   const unreadableFields =
@@ -96,8 +96,8 @@ const addFieldPermissionToObject = ({
   };
 };
 
-// TODO(@charlesBochet): remove with the deprecated role properties once applications declare the normalized shape
-export const normalizeRoleManifestRecordsPermissions = ({
+// TODO(@charlesBochet): remove with the legacy role properties once applications declare the normalized shape
+export const normalizeLegacyCompliantRoleManifest = ({
   role,
   applicationUniversalIdentifier,
 }: {

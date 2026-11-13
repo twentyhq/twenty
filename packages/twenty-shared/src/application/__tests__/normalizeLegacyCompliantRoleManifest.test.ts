@@ -1,6 +1,6 @@
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
-import { normalizeRoleManifestRecordsPermissions } from '@/application/utils/normalizeRoleManifestRecordsPermissions';
+import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -12,7 +12,7 @@ const ROLE = { universalIdentifier: 'role', label: 'Role' };
 const normalize = (
   role: Omit<LegacyCompliantRoleManifest, 'universalIdentifier' | 'label'>,
 ) =>
-  normalizeRoleManifestRecordsPermissions({
+  normalizeLegacyCompliantRoleManifest({
     role: { ...ROLE, ...role },
     applicationUniversalIdentifier: APPLICATION,
   });
@@ -25,8 +25,8 @@ const NO_ALL_RECORDS_PERMISSIONS = {
   canDestroyAllRecords: false,
 };
 
-describe('normalizeRoleManifestRecordsPermissions', () => {
-  it('should move the deprecated grants on all objects, object permissions and field permissions into recordsPermissions', () => {
+describe('normalizeLegacyCompliantRoleManifest', () => {
+  it('should move the legacy grants on all objects, object permissions and field permissions into recordsPermissions', () => {
     expect(
       normalize({
         canReadAllObjectRecords: true,

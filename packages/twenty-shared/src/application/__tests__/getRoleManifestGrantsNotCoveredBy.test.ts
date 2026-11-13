@@ -2,7 +2,7 @@ import {
   type RoleManifest,
   type LegacyCompliantRoleManifest,
 } from '@/application/roleManifestType';
-import { normalizeRoleManifestRecordsPermissions } from '@/application/utils/normalizeRoleManifestRecordsPermissions';
+import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
 import { SystemPermissionFlag } from '@/constants';
 import {
@@ -17,7 +17,7 @@ const EMAIL_FIELD = 'field-email';
 const buildRole = (
   overrides: Partial<LegacyCompliantRoleManifest> = {},
 ): RoleManifest =>
-  normalizeRoleManifestRecordsPermissions({
+  normalizeLegacyCompliantRoleManifest({
     role: { universalIdentifier: 'role', label: 'Role', ...overrides },
     applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
   });
