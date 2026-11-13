@@ -277,9 +277,23 @@ export const linkedinSendMessageHandler = async ({
 
 The payload carries the `messagingProviderName`, the conversation's `threadExternalId` as you ingested it, the `text`, the `idempotencyKey`, and the `recipients`: the participants of the thread's latest message other than the channel's own handle, so someone who only took part in an earlier exchange is not messaged. Prefer the provider's own conversation over `recipients` when its API sends to a conversation id. Return the provider's id for the sent message as `externalId`.
 
-The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Attachments are not sent yet. Requires `"engines": { "twenty": ">=2.58.0" }`.
+The payload's `conversationStyle` matches the provider's (`'chat'` when it declares none). With `'email'` (for example an app that syncs Outlook or Gmail), members reply with the email composer instead, and the payload also carries an `email` block: the `subject`, the rich text body compiled to `html`, the `cc` and `bcc` recipients, and `inReplyToExternalId`, the `externalId` of the message being answered when Twenty knows it. `recipients` are then the `To` addresses the member picked and `text` is the plain-text version of the body. Requires `"engines": { "twenty": ">=2.58.0" }`.
 
-Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
+When the workspace has message attachments enabled, a member can attach files to a reply, and the reply may then have an empty `text`. The mutation then also takes `attachments`, at most 20, each with the `id` of a file uploaded as an email attachment and its `name`. The payload's `attachments` lists them, and is an empty array for a text-only reply. Each one has a `filename`, a `contentType`, a `size` in bytes and a `downloadUrl`: a signed link your function fetches to get the file, so the bytes never travel in the payload. Check `size` against your provider's limit before downloading, and throw when the provider cannot deliver a file rather than sending the text alone, so the member sees the reply fail:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+`attachments` requires `"engines": { "twenty": ">=2.59.0" }`.
+
+Twenty then records the reply in the thread as an outgoing message from the channel, with the same recipients and its attachments, so it shows immediately. When your webhook later delivers the same message, ingesting it with that `externalId` changes nothing.
 
 The function runs inside the `sendAppChannelMessage` request. If it throws or returns no `externalId`, the mutation fails and nothing is recorded.
 

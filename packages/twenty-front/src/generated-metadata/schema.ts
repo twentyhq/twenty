@@ -7277,6 +7277,11 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageAttachmentInput = {
+  id: Scalars['UUID']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type SendAppChannelMessageEmailInput = {
   bcc?: InputMaybe<Scalars['String']['input']>;
   body: Scalars['String']['input'];
@@ -7287,6 +7292,7 @@ export type SendAppChannelMessageEmailInput = {
 };
 
 export type SendAppChannelMessageInput = {
+  attachments?: InputMaybe<Array<SendAppChannelMessageAttachmentInput>>;
   email?: InputMaybe<SendAppChannelMessageEmailInput>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
