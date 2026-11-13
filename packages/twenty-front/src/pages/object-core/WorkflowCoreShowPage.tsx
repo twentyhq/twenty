@@ -90,13 +90,9 @@ const CoreWorkflowShowContent = ({
     coreWorkflowId,
     shouldSkip: !canReadWorkflowRuns,
   });
-  const isLoadingInitialRunInsights =
-    runInsights.loading && !isDefined(runInsights.insights);
   const activeTabId = useCoreWorkflowShowPageActiveTab({
     coreWorkflowId,
-    hasRuns: isLoadingInitialRunInsights
-      ? undefined
-      : (runInsights.insights?.runCount ?? 0) > 0,
+    hasRuns: runInsights.hasRuns,
     requestedVersionId,
   });
   const { renameWorkflow } = useRenameCoreWorkflow({
@@ -115,7 +111,7 @@ const CoreWorkflowShowContent = ({
   if (
     (loading && !isDefined(record)) ||
     (versions.loading && versions.coreWorkflowVersions.length === 0) ||
-    isLoadingInitialRunInsights
+    !isDefined(runInsights.hasRuns)
   ) {
     return (
       <>

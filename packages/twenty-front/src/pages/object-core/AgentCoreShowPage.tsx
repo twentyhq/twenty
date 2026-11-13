@@ -46,10 +46,7 @@ export const AgentCoreShowPage = () => {
     return null;
   }
 
-  const isDefaultTabUnknown =
-    runInsights.loading && !isDefined(runInsights.insights);
-
-  if (!isDefined(agent) || isDefaultTabUnknown) {
+  if (!isDefined(agent) || !isDefined(runInsights.hasRuns)) {
     return <PageContentSkeletonLoader />;
   }
 
@@ -58,6 +55,7 @@ export const AgentCoreShowPage = () => {
       key={agent.id}
       agent={agent}
       runInsights={runInsights.insights}
+      hasRuns={runInsights.hasRuns}
       isLoadingRunInsights={runInsights.loading}
       hasRunInsightsError={isDefined(runInsights.error)}
     />

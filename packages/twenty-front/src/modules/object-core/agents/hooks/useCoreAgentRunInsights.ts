@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 
 import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
 import { useListenToCoreAgentRunEvents } from '@/object-core/agents/hooks/useListenToCoreAgentRunEvents';
+import { getCoreObjectRunInsightsHasRuns } from '@/object-core/utils/getCoreObjectRunInsightsHasRuns';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { GetAgentRunInsightsDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
@@ -30,6 +31,10 @@ export const useCoreAgentRunInsights = (agentId: string) => {
 
   return {
     insights: data?.agentRunInsights ?? null,
+    hasRuns: getCoreObjectRunInsightsHasRuns({
+      isLoading: loading,
+      runCount: data?.agentRunInsights.runCount,
+    }),
     loading,
     error,
   };

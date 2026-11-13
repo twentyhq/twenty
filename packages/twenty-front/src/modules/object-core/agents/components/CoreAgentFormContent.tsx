@@ -55,6 +55,7 @@ import { type CoreAgentFormValues } from '@/object-core/agents/validation-schema
 type CoreAgentFormContentProps = {
   agent: FindOneAgentQuery['findOneAgent'];
   runInsights: CoreAgentRunInsights | null;
+  hasRuns: boolean;
   isLoadingRunInsights: boolean;
   hasRunInsightsError: boolean;
 };
@@ -62,6 +63,7 @@ type CoreAgentFormContentProps = {
 export const CoreAgentFormContent = ({
   agent,
   runInsights,
+  hasRuns,
   isLoadingRunInsights,
   hasRunInsightsError,
 }: CoreAgentFormContentProps) => {
@@ -75,7 +77,7 @@ export const CoreAgentFormContent = ({
   const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
   const activeTabId = useCoreAgentShowPageActiveTab({
     agentId: agent.id,
-    hasRuns: (runInsights?.runCount ?? 0) > 0,
+    hasRuns,
   });
 
   const { draft, updateDraft } = useCoreAgentDraft(agent);

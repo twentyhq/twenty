@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 // Placeholders are passed in so the query fits both named (:timeZone) and positional ($2) parameters
 type RunInsightsDailySeriesPlaceholders = {
   timeZone: string;
@@ -38,7 +40,7 @@ export const buildRunInsightsDailySeriesQuery = ({
       INTERVAL '1 day'
     ) AS "calendarDay"("day")
     LEFT JOIN ${runsSource} AS "run"
-      ON ${runsSourceCondition ? `${runsSourceCondition} AND ` : ''}"run"."createdAt" >= (${windowFirstLocalDay}) AT TIME ZONE ${timeZone}
+      ON ${isNonEmptyString(runsSourceCondition) ? `${runsSourceCondition} AND ` : ''}"run"."createdAt" >= (${windowFirstLocalDay}) AT TIME ZONE ${timeZone}
       AND DATE_TRUNC('day', "run"."createdAt" AT TIME ZONE ${timeZone}) = "calendarDay"."day"
     GROUP BY "calendarDay"."day"
     ORDER BY "calendarDay"."day"`;

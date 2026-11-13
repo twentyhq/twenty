@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 
 import { useListenToCoreWorkflowRunEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowRunEvents';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { getCoreObjectRunInsightsHasRuns } from '@/object-core/utils/getCoreObjectRunInsightsHasRuns';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { GetCoreWorkflowRunInsightsDocument } from '~/generated/graphql';
 
@@ -37,6 +38,10 @@ export const useCoreWorkflowRunInsights = ({
 
   return {
     insights: data?.coreWorkflowRunInsights ?? null,
+    hasRuns: getCoreObjectRunInsightsHasRuns({
+      isLoading: loading,
+      runCount: data?.coreWorkflowRunInsights?.runCount,
+    }),
     loading,
     error,
   };

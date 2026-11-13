@@ -12,7 +12,6 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UseCoreAgentShowPageActiveTabArgs = {
   agentId: string;
-  // undefined until the run insights have loaded
   hasRuns: boolean | undefined;
 };
 
