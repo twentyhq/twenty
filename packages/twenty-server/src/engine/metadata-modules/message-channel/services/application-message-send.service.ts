@@ -245,6 +245,8 @@ export class ApplicationMessageSendService {
           } = await this.ingestOrDeleteCopies({
             copiedAttachments,
             workspaceId,
+            messageChannelId,
+            messageExternalId: delivery.externalId,
             ingest: () =>
               this.applicationMessageIngestionService.ingest({
                 applicationId,
@@ -318,22 +320,55 @@ export class ApplicationMessageSendService {
   private async ingestOrDeleteCopies<TIngestResult>({
     copiedAttachments,
     workspaceId,
+    messageChannelId,
+    messageExternalId,
     ingest,
   }: {
     copiedAttachments: AppMessageAttachmentInput[];
     workspaceId: string;
+    messageChannelId: string;
+    messageExternalId: string;
     ingest: () => Promise<TIngestResult>;
   }): Promise<TIngestResult> {
     try {
       return await ingest();
     } catch (error) {
-      await this.applicationMessageSendAttachmentsService.deleteCopies({
-        copiedAttachments,
+      const isMessageSaved = await this.isMessageSaved({
         workspaceId,
+        messageChannelId,
+        messageExternalId,
       });
+
+      if (!isMessageSaved) {
+        await this.applicationMessageSendAttachmentsService.deleteCopies({
+          copiedAttachments,
+          workspaceId,
+        });
+      }
 
       throw error;
     }
+  }
+
+  private async isMessageSaved({
+    workspaceId,
+    messageChannelId,
+    messageExternalId,
+  }: {
+    workspaceId: string;
+    messageChannelId: string;
+    messageExternalId: string;
+  }): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+          )
+          .exists({ where: { messageChannelId, messageExternalId } }),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   private async claimAttachmentsOrThrow({

@@ -41,6 +41,11 @@ describe('ApplicationMessageSendService', () => {
   const copyIntoAttachmentFileFieldOrThrow = jest.fn();
   const deleteUnclaimedCopies = jest.fn();
   const deleteCopies = jest.fn();
+  const CONVERSATION = {
+    threadExternalId: 'thread-external-1',
+    recipients: [{ handle: 'ada' }],
+  };
+  const executeInWorkspaceContext = jest.fn();
   const deleteFiles = jest.fn();
   let cache: Map<string, unknown>;
 
@@ -78,12 +83,7 @@ describe('ApplicationMessageSendService', () => {
       deleteCopies,
     } as unknown as ApplicationMessageSendAttachmentsService,
     { deleteFiles } as unknown as FileEmailAttachmentService,
-    {
-      executeInWorkspaceContext: async () => ({
-        threadExternalId: 'thread-external-1',
-        recipients: [{ handle: 'ada' }],
-      }),
-    } as unknown as WorkspaceOrmManager,
+    { executeInWorkspaceContext } as unknown as WorkspaceOrmManager,
     {} as unknown as ApplicationThreadLatestMessagesService,
     {
       getOrRecompute: async () => ({
@@ -116,6 +116,7 @@ describe('ApplicationMessageSendService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     cache = new Map();
+    executeInWorkspaceContext.mockResolvedValue(CONVERSATION);
     buildAttachmentsToSendOrThrow.mockResolvedValue([
       { filename: 'deck.pdf', downloadUrl: 'https://twenty.example/deck' },
     ]);
@@ -192,8 +193,11 @@ describe('ApplicationMessageSendService', () => {
     expect(sendOrThrow).not.toHaveBeenCalled();
   });
 
-  it('should delete every copy, claimed or not, when the ingestion fails', async () => {
+  it('should delete every copy, claimed or not, when the ingestion saved nothing', async () => {
     ingest.mockRejectedValueOnce(new Error('Ingestion rolled back'));
+    executeInWorkspaceContext
+      .mockResolvedValueOnce(CONVERSATION)
+      .mockResolvedValueOnce(false);
 
     await expect(service.send(SEND_ARGS)).rejects.toThrow(
       'Ingestion rolled back',
@@ -203,6 +207,19 @@ describe('ApplicationMessageSendService', () => {
       copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
       workspaceId: 'workspace-1',
     });
+  });
+
+  it('should keep the copies when the ingestion failed after saving the message', async () => {
+    ingest.mockRejectedValueOnce(new Error('Lookup after commit failed'));
+    executeInWorkspaceContext
+      .mockResolvedValueOnce(CONVERSATION)
+      .mockResolvedValueOnce(true);
+
+    await expect(service.send(SEND_ARGS)).rejects.toThrow(
+      'Lookup after commit failed',
+    );
+
+    expect(deleteCopies).not.toHaveBeenCalled();
   });
 
   it('should return the saved reply on retry without needing the deleted uploads', async () => {
