@@ -7,7 +7,11 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
+import {
+  findCreatedPeopleEmails,
+  findImportedCalendarEventTitles,
+} from 'test/integration/utils/find-imported-records.util';
+import { updateCalendarChannel } from 'test/integration/utils/query-messaging.util';
 import { resetCalendarChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
@@ -93,6 +97,46 @@ describe('Google calendar internal events (integration)', () => {
         externallyOrganizedTitle,
       ]),
     ).toEqual([externalTitle, externallyOrganizedTitle]);
+  }, 120000);
+
+  it('treats a booked room as a room: it neither makes a meeting external nor becomes a person', async () => {
+    await updateCalendarChannel(channel.calendarChannelId, {
+      isContactAutoCreationEnabled: true,
+    });
+
+    const roomHandle = `apple.dev_${randomUUID()}@resource.calendar.google.com`;
+    const customerHandle = `customer-${randomUUID()}@acme.com`;
+    const internalWithRoomTitle = `Internal event with room ${randomUUID()}`;
+    const externalWithRoomTitle = `External event with room ${randomUUID()}`;
+
+    await syncEvents([
+      googleCalendarEvent({
+        summary: internalWithRoomTitle,
+        attendees: [
+          { email: HANDLE },
+          { email: `colleague-${randomUUID()}@apple.dev` },
+          { email: roomHandle, resource: true },
+        ],
+      }),
+      googleCalendarEvent({
+        summary: externalWithRoomTitle,
+        attendees: [
+          { email: HANDLE },
+          { email: customerHandle },
+          { email: roomHandle, resource: true },
+        ],
+      }),
+    ]);
+
+    expect(
+      await findImportedCalendarEventTitles([
+        internalWithRoomTitle,
+        externalWithRoomTitle,
+      ]),
+    ).toEqual([externalWithRoomTitle]);
+    expect(await findCreatedPeopleEmails([customerHandle, roomHandle])).toEqual(
+      [customerHandle],
+    );
   }, 120000);
 
   it('imports internal events when internal import is enabled on the workspace', async () => {

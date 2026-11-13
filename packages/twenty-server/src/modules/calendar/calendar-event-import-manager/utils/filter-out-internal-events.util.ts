@@ -15,7 +15,9 @@ export const filterOutInternalEvents = ({
     items: events.map((event) => ({
       event,
       participants: [
-        ...event.participants,
+        ...event.participants.filter(
+          (participant) => !event.resourceHandles.includes(participant.handle),
+        ),
         {
           handle: isNonEmptyString(event.organizerHandle)
             ? event.organizerHandle
