@@ -461,7 +461,7 @@ describe('SendEmailWorkflowAction', () => {
       expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
         expect.any(Object),
         expect.objectContaining({
-          actorContext: {
+          actorMetadata: {
             source: 'WORKFLOW',
             name: 'Churn win-back',
             workspaceMemberId: null,

@@ -81,7 +81,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     return {
       workspaceId: runInfo.workspaceId,
-      actorContext: buildWorkflowActorMetadata(executionContext),
+      actorMetadata: buildWorkflowActorMetadata(executionContext),
       ...getUserFromAuthContext(executionContext.authContext),
     };
   }

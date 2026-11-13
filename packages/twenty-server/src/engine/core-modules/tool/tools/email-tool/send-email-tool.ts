@@ -56,7 +56,7 @@ export class SendEmailTool implements Tool {
             sendResult,
             data,
             workspaceId: context.workspaceId,
-            createdBy: context.actorContext,
+            createdBy: context.actorMetadata,
           })
         : undefined;
 

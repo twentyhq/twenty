@@ -104,20 +104,23 @@ describe('SendEmailTool', () => {
       data: buildComposedEmail(true),
     });
 
-    const actorContext = {
+    const actorMetadata = {
       source: FieldActorSource.WORKFLOW,
       name: 'Churn win-back',
       workspaceMemberId: null,
       context: { workflowId: 'workflow-id' },
     };
 
-    await tool.execute(baseInput, { workspaceId: 'workspace-1', actorContext });
+    await tool.execute(baseInput, {
+      workspaceId: 'workspace-1',
+      actorMetadata,
+    });
 
     expect(mockPersistSentMessage).toHaveBeenCalledTimes(1);
     expect(mockPersistSentMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: 'workspace-1',
-        createdBy: actorContext,
+        createdBy: actorMetadata,
       }),
     );
   });
