@@ -21,15 +21,18 @@ export class ComputeRecordAccessGroupIdsDeferredOperationHandlerService implemen
 
   async execute({
     workspaceId,
-    payload: { objectMetadataId },
+    payload: { objectMetadataIds },
   }: DeferredWorkspaceOperationExecutionArgs<
     DeferredWorkspaceOperationPayload<'compute_recordAccessGroupIds'>
   >): Promise<void> {
     await this.accessGroupPropagationPlanService.resetComputedRecordCount(
       workspaceId,
     );
-    await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
-      { workspaceId, objectMetadataId },
-    );
+
+    for (const objectMetadataId of objectMetadataIds) {
+      await this.recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
+        { workspaceId, objectMetadataId },
+      );
+    }
   }
 }

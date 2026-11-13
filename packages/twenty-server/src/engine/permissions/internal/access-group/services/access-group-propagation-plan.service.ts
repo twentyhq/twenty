@@ -77,8 +77,8 @@ export class AccessGroupPropagationPlanService {
 
       if (
         areRecordAccessGroupComputesAlreadyPlanned({
-          waitingObjectMetadataIds: waitingComputePayloads.map(
-            ({ objectMetadataId }) => objectMetadataId,
+          waitingObjectMetadataIds: waitingComputePayloads.flatMap(
+            ({ objectMetadataIds }) => objectMetadataIds,
           ),
           objectMetadataIds: plannedObjectMetadataIds,
         })
@@ -93,17 +93,21 @@ export class AccessGroupPropagationPlanService {
           workspaceId,
           applicationUniversalIdentifier:
             TWENTY_STANDARD_APPLICATION.universalIdentifier,
-          deferredOperations: plannedObjectMetadataIds.map(
-            (objectMetadataId) => ({
+          deferredOperations: [
+            {
               name: COMPUTE_OPERATION_NAME,
               payload: {
-                objectMetadataId,
-                plannedRecordCount:
-                  recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
+                objectMetadataIds: plannedObjectMetadataIds,
+                plannedRecordCount: plannedObjectMetadataIds.reduce(
+                  (recordCount, objectMetadataId) =>
+                    recordCount +
+                    (recordCountByObjectMetadataId.get(objectMetadataId) ?? 0),
+                  0,
+                ),
                 computedRecordCount: 0,
               },
-            }),
-          ),
+            },
+          ],
           queryRunner,
         });
       } finally {
