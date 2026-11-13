@@ -26,6 +26,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     flatEntityToDelete: [],
   };
 
+  // TODO: remove once every instance has run the 2.56 option table command.
   if (!isFieldMetadataOptionEntityAvailable()) {
     return operations;
   }
@@ -70,24 +71,14 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     fieldMetadataUniversalIdentifier,
     targetUniversalFlatFieldMetadata,
   } of fieldsWithTarget) {
+    const existingOptions =
+      existingOptionsByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      ) ?? [];
+
     const fieldOperations = computeFieldMetadataOptionOperationsForField({
       targetUniversalFlatFieldMetadata,
-      existingOptions:
-        existingOptionsByFieldMetadataUniversalIdentifier.get(
-          fieldMetadataUniversalIdentifier,
-        ) ?? [],
-      isUniversalIdentifierUsedByOtherField: (universalIdentifier) => {
-        const existingOption =
-          existingFlatFieldMetadataOptionMaps.byUniversalIdentifier[
-            universalIdentifier
-          ];
-
-        return (
-          isDefined(existingOption) &&
-          existingOption.fieldMetadataUniversalIdentifier !==
-            fieldMetadataUniversalIdentifier
-        );
-      },
+      existingOptions,
       applicationUniversalIdentifier,
     });
 

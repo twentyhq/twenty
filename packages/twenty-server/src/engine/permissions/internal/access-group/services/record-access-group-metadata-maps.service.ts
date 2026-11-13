@@ -31,6 +31,7 @@ export class RecordAccessGroupMetadataMapsService {
         'featureFlagsMap',
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
         'rolesPermissions',
       ],
     );

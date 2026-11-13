@@ -36,6 +36,7 @@ type HandleFlatFieldMetadataUpdateSideEffectArgs = FromTo<
     | 'flatViewGroupMaps'
     | 'flatViewMaps'
     | 'flatViewFieldMaps'
+    | 'flatFieldMetadataOptionMaps'
   >;
 
 export const FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS: FlatFieldMetadataUpdateSideEffects =
@@ -63,6 +64,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
   flatViewGroupMaps,
   flatViewMaps,
   flatViewFieldMaps,
+  flatFieldMetadataOptionMaps,
 }: HandleFlatFieldMetadataUpdateSideEffectArgs): FieldInputTranspilationResult<FlatFieldMetadataUpdateSideEffects> => {
   const sideEffectResult = structuredClone(
     FLAT_FIELD_METADATA_UPDATE_EMPTY_SIDE_EFFECTS,
@@ -115,6 +117,7 @@ export const handleFlatFieldMetadataUpdateSideEffect = ({
       flatViewGroupMaps,
       fromFlatFieldMetadata,
       toFlatFieldMetadata,
+      flatFieldMetadataOptionMaps,
     });
 
     sideEffectResult.flatViewFiltersToUpdate.push(...flatViewFiltersToUpdate);
