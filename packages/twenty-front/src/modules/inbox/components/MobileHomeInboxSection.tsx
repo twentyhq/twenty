@@ -1,5 +1,5 @@
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 
 const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
 
-export const MobileHomeAiChatSection = () => {
+export const MobileHomeInboxSection = () => {
   const { t } = useLingui();
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -30,7 +30,7 @@ export const MobileHomeAiChatSection = () => {
 
   return (
     <>
-      <NavigationDrawerAiChatThreadSection
+      <NavigationDrawerInboxThreadSection
         sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
         title={t`Conversations`}
         threads={threads}

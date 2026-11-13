@@ -14,17 +14,17 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
-type NavigationDrawerAiChatThreadItemProps = {
+type NavigationDrawerInboxThreadItemProps = {
   thread: InboxThreadListItemData;
   isActive: boolean;
   onClick: (thread: InboxThreadListItemData) => void;
 };
 
-export const NavigationDrawerAiChatThreadItem = ({
+export const NavigationDrawerInboxThreadItem = ({
   thread,
   isActive,
   onClick,
-}: NavigationDrawerAiChatThreadItemProps) => {
+}: NavigationDrawerInboxThreadItemProps) => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const {

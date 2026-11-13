@@ -5,7 +5,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
-import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
@@ -40,7 +40,7 @@ const toThreadUpdate = ({
   };
 };
 
-export const AiChatThreadRecordOperationsEffect = () => {
+export const InboxThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -59,7 +59,7 @@ export const AiChatThreadRecordOperationsEffect = () => {
       }),
     [loadInboxThreadList],
   );
-  const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
+  const { leaveRemovedInboxThread } = useLeaveRemovedInboxThread();
   const store = useStore();
   const { refreshInboxOpenThreadsSummary } =
     useRefreshInboxOpenThreadsSummary();
@@ -69,9 +69,9 @@ export const AiChatThreadRecordOperationsEffect = () => {
   const reloadAiChatThreads = useCallback(async () => {
     refreshInboxOpenThreadsSummary();
     await refreshAiChatThreads();
-    await leaveRemovedAiChatThread();
+    await leaveRemovedInboxThread();
   }, [
-    leaveRemovedAiChatThread,
+    leaveRemovedInboxThread,
     refreshInboxOpenThreadsSummary,
     refreshAiChatThreads,
   ]);

@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
-import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
+import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
 import { inboxAccessibleChannelsSelector } from '@/inbox/states/selectors/inboxAccessibleChannelsSelector';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
@@ -57,7 +57,7 @@ export const NavigationDrawerInboxFavoritesSection = ({
         />
       ))}
       {threads.map((thread) => (
-        <NavigationDrawerAiChatThreadItem
+        <NavigationDrawerInboxThreadItem
           key={thread.id}
           thread={thread}
           isActive={currentThreadId === thread.id}

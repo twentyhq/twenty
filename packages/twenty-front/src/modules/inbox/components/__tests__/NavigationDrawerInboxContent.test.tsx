@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { NavigationDrawerInboxContent } from '@/inbox/components/NavigationDrawerInboxContent';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
@@ -91,8 +91,8 @@ jest.mock('@/inbox/components/OpenDirectMessageButton', () => ({
   OpenDirectMessageButton: () => null,
 }));
 
-jest.mock('@/ai/components/NavigationDrawerAiChatThreadItem', () => ({
-  NavigationDrawerAiChatThreadItem: ({
+jest.mock('@/inbox/components/NavigationDrawerInboxThreadItem', () => ({
+  NavigationDrawerInboxThreadItem: ({
     thread,
   }: {
     thread: InboxThreadListItemData;
@@ -151,8 +151,8 @@ jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
   InboxThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
-jest.mock('@/ai/components/NavigationDrawerAiChatThreadSection', () => ({
-  NavigationDrawerAiChatThreadSection: ({
+jest.mock('@/inbox/components/NavigationDrawerInboxThreadSection', () => ({
+  NavigationDrawerInboxThreadSection: ({
     title,
     threads,
   }: {
@@ -171,7 +171,7 @@ const renderContent = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <NavigationDrawerAiChatContent />
+        <NavigationDrawerInboxContent />
       </I18nProvider>
     </JotaiProvider>,
   );
