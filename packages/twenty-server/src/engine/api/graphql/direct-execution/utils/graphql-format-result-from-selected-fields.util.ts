@@ -22,6 +22,11 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { IGroupByConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/group-by-connection.interface';
 import { ResolverOutput } from 'src/engine/api/graphql/workspace-query-runner/interfaces/resolver-output';
+import { computeRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
+import {
+  getSelectedFieldName,
+  isSelectionMetaKey,
+} from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-selections.util';
 import { getCompositeSubFieldObjectTypeName } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-composite-sub-field-gql-types.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -128,17 +133,31 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
   const formatted: Record<string, unknown> = {};
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = getNodeTypename(objectNameSingular);
       continue;
     }
 
-    if (!isDefined(record[key])) {
+    const fieldName = getSelectedFieldName(key, subFields);
+    const relationInfo = findRelationInfo(
+      objectNameSingular,
+      fieldName,
+      context,
+    );
+    const recordKey = isDefined(relationInfo)
+      ? computeRelationRecordKey({ fieldName, responseKey: key })
+      : fieldName;
+
+    if (!isDefined(record[recordKey])) {
       formatted[key] = null;
       continue;
     }
 
-    const value = record[key];
+    const value = record[recordKey];
 
     const hasNestedFields = isDefined(subFields) && !isEmptyObject(subFields);
 
@@ -146,8 +165,6 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
       formatted[key] = value;
       continue;
     }
-
-    const relationInfo = findRelationInfo(objectNameSingular, key, context);
 
     if (isDefined(relationInfo)) {
       if (relationInfo.relationType === RelationType.ONE_TO_MANY) {
@@ -170,7 +187,7 @@ const backfillNullValuesAndComputeTypeNameForObjectRecord = (
 
     const fieldMetadata = findFieldMetadataByName(
       objectNameSingular,
-      key,
+      fieldName,
       context,
     );
 
@@ -210,6 +227,10 @@ const backfillNullValuesAndComputeTypeNameForCompositeField = (
   const formatted: Record<string, unknown> = {};
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = pascalCase(fieldMetadataType);
       continue;
@@ -279,6 +300,10 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
   const pageInfoValues: Record<string, unknown> = connection.pageInfo;
 
   for (const [key, subFields] of Object.entries(selectedFields)) {
+    if (isSelectionMetaKey(key)) {
+      continue;
+    }
+
     if (key === '__typename') {
       formatted.__typename = getConnectionTypename(objectNameSingular);
       continue;
@@ -324,6 +349,10 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
       for (const pageInfoKey of Object.keys(
         subFields as Record<string, object>,
       )) {
+        if (isSelectionMetaKey(pageInfoKey)) {
+          continue;
+        }
+
         if (pageInfoKey === '__typename') {
           pageInfoFormatted.__typename = 'PageInfo';
           continue;
@@ -336,7 +365,8 @@ const backfillNullValuesAndComputeTypeNameForConnection = (
       continue;
     }
 
-    const rawAggregateValue = connectionValues[key] ?? null;
+    const rawAggregateValue =
+      connectionValues[getSelectedFieldName(key, subFields)] ?? null;
 
     formatted[key] =
       isNonEmptyString(rawAggregateValue) && isFinite(Number(rawAggregateValue))
