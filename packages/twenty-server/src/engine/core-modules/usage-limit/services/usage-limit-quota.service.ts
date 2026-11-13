@@ -28,6 +28,7 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
+import { type ConfiguredQuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/configured-quota-limit-default.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildWorkspaceAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-workspace-allowance-counter-key.util';
@@ -35,6 +36,7 @@ import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
+import { applyPerSpenderDefaultOverrides } from 'src/engine/core-modules/usage-limit/utils/apply-per-spender-default-overrides.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
@@ -245,7 +247,7 @@ export class UsageLimitQuotaService {
   }
 
   async hasUserCredits(workspaceId: string): Promise<boolean> {
-    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+    const { quotaLimitDefaults } = await this.findQuotaLimitsAndDefaults({
       workspaceId,
       resourceType: UsageResourceType.AI,
     });
@@ -698,15 +700,8 @@ export class UsageLimitQuotaService {
   }: QuotaConsumeArgs): Promise<
     (LimitQuotaCounter | UserAllowanceQuotaCounter)[]
   > {
-    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
-      workspaceId,
-      resourceType,
-    });
-
-    const quotaLimits = await this.findQuotaLimits({
-      workspaceId,
-      resourceType,
-    });
+    const { quotaLimitDefaults, quotaLimits } =
+      await this.findQuotaLimitsAndDefaults({ workspaceId, resourceType });
 
     if (quotaLimits.length === 0 && quotaLimitDefaults.length === 0) {
       return [];
@@ -730,13 +725,31 @@ export class UsageLimitQuotaService {
     });
   }
 
+  private async findQuotaLimitsAndDefaults({
+    workspaceId,
+    resourceType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+  }): Promise<{
+    quotaLimitDefaults: QuotaLimitDefault[];
+    quotaLimits: FlatQuotaLimit[];
+  }> {
+    const [quotaLimitDefaults, quotaLimits] = await Promise.all([
+      this.buildQuotaLimitDefaults({ workspaceId, resourceType }),
+      this.findQuotaLimits({ workspaceId, resourceType }),
+    ]);
+
+    return applyPerSpenderDefaultOverrides({ quotaLimitDefaults, quotaLimits });
+  }
+
   private async buildQuotaLimitDefaults({
     workspaceId,
     resourceType,
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-  }): Promise<QuotaLimitDefault[]> {
+  }): Promise<ConfiguredQuotaLimitDefault[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }
@@ -746,26 +759,21 @@ export class UsageLimitQuotaService {
       limitKind: 'quota',
     });
 
-    const quotaLimitDefaults = await Promise.all(
+    return Promise.all(
       (definition?.defaults ?? []).map(
         async ({
           limitValueConfigVariable,
           ...quotaLimitDefaultDefinition
-        }) => {
-          const limitValue =
+        }) => ({
+          ...quotaLimitDefaultDefinition,
+          limitValue:
             await this.usageLimitDefaultValueService.findDefaultLimitValue({
               workspaceId,
               limitValueConfigVariable,
-            });
-
-          return isDefined(limitValue)
-            ? [{ ...quotaLimitDefaultDefinition, limitValue }]
-            : [];
-        },
+            }),
+        }),
       ),
     );
-
-    return quotaLimitDefaults.flat();
   }
 
   private async buildWorkspaceAllowanceCounterAdmittingOnFailure(
