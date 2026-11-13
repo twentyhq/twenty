@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordFormFieldInput } from '@/object-record/record-form/components/RecordFormFieldInput';
 import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
@@ -39,8 +40,14 @@ export const UpdateMultipleRecordsForm = ({
     objectNameSingular,
   });
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
   const editableFields = objectMetadataItem.fields
-    .filter(shouldDisplayFormMultiEditField)
+    .filter((field) =>
+      shouldDisplayFormMultiEditField(field, objectPermissions),
+    )
     .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name));
 
   const fieldsWithDefinitions = editableFields.map((fieldMetadataItem) => ({

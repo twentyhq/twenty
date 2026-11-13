@@ -43,4 +43,77 @@ describe('shouldDisplayFormMultiEditField', () => {
 
     expect(shouldDisplayFormMultiEditField(field)).toBe(false);
   });
+
+  describe('field permissions', () => {
+    it('should return false when the user cannot update the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'restricted-field-id',
+      });
+
+      const objectPermissions = {
+        restrictedFields: {
+          'restricted-field-id': {
+            canRead: true,
+            canUpdate: false,
+          },
+        },
+      };
+
+      expect(
+        shouldDisplayFormMultiEditField(field, objectPermissions),
+      ).toBe(false);
+    });
+
+    it('should return false when the user cannot read the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'restricted-field-id',
+      });
+
+      const objectPermissions = {
+        restrictedFields: {
+          'restricted-field-id': {
+            canRead: false,
+            canUpdate: true,
+          },
+        },
+      };
+
+      expect(
+        shouldDisplayFormMultiEditField(field, objectPermissions),
+      ).toBe(false);
+    });
+
+    it('should return true when the user can read and update the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'allowed-field-id',
+      });
+
+      const objectPermissions = {
+        restrictedFields: {
+          'allowed-field-id': {
+            canRead: true,
+            canUpdate: true,
+          },
+        },
+      };
+
+      expect(
+        shouldDisplayFormMultiEditField(field, objectPermissions),
+      ).toBe(true);
+    });
+
+    it('should return true when the field has no restrictions in objectPermissions', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'unrestricted-field-id',
+      });
+
+      const objectPermissions = {
+        restrictedFields: {},
+      };
+
+      expect(
+        shouldDisplayFormMultiEditField(field, objectPermissions),
+      ).toBe(true);
+    });
+  });
 });
