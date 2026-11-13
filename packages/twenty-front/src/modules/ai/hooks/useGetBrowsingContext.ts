@@ -4,11 +4,11 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
-import { getInboxBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
-import { getInboxContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { getInboxBrowsingContextType } from '@/ai/utils/getInboxBrowsingContextType';
+import { getInboxContextStoreInstanceId } from '@/ai/utils/getInboxContextStoreInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';

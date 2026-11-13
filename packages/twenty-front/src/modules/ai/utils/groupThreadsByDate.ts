@@ -3,10 +3,10 @@ import { differenceInCalendarDays, startOfWeek } from 'date-fns';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxThreadDateGroup } from '@/ai/types/AgentChatThreadDateGroup';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getInboxThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { type InboxThreadDateGroup } from '@/ai/types/InboxThreadDateGroup';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
+import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
+import { getInboxThreadLastActivityAt } from '@/ai/utils/getInboxThreadLastActivityAt';
 
 const RECENT_THREAD_DAY_COUNT = 7;
 const COMPACT_DATE_GROUP_IDS = ['today', 'this-week', 'earlier'];

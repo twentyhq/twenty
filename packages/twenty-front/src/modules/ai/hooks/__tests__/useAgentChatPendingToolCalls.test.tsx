@@ -4,9 +4,9 @@ import { type ReactNode } from 'react';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,

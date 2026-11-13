@@ -1,5 +1,5 @@
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import { resetClosingInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
+import { resetClosingInboxThread } from '@/ai/utils/resetClosingInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -13,7 +13,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
   const store = useStore();

@@ -1,5 +1,5 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getInboxThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
+import { getInboxThreadLastActivityAt } from '@/ai/utils/getInboxThreadLastActivityAt';
 
 const getLastActivityMs = (
   thread: Pick<InboxThreadRecord, 'lastActivityAt' | 'updatedAt'>,

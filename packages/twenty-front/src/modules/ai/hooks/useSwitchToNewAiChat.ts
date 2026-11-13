@@ -1,12 +1,12 @@
 import { useStore } from 'jotai';
 
-import { useNavigateToInboxThreadPage } from '@/ai/hooks/useNavigateToAiChatPage';
-import { useSelectInboxThread } from '@/ai/hooks/useSelectAiChatThread';
-import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { useNavigateToInboxThreadPage } from '@/ai/hooks/useNavigateToInboxThreadPage';
+import { useSelectInboxThread } from '@/ai/hooks/useSelectInboxThread';
+import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;

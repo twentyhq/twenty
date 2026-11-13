@@ -2,7 +2,7 @@ import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatUsageState } from '@/ai/states/agentChatUsageFamilyState';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
 
 const toDisplayCredits = (internalCredits: number | string | undefined) =>
   Number(internalCredits ?? 0) / INTERNAL_CREDITS_PER_DISPLAY_CREDIT;

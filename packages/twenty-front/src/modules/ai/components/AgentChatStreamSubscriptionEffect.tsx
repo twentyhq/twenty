@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { useInboxSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { useInboxSubscription } from '@/ai/hooks/useInboxSubscription';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewInboxSlot';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
+import { inboxFetchedMessagesFamilyState } from '@/ai/states/inboxFetchedMessagesFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';

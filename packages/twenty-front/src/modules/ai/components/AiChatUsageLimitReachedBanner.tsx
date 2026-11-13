@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { InboxInlineBanner } from '@/ai/components/InboxInlineBanner';
 import { useManageUsageLimitsButton } from '@/settings/billing/hooks/useManageUsageLimitsButton';
 
 export const AiChatUsageLimitReachedBanner = () => {

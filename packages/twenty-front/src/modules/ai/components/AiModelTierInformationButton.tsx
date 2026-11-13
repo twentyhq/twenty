@@ -20,7 +20,7 @@ import {
   useThemeContainer,
 } from 'twenty-ui/theme';
 
-import { useInboxHoverCard } from '@/ai/hooks/useAiChatHoverCard';
+import { useInboxHoverCard } from '@/ai/hooks/useInboxHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';

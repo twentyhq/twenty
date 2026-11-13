@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectInboxThreadToUrl';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type ChatWidgetOpenInChatPageEffectProps = {

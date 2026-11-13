@@ -1,6 +1,6 @@
-import { InboxFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { InboxFilePreview } from '@/ai/components/internal/InboxFilePreview';
+import { inboxSelectedFilesState } from '@/ai/states/inboxSelectedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';

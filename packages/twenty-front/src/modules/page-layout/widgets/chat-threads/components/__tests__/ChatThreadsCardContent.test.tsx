@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -16,7 +16,7 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({ openRecordInSidePanel }),
 }));
 
-jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
+jest.mock('@/ai/components/InboxThreadActionsDropdown', () => ({
   InboxThreadActionsDropdown: () => null,
 }));
 

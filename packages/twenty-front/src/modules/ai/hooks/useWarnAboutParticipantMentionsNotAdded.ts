@@ -3,9 +3,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { type InboxParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { getInboxParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
+import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchInboxThreadsPage';
+import { type InboxParticipantMention } from '@/ai/types/InboxParticipantMention';
+import { getInboxParticipantAdditionStatus } from '@/ai/utils/getInboxParticipantAdditionStatus';
 import { logError } from '~/utils/logError';
 
 export const useWarnAboutParticipantMentionsNotAdded = () => {

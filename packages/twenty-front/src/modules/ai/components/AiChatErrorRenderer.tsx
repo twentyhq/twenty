@@ -1,4 +1,4 @@
-import { InboxApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
+import { InboxApiKeyNotConfiguredMessage } from '@/ai/components/InboxApiKeyNotConfiguredMessage';
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { AiChatQuotaLimitExhaustedMessage } from '@/ai/components/AiChatQuotaLimitExhaustedMessage';
 import { AiChatUserCreditsExhaustedMessage } from '@/ai/components/AiChatUserCreditsExhaustedMessage';

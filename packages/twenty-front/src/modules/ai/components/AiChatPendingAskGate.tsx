@@ -5,9 +5,9 @@ import { CountPager } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
-import { InboxRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { InboxRecordApprovalDeck } from '@/ai/components/InboxRecordApprovalDeck';
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { isAgentChatPendingRecordApproval } from '@/ai/utils/isAgentChatPendingRecordApproval';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

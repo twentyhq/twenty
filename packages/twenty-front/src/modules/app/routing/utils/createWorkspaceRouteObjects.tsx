@@ -61,13 +61,13 @@ const StandalonePageLayoutPage = lazy(() =>
 );
 
 const InboxThreadPage = lazy(() =>
-  import('~/pages/ai-chat/AiChatPage').then((module) => ({
+  import('~/pages/ai-chat/InboxThreadPage').then((module) => ({
     default: module.InboxThreadPage,
   })),
 );
 
 const InboxPage = lazy(() =>
-  import('~/pages/ai-chat/AiChatInboxPage').then((module) => ({
+  import('~/pages/ai-chat/InboxPage').then((module) => ({
     default: module.InboxPage,
   })),
 );

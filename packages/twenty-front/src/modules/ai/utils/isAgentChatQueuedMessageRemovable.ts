@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { isInboxMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { isInboxMessageOwn } from '@/ai/utils/isInboxMessageOwn';
 
 type IsAgentChatQueuedMessageRemovableParams = {
   message: Pick<ExtendedUIMessage, 'role' | 'metadata'>;

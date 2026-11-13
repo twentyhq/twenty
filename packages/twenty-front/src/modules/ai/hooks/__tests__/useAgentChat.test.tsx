@@ -14,22 +14,22 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/InboxNewThreadDefaultRecipients';
+import { INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/InboxRestoreEditorContentEventName';
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { inboxQuotedMessageIdFamilyState } from '@/ai/states/inboxQuotedMessageIdFamilyState';
+import { inboxDraftsByThreadIdState } from '@/ai/states/inboxDraftsByThreadIdState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/inboxNewThreadRecipientsFamilyState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/inboxIsSendingMessageFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
-import { type InboxNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
-import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/inboxIsAssistantReplyPendingFamilySelector';
+import { type InboxNewThreadRecipients } from '@/ai/types/InboxNewThreadRecipients';
+import { inboxSelectedFilesState } from '@/ai/states/inboxSelectedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -66,7 +66,7 @@ const loadInboxThread = jest.fn(async (threadId: string) => ({
   id: threadId,
 }));
 
-jest.mock('@/ai/hooks/useLoadAgentChatThread', () => ({
+jest.mock('@/ai/hooks/useLoadInboxThread', () => ({
   useLoadInboxThread: () => ({ loadInboxThread }),
 }));
 

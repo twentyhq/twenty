@@ -2,10 +2,10 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { getExpandedInboxReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueInboxInSidePanelState';
+import { getExpandedInboxReturnLocation } from '@/ai/utils/getExpandedInboxReturnLocation';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type UseReturnFromExpandedAiChatParams = {

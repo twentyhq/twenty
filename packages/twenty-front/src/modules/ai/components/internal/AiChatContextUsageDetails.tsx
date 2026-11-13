@@ -1,4 +1,4 @@
-import { formatInboxTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatInboxTokens } from '@/ai/utils/formatInboxTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import {
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';

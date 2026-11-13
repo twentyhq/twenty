@@ -5,12 +5,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadListItem } from '@/ai/components/InboxThreadListItem';
+import { setInboxSelectedChannelView } from '@/ai/testing/setInboxSelectedChannelView';
+import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { inboxThreadParticipantsState } from '@/ai/states/inboxThreadParticipantsState';
+import { setInboxThreadPermissions } from '@/ai/testing/setInboxThreadPermissions';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -62,7 +62,7 @@ const CHAT_OBJECT_METADATA_ITEM = {
 
 type ThreadScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 
-jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
+jest.mock('@/ai/hooks/useInboxThreadRename', () => ({
   useInboxThreadRename: () => ({
     isRenaming: false,
     draftTitle: '',
@@ -73,7 +73,7 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
+jest.mock('@/ai/hooks/useExecuteInboxThreadStatusAction', () => ({
   useExecuteInboxThreadStatusAction: () => ({
     executeInboxThreadStatusAction: jest.fn(),
     isPending: false,

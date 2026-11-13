@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { InboxTab } from '@/ai/components/AiChatTab';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { InboxTab } from '@/ai/components/InboxTab';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
 import { ChatWidgetOpenInChatPageEffect } from '@/page-layout/widgets/chat/components/ChatWidgetOpenInChatPageEffect';
 import { ChatWidgetThreadSyncEffect } from '@/page-layout/widgets/chat/components/ChatWidgetThreadSyncEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 
 const StyledChatContainer = styled.div`
   --ai-chat-content-max-width: 768px;

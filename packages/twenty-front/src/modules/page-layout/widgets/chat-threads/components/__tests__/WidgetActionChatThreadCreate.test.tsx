@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';

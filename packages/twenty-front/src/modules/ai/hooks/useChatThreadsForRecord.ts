@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
-import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type InboxThreadTargetRecord } from '@/ai/types/InboxThreadTargetRecord';
 import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';

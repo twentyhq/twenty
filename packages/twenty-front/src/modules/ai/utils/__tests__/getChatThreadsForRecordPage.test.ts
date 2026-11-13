@@ -1,7 +1,7 @@
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
+import { type InboxThreadTargetRecord } from '@/ai/types/InboxThreadTargetRecord';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 
 const PAGE_SIZE = 20;

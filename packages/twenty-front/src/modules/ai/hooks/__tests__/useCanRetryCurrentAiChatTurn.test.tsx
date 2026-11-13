@@ -1,13 +1,13 @@
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setInboxThreadPermissions } from '@/ai/testing/setInboxThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
-import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
+import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentInboxThreadAccess';
 import {
   jotaiStore,
   resetJotaiStore,

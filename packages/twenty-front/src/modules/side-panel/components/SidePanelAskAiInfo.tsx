@@ -1,8 +1,8 @@
-import { InboxThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { InboxThreadDetailsDropdown } from '@/ai/components/InboxThreadDetailsDropdown';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewInboxSlot';
+import { useInboxThreadDisplayLabel } from '@/ai/hooks/useInboxThreadDisplayLabel';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/inboxThreadRecordFamilySelector';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

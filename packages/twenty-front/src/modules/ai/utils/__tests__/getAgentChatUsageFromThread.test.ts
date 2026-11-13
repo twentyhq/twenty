@@ -1,5 +1,5 @@
 import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
-import { formatInboxTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatInboxTokens } from '@/ai/utils/formatInboxTokens';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 const storedThread = {

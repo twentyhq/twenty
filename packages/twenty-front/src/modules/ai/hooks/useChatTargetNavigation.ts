@@ -1,6 +1,6 @@
 import { AppPath } from 'twenty-shared/types';
 
-import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsInboxArtifactSurface';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 

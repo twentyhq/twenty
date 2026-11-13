@@ -2,10 +2,10 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { scrollInboxToBottom } from '@/ai/utils/scrollAiChatToBottom';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { inboxIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/inboxIsScrolledToBottomComponentSelector';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { scrollInboxToBottom } from '@/ai/utils/scrollInboxToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

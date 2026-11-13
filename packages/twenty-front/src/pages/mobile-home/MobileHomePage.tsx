@@ -1,5 +1,5 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
-import { MobileHomeInboxSection } from '@/ai/components/MobileHomeAiChatSection';
+import { MobileHomeInboxSection } from '@/ai/components/MobileHomeInboxSection';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';

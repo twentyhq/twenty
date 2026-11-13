@@ -1,5 +1,5 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendInboxMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { GettingStartedImportPreview } from '@/getting-started/components/step-preview/GettingStartedImportPreview';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';

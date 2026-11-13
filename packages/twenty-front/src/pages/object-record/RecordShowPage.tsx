@@ -7,7 +7,7 @@ import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPa
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { InboxThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { InboxThreadPageContent } from '~/pages/ai-chat/InboxThreadPageContent';
 import {
   type RecordShowPageParameters,
   RecordShowPageContent,

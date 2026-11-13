@@ -2,15 +2,15 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/InboxNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { inboxDraftsByThreadIdState } from '@/ai/states/inboxDraftsByThreadIdState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/inboxNewThreadRecipientsFamilyState';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
+import { type InboxFileUIPart } from '@/ai/types/InboxFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const NEW_CHAT_THREAD_ID = 'new-chat-thread-id';
@@ -33,7 +33,7 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useAiChatFileUpload', () => ({
+jest.mock('@/ai/hooks/useInboxFileUpload', () => ({
   useInboxFileUpload: () => ({
     uploadFiles: () =>
       new Promise<InboxFileUIPart[]>((resolve) => {

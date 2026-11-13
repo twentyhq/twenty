@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/InboxRefetchMessagesEventName';
 import { type useAiChatFrontComponentPreview } from '@/ai/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { InboxTab } from '@/ai/components/AiChatTab';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { InboxTab } from '@/ai/components/InboxTab';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
 
 const StyledContainer = styled.div`
   height: 100%;

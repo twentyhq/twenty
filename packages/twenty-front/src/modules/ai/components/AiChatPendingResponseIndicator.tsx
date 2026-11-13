@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxInitialLoadingIndicator } from '@/ai/components/InboxInitialLoadingIndicator';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
+import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/inboxIsAssistantReplyPendingFamilySelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';

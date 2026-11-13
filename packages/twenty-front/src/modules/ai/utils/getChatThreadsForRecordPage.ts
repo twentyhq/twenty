@@ -2,7 +2,7 @@ import uniqBy from 'lodash.uniqby';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type InboxThreadTargetRecord } from '@/ai/types/InboxThreadTargetRecord';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 
 export const getChatThreadsForRecordPage = ({

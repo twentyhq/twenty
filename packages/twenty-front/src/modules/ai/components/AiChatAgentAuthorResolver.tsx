@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type InboxMessageAuthor } from '@/ai/types/InboxMessageAuthor';
 import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {

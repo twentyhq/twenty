@@ -2,13 +2,13 @@ import { useStore } from 'jotai';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useInboxFileUpload } from '@/ai/hooks/useInboxFileUpload';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { type AgentChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 

@@ -1,4 +1,4 @@
-import { NavigationDrawerInboxContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { NavigationDrawerInboxContent } from '@/ai/components/NavigationDrawerInboxContent';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 

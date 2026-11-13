@@ -13,7 +13,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
-import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsInboxArtifactSurface';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';

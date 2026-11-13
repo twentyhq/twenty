@@ -6,7 +6,7 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
-import { type InboxConversationTarget } from '@/ai/types/AgentChatConversationTarget';
+import { type InboxConversationTarget } from '@/ai/types/InboxConversationTarget';
 
 const getConversationTargetsFromNode = (
   node: TipTapNode,

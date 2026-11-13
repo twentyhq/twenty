@@ -10,7 +10,7 @@ import {
   agentChatUsageFamilyState,
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {

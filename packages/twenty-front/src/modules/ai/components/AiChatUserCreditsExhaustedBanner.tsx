@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconSettings } from 'twenty-ui/icon';
 
-import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { InboxInlineBanner } from '@/ai/components/InboxInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';

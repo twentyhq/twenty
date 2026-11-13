@@ -3,10 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingInboxEnabledState';
 import { useEnterWorkspaceAfterOnboardingCheckout } from '@/onboarding/hooks/useEnterWorkspaceAfterOnboardingCheckout';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,

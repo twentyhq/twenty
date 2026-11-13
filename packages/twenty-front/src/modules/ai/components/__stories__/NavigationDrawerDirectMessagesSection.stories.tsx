@@ -11,7 +11,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { DirectMessagePresentationExample } from '@/ai/components/__stories__/DirectMessagePresentationExample';
 import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';

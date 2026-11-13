@@ -3,7 +3,7 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxThreadParticipantsState } from '@/ai/states/inboxThreadParticipantsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';

@@ -2,11 +2,11 @@ import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import type * as React from 'react';
-import { InboxNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { InboxNonLastMessageIdsList } from '@/ai/components/InboxNonLastMessageIdsList';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
 
-import { InboxTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxTabMessageList } from '@/ai/components/InboxTabMessageList';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import {
   jotaiStore,
@@ -21,7 +21,7 @@ jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
   WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
 }));
 
-jest.mock('@/ai/components/AiChatInitialLoadingIndicator', () => ({
+jest.mock('@/ai/components/InboxInitialLoadingIndicator', () => ({
   InboxInitialLoadingIndicator: () => (
     <div data-testid="initial-loading-indicator" />
   ),
@@ -33,25 +33,25 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
+jest.mock('@/ai/components/InboxNonLastMessageIdsList', () => ({
   InboxNonLastMessageIdsList: jest.fn(() => null),
 }));
-jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
+jest.mock('@/ai/components/InboxLastMessageWithStreamingState', () => ({
   InboxLastMessageWithStreamingState: () => null,
 }));
-jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+jest.mock('@/ai/components/InboxThreadStatusNotice', () => ({
   InboxThreadStatusNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
 }));
-jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
+jest.mock('@/ai/components/InboxScrollToBottomButton', () => ({
   InboxScrollToBottomButton: () => null,
 }));
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock(
-  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
+  '@/ai/components/InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => {
     const { useLayoutEffect } = jest.requireActual<typeof React>('react');
     return {

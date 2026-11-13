@@ -6,9 +6,9 @@ import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 
 const StyledTriggerContainer = styled.div`
   margin-top: 200px;

@@ -1,8 +1,8 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect, useState } from 'react';
 
-import { useSwitchInboxThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useSwitchInboxThreadWithDraft } from '@/ai/hooks/useSwitchInboxThreadWithDraft';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 
 type ChatWidgetThreadSyncEffectProps = {
   threadId: string;

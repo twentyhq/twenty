@@ -1,6 +1,6 @@
-import { InboxMemberPresence } from '@/ai/components/AiChatMemberPresence';
-import { InboxThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { InboxMemberPresence } from '@/ai/components/InboxMemberPresence';
+import { InboxThreadActionsDropdown } from '@/ai/components/InboxThreadActionsDropdown';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/inboxThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';

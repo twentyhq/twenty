@@ -1,6 +1,6 @@
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -8,7 +8,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueInboxInSidePanelState';
 import {
   jotaiStore,
   resetJotaiStore,

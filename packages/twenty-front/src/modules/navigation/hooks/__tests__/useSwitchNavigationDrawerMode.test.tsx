@@ -26,7 +26,7 @@ jest.mock('twenty-ui/utilities', () => ({
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
-jest.mock('@/ai/hooks/useSelectAiChatThread', () => ({
+jest.mock('@/ai/hooks/useSelectInboxThread', () => ({
   useSelectInboxThread: () => ({ selectInboxThread: jest.fn() }),
 }));
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({

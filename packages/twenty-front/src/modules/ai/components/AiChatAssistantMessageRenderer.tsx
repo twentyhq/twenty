@@ -1,6 +1,6 @@
 import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
-import { InboxCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
-import { InboxInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
+import { InboxCompactionIndicator } from '@/ai/components/InboxCompactionIndicator';
+import { InboxInitialLoadingIndicator } from '@/ai/components/InboxInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 

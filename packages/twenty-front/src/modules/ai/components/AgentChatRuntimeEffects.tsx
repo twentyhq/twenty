@@ -1,4 +1,4 @@
-import { InboxMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
+import { InboxMessagesFetchEffect } from '@/ai/components/InboxMessagesFetchEffect';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AgentChatStreamSubscriptionEffect } from '@/ai/components/AgentChatStreamSubscriptionEffect';
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';

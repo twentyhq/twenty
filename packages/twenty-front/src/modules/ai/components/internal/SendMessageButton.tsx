@@ -1,10 +1,10 @@
-import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { INBOX_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { inboxIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
+import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/InboxSendMessageEventName';
+import { INBOX_STOP_EVENT_NAME } from '@/ai/constants/InboxStopEventName';
+import { inboxIsLoadingSelector } from '@/ai/states/selectors/inboxIsLoadingSelector';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
-import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { inboxInputIsEmptySelector } from '@/ai/states/selectors/inboxInputIsEmptySelector';
+import { inboxIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/inboxIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconButton } from 'twenty-ui/components/input';

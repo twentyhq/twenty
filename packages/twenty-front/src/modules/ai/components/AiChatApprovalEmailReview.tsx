@@ -8,7 +8,7 @@ import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { InboxEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
+import { InboxEmailRecipientsRow } from '@/ai/components/internal/InboxEmailRecipientsRow';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai/types/AiChatApprovalReviewEmailDraft';
 
 const StyledEmail = styled.div`

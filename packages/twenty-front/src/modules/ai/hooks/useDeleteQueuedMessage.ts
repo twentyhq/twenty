@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/InboxRefetchMessagesEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { DeleteQueuedChatMessageDocument } from '~/generated-metadata/graphql';
 

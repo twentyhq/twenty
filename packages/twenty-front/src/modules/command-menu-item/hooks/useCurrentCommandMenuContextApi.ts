@@ -1,6 +1,6 @@
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
+import { inboxThreadParticipantsState } from '@/ai/states/inboxThreadParticipantsState';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/inboxSelectedChannelViewSelector';
+import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/inboxThreadMemberStateByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -43,7 +43,7 @@ import {
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 import { useLocation } from 'react-router-dom';
 
-import { isInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const workspaceSurface = useWorkspaceSurface();

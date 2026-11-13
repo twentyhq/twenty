@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/InboxSendMessageEventName';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';

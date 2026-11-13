@@ -1,4 +1,4 @@
-import { formatInboxTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatInboxTokens } from '@/ai/utils/formatInboxTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -15,7 +15,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { AiChatUsageMetricRow } from '@/ai/components/internal/AiChatUsageMetricRow';
-import { useInboxHoverCard } from '@/ai/hooks/useAiChatHoverCard';
+import { useInboxHoverCard } from '@/ai/hooks/useInboxHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
@@ -23,7 +23,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

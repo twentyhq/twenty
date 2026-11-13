@@ -10,7 +10,7 @@ import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferen
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import {
   FindManySkillsForSuggestionDocument,
