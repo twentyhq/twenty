@@ -5,13 +5,14 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -128,11 +129,11 @@ const meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    jotaiStore.set(agentChatChannelViewState.atom, null);
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
-    );
+    setAgentChatSelectedChannelView(jotaiStore, null);
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
+    });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
         instanceId: AI_CHAT_INBOX_INSTANCE_ID,
@@ -209,9 +210,12 @@ export const SwitchViews: Story = {
     await expect(
       canvas.getByRole('region', { name: 'Inbox header' }),
     ).toHaveAttribute('data-pathname', '/inbox');
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+    ).toEqual({
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
+    });
 
     await userEvent.click(trigger);
     await userEvent.click(
@@ -239,10 +243,10 @@ export const SwitchViews: Story = {
 
 export const FromSnoozed: Story = {
   beforeEach: () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
+    });
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -256,8 +260,11 @@ export const FromSnoozed: Story = {
       }),
     );
     await expect(canvas.getByText('Mentions')).toBeVisible();
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+    ).toEqual({
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS,
+    });
   },
 };

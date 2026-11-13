@@ -60,6 +60,7 @@ export type CoreWorkflowConnection = {
   __typename?: 'CoreWorkflowConnection';
   edges: Array<CoreWorkflowEdge>;
   pageInfo: CoreWorkflowPageInfo;
+  runSummaries: Array<CoreWorkflowRunSummary>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -79,10 +80,28 @@ export type CoreWorkflowDto = {
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
+export type CoreWorkflowDailyRunCount = {
+  __typename?: 'CoreWorkflowDailyRunCount';
+  completedRunCount: Scalars['Int']['output'];
+  /** Day in the requested time zone, as YYYY-MM-DD */
+  day: Scalars['String']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  /** Runs neither completed nor failed, such as running or stopped */
+  otherRunCount: Scalars['Int']['output'];
+};
+
 export type CoreWorkflowEdge = {
   __typename?: 'CoreWorkflowEdge';
   cursor: Scalars['String']['output'];
   node: CoreWorkflowDto;
+};
+
+export type CoreWorkflowFailedRun = {
+  __typename?: 'CoreWorkflowFailedRun';
+  createdAt: Scalars['String']['output'];
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
 };
 
 export enum CoreWorkflowFilterFieldKey {
@@ -138,6 +157,50 @@ export type CoreWorkflowPageInfo = {
   __typename?: 'CoreWorkflowPageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type CoreWorkflowRecentRun = {
+  __typename?: 'CoreWorkflowRecentRun';
+  createdAt: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  status: CoreWorkflowRunStatus;
+};
+
+export type CoreWorkflowRunInsights = {
+  __typename?: 'CoreWorkflowRunInsights';
+  /** Average duration of completed runs over the same 14 days */
+  averageDurationInMs?: Maybe<Scalars['Float']['output']>;
+  coreWorkflowId: Scalars['UUID']['output'];
+  /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+  dailyRunCounts: Array<CoreWorkflowDailyRunCount>;
+  /** Failed runs over the same 14 days */
+  failedRunCount: Scalars['Int']['output'];
+  /** True when run retention may have deleted runs from the window, so the counts are lower bounds */
+  isRunCountLowerBound: Scalars['Boolean']['output'];
+  /** Most recent failed runs first */
+  recentFailedRuns: Array<CoreWorkflowFailedRun>;
+  /** Runs over the last 14 days, the same window as the workflows list run count */
+  runCount: Scalars['Int']['output'];
+};
+
+export enum CoreWorkflowRunStatus {
+  COMPLETED = 'COMPLETED',
+  ENQUEUED = 'ENQUEUED',
+  FAILED = 'FAILED',
+  NOT_STARTED = 'NOT_STARTED',
+  RUNNING = 'RUNNING',
+  STOPPED = 'STOPPED',
+  STOPPING = 'STOPPING'
+}
+
+export type CoreWorkflowRunSummary = {
+  __typename?: 'CoreWorkflowRunSummary';
+  coreWorkflowId: Scalars['UUID']['output'];
+  /** True when run retention may have deleted runs from the window, so runCountLast14Days is a lower bound */
+  isRunCountLowerBound: Scalars['Boolean']['output'];
+  /** Most recent runs first */
+  recentRuns: Array<CoreWorkflowRecentRun>;
+  runCountLast14Days: Scalars['Int']['output'];
 };
 
 export enum CoreWorkflowStatus {
@@ -418,6 +481,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  testMcpToolStep: TestMcpToolStep;
   testWorkflowCodeStep: LogicFunctionExecutionResult;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
@@ -533,6 +597,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationTestMcpToolStepArgs = {
+  input: TestMcpToolStepInput;
+};
+
+
 export type MutationTestWorkflowCodeStepArgs = {
   input: TestWorkflowCodeStepInput;
 };
@@ -581,6 +650,7 @@ export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
   coreWorkflowById?: Maybe<CoreWorkflowDto>;
+  coreWorkflowRunInsights?: Maybe<CoreWorkflowRunInsights>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
@@ -620,6 +690,12 @@ export type QueryCoreWorkflowArgs = {
 
 export type QueryCoreWorkflowByIdArgs = {
   coreWorkflowId: Scalars['UUID']['input'];
+};
+
+
+export type QueryCoreWorkflowRunInsightsArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
+  timeZone: Scalars['String']['input'];
 };
 
 
@@ -834,6 +910,24 @@ export type TestHttpRequestInput = {
   url: Scalars['String']['input'];
 };
 
+export type TestMcpToolStep = {
+  __typename?: 'TestMcpToolStep';
+  error?: Maybe<Scalars['String']['output']>;
+  /** What the tool returned, saved as the step output sample */
+  result?: Maybe<Scalars['JSON']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type TestMcpToolStepInput = {
+  /** Must be true to run a tool that may change data, after the author confirmed it */
+  isDestructiveToolConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
+  mcpServerId: Scalars['UUID']['input'];
+  /** Tool arguments with workflow variables already replaced */
+  toolArguments?: InputMaybe<Scalars['JSON']['input']>;
+  toolName: Scalars['String']['input'];
+  workflowVersionId: Scalars['UUID']['input'];
+};
+
 export type TestWorkflowCodeStepInput = {
   /** TypeScript source of the code step */
   code: Scalars['String']['input'];
@@ -1016,6 +1110,7 @@ export enum WorkflowActionType {
   IF_ELSE = 'IF_ELSE',
   ITERATOR = 'ITERATOR',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
+  MCP_TOOL = 'MCP_TOOL',
   PICK_RECORD = 'PICK_RECORD',
   SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
   SEND_EMAIL = 'SEND_EMAIL',
@@ -1055,8 +1150,8 @@ export type WorkflowStepPositionInput = {
 export type WorkflowStepPositionUpdateInput = {
   /** Step or trigger ID */
   id: Scalars['String']['input'];
-  /** Position of the step or trigger */
-  position: WorkflowStepPositionInput;
+  /** Position of the step or trigger, null to remove it */
+  position?: InputMaybe<WorkflowStepPositionInput>;
 };
 
 export type WorkflowVersionStepChanges = {

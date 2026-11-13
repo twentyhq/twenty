@@ -1502,6 +1502,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -1531,6 +1532,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -1558,6 +1560,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -1585,6 +1588,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -1612,6 +1616,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -1731,6 +1736,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "type": "create",
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "aggregateOperation": null,
           "applicationUniversalIdentifier": Any<String>,
@@ -1753,6 +1759,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "universalIdentifier": Any<String>,
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "aggregateOperation": null,
           "applicationUniversalIdentifier": Any<String>,
@@ -1819,6 +1826,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "type": "create",
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "conditionalAvailabilityExpression": null,
@@ -3267,6 +3275,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -3296,6 +3305,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -3323,6 +3333,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -3350,6 +3361,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,
@@ -3377,6 +3389,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
           "deletedAt": null,

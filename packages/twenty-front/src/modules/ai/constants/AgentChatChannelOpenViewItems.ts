@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
@@ -6,37 +6,37 @@ import {
 
 export const AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS = [
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     assignment: AgentChatChannelAssignmentFilter.ANY,
     filter: AgentChatChannelThreadFilter.ANY,
     countKey: 'openCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
     assignment: AgentChatChannelAssignmentFilter.ANY,
     filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
     countKey: 'needsInputCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS,
     assignment: AgentChatChannelAssignmentFilter.ANY,
     filter: AgentChatChannelThreadFilter.MENTIONED,
     countKey: 'mentionedCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ME,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ME,
     assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
     filter: AgentChatChannelThreadFilter.ANY,
     countKey: 'assignedToMeCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED_TO_ANYONE,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE,
     assignment: AgentChatChannelAssignmentFilter.ASSIGNED,
     filter: AgentChatChannelThreadFilter.ANY,
     countKey: 'assignedCount',
   },
   {
-    filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.UNASSIGNED,
+    presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED,
     assignment: AgentChatChannelAssignmentFilter.UNASSIGNED,
     filter: AgentChatChannelThreadFilter.ANY,
     countKey: 'unassignedCount',

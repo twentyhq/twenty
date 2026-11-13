@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -61,8 +64,7 @@ Available trigger types:
 To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 - **cron**: Runs your function on a schedule using a CRON expression.
-- **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
-> e.g. `person.updated`, `*.created`, `company.*`
+- **databaseEvent**: Runs when records of an object are created, updated, deleted, destroyed, restored or upserted. You can limit it to updates of some fields and to records that meet a condition. See [Database event payloads](#database-event-trigger-payload).
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
 <Note>
@@ -432,18 +434,29 @@ For soft deletes, `.deleted` follows the update-style shape because the record's
 For permanent deletes, use `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` filters which update events
-  trigger the function. `event.properties.updatedFields` tells you which fields
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` filters which update
+  events trigger the function. `event.properties.updatedFields` tells you which fields
   actually changed on the current event.
 </Note>
 
-`databaseEventTriggerSettings` accepts:
+`eventTriggerSettings` with `on: 'recordEvent'` accepts:
 
-| Property        | Description                                                                                                                                                              |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `eventName`     | Event to listen on, such as `person.updated`. Supports `*` for the object name, the operation, or both.                                                                  |
-| `updatedFields` | Optional list of field names. On `.updated` events, only changes touching one of them trigger the function.                                                              |
-| `batchMode`     | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
+| Property                    | Description                                                                                                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `on`                        | `'recordEvent'`: the trigger listens to record events.                                                                                                                   |
+| `objectUniversalIdentifier` | Optional object to listen on. Leave it out to listen on every object.                                                                                                    |
+| `action`                    | `created`, `updated`, `deleted`, `destroyed`, `restored`, `upserted`, or `*` for all of them.                                                                            |
+| `watchedFieldUniversalIdentifiers` | Optional list of fields of the object. On updates and upserts, only changes touching one of them trigger the function. Relations to many records cannot be listed.      |
+| `condition`                 | Optional [rule expression](/user-guide/data-model/capabilities/validation-rules#write-a-condition) the record must meet. `previous.<field>` reads it before an update. Needs `objectUniversalIdentifier`. |
+| `batchMode`                 | Optional boolean. When `true`, the handler is called once per batch of records instead of once per record. The server decides how many records a batch holds, up to 200. |
+
+The build fails when an object or field is unknown, or when the condition reads a field the object does not have. A condition reads the record the way the API returns it, like a validation rule: `company.id` for the related company, `company.employees > 100` for one of its fields. Related fields are read when the event is dispatched, with the application's permissions, so a related record the application cannot read counts as empty. `previous.` only covers the record's own fields.
+
+<Note>
+  The earlier `databaseEventTriggerSettings`, with `eventName` (such as
+  `person.updated` or `*.created`) and `updatedFields` (field names), is still
+  accepted, but will be removed in a future release. Set one of the two, not both.
+</Note>
 
 Created event example:
 
@@ -481,11 +494,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 Trigger only on email updates:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+Trigger only when an opportunity moves to the customer stage:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -514,8 +548,11 @@ A bulk write emits many events at once: importing a mailbox, for instance, can u
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -544,7 +581,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   Write the handler to loop over `events` whatever its length.
 </Note>
 
-Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. `updatedFields` filtering is applied before batching, so a batch only contains records you asked for.
+Events are grouped by the user who caused them before being batched, so every call covers a single actor and `context.workspaceMemberId` stays meaningful. Field and condition filtering are applied before batching, so a batch only contains records you asked for.
 
 Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per record.
 
@@ -629,7 +666,7 @@ Logic functions can be exposed on two surfaces, each with its own trigger:
 - **`toolTriggerSettings`** — makes the function discoverable by Twenty's AI features (chat, MCP, function calling). Uses standard JSON Schema, the format LLMs natively understand.
 - **`workflowActionTriggerSettings`** — makes the function appear as a step in the visual workflow builder. Uses Twenty's rich `InputSchema` so the builder can render proper field editors, variable pickers, and labels.
 
-A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `databaseEventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
+A function can opt into one, the other, or both. They sit alongside `cronTriggerSettings`, `eventTriggerSettings`, and `httpRouteTriggerSettings` — same pattern, same shape.
 
 <Note>
   **Relationship to the workflow Code action.** The built-in **Code** action in

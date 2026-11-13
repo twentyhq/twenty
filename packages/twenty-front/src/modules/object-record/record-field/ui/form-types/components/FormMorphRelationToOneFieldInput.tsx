@@ -16,7 +16,10 @@ import { Field } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { isString } from '@sniptt/guards';
 import { useId } from 'react';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type JsonValue } from 'type-fest';
 import { useLingui } from '@lingui/react/macro';
@@ -72,7 +75,7 @@ export const FormMorphRelationToOneFieldInput = ({
     ...new Set(
       morphRelations
         .filter((morphRelation) =>
-          canReachSomeRecords({
+          canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions:
               objectPermissionsByObjectMetadataId[
                 morphRelation.targetObjectMetadata.id
@@ -99,7 +102,7 @@ export const FormMorphRelationToOneFieldInput = ({
 
   const selectedTargetIsReadable =
     !isDefined(selectedMorphValue) ||
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions:
         objectPermissionsByObjectMetadataId[
           selectedMorphValue.targetObjectMetadataId

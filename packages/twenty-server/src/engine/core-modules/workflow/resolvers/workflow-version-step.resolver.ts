@@ -4,6 +4,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
@@ -13,6 +14,8 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { TestHttpRequestDTO } from 'src/engine/core-modules/workflow/dtos/test-http-request.dto';
+import { TestMcpToolStepInput } from 'src/engine/core-modules/workflow/dtos/test-mcp-tool-step.input';
+import { TestMcpToolStepDTO } from 'src/engine/core-modules/workflow/dtos/test-mcp-tool-step.dto';
 import { TestWorkflowCodeStepInput } from 'src/engine/core-modules/workflow/dtos/test-workflow-code-step.input';
 import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step.input';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step.input';
@@ -39,6 +42,7 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { CodeStepRunnerService } from 'src/modules/workflow/workflow-executor/workflow-actions/code/services/code-step-runner.service';
+import { McpToolStepTestService } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service';
 import { canUpdateWorkflowRunStep } from 'src/modules/workflow/workflow-runner/utils/can-update-workflow-run-step.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -59,6 +63,22 @@ const WORKFLOW_VERSION_STEP_ACCESS_POLICY: AccessPolicy = {
     application: { withUser: true, withoutUser: false },
   },
   requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+};
+
+const WORKFLOW_MCP_TOOL_STEP_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.WORKFLOWS],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 };
 
 // Inline code runs with the workspace custom application's token, which no app or OAuth caller may borrow
@@ -95,6 +115,7 @@ export class WorkflowVersionStepResolver {
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly codeStepRunnerService: CodeStepRunnerService,
+    private readonly mcpToolStepTestService: McpToolStepTestService,
   ) {}
 
   // Related to https://github.com/twentyhq/private-issues/issues/478
@@ -222,6 +243,37 @@ export class WorkflowVersionStepResolver {
     );
   }
 
+  @Mutation(() => TestMcpToolStepDTO)
+  @UseGuards(AccessPolicyGuard(WORKFLOW_MCP_TOOL_STEP_ACCESS_POLICY))
+  async testMcpToolStep(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('input')
+    {
+      workflowVersionId,
+      mcpServerId,
+      toolName,
+      toolArguments,
+      isDestructiveToolConfirmed,
+    }: TestMcpToolStepInput,
+  ): Promise<TestMcpToolStepDTO> {
+    const { flatApplication } = await this.findWorkflowFlatApplicationOrThrow({
+      workspace,
+      userWorkspaceId,
+      workflowVersionId,
+    });
+
+    return this.mcpToolStepTestService.testTool({
+      mcpServerId,
+      toolName,
+      toolArguments,
+      isDestructiveToolConfirmed,
+      workspace,
+      workflowApplication: flatApplication,
+      userWorkspaceId,
+    });
+  }
+
   @Query(() => graphqlTypeJson)
   @UseGuards(AccessPolicyGuard(WORKFLOW_CODE_STEP_ACCESS_POLICY))
   async workflowCodeStepAvailablePackages(
@@ -267,12 +319,12 @@ export class WorkflowVersionStepResolver {
     return fromLogicFunctionExecuteResultToDTO(result);
   }
 
-  private async findWorkflowApplicationOrThrow({
-    workspace: { id: workspaceId, workspaceCustomApplicationId },
+  private async findWorkflowFlatApplicationOrThrow({
+    workspace: { id: workspaceId },
     userWorkspaceId,
     workflowVersionId,
   }: {
-    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
+    workspace: Pick<WorkspaceEntity, 'id'>;
     userWorkspaceId: string;
     workflowVersionId: string;
   }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
@@ -301,12 +353,9 @@ export class WorkflowVersionStepResolver {
       flatEntityId: coreWorkflowVersion.coreWorkflowId,
       flatEntityMaps: flatWorkflowMaps,
     });
-
-    // inline code runs with its application's token and variables, so only builder workflows may test it
-    const flatApplication =
-      flatWorkflow?.applicationId === workspaceCustomApplicationId
-        ? flatApplicationMaps.byId[workspaceCustomApplicationId]
-        : undefined;
+    const flatApplication = isDefined(flatWorkflow)
+      ? flatApplicationMaps.byId[flatWorkflow.applicationId]
+      : undefined;
 
     if (!isDefined(flatApplication)) {
       throw new WorkflowVersionStepException(
@@ -321,6 +370,33 @@ export class WorkflowVersionStepResolver {
         coreWorkflowVersion.workspaceWorkflowId ??
         coreWorkflowVersion.coreWorkflowId,
     };
+  }
+
+  private async findWorkflowApplicationOrThrow({
+    workspace,
+    userWorkspaceId,
+    workflowVersionId,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
+    userWorkspaceId: string;
+    workflowVersionId: string;
+  }): Promise<{ flatApplication: FlatApplication; workflowId: string }> {
+    const { flatApplication, workflowId } =
+      await this.findWorkflowFlatApplicationOrThrow({
+        workspace,
+        userWorkspaceId,
+        workflowVersionId,
+      });
+
+    // inline code runs with its application's token and variables, so only builder workflows may test it
+    if (flatApplication.id !== workspace.workspaceCustomApplicationId) {
+      throw new WorkflowVersionStepException(
+        'Application of the workflow not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
+    return { flatApplication, workflowId };
   }
 
   private async assertWorkflowRunIsReadableByRequesterOrThrow(

@@ -6,7 +6,7 @@ import {
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
@@ -21,10 +21,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
@@ -34,7 +34,6 @@ import { logError } from '~/utils/logError';
 export const useFetchAgentChatThreadsPage = () => {
   const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const fetchAgentChatThreadsPage = useCallback(
     async ({
@@ -44,6 +43,9 @@ export const useFetchAgentChatThreadsPage = () => {
       lastCursor: string | null;
       threadIdFilter?: RecordGqlOperationFilter;
     }) => {
+      const objectPermissionsByObjectMetadataId = store.get(
+        objectPermissionsByObjectMetadataIdSelector.atom,
+      );
       const hasAiPermission = store.get(permissionFlagMapSelector.atom)[
         PermissionFlagType.AI
       ];
@@ -69,7 +71,7 @@ export const useFetchAgentChatThreadsPage = () => {
         return undefined;
       }
 
-      const hasReadPermission = canReachSomeRecords({
+      const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
           chatObjectMetadataItem.id,
@@ -135,7 +137,7 @@ export const useFetchAgentChatThreadsPage = () => {
         endCursor: connection.pageInfo.endCursor ?? null,
       };
     },
-    [apolloCoreClient, objectPermissionsByObjectMetadataId, store],
+    [apolloCoreClient, store],
   );
 
   return { fetchAgentChatThreadsPage };

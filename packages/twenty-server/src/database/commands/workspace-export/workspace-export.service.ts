@@ -14,14 +14,21 @@ import { getCoreEntityMetadatasWithWorkspaceId } from 'src/database/commands/wor
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/permission-storage-object-universal-identifiers.constant';
+import { PERMISSION_TABLES } from 'src/engine/permissions/permission-table/constants/permission-tables.constant';
+import { buildCreatePermissionTablesStatements } from 'src/engine/permissions/permission-table/utils/build-create-permission-tables-statements.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import {
+  escapeIdentifier,
+  escapeLiteral,
+} from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { formatPgCopyField } from './utils/format-pg-copy-value.util';
 
 const BATCH_SIZE = 10_000;
@@ -42,6 +49,7 @@ type WriteRowsOptions = {
   queryParameters?: unknown[];
   jsonColumns?: Set<string>;
   excludedColumns?: Set<string>;
+  includedColumns?: Set<string>;
 };
 
 @Injectable()
@@ -76,9 +84,13 @@ export class WorkspaceExportService {
 
     this.logger.log(`Exporting workspace ${workspaceId} (${schemaName})`);
 
-    const objectMetadatas = await this.objectMetadataRepository.find(
-      workspaceId,
-      { relations: { application: true } },
+    const objectMetadatas = (
+      await this.objectMetadataRepository.find(workspaceId, {
+        relations: { application: true },
+      })
+    ).filter(
+      (objectMetadata) =>
+        !temporaryExcludePermissionStorageObject(objectMetadata),
     );
 
     const fieldMetadatas = await this.fieldMetadataRepository.find(workspaceId);
@@ -150,6 +162,13 @@ export class WorkspaceExportService {
         stream,
       );
 
+      await this.writePermissionTables({
+        schemaName,
+        tableFilter,
+        queryRunner,
+        stream,
+      });
+
       stream.write("\nSET session_replication_role = 'origin';\n");
     } finally {
       await queryRunner.release();
@@ -185,6 +204,12 @@ export class WorkspaceExportService {
     const coreEntityMetadatas = getCoreEntityMetadatasWithWorkspaceId(
       this.dataSource,
     );
+    const permissionStorageObjectRowIdsByTableName =
+      await this.findPermissionStorageObjectRowIdsByTableName({
+        workspaceId,
+        coreEntityMetadatas,
+        queryRunner,
+      });
 
     for (const entityMetadata of coreEntityMetadatas) {
       try {
@@ -194,8 +219,13 @@ export class WorkspaceExportService {
           displayName: entityMetadata.tableName,
           queryRunner,
           stream,
-          whereClause: '"workspaceId" = $1',
-          queryParameters: [workspaceId],
+          whereClause: '"workspaceId" = $1 AND "id" <> ALL($2::uuid[])',
+          queryParameters: [
+            workspaceId,
+            permissionStorageObjectRowIdsByTableName.get(
+              entityMetadata.tableName,
+            ) ?? [],
+          ],
           jsonColumns: this.buildJsonColumnSet(entityMetadata),
         });
       } catch (error) {
@@ -299,6 +329,7 @@ export class WorkspaceExportService {
     stream,
     jsonColumns,
     excludedColumns,
+    includedColumns,
   }: Omit<WriteRowsOptions, 'whereClause' | 'queryParameters'>): Promise<void> {
     let columnNames: string[] | undefined;
     let totalRows = 0;
@@ -314,7 +345,9 @@ export class WorkspaceExportService {
 
       if (!columnNames) {
         columnNames = Object.keys(rows[0]).filter(
-          (columnName) => !excludedColumns?.has(columnName),
+          (columnName) =>
+            !excludedColumns?.has(columnName) &&
+            (includedColumns?.has(columnName) ?? true),
         );
 
         const escapedColumns = columnNames.map(escapeIdentifier).join(', ');
@@ -347,6 +380,113 @@ export class WorkspaceExportService {
 
     if (totalRows > 0) {
       this.logger.log(`  ${displayName}: ${totalRows} rows`);
+    }
+  }
+
+  // The two objects are exported as permission tables, so their metadata and
+  // every core row that cascades from it stay out of the export
+  private async findPermissionStorageObjectRowIdsByTableName({
+    workspaceId,
+    coreEntityMetadatas,
+    queryRunner,
+  }: {
+    workspaceId: string;
+    coreEntityMetadatas: EntityMetadata[];
+    queryRunner: QueryRunner;
+  }): Promise<Map<string, string[]>> {
+    const permissionStorageObjects: { id: string }[] = await queryRunner.query(
+      `SELECT "id" FROM "core"."objectMetadata"
+       WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, PERMISSION_STORAGE_OBJECT_UNIVERSAL_IDENTIFIERS],
+    );
+    const rowIdsByTableName = new Map<string, string[]>([
+      ['objectMetadata', permissionStorageObjects.map(({ id }) => id)],
+    ]);
+    let hasFoundRows = isNonEmptyArray(permissionStorageObjects);
+
+    while (hasFoundRows) {
+      hasFoundRows = false;
+
+      for (const entityMetadata of coreEntityMetadatas) {
+        for (const foreignKey of entityMetadata.foreignKeys) {
+          const parentRowIds = rowIdsByTableName.get(
+            foreignKey.referencedEntityMetadata.tableName,
+          );
+          const [columnName] = foreignKey.columnNames;
+
+          if (
+            foreignKey.onDelete !== 'CASCADE' ||
+            !isNonEmptyArray(parentRowIds)
+          ) {
+            continue;
+          }
+
+          const knownRowIds =
+            rowIdsByTableName.get(entityMetadata.tableName) ?? [];
+          const rows: { id: string }[] = await queryRunner.query(
+            `SELECT "id" FROM "core".${escapeIdentifier(entityMetadata.tableName)}
+             WHERE "workspaceId" = $1 AND ${escapeIdentifier(columnName)} = ANY($2::uuid[]) AND "id" <> ALL($3::uuid[])`,
+            [workspaceId, parentRowIds, knownRowIds],
+          );
+
+          if (isNonEmptyArray(rows)) {
+            rowIdsByTableName.set(entityMetadata.tableName, [
+              ...knownRowIds,
+              ...rows.map(({ id }) => id),
+            ]);
+            hasFoundRows = true;
+          }
+        }
+      }
+    }
+
+    return rowIdsByTableName;
+  }
+
+  private async writePermissionTables({
+    schemaName,
+    tableFilter,
+    queryRunner,
+    stream,
+  }: Pick<WriteRowsOptions, 'schemaName' | 'queryRunner' | 'stream'> &
+    Pick<WorkspaceExportParams, 'tableFilter'>): Promise<void> {
+    for (const statement of buildCreatePermissionTablesStatements({
+      schemaName,
+    })) {
+      stream.write(`${statement};\n`);
+    }
+
+    stream.write('\n');
+
+    for (const {
+      tableName,
+      columnNames,
+      jsonColumnNames,
+      identityColumnName,
+    } of PERMISSION_TABLES) {
+      if (isDefined(tableFilter) && !tableFilter.includes(tableName)) {
+        continue;
+      }
+
+      await this.writeCopyRows({
+        schemaName,
+        tableName,
+        displayName: tableName,
+        queryRunner,
+        stream,
+        jsonColumns: new Set(jsonColumnNames),
+        includedColumns: new Set(columnNames),
+      });
+
+      if (isDefined(identityColumnName)) {
+        const table = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
+        const column = escapeIdentifier(identityColumnName);
+
+        // COPY keeps the exported ids but leaves the identity sequence at its start
+        stream.write(
+          `SELECT setval(pg_get_serial_sequence(${escapeLiteral(table)}, ${escapeLiteral(identityColumnName)}), COALESCE(MAX(${column}), 1), MAX(${column}) IS NOT NULL) FROM ${table};\n\n`,
+        );
+      }
     }
   }
 

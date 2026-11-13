@@ -1,3 +1,9 @@
+type AccessGroupPropagationProgress {
+  isInProgress: Boolean!
+  remainingRecordCount: Int!
+  totalRecordCount: Int!
+}
+
 input ActivateWorkspaceInput {
   """
   Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
@@ -147,6 +153,18 @@ type AgentChatThreadParticipant {
   updatedAt: DateTime!
 }
 
+type AgentDailyRunCount {
+  completedRunCount: Int!
+  credits: Float!
+
+  """Day in the requested time zone, as YYYY-MM-DD"""
+  day: String!
+  failedRunCount: Int!
+
+  """Runs neither completed nor failed, such as running or cancelled"""
+  otherRunCount: Int!
+}
+
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -205,7 +223,14 @@ type AgentMessageReactionSummary {
   workspaceMemberIds: [UUID!]!
 }
 
+type AgentRecentRun {
+  createdAt: DateTime!
+  id: UUID!
+  status: AgentTurnStatus!
+}
+
 type AgentRun {
+  canReadThread: Boolean!
   createdAt: DateTime!
   creatorName: String!
   creatorSource: String!
@@ -223,6 +248,37 @@ type AgentRun {
   threadId: UUID
   threadTitle: String
   toolNames: [String!]!
+}
+
+type AgentRunInsights {
+  agentId: UUID!
+
+  """Average duration of completed runs over the same 14 days"""
+  averageDurationInMs: Float
+
+  """Credits spent over the same 14 days"""
+  credits: Float!
+
+  """
+  One entry per calendar day of the last 14 days in the requested time zone, oldest first
+  """
+  dailyRunCounts: [AgentDailyRunCount!]!
+
+  """
+  Runs over the last 14 days, the same window as the agents list run count
+  """
+  runCount: Int!
+
+  """Input and output tokens used over the same 14 days"""
+  tokenCount: Float!
+}
+
+type AgentRunSummary {
+  agentId: UUID!
+
+  """Most recent runs first"""
+  recentRuns: [AgentRecentRun!]!
+  runCountLast14Days: Int!
 }
 
 enum AgentTurnStatus {
@@ -492,6 +548,7 @@ type Application {
   defaultRoleId: String
   description: String
   frontComponents: [FrontComponent!]!
+  grantRoleId: UUID
   grantedIframeMediaPermissions: [IframeMediaPermission!]!
   healthCheckLogicFunctionId: UUID
   id: UUID!
@@ -521,7 +578,9 @@ type ApplicationAuthorization {
   id: UUID!
   lastAuthorizedAt: DateTime
   lastUsedAt: DateTime!
+  marketplaceAppUniversalIdentifier: String
   scopes: [String!]
+  userId: UUID!
   workspaceId: UUID!
 }
 
@@ -637,6 +696,7 @@ enum ApplicationExportCoverageStatus {
 }
 
 type ApplicationExportFile {
+  """Base64 for public-asset files, UTF-8 text for other folders."""
   content: String!
   folder: String!
   path: String!
@@ -2449,6 +2509,7 @@ enum FeatureFlagKey {
   IS_HTTP_EGRESS_LAMBDA_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
+  IS_PERMISSION_TABLES_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -3130,9 +3191,15 @@ type LoginToken {
   loginToken: AuthToken!
 }
 
+input MarkAppChannelThreadAsReadInput {
+  messageChannelId: UUID!
+  messageThreadId: UUID!
+}
+
 type MarketplaceApp {
   author: String!
   category: String!
+  connectUrl: String
   description: String!
   id: String!
   isListed: Boolean!
@@ -3146,6 +3213,7 @@ type MarketplaceAppDetail {
   author: String
   billsCredits: Boolean!
   category: String
+  connectUrl: String
   content: ApplicationContent
   defaultRoleUniversalIdentifier: String
   description: String
@@ -3469,7 +3537,7 @@ type Mutation {
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
-  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
+  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, resource: String, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
@@ -3620,6 +3688,7 @@ type Mutation {
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
+  markAppChannelThreadAsRead(input: MarkAppChannelThreadAsReadInput!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   openDirectMessage(workspaceMemberId: UUID!): UUID!
   prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
@@ -3647,6 +3716,7 @@ type Mutation {
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   revokeUserSession(userSessionId: UUID!): Boolean!
+  revokeWorkspaceApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
@@ -3675,6 +3745,7 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  stopGenerate(input: StopGenerateInput!): Boolean!
   stopImpersonation: StopImpersonation!
   switchBillingPlan(plan: BillingPlanKey): BillingUpdate!
   switchSubscriptionInterval: BillingUpdate!
@@ -4240,6 +4311,8 @@ type PreviewMessageCampaignSendOutputDTO {
 
 type PublicApplicationRegistration {
   id: UUID!
+  isClaimingVerifiedClientName: Boolean!
+  isVerified: Boolean!
   logoUrl: String
   name: String!
   oAuthScopes: [String!]!
@@ -4295,11 +4368,19 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  accessGroupPropagationProgress: AccessGroupPropagationProgress!
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
+  agentRunInsights(
+    agentId: UUID!
+
+    """IANA time zone the days are counted in"""
+    timeZone: String!
+  ): AgentRunInsights!
+  agentRunSummaries: [AgentRunSummary!]!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   aiChatUserCreditsUsage: AiChatUserCreditsUsage
@@ -4336,7 +4417,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4470,6 +4551,7 @@ type Query {
   validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
+  workspaceApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
 type RatioAggregateConfig {
@@ -5027,6 +5109,10 @@ type StandaloneRichTextConfiguration {
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
+}
+
+input StopGenerateInput {
+  runId: UUID!
 }
 
 type StopImpersonation {
@@ -6193,9 +6279,7 @@ type UserWorkspace {
   id: UUID!
   isImpersonating: Boolean
   locale: String!
-  objectPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   objectRecordsPermissions: [ObjectRecordsPermissions!]
-  objectsPermissions: [ObjectPermission!] @deprecated(reason: "Use objectRecordsPermissions")
   permissionFlags: [PermissionFlagType!]
   twoFactorAuthenticationMethodSummary: [TwoFactorAuthenticationMethodSummary!]
   updatedAt: DateTime!
@@ -6535,6 +6619,7 @@ enum WorkflowActionType {
   IF_ELSE
   ITERATOR
   LOGIC_FUNCTION
+  MCP_TOOL
   PICK_RECORD
   SEND_CHAT_MESSAGE
   SEND_EMAIL

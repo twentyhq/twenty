@@ -1,9 +1,9 @@
 // @ts-nocheck
 export type Scalars = {
-    String: string,
     Boolean: boolean,
-    Float: number,
     Int: number,
+    String: string,
+    Float: number,
     ID: string,
     BigInt: any,
     ConnectionCursor: any,
@@ -12,6 +12,13 @@ export type Scalars = {
     JSONObject: any,
     UUID: string,
     Upload: File,
+}
+
+export interface AccessGroupPropagationProgress {
+    isInProgress: Scalars['Boolean']
+    remainingRecordCount: Scalars['Int']
+    totalRecordCount: Scalars['Int']
+    __typename: 'AccessGroupPropagationProgress'
 }
 
 export interface Agent {
@@ -140,6 +147,17 @@ export interface AgentChatThreadParticipant {
     __typename: 'AgentChatThreadParticipant'
 }
 
+export interface AgentDailyRunCount {
+    completedRunCount: Scalars['Int']
+    credits: Scalars['Float']
+    /** Day in the requested time zone, as YYYY-MM-DD */
+    day: Scalars['String']
+    failedRunCount: Scalars['Int']
+    /** Runs neither completed nor failed, such as running or cancelled */
+    otherRunCount: Scalars['Int']
+    __typename: 'AgentDailyRunCount'
+}
+
 export interface AgentMessage {
     agentId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -196,7 +214,15 @@ export interface AgentMessageReactionSummary {
     __typename: 'AgentMessageReactionSummary'
 }
 
+export interface AgentRecentRun {
+    createdAt: Scalars['DateTime']
+    id: Scalars['UUID']
+    status: AgentTurnStatus
+    __typename: 'AgentRecentRun'
+}
+
 export interface AgentRun {
+    canReadThread: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     creatorName: Scalars['String']
     creatorSource: Scalars['String']
@@ -215,6 +241,29 @@ export interface AgentRun {
     threadTitle?: Scalars['String']
     toolNames: Scalars['String'][]
     __typename: 'AgentRun'
+}
+
+export interface AgentRunInsights {
+    agentId: Scalars['UUID']
+    /** Average duration of completed runs over the same 14 days */
+    averageDurationInMs?: Scalars['Float']
+    /** Credits spent over the same 14 days */
+    credits: Scalars['Float']
+    /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+    dailyRunCounts: AgentDailyRunCount[]
+    /** Runs over the last 14 days, the same window as the agents list run count */
+    runCount: Scalars['Int']
+    /** Input and output tokens used over the same 14 days */
+    tokenCount: Scalars['Float']
+    __typename: 'AgentRunInsights'
+}
+
+export interface AgentRunSummary {
+    agentId: Scalars['UUID']
+    /** Most recent runs first */
+    recentRuns: AgentRecentRun[]
+    runCountLast14Days: Scalars['Int']
+    __typename: 'AgentRunSummary'
 }
 
 export type AgentTurnStatus = 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'RUNNING' | 'WAITING_FOR_INPUT'
@@ -376,6 +425,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantRoleId?: Scalars['UUID']
     grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
@@ -406,7 +456,9 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
+    marketplaceAppUniversalIdentifier?: Scalars['String']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -528,6 +580,7 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
+    /** Base64 for public-asset files, UTF-8 text for other folders. */
     content: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
@@ -1617,7 +1670,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_HTTP_EGRESS_LAMBDA_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2134,6 +2187,7 @@ export interface LoginToken {
 export interface MarketplaceApp {
     author: Scalars['String']
     category: Scalars['String']
+    connectUrl?: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
@@ -2148,6 +2202,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    connectUrl?: Scalars['String']
     content?: ApplicationContent
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
@@ -2566,6 +2621,7 @@ export interface Mutation {
     /** @deprecated Use installApplication instead */
     installMarketplaceApp: Scalars['Boolean']
     markAgentChatThreadAsDoneInChannel: Scalars['Boolean']
+    markAppChannelThreadAsRead: Scalars['Boolean']
     moveAgentChatThreadToChannel: Scalars['Boolean']
     openDirectMessage: Scalars['UUID']
     prepareGettingStartedWorkflow: GettingStartedWorkflow
@@ -2593,6 +2649,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationAuthorization: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -2621,6 +2678,7 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
+    stopGenerate: Scalars['Boolean']
     stopImpersonation: StopImpersonation
     switchBillingPlan: BillingUpdate
     switchSubscriptionInterval: BillingUpdate
@@ -3100,6 +3158,8 @@ export interface PreviewMessageCampaignSendOutputDTO {
 
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
+    isClaimingVerifiedClientName: Scalars['Boolean']
+    isVerified: Scalars['Boolean']
     logoUrl?: Scalars['String']
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
@@ -3163,11 +3223,14 @@ export interface PublicWorkspaceDataSummary {
 }
 
 export interface Query {
+    accessGroupPropagationProgress: AccessGroupPropagationProgress
     agentChatChannelRoles: AgentChatChannelRole[]
     agentChatChannelSummaries: AgentChatChannelSummary[]
     agentChatChannelThreadIds: AgentChatChannelThreadIds
     agentChatChannels: AgentChatChannel[]
     agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary
+    agentRunInsights: AgentRunInsights
+    agentRunSummaries: AgentRunSummary[]
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     aiChatUserCreditsUsage?: AiChatUserCreditsUsage
@@ -3321,6 +3384,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -4069,11 +4133,7 @@ export interface UserWorkspace {
     id: Scalars['UUID']
     isImpersonating?: Scalars['Boolean']
     locale: Scalars['String']
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermission[]
     objectRecordsPermissions?: ObjectRecordsPermissions[]
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermission[]
     permissionFlags?: PermissionFlagType[]
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummary[]
     updatedAt: Scalars['DateTime']
@@ -4308,7 +4368,7 @@ export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDA
 
 export type WidgetType = 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'GRAPH' | 'IFRAME' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
 
-export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
+export type WorkflowActionType = 'AI_AGENT' | 'CLASSIFY' | 'CODE' | 'CREATE_CALENDAR_EVENT' | 'CREATE_RECORD' | 'DELAY' | 'DELETE_RECORD' | 'DRAFT_EMAIL' | 'EMPTY' | 'FILTER' | 'FIND_RECORDS' | 'FORM' | 'HTTP_REQUEST' | 'IF_ELSE' | 'ITERATOR' | 'LOGIC_FUNCTION' | 'MCP_TOOL' | 'PICK_RECORD' | 'SEND_CHAT_MESSAGE' | 'SEND_EMAIL' | 'UPDATE_RECORD' | 'UPSERT_RECORD' | 'WAIT_FOR_EVENT'
 
 export interface WorkflowConfiguration {
     configurationType: WidgetConfigurationType
@@ -4500,6 +4560,14 @@ export interface WorkspaceUrlsAndId {
     __typename: 'WorkspaceUrlsAndId'
 }
 
+export interface AccessGroupPropagationProgressGenqlSelection{
+    isInProgress?: boolean | number
+    remainingRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
@@ -4633,6 +4701,18 @@ export interface AgentChatThreadParticipantGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentDailyRunCountGenqlSelection{
+    completedRunCount?: boolean | number
+    credits?: boolean | number
+    /** Day in the requested time zone, as YYYY-MM-DD */
+    day?: boolean | number
+    failedRunCount?: boolean | number
+    /** Runs neither completed nor failed, such as running or cancelled */
+    otherRunCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
@@ -4696,7 +4776,16 @@ export interface AgentMessageReactionSummaryGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentRecentRunGenqlSelection{
+    createdAt?: boolean | number
+    id?: boolean | number
+    status?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentRunGenqlSelection{
+    canReadThread?: boolean | number
     createdAt?: boolean | number
     creatorName?: boolean | number
     creatorSource?: boolean | number
@@ -4714,6 +4803,31 @@ export interface AgentRunGenqlSelection{
     threadId?: boolean | number
     threadTitle?: boolean | number
     toolNames?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunInsightsGenqlSelection{
+    agentId?: boolean | number
+    /** Average duration of completed runs over the same 14 days */
+    averageDurationInMs?: boolean | number
+    /** Credits spent over the same 14 days */
+    credits?: boolean | number
+    /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+    dailyRunCounts?: AgentDailyRunCountGenqlSelection
+    /** Runs over the last 14 days, the same window as the agents list run count */
+    runCount?: boolean | number
+    /** Input and output tokens used over the same 14 days */
+    tokenCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AgentRunSummaryGenqlSelection{
+    agentId?: boolean | number
+    /** Most recent runs first */
+    recentRuns?: AgentRecentRunGenqlSelection
+    runCountLast14Days?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4888,6 +5002,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantRoleId?: boolean | number
     grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
@@ -4919,7 +5034,9 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
+    marketplaceAppUniversalIdentifier?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5049,6 +5166,7 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
+    /** Base64 for public-asset files, UTF-8 text for other folders. */
     content?: boolean | number
     folder?: boolean | number
     path?: boolean | number
@@ -6947,9 +7065,12 @@ export interface LoginTokenGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface MarkAppChannelThreadAsReadInput {messageChannelId: Scalars['UUID'],messageThreadId: Scalars['UUID']}
+
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
@@ -6965,6 +7086,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     content?: ApplicationContentGenqlSelection
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
@@ -7221,7 +7343,7 @@ export interface MutationGenqlSelection{
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }
     attachRecordToInboxThread?: { __args: {input: InboxThreadRecordInput} }
-    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
+    authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), issuer?: (Scalars['String'] | null), redirectUrl: Scalars['String'], resource?: (Scalars['String'] | null), scope?: (Scalars['String'] | null), state?: (Scalars['String'] | null)} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     cancelSwitchBillingInterval?: BillingUpdateGenqlSelection
     cancelSwitchBillingPlan?: BillingUpdateGenqlSelection
@@ -7374,6 +7496,7 @@ export interface MutationGenqlSelection{
     /** @deprecated Use installApplication instead */
     installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
     markAgentChatThreadAsDoneInChannel?: { __args: {threadId: Scalars['UUID']} }
+    markAppChannelThreadAsRead?: { __args: {input: MarkAppChannelThreadAsReadInput} }
     moveAgentChatThreadToChannel?: { __args: {channelId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     openDirectMessage?: { __args: {workspaceMemberId: Scalars['UUID']} }
     prepareGettingStartedWorkflow?: (GettingStartedWorkflowGenqlSelection & { __args: {stepActionKey: GettingStartedStepActionKey} })
@@ -7401,6 +7524,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -7429,6 +7553,7 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    stopGenerate?: { __args: {input: StopGenerateInput} }
     stopImpersonation?: StopImpersonationGenqlSelection
     switchBillingPlan?: (BillingUpdateGenqlSelection & { __args?: {plan?: (BillingPlanKey | null)} })
     switchSubscriptionInterval?: BillingUpdateGenqlSelection
@@ -7941,6 +8066,8 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
+    isClaimingVerifiedClientName?: boolean | number
+    isVerified?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
     oAuthScopes?: boolean | number
@@ -8012,11 +8139,16 @@ export interface PublicWorkspaceDataSummaryGenqlSelection{
 }
 
 export interface QueryGenqlSelection{
+    accessGroupPropagationProgress?: AccessGroupPropagationProgressGenqlSelection
     agentChatChannelRoles?: AgentChatChannelRoleGenqlSelection
     agentChatChannelSummaries?: AgentChatChannelSummaryGenqlSelection
     agentChatChannelThreadIds?: (AgentChatChannelThreadIdsGenqlSelection & { __args: {after?: (Scalars['String'] | null), assignment?: (AgentChatChannelAssignmentFilter | null), channelId: Scalars['UUID'], filter?: (AgentChatChannelThreadFilter | null), first?: (Scalars['Int'] | null), status?: (AgentChatChannelThreadStatus | null)} })
     agentChatChannels?: AgentChatChannelGenqlSelection
     agentChatOpenThreadsSummary?: AgentChatOpenThreadsSummaryGenqlSelection
+    agentRunInsights?: (AgentRunInsightsGenqlSelection & { __args: {agentId: Scalars['UUID'], 
+    /** IANA time zone the days are counted in */
+    timeZone: Scalars['String']} })
+    agentRunSummaries?: AgentRunSummaryGenqlSelection
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     aiChatUserCreditsUsage?: AiChatUserCreditsUsageGenqlSelection
@@ -8053,7 +8185,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -8182,6 +8314,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8632,6 +8765,8 @@ export interface StartWorkspaceSetupChatResultGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StopGenerateInput {runId: Scalars['UUID']}
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
@@ -9267,11 +9402,7 @@ export interface UserWorkspaceGenqlSelection{
     id?: boolean | number
     isImpersonating?: boolean | number
     locale?: boolean | number
-    /** @deprecated Use objectRecordsPermissions */
-    objectPermissions?: ObjectPermissionGenqlSelection
     objectRecordsPermissions?: ObjectRecordsPermissionsGenqlSelection
-    /** @deprecated Use objectRecordsPermissions */
-    objectsPermissions?: ObjectPermissionGenqlSelection
     permissionFlags?: boolean | number
     twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryGenqlSelection
     updatedAt?: boolean | number
@@ -9719,6 +9850,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
 }
 
 
+    const AccessGroupPropagationProgress_possibleTypes: string[] = ['AccessGroupPropagationProgress']
+    export const isAccessGroupPropagationProgress = (obj?: { __typename?: any } | null): obj is AccessGroupPropagationProgress => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAccessGroupPropagationProgress"')
+      return AccessGroupPropagationProgress_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Agent_possibleTypes: string[] = ['Agent']
     export const isAgent = (obj?: { __typename?: any } | null): obj is Agent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgent"')
@@ -9791,6 +9930,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AgentDailyRunCount_possibleTypes: string[] = ['AgentDailyRunCount']
+    export const isAgentDailyRunCount = (obj?: { __typename?: any } | null): obj is AgentDailyRunCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentDailyRunCount"')
+      return AgentDailyRunCount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentMessage_possibleTypes: string[] = ['AgentMessage']
     export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
@@ -9815,10 +9962,34 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const AgentRecentRun_possibleTypes: string[] = ['AgentRecentRun']
+    export const isAgentRecentRun = (obj?: { __typename?: any } | null): obj is AgentRecentRun => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRecentRun"')
+      return AgentRecentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const AgentRun_possibleTypes: string[] = ['AgentRun']
     export const isAgentRun = (obj?: { __typename?: any } | null): obj is AgentRun => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRun"')
       return AgentRun_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunInsights_possibleTypes: string[] = ['AgentRunInsights']
+    export const isAgentRunInsights = (obj?: { __typename?: any } | null): obj is AgentRunInsights => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunInsights"')
+      return AgentRunInsights_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentRunSummary_possibleTypes: string[] = ['AgentRunSummary']
+    export const isAgentRunSummary = (obj?: { __typename?: any } | null): obj is AgentRunSummary => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentRunSummary"')
+      return AgentRunSummary_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13092,6 +13263,7 @@ export const enumFeatureFlagKey = {
    IS_HTTP_EGRESS_LAMBDA_ENABLED: 'IS_HTTP_EGRESS_LAMBDA_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
+   IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
@@ -13691,6 +13863,7 @@ export const enumWorkflowActionType = {
    IF_ELSE: 'IF_ELSE' as const,
    ITERATOR: 'ITERATOR' as const,
    LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   MCP_TOOL: 'MCP_TOOL' as const,
    PICK_RECORD: 'PICK_RECORD' as const,
    SEND_CHAT_MESSAGE: 'SEND_CHAT_MESSAGE' as const,
    SEND_EMAIL: 'SEND_EMAIL' as const,

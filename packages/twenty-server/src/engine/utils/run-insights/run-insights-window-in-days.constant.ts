@@ -1,0 +1,1 @@
+export const RUN_INSIGHTS_WINDOW_IN_DAYS = 14;

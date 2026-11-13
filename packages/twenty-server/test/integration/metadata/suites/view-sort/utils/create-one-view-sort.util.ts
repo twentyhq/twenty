@@ -12,6 +12,7 @@ export const createOneViewSort = async ({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateViewSortInput>): CommonResponseBody<{
   createViewSort: ViewSortDTO;
 }> => {
@@ -20,7 +21,7 @@ export const createOneViewSort = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

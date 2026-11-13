@@ -3,12 +3,13 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -96,11 +97,11 @@ const meta: Meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    jotaiStore.set(agentChatChannelViewState.atom, null);
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
-    );
+    setAgentChatSelectedChannelView(jotaiStore, null);
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
+    });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
         instanceId: AI_CHAT_INBOX_INSTANCE_ID,
@@ -129,9 +130,12 @@ export const OpenRestoresEveryOpenChat: Story = {
     await expect(openItem).toHaveAttribute('aria-current', 'true');
     await expect(isSelectedThreadSelected()).toBe(true);
     await userEvent.click(openItem);
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+    ).toEqual({
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
+    });
     await expect(isSelectedThreadSelected()).toBe(false);
     await expect(
       canvas.getByRole('button', { name: OPEN_ITEM_PATTERN }),
@@ -144,9 +148,12 @@ export const SnoozedClearsSelection: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
-    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+    ).toEqual({
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
+    });
     await expect(isSelectedThreadSelected()).toBe(false);
     await expect(
       canvas.getByRole('button', { name: 'Snoozed' }),

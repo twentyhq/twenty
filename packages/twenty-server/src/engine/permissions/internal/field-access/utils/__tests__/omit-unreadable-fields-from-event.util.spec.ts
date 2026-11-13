@@ -124,11 +124,10 @@ const omit = ({
     }),
     recordsPermissions: buildRecordsPermissions(unreadableFields),
     recordReadRestrictions: NO_RECORD_READ_RESTRICTIONS,
-    fieldsHiddenOnMatchingRecords: [],
+    unreadableFieldsOnMatchingRecords: [],
     metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-      flatApplicationMaps: { byId: {} },
       featureFlagsMap: {},
       rolesPermissions: {},
     },

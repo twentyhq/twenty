@@ -5,7 +5,7 @@ import {
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
@@ -129,7 +129,7 @@ export const useChatThreadsForRecord = ({
   const junctionObjectPermissions = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
-  const canReadSomeRecords = canReachSomeRecords({
+  const canReadSomeRecords = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: junctionObjectPermissions,
     operationType: 'read',
   });
