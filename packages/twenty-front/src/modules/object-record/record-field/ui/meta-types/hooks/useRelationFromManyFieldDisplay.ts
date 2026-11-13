@@ -8,7 +8,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { scopedRelationRecordsFamilyState } from '@/object-record/record-column-scope/states/scopedRelationRecordsFamilyState';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -16,7 +18,8 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 
 export const useRelationFromManyFieldDisplay = () => {
-  const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
+  const { recordId, fieldDefinition, maxWidth, scopedRelationViewFieldId } =
+    useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -38,11 +41,20 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
+  const recordFieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
     fieldName,
     fieldDefinition,
   );
+
+  const scopedRelationRecords = useAtomFamilyStateValue(
+    scopedRelationRecordsFamilyState,
+    { viewFieldId: scopedRelationViewFieldId ?? '', recordId },
+  );
+
+  const fieldValue = isDefined(scopedRelationViewFieldId)
+    ? scopedRelationRecords
+    : recordFieldValue;
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

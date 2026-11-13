@@ -1,6 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -14,6 +15,10 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { scopeViewFromScopedViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromScopedViewFieldIdFamilySelector';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { useContext, type ReactNode } from 'react';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
@@ -51,6 +56,15 @@ export const RecordTableCellFieldContextGeneric = ({
 
   const updateRecord = useContext(RecordTableUpdateContext);
 
+  const isColumnSettingsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
+  );
+
+  const scopeView = useAtomFamilySelectorValue(
+    scopeViewFromScopedViewFieldIdFamilySelector,
+    { scopedViewFieldId: recordField.id },
+  );
+
   if (!isDefined(fieldMetadataItem)) {
     return null;
   }
@@ -60,6 +74,7 @@ export const RecordTableCellFieldContextGeneric = ({
     operationType: 'read',
   });
   let isInvalidJunctionRelation = false;
+  let isJunctionRelation = false;
 
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
@@ -90,6 +105,7 @@ export const RecordTableCellFieldContextGeneric = ({
       });
 
       if (isDefined(junctionConfig)) {
+        isJunctionRelation = true;
         isInvalidJunctionRelation = !isUsableJunctionConfig(junctionConfig);
 
         if (isInvalidJunctionRelation) {
@@ -119,6 +135,12 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinition.metadata.fieldName,
   );
 
+  const isScopedRelationColumn =
+    isColumnSettingsEnabled &&
+    isFieldRelationOneToMany(fieldDefinition) &&
+    !isJunctionRelation &&
+    isRecordFieldScoped({ recordField, scopeView });
+
   return (
     <FieldContext.Provider
       value={{
@@ -146,6 +168,9 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
+        scopedRelationViewFieldId: isScopedRelationColumn
+          ? recordField.id
+          : undefined,
       }}
     >
       {children}

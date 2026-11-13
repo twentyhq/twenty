@@ -28,6 +28,7 @@ export type View = {
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   mainGroupByFieldMetadataId?: string | null;
+  scopedViewFieldId?: string | null;
   shouldHideEmptyGroups: boolean;
   shouldDisplayGroupsAsTabs?: boolean | null;
   kanbanColumnWidth?: number | null;

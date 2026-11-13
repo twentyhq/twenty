@@ -42,6 +42,7 @@ export type GenericFieldContextType = {
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;
+  scopedRelationViewFieldId?: string;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
