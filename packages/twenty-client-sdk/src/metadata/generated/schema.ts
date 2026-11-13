@@ -300,7 +300,7 @@ export interface AiSystemPromptSection {
     __typename: 'AiSystemPromptSection'
 }
 
-export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'webhook' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'agent' | 'agentChatChannel' | 'agentChatChannelRole' | 'applicationVariable' | 'commandMenuItem' | 'connectionProvider' | 'fieldMetadata' | 'fieldMetadataOption' | 'fieldPermission' | 'frontComponent' | 'index' | 'logicFunction' | 'mcpServer' | 'messagingProvider' | 'navigationMenuItem' | 'objectMetadata' | 'objectPermission' | 'pageLayout' | 'pageLayoutTab' | 'pageLayoutWidget' | 'permissionFlag' | 'relatedRecordPath' | 'role' | 'rolePermissionFlag' | 'roleTarget' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'rowLevelPermissionRule' | 'searchFieldMetadata' | 'settingsMenuItem' | 'skill' | 'timelineActivityType' | 'validationRule' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewFilter' | 'viewFilterGroup' | 'viewGroup' | 'viewSort' | 'viewTab' | 'webhook' | 'workflow' | 'workflowVersion'
 
 export interface Analytics {
     /** Boolean that confirms query was dispatched */
@@ -2457,6 +2457,7 @@ export interface Mutation {
     createManyViewFieldGroups: ViewFieldGroup[]
     createManyViewFields: ViewField[]
     createManyViewGroups: ViewGroup[]
+    createManyViewTabs: ViewTab[]
     createMcpServer: McpServer
     createMessageSuppression: MessageSuppression
     createNavigationMenuItem: NavigationMenuItem
@@ -2487,6 +2488,7 @@ export interface Mutation {
     createViewFilterGroup: ViewFilterGroup
     createViewGroup: ViewGroup
     createViewSort: ViewSort
+    createViewTab: ViewTab
     createWebhook: Webhook
     deactivateSkill: Skill
     deleteAgentChatChannel: Scalars['Boolean']
@@ -2528,6 +2530,7 @@ export interface Mutation {
     deleteViewFilterGroup: Scalars['Boolean']
     deleteViewGroup: ViewGroup
     deleteViewSort: Scalars['Boolean']
+    deleteViewTab: ViewTab
     deleteWebhook: Webhook
     deleteWorkspaceInvitation: Scalars['String']
     destroyPageLayout: Scalars['Boolean']
@@ -2540,6 +2543,7 @@ export interface Mutation {
     destroyViewFilterGroup: Scalars['Boolean']
     destroyViewGroup: ViewGroup
     destroyViewSort: Scalars['Boolean']
+    destroyViewTab: ViewTab
     detachRecordFromInboxThread: Scalars['Boolean']
     disconnectConnectedAccount: ConnectedAccountPublicDTO
     duplicateDashboard: DuplicatedDashboard
@@ -2665,6 +2669,7 @@ export interface Mutation {
     updateManyNavigationMenuItems: NavigationMenuItem[]
     updateManyObjects: Object[]
     updateManyViewGroups: ViewGroup[]
+    updateManyViewTabs: ViewTab[]
     updateMcpServer: McpServer
     updateMessageChannel: MessageChannel
     updateMessageFolder: MessageFolder
@@ -2696,6 +2701,7 @@ export interface Mutation {
     updateViewFilterGroup: ViewFilterGroup
     updateViewGroup: ViewGroup
     updateViewSort: ViewSort
+    updateViewTab: ViewTab
     updateWebhook: Webhook
     updateWorkspace: Workspace
     updateWorkspaceAllowedEmbeddingOrigins: Workspace
@@ -3283,6 +3289,8 @@ export interface Query {
     getViewGroups: ViewGroup[]
     getViewSort?: ViewSort
     getViewSorts: ViewSort[]
+    getViewTab?: ViewTab
+    getViewTabs: ViewTab[]
     getViews: View[]
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     gettingStartedProgress: GettingStartedProgress
@@ -4175,6 +4183,7 @@ export interface View {
     viewFilters: ViewFilter[]
     viewGroups: ViewGroup[]
     viewSorts: ViewSort[]
+    viewTabs: ViewTab[]
     visibility: ViewVisibility
     workspaceId: Scalars['UUID']
     __typename: 'View'
@@ -4239,6 +4248,7 @@ export interface ViewFilter {
     value: Scalars['JSON']
     viewFilterGroupId?: Scalars['UUID']
     viewId: Scalars['UUID']
+    viewTabId?: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ViewFilter'
 }
@@ -4291,6 +4301,23 @@ export interface ViewSort {
 }
 
 export type ViewSortDirection = 'ASC' | 'DESC'
+
+export interface ViewTab {
+    createdAt: Scalars['DateTime']
+    deletedAt?: Scalars['DateTime']
+    fieldValue?: Scalars['String']
+    id: Scalars['UUID']
+    isVisible: Scalars['Boolean']
+    name?: Scalars['String']
+    position: Scalars['Float']
+    type: ViewTabType
+    updatedAt: Scalars['DateTime']
+    viewId: Scalars['UUID']
+    workspaceId: Scalars['UUID']
+    __typename: 'ViewTab'
+}
+
+export type ViewTabType = 'ALL' | 'CUSTOM' | 'FIELD_VALUE' | 'NO_VALUE'
 
 export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
 
@@ -6083,7 +6110,7 @@ export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFilterInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),positionInViewFilterGroup?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFilterInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),positionInViewFilterGroup?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID'],viewTabId?: (Scalars['UUID'] | null)}
 
 export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -6092,6 +6119,8 @@ export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | nul
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),tabFieldMetadataId?: (Scalars['UUID'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
+
+export interface CreateViewTabInput {fieldValue?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),type: ViewTabType,viewId: Scalars['UUID']}
 
 export interface CreateWebhookInput {description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),operations: Scalars['String'][],roleId: Scalars['UUID'],secret?: (Scalars['String'] | null),targetUrl: Scalars['String']}
 
@@ -6164,6 +6193,10 @@ export interface DeleteViewSortInput {
 /** The id of the view sort to delete. */
 id: Scalars['UUID']}
 
+export interface DeleteViewTabInput {
+/** The id of the view tab to delete. */
+id: Scalars['UUID']}
+
 export interface DeletedWorkspaceMemberGenqlSelection{
     avatarUrl?: boolean | number
     id?: boolean | number
@@ -6192,6 +6225,10 @@ id: Scalars['UUID']}
 
 export interface DestroyViewSortInput {
 /** The id of the view sort to destroy. */
+id: Scalars['UUID']}
+
+export interface DestroyViewTabInput {
+/** The id of the view tab to destroy. */
 id: Scalars['UUID']}
 
 export interface DevelopmentApplicationGenqlSelection{
@@ -7274,6 +7311,7 @@ export interface MutationGenqlSelection{
     createManyViewFieldGroups?: (ViewFieldGroupGenqlSelection & { __args: {inputs: CreateViewFieldGroupInput[]} })
     createManyViewFields?: (ViewFieldGenqlSelection & { __args: {inputs: CreateViewFieldInput[]} })
     createManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: CreateViewGroupInput[]} })
+    createManyViewTabs?: (ViewTabGenqlSelection & { __args: {inputs: CreateViewTabInput[]} })
     createMcpServer?: (McpServerGenqlSelection & { __args: {input: CreateMcpServerInput} })
     createMessageSuppression?: (MessageSuppressionGenqlSelection & { __args: {input: CreateMessageSuppressionInput} })
     createNavigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {input: CreateNavigationMenuItemInput} })
@@ -7304,6 +7342,7 @@ export interface MutationGenqlSelection{
     createViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {input: CreateViewFilterGroupInput} })
     createViewGroup?: (ViewGroupGenqlSelection & { __args: {input: CreateViewGroupInput} })
     createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
+    createViewTab?: (ViewTabGenqlSelection & { __args: {input: CreateViewTabInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteAgentChatChannel?: { __args: {channelId: Scalars['UUID'], destinationChannelId?: (Scalars['UUID'] | null)} }
@@ -7345,6 +7384,7 @@ export interface MutationGenqlSelection{
     deleteViewFilterGroup?: { __args: {id: Scalars['String']} }
     deleteViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DeleteViewGroupInput} })
     deleteViewSort?: { __args: {input: DeleteViewSortInput} }
+    deleteViewTab?: (ViewTabGenqlSelection & { __args: {input: DeleteViewTabInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteWorkspaceInvitation?: { __args: {appTokenId: Scalars['String']} }
     destroyPageLayout?: { __args: {id: Scalars['String']} }
@@ -7357,6 +7397,7 @@ export interface MutationGenqlSelection{
     destroyViewFilterGroup?: { __args: {id: Scalars['String']} }
     destroyViewGroup?: (ViewGroupGenqlSelection & { __args: {input: DestroyViewGroupInput} })
     destroyViewSort?: { __args: {input: DestroyViewSortInput} }
+    destroyViewTab?: (ViewTabGenqlSelection & { __args: {input: DestroyViewTabInput} })
     detachRecordFromInboxThread?: { __args: {input: InboxThreadRecordInput} }
     disconnectConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     duplicateDashboard?: (DuplicatedDashboardGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7482,6 +7523,7 @@ export interface MutationGenqlSelection{
     updateManyNavigationMenuItems?: (NavigationMenuItemGenqlSelection & { __args: {inputs: UpdateOneNavigationMenuItemInput[]} })
     updateManyObjects?: (ObjectGenqlSelection & { __args: {inputs: UpdateOneObjectInput[]} })
     updateManyViewGroups?: (ViewGroupGenqlSelection & { __args: {inputs: UpdateViewGroupInput[]} })
+    updateManyViewTabs?: (ViewTabGenqlSelection & { __args: {inputs: UpdateViewTabInput[]} })
     updateMcpServer?: (McpServerGenqlSelection & { __args: {input: UpdateMcpServerInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
@@ -7513,6 +7555,7 @@ export interface MutationGenqlSelection{
     updateViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewFilterGroupInput} })
     updateViewGroup?: (ViewGroupGenqlSelection & { __args: {input: UpdateViewGroupInput} })
     updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
+    updateViewTab?: (ViewTabGenqlSelection & { __args: {input: UpdateViewTabInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     updateWorkspaceAllowedEmbeddingOrigins?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceAllowedEmbeddingOriginsInput} })
@@ -8147,6 +8190,8 @@ export interface QueryGenqlSelection{
     getViewGroups?: (ViewGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewSort?: (ViewSortGenqlSelection & { __args: {id: Scalars['String']} })
     getViewSorts?: (ViewSortGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
+    getViewTab?: (ViewTabGenqlSelection & { __args: {id: Scalars['String']} })
+    getViewTabs?: (ViewTabGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViews?: (ViewGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), viewTypes?: (ViewType[] | null)} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     gettingStartedProgress?: GettingStartedProgressGenqlSelection
@@ -8998,7 +9043,7 @@ id: Scalars['UUID'],
 /** The view filter to update */
 update: UpdateViewFilterInputUpdates}
 
-export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),positionInViewFilterGroup?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null)}
+export interface UpdateViewFilterInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),operand?: (ViewFilterOperand | null),positionInViewFilterGroup?: (Scalars['Float'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),viewFilterGroupId?: (Scalars['UUID'] | null),viewTabId?: (Scalars['UUID'] | null)}
 
 export interface UpdateViewGroupInput {
 /** The id of the view group to update */
@@ -9019,6 +9064,14 @@ id: Scalars['UUID'],
 update: UpdateViewSortInputUpdates}
 
 export interface UpdateViewSortInputUpdates {direction?: (ViewSortDirection | null),subFieldName?: (Scalars['String'] | null)}
+
+export interface UpdateViewTabInput {
+/** The id of the view tab to update */
+id: Scalars['UUID'],
+/** The view tab to update */
+update: UpdateViewTabInputUpdates}
+
+export interface UpdateViewTabInputUpdates {fieldValue?: (Scalars['String'] | null),isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateWebhookInput {
 /** The id of the webhook to update */
@@ -9393,6 +9446,7 @@ export interface ViewGenqlSelection{
     viewFilters?: ViewFilterGenqlSelection
     viewGroups?: ViewGroupGenqlSelection
     viewSorts?: ViewSortGenqlSelection
+    viewTabs?: ViewTabGenqlSelection
     visibility?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
@@ -9459,6 +9513,7 @@ export interface ViewFilterGenqlSelection{
     value?: boolean | number
     viewFilterGroupId?: boolean | number
     viewId?: boolean | number
+    viewTabId?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9499,6 +9554,22 @@ export interface ViewSortGenqlSelection{
     fieldMetadataId?: boolean | number
     id?: boolean | number
     subFieldName?: boolean | number
+    updatedAt?: boolean | number
+    viewId?: boolean | number
+    workspaceId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ViewTabGenqlSelection{
+    createdAt?: boolean | number
+    deletedAt?: boolean | number
+    fieldValue?: boolean | number
+    id?: boolean | number
+    isVisible?: boolean | number
+    name?: boolean | number
+    position?: boolean | number
+    type?: boolean | number
     updatedAt?: boolean | number
     viewId?: boolean | number
     workspaceId?: boolean | number
@@ -12578,6 +12649,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ViewTab_possibleTypes: string[] = ['ViewTab']
+    export const isViewTab = (obj?: { __typename?: any } | null): obj is ViewTab => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isViewTab"')
+      return ViewTab_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Webhook_possibleTypes: string[] = ['Webhook']
     export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
@@ -12820,6 +12899,7 @@ export const enumAllMetadataName = {
    viewFilterGroup: 'viewFilterGroup' as const,
    viewGroup: 'viewGroup' as const,
    viewSort: 'viewSort' as const,
+   viewTab: 'viewTab' as const,
    webhook: 'webhook' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
@@ -13622,6 +13702,13 @@ export const enumViewOpenRecordIn = {
 export const enumViewSortDirection = {
    ASC: 'ASC' as const,
    DESC: 'DESC' as const
+}
+
+export const enumViewTabType = {
+   ALL: 'ALL' as const,
+   CUSTOM: 'CUSTOM' as const,
+   FIELD_VALUE: 'FIELD_VALUE' as const,
+   NO_VALUE: 'NO_VALUE' as const
 }
 
 export const enumViewType = {

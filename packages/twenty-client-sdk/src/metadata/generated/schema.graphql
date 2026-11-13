@@ -383,6 +383,7 @@ enum AllMetadataName {
   viewFilterGroup
   viewGroup
   viewSort
+  viewTab
   webhook
   workflow
   workflowVersion
@@ -1929,6 +1930,7 @@ input CreateViewFilterInput {
   value: JSON!
   viewFilterGroupId: UUID
   viewId: UUID!
+  viewTabId: UUID
 }
 
 input CreateViewGroupInput {
@@ -1973,6 +1975,16 @@ input CreateViewSortInput {
   fieldMetadataId: UUID!
   id: UUID
   subFieldName: String
+  viewId: UUID!
+}
+
+input CreateViewTabInput {
+  fieldValue: String
+  id: UUID
+  isVisible: Boolean = true
+  name: String
+  position: Float = 0
+  type: ViewTabType!
   viewId: UUID!
 }
 
@@ -2079,6 +2091,11 @@ input DeleteViewSortInput {
   id: UUID!
 }
 
+input DeleteViewTabInput {
+  """The id of the view tab to delete."""
+  id: UUID!
+}
+
 type DeletedWorkspaceMember {
   avatarUrl: String
   id: UUID!
@@ -2109,6 +2126,11 @@ input DestroyViewGroupInput {
 
 input DestroyViewSortInput {
   """The id of the view sort to destroy."""
+  id: UUID!
+}
+
+input DestroyViewTabInput {
+  """The id of the view tab to destroy."""
   id: UUID!
 }
 
@@ -3514,6 +3536,7 @@ type Mutation {
   createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
   createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
   createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  createManyViewTabs(inputs: [CreateViewTabInput!]!): [ViewTab!]!
   createMcpServer(input: CreateMcpServerInput!): McpServer!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
@@ -3544,6 +3567,7 @@ type Mutation {
   createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
   createViewGroup(input: CreateViewGroupInput!): ViewGroup!
   createViewSort(input: CreateViewSortInput!): ViewSort!
+  createViewTab(input: CreateViewTabInput!): ViewTab!
   createWebhook(input: CreateWebhookInput!): Webhook!
   deactivateSkill(id: UUID!): Skill!
   deleteAgentChatChannel(channelId: UUID!, destinationChannelId: UUID): Boolean!
@@ -3585,6 +3609,7 @@ type Mutation {
   deleteViewFilterGroup(id: String!): Boolean!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   deleteViewSort(input: DeleteViewSortInput!): Boolean!
+  deleteViewTab(input: DeleteViewTabInput!): ViewTab!
   deleteWebhook(id: UUID!): Webhook!
   deleteWorkspaceInvitation(appTokenId: String!): String!
   destroyPageLayout(id: String!): Boolean!
@@ -3597,6 +3622,7 @@ type Mutation {
   destroyViewFilterGroup(id: String!): Boolean!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  destroyViewTab(input: DestroyViewTabInput!): ViewTab!
   detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
@@ -3718,6 +3744,7 @@ type Mutation {
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  updateManyViewTabs(inputs: [UpdateViewTabInput!]!): [ViewTab!]!
   updateMcpServer(input: UpdateMcpServerInput!): McpServer!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
@@ -3749,6 +3776,7 @@ type Mutation {
   updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
   updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
+  updateViewTab(input: UpdateViewTabInput!): ViewTab!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   updateWorkspaceAllowedEmbeddingOrigins(data: UpdateWorkspaceAllowedEmbeddingOriginsInput!): Workspace!
@@ -4425,6 +4453,8 @@ type Query {
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewSort(id: String!): ViewSort
   getViewSorts(viewId: String): [ViewSort!]!
+  getViewTab(id: String!): ViewTab
+  getViewTabs(viewId: String): [ViewTab!]!
   getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   gettingStartedProgress: GettingStartedProgress!
@@ -5707,6 +5737,7 @@ input UpdateViewFilterInputUpdates {
   subFieldName: String
   value: JSON
   viewFilterGroupId: UUID
+  viewTabId: UUID
 }
 
 input UpdateViewGroupInput {
@@ -5763,6 +5794,21 @@ input UpdateViewSortInput {
 input UpdateViewSortInputUpdates {
   direction: ViewSortDirection
   subFieldName: String
+}
+
+input UpdateViewTabInput {
+  """The id of the view tab to update"""
+  id: UUID!
+
+  """The view tab to update"""
+  update: UpdateViewTabInputUpdates!
+}
+
+input UpdateViewTabInputUpdates {
+  fieldValue: String
+  isVisible: Boolean
+  name: String
+  position: Float
 }
 
 input UpdateWebhookInput {
@@ -6302,6 +6348,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
+  viewTabs: [ViewTab!]!
   visibility: ViewVisibility!
   workspaceId: UUID!
 }
@@ -6364,6 +6411,7 @@ type ViewFilter {
   value: JSON!
   viewFilterGroupId: UUID
   viewId: UUID!
+  viewTabId: UUID
   workspaceId: UUID!
 }
 
@@ -6440,6 +6488,27 @@ type ViewSort {
 enum ViewSortDirection {
   ASC
   DESC
+}
+
+type ViewTab {
+  createdAt: DateTime!
+  deletedAt: DateTime
+  fieldValue: String
+  id: UUID!
+  isVisible: Boolean!
+  name: String
+  position: Float!
+  type: ViewTabType!
+  updatedAt: DateTime!
+  viewId: UUID!
+  workspaceId: UUID!
+}
+
+enum ViewTabType {
+  ALL
+  CUSTOM
+  FIELD_VALUE
+  NO_VALUE
 }
 
 enum ViewType {
