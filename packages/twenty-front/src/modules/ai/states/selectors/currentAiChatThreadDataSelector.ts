@@ -1,5 +1,5 @@
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
@@ -10,7 +10,7 @@ export const currentAiChatThreadDataSelector = createAtomSelector<
   get: ({ get }) => {
     const currentThreadId = get(currentAiChatThreadState);
 
-    return get(agentChatThreadsSelector).find(
+    return get(agentChatRecentThreadsSelector).find(
       (thread) => thread.id === currentThreadId,
     );
   },

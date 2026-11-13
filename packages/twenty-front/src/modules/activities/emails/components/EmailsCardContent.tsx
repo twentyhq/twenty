@@ -1,11 +1,13 @@
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { EmailsCardErrorState } from '@/activities/emails/components/EmailsCardErrorState';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components/layout';
 import { IconFilterOff } from 'twenty-ui/icon';
@@ -25,6 +27,8 @@ const StyledSection = styled(Section.Root)`
 `;
 
 type EmailsCardContentProps = {
+  error?: unknown;
+  onRetry: () => void;
   isFiltered?: boolean;
   onClearFilter?: () => void;
   firstQueryLoading: boolean;
@@ -34,6 +38,8 @@ type EmailsCardContentProps = {
 };
 
 export const EmailsCardContent = ({
+  error,
+  onRetry,
   isFiltered = false,
   onClearFilter,
   firstQueryLoading,
@@ -45,6 +51,10 @@ export const EmailsCardContent = ({
 
   if (firstQueryLoading) {
     return <SkeletonLoader />;
+  }
+
+  if (isDefined(error) && !timelineThreads?.length) {
+    return <EmailsCardErrorState onRetry={onRetry} />;
   }
 
   if (isFiltered && !timelineThreads?.length) {

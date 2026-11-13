@@ -21,15 +21,21 @@ export const EmailsCard = () => {
   const [timelineThreadChannelFilter, setTimelineThreadChannelFilter] =
     useAtomFamilyState(timelineThreadChannelFilterFamilyState, targetRecord.id);
 
-  const { data, error, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
-    useCustomResolver<TimelineThreadsWithTotal>({
-      query: getTimelineThreadsFromObjectRecord,
-      queryName: 'getTimelineThreadsFromObjectRecord',
-      objectName: 'timelineThreads',
-      activityTargetableObject: targetRecord,
-      pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-      variables: { channel: timelineThreadChannelFilter },
-    });
+  const {
+    data,
+    error,
+    firstQueryLoading,
+    isFetchingMore,
+    fetchMoreRecords,
+    refetch,
+  } = useCustomResolver<TimelineThreadsWithTotal>({
+    query: getTimelineThreadsFromObjectRecord,
+    queryName: 'getTimelineThreadsFromObjectRecord',
+    objectName: 'timelineThreads',
+    activityTargetableObject: targetRecord,
+    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+    variables: { channel: timelineThreadChannelFilter },
+  });
 
   useSubscribeTimelineToParticipantChanges({
     queryId: `emails-${targetRecord.id}`,
@@ -63,6 +69,8 @@ export const EmailsCard = () => {
 
       <WidgetHeaderCountEffect count={totalNumberOfThreads} />
       <EmailsCardContent
+        error={error}
+        onRetry={() => refetch()}
         isFiltered={isDefined(timelineThreadChannelFilter)}
         onClearFilter={() => setTimelineThreadChannelFilter(null)}
         firstQueryLoading={firstQueryLoading}

@@ -33,6 +33,7 @@
     "lodash.startcase": "^4.4.0",
     "npm-pick-manifest": "^11.0.1",
     "semver": "7.6.3",
+    "signal-exit": "^4.1.0",
     "string-width": "^8.2.0",
     "twenty-client-sdk": "workspace:*",
     "twenty-shared": "workspace:*",
