@@ -1,4 +1,7 @@
-import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
+import {
+  AGENT_CHAT_THREAD_PRESET_FILTER,
+  AgentChatThreadConversationType,
+} from 'twenty-shared/ai';
 
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
@@ -26,6 +29,7 @@ import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListF
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -35,6 +39,11 @@ import {
   resetJotaiStore,
   jotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import {
+  AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
+  AgentChatChannelThreadStatus,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 
@@ -230,6 +239,11 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 }));
 
 const [firstThread, secondThread, thirdThread] = THREADS;
+
+const DIRECT_MESSAGE: AgentChatThreadRecord = {
+  ...buildThread('8c3d5e7f-1a2b-4c6d-9e8f-0a1b2c3d4e5f', 'Marie Stoppa'),
+  conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+};
 
 const renderInbox = (path = `/inbox/${firstThread.id}`) =>
   render(
@@ -575,6 +589,48 @@ describe('AiChatInboxPage', () => {
     expect(
       screen.getByRole('button', { name: 'First chat' }),
     ).toBeInTheDocument();
+  });
+
+  describe('with a direct message open while a channel is selected', () => {
+    beforeEach(() => {
+      jotaiStore.set(
+        recordStoreFamilyState.atomFamily(DIRECT_MESSAGE.id),
+        DIRECT_MESSAGE,
+      );
+      setAgentChatSelectedChannelView(jotaiStore, {
+        channelId: '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f',
+        channelStatus: AgentChatChannelThreadStatus.OPEN,
+        assignment: AgentChatChannelAssignmentFilter.ANY,
+        filter: AgentChatChannelThreadFilter.ANY,
+      });
+    });
+
+    it('hides the channel list', () => {
+      renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
+
+      expect(
+        screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('region', { name: 'Conversation list' }),
+      ).not.toBeInTheDocument();
+    });
+
+    it('leaves the channel out of the breadcrumb in record page layout', () => {
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
+
+      renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
+
+      expect(
+        screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', { name: /Open/ }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe('in record page layout', () => {
