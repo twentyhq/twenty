@@ -1133,7 +1133,9 @@ exports[`Application export - data model exports the whole application as a stab
       "label": "Test Role",
       "objectPermissions": [
         {
+          "canDestroyObjectRecords": false,
           "canReadObjectRecords": true,
+          "canSoftDeleteObjectRecords": false,
           "canUpdateObjectRecords": false,
           "objectUniversalIdentifier": "<TICKET_OBJECT>",
           "universalIdentifier": "<TEST_ROLE_TICKET_OBJECT_PERMISSION>",

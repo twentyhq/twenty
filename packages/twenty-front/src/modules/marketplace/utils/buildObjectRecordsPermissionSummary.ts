@@ -2,7 +2,7 @@ import { type PermissionSummaryItem } from '@/marketplace/types/PermissionSummar
 import { type RecordAccess } from '@/marketplace/types/RecordAccess';
 import { getRecordAccessLabel } from '@/marketplace/utils/getRecordAccessLabel';
 import { plural } from '@lingui/core/macro';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAddressBook } from 'twenty-ui/icon';
 
@@ -18,7 +18,9 @@ const getAccessBeyondRole = ({
   objectPermission,
   roleAccess,
 }: {
-  objectPermission: NonNullable<RoleManifest['objectPermissions']>[number];
+  objectPermission: NonNullable<
+    LegacyCompliantRoleManifest['objectPermissions']
+  >[number];
   roleAccess: RecordAccess;
 }): RecordAccess => ({
   canRead:
@@ -35,7 +37,7 @@ const groupObjectPermissionsByAccess = ({
   defaultRole,
   roleAccess,
 }: {
-  defaultRole: RoleManifest;
+  defaultRole: LegacyCompliantRoleManifest;
   roleAccess: RecordAccess;
 }): ObjectPermissionGroup[] => {
   const groupsByAccessKey = new Map<string, ObjectPermissionGroup>();
@@ -74,7 +76,7 @@ export const buildObjectRecordsPermissionSummary = ({
   roleAccess,
   objectLabelsByUniversalIdentifier,
 }: {
-  defaultRole: RoleManifest;
+  defaultRole: LegacyCompliantRoleManifest;
   roleAccess: RecordAccess;
   objectLabelsByUniversalIdentifier: Record<string, string>;
 }): PermissionSummaryItem[] =>
