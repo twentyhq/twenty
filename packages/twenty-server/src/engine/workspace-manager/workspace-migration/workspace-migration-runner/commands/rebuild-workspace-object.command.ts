@@ -12,6 +12,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { WORKSPACE_SCHEMA_TABLE_REBUILD_MAXIMUM_ROW_COUNT } from 'src/engine/twenty-orm/workspace-schema-manager/constants/workspace-schema-table-rebuild-maximum-row-count.constant';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -90,8 +91,12 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
 
     try {
       const columnSlotUsages =
-        await this.workspaceSchemaManagerService.tableManager.findColumnSlotUsages(
-          { queryRunner, schemaName },
+        await this.workspaceSchemaManagerService.tableRebuildManager.findColumnSlotUsages(
+          {
+            queryRunner,
+            schemaName,
+            tableNames: flatObjectMetadatas.map(computeObjectTargetTable),
+          },
         );
       const columnSlotUsageByTableName = new Map(
         columnSlotUsages.map((columnSlotUsage) => [
@@ -120,7 +125,18 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
           continue;
         }
 
-        const objectDescription = `object ${flatObjectMetadata.nameSingular} (${columnSlotUsage.usedColumnSlotCount} column slots used, ${columnSlotUsage.droppedColumnCount} held by dropped columns) in workspace ${workspaceId}`;
+        if (
+          columnSlotUsage.estimatedRowCount >
+          WORKSPACE_SCHEMA_TABLE_REBUILD_MAXIMUM_ROW_COUNT
+        ) {
+          this.logger.warn(
+            `Skipping object ${flatObjectMetadata.nameSingular} in workspace ${workspaceId}: about ${columnSlotUsage.estimatedRowCount} rows, above the ${WORKSPACE_SCHEMA_TABLE_REBUILD_MAXIMUM_ROW_COUNT} rows a rebuild supports`,
+          );
+
+          continue;
+        }
+
+        const objectDescription = `object ${flatObjectMetadata.nameSingular} (${columnSlotUsage.usedColumnSlotCount} column slots used, ${columnSlotUsage.droppedColumnCount} held by dropped columns, about ${Math.max(columnSlotUsage.estimatedRowCount, 0)} rows) in workspace ${workspaceId}`;
 
         if (options.dryRun) {
           this.logger.log(

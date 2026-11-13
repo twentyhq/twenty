@@ -41,21 +41,19 @@ export class RebuildObjectDeferredOperationHandlerService implements DeferredWor
       objectMetadata: flatObjectMetadata,
     });
 
-    const columnSlotUsages =
-      await this.workspaceSchemaManagerService.tableManager.findColumnSlotUsages(
-        { queryRunner, schemaName },
+    const [columnSlotUsage] =
+      await this.workspaceSchemaManagerService.tableRebuildManager.findColumnSlotUsages(
+        { queryRunner, schemaName, tableNames: [tableName] },
       );
-    const hasDroppedColumns = columnSlotUsages.some(
-      (columnSlotUsage) =>
-        columnSlotUsage.tableName === tableName &&
-        columnSlotUsage.droppedColumnCount > 0,
-    );
 
-    if (!hasDroppedColumns) {
+    if (
+      !isDefined(columnSlotUsage) ||
+      columnSlotUsage.droppedColumnCount === 0
+    ) {
       return;
     }
 
-    await this.workspaceSchemaManagerService.tableManager.rebuildTable({
+    await this.workspaceSchemaManagerService.tableRebuildManager.rebuildTable({
       queryRunner,
       schemaName,
       tableName,
