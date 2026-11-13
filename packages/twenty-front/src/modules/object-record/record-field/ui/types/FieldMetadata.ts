@@ -169,24 +169,21 @@ export type FieldMorphRelationMetadata = BaseFieldMetadata & {
   settings?: FieldRelationMetadataSettings;
 };
 
+type FieldSelectMetadataOption = {
+  label: string;
+  color: ThemeColor;
+  value: string;
+  isActive?: boolean;
+};
+
 export type FieldSelectMetadata = BaseFieldMetadata & {
-  options: {
-    label: string;
-    color: ThemeColor;
-    value: string;
-    isActive?: boolean;
-  }[];
+  options: FieldSelectMetadataOption[];
   isNullable: boolean;
   settings?: null;
 };
 
 export type FieldMultiSelectMetadata = BaseFieldMetadata & {
-  options: {
-    label: string;
-    color: ThemeColor;
-    value: string;
-    isActive?: boolean;
-  }[];
+  options: FieldSelectMetadataOption[];
   settings?: null;
 };
 

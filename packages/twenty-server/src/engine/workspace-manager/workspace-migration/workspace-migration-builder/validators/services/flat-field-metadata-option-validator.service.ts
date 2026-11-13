@@ -97,7 +97,10 @@ export class FlatFieldMetadataOptionValidatorService {
   }: {
     universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
     flatFieldMetadataMaps: FieldMetadataOptionRelatedMaps['flatFieldMetadataMaps'];
-    buildOptions: WorkspaceMigrationValidationBuildOptions;
+    buildOptions: Pick<
+      WorkspaceMigrationValidationBuildOptions,
+      'isSystemBuild' | 'applicationUniversalIdentifier'
+    >;
   }): boolean {
     if (
       buildOptions.isSystemBuild ||
@@ -130,7 +133,10 @@ export class FlatFieldMetadataOptionValidatorService {
     buildOptions,
   }: {
     universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
-    buildOptions: WorkspaceMigrationValidationBuildOptions;
+    buildOptions: Pick<
+      WorkspaceMigrationValidationBuildOptions,
+      'workspaceCustomApplicationUniversalIdentifier'
+    >;
   }): string {
     return resolveEffectiveFlatEntityProperty({
       metadataName: 'fieldMetadataOption',

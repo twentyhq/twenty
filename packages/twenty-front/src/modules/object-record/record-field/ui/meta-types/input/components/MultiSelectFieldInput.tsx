@@ -7,7 +7,7 @@ import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/i
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 
 export const MultiSelectFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
@@ -28,7 +28,7 @@ export const MultiSelectFieldInput = () => {
       // An inactive option already on the record stays listed so it can be unchecked.
       options: fieldDefinition.metadata.options.filter(
         (option) =>
-          option.isActive !== false ||
+          isFieldMetadataOptionActive(option) ||
           (draftValue ?? []).includes(option.value),
       ),
     });

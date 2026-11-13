@@ -5,7 +5,7 @@ import { useColorLabels } from '@/ui/input/hooks/useColorLabels';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import {
@@ -102,7 +102,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   const SELECT_COLOR_DROPDOWN_ID = `select-color-dropdown-${option.id}`;
   const SELECT_ACTIONS_DROPDOWN_ID = `select-actions-dropdown-${option.id}`;
 
-  const isInactive = option.isActive === false;
+  const isInactive = !isFieldMetadataOptionActive(option);
   const shouldForbidRemoveAsDefault = isDefault && !fieldIsNullable;
 
   const handleInputEnter = () => {
@@ -166,13 +166,13 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           instanceId={`select-option-label-${option.id}`}
           value={option.label}
           onChange={(label) => {
-            const optionNameHasBeenEdited =
+            const shouldKeepApiValue =
               isApiValueReadOnly ||
               option.value !== computeOptionValueFromLabel(option.label);
             onChange({
               ...option,
               label,
-              value: optionNameHasBeenEdited
+              value: shouldKeepApiValue
                 ? option.value
                 : computeOptionValueFromLabel(label),
             });

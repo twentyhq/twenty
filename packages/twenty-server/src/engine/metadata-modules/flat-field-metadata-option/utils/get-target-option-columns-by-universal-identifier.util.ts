@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -34,7 +34,7 @@ export const getTargetOptionColumnsByUniversalIdentifier = (
       label: option.label,
       color: 'color' in option && isDefined(option.color) ? option.color : null,
       position: option.position,
-      isActive: option.isActive !== false,
+      isActive: isFieldMetadataOptionActive(option),
     });
   }
 

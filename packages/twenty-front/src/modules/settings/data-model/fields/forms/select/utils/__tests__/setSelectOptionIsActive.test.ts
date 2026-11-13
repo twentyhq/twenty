@@ -1,11 +1,15 @@
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { setSelectOptionIsActive } from '@/settings/data-model/fields/forms/select/utils/setSelectOptionIsActive';
 
-const buildOption = (
-  label: string,
-  position: number,
-  isActive?: false,
-): FieldMetadataItemOption => ({
+const buildOption = ({
+  label,
+  position,
+  isActive,
+}: {
+  label: string;
+  position: number;
+  isActive?: false;
+}): FieldMetadataItemOption => ({
   id: label,
   label,
   value: label.toUpperCase(),
@@ -17,10 +21,10 @@ const buildOption = (
 describe('setSelectOptionIsActive', () => {
   it('moves a deactivated option after the active ones', () => {
     const options = [
-      buildOption('New', 0),
-      buildOption('Screening', 1),
-      buildOption('Won', 2),
-      buildOption('Lost', 3, false),
+      buildOption({ label: 'New', position: 0 }),
+      buildOption({ label: 'Screening', position: 1 }),
+      buildOption({ label: 'Won', position: 2 }),
+      buildOption({ label: 'Lost', position: 3, isActive: false }),
     ];
 
     expect(
@@ -30,28 +34,28 @@ describe('setSelectOptionIsActive', () => {
         isActive: false,
       }),
     ).toEqual([
-      buildOption('New', 0),
-      buildOption('Won', 1),
-      buildOption('Lost', 2, false),
-      buildOption('Screening', 3, false),
+      buildOption({ label: 'New', position: 0 }),
+      buildOption({ label: 'Won', position: 1 }),
+      buildOption({ label: 'Lost', position: 2, isActive: false }),
+      buildOption({ label: 'Screening', position: 3, isActive: false }),
     ]);
   });
 
   it('moves a reactivated option to the end of the active ones', () => {
     const options = [
-      buildOption('New', 0),
-      buildOption('Won', 1),
-      buildOption('Lost', 2, false),
-      buildOption('Screening', 3, false),
+      buildOption({ label: 'New', position: 0 }),
+      buildOption({ label: 'Won', position: 1 }),
+      buildOption({ label: 'Lost', position: 2, isActive: false }),
+      buildOption({ label: 'Screening', position: 3, isActive: false }),
     ];
 
     expect(
       setSelectOptionIsActive({ options, optionId: 'Lost', isActive: true }),
     ).toEqual([
-      buildOption('New', 0),
-      buildOption('Won', 1),
-      buildOption('Lost', 2),
-      buildOption('Screening', 3, false),
+      buildOption({ label: 'New', position: 0 }),
+      buildOption({ label: 'Won', position: 1 }),
+      buildOption({ label: 'Lost', position: 2 }),
+      buildOption({ label: 'Screening', position: 3, isActive: false }),
     ]);
   });
 });

@@ -9,6 +9,7 @@ import {
   type ObjectManifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -57,7 +58,7 @@ const buildManifest = ({
         label: selectFieldLabel,
         type: FieldMetadataType.SELECT,
         options,
-        ...(selectFieldDefaultValue !== undefined
+        ...(isDefined(selectFieldDefaultValue)
           ? { defaultValue: selectFieldDefaultValue }
           : {}),
       },

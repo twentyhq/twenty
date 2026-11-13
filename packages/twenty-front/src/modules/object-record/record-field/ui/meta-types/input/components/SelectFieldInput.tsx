@@ -8,6 +8,7 @@ import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks
 import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/input/components/FieldInputDropdown';
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { useContext } from 'react';
+import { isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const SelectFieldInput = () => {
@@ -29,7 +30,7 @@ export const SelectFieldInput = () => {
     objectMetadataNameSingular:
       fieldDefinition.metadata.objectMetadataNameSingular,
     options: fieldDefinition.metadata.options.filter(
-      (option) => option.isActive !== false,
+      isFieldMetadataOptionActive,
     ),
   });
 

@@ -1,5 +1,5 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import {
@@ -37,7 +37,7 @@ export const computeFlatViewGroupsOnViewCreate = ({
   const flatViewGroupsFromOptions: UniversalFlatViewGroup[] = (
     mainGroupByFieldMetadata.options ?? []
   )
-    .filter((option) => option.isActive !== false)
+    .filter(isFieldMetadataOptionActive)
     .map((option, index) => ({
       viewUniversalIdentifier: flatViewToCreateUniversalIdentifier,
       createdAt,
