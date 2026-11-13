@@ -28,7 +28,6 @@ const isOwnedByAnotherApplicationThanField = ({
   isDefined(fieldApplicationId) &&
   optionApplicationId !== fieldApplicationId;
 
-// Stored options stand for a field without rows and, with shouldRowsCoverStoredOptions, while one has no row.
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,

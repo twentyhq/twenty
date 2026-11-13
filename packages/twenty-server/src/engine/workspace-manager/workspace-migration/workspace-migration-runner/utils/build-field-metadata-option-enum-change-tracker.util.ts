@@ -8,7 +8,6 @@ import {
   type FieldMetadataOptionEnumChangeTracker,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 
-// One enum change per field, from its option rows before the migration to those after it.
 export const buildFieldMetadataOptionEnumChangeTracker = ({
   actions,
   flatFieldMetadataOptionMaps,
