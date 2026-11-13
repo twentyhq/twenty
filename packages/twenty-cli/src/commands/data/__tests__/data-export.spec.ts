@@ -52,7 +52,17 @@ let shouldCompleteWithoutDownload = false;
 let contentType = 'text/csv';
 let cancellation: 'subscription' | 'download' | undefined;
 let shouldCreateDestinationDuringDownload = false;
+let requiredProxyToken: string | undefined;
 const server = await startTestServer((request, response) => {
+  if (
+    isDefined(requiredProxyToken) &&
+    request.headers['cf-access-token'] !== requiredProxyToken
+  ) {
+    response.writeHead(302, {
+      location: 'https://team.cloudflareaccess.com/cdn-cgi/access/login/app',
+    });
+    return response.end();
+  }
   if (request.method === 'GET') {
     if (shouldCreateDestinationDuringDownload) {
       writeFileSync(outputPath, 'created while exporting');
@@ -187,6 +197,7 @@ beforeEach(async () => {
   contentType = 'text/csv';
   cancellation = undefined;
   shouldCreateDestinationDuringDownload = false;
+  requiredProxyToken = undefined;
 });
 afterEach(async () => {
   vi.unstubAllEnvs();
@@ -239,6 +250,21 @@ describe('twenty data export', () => {
     );
     expect(result.stdout + result.stderr).not.toContain('private.signed.token');
     await assertNoTemporaryFiles();
+  });
+
+  it('sends proxy headers with the download behind an authenticating proxy', async () => {
+    requiredProxyToken = 'proxy-token';
+    vi.stubEnv('TWENTY_PROXY_HEADERS', 'cf-access-token: proxy-token');
+
+    const result = await run('--format', 'json');
+
+    expect(result.exitCode).toBe(0);
+    expect(await readFile(outputPath, 'utf8')).toBe(CSV);
+    expect(server.requests.at(-1)).toMatchObject({
+      method: 'GET',
+      path: DOWNLOAD_PATH,
+      headers: { 'cf-access-token': 'proxy-token' },
+    });
   });
 
   it('uses a saved browser session for both the subscription and the download', async () => {
