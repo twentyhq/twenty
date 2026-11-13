@@ -41,7 +41,7 @@ const readRecipients = (toolArguments: Record<string, unknown>) => {
   };
 };
 
-// the editor reads a document, or an HTML string through its legacy parser
+// the editor reads a document, or a string through its legacy parser
 const serializeEmailBody = (body: unknown): string =>
   isString(body)
     ? body
