@@ -1,4 +1,4 @@
-import { mkdtemp, readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -361,6 +361,32 @@ describe('proxy headers', () => {
     expect((await readConfigFile()).remotes.default.proxyHeaders).toEqual({
       'cf-access-token': proxy.acceptedToken,
     });
+  });
+
+  it('replaces a remote whose saved URL is malformed', async () => {
+    await login([
+      '--url',
+      server.url,
+      '--proxy-header',
+      `cf-access-token: ${proxy.acceptedToken}`,
+    ]);
+
+    const configPath = join(home, '.twenty', 'config.json');
+    const config = await readConfigFile();
+
+    config.remotes.default.apiUrl = 'not a url';
+    await writeFile(configPath, JSON.stringify(config));
+
+    const { envelope } = await login([
+      '--url',
+      server.url,
+      '--replace',
+      '--proxy-header',
+      `cf-access-token: ${proxy.acceptedToken}`,
+    ]);
+
+    expect(envelope.ok).toBe(true);
+    expect((await readConfigFile()).remotes.default.apiUrl).toBe(server.url);
   });
 
   it('saves a header command and clears it when given an empty value', async () => {
