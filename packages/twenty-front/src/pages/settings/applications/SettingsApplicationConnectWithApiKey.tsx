@@ -9,12 +9,12 @@ import {
 } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
-import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { useConnectApplicationWithApiKey } from '@/settings/applications/hooks/useConnectApplicationWithApiKey';
+import { getReturnToFromLocationState } from '@/settings/applications/utils/getReturnToFromLocationState';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -69,15 +69,11 @@ export const SettingsApplicationConnectWithApiKey = () => {
         accountsBreadcrumbLink,
       ];
 
-  const stateReturnTo =
-    typeof location.state === 'object' &&
-    isDefined(location.state) &&
-    'returnTo' in location.state &&
-    typeof location.state.returnTo === 'string' &&
-    isValidReturnToPath(location.state.returnTo)
-      ? location.state.returnTo
-      : undefined;
-  const returnTo = stateReturnTo ?? parentLinks[parentLinks.length - 1].href;
+  const stateReturnTo = getReturnToFromLocationState(location.state);
+  const returnTo =
+    stateReturnTo ??
+    parentLinks[parentLinks.length - 1].href ??
+    getSettingsPath(SettingsPath.Accounts);
 
   const canConnect = isNonEmptyString(apiKey.trim()) && !loading;
 
