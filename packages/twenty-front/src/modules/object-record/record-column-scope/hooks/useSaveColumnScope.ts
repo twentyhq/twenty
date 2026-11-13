@@ -24,10 +24,10 @@ export const useSaveColumnScope = () => {
 
   const createScopeView = useCallback(
     async ({
-      scopedViewFieldId,
+      ownerViewFieldId,
       relationObjectMetadataId,
     }: {
-      scopedViewFieldId: string;
+      ownerViewFieldId: string;
       relationObjectMetadataId: string;
     }): Promise<View | undefined> => {
       const scopeViewId = v4();
@@ -41,7 +41,7 @@ export const useSaveColumnScope = () => {
             objectMetadataId: relationObjectMetadataId,
             type: ViewType.TABLE_WIDGET,
             visibility: ViewVisibility.WORKSPACE,
-            scopedViewFieldId,
+            ownerViewFieldId,
           },
         },
         relationObjectMetadataId,
@@ -59,12 +59,12 @@ export const useSaveColumnScope = () => {
   const saveColumnScope = useCallback(
     async ({
       scopeInstanceId,
-      scopedViewFieldId,
+      ownerViewFieldId,
       relationObjectMetadataId,
       scopeView,
     }: {
       scopeInstanceId: string;
-      scopedViewFieldId: string;
+      ownerViewFieldId: string;
       relationObjectMetadataId: string;
       scopeView: View | undefined;
     }) => {
@@ -95,7 +95,7 @@ export const useSaveColumnScope = () => {
       const viewToSave =
         scopeView ??
         (await createScopeView({
-          scopedViewFieldId,
+          ownerViewFieldId,
           relationObjectMetadataId,
         }));
 

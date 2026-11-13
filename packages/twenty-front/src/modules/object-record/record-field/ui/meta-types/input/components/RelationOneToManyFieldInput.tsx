@@ -19,7 +19,7 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { scopeViewFromScopedViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromScopedViewFieldIdFamilySelector';
+import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -85,8 +85,8 @@ export const RelationOneToManyFieldInput = () => {
   }
 
   const scopeView = useAtomFamilySelectorValue(
-    scopeViewFromScopedViewFieldIdFamilySelector,
-    { scopedViewFieldId: scopedRelationViewFieldId ?? '' },
+    scopeViewFromOwnerViewFieldIdFamilySelector,
+    { ownerViewFieldId: scopedRelationViewFieldId ?? '' },
   );
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,

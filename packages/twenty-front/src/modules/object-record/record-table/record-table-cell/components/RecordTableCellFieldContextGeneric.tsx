@@ -16,7 +16,7 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { scopeViewFromScopedViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromScopedViewFieldIdFamilySelector';
+import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { useContext, type ReactNode } from 'react';
@@ -61,8 +61,8 @@ export const RecordTableCellFieldContextGeneric = ({
   );
 
   const scopeView = useAtomFamilySelectorValue(
-    scopeViewFromScopedViewFieldIdFamilySelector,
-    { scopedViewFieldId: recordField.id },
+    scopeViewFromOwnerViewFieldIdFamilySelector,
+    { ownerViewFieldId: recordField.id },
   );
 
   if (!isDefined(fieldMetadataItem)) {

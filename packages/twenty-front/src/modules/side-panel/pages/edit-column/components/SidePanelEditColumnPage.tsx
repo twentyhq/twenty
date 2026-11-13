@@ -15,7 +15,7 @@ import {
 import { SidePanelEditColumnScopeSection } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnScopeSection';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { scopeViewFromScopedViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromScopedViewFieldIdFamilySelector';
+import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -119,8 +119,8 @@ const SidePanelEditColumnForm = ({
   const scopeInstanceId = `edit-column-scope-${sidePanelPageId}`;
 
   const scopeView = useAtomFamilySelectorValue(
-    scopeViewFromScopedViewFieldIdFamilySelector,
-    { scopedViewFieldId: recordField.id },
+    scopeViewFromOwnerViewFieldIdFamilySelector,
+    { ownerViewFieldId: recordField.id },
   );
 
   const isScopableRelationField =
@@ -154,7 +154,7 @@ const SidePanelEditColumnForm = ({
     if (isDefined(relationObjectMetadataItem)) {
       await saveColumnScope({
         scopeInstanceId,
-        scopedViewFieldId: recordField.id,
+        ownerViewFieldId: recordField.id,
         relationObjectMetadataId: relationObjectMetadataItem.id,
         scopeView,
       });

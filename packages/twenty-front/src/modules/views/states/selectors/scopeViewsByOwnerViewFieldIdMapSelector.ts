@@ -3,15 +3,15 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { isDefined } from 'twenty-shared/utils';
 
-export const scopeViewsByScopedViewFieldIdMapSelector = createAtomSelector<
+export const scopeViewsByOwnerViewFieldIdMapSelector = createAtomSelector<
   Map<string, ViewWithRelations>
 >({
-  key: 'scopeViewsByScopedViewFieldIdMapSelector',
+  key: 'scopeViewsByOwnerViewFieldIdMapSelector',
   get: ({ get }) =>
     new Map(
       get(viewsSelector).flatMap((view) =>
-        isDefined(view.scopedViewFieldId)
-          ? [[view.scopedViewFieldId, view] as const]
+        isDefined(view.ownerViewFieldId)
+          ? [[view.ownerViewFieldId, view] as const]
           : [],
       ),
     ),
