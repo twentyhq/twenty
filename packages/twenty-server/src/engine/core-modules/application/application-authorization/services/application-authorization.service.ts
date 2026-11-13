@@ -9,7 +9,6 @@ import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/applicat
 import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-app-universal-identifiers-by-client-id-metadata-document-url.util';
 
 @Injectable()
 export class ApplicationAuthorizationService {
@@ -28,8 +27,12 @@ export class ApplicationAuthorizationService {
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
     const marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl =
-      findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl(
-        Object.values(marketplaceCatalog),
+      Object.fromEntries(
+        Object.values(marketplaceCatalog).flatMap((marketplaceApp) =>
+          (marketplaceApp.attributedClientIdMetadataDocumentUrls ?? []).map(
+            (url) => [url, marketplaceApp.id],
+          ),
+        ),
       );
 
     return authorizations.map((authorization) =>

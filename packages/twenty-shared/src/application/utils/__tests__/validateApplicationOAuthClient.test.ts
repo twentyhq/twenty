@@ -40,6 +40,17 @@ describe('validateApplicationOAuthClient', () => {
     },
   );
 
+  it('should refuse a metadata document URL that is not a string without throwing', () => {
+    expect(
+      validateApplicationOAuthClient({
+        ...VALID_OAUTH_CLIENT,
+        clientIdMetadataDocumentUrls: JSON.parse('[{"toString":null}]'),
+      }),
+    ).toEqual([
+      'OAuth client metadata document URL must be a non-empty string',
+    ]);
+  });
+
   it.each([
     ['a script URL', 'javascript:alert(1)'],
     ['plain http', 'http://client.example.com/connect'],

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
+import { findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-app-universal-identifiers-by-client-id-metadata-document-url.util';
 import { type MarketplaceCatalogApp } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-catalog-app.type';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -59,6 +60,11 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       return {};
     }
 
+    const universalIdentifiersByClientIdMetadataDocumentUrl =
+      findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl(
+        registrations,
+      );
+
     const configuredStatuses =
       await this.applicationRegistrationVariableService.isConfiguredBatch(
         registrations.map((registration) => registration.id),
@@ -82,7 +88,10 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       .reduce<Record<string, MarketplaceCatalogApp>>(
         (accumulator, registration) => {
           accumulator[registration.universalIdentifier] =
-            this.toMarketplaceCatalogApp(registration);
+            this.toMarketplaceCatalogApp({
+              catalogCard: registration,
+              universalIdentifiersByClientIdMetadataDocumentUrl,
+            });
 
           return accumulator;
         },
@@ -90,9 +99,13 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       );
   }
 
-  private toMarketplaceCatalogApp(
-    catalogCard: ApplicationRegistrationCatalogCard,
-  ): MarketplaceCatalogApp {
+  private toMarketplaceCatalogApp({
+    catalogCard,
+    universalIdentifiersByClientIdMetadataDocumentUrl,
+  }: {
+    catalogCard: ApplicationRegistrationCatalogCard;
+    universalIdentifiersByClientIdMetadataDocumentUrl: Record<string, string>;
+  }): MarketplaceCatalogApp {
     return {
       id: catalogCard.universalIdentifier,
       name: catalogCard.name,
@@ -102,8 +115,12 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
       connectUrl: catalogCard.oAuthClient?.connectUrl,
-      clientIdMetadataDocumentUrls:
-        catalogCard.oAuthClient?.clientIdMetadataDocumentUrls,
+      attributedClientIdMetadataDocumentUrls:
+        catalogCard.oAuthClient?.clientIdMetadataDocumentUrls.filter(
+          (url) =>
+            universalIdentifiersByClientIdMetadataDocumentUrl[url] ===
+            catalogCard.universalIdentifier,
+        ),
       isListed: catalogCard.isListed,
     };
   }

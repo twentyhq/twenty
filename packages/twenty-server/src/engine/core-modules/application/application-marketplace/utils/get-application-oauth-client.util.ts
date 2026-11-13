@@ -5,7 +5,6 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// A registry manifest is written by its publisher, so the declaration is checked again before it is shown or matched
 export const getApplicationOAuthClient = (
   manifest:
     | { application?: Pick<Manifest['application'], 'oAuthClient'> }

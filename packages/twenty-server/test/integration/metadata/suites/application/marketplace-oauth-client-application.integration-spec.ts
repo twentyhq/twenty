@@ -1,8 +1,11 @@
 import crypto from 'crypto';
 
-import gql from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { currentUserApplicationAuthorizationsMarketplaceAppQuery } from 'test/integration/metadata/suites/application/utils/current-user-application-authorizations-marketplace-app-query.util';
+import { findManyMarketplaceAppsConnectUrlQuery } from 'test/integration/metadata/suites/application/utils/find-many-marketplace-apps-connect-url-query.util';
+import { findMarketplaceAppDetailConnectUrlQuery } from 'test/integration/metadata/suites/application/utils/find-marketplace-app-detail-connect-url-query.util';
+import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -15,33 +18,6 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const CONNECT_URL = 'https://client.example.com/connect?server={mcpServerUrl}';
-
-const findManyMarketplaceAppsQuery = gql`
-  query FindManyMarketplaceApps {
-    findManyMarketplaceApps {
-      id
-      connectUrl
-    }
-  }
-`;
-
-const findMarketplaceAppDetailQuery = gql`
-  query FindMarketplaceAppDetail($universalIdentifier: String!) {
-    findMarketplaceAppDetail(universalIdentifier: $universalIdentifier) {
-      universalIdentifier
-      connectUrl
-    }
-  }
-`;
-
-const currentUserApplicationAuthorizationsQuery = gql`
-  query CurrentUserApplicationAuthorizations {
-    currentUserApplicationAuthorizations {
-      applicationId
-      marketplaceAppUniversalIdentifier
-    }
-  }
-`;
 
 describe('Marketplace application that declares an OAuth client', () => {
   const marketplaceAppUniversalIdentifier = crypto.randomUUID();
@@ -68,7 +44,7 @@ describe('Marketplace application that declares an OAuth client', () => {
 
   const findConnectionMarketplaceAppUniversalIdentifier = async () => {
     const response = await makeMetadataApiRequest({
-      query: currentUserApplicationAuthorizationsQuery,
+      query: currentUserApplicationAuthorizationsMarketplaceAppQuery,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -176,7 +152,7 @@ describe('Marketplace application that declares an OAuth client', () => {
 
   it('should list the application with its connect link', async () => {
     const response = await makeMetadataApiRequest({
-      query: findManyMarketplaceAppsQuery,
+      query: findManyMarketplaceAppsConnectUrlQuery,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -188,7 +164,7 @@ describe('Marketplace application that declares an OAuth client', () => {
 
   it('should return the connect link on the application detail', async () => {
     const response = await makeMetadataApiRequest({
-      query: findMarketplaceAppDetailQuery,
+      query: findMarketplaceAppDetailConnectUrlQuery,
       variables: { universalIdentifier: marketplaceAppUniversalIdentifier },
     });
 
@@ -237,6 +213,35 @@ describe('Marketplace application that declares an OAuth client', () => {
   });
 
   it('should attach a connection of the declared client to the application', async () => {
+    expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBe(
+      marketplaceAppUniversalIdentifier,
+    );
+  });
+
+  it('should not attach the connection when a second listed application the store hides declares the same client', async () => {
+    const hiddenRegistrationId = await insertCatalogApplicationRegistration({
+      universalIdentifier: crypto.randomUUID(),
+      name: 'Hidden OAuth Client Marketplace App',
+      sourcePackage: '@test/hidden-oauth-client-marketplace-app',
+      workspaceId: null,
+      manifest: {
+        application: {
+          requiredServerVersionRange: '>=999.0.0',
+          oAuthClient: {
+            clientIdMetadataDocumentUrls: [clientIdMetadataDocumentUrl],
+            connectUrl: CONNECT_URL,
+          },
+        },
+      },
+    });
+
+    expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBeNull();
+
+    await ds.query(`DELETE FROM core."applicationRegistration" WHERE id = $1`, [
+      hiddenRegistrationId,
+    ]);
+    await invalidateMarketplaceCatalog();
+
     expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBe(
       marketplaceAppUniversalIdentifier,
     );

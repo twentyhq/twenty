@@ -19,6 +19,16 @@ describe('getApplicationOAuthClient', () => {
     expect(getApplicationOAuthClient(null)).toBeUndefined();
   });
 
+  it('should ignore a malformed OAuth client without throwing', () => {
+    expect(
+      getApplicationOAuthClient(
+        JSON.parse(
+          '{"application":{"oAuthClient":{"clientIdMetadataDocumentUrls":[{"toString":null}],"connectUrl":"https://client.example.com/connect"}}}',
+        ),
+      ),
+    ).toBeUndefined();
+  });
+
   it('should ignore an OAuth client whose connect URL is not https', () => {
     expect(
       getApplicationOAuthClient({

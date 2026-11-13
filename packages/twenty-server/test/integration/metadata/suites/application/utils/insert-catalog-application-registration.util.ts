@@ -55,7 +55,6 @@ export const insertCatalogApplicationRegistration = async ({
     ],
   );
 
-  // A row inserted by SQL bypasses the invalidation, and any earlier suite may have filled the cache
   await getAppProviderByClassName<CoreEntityCacheService>(
     'CoreEntityCacheService',
   ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);

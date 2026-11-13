@@ -8,11 +8,17 @@ describe('findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl', 
     expect(
       findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl([
         {
-          id: 'listed-app',
+          universalIdentifier: 'listed-app',
           isListed: true,
-          clientIdMetadataDocumentUrls: [CLIENT_URL, OTHER_CLIENT_URL],
+          oAuthClient: {
+            clientIdMetadataDocumentUrls: [CLIENT_URL, OTHER_CLIENT_URL],
+          },
         },
-        { id: 'app-without-client', isListed: true },
+        {
+          universalIdentifier: 'app-without-client',
+          isListed: true,
+          oAuthClient: null,
+        },
       ]),
     ).toEqual({
       [CLIENT_URL]: 'listed-app',
@@ -24,9 +30,9 @@ describe('findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl', 
     expect(
       findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl([
         {
-          id: 'unlisted-app',
+          universalIdentifier: 'unlisted-app',
           isListed: false,
-          clientIdMetadataDocumentUrls: [CLIENT_URL],
+          oAuthClient: { clientIdMetadataDocumentUrls: [CLIENT_URL] },
         },
       ]),
     ).toEqual({});
@@ -36,14 +42,16 @@ describe('findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl', 
     expect(
       findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl([
         {
-          id: 'listed-app',
+          universalIdentifier: 'listed-app',
           isListed: true,
-          clientIdMetadataDocumentUrls: [CLIENT_URL, OTHER_CLIENT_URL],
+          oAuthClient: {
+            clientIdMetadataDocumentUrls: [CLIENT_URL, OTHER_CLIENT_URL],
+          },
         },
         {
-          id: 'second-listed-app',
+          universalIdentifier: 'second-listed-app',
           isListed: true,
-          clientIdMetadataDocumentUrls: [CLIENT_URL],
+          oAuthClient: { clientIdMetadataDocumentUrls: [CLIENT_URL] },
         },
       ]),
     ).toEqual({ [OTHER_CLIENT_URL]: 'listed-app' });

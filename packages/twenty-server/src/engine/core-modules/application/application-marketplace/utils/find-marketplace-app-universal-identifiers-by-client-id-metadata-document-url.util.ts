@@ -1,27 +1,30 @@
+import { type ApplicationOAuthClient } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MarketplaceCatalogApp } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-catalog-app.type';
+type OAuthClientDeclaration = {
+  universalIdentifier: string;
+  isListed: boolean;
+  oAuthClient: Pick<
+    ApplicationOAuthClient,
+    'clientIdMetadataDocumentUrls'
+  > | null;
+};
 
-// Anyone can publish a package that declares another client's document, so only listed apps count and a contested URL names no app
 export const findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl =
-  (
-    catalogApps: Pick<
-      MarketplaceCatalogApp,
-      'id' | 'isListed' | 'clientIdMetadataDocumentUrls'
-    >[],
-  ): Record<string, string> => {
+  (declarations: OAuthClientDeclaration[]): Record<string, string> => {
     const universalIdentifiersByUrl = new Map<string, Set<string>>();
 
-    for (const catalogApp of catalogApps) {
-      if (!catalogApp.isListed) {
+    for (const declaration of declarations) {
+      if (!declaration.isListed) {
         continue;
       }
 
-      for (const url of catalogApp.clientIdMetadataDocumentUrls ?? []) {
+      for (const url of declaration.oAuthClient?.clientIdMetadataDocumentUrls ??
+        []) {
         const universalIdentifiers =
           universalIdentifiersByUrl.get(url) ?? new Set<string>();
 
-        universalIdentifiers.add(catalogApp.id);
+        universalIdentifiers.add(declaration.universalIdentifier);
         universalIdentifiersByUrl.set(url, universalIdentifiers);
       }
     }

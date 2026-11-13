@@ -7,14 +7,15 @@ import { getUrlSafely } from '@/utils/getUrlSafely';
 const getClientIdMetadataDocumentUrlErrors = (
   clientIdMetadataDocumentUrl: unknown,
 ): string[] => {
-  const url = isNonEmptyString(clientIdMetadataDocumentUrl)
-    ? getUrlSafely(clientIdMetadataDocumentUrl)
-    : null;
+  if (!isNonEmptyString(clientIdMetadataDocumentUrl)) {
+    return ['OAuth client metadata document URL must be a non-empty string'];
+  }
 
-  // The client presents the URL as its client_id and the server compares it as a string
+  const url = getUrlSafely(clientIdMetadataDocumentUrl);
+
   if (url === null || url.href !== clientIdMetadataDocumentUrl) {
     return [
-      `OAuth client metadata document URL "${String(clientIdMetadataDocumentUrl)}" must be a canonical URL`,
+      `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must be a canonical URL`,
     ];
   }
 

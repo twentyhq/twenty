@@ -63,7 +63,6 @@ export type InstallableApplicationManifest = ApplicationManifestListing &
     oAuthClient?: never;
   };
 
-// Nothing is installed: the client acts with the permissions of the member who connects it
 export type OAuthClientApplicationManifest = ApplicationManifestListing & {
   [Key in keyof ApplicationManifestInstallOptions]?: never;
 } & {
