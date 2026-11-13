@@ -114,4 +114,13 @@ describe('useCustomResolver', () => {
 
     expect(fetchMore).not.toHaveBeenCalled();
   });
+
+  it('stops after a partial last page instead of requesting it again', async () => {
+    const fetchMore = mockLoadedThreads({ count: 5, loading: false });
+    const { result } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+
+    expect(fetchMore).not.toHaveBeenCalled();
+  });
 });

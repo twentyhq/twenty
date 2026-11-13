@@ -70,9 +70,15 @@ export const useCustomResolver = <
   const firstQueryLoading = loading && !data;
 
   const loadedRecordsCount = data?.[queryName]?.[objectName]?.length ?? 0;
+  const hasLoadedPartialLastPage = loadedRecordsCount % pageSize !== 0;
 
   const fetchMoreRecords = async () => {
-    if (hasNextPage && !isFetchingMore && !loading) {
+    if (
+      hasNextPage &&
+      !hasLoadedPartialLastPage &&
+      !isFetchingMore &&
+      !loading
+    ) {
       setIsFetchingMore(true);
 
       await fetchMore({
