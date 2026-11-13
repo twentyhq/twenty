@@ -82,6 +82,13 @@ const getOwnerViewFieldErrorMessages = ({
     };
   }
 
+  if (ownerViewField.isCanonical) {
+    return {
+      message: t`Only a non-canonical view field can be scoped`,
+      userFriendlyMessage: msg`Only added columns can be scoped`,
+    };
+  }
+
   const scopedFieldMetadata = findFlatEntityByUniversalIdentifier({
     universalIdentifier: ownerViewField.fieldMetadataUniversalIdentifier,
     flatEntityMaps: optimisticUniversalFlatMaps.flatFieldMetadataMaps,

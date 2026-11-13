@@ -63,7 +63,7 @@ All enums above are exported from `twenty-sdk/define`.
 
 ### Scoping a relation column
 
-A `TABLE_WIDGET` view can filter and sort the related records one column shows. Set its `ownerViewFieldUniversalIdentifier` to a view field of a one-to-many relation, and give it the related object as `objectUniversalIdentifier`. Its `filters` and `sorts` then decide which related records appear in that column's cells, and the view is deleted with the column. Each column has at most one scope view.
+A `TABLE_WIDGET` view can filter and sort the related records one column shows. Set its `ownerViewFieldUniversalIdentifier` to a non-canonical view field (`isCanonical: false`) of a one-to-many relation, and give it the related object as `objectUniversalIdentifier`. Its `filters` and `sorts` then decide which related records appear in that column's cells, and the view is deleted with the column. Each column has at most one scope view.
 
 ## Filters
 
