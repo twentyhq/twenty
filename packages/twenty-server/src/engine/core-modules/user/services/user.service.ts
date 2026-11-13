@@ -330,7 +330,9 @@ export class UserService {
     return userWorkspace;
   }
 
-  private async assertUserIsNotUniqueServerAdminOrThrow(user: UserEntity) {
+  private async assertUserIsNotUniqueServerAdminOrThrow(
+    user: Pick<UserEntity, 'id' | 'canAccessFullAdminPanel'>,
+  ) {
     if (!user.canAccessFullAdminPanel) {
       return;
     }

@@ -256,13 +256,10 @@ describe('last server admin removal', () => {
     );
   };
 
-  const expectServerAdminToBeActive = async () => {
-    expect(
-      await getCoreRepository<UserEntity>(UserEntity).exists({
-        where: { id: serverAdmin.id },
-      }),
-    ).toBe(true);
-  };
+  const isServerAdminActive = () =>
+    getCoreRepository<UserEntity>(UserEntity).exists({
+      where: { id: serverAdmin.id },
+    });
 
   beforeEach(async () => {
     const accessToken = await signUpInWorkspaceAndGetAccessToken(
@@ -296,11 +293,7 @@ describe('last server admin removal', () => {
   });
 
   afterEach(async () => {
-    const isServerAdminActive = await getCoreRepository<UserEntity>(
-      UserEntity,
-    ).exists({ where: { id: serverAdmin.id } });
-
-    if (isServerAdminActive) {
+    if (await isServerAdminActive()) {
       await deleteUser({
         accessToken: serverAdmin.accessToken,
         expectToFail: false,
@@ -346,8 +339,7 @@ describe('last server admin removal', () => {
         PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
       );
       expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-
-      await expectServerAdminToBeActive();
+      expect(await isServerAdminActive()).toBe(true);
     });
 
     it('should not allow deleting their account', async () => {
@@ -361,8 +353,7 @@ describe('last server admin removal', () => {
         PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
       );
       expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-
-      await expectServerAdminToBeActive();
+      expect(await isServerAdminActive()).toBe(true);
     });
   });
 
@@ -374,11 +365,7 @@ describe('last server admin removal', () => {
     });
 
     expect(errors).toBeUndefined();
-    expect(
-      await getCoreRepository<UserEntity>(UserEntity).exists({
-        where: { id: serverAdmin.id },
-      }),
-    ).toBe(false);
+    expect(await isServerAdminActive()).toBe(false);
   });
 });
 
