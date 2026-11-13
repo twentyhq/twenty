@@ -46,7 +46,7 @@ export const resolveFieldMetadataOptionsFromRows = ({
   }
 
   // Caches are built without an author, so a workspace override is read before the owner's.
-  return fieldMetadataOptionRows
+  const sortedFieldMetadataOptionRows = fieldMetadataOptionRows
     .map((fieldMetadataOptionRow) =>
       shouldApplyOverrides
         ? resolveEffectiveFlatEntity({
@@ -59,9 +59,15 @@ export const resolveFieldMetadataOptionsFromRows = ({
       (first, second) =>
         first.position - second.position ||
         first.universalIdentifier.localeCompare(second.universalIdentifier),
-    )
-    .map(
-      ({
+    );
+  // Rows of different applications can share a position, while option lists need distinct ones.
+  const hasSharedPosition =
+    new Set(sortedFieldMetadataOptionRows.map(({ position }) => position))
+      .size < sortedFieldMetadataOptionRows.length;
+
+  return sortedFieldMetadataOptionRows.map(
+    (
+      {
         universalIdentifier,
         value,
         label,
@@ -69,21 +75,21 @@ export const resolveFieldMetadataOptionsFromRows = ({
         position,
         isActive,
         applicationId,
-      }) => ({
-        id: universalIdentifier,
-        value,
-        label,
-        position,
-        ...(isDefined(color) ? { color } : {}),
-        ...(isFieldMetadataOptionActive({ isActive })
-          ? {}
-          : { isActive: false }),
-        ...(isOwnedByAnotherApplicationThanField({
-          optionApplicationId: applicationId,
-          fieldApplicationId: fieldMetadataEntity.applicationId,
-        })
-          ? { applicationId }
-          : {}),
-      }),
-    );
+      },
+      index,
+    ) => ({
+      id: universalIdentifier,
+      value,
+      label,
+      position: hasSharedPosition ? index : position,
+      ...(isDefined(color) ? { color } : {}),
+      ...(isFieldMetadataOptionActive({ isActive }) ? {} : { isActive: false }),
+      ...(isOwnedByAnotherApplicationThanField({
+        optionApplicationId: applicationId,
+        fieldApplicationId: fieldMetadataEntity.applicationId,
+      })
+        ? { applicationId }
+        : {}),
+    }),
+  );
 };

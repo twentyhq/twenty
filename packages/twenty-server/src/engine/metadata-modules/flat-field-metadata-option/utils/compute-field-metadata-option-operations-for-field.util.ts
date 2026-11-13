@@ -7,6 +7,7 @@ import {
 import { type FieldMetadataOptionOverrides } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
 import { buildUniversalFlatFieldMetadataOptionsForField } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/build-universal-flat-field-metadata-options-for-field.util';
 import { isFieldMetadataOptionSyncSkipped } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-sync-skipped.util';
+import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { resolveEffectiveFieldMetadataOptionColumns } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-effective-field-metadata-option-columns.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
@@ -60,6 +61,16 @@ export const computeFieldMetadataOptionOperationsForField = ({
       targetUniversalFlatFieldMetadata,
     );
 
+  const readPositionByUniversalIdentifier = new Map(
+    (isDefined(targetUniversalFlatFieldMetadata)
+      ? (resolveFieldMetadataOptionsFromRows({
+          fieldMetadataEntity: { type: targetUniversalFlatFieldMetadata.type },
+          fieldMetadataOptionRows: existingOptions,
+        }) ?? [])
+      : []
+    ).map(({ id, position }) => [id, position]),
+  );
+
   for (const existingOption of existingOptions) {
     const targetOptionColumns = targetOptionColumnsByUniversalIdentifier.get(
       existingOption.universalIdentifier,
@@ -71,15 +82,28 @@ export const computeFieldMetadataOptionOperationsForField = ({
       continue;
     }
 
-    // The owner writes the row itself, so an override that already matches must not hide its change.
-    const currentOptionColumns =
+    const isOwnedByCaller =
       existingOption.applicationUniversalIdentifier ===
-      applicationUniversalIdentifier
-        ? existingOption
-        : resolveEffectiveFieldMetadataOptionColumns({
+      applicationUniversalIdentifier;
+    // Sending back a position re-indexed on read does not reorder another application's option.
+    const isReadPositionSentBack =
+      !isOwnedByCaller &&
+      targetOptionColumns.position ===
+        readPositionByUniversalIdentifier.get(
+          existingOption.universalIdentifier,
+        );
+    // The owner writes the row itself, so an override that already matches must not hide its change.
+    const currentOptionColumns = isOwnedByCaller
+      ? existingOption
+      : {
+          ...resolveEffectiveFieldMetadataOptionColumns({
             universalFlatFieldMetadataOption: existingOption,
             workspaceCustomApplicationUniversalIdentifier,
-          });
+          }),
+          ...(isReadPositionSentBack
+            ? { position: targetOptionColumns.position }
+            : {}),
+        };
 
     if (
       !hasOptionColumnsChanged({ currentOptionColumns, targetOptionColumns })
@@ -87,7 +111,10 @@ export const computeFieldMetadataOptionOperationsForField = ({
       continue;
     }
 
-    const { value, ...overridableOptionColumns } = targetOptionColumns;
+    const { value, position, ...otherOptionColumns } = targetOptionColumns;
+    const overridableOptionColumns = isReadPositionSentBack
+      ? otherOptionColumns
+      : { ...otherOptionColumns, position };
     const isCallerOverridingOption =
       isDefined(workspaceCustomApplicationUniversalIdentifier) &&
       isCallerOverridingEntity({

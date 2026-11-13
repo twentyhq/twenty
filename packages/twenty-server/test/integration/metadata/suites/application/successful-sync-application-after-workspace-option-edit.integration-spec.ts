@@ -1,3 +1,4 @@
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -25,6 +26,13 @@ const OPEN_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000e1';
 const CLOSED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000e2';
 
 const ARCHIVED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000e3';
+const ARCHIVED_OPTION = {
+  id: ARCHIVED_OPTION_ID,
+  value: 'ARCHIVED',
+  label: 'Archived',
+  color: 'gray',
+  position: 2,
+} as const;
 
 type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
@@ -214,17 +222,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
     const archivedSubjectId = await createSubjectWithStatus('ARCHIVED');
 
     const { errors } = await syncApplication({
-      manifest: buildManifest([
-        OPEN_OPTION,
-        CLOSED_OPTION,
-        {
-          id: ARCHIVED_OPTION_ID,
-          value: 'ARCHIVED',
-          label: 'Archived',
-          color: 'gray',
-          position: 2,
-        },
-      ]),
+      manifest: buildManifest([OPEN_OPTION, CLOSED_OPTION, ARCHIVED_OPTION]),
       expectToFail: false,
     });
 
@@ -270,17 +268,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
 
     try {
       const { errors } = await syncApplication({
-        manifest: buildManifest([
-          OPEN_OPTION,
-          CLOSED_OPTION,
-          {
-            id: ARCHIVED_OPTION_ID,
-            value: 'ARCHIVED',
-            label: 'Archived',
-            color: 'gray',
-            position: 2,
-          },
-        ]),
+        manifest: buildManifest([OPEN_OPTION, CLOSED_OPTION, ARCHIVED_OPTION]),
         expectToFail: true,
       });
 
@@ -299,6 +287,78 @@ describe('Sync application after a workspace edit re-keyed its field options', (
         [SEED_APPLE_WORKSPACE_ID, await findSelectFieldId()],
       );
       await invalidateOptionCaches();
+    }
+  }, 60000);
+  it('accepts a workspace label edit resending the options after an app took a workspace option position', async () => {
+    await updateSelectFieldOptions([
+      OPEN_OPTION,
+      CLOSED_OPTION,
+      { value: 'PENDING', label: 'Pending', color: 'yellow', position: 2 },
+    ]);
+
+    try {
+      await syncApplication({
+        manifest: buildManifest([OPEN_OPTION, CLOSED_OPTION, ARCHIVED_OPTION]),
+        expectToFail: false,
+      });
+
+      expect(
+        (await findSelectFieldOptionRows()).map(
+          ({ position }: { position: number }) => position,
+        ),
+      ).toEqual([0, 1, 2, 2]);
+
+      const { fields } = await findManyFieldsMetadata({
+        expectToFail: false,
+        input: {
+          filter: { id: { eq: await findSelectFieldId() } },
+          paging: { first: 1 },
+        },
+        gqlFields: 'id options',
+      });
+      const returnedOptions: {
+        id: string;
+        value: string;
+        label: string;
+        color: string;
+        position: number;
+      }[] = fields[0].node.options;
+
+      expect(returnedOptions.map(({ position }) => position)).toEqual([
+        0, 1, 2, 3,
+      ]);
+
+      const { errors } = await updateSelectFieldOptions(
+        returnedOptions.map((option) =>
+          option.value === 'PENDING' ? { ...option, label: 'Waiting' } : option,
+        ),
+      );
+
+      expect(errors).toBeUndefined();
+
+      const { errors: resyncErrors } = await syncApplication({
+        manifest: buildManifest([OPEN_OPTION, CLOSED_OPTION, ARCHIVED_OPTION]),
+        expectToFail: false,
+      });
+
+      expect(resyncErrors).toBeUndefined();
+      expect(await findSelectFieldOptionRows()).toEqual(
+        expect.arrayContaining([
+          {
+            universalIdentifier: ARCHIVED_OPTION_ID,
+            value: 'ARCHIVED',
+            color: 'gray',
+            position: 2,
+            isOwnedByTestApp: true,
+          },
+          expect.objectContaining({
+            value: 'PENDING',
+            isOwnedByTestApp: false,
+          }),
+        ]),
+      );
+    } finally {
+      await updateSelectFieldOptions([OPEN_OPTION, CLOSED_OPTION]);
     }
   }, 60000);
 });

@@ -168,6 +168,64 @@ describe('computeFieldMetadataOptionOperationsForField', () => {
     });
   });
 
+  it("does not override another app's position re-indexed on read from a shared position", () => {
+    const workspaceOptionId = '20202020-0000-4000-8000-000000000100';
+    const workspaceOptionRow = {
+      ...closedOptionRow,
+      universalIdentifier: workspaceOptionId,
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      value: 'PENDING',
+      label: 'Pending',
+    };
+
+    const operations = computeOperations({
+      existingOptions: [openOptionRow, closedOptionRow, workspaceOptionRow],
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      targetUniversalFlatFieldMetadata: getFlatFieldMetadataMock({
+        ...targetField,
+        options: [
+          {
+            id: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'Open',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: workspaceOptionId,
+            value: 'PENDING',
+            label: 'Waiting',
+            color: 'red',
+            position: 1,
+          },
+          {
+            id: CLOSED_OPTION_ID,
+            value: 'CLOSED',
+            label: 'Done',
+            color: 'red',
+            position: 2,
+          },
+        ],
+      }),
+    });
+
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [workspaceOptionId]: { label: 'Waiting', position: 1 },
+      [CLOSED_OPTION_ID]: {
+        position: 1,
+        overrides: {
+          [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: { label: 'Done' },
+        },
+      },
+    });
+    expect(
+      operations.flatEntityToUpdate[CLOSED_OPTION_ID]?.overrides?.[
+        CALLER_APPLICATION_UNIVERSAL_IDENTIFIER
+      ],
+    ).not.toHaveProperty('position');
+    expect(operations.flatEntityToUpdate).not.toHaveProperty(OPEN_OPTION_ID);
+  });
+
   it('drops the overrides once the workspace is back on the app values', () => {
     const operations = computeOperations({
       existingOptions: [
