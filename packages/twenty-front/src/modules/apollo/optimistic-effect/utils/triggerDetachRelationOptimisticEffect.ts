@@ -44,8 +44,12 @@ export const triggerDetachRelationOptimisticEffect = ({
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { isReference, readField },
+        { isReference, readField, storeFieldName, DELETE },
       ) => {
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return DELETE;
+        }
+
         const isRecordConnection = isObjectRecordConnectionWithRefs(
           sourceObjectNameSingular,
           targetRecordFieldValue,

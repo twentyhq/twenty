@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { getSelectedFieldName } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-field-selections.util';
 import { type GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
   type AggregationField,
@@ -30,7 +31,10 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(fields);
 
-    for (const selectedField of Object.keys(graphqlSelectedFields)) {
+    for (const [responseKey, selection] of Object.entries(
+      graphqlSelectedFields,
+    )) {
+      const selectedField = getSelectedFieldName(responseKey, selection);
       const selectedAggregation = availableAggregations[selectedField];
 
       if (!selectedAggregation) {

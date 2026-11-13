@@ -4,6 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { getScopeViewPrefillViewFilters } from '@/object-record/record-column-scope/utils/getScopeViewPrefillViewFilters';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useCreateJunctionRecordWithNestedTarget } from '@/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget';
@@ -95,7 +96,7 @@ export const RelationOneToManyFieldInput = () => {
     recordId,
     prefillRecordFilters: isDefined(scopeView)
       ? mapViewFiltersToFilters(
-          scopeView.viewFilters,
+          getScopeViewPrefillViewFilters(scopeView),
           flattenedFieldMetadataItems,
         )
       : [],

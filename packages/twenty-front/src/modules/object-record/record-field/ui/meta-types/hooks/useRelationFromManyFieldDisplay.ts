@@ -8,9 +8,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { scopedRelationRecordsFamilyState } from '@/object-record/record-column-scope/states/scopedRelationRecordsFamilyState';
+import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -41,22 +40,13 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const recordFieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
+  const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
-    fieldName,
+    isDefined(scopedRelationViewFieldId)
+      ? getScopedRelationAlias(scopedRelationViewFieldId)
+      : fieldName,
     fieldDefinition,
   );
-
-  const scopedRelationRecords = useAtomFamilyStateValue(
-    scopedRelationRecordsFamilyState,
-    isDefined(scopedRelationViewFieldId)
-      ? { viewFieldId: scopedRelationViewFieldId, recordId }
-      : { viewFieldId: '', recordId: '' },
-  );
-
-  const fieldValue = isDefined(scopedRelationViewFieldId)
-    ? scopedRelationRecords
-    : recordFieldValue;
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

@@ -56,7 +56,15 @@ export const triggerAttachRelationOptimisticEffect = ({
   cache.modify<StoreObject>({
     id: targetRecordCacheId,
     fields: {
-      [fieldNameOnTargetRecord]: (targetRecordFieldValue, { toReference }) => {
+      [fieldNameOnTargetRecord]: (
+        targetRecordFieldValue,
+        { toReference, storeFieldName, DELETE },
+      ) => {
+        // A copy with arguments is filtered or limited; drop it so it is refetched instead of guessed
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return DELETE;
+        }
+
         const fieldValueIsObjectRecordConnectionWithRefs =
           isObjectRecordConnectionWithRefs(
             sourceObjectNameSingular,

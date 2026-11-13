@@ -1,11 +1,6 @@
-import { msg } from '@lingui/core/macro';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type NestedRelationQueryArgs } from 'src/engine/api/common/common-nested-relations-processor/types/nested-relation-query-args.type';
-import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import {
   type ObjectRecordFilter,
   type ObjectRecordOrderBy,
@@ -24,61 +19,24 @@ const isObjectRecordOrderBy = (
 ): value is ObjectRecordOrderBy | ObjectRecordOrderBy[number] =>
   Array.isArray(value) || isPlainObject(value);
 
-const throwInvalidNestedRelationArgument = (argumentName: string): never => {
-  throw new GraphqlQueryRunnerException(
-    `Argument "${argumentName}" is not supported on a nested relation: use filter, orderBy or first`,
-    GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-    {
-      userFriendlyMessage: msg`This argument is not supported on related records.`,
-    },
-  );
-};
+const isNonNegativeInteger = (value: unknown): value is number =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 0;
 
-// graphqlFields' processArguments output: one { [argumentName]: { kind, value } } entry per argument
+// Cursor and offset arguments stay ignored on nested relations, as they always were
 export const extractNestedRelationQueryArgs = (
   graphqlArguments: unknown,
 ): ExtractedNestedRelationQueryArgs => {
-  if (!Array.isArray(graphqlArguments)) {
+  if (!isPlainObject(graphqlArguments)) {
     return {};
   }
 
-  const extractedArgs: ExtractedNestedRelationQueryArgs = {};
+  const { filter, orderBy, first } = graphqlArguments;
 
-  for (const graphqlArgument of graphqlArguments) {
-    if (!isPlainObject(graphqlArgument)) {
-      continue;
-    }
-
-    for (const [argumentName, argument] of Object.entries(graphqlArgument)) {
-      const value = isPlainObject(argument) ? argument.value : undefined;
-
-      if (!isDefined(value)) {
-        continue;
-      }
-
-      if (argumentName === 'filter' && isObjectRecordFilter(value)) {
-        extractedArgs.filter = value;
-        continue;
-      }
-
-      if (argumentName === 'orderBy' && isObjectRecordOrderBy(value)) {
-        extractedArgs.orderBy = Array.isArray(value) ? value : [value];
-        continue;
-      }
-
-      if (
-        argumentName === 'first' &&
-        typeof value === 'number' &&
-        Number.isInteger(value) &&
-        value > 0
-      ) {
-        extractedArgs.first = value;
-        continue;
-      }
-
-      throwInvalidNestedRelationArgument(argumentName);
-    }
-  }
-
-  return extractedArgs;
+  return {
+    ...(isObjectRecordFilter(filter) ? { filter } : {}),
+    ...(isObjectRecordOrderBy(orderBy)
+      ? { orderBy: Array.isArray(orderBy) ? orderBy : [orderBy] }
+      : {}),
+    ...(isNonNegativeInteger(first) ? { first } : {}),
+  };
 };
