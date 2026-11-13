@@ -5,6 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { APPLICATION_SOURCE_ENTRY_EXTENSIONS } from 'src/engine/core-modules/file-storage/constants/application-source-entry-extensions.constant';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
@@ -74,6 +75,7 @@ export class FlatLogicFunctionValidatorService {
       const sourcePathResult = validateFilePath({
         resourcePath: flatEntityUpdate.sourceHandlerPath,
         fileFolder: FileFolder.Source,
+        allowedExtensions: APPLICATION_SOURCE_ENTRY_EXTENSIONS,
       });
 
       if (!sourcePathResult.isValid) {
@@ -218,6 +220,7 @@ export class FlatLogicFunctionValidatorService {
       const sourcePathResult = validateFilePath({
         resourcePath: flatLogicFunctionToValidate.sourceHandlerPath,
         fileFolder: FileFolder.Source,
+        allowedExtensions: APPLICATION_SOURCE_ENTRY_EXTENSIONS,
       });
 
       if (!sourcePathResult.isValid) {

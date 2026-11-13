@@ -1,0 +1,1 @@
+export const GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT = 50;

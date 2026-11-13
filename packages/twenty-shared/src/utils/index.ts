@@ -134,6 +134,8 @@ export { resolveRelativeDateTimeFilterStringified } from './filter/dates/utils/r
 export { subUnitFromDateTime } from './filter/dates/utils/subUnitFromDateTime';
 export { subUnitFromZonedDateTime } from './filter/dates/utils/subUnitFromZonedDateTime';
 export { filterOutInvalidRecordFilters } from './filter/filterOutInvalidRecordFilters';
+export type { FilterQuoteCharacter } from './filter/get-open-quote-after-character';
+export { getOpenQuoteAfterCharacter } from './filter/get-open-quote-after-character';
 export { getFieldOrSubFieldType } from './filter/getFieldOrSubFieldType';
 export { getRlsPredicateCompatibleWorkspaceMemberFieldTypes } from './filter/getRlsPredicateCompatibleWorkspaceMemberFieldTypes';
 export { isEmptinessOperand } from './filter/isEmptinessOperand';
@@ -141,6 +143,7 @@ export { isRecordFilterOperandExpectingValue } from './filter/isRecordFilterOper
 export { isRecordFilterValueValid } from './filter/isRecordFilterValueValid';
 export { isWorkspaceMemberFieldCompatibleWithRlsPredicate } from './filter/isWorkspaceMemberFieldCompatibleWithRlsPredicate';
 export { mapRLSOperandToRecordFilterOperand } from './filter/mapRLSOperandToRecordFilterOperand';
+export { splitFilterArrayItems } from './filter/split-filter-array-items';
 export { turnAnyFieldFilterIntoRecordGqlFilter } from './filter/turnAnyFieldFilterIntoRecordGqlFilter';
 export type {
   RecordFilter,

@@ -25,7 +25,20 @@ describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
     [
       FieldMetadataType.RELATION,
       undefined,
-      [FieldMetadataType.RELATION, FieldMetadataType.ARRAY],
+      [
+        FieldMetadataType.RELATION,
+        FieldMetadataType.UUID,
+        FieldMetadataType.ARRAY,
+      ],
+    ],
+    [
+      FieldMetadataType.ACTOR,
+      'workspaceMemberId',
+      [
+        FieldMetadataType.RELATION,
+        FieldMetadataType.UUID,
+        FieldMetadataType.ARRAY,
+      ],
     ],
     [FieldMetadataType.ARRAY, undefined, [FieldMetadataType.TEXT]],
     [FieldMetadataType.EMAILS, undefined, [FieldMetadataType.TEXT]],

@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldActorSource } from 'twenty-shared/types';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
@@ -95,6 +96,30 @@ describe('SendEmailTool', () => {
       messageId: 'message-record-id',
       messageThreadId: 'message-thread-record-id',
     });
+  });
+
+  it('persists the sent message under the acting workflow or agent', async () => {
+    mockComposeEmail.mockResolvedValue({
+      success: true,
+      data: buildComposedEmail(true),
+    });
+
+    const actorContext = {
+      source: FieldActorSource.WORKFLOW,
+      name: 'Churn win-back',
+      workspaceMemberId: null,
+      context: { workflowId: 'workflow-id' },
+    };
+
+    await tool.execute(baseInput, { workspaceId: 'workspace-1', actorContext });
+
+    expect(mockPersistSentMessage).toHaveBeenCalledTimes(1);
+    expect(mockPersistSentMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workspaceId: 'workspace-1',
+        createdBy: actorContext,
+      }),
+    );
   });
 
   it('returns the send identifiers without record ids when persistence is disabled', async () => {

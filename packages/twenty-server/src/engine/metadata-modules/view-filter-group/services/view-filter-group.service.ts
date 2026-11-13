@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -9,6 +10,13 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
 import { fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-update-view-filter-group-input-to-flat-view-filter-group-to-update-or-throw.util';
+import {
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { type DeleteViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/delete-view-filter-group.input';
 import { type DestroyViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/destroy-view-filter-group.input';
@@ -16,6 +24,7 @@ import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/vie
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -257,48 +266,75 @@ export class ViewFilterGroupService {
     });
   }
 
-  async findByWorkspaceId(
-    workspaceId: string,
-  ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
-      where: {
-        deletedAt: IsNull(),
-      },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
+  async findByWorkspaceId({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterGroupEntity[]> {
+    return this.findManyVisibleToUser({ workspaceId, userWorkspaceId });
+  }
+
+  async findByViewId({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterGroupEntity[]> {
+    return this.findManyVisibleToUser({
+      workspaceId,
+      viewId,
+      userWorkspaceId,
     });
   }
 
-  async findByViewId(
-    workspaceId: string,
-    viewId: string,
-  ): Promise<ViewFilterGroupEntity[]> {
-    return this.viewFilterGroupRepository.find(workspaceId, {
-      where: {
-        viewId,
-        deletedAt: IsNull(),
+  private async findManyVisibleToUser({
+    workspaceId,
+    viewId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterGroupEntity[]> {
+    const viewFilterGroups = await this.viewFilterGroupRepository.find(
+      workspaceId,
+      {
+        where: {
+          ...(isDefined(viewId) ? { viewId } : {}),
+          deletedAt: IsNull(),
+        },
+        order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
+        relations: [
+          'workspace',
+          'view',
+          'viewFilters',
+          'parentViewFilterGroup',
+          'childViewFilterGroups',
+        ],
       },
-      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
-      relations: [
-        'workspace',
-        'view',
-        'viewFilters',
-        'parentViewFilterGroup',
-        'childViewFilterGroups',
-      ],
-    });
+    );
+
+    return viewFilterGroups.filter(
+      (viewFilterGroup) =>
+        isDefined(viewFilterGroup.view) &&
+        isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId),
+    );
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewFilterGroupEntity | null> {
+  async findByIdOrThrow({
+    id,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+  }): Promise<ViewFilterGroupEntity> {
     const viewFilterGroup = await this.viewFilterGroupRepository.findOne(
       workspaceId,
       {
@@ -316,6 +352,26 @@ export class ViewFilterGroupService {
       },
     );
 
-    return viewFilterGroup || null;
+    if (
+      !isDefined(viewFilterGroup) ||
+      !isDefined(viewFilterGroup.view) ||
+      !isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId)
+    ) {
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+            ),
+        },
+      );
+    }
+
+    return viewFilterGroup;
   }
 }

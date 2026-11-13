@@ -277,6 +277,11 @@ msgstr "캠페인에서 추적되는 링크"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "마케팅 이메일은 한 번에 한 명의 수신자에게만 보낼 수 있으므로, 각 수신자는 자신만의 구독 취소 링크를 받습니다."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr ""
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -3463,7 +3468,7 @@ msgstr "'custom' 유형의 연결 공급자는 authorize 및 callback 로직 함
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "유형이 'oauth-discovery'인 연결 제공자에는 HTTP 또는 HTTPS oauthDiscoveryConfig.resourceUrl이 필요합니다"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5497,6 +5502,11 @@ msgstr "필드 \"{fieldName}\"은 관계 \"{relationFieldName}\"을 통해 도�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "필드 \"{fieldName}\"은(는) 다대일 관계가 아니므로 비교할 조인 열이 없습니다"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "필드 \"{fieldName}\"은(는) 피연산자 \"{operand}\"와 함께 단일 값을 사용하므로 워크스페이스 멤버 필드 \"{workspaceMemberFieldName}\"이(가) 보유한 목록과 비교할 수 없습니다"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8476,6 +8486,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "읽지 않음으로 표시"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr ""
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8667,6 +8682,11 @@ msgstr "메시지"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "메시지"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr ""
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9762,7 +9782,7 @@ msgstr "OAuth 연결 공급자에 oauth config 블록이 누락되었습니다"
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "OAuth 검색 연결 제공자에는 로그인하는 리소스의 URL이 필요합니다"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14075,6 +14095,11 @@ msgstr "연결된 계정을 식별하는 로직 함수를 찾을 수 없습니�
 msgid "The logic function that starts the connection was not found."
 msgstr "연결을 시작하는 로직 함수를 찾을 수 없습니다."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr ""
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14808,6 +14833,11 @@ msgstr "이 기능은 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY}석까지 무료로 제�
 msgid "This feature is not enabled."
 msgstr "이 기능은 활성화되어 있지 않습니다."
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "이 필드는 값 목록과 비교할 수 없습니다"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14944,6 +14974,21 @@ msgstr "이 로그 테이블은 유효하지 않습니다."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "이 MCP 메서드는 지원되지 않습니다."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "이 MCP 서버는 다른 애플리케이션에 속해 있으므로 이 워크플로에서는 사용할 수 없습니다."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "이 MCP 서버는 비활성 상태입니다. 도구를 테스트하기 전에 활성화하세요."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "이 MCP 서버는 이 워크플로에서 사용할 수 없습니다."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15235,6 +15280,16 @@ msgstr "이 SVG는 처리하기에 너무 큽니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "이 타임라인 활동 작업은 지원되지 않습니다"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "이 도구는 더 이상 해당 MCP 서버에서 제공되지 않습니다."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "이 도구는 데이터를 변경할 수 있습니다. 실행하기 전에 테스트를 확인하세요."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17027,6 +17082,11 @@ msgstr "연결을 완료할 수 없습니다. 다시 시도하세요."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "승인한 계정을 식별할 수 없습니다. 다시 시도하세요."
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr ""
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

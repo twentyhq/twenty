@@ -24,10 +24,13 @@ export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
     case FieldMetadataType.MULTI_SELECT:
       return [FieldMetadataType.SELECT, FieldMetadataType.MULTI_SELECT];
     case FieldMetadataType.UUID:
-      return [FieldMetadataType.UUID, FieldMetadataType.ARRAY];
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION:
-      return [FieldMetadataType.RELATION, FieldMetadataType.ARRAY];
+      return [
+        FieldMetadataType.RELATION,
+        FieldMetadataType.UUID,
+        FieldMetadataType.ARRAY,
+      ];
     case FieldMetadataType.ARRAY:
       return [FieldMetadataType.TEXT];
     default:

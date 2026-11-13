@@ -186,6 +186,7 @@ msgstr "(επιλεγμένο: {selectedIconKey})"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "[empty string]"
 msgstr "[κενή χορδή]"
 
@@ -1652,6 +1653,11 @@ msgstr "Ανοίγει μια φόρμα για το άτομο που εκκι�
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Ανοίγει μια φόρμα για το άτομο που ξεκινά τη ροή εργασίας και συμπληρώνεται επιτόπου. Με αυτό το έναυσμα, εμφανίζεται μόνο στην εκτέλεση της ροής εργασίας. Για να ζητήσετε από κάποιον απάντηση ή έγκριση στα εισερχόμενά του, χρησιμοποιήστε αντί αυτού ένα βήμα Αποστολή στα εισερχόμενα."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -2876,6 +2882,7 @@ msgstr "Διαχειριστές"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Προηγμένο"
 
@@ -2940,7 +2947,7 @@ msgid "agent"
 msgstr "πράκτορας"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3331,6 +3338,11 @@ msgstr "Όλα τα κανάλια"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Όλες οι εταιρείες"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr ""
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4442,7 +4454,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Ανατέθηκε"
 
@@ -4457,7 +4469,7 @@ msgid "Assigned to"
 msgstr "Ανατεθειμένο σε"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Ανατεθειμένο σε εμένα"
 
@@ -4477,8 +4489,8 @@ msgid "Assignment"
 msgstr "Ανάθεση"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Βοηθός"
 
@@ -4862,6 +4874,7 @@ msgid "Average"
 msgstr "Μέσος όρος"
 
 #. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
 msgstr "Μέση διάρκεια"
@@ -5802,7 +5815,7 @@ msgstr "Ακυρώθηκε στις"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Ακυρώθηκε"
 
@@ -6535,6 +6548,7 @@ msgid "Clear"
 msgstr "Καθαρισμός"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -6849,6 +6863,7 @@ msgstr "σύμπτυξη"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Collapse"
 msgstr "Σύμπτυξη"
 
@@ -7073,7 +7088,7 @@ msgstr "ολοκληρωμένο"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7371,6 +7386,11 @@ msgstr "Επιβεβαίωση αναβάθμισης"
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Confirming your payment"
 msgstr "Γίνεται επιβεβαίωση της πληρωμής σας"
+
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr ""
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8001,7 +8021,7 @@ msgid "Could not load related records"
 msgstr "Δεν ήταν δυνατή η φόρτωση σχετικών εγγραφών"
 
 #. js-lingui-id: 3167/q
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 msgid "Could not load run insights"
 msgstr "Δεν ήταν δυνατή η φόρτωση πληροφοριών εκτέλεσης"
 
@@ -8676,6 +8696,7 @@ msgstr "πιστώσεις"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8684,6 +8705,11 @@ msgstr "πιστώσεις"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Πιστώσεις"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr ""
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8719,6 +8745,11 @@ msgstr "διαθέσιμες πιστώσεις κατά την περίοδο �
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Πιστώσεις που χορηγούνται επιπλέον του επιτρεπόμενου ποσού του προγράμματος. Παραμένουν διαθέσιμες για δαπάνη μέχρι να εξαντληθούν."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr ""
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10315,6 +10346,11 @@ msgstr "Ταυτότητα ζεύγους άμεσων μηνυμάτων"
 msgid "Direct messages"
 msgstr "Άμεσα μηνύματα"
 
+#. js-lingui-id: Rz4s9r
+#: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
+msgid "Direct messages don't support attachments."
+msgstr "Τα άμεσα μηνύματα δεν υποστηρίζουν συνημμένα αρχεία."
+
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
@@ -10574,8 +10610,8 @@ msgstr "Να μην εισάγονται συμβάντα που έχουν επ
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 #: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Ολοκληρώθηκε"
@@ -11180,7 +11216,7 @@ msgid "else if"
 msgstr "αλλιώς εάν"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -11480,6 +11516,7 @@ msgstr "Κενό"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Array"
 msgstr "Κενός Πίνακας"
 
@@ -11498,6 +11535,7 @@ msgstr "Κενός Πίνακας"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Object"
 msgstr "Κενό Αντικείμενο"
 
@@ -11892,7 +11930,7 @@ msgid "Enter phone number"
 msgstr "Εισάγετε αριθμό τηλεφώνου"
 
 #. js-lingui-id: xCiJkz
-#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepTestVariableInput.tsx
 msgid "Enter test value"
 msgstr "Εισάγετε δοκιμαστική τιμή"
 
@@ -12546,6 +12584,7 @@ msgstr "Έξοδος από τη ροή εισαγωγής"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Expand"
 msgstr "Επέκταση"
 
@@ -12781,8 +12820,8 @@ msgstr "Πρόσωπο"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -13048,7 +13087,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Αποτυχία σύνδεσης των σχετικών εγγραφών με αυτό το συμβάν"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Αποτυχία φόρτωσης λεπτομερειών πράκτορα."
 
@@ -13748,6 +13787,11 @@ msgstr "Φιλτράρισμα κατά αναγνωριστικό εγγραφ�
 msgid "Filter chats"
 msgstr "Φιλτράρισμα συνομιλιών"
 
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr ""
+
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
@@ -14062,6 +14106,7 @@ msgid "Formats"
 msgstr "Μορφές"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
@@ -16929,6 +16974,7 @@ msgid "Last refreshed"
 msgstr "Τελευταία ανανέωση"
 
 #. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last run"
 msgstr "Τελευταία εκτέλεση"
@@ -18276,6 +18322,11 @@ msgstr "Διακομιστές MCP"
 msgid "MCP servers unavailable"
 msgstr "Οι διακομιστές MCP δεν είναι διαθέσιμοι"
 
+#. js-lingui-id: iwK6Ak
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP tool step"
+msgstr "Βήμα εργαλείου MCP"
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
@@ -18394,7 +18445,7 @@ msgid "Mentioned you"
 msgstr "Σας ανέφερε"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Αναφορές"
 
@@ -19257,7 +19308,7 @@ msgid "Needs a Select field"
 msgstr "Χρειάζεται πεδίο Επιλογής"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Needs input"
 msgstr "Χρειάζεται εισαγωγή"
@@ -19922,6 +19973,11 @@ msgstr "Καμία μεταβλητή διαμόρφωσης δεν ταιριά
 msgid "No content"
 msgstr "Χωρίς περιεχόμενο"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr ""
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -20195,6 +20251,11 @@ msgstr "Δεν καταγράφηκαν αρχεία καταγραφής για
 msgid "No matching activity"
 msgstr "Δεν υπάρχει δραστηριότητα που να αντιστοιχεί"
 
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr ""
+
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "No matching people or roles"
@@ -20294,6 +20355,11 @@ msgstr "Καμία έξοδος"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
 msgstr "Δεν υπάρχει διαθέσιμη έξοδος"
+
+#. js-lingui-id: LF3XrW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No output returned"
+msgstr "Δεν επιστράφηκε αποτέλεσμα"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20531,6 +20597,16 @@ msgstr "Χωρίς θέμα"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView.tsx
 msgid "No targets available"
 msgstr "Δεν υπάρχουν διαθέσιμοι στόχοι"
+
+#. js-lingui-id: n75Kxz
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No test result yet"
+msgstr "Δεν υπάρχει ακόμη αποτέλεσμα δοκιμής"
+
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr ""
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -21209,6 +21285,11 @@ msgstr "Εκτός της συνηθισμένης πορείας"
 msgid "Official app"
 msgstr "Επίσημη εφαρμογή"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr "Εκτός σύνδεσης"
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -21336,10 +21417,20 @@ msgstr "Μία συνδρομή παρέχει ένα κλειδί Οργανι�
 msgid "One-to-one conversations between people"
 msgstr "Ατομικές συνομιλίες μεταξύ ατόμων"
 
+#. js-lingui-id: oXOSPE
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr "Σε σύνδεση"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Μόνο εφαρμογές που έχουν δημοσιευτεί στο npm μπορούν να διεκδικηθούν με αυτόν τον τρόπο."
+
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr "Συνεχίστε μόνο αν ξεκινήσατε αυτή τη σύνδεση από το {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -21441,7 +21532,7 @@ msgstr "Μόνο εσείς θα μπορείτε να βλέπετε τα email
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21874,7 +21965,7 @@ msgstr "Το αρχικό μήνυμα δεν είναι διαθέσιμο"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -21995,6 +22086,11 @@ msgstr "Έξοδος"
 msgid "Output cost"
 msgstr "Κόστος εξόδου"
 
+#. js-lingui-id: SkbJO4
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Output saved"
+msgstr "Η έξοδος αποθηκεύτηκε"
+
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
@@ -22018,6 +22114,7 @@ msgid "Override Draft"
 msgstr "Αντικατάσταση Προχείρου"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -22505,11 +22602,6 @@ msgstr "Προσωπική χρήση AI"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Προσωπική χρήση"
-
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Το όριο προσωπικής χρήσης επαναφέρεται σε {daysUntilReset, plural, one {# ημέρα} other {# ημέρες}}."
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -23602,7 +23694,8 @@ msgid "Recent failed runs"
 msgstr "Πρόσφατες αποτυχημένες εκτελέσεις"
 
 #. js-lingui-id: dF8kMd
-#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Recent runs"
 msgstr "Πρόσφατες εκτελέσεις"
@@ -24030,6 +24123,11 @@ msgstr "Καταχωρίστε εξωτερικούς διακομιστές MCP
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Καταχωρίστηκε ως instance ανάπτυξης. Αυτό το instance δεν θα χρεωθεί."
+
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr "Καταχωρίστηκε στο Twenty ως το επίσημο {appName}"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
@@ -24494,12 +24592,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Οι σύνδεσμοι εγκατάστασης Replit απαιτούν μια HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Απάντηση"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr ""
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -24775,6 +24879,7 @@ msgstr "Περιορισμένη"
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Result"
 msgstr "Αποτέλεσμα"
 
@@ -25105,6 +25210,11 @@ msgstr "Ο κανόνας ενεργοποιήθηκε."
 msgid "Rule updated."
 msgstr "Ο κανόνας ενημερώθηκε."
 
+#. js-lingui-id: 1GQ5z+
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Run a test to see what the tool returns and use its fields in the next steps."
+msgstr "Εκτελέστε μια δοκιμή για να δείτε τι επιστρέφει το εργαλείο και να χρησιμοποιήσετε τα πεδία του στα επόμενα βήματα."
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -25130,9 +25240,19 @@ msgstr "Εκτέλεση κώδικα για την ανάλυση αρχείω�
 msgid "Run Function"
 msgstr "Εκτελέστε τη Λειτουργία"
 
+#. js-lingui-id: scFhaW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run this tool for real?"
+msgstr "Να εκτελεστεί πραγματικά αυτό το εργαλείο;"
+
+#. js-lingui-id: dLtKV9
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run tool"
+msgstr "Εκτέλεση εργαλείου"
+
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "Εκτελείται"
@@ -25151,6 +25271,11 @@ msgstr "Γίνεται εκτέλεση κώδικα"
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
 msgstr "Εκτέλεση λειτουργίας"
+
+#. js-lingui-id: cHCb42
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Running the tool..."
+msgstr "Εκτέλεση του εργαλείου..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -25173,6 +25298,8 @@ msgid "Runs"
 msgstr "Εκτελέσεις"
 
 #. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Runs · 14d"
@@ -25189,6 +25316,7 @@ msgid "Runs appear here once this workflow is triggered"
 msgstr "Οι εκτελέσεις εμφανίζονται εδώ μόλις ενεργοποιηθεί αυτή η ροή εργασίας"
 
 #. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
 msgstr "Εκτελέσεις ανά ημέρα"
@@ -26628,6 +26756,7 @@ msgstr "Γίνεται αποστολή email"
 
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Η αποστολή απέτυχε"
 
@@ -26860,6 +26989,7 @@ msgstr "Ρύθμιση της <0>βάσης δεδομένων</0> σας..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -26873,6 +27003,7 @@ msgstr "Ρύθμιση της <0>βάσης δεδομένων</0> σας..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -27518,7 +27649,7 @@ msgstr "Αναβολή έως {snoozedUntilLabel}"
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
 #: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Σε αναβολή"
 
@@ -27590,6 +27721,11 @@ msgstr "Κάτι πήγε στραβά κατά τη δημιουργία του
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "Παρουσιάστηκε κάποιο σφάλμα κατά την ανάκτηση των συνομιλιών αυτής της εγγραφής."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr ""
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -28775,6 +28911,8 @@ msgstr "Όροι Υπηρεσίας"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Δοκιμή"
@@ -28799,6 +28937,11 @@ msgstr "Δοκιμάστε αυτό το βήμα για να δείτε τα α
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Test your function"
 msgstr "Δοκιμάστε τη λειτουργία σας"
+
+#. js-lingui-id: 4WDbC6
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
+msgstr "Η δοκιμή καλεί το {toolName} στο {mcpServerLabel} με τα τρέχοντα ορίσματα. Αυτό το εργαλείο δεν έχει επισημανθεί ως μόνο για ανάγνωση, επομένως μπορεί να δημιουργήσει, να αλλάξει ή να διαγράψει δεδομένα."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28998,6 +29141,11 @@ msgstr "Η σύνδεση εξαγωγής χάθηκε. Προσπαθήστε 
 msgid "The export was interrupted. Please try again."
 msgstr "Η εξαγωγή διακόπηκε. Προσπαθήστε ξανά."
 
+#. js-lingui-id: KXe+rm
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The fields below are now available as variables in the next steps."
+msgstr "Τα παρακάτω πεδία είναι τώρα διαθέσιμα ως μεταβλητές στα επόμενα βήματα."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -29144,6 +29292,23 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Το κοινόχρηστο email που θέλετε να χρησιμοποιήσετε."
+
+#. js-lingui-id: V27DQk
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
+msgid "The tool arguments must resolve to an object"
+msgstr "Τα ορίσματα του εργαλείου πρέπει να επιλύονται σε αντικείμενο"
+
+#. js-lingui-id: vglXPW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+msgid "The tool call failed"
+msgstr "Η κλήση του εργαλείου απέτυχε"
+
+#. js-lingui-id: xOR8cR
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The tool ran but returned no fields, so the expected output was left unchanged."
+msgstr "Το εργαλείο εκτελέστηκε, αλλά δεν επέστρεψε πεδία, επομένως η αναμενόμενη έξοδος παρέμεινε αμετάβλητη."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29394,6 +29559,11 @@ msgstr "Αυτός ο πράκτορας μοιράζεται τον ρόλο τ
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Αυτός ο πράκτορας μοιράζεται τον ρόλο του με άλλα μέλη ή πράκτορες. Αλλάξτε τα εργαλεία του στις Ρυθμίσεις > Ρόλοι."
+
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr "Αυτή η εφαρμογή αυτοαποκαλείται {appName}, αλλά το Twenty δεν μπόρεσε να το επιβεβαιώσει. Συνεχίστε μόνο αν ξεκινήσατε αυτή τη σύνδεση από το {appName}."
 
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
@@ -30106,6 +30276,11 @@ msgstr "διακριτικά"
 msgid "Tokens"
 msgstr "Tokens"
 
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr ""
+
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Tomato"
@@ -30506,6 +30681,7 @@ msgid "True/False"
 msgstr "Αληθές/Ψευδές"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30517,7 +30693,7 @@ msgstr "Δοκιμάστε ξανά"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Δοκιμάστε ξανά σε λίγο"
@@ -30779,7 +30955,7 @@ msgid "Unanswered"
 msgstr "Αναπάντητες"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Χωρίς ανάθεση"
 
@@ -31009,7 +31185,7 @@ msgstr "Άγνωστο σφάλμα ανάλυσης"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Άγνωστος αποστολέας"
 
@@ -32029,11 +32205,6 @@ msgstr "Χρησιμοποιώντας την προεπιλεγμένη τιμ�
 msgid "Using default value. Set a custom value to override."
 msgstr "Χρησιμοποιώντας την προεπιλεγμένη τιμή. Ορίστε μια προσαρμοσμένη τιμή για υπερισχύ."
 
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Χρήση πιστώσεων χώρου εργασίας για {daysUntilReset, plural, one {# ημέρα} other {# ημέρες}}."
-
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
@@ -32342,7 +32513,7 @@ msgid "View only — You can read this conversation."
 msgstr "Μόνο προβολή — Μπορείτε να διαβάσετε αυτήν τη συνομιλία."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Προβολή αρχικού μηνύματος"
 
@@ -32478,7 +32649,7 @@ msgid "Wait for the attachments to finish uploading."
 msgstr "Περιμένετε να ολοκληρωθεί η μεταφόρτωση των συνημμένων."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "Σε αναμονή"
@@ -32619,6 +32790,11 @@ msgstr "Δεν μπορέσαμε να επιβεβαιώσουμε τη μέθ�
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
 msgstr "Δεν ήταν δυνατή η φόρτωση των συνομιλιών"
+
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr ""
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32803,6 +32979,21 @@ msgstr "Εβδομάδα"
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
 msgstr "Εβδομαδιαία"
+
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr ""
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr ""
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr ""
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33605,6 +33796,8 @@ msgstr "Χθες"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx

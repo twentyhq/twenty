@@ -52,11 +52,12 @@ export class SendEmailTool implements Tool {
       const sendResult = await this.sendEmailService.sendComposedEmail(data);
 
       const persistedMessage = data.shouldPersistMessage
-        ? await this.sendEmailService.persistSentMessage(
+        ? await this.sendEmailService.persistSentMessage({
             sendResult,
             data,
-            context.workspaceId,
-          )
+            workspaceId: context.workspaceId,
+            createdBy: context.actorContext,
+          })
         : undefined;
 
       this.logger.log(

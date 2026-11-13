@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
 import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
+import { useCoreAgentRunInsights } from '@/object-core/agents/hooks/useCoreAgentRunInsights';
 import { useListenToCoreAgentEvents } from '@/object-core/agents/hooks/useListenToCoreAgentEvents';
 import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
@@ -29,6 +30,8 @@ export const AgentCoreShowPage = () => {
     refetch: refetchCoreAgent,
   });
 
+  const runInsights = useCoreAgentRunInsights(agentId);
+
   const agent = data?.findOneAgent;
   const hasFailedToLoad =
     !loading && (!isDefined(agent) || isGraphqlErrorOfType(error, 'NOT_FOUND'));
@@ -43,9 +46,18 @@ export const AgentCoreShowPage = () => {
     return null;
   }
 
-  if (!isDefined(agent)) {
+  if (!isDefined(agent) || !isDefined(runInsights.hasRuns)) {
     return <PageContentSkeletonLoader />;
   }
 
-  return <CoreAgentFormContent key={agent.id} agent={agent} />;
+  return (
+    <CoreAgentFormContent
+      key={agent.id}
+      agent={agent}
+      runInsights={runInsights.insights}
+      hasRuns={runInsights.hasRuns}
+      isLoadingRunInsights={runInsights.loading}
+      hasRunInsightsError={isDefined(runInsights.error)}
+    />
+  );
 };

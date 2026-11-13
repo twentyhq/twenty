@@ -34,4 +34,9 @@ export class OAuthTokenInput {
   @IsString()
   @MaxLength(2048)
   refresh_token?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2048)
+  resource?: string;
 }

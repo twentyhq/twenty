@@ -54,6 +54,7 @@ export class WorkflowRunWorkspaceService {
     triggerPayload,
     error,
     workspaceId,
+    shouldSkipEventEmission = false,
   }: {
     coreWorkflowId: string;
     coreWorkflowVersionId: string;
@@ -70,6 +71,7 @@ export class WorkflowRunWorkspaceService {
     workflowRunId?: string;
     error?: string;
     workspaceId: string;
+    shouldSkipEventEmission?: boolean;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -77,6 +79,7 @@ export class WorkflowRunWorkspaceService {
       const workflowRunRepository =
         this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
           'workflowRun',
+          { shouldSkipEventEmission },
         );
       const position = await this.recordPositionService.buildRecordPosition({
         value: 'first',

@@ -277,6 +277,11 @@ msgstr "رابط يتم تتبعه في حملة إعلانية"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "لا يمكن إرسال رسالة بريد إلكتروني تسويقية إلا إلى مستلم واحد في كل مرة، بحيث يحصل كل شخص على رابط إلغاء الاشتراك الخاص به."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr ""
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -3463,7 +3468,7 @@ msgstr "يجب أن يشير موفّر الاتصال من النوع 'custom' 
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "يتطلب موفر الاتصال من النوع 'oauth-discovery' عنوان oauthDiscoveryConfig.resourceUrl ببروتوكول HTTP أو HTTPS"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5497,6 +5502,11 @@ msgstr "الحقل \"{fieldName}\" لا ينتمي إلى الكائن الذي 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "الحقل \"{fieldName}\" ليس علاقة متعدد إلى واحد، ولا يحتوي على عمود ربط للمقارنة به"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "يأخذ الحقل \"{fieldName}\" قيمة واحدة مع المعامل \"{operand}\"، ولا يمكن مقارنته بالقائمة التي يحتفظ بها حقل عضو مساحة العمل \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8476,6 +8486,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "وضع علامة كغير مقروء"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr ""
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8667,6 +8682,11 @@ msgstr "رسالة"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "رسالة"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr ""
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9762,7 +9782,7 @@ msgstr "لا تحتوي جهة توفير اتصال OAuth على كتلة إع�
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "يتطلب موفر اتصال اكتشاف OAuth عنوان URL للمورد الذي يسجّل الدخول إليه"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14075,6 +14095,11 @@ msgstr "لم يتم العثور على دالة المنطق التي تحدد 
 msgid "The logic function that starts the connection was not found."
 msgstr "لم يتم العثور على دالة المنطق التي تبدأ الاتصال."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr ""
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14808,6 +14833,11 @@ msgstr "هذه الميزة مجانية لما يصل إلى {MAX_SEATS_WITHOUT
 msgid "This feature is not enabled."
 msgstr "هذه الميزة غير مُمكَّنة."
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "لا يمكن مقارنة هذا الحقل بقائمة من القيم"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14944,6 +14974,21 @@ msgstr "جدول السجل هذا غير صالح."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "طريقة MCP هذه غير مدعومة."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "ينتمي خادم MCP هذا إلى تطبيق آخر، لذلك لا يمكن لسير العمل هذا استخدامه."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "خادم MCP هذا غير نشط. فعّله قبل اختبار أدواته."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "خادم MCP هذا غير متاح لسير العمل هذا."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15235,6 +15280,16 @@ msgstr "ملف SVG هذا كبير جدًا بحيث يتعذر معالجته."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "إجراء نشاط الجدول الزمني هذا غير مدعوم"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "لم يعد خادم MCP الخاص به يوفّر هذه الأداة."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "قد تغيّر هذه الأداة البيانات. أكّد الاختبار قبل تشغيله."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17027,6 +17082,11 @@ msgstr "تعذّر إكمال الاتصال. يُرجى المحاولة مرة
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "تعذر علينا تحديد الحساب الذي فوّضته. يُرجى المحاولة مرة أخرى."
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr ""
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

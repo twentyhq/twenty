@@ -23,7 +23,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
@@ -282,7 +282,7 @@ const meta = {
     );
     jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     });
     jotaiStore.set(
       agentChatThreadListFamilyState.atomFamily(

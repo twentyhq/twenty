@@ -9,7 +9,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
@@ -239,7 +239,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
     agentChatThreadParticipantsState.atom,
     getScenarioParticipants(scenario),
   );
-  setAgentChatShownChannelView(
+  setAgentChatSelectedChannelView(
     jotaiStore,
     scenario.isChannelView
       ? {
