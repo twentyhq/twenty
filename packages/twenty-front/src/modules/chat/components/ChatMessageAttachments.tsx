@@ -32,12 +32,12 @@ const StyledStandaloneAttachments = styled.div<{ isRightAligned: boolean }>`
 
 type ChatMessageAttachmentsProps = {
   files: FieldFilesValue[];
-  isRightAligned: boolean;
+  isRightAligned?: boolean;
 };
 
 export const ChatMessageAttachments = ({
   files,
-  isRightAligned,
+  isRightAligned = false,
 }: ChatMessageAttachmentsProps) => {
   const { gridImages, standaloneAttachments } =
     getChatMessageAttachmentGroups(files);

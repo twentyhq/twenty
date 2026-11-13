@@ -1299,3 +1299,98 @@ export const UserMessageWithManyImages: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+const getSizedImageUrlMock = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#dbeafe"/><rect x="1" y="1" width="${width - 2}" height="${height - 2}" fill="none" stroke="#3b82f6" stroke-width="2"/></svg>`,
+  )}`;
+
+const getOwnMessageWithImagesMock = ({
+  id,
+  text,
+  images,
+}: {
+  id: string;
+  text: string;
+  images: { filename: string; width: number; height: number }[];
+}): ExtendedUIMessage => ({
+  id,
+  role: 'user',
+  parts: [
+    { type: 'text', text },
+    ...images.map(({ filename, width, height }): AgentChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-${filename}`,
+      filename,
+      mediaType: 'image/png',
+      url: getSizedImageUrlMock({ width, height }),
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+});
+
+const mockOwnMessagesWithImages = [
+  getOwnMessageWithImagesMock({
+    id: 'msg-own-portrait',
+    text: 'Portrait screenshot from the mobile app',
+    images: [{ filename: 'portrait.png', width: 390, height: 844 }],
+  }),
+  getOwnMessageWithImagesMock({
+    id: 'msg-own-landscape',
+    text: 'Landscape',
+    images: [{ filename: 'landscape.png', width: 1600, height: 200 }],
+  }),
+  getOwnMessageWithImagesMock({
+    id: 'msg-own-small',
+    text: 'Small logo for the company record',
+    images: [{ filename: 'small.png', width: 48, height: 48 }],
+  }),
+  getOwnMessageWithImagesMock({
+    id: 'msg-own-two-images',
+    text: 'Two',
+    images: [
+      { filename: 'first.png', width: 1440, height: 900 },
+      { filename: 'second.png', width: 390, height: 844 },
+    ],
+  }),
+];
+
+export const OwnMessagesWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: mockOwnMessagesWithImages,
+  },
+  render: () => (
+    <StyledConversationContainer>
+      {mockOwnMessagesWithImages.map((message) => (
+        <AiChatMessage key={message.id} messageId={message.id} />
+      ))}
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const [text, imageName] of [
+      ['Portrait screenshot from the mobile app', 'portrait.png'],
+      ['Landscape', 'landscape.png'],
+      ['Small logo for the company record', 'small.png'],
+      ['Two', 'first.png'],
+    ]) {
+      const image = await canvas.findByRole('img', { name: imageName });
+
+      await expect(image).toBeVisible();
+      await expect(image.getBoundingClientRect().left).toBeLessThanOrEqual(
+        canvas.getByText(text).getBoundingClientRect().left,
+      );
+    }
+  },
+};

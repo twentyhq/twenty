@@ -255,10 +255,7 @@ export const AiChatMessage = ({
             <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
           )}
           {isNonEmptyArray(attachments) && (
-            <ChatMessageAttachments
-              files={attachments}
-              isRightAligned={isRightAligned}
-            />
+            <ChatMessageAttachments files={attachments} />
           )}
           {shouldShowError && <AiChatErrorRenderer error={error} />}
         </StyledMessageContainer>
