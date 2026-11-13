@@ -44,6 +44,5 @@ export type AppConnection = AppConnectionBase &
   (
     | { providerType: 'oauth'; accessToken: string }
     | { providerType: 'custom'; accessToken: string | null }
-    // The key the member entered when connecting
     | { providerType: 'api-key'; accessToken: string }
   );

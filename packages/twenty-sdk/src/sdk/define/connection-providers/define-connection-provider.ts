@@ -171,16 +171,17 @@ export const defineConnectionProvider: DefineEntity<
     errors.push(...getCustomConfigErrors(config.custom));
   }
 
-  if (config.type === 'api-key') {
-    const misplacedConfigKeys = (
-      ['oauth', 'oauthDiscovery', 'custom'] as const
-    ).filter((configKey) => configKey in config);
+  const misplacedApiKeyConfigKeys =
+    config.type === 'api-key'
+      ? (['oauth', 'oauthDiscovery', 'custom'] as const).filter(
+          (configKey) => configKey in config,
+        )
+      : [];
 
-    if (misplacedConfigKeys.length > 0) {
-      errors.push(
-        `Connection provider with type 'api-key' takes no config block, but declares ${misplacedConfigKeys.join(', ')}`,
-      );
-    }
+  if (misplacedApiKeyConfigKeys.length > 0) {
+    errors.push(
+      `Connection provider with type 'api-key' takes no config block, but declares ${misplacedApiKeyConfigKeys.join(', ')}`,
+    );
   }
 
   return createValidationResult({ config, errors });

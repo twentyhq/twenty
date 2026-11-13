@@ -4,7 +4,6 @@ import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppO
 import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
 import { useOpenConnectApplicationWithApiKeyInSidePanel } from '@/side-panel/hooks/useOpenConnectApplicationWithApiKeyInSidePanel';
 
-// API key providers collect the key in Twenty; every other type signs in on the provider's side
 export const useStartAppConnection = () => {
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { openConnectApplicationWithApiKeyInSidePanel } =

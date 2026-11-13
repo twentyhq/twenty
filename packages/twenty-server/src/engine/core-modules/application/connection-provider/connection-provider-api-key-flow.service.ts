@@ -11,7 +11,7 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 type ConnectWithApiKeyArgs = {
   applicationId: string;
@@ -74,7 +74,7 @@ export class ConnectionProviderApiKeyFlowService {
     const connectedAccount = await this.connectedAccountService.persist({
       provider,
       credentials: {
-        accessToken: trimmedApiKey as PlaintextString,
+        accessToken: plaintextStringSchema.parse(trimmedApiKey),
         refreshToken: null,
         scopes: null,
       },

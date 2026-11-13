@@ -70,7 +70,11 @@ export const SidePanelConnectApplicationWithApiKeyPage = () => {
         refetchQueries: ['MyConnectedAccounts', 'ApplicationConnectedAccounts'],
       });
     } catch (error) {
-      setErrorMessage(getErrorMessageFromApolloError(error as Error));
+      setErrorMessage(
+        error instanceof Error
+          ? getErrorMessageFromApolloError(error)
+          : t`An error occurred.`,
+      );
 
       return;
     }
