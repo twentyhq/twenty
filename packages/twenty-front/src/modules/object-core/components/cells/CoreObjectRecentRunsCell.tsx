@@ -5,10 +5,9 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { type CoreWorkflowRecentRun } from '@/object-core/workflows/types/CoreWorkflowRecentRun';
+import { type CoreObjectRecentRun } from '@/object-core/types/CoreObjectRecentRun';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledStrip = styled.div`
@@ -26,13 +25,13 @@ const StyledRunBar = styled.span<{ barColor: string }>`
   width: 3px;
 `;
 
-type CoreWorkflowRecentRunsCellProps = {
-  recentRuns: CoreWorkflowRecentRun[] | null;
+type CoreObjectRecentRunsCellProps = {
+  recentRuns: CoreObjectRecentRun[] | null;
 };
 
-export const CoreWorkflowRecentRunsCell = ({
+export const CoreObjectRecentRunsCell = ({
   recentRuns,
-}: CoreWorkflowRecentRunsCellProps) => {
+}: CoreObjectRecentRunsCellProps) => {
   const { t } = useLingui();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -44,32 +43,26 @@ export const CoreWorkflowRecentRunsCell = ({
 
   return (
     <StyledStrip aria-label={t`Recent runs`}>
-      {oldestFirstRuns.map((recentRun) => {
-        const { color, text } = getWorkflowRunStatusTagProps({
-          workflowRunStatus: recentRun.status,
-        });
-
-        return (
-          <Tooltip
-            key={recentRun.id}
-            content={text}
-            description={beautifyPastDateRelativeToNow(
-              recentRun.createdAt,
-              localeCatalog,
-            )}
-            delay={TooltipDelay.shortDelay}
-          >
-            <StyledRunBar
-              aria-label={text}
-              barColor={
-                color === 'transparent'
-                  ? themeCssVariables.border.color.medium
-                  : themeCssVariables.color[color]
-              }
-            />
-          </Tooltip>
-        );
-      })}
+      {oldestFirstRuns.map((recentRun) => (
+        <Tooltip
+          key={recentRun.id}
+          content={recentRun.statusLabel}
+          description={beautifyPastDateRelativeToNow(
+            recentRun.createdAt,
+            localeCatalog,
+          )}
+          delay={TooltipDelay.shortDelay}
+        >
+          <StyledRunBar
+            aria-label={recentRun.statusLabel}
+            barColor={
+              recentRun.statusColor === 'transparent'
+                ? themeCssVariables.border.color.medium
+                : themeCssVariables.color[recentRun.statusColor]
+            }
+          />
+        </Tooltip>
+      ))}
     </StyledStrip>
   );
 };
