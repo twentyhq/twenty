@@ -188,6 +188,17 @@ Set `requestedCapabilities` only when the app uses microphone or camera capture.
 
 Set `requestedIframeMediaPermissions` only when a front component or an `IFRAME` page layout widget embeds a website that needs the microphone or camera. List up to 20 unique exact HTTPS origins, with `microphone` and `camera` set separately and at least one set to `true`; the installation screen shows each website for the same approval.
 
+Set `oAuthClient` only when the app lists an external client that members connect to Twenty themselves, such as an AI assistant that signs in with OAuth and identifies itself with a client ID metadata document:
+
+```ts
+oAuthClient: {
+  clientIdMetadataDocumentUrls: ['https://acme.example.com/oauth/client.json'],
+  connectUrl: 'https://acme.example.com/connect?server={mcpServerUrl}',
+},
+```
+
+`clientIdMetadataDocumentUrls` are the https URLs the client presents as its `client_id`, written exactly as it sends them. `connectUrl` is the https page where a member starts connecting; `{mcpServerUrl}` is replaced by the server's MCP endpoint. The marketplace page then shows **Connect** in place of **Install**, and each member connects with their own account and permissions. A member's connection is shown under the app only once the app is listed, and declaring a client does not mark it as verified on the consent screen.
+
 Only set `aboutDescription` when the marketplace About tab should differ from the npm README. Otherwise keep one source of truth in `README.md`. The About tab renders markdown text only: images and raw HTML (badges, `<div>` blocks) are not rendered, so keep the marketplace-facing content in plain markdown.
 
 If the app requires a specific Twenty server version, set `engines.twenty` in `package.json`. If publishing to npm, add the `twenty-app` keyword.

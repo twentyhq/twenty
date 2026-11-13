@@ -64,6 +64,8 @@ Publishing is separate from the development loop. It is used to share an app wit
 
 Each publish requires a strictly higher semver version in `package.json`. See the `publish-app` skill for marketplace metadata and listing guidance.
 
+An app can also list an external OAuth client that members connect to Twenty themselves, such as an AI assistant. Declare it with `oAuthClient` in `defineApplication()`: `clientIdMetadataDocumentUrls` (the https client ID metadata document URLs the client presents as its `client_id`) and `connectUrl` (the https page where a member starts connecting, with `{mcpServerUrl}` replaced by the server's MCP endpoint). The marketplace page of such an app shows **Connect** in place of **Install**, and the client acts with the connecting member's permissions.
+
 ## Front Component Rendering
 
 Front components do not run as a separate frontend application. The Twenty workspace renders them inside an isolated Remote DOM container. The SDK mounts the component, provides a `ThemeProvider`, and proxies host APIs (navigation, snackbars, side panels) through `twenty-sdk/front-component`.
