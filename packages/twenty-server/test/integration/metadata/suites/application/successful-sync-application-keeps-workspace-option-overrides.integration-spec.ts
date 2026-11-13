@@ -308,17 +308,22 @@ describe('Sync application keeps the option edits a workspace made on its fields
     const selectFlatFieldMetadata =
       flatFieldMetadataMaps.byUniversalIdentifier[SELECT_FIELD_ID];
 
+    expect(selectFlatFieldMetadata).toBeDefined();
+
+    const resolvedOptions = isDefined(selectFlatFieldMetadata)
+      ? resolveFlatFieldMetadataOptions({
+          flatFieldMetadata: selectFlatFieldMetadata,
+          flatFieldMetadataOptionMaps,
+        })
+      : undefined;
+
     expect(
-      (isDefined(selectFlatFieldMetadata)
-        ? (resolveFlatFieldMetadataOptions({
-            flatFieldMetadata: selectFlatFieldMetadata,
-            flatFieldMetadataOptionMaps,
-          }) ?? [])
-        : []
-      ).map(({ applicationId: _applicationId, ...option }) => ({
-        ...option,
-        id: undefined,
-      })),
+      (resolvedOptions ?? []).map(
+        ({ applicationId: _applicationId, ...option }) => ({
+          ...option,
+          id: undefined,
+        }),
+      ),
     ).toEqual(
       [
         { value: 'CLOSED', label: 'Done', color: 'blue', position: 0 },
@@ -358,6 +363,7 @@ describe('Sync application keeps the option edits a workspace made on its fields
     });
 
     expect((await findSelectField()).defaultValue).toBe("'PAUSED'");
+
   }, 120000);
 
   it('does not bring back the board column of an option the workspace deactivated', async () => {

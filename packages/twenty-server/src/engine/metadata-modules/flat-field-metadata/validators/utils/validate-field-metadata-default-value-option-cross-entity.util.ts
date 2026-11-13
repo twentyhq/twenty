@@ -14,6 +14,59 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
+const groupInactiveOptionValuesByFieldMetadataUniversalIdentifier = ({
+  flatFieldMetadataOptionMaps,
+  isWorkspaceCaller,
+}: {
+  flatFieldMetadataOptionMaps:
+    | MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>
+    | undefined;
+  isWorkspaceCaller: boolean;
+}): Map<string, Set<string>> => {
+  const inactiveOptionValuesByFieldMetadataUniversalIdentifier = new Map<
+    string,
+    Set<string>
+  >();
+
+  for (const flatFieldMetadataOption of Object.values(
+    flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
+  )) {
+    if (!isDefined(flatFieldMetadataOption)) {
+      continue;
+    }
+
+    const isActiveOverride = isWorkspaceCaller
+      ? readAuthoredOverrideProperty({
+          metadataName: 'fieldMetadataOption',
+          overrides: flatFieldMetadataOption.overrides,
+          path: ['isActive'],
+          authorContext: { ownerApplicationUniversalIdentifier: undefined },
+        })
+      : undefined;
+
+    if (
+      (isBoolean(isActiveOverride)
+        ? isActiveOverride
+        : flatFieldMetadataOption.isActive) !== false
+    ) {
+      continue;
+    }
+
+    const inactiveOptionValues =
+      inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
+        flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
+      ) ?? new Set<string>();
+
+    inactiveOptionValues.add(flatFieldMetadataOption.value);
+    inactiveOptionValuesByFieldMetadataUniversalIdentifier.set(
+      flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
+      inactiveOptionValues,
+    );
+  }
+
+  return inactiveOptionValuesByFieldMetadataUniversalIdentifier;
+};
+
 // The default value and its options can change through different entities of one migration, so check the final state.
 export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
   fromFlatFieldMetadataOptionMaps,
@@ -80,10 +133,21 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
     string,
     Set<string>
   >();
-  const inactiveOptionValuesByFieldMetadataUniversalIdentifier = new Map<
-    string,
-    Set<string>
-  >();
+  const inactiveOptionValuesByFieldMetadataUniversalIdentifier =
+    groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
+      flatFieldMetadataOptionMaps,
+      isWorkspaceCaller,
+    });
+  const fromInactiveOptionValuesByFieldMetadataUniversalIdentifier =
+    groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
+      flatFieldMetadataOptionMaps: fromFlatFieldMetadataOptionMaps,
+      isWorkspaceCaller,
+    });
+  const fieldMetadataUniversalIdentifiersWithDefaultValueUpdate = new Set(
+    orchestratorActionsReport.fieldMetadata.update
+      .filter(({ update }) => 'defaultValue' in update)
+      .map(({ universalIdentifier }) => universalIdentifier),
+  );
 
   for (const flatFieldMetadataOption of Object.values(
     flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
@@ -102,32 +166,6 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
       optionValues,
     );
-
-    const isActiveOverride = isWorkspaceCaller
-      ? readAuthoredOverrideProperty({
-          metadataName: 'fieldMetadataOption',
-          overrides: flatFieldMetadataOption.overrides,
-          path: ['isActive'],
-          authorContext: { ownerApplicationUniversalIdentifier: undefined },
-        })
-      : undefined;
-
-    if (
-      (isBoolean(isActiveOverride)
-        ? isActiveOverride
-        : flatFieldMetadataOption.isActive) === false
-    ) {
-      const inactiveOptionValues =
-        inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
-          flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
-        ) ?? new Set<string>();
-
-      inactiveOptionValues.add(flatFieldMetadataOption.value);
-      inactiveOptionValuesByFieldMetadataUniversalIdentifier.set(
-        flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
-        inactiveOptionValues,
-      );
-    }
   }
 
   for (const fieldMetadataUniversalIdentifier of touchedFieldMetadataUniversalIdentifiers) {
@@ -170,12 +208,26 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
         fieldMetadataUniversalIdentifier,
       );
+    const fromInactiveOptionValues =
+      fromInactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      );
+    // Only a migration that sets the default or deactivates its option breaks the rule, so unrelated edits still pass.
+    const isDefaultValueSet =
+      createdFieldMetadataUniversalIdentifiers.has(
+        fieldMetadataUniversalIdentifier,
+      ) ||
+      fieldMetadataUniversalIdentifiersWithDefaultValueUpdate.has(
+        fieldMetadataUniversalIdentifier,
+      );
     const hasInactiveDefaultOption = defaultValues
       .filter(isString)
-      .some((defaultValue) =>
-        inactiveOptionValues?.has(
-          defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
-        ),
+      .map((defaultValue) => defaultValue.replace(QUOTED_STRING_REGEX, '$1'))
+      .some(
+        (defaultOptionValue) =>
+          inactiveOptionValues?.has(defaultOptionValue) === true &&
+          (isDefaultValueSet ||
+            fromInactiveOptionValues?.has(defaultOptionValue) !== true),
       );
 
     if (defaultValuesWithoutOption.length === 0 && !hasInactiveDefaultOption) {
