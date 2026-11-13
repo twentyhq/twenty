@@ -4379,6 +4379,9 @@ export default {
             "id": [
                 563
             ],
+            "isCanonical": [
+                1
+            ],
             "isVisible": [
                 1
             ],
@@ -16639,6 +16642,9 @@ export default {
                 563
             ],
             "isActive": [
+                1
+            ],
+            "isCanonical": [
                 1
             ],
             "isOverridden": [
