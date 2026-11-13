@@ -10262,6 +10262,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr ""
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr ""
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -13768,6 +13774,12 @@ msgstr ""
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr ""
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr ""
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13946,6 +13958,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
+msgstr ""
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
 msgstr ""
 
 #. js-lingui-id: nCXfEw
