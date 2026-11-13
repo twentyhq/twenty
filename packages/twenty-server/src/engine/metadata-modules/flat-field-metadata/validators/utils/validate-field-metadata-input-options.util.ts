@@ -81,7 +81,10 @@ export const validateFieldMetadataInputOptions = ({
   universalFlatFieldMetadata,
   isWritingOptions = true,
 }: {
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>;
+  universalFlatFieldMetadata: Pick<
+    UniversalFlatFieldMetadata<EnumFieldMetadataType>,
+    'options'
+  >;
   isWritingOptions?: boolean;
 }): FlatFieldMetadataValidationError[] => {
   const { options } = universalFlatFieldMetadata;
