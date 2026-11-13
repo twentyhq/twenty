@@ -1961,8 +1961,8 @@ input CreateViewInput {
   Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
+  ownerViewFieldId: UUID
   position: Float = 0
-  scopedViewFieldId: UUID
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
@@ -6291,8 +6291,8 @@ type View {
   name: String!
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
+  ownerViewFieldId: UUID
   position: Float!
-  scopedViewFieldId: UUID
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!

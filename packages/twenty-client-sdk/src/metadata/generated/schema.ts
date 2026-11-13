@@ -4164,8 +4164,8 @@ export interface View {
     objectMetadataId: Scalars['UUID']
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn: ViewOpenRecordIn
+    ownerViewFieldId?: Scalars['UUID']
     position: Scalars['Float']
-    scopedViewFieldId?: Scalars['UUID']
     shouldDisplayGroupsAsTabs?: Scalars['Boolean']
     shouldHideEmptyGroups: Scalars['Boolean']
     type: ViewType
@@ -6098,7 +6098,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),scopedViewFieldId?: (Scalars['UUID'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),ownerViewFieldId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -9391,8 +9391,8 @@ export interface ViewGenqlSelection{
     objectMetadataId?: boolean | number
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn?: boolean | number
+    ownerViewFieldId?: boolean | number
     position?: boolean | number
-    scopedViewFieldId?: boolean | number
     shouldDisplayGroupsAsTabs?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     type?: boolean | number

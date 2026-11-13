@@ -22,7 +22,7 @@ type DealFieldNode = {
 
 const SCOPE_VIEW_GQL_FIELDS = `
   ${VIEW_GQL_FIELDS}
-  scopedViewFieldId
+  ownerViewFieldId
 `;
 
 const testContext = {
@@ -49,12 +49,12 @@ const createDealViewField = async (fieldMetadataId: string) => {
 };
 
 const createScopeView = async ({
-  scopedViewFieldId,
+  ownerViewFieldId,
   objectMetadataId = testContext.actionItemObjectId,
   type = ViewType.TABLE_WIDGET,
   expectToFail,
 }: {
-  scopedViewFieldId: string;
+  ownerViewFieldId: string;
   objectMetadataId?: string;
   type?: ViewType;
   expectToFail: boolean;
@@ -67,7 +67,7 @@ const createScopeView = async ({
       icon: 'IconFilter',
       objectMetadataId,
       type,
-      scopedViewFieldId,
+      ownerViewFieldId,
     },
   });
 
@@ -194,14 +194,14 @@ describe('View scoping a one-to-many view field', () => {
     const {
       data: { createView: scopeView },
     } = await createScopeView({
-      scopedViewFieldId: viewFieldId,
+      ownerViewFieldId: viewFieldId,
       expectToFail: false,
     });
 
-    expect(scopeView.scopedViewFieldId).toBe(viewFieldId);
+    expect(scopeView.ownerViewFieldId).toBe(viewFieldId);
 
     const secondScopeViewResponse = await createScopeView({
-      scopedViewFieldId: viewFieldId,
+      ownerViewFieldId: viewFieldId,
       expectToFail: true,
     });
 
@@ -248,7 +248,7 @@ describe('View scoping a one-to-many view field', () => {
     const {
       data: { createView: scopeView },
     } = await createScopeView({
-      scopedViewFieldId: createViewField.id,
+      ownerViewFieldId: createViewField.id,
       expectToFail: false,
     });
 
@@ -286,7 +286,7 @@ describe('View scoping a one-to-many view field', () => {
       );
 
       const response = await createScopeView({
-        scopedViewFieldId: viewFieldId,
+        ownerViewFieldId: viewFieldId,
         expectToFail: true,
         ...getScopeViewOverrides(),
       });
@@ -304,7 +304,7 @@ describe('View scoping a one-to-many view field', () => {
     const viewFieldId = await createDealViewField(testContext.nextStepFieldId);
 
     const response = await createScopeView({
-      scopedViewFieldId: viewFieldId,
+      ownerViewFieldId: viewFieldId,
       expectToFail: true,
     });
 
