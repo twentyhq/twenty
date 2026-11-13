@@ -1,27 +1,60 @@
 import { EmailsCardContent } from '@/activities/emails/components/EmailsCardContent';
+import { timelineThreadChannelFilterFamilyState } from '@/activities/emails/states/timelineThreadChannelFilterFamilyState';
+import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { PageLayoutType } from '~/generated-metadata/graphql';
+import { MessageChannelType } from '~/generated/graphql';
+
+const TARGET_RECORD_ID = 'story-company';
+
+const getTimelineThreadChannelFilter = () =>
+  jotaiStore.get(
+    timelineThreadChannelFilterFamilyState.atomFamily(TARGET_RECORD_ID),
+  );
 
 const onRetry = fn();
-const onClearFilter = fn();
 
 const meta: Meta<typeof EmailsCardContent> = {
   title: 'Modules/Activities/Emails/EmailsCardContent',
   component: EmailsCardContent,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <LayoutRenderingProvider
+        value={{
+          layoutType: PageLayoutType.RECORD_PAGE,
+          targetRecordIdentifier: {
+            id: TARGET_RECORD_ID,
+            targetObjectNameSingular: StandardObjectNameSingular.Company,
+          },
+        }}
+      >
+        <Story />
+      </LayoutRenderingProvider>
+    ),
+    ComponentDecorator,
+  ],
   parameters: { container: { width: 360 } },
   args: {
     firstQueryLoading: false,
     isFetchingMore: false,
     onLastRowVisible: fn(async () => undefined),
     onRetry,
-    onClearFilter,
     timelineThreads: undefined,
   },
   beforeEach: () => {
     onRetry.mockClear();
-    onClearFilter.mockClear();
+    jotaiStore.set(
+      timelineThreadChannelFilterFamilyState.atomFamily(TARGET_RECORD_ID),
+      {
+        type: MessageChannelType.EMAIL,
+        provider: 'microsoft',
+        applicationId: null,
+      },
+    );
   },
 };
 
@@ -56,6 +89,6 @@ export const NoMatchingConversation: Story = {
 
     await userEvent.click(canvas.getByRole('button', { name: 'Clear filter' }));
 
-    await expect(onClearFilter).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(getTimelineThreadChannelFilter()).toBeNull());
   },
 };

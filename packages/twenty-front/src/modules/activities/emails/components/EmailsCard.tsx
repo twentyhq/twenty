@@ -12,14 +12,16 @@ import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/use
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { timelineThreadChannelFilterFamilyState } from '@/activities/emails/states/timelineThreadChannelFilterFamilyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { type TimelineThreadsWithTotal } from '~/generated/graphql';
 
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
   const apolloCoreClient = useApolloCoreClient();
-  const [timelineThreadChannelFilter, setTimelineThreadChannelFilter] =
-    useAtomFamilyState(timelineThreadChannelFilterFamilyState, targetRecord.id);
+  const timelineThreadChannelFilter = useAtomFamilyStateValue(
+    timelineThreadChannelFilterFamilyState,
+    targetRecord.id,
+  );
 
   const {
     data,
@@ -72,7 +74,6 @@ export const EmailsCard = () => {
         error={error}
         onRetry={() => refetch()}
         isFiltered={isDefined(timelineThreadChannelFilter)}
-        onClearFilter={() => setTimelineThreadChannelFilter(null)}
         firstQueryLoading={firstQueryLoading}
         isFetchingMore={isFetchingMore}
         onLastRowVisible={handleLastRowVisible}

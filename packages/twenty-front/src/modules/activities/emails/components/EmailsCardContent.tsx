@@ -2,16 +2,13 @@ import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EmailsCardErrorState } from '@/activities/emails/components/EmailsCardErrorState';
+import { EmailsCardNoMatchingConversation } from '@/activities/emails/components/EmailsCardNoMatchingConversation';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
 import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components/layout';
-import { IconFilterOff } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineThread } from '~/generated/graphql';
 
@@ -30,7 +27,6 @@ type EmailsCardContentProps = {
   error?: unknown;
   onRetry: () => void;
   isFiltered?: boolean;
-  onClearFilter?: () => void;
   firstQueryLoading: boolean;
   isFetchingMore: boolean;
   onLastRowVisible: () => Promise<void>;
@@ -41,14 +37,11 @@ export const EmailsCardContent = ({
   error,
   onRetry,
   isFiltered = false,
-  onClearFilter,
   firstQueryLoading,
   isFetchingMore,
   onLastRowVisible,
   timelineThreads,
 }: EmailsCardContentProps) => {
-  const { t } = useLingui();
-
   if (firstQueryLoading) {
     return <SkeletonLoader />;
   }
@@ -58,23 +51,7 @@ export const EmailsCardContent = ({
   }
 
   if (isFiltered && !timelineThreads?.length) {
-    return (
-      <EmptyState.Root>
-        <EmptyState.Content>
-          <EmptyState.Title>{t`No matching conversations`}</EmptyState.Title>
-          <EmptyState.Description>
-            {t`No conversation uses this channel.`}
-          </EmptyState.Description>
-        </EmptyState.Content>
-        <EmptyState.Actions>
-          <Button
-            startIcon={<IconFilterOff />}
-            onClick={onClearFilter}
-            variant="outline"
-          >{t`Clear filter`}</Button>
-        </EmptyState.Actions>
-      </EmptyState.Root>
-    );
+    return <EmailsCardNoMatchingConversation />;
   }
 
   if (!timelineThreads?.length) {
