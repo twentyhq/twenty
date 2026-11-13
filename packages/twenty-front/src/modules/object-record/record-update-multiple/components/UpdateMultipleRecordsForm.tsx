@@ -39,8 +39,7 @@ export const UpdateMultipleRecordsForm = ({
     objectNameSingular,
   });
 
-  const editableFields =
-    getFieldsEditableInMultiEditForm(objectMetadataItem);
+  const editableFields = getFieldsEditableInMultiEditForm(objectMetadataItem);
 
   const fieldsWithDefinitions = editableFields.map((fieldMetadataItem) => ({
     fieldMetadataItem,

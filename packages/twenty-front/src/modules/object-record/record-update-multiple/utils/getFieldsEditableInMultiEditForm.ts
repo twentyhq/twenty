@@ -13,7 +13,8 @@ export const getFieldsEditableInMultiEditForm = (
   return objectMetadataItem.updatableFields
     .filter(
       (field) =>
-        readableFieldIds.has(field.id) && shouldDisplayFormMultiEditField(field),
+        readableFieldIds.has(field.id) &&
+        shouldDisplayFormMultiEditField(field),
     )
     .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name));
 };
