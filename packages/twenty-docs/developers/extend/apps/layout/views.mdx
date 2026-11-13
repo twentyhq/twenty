@@ -39,6 +39,7 @@ export default defineView({
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
 - The object's main list view is server-owned: `key` is deprecated and ignored, so a manifest view can never claim it. Ship a `VIEW` navigation item if you want your view one click away in the sidebar.
 - `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
+- A field's optional `settings` customize that one column: `label` renames it (1 to 63 characters), and `recordLimit` caps how many related records a one-to-many relation column shows per row (1 to 60).
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
@@ -58,6 +59,10 @@ export default defineView({
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                         | Calendar views: layout, the date field that positions records, and an optional end date field.                                                                                                 |
 
 All enums above are exported from `twenty-sdk/define`.
+
+### Scoping a relation column
+
+A `TABLE_WIDGET` view can filter and sort the related records one column shows. Set its `scopedViewFieldUniversalIdentifier` to a view field of a one-to-many relation, and give it the related object as `objectUniversalIdentifier`. Its `filters` and `sorts` then decide which related records appear in that column's cells, and the view is deleted with the column. Each column has at most one scope view.
 
 ## Filters
 

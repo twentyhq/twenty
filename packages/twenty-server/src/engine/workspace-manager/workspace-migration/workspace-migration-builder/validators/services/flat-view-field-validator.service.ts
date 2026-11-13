@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
+import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { isViewFieldInLowestPosition } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-in-lowest-position.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -67,7 +68,11 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
-    if (isDefined(flatEntityUpdate.settings)) {
+    // Settings edited on another app's view field land in universalOverrides
+    if (
+      isDefined(flatEntityUpdate.settings) ||
+      isDefined(flatEntityUpdate.universalOverrides)
+    ) {
       const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
         universalIdentifier:
           updatedFlatViewField.fieldMetadataUniversalIdentifier,
@@ -77,7 +82,11 @@ export class FlatViewFieldValidatorService {
       if (isDefined(flatFieldMetadata)) {
         validationResult.errors.push(
           ...validateFlatViewFieldSettings({
-            settings: flatEntityUpdate.settings,
+            settings: resolveEffectiveUniversalFlatEntityProperty({
+              metadataName: 'viewField',
+              universalFlatEntity: updatedFlatViewField,
+              property: 'settings',
+            }),
             flatFieldMetadata,
           }),
         );

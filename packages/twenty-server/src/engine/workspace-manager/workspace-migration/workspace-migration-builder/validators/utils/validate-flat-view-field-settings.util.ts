@@ -2,7 +2,8 @@ import { msg, t } from '@lingui/core/macro';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { RelationType, type ViewFieldSettings } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -39,6 +40,16 @@ export const validateFlatViewFieldSettings = ({
     return [];
   }
 
+  if (!isPlainObject(settings)) {
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`View field settings must be an object`,
+        userFriendlyMessage: msg`Invalid column settings`,
+      },
+    ];
+  }
+
   const errors: FlatEntityValidationError<ViewExceptionCode>[] = [];
 
   const unknownKeys = Object.keys(settings).filter(
@@ -57,8 +68,8 @@ export const validateFlatViewFieldSettings = ({
 
   if (
     isDefined(label) &&
-    (typeof label !== 'string' ||
-      label.trim().length === 0 ||
+    (!isString(label) ||
+      !isNonEmptyString(label.trim()) ||
       label.length > IDENTIFIER_MAX_CHAR_LENGTH)
   ) {
     errors.push({
