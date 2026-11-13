@@ -13,9 +13,10 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { In } from 'typeorm';
 
+import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { type ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
+import { SERVER_ADMINS_LOCK_NAME } from 'src/engine/core-modules/user/constants/server-admins-lock-name.constant';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -140,14 +141,23 @@ const updateServerAdminAccess = ({
     accessToken,
   );
 
-const getServerAdminLockService = () =>
-  getAppProviderByClassName<ServerAdminLockService>('ServerAdminLockService');
+const holdServerAdminsLockFromAnotherInstance = async (
+  callback: () => Promise<void>,
+  { isShared }: { isShared: boolean },
+) => {
+  const lockResult =
+    await getAppProviderByClassName<PostgresAdvisoryLockService>(
+      'PostgresAdvisoryLockService',
+    ).tryWithLock(SERVER_ADMINS_LOCK_NAME, callback, { isShared });
+
+  expect(lockResult.acquired).toBe(true);
+};
 
 const runWhileServerAdminsChange = (callback: () => Promise<void>) =>
-  getServerAdminLockService().runExclusively(callback);
+  holdServerAdminsLockFromAnotherInstance(callback, { isShared: false });
 
 const runWhileAUserIsRemoved = (callback: () => Promise<void>) =>
-  getServerAdminLockService().runShared(callback);
+  holdServerAdminsLockFromAnotherInstance(callback, { isShared: true });
 
 const expectServerAdminToBeUntouched = async (serverAdmin: Member) => {
   const user = await getCoreRepository<UserEntity>(UserEntity).findOne({
@@ -354,6 +364,27 @@ describe('Removing the last server admin', () => {
 
       expect(removedMember?.deletedAt).not.toBeNull();
     });
+  });
+
+  it('should remove more members at once than the database pool has connections', async () => {
+    const members: Member[] = [];
+    const poolSize = Number(process.env.PG_POOL_MAX_CONNECTIONS ?? 10);
+
+    for (let index = 0; index < poolSize + 2; index++) {
+      members.push(await signUpMember());
+    }
+
+    const removals = await Promise.all(
+      members.map((member) =>
+        deleteUserFromWorkspace({
+          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
+          expectToFail: false,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        }),
+      ),
+    );
+
+    expect(removals.every(({ errors }) => errors === undefined)).toBe(true);
   });
 
   it('should remove a server admin from their only workspace when another server admin is left', async () => {
