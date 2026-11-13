@@ -1,11 +1,11 @@
 import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AiChatNewThreadDefaultRecipients';
 import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/InboxRecentThreadListSource';
-import { inboxThreadListFamilyState } from '@/ai/states/inboxThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/ai/utils/getInboxThreadListSourceKey';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

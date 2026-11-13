@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateInboxThreadStatus';
+import { useUpdateInboxThreadStatus } from '@/inbox/hooks/useUpdateInboxThreadStatus';
 import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadOpenViewCountState } from '@/ai/states/aiChatThreadOpenViewCountState';

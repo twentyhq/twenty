@@ -9,7 +9,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadRowContent } from '@/ai/components/AiChatThreadRowContent';
-import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
+import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
 
 const StyledRow = styled.div<{ $isCompact: boolean }>`
   border-bottom: ${({ $isCompact }) =>

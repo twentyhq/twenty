@@ -5,14 +5,14 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
-import { InboxChannelIcon } from '@/ai/components/InboxChannelIcon';
+import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/inboxAccessibleChannelsSelector';
+import { inboxAccessibleChannelsSelector } from '@/inbox/states/selectors/inboxAccessibleChannelsSelector';
 import { getToggledRecipientWorkspaceMemberIds } from '@/ai/utils/getToggledRecipientWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';

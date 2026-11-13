@@ -1,6 +1,6 @@
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { type InboxThreadListItemData } from '@/ai/types/InboxThreadListItemData';
+import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
   sectionId: string;

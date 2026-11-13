@@ -9,7 +9,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -51,8 +51,7 @@ export class MessagingMessagesImportService {
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceInternalImportService: WorkspaceInternalImportService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -184,10 +183,10 @@ export class MessagingMessagesImportService {
             );
           }
 
-          const workspace = await this.workspaceRepository.findOne({
-            where: { id: workspaceId },
-            select: ['id', 'isInternalMessagesImportEnabled'],
-          });
+          const isInternalImportEnabled =
+            await this.workspaceInternalImportService.isInternalImportEnabled({
+              workspaceId,
+            });
 
           const messagesToSave = filterEmails(
             messageChannel.handle,
@@ -197,7 +196,7 @@ export class MessagingMessagesImportService {
               .map((blocklistItem) => blocklistItem.handle)
               .filter(isDefined),
             messageChannel.excludeGroupEmails,
-            workspace?.isInternalMessagesImportEnabled ?? false,
+            isInternalImportEnabled,
           );
 
           if (messagesToSave.length > 0) {

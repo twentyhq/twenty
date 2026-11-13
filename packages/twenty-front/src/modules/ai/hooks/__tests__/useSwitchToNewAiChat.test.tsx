@@ -5,7 +5,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
 
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 
