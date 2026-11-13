@@ -57,6 +57,8 @@ export const EmailsCard = () => {
 
       <WidgetHeaderCountEffect count={totalNumberOfThreads} />
       <EmailsCardContent
+        error={error}
+        onRetry={() => refetch()}
         firstQueryLoading={firstQueryLoading}
         isFetchingMore={isFetchingMore}
         onLastRowVisible={handleLastRowVisible}

@@ -3,15 +3,15 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 
-type CoreWorkflowRunCountCellProps = {
+type CoreObjectRunCountCellProps = {
   runCount: number | null;
   isLowerBound: boolean;
 };
 
-export const CoreWorkflowRunCountCell = ({
+export const CoreObjectRunCountCell = ({
   runCount,
   isLowerBound,
-}: CoreWorkflowRunCountCellProps) => {
+}: CoreObjectRunCountCellProps) => {
   const { formatNumber } = useNumberFormat();
 
   if (!isDefined(runCount)) {
