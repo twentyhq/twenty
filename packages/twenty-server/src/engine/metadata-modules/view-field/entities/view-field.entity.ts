@@ -114,7 +114,6 @@ export class ViewFieldEntity
   @Column({ type: 'jsonb', nullable: true })
   settings: JsonbProperty<ViewFieldSettings> | null;
 
-  // A field of the related record, shown instead of the record itself
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME,

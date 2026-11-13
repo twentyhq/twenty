@@ -11,6 +11,7 @@ import { createOneViewField } from 'test/integration/metadata/suites/view-field/
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -52,7 +53,7 @@ const createTextField = async (objectMetadataId: string, name: string) => {
     },
   });
 
-  return id as string;
+  return id;
 };
 
 const createView = async (objectMetadataId: string) => {
@@ -63,7 +64,7 @@ const createView = async (objectMetadataId: string) => {
     input: { name: 'Lookups', icon: 'IconTable', objectMetadataId },
   });
 
-  return createView.id as string;
+  return createView.id;
 };
 
 const createLookupViewField = ({
@@ -150,13 +151,18 @@ describe('View field showing a field of the related record', () => {
     testContext.dealObjectId = dealObjectId;
     testContext.companyObjectId = companyObjectId;
     testContext.dealCompanyFieldId = dealCompanyFieldId;
-    testContext.companyDealsFieldId =
-      fields
-        .map(({ node }: { node: FieldNode }) => node)
-        .find(
-          (field: FieldNode) =>
-            field.object?.id === companyObjectId && field.name === 'deals',
-        )?.id ?? '';
+    const companyDealsField = fields
+      .map(({ node }: { node: FieldNode }) => node)
+      .find(
+        (field: FieldNode) =>
+          field.object?.id === companyObjectId && field.name === 'deals',
+      );
+
+    if (!isDefined(companyDealsField)) {
+      throw new Error('Inverse deals relation field was not created');
+    }
+
+    testContext.companyDealsFieldId = companyDealsField.id;
     testContext.companyIndustryFieldId = await createTextField(
       companyObjectId,
       'industry',
