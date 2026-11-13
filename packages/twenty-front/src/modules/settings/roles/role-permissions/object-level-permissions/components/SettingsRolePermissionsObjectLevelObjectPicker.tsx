@@ -9,6 +9,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSearch } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -72,7 +73,10 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
     navigate(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId },
-      fromAgentId ? { fromAgent: fromAgentId } : undefined,
+      {
+        fromObjectPicker: 'true',
+        ...(isDefined(fromAgentId) ? { fromAgent: fromAgentId } : {}),
+      },
     );
   };
 

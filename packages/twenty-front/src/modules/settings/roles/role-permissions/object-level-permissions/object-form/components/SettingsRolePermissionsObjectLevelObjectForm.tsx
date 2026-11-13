@@ -42,6 +42,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
+  const isFromObjectPicker = searchParams.get('fromObjectPicker') === 'true';
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -107,9 +108,15 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
-  const previousStepPath = `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
-    roleId,
-  })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;
+  const objectPickerPath = getSettingsPath(
+    SettingsPath.RoleAddObjectLevel,
+    { roleId },
+    isDefined(fromAgentId) ? { fromAgent: fromAgentId } : undefined,
+  );
+
+  const backButtonPath = isFromObjectPicker
+    ? objectPickerPath
+    : finishButtonPath;
 
   const headerTitle =
     fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
@@ -140,7 +147,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       secondaryBar={
         <SettingsWizardStepBar
           label={t`2. Set ${objectLabelPlural} permissions`}
-          onBack={() => navigate(previousStepPath)}
+          onBack={() => navigate(backButtonPath)}
           trailing={
             <NavigationButton
               size="sm"
