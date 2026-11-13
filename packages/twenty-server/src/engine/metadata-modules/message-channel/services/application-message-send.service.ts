@@ -62,6 +62,9 @@ const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
 
 const APP_MESSAGE_DELIVERY_LOCK_OPTIONS = { ms: 500, maxRetries: 180 };
 
+const getAttachmentClaimKey = (workspaceId: string, fileId: string) =>
+  `app-message-attachment-claim:${workspaceId}:${fileId}`;
+
 type SendArgs = {
   workspaceId: string;
   userWorkspaceId: string;
@@ -383,7 +386,7 @@ export class ApplicationMessageSendService {
     deliveryKey: string;
   }): Promise<void> {
     for (const { id, name } of attachments) {
-      const claimKey = `app-message-attachment-claim:${workspaceId}:${id}`;
+      const claimKey = getAttachmentClaimKey(workspaceId, id);
 
       const hasClaimed = await this.cacheStorageService.setIfAbsent(
         claimKey,
@@ -413,7 +416,7 @@ export class ApplicationMessageSendService {
     deliveryKey: string;
   }): Promise<void> {
     for (const { id } of attachments) {
-      const claimKey = `app-message-attachment-claim:${workspaceId}:${id}`;
+      const claimKey = getAttachmentClaimKey(workspaceId, id);
 
       if (
         (await this.cacheStorageService.get<string>(claimKey)) === deliveryKey
