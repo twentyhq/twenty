@@ -8,6 +8,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import {
+  type ApplicationOAuthClient,
   type ApplicationBilling,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type Manifest,
@@ -61,6 +62,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { type ApplicationInstallation } from 'src/engine/core-modules/application/application-registration/types/application-installation.type';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { getApplicationOAuthClient } from 'src/engine/core-modules/application/application-marketplace/utils/get-application-oauth-client.util';
 import { getApplicationAuthorDisplayName } from 'src/engine/core-modules/application/application-registration/utils/get-application-author-display-name.util';
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { sortApplicationRegistrationsForAdmin } from 'src/engine/core-modules/application/application-registration/utils/sort-application-registrations-for-admin.util';
@@ -118,6 +120,7 @@ export type ApplicationRegistrationCatalogCard = {
   category: string | null;
   logoUrl: string | null;
   requiredServerVersionRange: string | null;
+  oAuthClient: ApplicationOAuthClient | null;
 };
 
 @Injectable()
@@ -1110,6 +1113,7 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       requiredServerVersionRange:
         registration.manifest?.application?.requiredServerVersionRange ?? null,
+      oAuthClient: getApplicationOAuthClient(registration.manifest) ?? null,
     }));
   }
 

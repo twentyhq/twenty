@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
-import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
+import { type MarketplaceCatalogApp } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-catalog-app.type';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import {
@@ -41,7 +41,7 @@ const compareCatalogCards = (
 @Injectable()
 @CoreEntityCache('marketplaceCatalog')
 export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvider<
-  Record<string, MarketplaceAppDTO>
+  Record<string, MarketplaceCatalogApp>
 > {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
@@ -51,7 +51,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     super();
   }
 
-  async computeForCache(): Promise<Record<string, MarketplaceAppDTO>> {
+  async computeForCache(): Promise<Record<string, MarketplaceCatalogApp>> {
     const registrations =
       await this.applicationRegistrationService.findManyCatalogCards();
 
@@ -79,10 +79,10 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
     return configuredRegistrations
       .filter((_registration, index) => serverCompatibilities[index].compatible)
       .sort(compareCatalogCards)
-      .reduce<Record<string, MarketplaceAppDTO>>(
+      .reduce<Record<string, MarketplaceCatalogApp>>(
         (accumulator, registration) => {
           accumulator[registration.universalIdentifier] =
-            this.toMarketplaceAppDTO(registration);
+            this.toMarketplaceCatalogApp(registration);
 
           return accumulator;
         },
@@ -90,9 +90,9 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       );
   }
 
-  private toMarketplaceAppDTO(
+  private toMarketplaceCatalogApp(
     catalogCard: ApplicationRegistrationCatalogCard,
-  ): MarketplaceAppDTO {
+  ): MarketplaceCatalogApp {
     return {
       id: catalogCard.universalIdentifier,
       name: catalogCard.name,
@@ -101,6 +101,9 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       category: catalogCard.category ?? '',
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
+      connectUrl: catalogCard.oAuthClient?.connectUrl,
+      clientIdMetadataDocumentUrls:
+        catalogCard.oAuthClient?.clientIdMetadataDocumentUrls,
       isListed: catalogCard.isListed,
     };
   }

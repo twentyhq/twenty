@@ -584,6 +584,42 @@ describe('defineApplication', () => {
     );
   });
 
+  it('should accept an OAuth client with an https metadata document URL and connect URL', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      oAuthClient: {
+        clientIdMetadataDocumentUrls: [
+          'https://client.example.com/oauth/client.json',
+        ],
+        connectUrl: 'https://client.example.com/connect?server={mcpServerUrl}',
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when an OAuth client connect URL is not https', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      oAuthClient: {
+        clientIdMetadataDocumentUrls: [
+          'https://client.example.com/oauth/client.json',
+        ],
+        connectUrl: 'javascript:alert(1)',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'OAuth client must declare an https connect URL',
+    );
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',

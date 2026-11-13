@@ -246,4 +246,30 @@ If you plan to [publish your app](/developers/extend/apps/operations/publishing)
 `logoUrl` and `screenshots` are deprecated aliases of `logo` and `galleryImages`. External absolute URLs (`http://` or `https://`) are not supported for these fields: they are dropped with a warning at build time. Bundle the images in your app's `public/` folder instead.
 </Note>
 
+## OAuth client
+
+Some apps list an external client that members connect to Twenty themselves, such as an AI assistant. The client signs in with OAuth and identifies itself with a [client ID metadata document](https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/), so the app has nothing to install. Declare the client with `oAuthClient`:
+
+```ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Acme Assistant',
+  description: 'Work with your Twenty workspace from Acme Assistant.',
+  oAuthClient: {
+    clientIdMetadataDocumentUrls: ['https://acme.example.com/oauth/client.json'],
+    connectUrl: 'https://acme.example.com/connect?server={mcpServerUrl}',
+  },
+});
+```
+
+| Field | Description |
+|-------|-------------|
+| `clientIdMetadataDocumentUrls` | The https URLs your client presents as its `client_id`. Each is compared in full, so write it exactly as the client sends it |
+| `connectUrl` | The https page where a member starts connecting. `{mcpServerUrl}` is replaced by the server's MCP endpoint |
+
+- The marketplace page of the app shows a **Connect** button that opens `connectUrl`, in place of **Install**.
+- Each member connects with their own account, and the client acts with that member's permissions.
+- A member's connection is shown under your app only once the app is listed in the marketplace, and only when no other listed app declares the same document URL.
+- Declaring a client does not mark it as verified on the consent screen. That list is kept by the server.
+
 <PageBanner illustration="card-page-application-config" />

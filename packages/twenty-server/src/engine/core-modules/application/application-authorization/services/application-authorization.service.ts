@@ -4,14 +4,41 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
+import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-app-universal-identifiers-by-client-id-metadata-document-url.util';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
+
+  async toApplicationAuthorizationDTOs(
+    authorizations: ApplicationAuthorizationEntity[],
+  ): Promise<ApplicationAuthorizationDTO[]> {
+    const marketplaceCatalog =
+      (await this.coreEntityCacheService.get(
+        'marketplaceCatalog',
+        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+      )) ?? {};
+    const marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl =
+      findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl(
+        Object.values(marketplaceCatalog),
+      );
+
+    return authorizations.map((authorization) =>
+      toApplicationAuthorizationDTO({
+        authorization,
+        marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl,
+      }),
+    );
+  }
 
   async recordAuthorization({
     userId,

@@ -12,6 +12,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
+import { getApplicationOAuthClient } from 'src/engine/core-modules/application/application-marketplace/utils/get-application-oauth-client.util';
 import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
 import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
 import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
@@ -197,6 +198,7 @@ export class MarketplaceQueryService {
         registration.issueReportUrl ??
         registration.manifest?.application?.issueReportUrl ??
         undefined,
+      connectUrl: getApplicationOAuthClient(manifest)?.connectUrl,
       screenshots: galleryImageUrls,
       galleryImages: galleryImageUrls,
       installCount,

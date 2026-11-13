@@ -5,6 +5,7 @@ import { type SettingsFrontComponentApplicationManifest } from '@/application/se
 import { type UninstallLogicFunctionApplicationManifest } from '@/application/uninstallLogicFunctionApplicationType';
 import { type FrontComponentSharedDependenciesManifest } from '@/application/frontComponentSharedDependenciesManifestType';
 import { type ApplicationCapability } from '@/application/applicationCapabilityType';
+import { type ApplicationOAuthClient } from '@/application/applicationOAuthClientType';
 import { type IframeMediaPermission } from '@/types/IframeMediaPermission';
 import { type ApplicationBilling } from './applicationBillingType';
 import { type ApplicationCategory } from './applicationCategoryType';
@@ -38,6 +39,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
   termsUrl?: string;
   emailSupport?: string;
   issueReportUrl?: string;
+  oAuthClient?: ApplicationOAuthClient;
   postInstallLogicFunction?: PostInstallLogicFunctionApplicationManifest;
   preInstallLogicFunction?: PreInstallLogicFunctionApplicationManifest;
   uninstallLogicFunction?: UninstallLogicFunctionApplicationManifest;

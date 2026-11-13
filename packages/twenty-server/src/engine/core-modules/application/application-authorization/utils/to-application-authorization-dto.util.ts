@@ -4,9 +4,16 @@ import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/app
 import { type ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { findVerifiedOAuthClientForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-registration.util';
 
-export const toApplicationAuthorizationDTO = (
-  authorization: ApplicationAuthorizationEntity,
-): ApplicationAuthorizationDTO => {
+export const toApplicationAuthorizationDTO = ({
+  authorization,
+  marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl,
+}: {
+  authorization: ApplicationAuthorizationEntity;
+  marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl: Record<
+    string,
+    string
+  >;
+}): ApplicationAuthorizationDTO => {
   const { applicationRegistration } = authorization.application;
 
   return {
@@ -19,7 +26,11 @@ export const toApplicationAuthorizationDTO = (
       authorization.application.universalIdentifier,
     marketplaceAppUniversalIdentifier: isDefined(applicationRegistration)
       ? (findVerifiedOAuthClientForRegistration(applicationRegistration)
-          ?.marketplaceAppUniversalIdentifier ?? null)
+          ?.marketplaceAppUniversalIdentifier ??
+        marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl[
+          applicationRegistration.oAuthClientId
+        ] ??
+        null)
       : null,
     scopes: authorization.scopes,
     lastAuthorizedAt: authorization.lastAuthorizedAt,

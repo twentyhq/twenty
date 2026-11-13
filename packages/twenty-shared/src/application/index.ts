@@ -57,6 +57,7 @@ export type {
   ApplicationHealthCheckResult,
 } from './applicationHealthType';
 export { isApplicationHealthCheckResult } from './applicationHealthType';
+export type { ApplicationOAuthClient } from './applicationOAuthClientType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -348,6 +349,7 @@ export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontC
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
+export { validateApplicationOAuthClient } from './utils/validateApplicationOAuthClient';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {
   ViewManifestFilterValue,

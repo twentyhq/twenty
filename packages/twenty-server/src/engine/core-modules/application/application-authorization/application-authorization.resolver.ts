@@ -4,7 +4,6 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
-import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -48,7 +47,9 @@ export class ApplicationAuthorizationResolver {
         { userId: user.id, workspaceId: workspace.id },
       );
 
-    return authorizations.map(toApplicationAuthorizationDTO);
+    return this.applicationAuthorizationService.toApplicationAuthorizationDTOs(
+      authorizations,
+    );
   }
 
   @Mutation(() => Boolean)

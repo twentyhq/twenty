@@ -1,5 +1,9 @@
 import crypto from 'crypto';
 
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -50,6 +54,11 @@ export const insertCatalogApplicationRegistration = async ({
       category,
     ],
   );
+
+  // A row inserted by SQL bypasses the invalidation, and any earlier suite may have filled the cache
+  await getAppProviderByClassName<CoreEntityCacheService>(
+    'CoreEntityCacheService',
+  ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
 
   return id;
 };
