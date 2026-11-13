@@ -19,7 +19,10 @@ import { removePendingWakeUpJobs } from 'test/integration/utils/remove-pending-w
 import { resetCalendarChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { scheduleChannelStage } from 'test/integration/utils/schedule-channel-stage.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  countRunningJobs,
+  waitForAllJobsToFinish,
+} from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -145,6 +148,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
       for (const { resumeAt } of await findRecurringEventWakeUps()) {
         expect(resumeAt.getTime()).toBeGreaterThan(Date.now());
       }
+
+      expect(
+        await countRunningJobs({ queueName: MessageQueue.delayedJobsQueue }),
+      ).toBe(0);
     });
 
     await removeRecurringEventWakeUpJobs();
@@ -168,6 +175,10 @@ describe('Google calendar recurring event horizon (integration)', () => {
       expect(
         (await findRecurringEventWakeUps()).map(({ id }) => id),
       ).not.toContain(wakeUpId);
+
+      expect(
+        await countRunningJobs({ queueName: MessageQueue.delayedJobsQueue }),
+      ).toBe(0);
     });
 
     await removeRecurringEventWakeUpJobs();
