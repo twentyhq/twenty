@@ -16,7 +16,6 @@ import { type MessagingProviderMessageSenderService } from 'src/engine/metadata-
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// chat replies never compile an email body, and the real util pulls in the built twenty-emails package
 jest.mock(
   'src/engine/core-modules/email/utils/compile-outbound-email-content.util',
   () => ({ compileOutboundEmailContent: jest.fn() }),

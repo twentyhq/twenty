@@ -73,7 +73,6 @@ export class SendAppChannelMessageInput {
   @IsUUID()
   messageThreadId: string;
 
-  // may be empty when attachments are sent; the service requires one of the two
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

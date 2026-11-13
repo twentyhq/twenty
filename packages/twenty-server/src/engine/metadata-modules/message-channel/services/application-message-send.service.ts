@@ -94,7 +94,6 @@ type AppMessageDelivery = Conversation & {
   subject: string | null;
   cc: AppMessageReplyRecipient[];
   bcc: AppMessageReplyRecipient[];
-  // a retry records what was delivered, not what it carries; absent on deliveries cached before attachments
   attachments?: SendAppChannelMessageAttachmentInput[];
 };
 
@@ -192,7 +191,6 @@ export class ApplicationMessageSendService {
 
     return this.cacheLockService.withLock(
       async () => {
-        // the source uploads are deleted once a send completes, so a retry must not need them again
         const sentMessage =
           await this.cacheStorageService.get<SendAppChannelMessageOutput>(
             sentMessageKey,

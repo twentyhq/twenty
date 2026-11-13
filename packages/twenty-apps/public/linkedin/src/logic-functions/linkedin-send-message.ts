@@ -16,7 +16,6 @@ import { type SendAppMessageAttachment } from 'src/types/send-app-message-attach
 import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoing-attachment.type';
 import { sendUnipileChatMessage } from 'src/unipile/utils/send-unipile-chat-message.util';
 
-// servers before 2.59 send no attachments field
 type SendAppMessagePayloadWithAttachments = SendAppMessagePayload & {
   attachments?: SendAppMessageAttachment[];
 };
@@ -46,7 +45,6 @@ const downloadAttachmentsWithinTotalSizeLimitOrThrow = async ({
   let remainingSizeBytes =
     LINKEDIN_SEND_MESSAGE_ATTACHMENTS_MAX_TOTAL_SIZE_BYTES;
 
-  // one at a time, so a file larger than announced cannot push the reply past the total limit
   for (const attachment of attachments) {
     const unipileAttachment = await downloadSendMessageAttachmentOrThrow({
       attachment,

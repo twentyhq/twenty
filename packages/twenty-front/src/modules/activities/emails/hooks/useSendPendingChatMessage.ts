@@ -16,7 +16,6 @@ type SendPendingChatMessageArguments = {
 export const useSendPendingChatMessage = () => {
   const { sendAppChannelMessage } = useSendAppChannelMessage();
   const { uploadEmailAttachment } = useUploadEmailAttachment();
-  // a retry reuses the uploads that succeeded and only uploads the failed files again
   const [uploadsByPendingMessageId, setUploadsByPendingMessageId] = useState<
     Record<string, (EmailAttachment | null)[]>
   >({});
@@ -40,7 +39,6 @@ export const useSendPendingChatMessage = () => {
 
     const attachments = uploads.filter(isDefined);
 
-    // the upload already toasted the failure; throwing marks the message as failed
     if (attachments.length < files.length) {
       throw new Error(doNotTranslate('Some attachments failed to upload'));
     }

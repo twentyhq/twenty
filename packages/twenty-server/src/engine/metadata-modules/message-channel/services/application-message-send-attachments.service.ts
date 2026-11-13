@@ -105,7 +105,6 @@ export class ApplicationMessageSendAttachmentsService {
     );
   }
 
-  // copies are temporary until an attachment row claims them, so callers must clean up with deleteUnclaimedCopies
   async copyIntoAttachmentFileFieldOrThrow({
     attachments,
     workspaceId,
@@ -136,7 +135,6 @@ export class ApplicationMessageSendAttachmentsService {
         : [],
     );
 
-    // ingestion never adds attachments to a message that already has some, so a partial set could not be completed later
     if (isNonEmptyArray(copyFailures)) {
       await this.deleteUnclaimedCopies({ copiedAttachments, workspaceId });
 
@@ -149,7 +147,6 @@ export class ApplicationMessageSendAttachmentsService {
     return copiedAttachments;
   }
 
-  // unclaimed copies have no expiry, so cleanup crons never collect them
   async deleteUnclaimedCopies({
     copiedAttachments,
     workspaceId,
@@ -161,7 +158,6 @@ export class ApplicationMessageSendAttachmentsService {
       return;
     }
 
-    // runs after delivery, so a cleanup failure must not fail the send
     try {
       const files = await this.fileRepository.find(workspaceId, {
         where: { id: In(copiedAttachments.map(({ fileId }) => fileId)) },

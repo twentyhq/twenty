@@ -93,7 +93,6 @@ export const useEmailComposerState = ({
   const canAttachFiles =
     !isSendingThroughAppSender || isMessageAttachmentEnabled;
 
-  // hide files the app cannot send, including uploads that finish after switching to the app
   const files = canAttachFiles ? attachedFiles : [];
 
   const { sendEmail, loading: isSendingEmail } = useSendEmail();
