@@ -161,6 +161,33 @@ export const MessagingAccount: Story = {
   },
 };
 
+export const SmtpOnlyAccount: Story = {
+  beforeEach: () => {
+    jotaiStore.set(myConnectedAccountsState.atom, [
+      {
+        ...WHATSAPP_ACCOUNT,
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        handle: 'tim@acme.com',
+        applicationId: null,
+        connectionProviderId: null,
+        connectionParameters: {
+          SMTP: { host: 'smtp.acme.com', port: 587 },
+        },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Send Email' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'Connect an account' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
 export const DisconnectedAccount: Story = {
   parameters: { msw: mockMessageChannels(() => [WHATSAPP_CHANNEL]) },
   beforeEach: () => {
