@@ -34,6 +34,7 @@ import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadLis
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -51,6 +52,7 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -122,6 +124,15 @@ const AiChatInboxPageContent = () => {
   const agentChatSelectedChannelView = useAtomStateValue(
     agentChatSelectedChannelViewSelector,
   );
+  const isSelectedThreadDirectMessage = useAtomFamilySelectorValue(
+    agentChatThreadIsDirectMessageFamilySelector,
+    selectedThreadId ?? null,
+  );
+  // A direct message is in no channel, so it takes the page alone instead of
+  // showing beside the channel picked last
+  const isChannelHiddenForDirectMessage =
+    isSelectedThreadDirectMessage && isDefined(agentChatSelectedChannelView);
+  const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const agentChatSelectedThreadListSource = useAtomStateValue(
     agentChatSelectedThreadListSourceState,
@@ -206,13 +217,13 @@ const AiChatInboxPageContent = () => {
   // Split view shows the list beside the chat or the selection; otherwise
   // the list and a chat each take the whole page
   const isListShown =
-    isSplitView || (!isDefined(selectedThreadId) && !isNewThreadRoute);
-  const isSelectionPaneShown = isSplitView && isSelectionShown;
+    isSplitLayout || (!isDefined(selectedThreadId) && !isNewThreadRoute);
+  const isSelectionPaneShown = isSplitLayout && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
   const isNewThreadShown = isNewThreadRoute && !isSelectionPaneShown;
   const isSecondaryPaneShown =
     isSelectionPaneShown || isThreadShown || isNewThreadShown;
-  const isListFullWidth = !isSplitView || !isSecondaryPaneShown;
+  const isListFullWidth = !isSplitLayout || !isSecondaryPaneShown;
   const isSidePanelShowingAiChat =
     isSidePanelOpened &&
     isSidePanelItemShowingAiChat(sidePanelNavigationStack.at(-1));
@@ -224,13 +235,15 @@ const AiChatInboxPageContent = () => {
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
 
   useGlobalHotkeys({
-    keys: [
-      Key.ArrowUp,
-      Key.ArrowDown,
-      ...(isListShown
-        ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
-        : []),
-    ],
+    keys: isChannelHiddenForDirectMessage
+      ? []
+      : [
+          Key.ArrowUp,
+          Key.ArrowDown,
+          ...(isListShown
+            ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
+            : []),
+        ],
     callback: navigateWithArrowKey,
     containsModifier: false,
     dependencies: [navigateWithArrowKey],
@@ -359,7 +372,7 @@ const AiChatInboxPageContent = () => {
       {shouldRenderConversationPane && (
         <AnimatePresence initial={false}>
           {(isNewThreadShown || isThreadShown) && (
-            <AiChatInboxConversationPane isSplitView={isSplitView}>
+            <AiChatInboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
                   <AiChatPageEffects />
@@ -375,7 +388,11 @@ const AiChatInboxPageContent = () => {
                   <AiChatThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={
-                      !isSplitView && !isMobile && <AiChatInboxBreadcrumb />
+                      !isSplitView &&
+                      !isMobile &&
+                      !isChannelHiddenForDirectMessage && (
+                        <AiChatInboxBreadcrumb />
+                      )
                     }
                     headerActions={
                       isMobile ? backToInboxButton : desktopThreadHeaderActions
