@@ -1,6 +1,6 @@
+import { TIMELINE_THREADS_REFETCH_QUERIES } from '@/activities/emails/constants/TimelineThreadsRefetchQueries';
 import { useMutation } from '@apollo/client/react';
 
-import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
@@ -23,7 +23,7 @@ export const useSendAppChannelMessage = () => {
     });
 
     await apolloCoreClient
-      .refetchQueries({ include: [getTimelineThreadsFromObjectRecord] })
+      .refetchQueries({ include: TIMELINE_THREADS_REFETCH_QUERIES })
       .catch(() => undefined);
 
     return result.data?.sendAppChannelMessage ?? null;

@@ -15,10 +15,7 @@ export const RecordTableColumnHeadWithDropdown = ({
   objectMetadataId,
   recordField,
 }: RecordTableColumnHeadWithDropdownProps) => (
-  <DropdownRoot
-    type="menu"
-    dropdownId={recordField.fieldMetadataItemId + '-header'}
-  >
+  <DropdownRoot type="menu" dropdownId={recordField.id + '-header'}>
     <Dropdown.Trigger nativeButton={false} render={<div />}>
       <RecordTableColumnHead recordField={recordField} />
     </Dropdown.Trigger>

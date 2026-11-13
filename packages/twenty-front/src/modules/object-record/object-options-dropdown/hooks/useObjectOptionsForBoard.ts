@@ -97,7 +97,7 @@ export const useObjectOptionsForBoard = ({
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      recordFieldToMove: Pick<RecordField, 'id'>;
       targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const updatedRecordField = reorderVisibleRecordFields({
@@ -146,7 +146,7 @@ export const useObjectOptionsForBoard = ({
       updatedFieldDefinition: Pick<
         ColumnDefinition<FieldMetadata>,
         'fieldMetadataId' | 'isVisible'
-      >,
+      > & { recordFieldId?: string },
     ) => {
       const lastPosition = currentRecordFields.toSorted(
         sortByProperty('position', 'desc'),
@@ -156,8 +156,10 @@ export const useObjectOptionsForBoard = ({
         updatedFieldDefinition.isVisible === true;
       const corresponingRecordField = currentRecordFields.find(
         (recordFieldToFind) =>
-          recordFieldToFind.fieldMetadataItemId ===
-          updatedFieldDefinition.fieldMetadataId,
+          isDefined(updatedFieldDefinition.recordFieldId)
+            ? recordFieldToFind.id === updatedFieldDefinition.recordFieldId
+            : recordFieldToFind.fieldMetadataItemId ===
+              updatedFieldDefinition.fieldMetadataId,
       );
 
       const noExistingRecordField = !isDefined(corresponingRecordField);
@@ -205,7 +207,7 @@ export const useObjectOptionsForBoard = ({
         // TODO: remove after refactor
         setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
       } else {
-        updateRecordField(updatedFieldDefinition.fieldMetadataId, {
+        updateRecordField(corresponingRecordField.id, {
           isVisible: shouldShowFieldMetadataItem,
         });
 
