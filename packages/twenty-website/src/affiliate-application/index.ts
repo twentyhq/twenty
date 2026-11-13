@@ -1,1 +1,2 @@
-export { AffiliateApplicationForm } from './AffiliateApplicationForm';
+export { AffiliateApplicationModalRoot } from './AffiliateApplicationModalRoot';
+export { AffiliateApplyButton } from './AffiliateApplyButton';

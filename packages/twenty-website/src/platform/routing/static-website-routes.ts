@@ -122,12 +122,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'yearly',
-    description: msg`The terms of the Twenty Affiliate Program: qualified referrals, commissions, payouts and how you may promote Twenty.`,
+    description: msg`The terms of the Twenty Partner Program for creators and integrators: qualified referrals, commissions, payouts and how you may promote Twenty.`,
     id: 'partnersTerms',
     indexed: false,
     path: '/partners/terms',
     priority: 0.3,
-    title: msg`Affiliate Program Terms | Twenty`,
+    title: msg`Partner Program Terms | Twenty`,
   },
   {
     changeFrequency: 'monthly',

@@ -1,9 +1,10 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
-import { Body, Button, Heading, SectionShell } from '@/ui';
+import { Body, Heading, SectionShell } from '@/ui';
 
 const SwitchRow = styled.div`
   align-items: center;
@@ -30,15 +31,13 @@ const SwitchCopy = styled.div`
   }
 `;
 
-type ProgramSwitchStripProps = {
+type ProgramStripProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
-  label: MessageDescriptor;
-  href: string;
+  action: ReactNode;
 };
 
-// Points people who landed on the other program's page to the one that fits them.
-export function ProgramSwitchStrip({ heading, body, label, href }: ProgramSwitchStripProps) {
+export function ProgramStrip({ heading, body, action }: ProgramStripProps) {
   const i18n = getServerI18n();
 
   return (
@@ -52,7 +51,7 @@ export function ProgramSwitchStrip({ heading, body, label, href }: ProgramSwitch
             {i18n._(body)}
           </Body>
         </SwitchCopy>
-        <Button href={href} label={i18n._(label)} variant="outlined" />
+        {action}
       </SwitchRow>
     </SectionShell>
   );

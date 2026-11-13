@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
 
 export const AFFILIATE_APPLICATION_COPY = {
+  title: msg`Apply as a\n*Twenty creator*`,
+  subtitle: msg`We review every application within 5 business days and send your link once you're approved.`,
   fields: {
     name: msg`Full name`,
     email: msg`Email`,

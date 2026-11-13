@@ -17,7 +17,7 @@ import { Menu } from '@/sections/menu';
 
 export const generateMetadata = buildRouteMetadata('partnersTerms');
 
-export default async function AffiliateProgramTermsPage({
+export default async function PartnerProgramTermsPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
@@ -43,7 +43,7 @@ export default async function AffiliateProgramTermsPage({
       />
       <Menu communityStats={communityStats} />
       <main>
-        <LegalDocument title={i18n._(msg`Affiliate Program Terms`)}>
+        <LegalDocument title={i18n._(msg`Partner Program Terms`)}>
           <AffiliateProgramTermsDocument />
         </LegalDocument>
       </main>

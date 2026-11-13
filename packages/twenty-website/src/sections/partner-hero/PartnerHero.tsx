@@ -1,18 +1,9 @@
-import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
-import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
-import {
-  fontFamily,
-  GRADIENT,
-  HERO_COMPOSITION,
-  mediaUp,
-  semanticColor,
-  spacing,
-  typeRampDeclarations,
-} from '@/tokens';
+import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnerVisual } from './PartnerVisual';
@@ -57,31 +48,15 @@ const BodyMeasure = styled.div`
   }
 `;
 
-// The hero's single CTA sits on the shared 32px Body->CTA step (IntroStack's
-// owl rhythm); the buyer hand-off hangs 12px under it so it reads as a
-// footnote to the CTA rather than as a second step in that rhythm.
-const CtaStack = styled.div`
+const CtaRow = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  gap: ${spacing(3)};
+  justify-content: center;
 
-  & > * + * {
-    margin-top: ${spacing(3)};
-  }
-`;
-
-// Deliberately duplicated from partner-lead/PartnerBecomeStrip's LearnMoreLink:
-// sections may not import each other, so the recipe is copied, not shared.
-const HireLink = styled(LocalizedLink)`
-  color: ${semanticColor.inkMuted};
-  display: inline-block;
-  font-family: ${fontFamily('sans')};
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  ${typeRampDeclarations('bodySm')}
-
-  &:hover {
-    color: ${semanticColor.ink};
+  ${mediaUp('sm')} {
+    flex-direction: row;
   }
 `;
 
@@ -90,7 +65,14 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
-export function PartnerHero() {
+type PartnerHeroProps = {
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
+  actions: ReactNode;
+};
+
+// Program pages (integrators, creators) share the /partners hero composition.
+export function PartnerHero({ heading, body, actions }: PartnerHeroProps) {
   const i18n = getServerI18n();
 
   return (
@@ -103,23 +85,16 @@ export function PartnerHero() {
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become a\n*Twenty integrator*`)}
+              {i18n._(heading)}
             </Heading>
           </HeadingMeasure>
           <BodyMeasure>
             <Body muted size="sm">
-              {i18n._(
-                msg`You implement Twenty for your clients. Earn 20% on every client you bring, get help from our team and other partners, and grow into a Lead Integrator to receive client briefs.`,
-              )}
+              {i18n._(body)}
             </Body>
           </BodyMeasure>
         </HeadingPair>
-        <CtaStack>
-          <BecomePartnerButton label={msg`Apply as an integrator`} />
-          <HireLink href="/partners">
-            {i18n._(msg`Looking to hire a partner?`)}
-          </HireLink>
-        </CtaStack>
+        <CtaRow>{actions}</CtaRow>
       </IntroStack>
       <VisualStage>
         <PartnerVisual />
