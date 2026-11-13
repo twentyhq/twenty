@@ -343,16 +343,18 @@ export class UserService {
       return;
     }
 
-    const hasOtherUser = await this.userRepository.exists({
+    const isOnlyUser = !(await this.userRepository.exists({
       where: { id: Not(user.id) },
-    });
+    }));
 
-    if (hasOtherUser) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
-        PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
-      );
+    if (isOnlyUser) {
+      return;
     }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    );
   }
 
   async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(

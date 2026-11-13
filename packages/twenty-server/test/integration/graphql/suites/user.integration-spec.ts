@@ -232,10 +232,13 @@ describe('last server admin removal', () => {
     accessToken: string;
   };
 
-  const setCanAccessFullAdminPanel = async (
-    userIds: string[],
-    canAccessFullAdminPanel: boolean,
-  ) => {
+  const setCanAccessFullAdminPanel = async ({
+    userIds,
+    canAccessFullAdminPanel,
+  }: {
+    userIds: string[];
+    canAccessFullAdminPanel: boolean;
+  }) => {
     await getCoreRepository<UserEntity>(UserEntity).update(
       { id: In(userIds) },
       { canAccessFullAdminPanel },
@@ -286,7 +289,10 @@ describe('last server admin removal', () => {
 
     serverAdmin = { id, workspaceMemberId: workspaceMember.id, accessToken };
 
-    await setCanAccessFullAdminPanel([id], true);
+    await setCanAccessFullAdminPanel({
+      userIds: [id],
+      canAccessFullAdminPanel: true,
+    });
   });
 
   afterEach(async () => {
@@ -315,10 +321,18 @@ describe('last server admin removal', () => {
 
       otherServerAdminIds = otherServerAdmins.map(({ id }) => id);
 
-      await setCanAccessFullAdminPanel(otherServerAdminIds, false);
+      await setCanAccessFullAdminPanel({
+        userIds: otherServerAdminIds,
+        canAccessFullAdminPanel: false,
+      });
     });
 
-    afterEach(() => setCanAccessFullAdminPanel(otherServerAdminIds, true));
+    afterEach(() =>
+      setCanAccessFullAdminPanel({
+        userIds: otherServerAdminIds,
+        canAccessFullAdminPanel: true,
+      }),
+    );
 
     it('should not allow removing their member from their only workspace', async () => {
       const { data, errors } = await deleteUserFromWorkspace({
