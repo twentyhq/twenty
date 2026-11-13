@@ -40,7 +40,7 @@ const buildDefaultValue = ({
   flatFieldMetadata,
   options,
 }: {
-  flatFieldMetadata: UniversalFlatFieldMetadata;
+  flatFieldMetadata: Pick<UniversalFlatFieldMetadata, 'type' | 'defaultValue'>;
   options: ReturnType<typeof resolveFlatFieldMetadataOptions>;
 }) => {
   const { type, defaultValue } = flatFieldMetadata;
