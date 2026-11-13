@@ -6,6 +6,7 @@
 
 - **LinkedIn messages in Twenty**: every message you send or receive lands on the matching Person and Company, next to their emails
 - **Shared files included**: images, videos, voice notes and documents up to 25 MB are attached to their message
+- **Unread conversations**: conversations you have not read on LinkedIn stand out on timelines, and reading them on LinkedIn clears them in Twenty
 - **Replies from Twenty**: answer a LinkedIn conversation from its thread in Twenty, sent from your own LinkedIn account
 - **One connection per member**: each teammate connects their own LinkedIn account in a few clicks
 

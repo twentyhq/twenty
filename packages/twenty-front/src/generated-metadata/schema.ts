@@ -556,6 +556,7 @@ export type AppMessageInput = {
   attachments?: InputMaybe<Array<AppMessageAttachmentInput>>;
   externalId: Scalars['String']['input'];
   folderExternalIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  isRead?: InputMaybe<Scalars['Boolean']['input']>;
   participants: Array<AppMessageParticipantInput>;
   receivedAt: Scalars['DateTime']['input'];
   subject?: InputMaybe<Scalars['String']['input']>;
@@ -3930,6 +3931,7 @@ export type Mutation = {
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
+  setAppMessageThreadReadState: SetAppMessageThreadReadStateOutput;
   setBillingPartnerCode: BillingPartnerCode;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setRecordPrivate: RecordSharingDto;
@@ -5051,6 +5053,11 @@ export type MutationSendMessageCampaignTestArgs = {
 
 export type MutationSetAppKeyValueArgs = {
   input: SetAppKeyValueInput;
+};
+
+
+export type MutationSetAppMessageThreadReadStateArgs = {
+  input: SetAppMessageThreadReadStateInput;
 };
 
 
@@ -7409,6 +7416,17 @@ export type SetAppKeyValueInput = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
   value?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type SetAppMessageThreadReadStateInput = {
+  isRead: Scalars['Boolean']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  threadExternalId: Scalars['String']['input'];
+};
+
+export type SetAppMessageThreadReadStateOutput = {
+  __typename?: 'SetAppMessageThreadReadStateOutput';
+  updatedMessageCount: Scalars['Int']['output'];
 };
 
 export type SettingsMenuItem = {

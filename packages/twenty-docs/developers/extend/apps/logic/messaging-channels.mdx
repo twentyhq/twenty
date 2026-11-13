@@ -156,6 +156,24 @@ Attachments are stored only while the message has none, so a redelivery never re
 
 Attachments follow the channel's `visibility` like the body: unless the conversation is fully shared, other members get an empty list.
 
+### Read state
+
+Each message can carry `isRead` for the member who owns the channel. It defaults to read, and it is only applied when the message is first stored, so a redelivery never overrides it. A thread shows as unread on timelines, to its channel owner only, while one of its incoming messages is unread. Opening the thread in Twenty marks it read.
+
+When the provider reports that a conversation was read or marked unread, call `setMessageThreadReadState`:
+
+```ts
+import { setMessageThreadReadState } from 'twenty-sdk/logic-function';
+
+await setMessageThreadReadState({
+  messageChannelId: channel.id,
+  threadExternalId: conversation.id,
+  isRead: conversation.unreadCount === 0,
+});
+```
+
+Marking a thread read marks all its messages read. Marking it unread flags its latest incoming message, and leaves the thread as is when it already has an unread message. Requires `"engines": { "twenty": ">=2.59.0" }`.
+
 ### Linking participants to People
 
 An unlinked participant pulls the conversation onto no record page, so every participant should end up linked to a Person. There are two ways to get there: let Twenty match handles against a person field, or resolve the person yourself.
@@ -301,7 +319,7 @@ Once your function returns, Twenty keeps the delivery for 24 hours under the mem
 
 ## Marking threads as read
 
-Twenty keeps no read state for app messages, but it can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
+Twenty can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
 
 ```ts src/messaging-providers/linkedin-messaging.ts
 export default defineMessagingProvider({

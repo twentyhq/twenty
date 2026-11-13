@@ -518,6 +518,7 @@ input AppMessageInput {
   attachments: [AppMessageAttachmentInput!]
   externalId: String!
   folderExternalIds: [String!]
+  isRead: Boolean
   participants: [AppMessageParticipantInput!]!
   receivedAt: DateTime!
   subject: String
@@ -3741,6 +3742,7 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  setAppMessageThreadReadState(input: SetAppMessageThreadReadStateInput!): SetAppMessageThreadReadStateOutput!
   setBillingPartnerCode(partnerCode: String!): BillingPartnerCode!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
   setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
@@ -5046,6 +5048,16 @@ input SetAppKeyValueInput {
   key: String!
   scope: AppKeyValueScope = WORKSPACE
   value: JSON
+}
+
+input SetAppMessageThreadReadStateInput {
+  isRead: Boolean!
+  messageChannelId: UUID!
+  threadExternalId: String!
+}
+
+type SetAppMessageThreadReadStateOutput {
+  updatedMessageCount: Int!
 }
 
 type SettingsMenuItem {

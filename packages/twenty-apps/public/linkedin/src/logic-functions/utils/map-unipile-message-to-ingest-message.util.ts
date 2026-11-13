@@ -9,6 +9,8 @@ import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-link
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
+type LinkedinIngestMessage = IngestMessage & { isRead?: boolean };
+
 const buildLinkedinMessageParticipants = ({
   message,
   channelHandle,
@@ -41,11 +43,13 @@ export const mapUnipileMessageToIngestMessage = ({
   message,
   channelHandle,
   counterparts,
+  isChatRead,
 }: {
   message: UnipileMessage;
   channelHandle: string;
   counterparts: UnipileUser[];
-}): IngestMessage | null => {
+  isChatRead?: boolean;
+}): LinkedinIngestMessage | null => {
   if (message.is_event || message.is_deleted) {
     return null;
   }
@@ -60,5 +64,8 @@ export const mapUnipileMessageToIngestMessage = ({
       channelHandle,
       counterparts,
     }),
+    ...(isDefined(isChatRead)
+      ? { isRead: message.is_sender || isChatRead }
+      : {}),
   };
 };

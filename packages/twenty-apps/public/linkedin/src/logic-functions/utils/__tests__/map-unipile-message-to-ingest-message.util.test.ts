@@ -107,4 +107,37 @@ describe('mapUnipileMessageToIngestMessage', () => {
       ).toBeNull();
     },
   );
+
+  it('marks a received message unread when the chat is unread', () => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage(),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [],
+        isChatRead: false,
+      })?.isRead,
+    ).toBe(false);
+  });
+
+  it('keeps a sent message read when the chat is unread', () => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage({ is_sender: true }),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [],
+        isChatRead: false,
+      })?.isRead,
+    ).toBe(true);
+  });
+
+  it('marks a received message read when the chat is read', () => {
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage(),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [],
+        isChatRead: true,
+      })?.isRead,
+    ).toBe(true);
+  });
 });
