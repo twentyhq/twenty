@@ -4925,6 +4925,11 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageAttachmentInput {
+  id: UUID!
+  name: String!
+}
+
 input SendAppChannelMessageEmailInput {
   bcc: String
   body: String!
@@ -4935,6 +4940,7 @@ input SendAppChannelMessageEmailInput {
 }
 
 input SendAppChannelMessageInput {
+  attachments: [SendAppChannelMessageAttachmentInput!]
   email: SendAppChannelMessageEmailInput
   idempotencyKey: UUID!
   messageChannelId: UUID!

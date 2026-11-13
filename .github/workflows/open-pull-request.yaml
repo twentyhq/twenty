@@ -1,4 +1,4 @@
-name: Open i18n pull request reusable workflow
+name: Open pull request reusable workflow
 
 # Actions may not open PRs in this repo, so the Twenty PR app does. Its key stays
 # out of the callers' jobs that run yarn install.
@@ -12,6 +12,10 @@ on:
       title:
         required: true
         type: string
+      body:
+        required: false
+        type: string
+        default: 'Created by Github action'
     secrets:
       TWENTY_PR_PRIVATE_KEY:
         required: true
@@ -36,21 +40,23 @@ jobs:
           permission-contents: write
           permission-pull-requests: write
 
-      - name: Open a pull request or add an app commit to the open one
+      - name: Open a pull request or update the open one
         env:
           GH_TOKEN: ${{ steps.twenty-pr-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
           BRANCH: ${{ inputs.branch }}
           TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
         run: |
           OPEN_PRS=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)
           if [ "$OPEN_PRS" = 0 ]; then
-            gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
+            gh pr create -B main -H "$BRANCH" --title "$TITLE" --body "$BODY"
           else
+            gh pr edit "$BRANCH" --body "$BODY"
             HEAD_SHA=$(gh api "repos/$GH_REPO/git/ref/heads/$BRANCH" --jq .object.sha)
             TREE_SHA=$(gh api "repos/$GH_REPO/git/commits/$HEAD_SHA" --jq .tree.sha)
             COMMIT_SHA=$(gh api "repos/$GH_REPO/git/commits" \
-              -f message='chore: run CI on the latest translations' \
+              -f message='chore: run CI on the latest push' \
               -f tree="$TREE_SHA" \
               -f "parents[]=$HEAD_SHA" \
               --jq .sha)
@@ -67,7 +73,7 @@ jobs:
           repositories: twenty-infra
           permission-actions: write
 
-      - name: Trigger i18n automerge
+      - name: Trigger automerge
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
