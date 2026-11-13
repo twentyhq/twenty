@@ -303,7 +303,7 @@ import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/
 import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
 import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
 import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
-import { BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794576631992-backfill-field-metadata-option-rows-from-stored-options';
+import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794581656744-backfill-field-metadata-option-rows-from-stored-options';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -609,5 +609,5 @@ export const INSTANCE_COMMANDS = [
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
   RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand,
   AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
-  BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand,
+  BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
 ];

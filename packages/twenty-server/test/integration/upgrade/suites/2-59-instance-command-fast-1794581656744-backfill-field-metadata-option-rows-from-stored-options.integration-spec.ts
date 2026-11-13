@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { type DataSource, type QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794576631992-backfill-field-metadata-option-rows-from-stored-options';
+import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794581656744-backfill-field-metadata-option-rows-from-stored-options';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -17,9 +17,9 @@ type OptionRow = {
   label: string;
 };
 
-describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand (integration)', () => {
+describe('2-59 fast instance command 1794581656744 - BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand (integration)', () => {
   const flush = jest.fn();
-  let command: BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand;
+  let command: BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand;
   let queryRunner: QueryRunner;
   let stageField: {
     id: string;
@@ -30,13 +30,13 @@ describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOption
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand,
+        BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
         { provide: WorkspaceCacheService, useValue: { flush } },
       ],
     }).compile();
 
     command = module.get(
-      BackfillFieldMetadataOptionRowsFromStoredOptionsSlowInstanceCommand,
+      BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
     );
   });
 
@@ -46,10 +46,6 @@ describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOption
         FROM core."fieldMetadataOption" WHERE "fieldMetadataId" = $1 ORDER BY value`,
       [stageField.id],
     );
-
-  // The manager's transaction nests in the test transaction, so each test rolls the migration back.
-  const runDataMigration = () =>
-    command.runDataMigration(queryRunner.manager as unknown as DataSource);
 
   const findStageOptionRow = async (value: string) =>
     (await findStageOptionRows()).find((row) => row.value === value);
@@ -99,7 +95,7 @@ describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOption
       [stageField.id, editedOption.value],
     );
 
-    await runDataMigration();
+    await command.up(queryRunner);
 
     expect(await findStageOptionRow(missingOption.value)).toMatchObject({
       universalIdentifier: missingOption.id,
@@ -147,7 +143,7 @@ describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOption
     );
     const rowsBefore = await findStageOptionRows();
 
-    await runDataMigration();
+    await command.up(queryRunner);
 
     expect(await findStageOptionRow('WORKSPACE_ADDED')).toMatchObject({
       universalIdentifier: addedOptionId,
@@ -181,7 +177,7 @@ describe('2-59 slow instance command 1794576631992 - BackfillFieldMetadataOption
       ],
     );
 
-    await runDataMigration();
+    await command.up(queryRunner);
 
     const duplicateIdRow = await findStageOptionRow('DUPLICATE_ID');
 
