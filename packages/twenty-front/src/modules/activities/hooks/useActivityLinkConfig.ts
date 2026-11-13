@@ -6,7 +6,10 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export type ActivityLinkConfig = {
@@ -38,7 +41,7 @@ export const useActivityLinkConfig = ({
   const junctionObjectPermissions = useObjectPermissionsForObject(
     junctionConfig?.junctionObjectMetadata.id ?? '',
   );
-  const canLinkActivities = canReachSomeRecords({
+  const canLinkActivities = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: junctionObjectPermissions,
     operationType: 'create',
   });

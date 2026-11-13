@@ -236,7 +236,32 @@ describe('SettingsPrivacy', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('keeps the controls enabled during a save and restores the value when it fails', async () => {
+  it('keeps the controls enabled while a save runs', async () => {
+    renderSettingsPrivacy({
+      isMultiWorkspaceEnabled: true,
+      aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
+      aiDataPolicy: {
+        requiredDataResidencyRegion: null,
+        isZeroDataRetentionRequired: false,
+        isProductImprovementDataSharingEnabled: true,
+      },
+      updateWorkspaceDelay: Number.POSITIVE_INFINITY,
+    });
+
+    const zeroDataRetentionSwitch = screen.getByRole('switch', {
+      name: 'Zero data retention',
+    });
+
+    await userEvent.click(zeroDataRetentionSwitch);
+
+    expect(zeroDataRetentionSwitch).toBeChecked();
+    expect(zeroDataRetentionSwitch).not.toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+  });
+
+  it('restores the value when a save fails', async () => {
     renderSettingsPrivacy({
       isMultiWorkspaceEnabled: true,
       aiModels: [EU_ZERO_DATA_RETENTION_MODEL],
@@ -253,12 +278,6 @@ describe('SettingsPrivacy', () => {
     });
 
     await userEvent.click(zeroDataRetentionSwitch);
-
-    expect(zeroDataRetentionSwitch).toBeChecked();
-    expect(zeroDataRetentionSwitch).not.toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
 
     await waitFor(() => expect(zeroDataRetentionSwitch).not.toBeChecked());
   });

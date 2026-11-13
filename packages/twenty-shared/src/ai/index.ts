@@ -9,6 +9,8 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
+export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
+export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
 export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
@@ -61,6 +63,7 @@ export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
+export type { AgentChatThreadInboxStatus } from './types/AgentChatThreadInboxStatus';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
 export type { AgentMessageRow } from './types/AgentMessageRow';
 export type {
@@ -132,15 +135,18 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
+export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
+export { isAgentChatThreadInPresetFilter } from './utils/is-agent-chat-thread-in-preset-filter.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
@@ -152,6 +158,8 @@ export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidencyRegion } from './utils/is-data-residency-region.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export type { McpServerToolAnnotationsHints } from './utils/is-destructive-mcp-server-tool.util';
+export { isDestructiveMcpServerTool } from './utils/is-destructive-mcp-server-tool.util';
 export { isFrontComponentProposedToolCall } from './utils/is-front-component-proposed-tool-call.util';
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';

@@ -214,6 +214,12 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Վահանակ"
 
+#. js-lingui-id: 79heIx
+#: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
+msgid "A database event trigger in this application is invalid."
+msgstr "Այս հավելվածում տվյալների բազայի իրադարձության գործարկիչն անվավեր է."
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -2954,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Հնարավորությանը կապակցված զրույցներ"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Ընտրեք ակտիվ ներդիր և դրա դասավորության ռեժիմին համապատասխանող վիջեթի դիրք։"
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3448,6 +3459,11 @@ msgstr "Այս հավելվածի համար {0} անվամբ միացման մ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "'custom' տիպով միացման մատուցողը պետք է հղում կատարի authorize և callback տրամաբանության ֆունկցիաներին"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "«oauth-discovery» տիպով կապի մատակարարին անհրաժեշտ է HTTP կամ HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5380,11 +5396,6 @@ msgstr "Չհաջողվեց ստեղծել գրառում։"
 msgid "Failed to delete file {fileId}"
 msgstr "Չհաջողվեց ջնջել {fileId} ֆայլը"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Չհաջողվեց ջնջել առաջադրանքները։ Խնդրում ենք փորձել ավելի ուշ։"
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -5486,6 +5497,11 @@ msgstr "«{fieldName}» դաշտը չի պատկանում «{relationFieldName}
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "\"{fieldName}\" դաշտը many-to-one կապ չէ, այն չունի join սյունակ, որի հետ կարելի է համեմատել"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "\"{fieldName}\" դաշտը \"{operand}\" օպերանդով ընդունում է մեկ արժեք, այն չի կարող համեմատվել աշխատանքային տարածքի անդամի \"{workspaceMemberFieldName}\" դաշտի կողմից պահվող ցանկի հետ"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6156,6 +6172,11 @@ msgstr "`frontComponentId` չպետք է սահմանված լինի, երբ `en
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Frontend component builder-ի հարցումը գերազանցում է 6 MiB սահմանաչափը։ Նվազեցրեք հավելվածի կախվածությունները կամ գեներացված SDK-ի չափը։"
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Ֆրոնտենդ բաղադրիչը չի գտնվել։"
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9742,6 +9763,11 @@ msgstr "OAuth մուտքը մերժվել է։"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth միացման մատուցողը չունի իր oauth config բլոկը"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "OAuth հայտնաբերման կապի մատակարարին անհրաժեշտ է ռեսուրսի URL-ը, որում այն մուտք է գործում"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13792,6 +13818,16 @@ msgstr "Բաղադրիչի կախվածությունները չափազանց �
 msgid "The component dependencies could not be verified. Try creating the component again."
 msgstr "Չհաջողվեց ստուգել բաղադրիչի կախվածությունները։ Փորձեք կրկին ստեղծել բաղադրիչը։"
 
+#. js-lingui-id: Ebgiv3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "The condition of a database event trigger must be text"
+msgstr "Տվյալների բազայի իրադարձության գործարկիչի պայմանը պետք է լինի տեքստ"
+
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr "Գործակալի գործարկիչի պայմանն անվավեր է"
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14777,6 +14813,11 @@ msgstr "Այս գործառույթն անվճար է մինչև {MAX_SEATS_WITH
 msgid "This feature is not enabled."
 msgstr "Այս հնարավորությունն ակտիվացված չէ։"
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "Այս դաշտը չի կարող համեմատվել արժեքների ցանկի հետ"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14849,6 +14890,11 @@ msgstr "Այս ֆայլի վերբեռնումը արդեն եզրափակվել
 msgid "This form no longer waits for an answer."
 msgstr "Այս ձևն այլևս պատասխան չի սպասում։"
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Այս ֆրոնտենդ բաղադրիչը հասանելի չէ էջի այս դասավորությունում։"
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14908,6 +14954,21 @@ msgstr "Այս մատյանի աղյուսակը վավեր չէ։"
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "MCP այս մեթոդը չի աջակցվում։"
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Այս MCP սերվերը պատկանում է մեկ այլ հավելվածի, ուստի այս աշխատահոսքը չի կարող օգտագործել այն։"
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Այս MCP սերվերն անգործուն է։ Ակտիվացրեք այն՝ նախքան դրա գործիքները փորձարկելը։"
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Այս MCP սերվերը հասանելի չէ այս աշխատահոսքի համար։"
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15199,6 +15260,16 @@ msgstr "Այս SVG-ը չափազանց մեծ է մշակման համար։"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Ժամանակագծի գործողության այս գործողությունը չի աջակցվում"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Այս գործիքն այլևս չի տրամադրվում իր MCP սերվերի կողմից։"
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Այս գործիքը կարող է փոխել տվյալները։ Հաստատեք փորձարկումը՝ նախքան այն գործարկելը։"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -16971,10 +17042,10 @@ msgstr "կապն անջատվել է՝"
 msgid "Watched fields of a database event trigger must be field names"
 msgstr "Տվյալների բազայի իրադարձության գործարկիչի դիտարկվող դաշտերը պետք է լինեն դաշտերի անուններ"
 
-#. js-lingui-id: CsCRdd
+#. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
-msgid "Watched fields only apply to \"updated\" database event triggers"
-msgstr "Դիտարկվող դաշտերը կիրառելի են միայն \"updated\" տվյալների բազայի իրադարձության գործարկիչների համար"
+msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
+msgstr "Դիտարկվող դաշտերը կիրառելի են միայն տվյալների բազայի \"updated\" և \"upserted\" իրադարձության գործարկիչների համար"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
@@ -17210,6 +17281,11 @@ msgstr "Ով է ստանում մուտքը"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Ինչու է մուտքը տրամադրվել"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Վիջեթի կազմաձևումը պարտադիր է։"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

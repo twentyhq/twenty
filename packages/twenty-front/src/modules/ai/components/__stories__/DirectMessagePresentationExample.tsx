@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
+import { agentChatOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
 import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/ai/components/__stories__/directMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -28,23 +30,32 @@ type DirectMessagePresentationExampleProps = {
   onSelectThread: (threadId: string) => void;
   onSelectMember: (workspaceMemberId: string) => void;
   memberState?: 'loading' | 'refreshing' | 'results';
+  onlineWorkspaceMemberIds?: string[];
 };
 
 export const DirectMessagePresentationExample = ({
   onSelectThread,
   onSelectMember,
   memberState = 'results',
+  onlineWorkspaceMemberIds,
 }: DirectMessagePresentationExampleProps) => {
   const [store] = useState(() => {
     const initialStore = createStore();
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
+    initialStore.set(
+      agentChatOnlineWorkspaceMemberIdsState.atom,
+      onlineWorkspaceMemberIds ?? null,
+    );
     return initialStore;
   });
   const [currentThreadId, setCurrentThreadId] = useState('dm-anna');
   const [searchValue, setSearchValue] = useState('');
   const { currentMember, directMessages } = DIRECT_MESSAGE_PRESENTATION_FIXTURE;
   const matchingHumanMembers = filterBySearchQuery({
-    items: [currentMember, ...directMessages.map(({ peer }) => peer)],
+    items: [
+      currentMember,
+      ...directMessages.flatMap(({ peer }) => (isDefined(peer) ? [peer] : [])),
+    ],
     searchQuery: searchValue,
     getSearchableValues: ({ name, email }) => [name, email],
   });

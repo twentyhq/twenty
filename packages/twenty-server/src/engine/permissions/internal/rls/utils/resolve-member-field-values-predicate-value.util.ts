@@ -5,24 +5,18 @@ import {
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateValue,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataArrayKind } from 'twenty-shared/utils';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { type RowLevelPermissionMemberFieldValues } from 'src/engine/permissions/internal/rls/types/row-level-permission-member-field-values.type';
+import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
-
-const LIST_MEMBER_FIELD_TYPES: FieldMetadataType[] = [
-  FieldMetadataType.SELECT,
-  FieldMetadataType.MULTI_SELECT,
-  FieldMetadataType.ARRAY,
-];
 
 export const resolveMemberFieldValuesPredicateValue = ({
   memberFieldValues,
   predicate,
   workspaceMemberFieldMetadata,
 }: {
-  memberFieldValues: RowLevelPermissionMemberFieldValues;
+  memberFieldValues: RlsMemberFieldValues;
   predicate: Pick<
     RowLevelPermissionPredicate,
     'workspaceMemberFieldMetadataId' | 'workspaceMemberSubFieldName'
@@ -36,7 +30,8 @@ export const resolveMemberFieldValuesPredicateValue = ({
   }
 
   return typeof value === 'string' &&
-    LIST_MEMBER_FIELD_TYPES.includes(workspaceMemberFieldMetadata.type)
+    (workspaceMemberFieldMetadata.type === FieldMetadataType.SELECT ||
+      isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type))
     ? [value]
     : value;
 };

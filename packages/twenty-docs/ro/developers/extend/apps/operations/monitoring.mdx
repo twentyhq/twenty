@@ -70,7 +70,7 @@ Pentru propriul tău server de dezvoltare, `twenty app logs` transmite în timp 
 
 * **Erorile cresc imediat după o lansare**: compară versiunile în tabelul **Versiuni**, apoi remediază problema și publică o versiune mai nouă. Consultați [Publicarea](/ro/developers/extend/apps/operations/publishing).
 * **Solicitările API sunt limitate ca rată**: aplicația ta apelează API-ul prea des. Grupează citirile și scrierile și evită apelarea API-ului în bucle strânse.
-* **Sarcinile sunt limitate ca rată**: evenimentele bazei de date sau declanșatoarele cron se execută mai repede decât pot fi puse sarcinile în coadă. Restrânge declanșatorul, de exemplu cu `updatedFields` într-un declanșator `databaseEvent`, sau efectuează lucrul în mai puține rulări, dar mai mari. Vezi [Funcții logice](/ro/developers/extend/apps/logic/logic-functions).
+* **Sarcinile sunt limitate ca rată**: evenimentele bazei de date sau declanșatoarele cron se execută mai repede decât pot fi puse sarcinile în coadă. Restrângeți declanșatorul, de exemplu cu `watchedFieldUniversalIdentifiers` în `eventTriggerSettings`, sau efectuați munca în mai puține rulări, mai mari. Vezi [Funcții logice](/ro/developers/extend/apps/logic/logic-functions).
 * **Eșecuri de instalare sau actualizare**: verifică-ți [cârligele de instalare](/ro/developers/extend/apps/config/install-hooks). Mesajul de eroare este înregistrat odată cu eșecul.
 * **Funcții lente**: o durată ridicată la percentila 95 indică o funcție care merită profilată sau împărțită.
 

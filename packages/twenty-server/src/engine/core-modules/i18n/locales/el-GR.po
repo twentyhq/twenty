@@ -214,6 +214,12 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Ένας πίνακας ελέγχου"
 
+#. js-lingui-id: 79heIx
+#: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
+msgid "A database event trigger in this application is invalid."
+msgstr "Ένα έναυσμα συμβάντος βάσης δεδομένων σε αυτή την εφαρμογή δεν είναι έγκυρο."
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -2954,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Συνομιλίες που συνδέονται με την ευκαιρία"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Επιλέξτε μια ενεργή καρτέλα και μια θέση widget που αντιστοιχεί στη λειτουργία διάταξής της."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3448,6 +3459,11 @@ msgstr "Υπάρχει ήδη πάροχος σύνδεσης με το όνομ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Ο πάροχος σύνδεσης με τύπο 'custom' πρέπει να αναφέρεται σε μια λογική συνάρτηση authorize και callback"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "Ο πάροχος σύνδεσης με τύπο 'oauth-discovery' χρειάζεται ένα HTTP ή HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5380,11 +5396,6 @@ msgstr "Αποτυχία δημιουργίας εγγραφής."
 msgid "Failed to delete file {fileId}"
 msgstr "Απέτυχε η διαγραφή αρχείου {fileId}"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Αποτυχία διαγραφής εργασιών. Παρακαλώ δοκιμάστε ξανά αργότερα."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -5486,6 +5497,11 @@ msgstr "Το πεδίο \"{fieldName}\" δεν ανήκει στο αντικε�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Το πεδίο \"{fieldName}\" δεν είναι σχέση πολλά-προς-ένα, δεν διαθέτει στήλη σύνδεσης για σύγκριση"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "Το πεδίο \"{fieldName}\" δέχεται μία μόνο τιμή με τελεστή \"{operand}\", δεν μπορεί να συγκριθεί με τη λίστα που περιέχεται στο πεδίο μέλους χώρου εργασίας \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6156,6 +6172,11 @@ msgstr "Το frontComponentId δεν πρέπει να οριστεί όταν �
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Το αίτημα δημιουργίας στοιχείων frontend υπερβαίνει το όριο των 6 MiB. Μειώστε τις εξαρτήσεις της εφαρμογής ή το μέγεθος του παραγόμενου SDK."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Το frontend component δεν βρέθηκε."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9742,6 +9763,11 @@ msgstr "Η πρόσβαση OAuth απορρίφθηκε."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "Στον πάροχο σύνδεσης OAuth λείπει το μπλοκ ρυθμίσεων OAuth"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "Ο πάροχος σύνδεσης εντοπισμού OAuth χρειάζεται το URL του πόρου στον οποίο πραγματοποιεί σύνδεση"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13792,6 +13818,16 @@ msgstr "Οι εξαρτήσεις του στοιχείου είναι υπερ�
 msgid "The component dependencies could not be verified. Try creating the component again."
 msgstr "Δεν ήταν δυνατή η επαλήθευση των εξαρτήσεων του στοιχείου. Δοκιμάστε να δημιουργήσετε ξανά το στοιχείο."
 
+#. js-lingui-id: Ebgiv3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "The condition of a database event trigger must be text"
+msgstr "Η συνθήκη ενός εναύσματος συμβάντος βάσης δεδομένων πρέπει να είναι κείμενο"
+
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr "Η συνθήκη ενός εναύσματος πράκτορα δεν είναι έγκυρη"
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14777,6 +14813,11 @@ msgstr "Αυτή η δυνατότητα παρέχεται δωρεάν έως 
 msgid "This feature is not enabled."
 msgstr "Αυτό το χαρακτηριστικό δεν είναι ενεργοποιημένο."
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "Αυτό το πεδίο δεν μπορεί να συγκριθεί με λίστα τιμών"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14849,6 +14890,11 @@ msgstr "Αυτή η μεταφόρτωση αρχείου έχει ήδη ολο
 msgid "This form no longer waits for an answer."
 msgstr "Αυτή η φόρμα δεν αναμένει πλέον απάντηση."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Αυτό το frontend component δεν είναι διαθέσιμο σε αυτή τη διάταξη σελίδας."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14908,6 +14954,21 @@ msgstr "Αυτός ο πίνακας καταγραφών δεν είναι έγ
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Αυτή η μέθοδος MCP δεν υποστηρίζεται."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Αυτός ο διακομιστής MCP ανήκει σε άλλη εφαρμογή, επομένως αυτή η ροή εργασίας δεν μπορεί να τον χρησιμοποιήσει."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Αυτός ο διακομιστής MCP είναι ανενεργός. Ενεργοποιήστε τον πριν δοκιμάσετε τα εργαλεία του."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Αυτός ο διακομιστής MCP δεν είναι διαθέσιμος για αυτή τη ροή εργασίας."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15199,6 +15260,16 @@ msgstr "Αυτό το SVG είναι πολύ μεγάλο για να υποβ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Αυτή η ενέργεια δραστηριότητας χρονολογίου δεν υποστηρίζεται"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Αυτό το εργαλείο δεν προσφέρεται πλέον από τον διακομιστή MCP του."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Αυτό το εργαλείο ενδέχεται να αλλάξει δεδομένα. Επιβεβαιώστε τη δοκιμή πριν την εκτελέσετε."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -16971,10 +17042,10 @@ msgstr "αποσυνδέθηκε από"
 msgid "Watched fields of a database event trigger must be field names"
 msgstr "Τα παρακολουθούμενα πεδία μιας ενεργοποίησης συμβάντος βάσης δεδομένων πρέπει να είναι ονόματα πεδίων"
 
-#. js-lingui-id: CsCRdd
+#. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
-msgid "Watched fields only apply to \"updated\" database event triggers"
-msgstr "Τα παρακολουθούμενα πεδία ισχύουν μόνο για ενεργοποιήσεις συμβάντος βάσης δεδομένων \"updated\""
+msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
+msgstr "Τα παρακολουθούμενα πεδία ισχύουν μόνο για εναύσματα συμβάντων βάσης δεδομένων \"updated\" και \"upserted\""
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
@@ -17210,6 +17281,11 @@ msgstr "Ποιος λαμβάνει την πρόσβαση"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Γιατί παραχωρήθηκε η πρόσβαση"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Απαιτείται διαμόρφωση γραφικού στοιχείου."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

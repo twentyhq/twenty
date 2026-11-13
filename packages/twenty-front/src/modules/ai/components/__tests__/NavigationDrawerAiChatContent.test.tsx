@@ -3,17 +3,24 @@ import { I18nProvider } from '@lingui/react';
 import { render, within } from '@testing-library/react';
 import { atom, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -25,6 +32,15 @@ const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
   deletedAt: null,
   createdAt: '2026-09-30T00:00:00.000Z',
   updatedAt: '2026-09-30T00:00:00.000Z',
+});
+
+const DIRECT_MESSAGE_PEER_ID = 'peer-member';
+
+const buildDirectMessageThread = (id: string): AgentChatThreadRecord => ({
+  ...buildThread(id, 'Direct message'),
+  conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
+  directMessageFirstWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  directMessageSecondWorkspaceMemberId: DIRECT_MESSAGE_PEER_ID,
 });
 
 const mockFavoriteThreadsAtom = atom<AgentChatThreadListItem[]>([]);
@@ -63,6 +79,18 @@ jest.mock('@/ai/components/NavigationDrawerAiChatChannelItem', () => ({
   }) => <div>{channel.name}</div>,
 }));
 
+jest.mock('@/ai/components/NavigationDrawerDirectMessageItem', () => ({
+  NavigationDrawerDirectMessageItem: ({
+    directMessage,
+  }: {
+    directMessage: DirectMessageSidebarItem;
+  }) => <div>{directMessage.peer?.name}</div>,
+}));
+
+jest.mock('@/ai/components/OpenDirectMessageButton', () => ({
+  OpenDirectMessageButton: () => null,
+}));
+
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadItem', () => ({
   NavigationDrawerAiChatThreadItem: ({
     thread,
@@ -84,8 +112,8 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/hooks/useChatThreads', () => ({
-  useChatThreads: () => ({ threads: mockThreads, loading: false }),
+jest.mock('@/ai/hooks/useAgentChatThreadList', () => ({
+  useAgentChatThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
@@ -104,17 +132,23 @@ jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
 }));
 
 let mockIsAiChatInboxEnabled = true;
+let mockIsDirectMessageEnabled = true;
+const mockDirectMessageFeatureFlagKey =
+  FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: (featureFlagKey: string) =>
+    featureFlagKey === mockDirectMessageFeatureFlagKey
+      ? mockIsDirectMessageEnabled
+      : mockIsAiChatInboxEnabled,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatChannelsSection', () => ({
   NavigationDrawerAiChatChannelsSection: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
-  AgentChatThreadsFetchMoreTrigger: () => <div>Load more chats</div>,
+jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
+  AgentChatThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadSection', () => ({
@@ -146,6 +180,7 @@ describe('NavigationDrawerAiChatContent', () => {
   beforeEach(() => {
     resetJotaiStore();
     mockIsAiChatInboxEnabled = true;
+    mockIsDirectMessageEnabled = true;
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
       buildThread('chat-2', 'Quarterly plan'),
@@ -269,6 +304,46 @@ describe('NavigationDrawerAiChatContent', () => {
 
     expect(within(recents).getAllByText(/^Chat \d$/)).toHaveLength(7);
     expect(getByText('Load more chats')).toBeInTheDocument();
+  });
+
+  it('lists direct messages in their own section instead of Recent', () => {
+    mockThreads = [
+      buildThread('chat-1', 'Pipeline review'),
+      buildDirectMessageThread('direct-message'),
+    ];
+    setAgentChatThreadList(jotaiStore, mockThreads);
+    jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+    jotaiStore.set(currentWorkspaceMembersState.atom, [
+      mockedWorkspaceMemberData,
+      {
+        ...mockedWorkspaceMemberData,
+        id: DIRECT_MESSAGE_PEER_ID,
+        name: { firstName: 'Alice', lastName: 'Example' },
+      },
+    ]);
+
+    const { getByRole } = renderContent();
+
+    const directMessages = getByRole('region', { name: 'Direct messages' });
+    const recents = getByRole('region', { name: 'Recent' });
+
+    expect(within(directMessages).getByText('Alice Example')).toBeVisible();
+    expect(within(recents).getByText('Pipeline review')).toBeVisible();
+    expect(within(recents).queryByText('Direct message')).toBeNull();
+  });
+
+  it('keeps direct messages in Recent while direct messages are off', () => {
+    mockIsDirectMessageEnabled = false;
+    mockThreads = [buildDirectMessageThread('direct-message')];
+
+    const { getByRole, queryByRole } = renderContent();
+
+    expect(queryByRole('region', { name: 'Direct messages' })).toBeNull();
+    expect(
+      within(getByRole('region', { name: 'Recent' })).getByText(
+        'Direct message',
+      ),
+    ).toBeVisible();
   });
 
   it('shows no Favorites section without favorite chats or channels', () => {

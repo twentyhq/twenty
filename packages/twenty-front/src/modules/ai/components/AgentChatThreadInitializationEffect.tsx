@@ -2,19 +2,21 @@ import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
+import { agentChatRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
@@ -33,7 +35,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -53,7 +55,7 @@ export const AgentChatThreadInitializationEffect = () => {
     !isWorkspaceSuspended &&
     isDefined(chatObjectMetadataItem) &&
     isNonEmptyArray(chatObjectMetadataItem.readableFields) &&
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: chatObjectPermissions,
       operationType: 'read',
     });
@@ -64,8 +66,8 @@ export const AgentChatThreadInitializationEffect = () => {
       'fieldMetadataItems',
     ) === 'up-to-date';
 
-  const agentChatThreadsLoading = useAtomStateValue(
-    agentChatThreadsLoadingSelector,
+  const agentChatRecentThreadsLoading = useAtomStateValue(
+    agentChatRecentThreadsLoadingSelector,
   );
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -76,8 +78,12 @@ export const AgentChatThreadInitializationEffect = () => {
   )
     .map(({ id }) => id)
     .join(',');
-  const agentChatVisibleThreads = useAtomStateValue(
-    agentChatVisibleThreadsSelector,
+  const agentChatSelectedThreadListSource = useAtomStateValue(
+    agentChatSelectedThreadListSourceState,
+  );
+  const agentChatThreadListThreads = useAtomFamilySelectorValue(
+    agentChatThreadListThreadsFamilySelector,
+    agentChatSelectedThreadListSource,
   );
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
@@ -91,7 +97,7 @@ export const AgentChatThreadInitializationEffect = () => {
       .get(agentChatFavoriteThreadsSelector.atom)
       .some(({ conversationType }) => !isDefined(conversationType));
 
-    if (!agentChatThreadsLoading && !hasUnloadedFavoriteThreads) {
+    if (!agentChatRecentThreadsLoading && !hasUnloadedFavoriteThreads) {
       return;
     }
 
@@ -99,7 +105,10 @@ export const AgentChatThreadInitializationEffect = () => {
     let retryTimeoutId: number | undefined;
 
     const refreshUntilLoaded = async () => {
-      const agentChatThreads = await refreshAgentChatThreads();
+      const agentChatThreads = await loadAgentChatThreadList({
+        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+        mode: 'refresh',
+      });
 
       if (!isActive || isDefined(agentChatThreads)) {
         return;
@@ -121,16 +130,16 @@ export const AgentChatThreadInitializationEffect = () => {
       }
     };
   }, [
-    agentChatThreadsLoading,
+    agentChatRecentThreadsLoading,
     areFieldMetadataItemsLoaded,
     canLoadChatThreads,
     favoriteThreadIdsKey,
-    refreshAgentChatThreads,
+    loadAgentChatThreadList,
     store,
   ]);
 
   useEffect(() => {
-    if (hasInitializedAgentChatThreads || agentChatThreadsLoading) {
+    if (hasInitializedAgentChatThreads || agentChatRecentThreadsLoading) {
       return;
     }
 
@@ -152,7 +161,7 @@ export const AgentChatThreadInitializationEffect = () => {
     setHasInitializedAgentChatThreads(true);
 
     const sortedThreads = sortChatThreadsByLastActivityDesc(
-      agentChatVisibleThreads,
+      agentChatThreadListThreads,
     );
 
     if (sortedThreads.length > 0) {
@@ -167,9 +176,9 @@ export const AgentChatThreadInitializationEffect = () => {
       setCurrentAiChatThread(store.get(newAiChatThreadIdState.atom));
     }
   }, [
-    agentChatVisibleThreads,
+    agentChatThreadListThreads,
     currentAiChatThread,
-    agentChatThreadsLoading,
+    agentChatRecentThreadsLoading,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     setCurrentAiChatThread,

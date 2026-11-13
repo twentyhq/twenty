@@ -3,7 +3,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 // A record shared by name reaches people whose role cannot read its object,
 // so a direct link must still be fetched; the server returns nothing when
@@ -19,7 +19,7 @@ export const useCanReadObjectRecordsOrSharedRecords = (
   );
 
   return (
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: objectPermissions,
       operationType: 'read',
     }) ||

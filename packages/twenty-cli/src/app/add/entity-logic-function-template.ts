@@ -43,9 +43,11 @@ export default defineLogicFunction({
     // cronTriggerSettings: {
     //   pattern: '0 0 * * *', // Daily at midnight
     // },
-    // Database event trigger example:
-    // databaseEventTriggerSettings: {
-    //   eventName: 'objectName.created',
+    // Record event trigger example:
+    // eventTriggerSettings: {
+    //   on: 'recordEvent',
+    //   objectUniversalIdentifier: '<object universal identifier>',
+    //   action: 'created',
     //   // Optional: receive one call per batch of events instead of one per event,
     //   // the handler payload then becomes { ...eventInfo, events: [...] }
     //   batchMode: true,

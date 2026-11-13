@@ -214,6 +214,12 @@ msgctxt "objectMetadata.description"
 msgid "A dashboard"
 msgstr "Boshqaruv paneli (dashboard)"
 
+#. js-lingui-id: 79heIx
+#: src/engine/core-modules/application/application-manifest/utils/resolve-database-event-trigger-manifest-settings-or-throw.util.ts
+#: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
+msgid "A database event trigger in this application is invalid."
+msgstr "Ushbu ilovadagi ma’lumotlar bazasi hodisasi triggeri yaroqsiz."
+
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
@@ -2954,6 +2960,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Imkoniyat bilan bogʻlangan suhbatlar"
 
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Faol varaqni va uning joylashuv rejimiga mos vidjet o‘rnini tanlang."
+
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose an existing timeline activity type to override"
@@ -3448,6 +3459,11 @@ msgstr "Bu ilova uchun {0} nomli ulanish provayderi allaqachon mavjud"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "'custom' turidagi ulanish provayderi authorize va callback mantiqiy funksiyalariga havola qilishi kerak"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "\"oauth-discovery\" turidagi ulanish provayderi uchun HTTP yoki HTTPS oauthDiscoveryConfig.resourceUrl talab qilinadi"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5380,11 +5396,6 @@ msgstr "Yozuvni yaratib bo‘lmadi."
 msgid "Failed to delete file {fileId}"
 msgstr "{fileId} faylini o‘chirish muvaffaqiyatsiz tugadi"
 
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Ishlarni o‘chirib bo‘lmadi. Iltimos, birozdan so‘ng qayta urinib ko‘ring."
-
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
 msgid "Failed to delete record."
@@ -5486,6 +5497,11 @@ msgstr "\"{fieldName}\" maydoni \"{relationFieldName}\" bog‘lanishi orqali yet
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "\"{fieldName}\" maydoni ko‘pdan-birga munosabat emas, unda taqqoslash uchun birlashtirish ustuni yo‘q"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "\"{fieldName}\" maydoni \"{operand}\" operandli bitta qiymatni qabul qiladi, uni \"{workspaceMemberFieldName}\" ish maydoni a'zosi maydonida saqlangan ro‘yxat bilan taqqoslab bo‘lmaydi"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6156,6 +6172,11 @@ msgstr "engineComponentKey TRIGGER_WORKFLOW_VERSION bo‘lganda frontComponentId
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Frontend komponent yaratuvchisi so‘rovi 6 MiB limitidan oshadi. Ilova bog‘liqliklarini yoki yaratilgan SDK hajmini kamaytiring."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Frontend komponent topilmadi."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9742,6 +9763,11 @@ msgstr "OAuth orqali kirish rad etildi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth ulanish provayderida oauth config bloki yetishmaydi"
+
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "OAuth aniqlash ulanish provayderi kiradigan resursning URL manzilini talab qiladi"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -13792,6 +13818,16 @@ msgstr "Komponent bog‘liqliklari juda katta. Workspace ilovasining bog‘liqli
 msgid "The component dependencies could not be verified. Try creating the component again."
 msgstr "Komponent bog‘liqliklarini tekshirib bo‘lmadi. Komponentni yana yaratib ko‘ring."
 
+#. js-lingui-id: Ebgiv3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
+msgid "The condition of a database event trigger must be text"
+msgstr "Ma’lumotlar bazasi hodisasi triggerining sharti matn bo‘lishi kerak"
+
+#. js-lingui-id: kxzWhP
+#: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
+msgid "The condition of an agent trigger is invalid"
+msgstr "Agent triggerining sharti yaroqsiz"
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -14777,6 +14813,11 @@ msgstr "Bu funksiya {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} ta o‘ringacha bepul. In
 msgid "This feature is not enabled."
 msgstr "Ushbu funksiya yoqilmagan."
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "Bu maydonni qiymatlar ro‘yxati bilan taqqoslab bo‘lmaydi"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14849,6 +14890,11 @@ msgstr "Ushbu faylni yuklab qo‘yish allaqachon yakunlangan."
 msgid "This form no longer waits for an answer."
 msgstr "Bu shakl endi javob kutmaydi."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Ushbu frontend komponent ushbu sahifa joylashuvida mavjud emas."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14908,6 +14954,21 @@ msgstr "Ushbu jurnal jadvali yaroqli emas."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Bu MCP usuli qo‘llab-quvvatlanmaydi."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Bu MCP serveri boshqa ilovaga tegishli, shuning uchun bu ish jarayoni undan foydalana olmaydi."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Bu MCP serveri faol emas. Uning vositalarini sinashdan oldin uni faollashtiring."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Bu MCP serveri ushbu ish jarayoni uchun mavjud emas."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15199,6 +15260,16 @@ msgstr "Bu SVG qayta ishlash uchun juda katta."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Ushbu vaqt jadvali faoliyati amali qo‘llab-quvvatlanmaydi"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Bu vosita endi uning MCP serveri tomonidan taqdim etilmaydi."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Bu vosita ma’lumotlarni o‘zgartirishi mumkin. Uni ishga tushirishdan oldin sinovni tasdiqlang."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -16971,10 +17042,10 @@ msgstr "tomonidan bog‘lanishi olib tashlangan"
 msgid "Watched fields of a database event trigger must be field names"
 msgstr "Ma’lumotlar bazasi hodisasi triggerining kuzatiladigan maydonlari maydon nomlari bo‘lishi kerak"
 
-#. js-lingui-id: CsCRdd
+#. js-lingui-id: 0ngZ7S
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
-msgid "Watched fields only apply to \"updated\" database event triggers"
-msgstr "Kuzatiladigan maydonlar faqat \"updated\" ma’lumotlar bazasi hodisasi triggerlariga tegishli"
+msgid "Watched fields only apply to \"updated\" and \"upserted\" database event triggers"
+msgstr "Kuzatiladigan maydonlar faqat \"updated\" va \"upserted\" ma’lumotlar bazasi hodisasi triggerlariga tegishli"
 
 #. js-lingui-id: xvV2NJ
 #: src/engine/workspace-query-executor/constants/postgres-error-messages.constants.ts
@@ -17210,6 +17281,11 @@ msgstr "Kirishni kim olishi"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Kirish nima sababdan berilgani"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Vidjet konfiguratsiyasi talab qilinadi."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

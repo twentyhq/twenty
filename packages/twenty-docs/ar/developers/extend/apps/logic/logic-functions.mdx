@@ -44,8 +44,11 @@ export default defineLogicFunction({
     httpMethod: 'POST',
     isAuthRequired: true,
   },
-  /*databaseEventTriggerSettings: {
-    eventName: 'people.created',
+  /*eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'created',
   },*/
   /*cronTriggerSettings: {
     pattern: '0 0 1 1 *',
@@ -61,8 +64,7 @@ export default defineLogicFunction({
 لاستدعاء دالة منطقية يتم تشغيلها بواسطة مسار من مكون واجهة (بدون واجهة رسومية)، راجع قسم [استدعاء دالة منطقية](/ar/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
 * **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
-* **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة. يقيّد `condition` ذلك بالسجلات التي تستوفي تعبير قاعدة.
-> مثال: `person.updated`، `*.created`، `company.*`
+* **databaseEvent**: يُشغَّل عند إنشاء سجلات كائن أو تحديثها أو حذفها أو إتلافها أو استعادتها أو إدراجها أو تحديثها. يمكنك قصره على تحديثات بعض الحقول وعلى السجلات التي تستوفي شرطًا. راجع [حِمولات أحداث قاعدة البيانات](#database-event-trigger-payload).
 * **serverRoute**: يوفّر مسار HTTP واحدًا بنطاق التسجيل. تعمل دالة **resolver** (المُعلَنة باستخدام `serverRouteTriggerSettings`) في مساحة عمل المالك وتُرجِع إمّا كائن `Response` متزامنًا أو كلاً من مساحة العمل المستهدفة ودالة المنطق المطلوب إدراجها في قائمة الانتظار؛ في مسار الإدراج في قائمة الانتظار يؤكّد النظام الأساسي تلقّي الطلب برمز `202` ويُشغِّل ذلك **الهدف** في طابور العامل (worker queue). راجع [مشغّل مسار الخادم](#server-route-trigger).
 
 <Note>
@@ -431,19 +433,27 @@ type Person = {
 في عمليات الحذف الدائم، استخدم `.destroyed`.
 
 <Note>
-  `databaseEventTriggerSettings.updatedFields` يرشّح أحداث التحديث التي
-  تُشغِّل الدالة. `event.properties.updatedFields` يوضّح لك الحقول التي
+  `eventTriggerSettings.watchedFieldUniversalIdentifiers` يرشّح أحداث التحديث التي تُشغِّل الدالة. `event.properties.updatedFields` يوضّح لك الحقول التي
   تغيّرت فعليًا في الحدث الحالي.
 </Note>
 
-يقبل `databaseEventTriggerSettings`:
+يقبل `eventTriggerSettings` مع `on: 'recordEvent'` ما يلي:
 
-| الخاصية         | الوصف                                                                                                                                                                                                                                                                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `eventName`     | الحدث المطلوب الاستماع إليه، مثل `person.updated`. يدعم `*` لاسم الكائن أو العملية أو كليهما.                                                                                                                                                                                                                       |
-| `updatedFields` | قائمة اختيارية بأسماء الحقول. في أحداث `.updated` و`.upserted`، لا تؤدي إلى تشغيل الدالة إلا التغييرات التي تمس أيًا منها.                                                                                                                                                                                          |
-| `الشرط`         | تعبير [قاعدة](/ar/user-guide/data-model/capabilities/validation-rules#write-a-condition) اختياري يجب أن يفي به السجل، مثل `stage == 'CUSTOMER'`. `السابق.\<field>` يقرأ السجل قبل التحديث. يقرأ حقول السجل نفسه؛ والعلاقة متعدد إلى واحد هي حقل المعرّف الخاص بها (`companyId`) وليست `company.name`. |
-| `batchMode`     | قيمة منطقية اختيارية. عندما تكون القيمة `true`، يُستدعى المعالج مرة واحدة لكل دفعة من السجلات بدلاً من مرة واحدة لكل سجل. يحدد الخادم عدد السجلات التي تحتويها الدفعة، بحد أقصى 200.                                                                                                                                |
+| الخاصية                            | الوصف                                                                                                                                                                                                        |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `on`                               | `'recordEvent'`: يستمع المشغّل إلى أحداث السجلات.                                                                                                                                                            |
+| `objectUniversalIdentifier`        | كائن اختياري للاستماع إليه. اتركه فارغًا للاستماع إلى كل كائن.                                                                                                                                               |
+| `الإجراء`                          | `created` أو `updated` أو `deleted` أو `destroyed` أو `restored` أو `upserted` أو `*` لجميعها.                                                                                                               |
+| `watchedFieldUniversalIdentifiers` | قائمة اختيارية بحقول الكائن. عند التحديثات وعمليات الإدراج أو التحديث، لا تؤدي إلى تشغيل الدالة إلا التغييرات التي تمس أحدها. لا يمكن إدراج العلاقات بسجلات متعددة.                                          |
+| `الشرط`                            | [تعبير قاعدة](/ar/user-guide/data-model/capabilities/validation-rules#write-a-condition) اختياري يجب أن يستوفيه السجل. `السابق.\<field>` يقرأه قبل التحديث. يتطلب `objectUniversalIdentifier`. |
+| `batchMode`                        | قيمة منطقية اختيارية. عندما تكون القيمة `true`، يُستدعى المعالج مرة واحدة لكل دفعة من السجلات بدلاً من مرة واحدة لكل سجل. يحدد الخادم عدد السجلات التي تحتويها الدفعة، بحد أقصى 200.                         |
+
+تفشل عملية البناء عندما يكون كائن أو حقل غير معروف، أو عندما يقرأ الشرط حقلًا لا يملكه الكائن. يقرأ الشرط حقول السجل نفسه؛ وتُقرأ العلاقة متعدد-إلى-واحد من خلال معرّفها، مثل `companyId`.
+
+<Note>
+  لا يزال `databaseEventTriggerSettings` السابق، مع `eventName` (مثل
+  `person.updated` أو `*.created`) و`updatedFields` (أسماء الحقول)، مقبولًا، ولكن ستتم إزالته في إصدار مستقبلي. عيّن أحدهما، لا كليهما.
+</Note>
 
 مثال على حدث الإنشاء:
 
@@ -481,11 +491,32 @@ const handler = async (event: PersonUpdatedEvent) => {
 تشغيل المشغّل فقط عند تحديثات البريد الإلكتروني:
 
 ```ts
+const PERSON = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person;
+
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
-    updatedFields: ['emails'],
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: PERSON.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [PERSON.fields.emails.universalIdentifier],
+  },
+});
+```
+
+شغّل فقط عندما تنتقل فرصة إلى مرحلة العميل:
+
+```ts
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineLogicFunction({
+  ...,
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+    action: 'updated',
+    watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+    condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
   },
 });
 ```
@@ -514,8 +545,11 @@ const handler = async (event: PersonDestroyedEvent) => {
 ```ts
 export default defineLogicFunction({
   ...,
-  databaseEventTriggerSettings: {
-    eventName: 'person.updated',
+  eventTriggerSettings: {
+    on: 'recordEvent',
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+    action: 'updated',
     batchMode: true,
   },
 });
@@ -544,7 +578,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
   اكتب المعالج بحيث يكرّر عبر `events` مهما كان طولها.
 </Note>
 
-تُجمّع الأحداث حسب المستخدم الذي تسبب فيها قبل وضعها في دفعات، لذا يغطي كل استدعاء فاعلاً واحداً ويظل `context.workspaceMemberId` ذا معنى. يُطبّق ترشيح `updatedFields` قبل التجميع في دفعات، لذا لا تحتوي الدفعة إلا على السجلات التي طلبتها.
+تُجمّع الأحداث حسب المستخدم الذي تسبب فيها قبل وضعها في دفعات، لذا يغطي كل استدعاء فاعلاً واحداً ويظل `context.workspaceMemberId` ذا معنى. يُطبَّق ترشيح الحقول والشروط قبل التجميع في دفعات، لذلك لا تحتوي الدفعة إلا على السجلات التي طلبتها.
 
 من دون `batchMode`، يستمر المعالج في تلقي `DatabaseEventPayload` واحد لكل سجل.
 
@@ -629,7 +663,7 @@ const asApplication = new RestApiClient({ runAs: 'application' });
 * **`toolTriggerSettings`** — يجعل الدالة قابلة للاكتشاف عبر ميزات الذكاء الاصطناعي الخاصة بـ Twenty (الدردشة، MCP، استدعاء الدوال). يستخدم JSON Schema القياسي، وهو التنسيق الذي تفهمه LLMs أصلاً.
 * **`workflowActionTriggerSettings`** — يجعل الدالة تظهر كخطوة في منشئ سير العمل المرئي. يستخدم `InputSchema` الغني الخاص بـ Twenty لكي يتمكن المُنشئ من عرض محرّرات الحقول المناسبة، وأدوات انتقاء المتغيّرات، والتسميات.
 
-يمكن للدالة اختيار أحدهما، أو الآخر، أو كليهما. توجد جنبًا إلى جنب مع `cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` — النمط نفسه، والشكل نفسه.
+يمكن للدالة اختيار أحدهما، أو الآخر، أو كليهما. توجد جنبًا إلى جنب مع `cronTriggerSettings` و`eventTriggerSettings` و`httpRouteTriggerSettings` — النمط نفسه، والشكل نفسه.
 
 <Note>
   **العلاقة بإجراء Code الخاص بسير العمل.** يُعَد إجراء **Code** المضمَّن في

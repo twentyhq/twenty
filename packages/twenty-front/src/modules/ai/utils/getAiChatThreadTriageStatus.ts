@@ -1,4 +1,4 @@
-import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
+import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 const TRIAGE_STATUS_BY_SCOPE = {
   INBOX: 'open',
