@@ -134,15 +134,19 @@ export const ChatThreadWidgetContent = ({
                   : null
               }
               isDisconnected={isDisconnected}
-              draftKey={messageThreadId}
+              draftKey={
+                isDefined(currentWorkspaceMember)
+                  ? `${currentWorkspaceMember.id}:${messageThreadId}`
+                  : undefined
+              }
               onSendMessage={({ id, text }) =>
                 sendAppChannelMessage({
                   messageChannelId: messageChannel.id,
                   messageThreadId,
                   text,
                   idempotencyKey: id,
-                }).catch(async (error) => {
-                  await apolloClient
+                }).catch((error) => {
+                  apolloClient
                     .refetchQueries({ include: [MyConnectedAccountsDocument] })
                     .catch(() => undefined);
 
