@@ -12,7 +12,6 @@ export const buildRunInsightsWindowFirstLocalDay = ({
 }: Pick<RunInsightsDailySeriesPlaceholders, 'timeZone' | 'lastDayOffset'>) =>
   `DATE_TRUNC('day', NOW() AT TIME ZONE ${timeZone}) - MAKE_INTERVAL(days => ${lastDayOffset}::int)`;
 
-// One row per local calendar day of the window, oldest first, counting the runs created that day
 export const buildRunInsightsDailySeriesQuery = ({
   runsSource,
   runsSourceCondition,

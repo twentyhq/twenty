@@ -1,4 +1,5 @@
-import gql from 'graphql-tag';
+import { agentRunInsightsQueryFactory } from 'test/integration/ai/utils/agent-run-insights-query-factory.util';
+import { agentRunSummariesQueryFactory } from 'test/integration/ai/utils/agent-run-summaries-query-factory.util';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
@@ -9,35 +10,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
-const AGENT_RUN_SUMMARIES_QUERY = gql`
-  query AgentRunSummaries {
-    agentRunSummaries {
-      agentId
-      runCountLast14Days
-      recentRuns {
-        id
-        status
-      }
-    }
-  }
-`;
-
-const AGENT_RUN_INSIGHTS_QUERY = gql`
-  query AgentRunInsights($agentId: UUID!, $timeZone: String!) {
-    agentRunInsights(agentId: $agentId, timeZone: $timeZone) {
-      runCount
-      tokenCount
-      credits
-      averageDurationInMs
-      dailyRunCounts {
-        completedRunCount
-        failedRunCount
-        otherRunCount
-      }
-    }
-  }
-`;
 
 const insertTurn = ({
   agentId,
@@ -93,9 +65,9 @@ describe('agent run statistics', () => {
   });
 
   it('counts an agent runs over the last 14 days and lists the most recent first', async () => {
-    const response = await makeMetadataApiRequest({
-      query: AGENT_RUN_SUMMARIES_QUERY,
-    });
+    const response = await makeMetadataApiRequest(
+      agentRunSummariesQueryFactory(),
+    );
 
     expect(response.body.errors).toBeUndefined();
 
@@ -110,10 +82,9 @@ describe('agent run statistics', () => {
   });
 
   it('aggregates runs, tokens and duration per calendar day', async () => {
-    const response = await makeMetadataApiRequest({
-      query: AGENT_RUN_INSIGHTS_QUERY,
-      variables: { agentId, timeZone: 'UTC' },
-    });
+    const response = await makeMetadataApiRequest(
+      agentRunInsightsQueryFactory({ agentId, timeZone: 'UTC' }),
+    );
 
     expect(response.body.errors).toBeUndefined();
 
@@ -140,10 +111,7 @@ describe('agent run statistics', () => {
 
   it('refuses a member without AI settings access', async () => {
     const response = await makeMetadataApiRequest(
-      {
-        query: AGENT_RUN_INSIGHTS_QUERY,
-        variables: { agentId, timeZone: 'UTC' },
-      },
+      agentRunInsightsQueryFactory({ agentId, timeZone: 'UTC' }),
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
