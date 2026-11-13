@@ -95,6 +95,36 @@ describe('resolveFlatFieldMetadataOptions', () => {
       }),
     ).toEqual([storedOpenOption]);
   });
+
+  it('falls back to the stored options of an ORM field', () => {
+    const storedOptions = [
+      storedOpenOption,
+      { id: 'legacy', value: 'LEGACY', label: 'Legacy', position: 1 },
+    ];
+
+    expect(
+      resolveFlatFieldMetadataOptions({
+        flatFieldMetadata: {
+          type: FieldMetadataType.SELECT,
+          storedOptions,
+          fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
+        },
+        flatFieldMetadataOptionMaps,
+      }),
+    ).toEqual(storedOptions);
+    expect(
+      resolveFlatFieldMetadataOptions({
+        flatFieldMetadata: {
+          type: FieldMetadataType.SELECT,
+          storedOptions: [storedOpenOption],
+          fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
+        },
+        flatFieldMetadataOptionMaps,
+      }),
+    ).toEqual([
+      { id: OPEN_OPTION_ID, value: 'OPEN', label: 'Open', position: 0 },
+    ]);
+  });
 });
 
 describe('resolveFlatFieldMetadataOptionsFromCachedMaps', () => {

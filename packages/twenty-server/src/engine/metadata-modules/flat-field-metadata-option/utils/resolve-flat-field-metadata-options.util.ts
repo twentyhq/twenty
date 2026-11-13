@@ -5,16 +5,24 @@ import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-f
 import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-export type FlatFieldMetadataForOptions = Pick<
-  FlatFieldMetadata,
-  'type' | 'options'
-> &
+export type FlatFieldMetadataForOptions = Pick<FlatFieldMetadata, 'type'> &
   Partial<
     Pick<
       FlatFieldMetadata,
       'applicationId' | 'fieldMetadataOptionUniversalIdentifiers'
     >
-  >;
+  > &
+  (
+    | Pick<FlatFieldMetadata, 'options'>
+    | { storedOptions: FlatFieldMetadata['options'] }
+  );
+
+const getStoredFlatFieldMetadataOptions = (
+  flatFieldMetadata: FlatFieldMetadataForOptions,
+): FlatFieldMetadata['options'] =>
+  'storedOptions' in flatFieldMetadata
+    ? flatFieldMetadata.storedOptions
+    : flatFieldMetadata.options;
 
 export type FlatFieldMetadataOptionMapsForOptions = Pick<
   FlatEntityMaps<FlatFieldMetadataOption>,
@@ -30,12 +38,18 @@ export const resolveFlatFieldMetadataOptions = ({
     | FlatFieldMetadataOptionMapsForOptions
     | undefined;
 }): FlatFieldMetadata['options'] => {
+  const storedOptions = getStoredFlatFieldMetadataOptions(flatFieldMetadata);
+
   if (!isDefined(flatFieldMetadataOptionMaps)) {
-    return flatFieldMetadata.options;
+    return storedOptions;
   }
 
   return resolveFieldMetadataOptionsFromRows({
-    fieldMetadataEntity: flatFieldMetadata,
+    fieldMetadataEntity: {
+      type: flatFieldMetadata.type,
+      applicationId: flatFieldMetadata.applicationId,
+      options: storedOptions,
+    },
     fieldMetadataOptionRows: (
       flatFieldMetadata.fieldMetadataOptionUniversalIdentifiers ?? []
     )

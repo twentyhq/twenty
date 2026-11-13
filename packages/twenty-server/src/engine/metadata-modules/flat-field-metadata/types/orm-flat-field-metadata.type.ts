@@ -12,8 +12,6 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'name',
   'label',
   'defaultValue',
-  // stored copy, only a fallback: readers resolve options from flatFieldMetadataOptionMaps
-  'options',
   'fieldMetadataOptionUniversalIdentifiers',
   'settings',
   'isNullable',
@@ -32,9 +30,19 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
 export type OrmFlatFieldMetadataKey =
   (typeof ORM_FLAT_FIELD_METADATA_KEYS)[number];
 
+type FlatFieldMetadataOptionsKey<T extends FieldMetadataType> = Extract<
+  keyof FlatFieldMetadata<T>,
+  'options'
+>;
+
 export type OrmFlatFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
 > = Pick<
   FlatFieldMetadata<T>,
   Extract<keyof FlatFieldMetadata<T>, OrmFlatFieldMetadataKey>
->;
+> &
+  // Named storedOptions so readers resolve through resolveFlatFieldMetadataOptions; full flat fields still fit.
+  (
+    | { storedOptions: FlatFieldMetadata<T>[FlatFieldMetadataOptionsKey<T>] }
+    | Pick<FlatFieldMetadata<T>, FlatFieldMetadataOptionsKey<T>>
+  );

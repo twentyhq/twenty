@@ -24,7 +24,10 @@ export const resolveFlatFieldMetadataOptionsFromCachedMaps = ({
     | undefined;
 }): FlatFieldMetadata['options'] => {
   if (!isDefined(flatFieldMetadataOptionMaps)) {
-    return flatFieldMetadata.options;
+    return resolveFlatFieldMetadataOptions({
+      flatFieldMetadata,
+      flatFieldMetadataOptionMaps,
+    });
   }
 
   let resolvedOptionsByField = RESOLVED_OPTIONS_BY_FIELD_BY_OPTION_MAPS.get(
