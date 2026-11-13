@@ -12,11 +12,20 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { type View } from '@/views/types/View';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
+
+// The effects also prepare the filter rows the user adds before the scope view exists
+const EMPTY_SCOPE_VIEW: Pick<
+  View,
+  'viewFilters' | 'viewFilterGroups' | 'viewSorts'
+> = {
+  viewFilters: [],
+  viewFilterGroups: [],
+  viewSorts: [],
+};
 
 const StyledContainer = styled.div`
   display: flex;
@@ -77,11 +86,9 @@ export const SidePanelEditColumnScopeSection = ({
               objectMetadataItem={relationObjectMetadataItem}
               isWorkflowFindRecords={false}
             />
-            {isDefined(scopeView) && (
-              <RecordTableSettingsFiltersInitializeStateEffect
-                view={scopeView}
-              />
-            )}
+            <RecordTableSettingsFiltersInitializeStateEffect
+              view={scopeView ?? EMPTY_SCOPE_VIEW}
+            />
           </RecordFiltersComponentInstanceContext.Provider>
         </RecordFilterGroupsComponentInstanceContext.Provider>
       </StyledSection>
@@ -94,9 +101,9 @@ export const SidePanelEditColumnScopeSection = ({
             sortableFieldOptions={sortableFieldOptions}
             directionOptions={directionOptions}
           />
-          {isDefined(scopeView) && (
-            <RecordTableSettingsSortsInitializeStateEffect view={scopeView} />
-          )}
+          <RecordTableSettingsSortsInitializeStateEffect
+            view={scopeView ?? EMPTY_SCOPE_VIEW}
+          />
         </RecordSortsComponentInstanceContext.Provider>
       </StyledSection>
       <TextInput
