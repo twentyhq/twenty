@@ -105,7 +105,6 @@ export class WorkspaceExportService {
       [workspaceId],
     );
 
-    // The enum of a select column is exported from its option rows
     const fieldMetadatas = (
       await this.fieldMetadataRepository.find(workspaceId)
     ).map((fieldMetadata) =>

@@ -27,6 +27,10 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
 import { buildFieldMetadataOptionEnumChangeFromOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-from-options.util';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
+import {
+  type FieldMetadataOptionEnumChange,
+  type FieldMetadataOptionEnumChangeTracker,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -220,15 +224,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       optimisticFlatFieldMetadata.name = update.name;
     }
 
-    const enumChange = isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
-      ? (context.fieldMetadataOptionEnumChangeTracker?.consume(
-          currentFlatFieldMetadata.universalIdentifier,
-        ) ??
-        buildFieldMetadataOptionEnumChangeFromOptions({
-          fromOptions: currentFlatFieldMetadata.options,
-          toOptions: update.options,
-        }))
-      : undefined;
+    const enumChange = this.resolveEnumChange({
+      currentFlatFieldMetadata,
+      toOptions: update.options,
+      fieldMetadataOptionEnumChangeTracker:
+        context.fieldMetadataOptionEnumChangeTracker,
+    });
 
     if (isDefined(enumChange)) {
       // Rebuilding the enum recreates the column, so the new default value goes with it.
@@ -416,6 +417,32 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     }
+  }
+
+  private resolveEnumChange({
+    currentFlatFieldMetadata,
+    toOptions,
+    fieldMetadataOptionEnumChangeTracker,
+  }: {
+    currentFlatFieldMetadata: FlatFieldMetadata;
+    toOptions: FlatFieldMetadata['options'] | undefined;
+    fieldMetadataOptionEnumChangeTracker:
+      | FieldMetadataOptionEnumChangeTracker
+      | undefined;
+  }): FieldMetadataOptionEnumChange | undefined {
+    if (!isEnumFlatFieldMetadata(currentFlatFieldMetadata)) {
+      return undefined;
+    }
+
+    return (
+      fieldMetadataOptionEnumChangeTracker?.consume(
+        currentFlatFieldMetadata.universalIdentifier,
+      ) ??
+      buildFieldMetadataOptionEnumChangeFromOptions({
+        fromOptions: currentFlatFieldMetadata.options,
+        toOptions,
+      })
+    );
   }
 
   private async handleFieldNameUpdate({

@@ -1,5 +1,6 @@
 import {
   computeFieldMetadataOptionRowsAlignment,
+  type EnumFieldToAlign,
   type ExistingFieldMetadataOptionRow,
 } from 'src/database/commands/upgrade-version-command/2-59/utils/compute-field-metadata-option-rows-alignment.util';
 
@@ -24,10 +25,13 @@ const closedOption = {
   position: 1,
 };
 
-const toRow = (
-  { id, ...columns }: typeof openOption,
-  rowId: string,
-): ExistingFieldMetadataOptionRow => ({
+const toRow = ({
+  option: { id, ...columns },
+  rowId,
+}: {
+  option: typeof openOption;
+  rowId: string;
+}): ExistingFieldMetadataOptionRow => ({
   id: rowId,
   universalIdentifier: id,
   fieldMetadataId: FIELD_ID,
@@ -38,7 +42,7 @@ const align = ({
   options,
   existingOptionRows,
 }: {
-  options: unknown;
+  options: EnumFieldToAlign['options'];
   existingOptionRows: ExistingFieldMetadataOptionRow[];
 }) =>
   computeFieldMetadataOptionRowsAlignment({
@@ -53,8 +57,8 @@ describe('computeFieldMetadataOptionRowsAlignment', () => {
       align({
         options: [openOption, closedOption],
         existingOptionRows: [
-          toRow(openOption, 'row-open'),
-          toRow(closedOption, 'row-closed'),
+          toRow({ option: openOption, rowId: 'row-open' }),
+          toRow({ option: closedOption, rowId: 'row-closed' }),
         ],
       }),
     ).toEqual({
@@ -69,11 +73,11 @@ describe('computeFieldMetadataOptionRowsAlignment', () => {
       align({
         options: [{ ...openOption, label: 'Opened' }, closedOption],
         existingOptionRows: [
-          toRow(openOption, 'row-open'),
-          toRow(
-            { ...closedOption, id: GENERATED_ID, value: 'ARCHIVED' },
-            'row-archived',
-          ),
+          toRow({ option: openOption, rowId: 'row-open' }),
+          toRow({
+            option: { ...closedOption, id: GENERATED_ID, value: 'ARCHIVED' },
+            rowId: 'row-archived',
+          }),
         ],
       }),
     ).toEqual({
@@ -106,7 +110,10 @@ describe('computeFieldMetadataOptionRowsAlignment', () => {
       align({
         options: [{ ...openOption, label: 'Opened' }],
         existingOptionRows: [
-          toRow({ ...openOption, id: GENERATED_ID }, 'row-open'),
+          toRow({
+            option: { ...openOption, id: GENERATED_ID },
+            rowId: 'row-open',
+          }),
         ],
       }),
     ).toEqual({

@@ -1,5 +1,3 @@
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 import { buildFieldMetadataOptionEnumChangeTracker } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-tracker.util';
 
@@ -8,26 +6,37 @@ const OPEN_OPTION_ID = '20202020-0000-4000-8000-000000000101';
 const CLOSED_OPTION_ID = '20202020-0000-4000-8000-000000000102';
 const PAUSED_OPTION_ID = '20202020-0000-4000-8000-000000000103';
 
-const buildOptionRow = (
-  universalIdentifier: string,
-  value: string,
-  position: number,
-) =>
-  ({
-    universalIdentifier,
-    fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
-    value,
-    label: value,
-    color: null,
-    position,
-  }) as FlatFieldMetadataOption;
+const buildOptionRow = ({
+  universalIdentifier,
+  value,
+  position,
+}: {
+  universalIdentifier: string;
+  value: string;
+  position: number;
+}) => ({
+  universalIdentifier,
+  fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  value,
+  label: value,
+  color: null,
+  position,
+});
 
 const flatFieldMetadataOptionMaps = {
   byUniversalIdentifier: {
-    [OPEN_OPTION_ID]: buildOptionRow(OPEN_OPTION_ID, 'OPEN', 0),
-    [CLOSED_OPTION_ID]: buildOptionRow(CLOSED_OPTION_ID, 'CLOSED', 1),
+    [OPEN_OPTION_ID]: buildOptionRow({
+      universalIdentifier: OPEN_OPTION_ID,
+      value: 'OPEN',
+      position: 0,
+    }),
+    [CLOSED_OPTION_ID]: buildOptionRow({
+      universalIdentifier: CLOSED_OPTION_ID,
+      value: 'CLOSED',
+      position: 1,
+    }),
   },
-} as unknown as FlatFieldMetadataOptionMaps;
+};
 
 const optionActions = [
   {
@@ -44,7 +53,11 @@ const optionActions = [
   {
     type: 'create',
     metadataName: 'fieldMetadataOption',
-    flatEntity: buildOptionRow(PAUSED_OPTION_ID, 'PAUSED', 2),
+    flatEntity: buildOptionRow({
+      universalIdentifier: PAUSED_OPTION_ID,
+      value: 'PAUSED',
+      position: 2,
+    }),
   },
 ] as unknown as AllUniversalWorkspaceMigrationAction[];
 

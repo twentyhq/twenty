@@ -4,7 +4,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { resolveFieldMetadataOptionsFromRows } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { type FieldMetadataOptionEnumChangeTracker } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 
-// The enum of a created field is built from the option rows created with it.
 export const applyFieldMetadataOptionRowsToCreatedFlatFieldMetadata = ({
   flatFieldMetadata,
   fieldMetadataOptionEnumChangeTracker,
