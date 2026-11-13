@@ -30,7 +30,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
-import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
+import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -161,11 +161,7 @@ const buildPredicateRecordFilter = ({
 
   if (isDefined(workspaceMemberFieldMetadata)) {
     predicateValue = keepTargetFieldOptions({
-      value: resolveMemberFieldValuesPredicateValue({
-        memberFieldValues,
-        predicate,
-        workspaceMemberFieldMetadata,
-      }),
+      value: memberFieldValues[buildMemberFieldKey(predicate)] ?? null,
       targetFieldMetadata: fieldMetadata,
     });
 

@@ -63,6 +63,11 @@ describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
       'source',
       [FieldMetadataType.SELECT, FieldMetadataType.MULTI_SELECT],
     ],
+    [
+      FieldMetadataType.CURRENCY,
+      undefined,
+      [FieldMetadataType.NUMBER, FieldMetadataType.NUMERIC],
+    ],
     [FieldMetadataType.RATING, undefined, []],
   ])(
     'should list the member field types a %s field (sub field %s) compares to',

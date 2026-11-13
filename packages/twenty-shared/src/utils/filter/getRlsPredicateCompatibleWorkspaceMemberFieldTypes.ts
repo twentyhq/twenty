@@ -25,6 +25,7 @@ export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
       return [comparedFieldType];
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.CURRENCY:
       return [FieldMetadataType.NUMBER, FieldMetadataType.NUMERIC];
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
