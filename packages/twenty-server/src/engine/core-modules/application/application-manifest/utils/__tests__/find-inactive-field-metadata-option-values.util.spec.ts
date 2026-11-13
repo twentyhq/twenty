@@ -6,6 +6,8 @@ const APP_UID = '11111111-1111-4111-8111-111111111111';
 const WORKSPACE_APP_UID = '22222222-2222-4222-8222-222222222222';
 const ACTIVE_OPTION_UID = '77777777-7777-4777-8777-777777777771';
 const DEACTIVATED_OPTION_UID = '77777777-7777-4777-8777-777777777772';
+const WORKSPACE_ARCHIVED_OPTION_UID = '77777777-7777-4777-8777-777777777773';
+const APP_ARCHIVED_OPTION_UID = '77777777-7777-4777-8777-777777777774';
 
 const existingFlatFieldMetadataOptionMaps = {
   byUniversalIdentifier: {
@@ -56,5 +58,36 @@ describe('findInactiveFieldMetadataOptionValues', () => {
         },
       }),
     ).toEqual(new Set(['ON_HOLD']));
+  });
+
+  it('should not return the value of a deactivated workspace option the app now ships under another id', () => {
+    expect(
+      findInactiveFieldMetadataOptionValues({
+        fieldMetadataUniversalIdentifier: FIELD_UID,
+        existingFlatFieldMetadataOptionMaps: {
+          byUniversalIdentifier: {
+            [WORKSPACE_ARCHIVED_OPTION_UID]: getFlatFieldMetadataOptionMock({
+              universalIdentifier: WORKSPACE_ARCHIVED_OPTION_UID,
+              fieldMetadataUniversalIdentifier: FIELD_UID,
+              applicationUniversalIdentifier: WORKSPACE_APP_UID,
+              value: 'ARCHIVED',
+              position: 2,
+              isActive: false,
+            }),
+          },
+        },
+        incomingFlatFieldMetadataOptionMaps: {
+          byUniversalIdentifier: {
+            [APP_ARCHIVED_OPTION_UID]: getFlatFieldMetadataOptionMock({
+              universalIdentifier: APP_ARCHIVED_OPTION_UID,
+              fieldMetadataUniversalIdentifier: FIELD_UID,
+              applicationUniversalIdentifier: APP_UID,
+              value: 'ARCHIVED',
+              position: 2,
+            }),
+          },
+        },
+      }),
+    ).toEqual(new Set());
   });
 });

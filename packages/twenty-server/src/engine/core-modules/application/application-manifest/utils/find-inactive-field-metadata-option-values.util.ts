@@ -20,8 +20,21 @@ export const findInactiveFieldMetadataOptionValues = ({
     UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>,
     'byUniversalIdentifier'
   >;
-}): ReadonlySet<string> =>
-  new Set(
+}): ReadonlySet<string> => {
+  const incomingFieldOptions = Object.values(
+    incomingFlatFieldMetadataOptionMaps.byUniversalIdentifier,
+  )
+    .filter(isDefined)
+    .filter(
+      (flatFieldMetadataOption) =>
+        flatFieldMetadataOption.fieldMetadataUniversalIdentifier ===
+        fieldMetadataUniversalIdentifier,
+    );
+  const incomingValues = new Set(
+    incomingFieldOptions.map(({ value }) => value),
+  );
+
+  return new Set(
     Object.values(existingFlatFieldMetadataOptionMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
@@ -38,10 +51,19 @@ export const findInactiveFieldMetadataOptionValues = ({
             }),
           ),
       )
-      .map(
-        ({ universalIdentifier, value }) =>
+      .map(({ universalIdentifier, value }) => {
+        const incomingOption =
           incomingFlatFieldMetadataOptionMaps.byUniversalIdentifier[
             universalIdentifier
-          ]?.value ?? value,
-      ),
+          ];
+
+        if (isDefined(incomingOption)) {
+          return incomingOption.value;
+        }
+
+        // A row whose value the app now declares under another id is replaced by an active one.
+        return incomingValues.has(value) ? undefined : value;
+      })
+      .filter(isDefined),
   );
+};
