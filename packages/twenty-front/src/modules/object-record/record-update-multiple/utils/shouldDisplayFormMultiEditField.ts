@@ -5,7 +5,10 @@ import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 export const shouldDisplayFormMultiEditField = (
   fieldMetadataItem: FieldMetadataItem,
-  objectPermissions?: Pick<ObjectRecordsPermissions, 'restrictedFields'>,
+  objectPermissions?: Pick<
+    ObjectRecordsPermissions,
+    'unreadableFields' | 'uneditableFields'
+  >,
 ) => {
   if (
     !shouldDisplayFormField({ fieldMetadataItem, actionType: 'UPDATE_RECORD' })

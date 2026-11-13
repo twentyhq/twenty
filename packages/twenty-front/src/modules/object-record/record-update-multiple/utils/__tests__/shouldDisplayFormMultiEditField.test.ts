@@ -51,17 +51,13 @@ describe('shouldDisplayFormMultiEditField', () => {
       });
 
       const objectPermissions = {
-        restrictedFields: {
-          'restricted-field-id': {
-            canRead: true,
-            canUpdate: false,
-          },
-        },
+        unreadableFields: [],
+        uneditableFields: ['restricted-field-id'],
       };
 
-      expect(
-        shouldDisplayFormMultiEditField(field, objectPermissions),
-      ).toBe(false);
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        false,
+      );
     });
 
     it('should return false when the user cannot read the field', () => {
@@ -70,17 +66,13 @@ describe('shouldDisplayFormMultiEditField', () => {
       });
 
       const objectPermissions = {
-        restrictedFields: {
-          'restricted-field-id': {
-            canRead: false,
-            canUpdate: true,
-          },
-        },
+        unreadableFields: ['restricted-field-id'],
+        uneditableFields: [],
       };
 
-      expect(
-        shouldDisplayFormMultiEditField(field, objectPermissions),
-      ).toBe(false);
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        false,
+      );
     });
 
     it('should return true when the user can read and update the field', () => {
@@ -89,17 +81,13 @@ describe('shouldDisplayFormMultiEditField', () => {
       });
 
       const objectPermissions = {
-        restrictedFields: {
-          'allowed-field-id': {
-            canRead: true,
-            canUpdate: true,
-          },
-        },
+        unreadableFields: [],
+        uneditableFields: [],
       };
 
-      expect(
-        shouldDisplayFormMultiEditField(field, objectPermissions),
-      ).toBe(true);
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        true,
+      );
     });
 
     it('should return true when the field has no restrictions in objectPermissions', () => {
@@ -108,12 +96,13 @@ describe('shouldDisplayFormMultiEditField', () => {
       });
 
       const objectPermissions = {
-        restrictedFields: {},
+        unreadableFields: ['other-field-id'],
+        uneditableFields: ['other-field-id'],
       };
 
-      expect(
-        shouldDisplayFormMultiEditField(field, objectPermissions),
-      ).toBe(true);
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        true,
+      );
     });
   });
 });
