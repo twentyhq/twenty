@@ -113,11 +113,19 @@ export const InlineWorkspaceMemberPickerPanel = ({
     { searchTerm, shouldListWithoutSearchTerm: true },
   );
 
-  const emptyStateText = isSearching
-    ? t('Searching…')
-    : isNonEmptyString(searchErrorMessage)
-      ? searchErrorMessage
-      : t('No results');
+  const getEmptyStateText = () => {
+    if (isSearching) {
+      return t('Searching…');
+    }
+
+    if (isNonEmptyString(searchErrorMessage)) {
+      return searchErrorMessage;
+    }
+
+    return t('No results');
+  };
+
+  const emptyStateText = getEmptyStateText();
 
   return (
     <>

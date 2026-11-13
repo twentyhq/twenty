@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { listLinkedTeamsUserAadObjectIds } from 'src/features/chat/logic-functions/data/list-linked-teams-user-aad-object-ids';
+import { listLinkedTeamsUserAadObjectIdsOrThrow } from 'src/features/chat/logic-functions/data/list-linked-teams-user-aad-object-ids';
 
-describe('listLinkedTeamsUserAadObjectIds', () => {
+describe('listLinkedTeamsUserAadObjectIdsOrThrow', () => {
   const queryMock = vi.fn();
   const client = { query: queryMock };
 
@@ -28,7 +28,7 @@ describe('listLinkedTeamsUserAadObjectIds', () => {
         },
       });
 
-    const result = await listLinkedTeamsUserAadObjectIds({
+    const result = await listLinkedTeamsUserAadObjectIdsOrThrow({
       client,
       teamsTenantId: 'tenant-1',
     });
@@ -48,7 +48,7 @@ describe('listLinkedTeamsUserAadObjectIds', () => {
       },
     });
 
-    await listLinkedTeamsUserAadObjectIds({
+    await listLinkedTeamsUserAadObjectIdsOrThrow({
       client,
       teamsTenantId: 'tenant-9',
     });
@@ -67,7 +67,7 @@ describe('listLinkedTeamsUserAadObjectIds', () => {
     });
 
     await expect(
-      listLinkedTeamsUserAadObjectIds({ client, teamsTenantId: 'tenant-1' }),
+      listLinkedTeamsUserAadObjectIdsOrThrow({ client, teamsTenantId: 'tenant-1' }),
     ).rejects.toThrow('cannot be listed');
   });
 });

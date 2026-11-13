@@ -34,7 +34,9 @@ export const useSetTeamsUserLink = (): SetTeamsUserLinkState => {
       >(`/s${TEAMS_USER_LINKS_SET_ROUTE_PATH}`, input);
 
       return result ?? GENERIC_ERROR_RESULT;
-    } catch {
+    } catch (error) {
+      console.error('Teams set user link request failed', error);
+
       return GENERIC_ERROR_RESULT;
     } finally {
       setIsSubmitting(false);

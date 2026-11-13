@@ -4,7 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 const LINKS_PER_PAGE = 200;
 const MAX_PAGES = 25;
 
-export const listLinkedTeamsUserAadObjectIds = async ({
+export const listLinkedTeamsUserAadObjectIdsOrThrow = async ({
   client,
   teamsTenantId,
 }: {
@@ -38,10 +38,7 @@ export const listLinkedTeamsUserAadObjectIds = async ({
 
     const pageInfo = queryResult.teamsUserLinks?.pageInfo;
 
-    if (
-      pageInfo?.hasNextPage !== true ||
-      !isNonEmptyString(pageInfo.endCursor)
-    ) {
+    if (!pageInfo?.hasNextPage || !isNonEmptyString(pageInfo.endCursor)) {
       return linkedAadObjectIds;
     }
 

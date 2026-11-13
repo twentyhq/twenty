@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useTranslate } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Callout } from 'twenty-ui/components/feedback';
-import { Section } from 'twenty-ui/components/layout';
+import { Callout, Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -56,11 +55,52 @@ export const TeamsUserLinksSettings = () => {
     await handleLinkSaved();
   };
 
+  const renderUnlinkedTeamsUsers = () => {
+    if (isUnlinkedTeamsUsersLoading && unlinkedTeamsUsers.length === 0) {
+      return (
+        <StyledCenteredState>
+          {t('Loading unlinked Teams users…')}
+        </StyledCenteredState>
+      );
+    }
+
+    if (isDefined(unlinkedErrorMessage)) {
+      return <StyledCenteredState>{unlinkedErrorMessage}</StyledCenteredState>;
+    }
+
+    return (
+      <UnlinkedTeamsUsersList
+        unlinkedTeamsUsers={unlinkedTeamsUsers}
+        hasMore={hasMoreUnlinkedTeamsUsers}
+        onLinkSaved={handleLinkSaved}
+      />
+    );
+  };
+
+  const renderManualLinkControl = () => {
+    if (isManualFormOpen) {
+      return <TeamsUserLinkForm onLinkSaved={handleManualLinkSaved} />;
+    }
+
+    return (
+      <StyledDisclosure>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => setIsManualFormOpen(true)}
+        >
+          {t('Link someone not listed above')}
+        </Button>
+      </StyledDisclosure>
+    );
+  };
+
   return (
     <StyledContainer>
       {!isPermissionLoading && !canManage && (
         <Callout
-          status="warning"
+          variant="warning"
           title={t('You need the roles permission')}
           description={t(
             'Only members with the roles permission can create or change Teams user links. You can review the existing links below.',
@@ -75,37 +115,11 @@ export const TeamsUserLinksSettings = () => {
               'Only Teams users linked to a workspace member can use the assistant. Pick a workspace member on a row to link them in place.',
             )}
           />
-          {isUnlinkedTeamsUsersLoading && unlinkedTeamsUsers.length === 0 ? (
-            <StyledCenteredState>
-              {t('Loading unlinked Teams users…')}
-            </StyledCenteredState>
-          ) : isDefined(unlinkedErrorMessage) ? (
-            <StyledCenteredState>{unlinkedErrorMessage}</StyledCenteredState>
-          ) : (
-            <UnlinkedTeamsUsersList
-              unlinkedTeamsUsers={unlinkedTeamsUsers}
-              hasMore={hasMoreUnlinkedTeamsUsers}
-              onLinkSaved={handleLinkSaved}
-            />
-          )}
+          {renderUnlinkedTeamsUsers()}
         </Section.Root>
       )}
       <TeamsUserLinksList key={teamsUserLinksListKey} />
-      {canManage &&
-        (isManualFormOpen ? (
-          <TeamsUserLinkForm onLinkSaved={handleManualLinkSaved} />
-        ) : (
-          <StyledDisclosure>
-            <Button
-              type="button"
-              size="sm"
-              variant="outline"
-              onClick={() => setIsManualFormOpen(true)}
-            >
-              {t('Link someone not listed above')}
-            </Button>
-          </StyledDisclosure>
-        ))}
+      {canManage && renderManualLinkControl()}
     </StyledContainer>
   );
 };

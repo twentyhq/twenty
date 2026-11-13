@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { teamsListUnlinkedUsersHandler } from 'src/features/chat/logic-functions/handlers/teams-list-unlinked-users-handler';
 
@@ -35,7 +36,7 @@ vi.mock('src/features/chat/logic-functions/utils/collect-graph-users', () => ({
 vi.mock(
   'src/features/chat/logic-functions/data/list-linked-teams-user-aad-object-ids',
   () => ({
-    listLinkedTeamsUserAadObjectIds: listLinkedTeamsUserAadObjectIdsMock,
+    listLinkedTeamsUserAadObjectIdsOrThrow: listLinkedTeamsUserAadObjectIdsMock,
   }),
 );
 
@@ -96,7 +97,7 @@ describe('teamsListUnlinkedUsersHandler', () => {
         shouldCollectUser?: (user: { id: string }) => boolean;
       }) => ({
         users: [ADA, BOB].filter(
-          (user) => !shouldCollectUser || shouldCollectUser(user),
+          (user) => !isDefined(shouldCollectUser) || shouldCollectUser(user),
         ),
         isTruncated: false,
       }),

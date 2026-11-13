@@ -9,5 +9,5 @@ export type TeamsUserSearchResult =
   | { success: false; message: string; error: string };
 
 export type TeamsUnlinkedUsersResult =
-  | { success: true; teamsUsers: TeamsUserSearchOption[]; hasMore: boolean }
-  | { success: false; message: string; error: string };
+  | (Extract<TeamsUserSearchResult, { success: true }> & { hasMore: boolean })
+  | Extract<TeamsUserSearchResult, { success: false }>;

@@ -5,6 +5,13 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TeamsUserLinksSettings } from 'src/features/chat/front-components/TeamsUserLinksSettings';
+import { type TeamsUserSearchOption } from 'src/features/chat/logic-functions/types/teams-user-search-option.type';
+
+type WorkspaceMemberFixture = {
+  id: string;
+  name: { firstName: string; lastName: string };
+  userEmail: string;
+};
 
 const {
   restGetMock,
@@ -39,11 +46,11 @@ vi.mock(
 );
 
 const setRestResponses = ({
-  unlinkedTeamsUsers = [] as unknown[],
-  workspaceMembers = [] as unknown[],
+  unlinkedTeamsUsers = [],
+  workspaceMembers = [],
 }: {
-  unlinkedTeamsUsers?: unknown[];
-  workspaceMembers?: unknown[];
+  unlinkedTeamsUsers?: TeamsUserSearchOption[];
+  workspaceMembers?: WorkspaceMemberFixture[];
 } = {}) => {
   restGetMock.mockImplementation((path: string) => {
     if (path === '/rest/teamsUserLinks') {

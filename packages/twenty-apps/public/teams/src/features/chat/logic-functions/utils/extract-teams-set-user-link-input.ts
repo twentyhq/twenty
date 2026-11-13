@@ -17,12 +17,16 @@ const readOptionalString = (value: unknown): string | undefined =>
 
 export const extractTeamsSetUserLinkInput = (
   payload: TeamsSetUserLinkPayload,
-): TeamsSetUserLinkInput => {
+): {
+  workspaceMemberId: string | undefined;
+  teamsUserAadObjectId: string | undefined;
+  name: string | undefined;
+} => {
   const source = isRoutePayload(payload) ? (payload.body ?? {}) : payload;
 
   return {
-    workspaceMemberId: readOptionalString(source.workspaceMemberId) ?? '',
-    teamsUserAadObjectId: readOptionalString(source.teamsUserAadObjectId) ?? '',
+    workspaceMemberId: readOptionalString(source.workspaceMemberId),
+    teamsUserAadObjectId: readOptionalString(source.teamsUserAadObjectId),
     name: readOptionalString(source.name),
   };
 };

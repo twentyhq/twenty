@@ -39,7 +39,7 @@ export const useTeamsUserSearch = (
       return;
     }
 
-    let cancelled = false;
+    let isCancelled = false;
 
     setOptions([]);
     setSearchErrorMessage(undefined);
@@ -53,7 +53,7 @@ export const useTeamsUserSearch = (
           query: trimmedSearchTerm,
         });
 
-        if (cancelled) {
+        if (isCancelled) {
           return;
         }
 
@@ -67,19 +67,19 @@ export const useTeamsUserSearch = (
         setOptions(result.teamsUsers);
         setSearchErrorMessage(undefined);
       } catch {
-        if (!cancelled) {
+        if (!isCancelled) {
           setOptions([]);
           setSearchErrorMessage(SEARCH_ERROR_MESSAGE);
         }
       } finally {
-        if (!cancelled) {
+        if (!isCancelled) {
           setIsSearching(false);
         }
       }
     }, TEAMS_USER_SEARCH_DEBOUNCE_MS);
 
     return () => {
-      cancelled = true;
+      isCancelled = true;
       clearTimeout(timeoutId);
     };
   }, [searchTerm]);
