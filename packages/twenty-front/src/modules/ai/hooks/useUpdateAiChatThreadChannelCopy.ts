@@ -15,13 +15,13 @@ type InboxThreadChannelCopy = Pick<
   'channelArchivedAt' | 'channelSnoozedUntil'
 >;
 
-export const useUpdateInboxThreadChannelCopy = () => {
+export const useUpdateAiChatThreadChannelCopy = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
 
-  const updateInboxThreadChannelCopy = useCallback(
+  const updateAiChatThreadChannelCopy = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
       variables,
@@ -67,5 +67,5 @@ export const useUpdateInboxThreadChannelCopy = () => {
     [applyAiChatThreadUpdate, client, enqueueToast, store],
   );
 
-  return { updateInboxThreadChannelCopy };
+  return { updateAiChatThreadChannelCopy };
 };

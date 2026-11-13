@@ -18,7 +18,7 @@ import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 
-export const useOpenNewInboxAsDirectMessage = () => {
+export const useOpenNewAiChatAsDirectMessage = () => {
   const store = useStore();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
@@ -27,7 +27,7 @@ export const useOpenNewInboxAsDirectMessage = () => {
     shouldPreserveClosedInbox: true,
   });
 
-  const openNewInboxAsDirectMessage = useCallback(
+  const openNewAiChatAsDirectMessage = useCallback(
     async ({
       newChatThreadId,
       workspaceMemberId,
@@ -107,5 +107,5 @@ export const useOpenNewInboxAsDirectMessage = () => {
     ],
   );
 
-  return { openNewInboxAsDirectMessage };
+  return { openNewAiChatAsDirectMessage };
 };

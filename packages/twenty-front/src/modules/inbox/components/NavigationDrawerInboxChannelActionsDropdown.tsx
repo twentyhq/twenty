@@ -17,12 +17,12 @@ import { useRemoveInboxChannelFromFavorites } from '@/inbox/hooks/useRemoveInbox
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { type InboxChannel } from '@/inbox/types/InboxChannel';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { type UpdateAgentChatChannelInput } from '~/generated-metadata/graphql';
 
 type NavigationDrawerInboxChannelActionsDropdownProps = {
-  channel: InboxChannel;
-  destinationChannels: InboxChannel[];
+  channel: AiChatChannel;
+  destinationChannels: AiChatChannel[];
   dropdownId: string;
   canManage: boolean;
   onRename: () => void;

@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useUpdateInboxThreadStatus } from '@/inbox/hooks/useUpdateInboxThreadStatus';
+import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
@@ -48,7 +48,7 @@ const renderUpdateInboxState = () => {
   } as never);
   store.set(aiChatThreadParticipantsState.atom, {});
 
-  const { result } = renderHook(() => useUpdateInboxThreadStatus(), {
+  const { result } = renderHook(() => useUpdateAiChatThreadStatus(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Provider store={store}>{children}</Provider>
     ),

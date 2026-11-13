@@ -3,7 +3,7 @@ import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatThreadTargetRecord } from '@/ai/types/AiChatThreadTargetRecord';
-import { sortChatThreadsByLastActivityDesc } from '@/inbox/utils/sortChatThreadsByLastActivityDesc';
+import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 
 export const getChatThreadsForRecordPage = ({
   links,
