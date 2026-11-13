@@ -28,6 +28,7 @@ const findMarketplaceAppDetailQuery = gql`
       sourceType
       connectUrl
       websiteUrl
+      galleryImages
     }
   }
 `;
@@ -41,7 +42,6 @@ const publicMarketplaceAppsQuery = gql`
 `;
 
 describe('Built-in marketplace applications', () => {
-  // Listing computes the catalog cache; later suites insert registrations and expect to compute it themselves.
   afterAll(async () => {
     await getAppProviderByClassName<CoreEntityCacheService>(
       'CoreEntityCacheService',
@@ -88,6 +88,11 @@ describe('Built-in marketplace applications', () => {
       sourceType: 'OAUTH_ONLY',
       connectUrl: expect.stringMatching(/^https:\/\/docs\.twenty\.com\//),
       websiteUrl: expect.stringMatching(/^https:\/\/docs\.twenty\.com\//),
+      galleryImages: [
+        expect.stringMatching(
+          /^https?:\/\/.+\/images\/oauth-clients\/covers\/twenty-cli\.webp$/,
+        ),
+      ],
     });
   });
 
