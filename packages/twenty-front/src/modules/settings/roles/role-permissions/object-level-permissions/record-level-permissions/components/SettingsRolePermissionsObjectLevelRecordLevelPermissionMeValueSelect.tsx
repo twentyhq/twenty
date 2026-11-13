@@ -12,7 +12,11 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  getRlsPredicateCompatibleWorkspaceMemberFieldTypes,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -83,6 +87,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       }
     }
 
+    const compatibleWorkspaceMemberFieldTypes = isDefined(selectedFieldType)
+      ? getRlsPredicateCompatibleWorkspaceMemberFieldTypes({
+          fieldType: selectedFieldType,
+          subFieldName: selectedSubFieldName,
+        })
+      : undefined;
+
     const isRelationToWorkspaceMember =
       selectedFieldMetadataItem?.type === FieldMetadataType.RELATION &&
       selectedFieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
@@ -111,7 +122,10 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           return false;
         }
 
-        if (!targetFieldType) {
+        if (
+          !isDefined(targetFieldType) ||
+          !isDefined(compatibleWorkspaceMemberFieldTypes)
+        ) {
           return true;
         }
 
@@ -123,7 +137,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           return false;
         }
 
-        if (field.type === targetFieldType) {
+        if (compatibleWorkspaceMemberFieldTypes.includes(field.type)) {
           return true;
         }
 
@@ -131,8 +145,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           const fieldCompositeType = compositeTypeDefinitions.get(field.type);
 
           if (isDefined(fieldCompositeType)) {
-            return fieldCompositeType.properties.some(
-              (property) => property.type === targetFieldType,
+            return fieldCompositeType.properties.some((property) =>
+              compatibleWorkspaceMemberFieldTypes.includes(property.type),
             );
           }
         }
@@ -191,13 +205,16 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           );
 
           for (const subField of filterableSubFields) {
-            if (isDefined(targetFieldType)) {
+            if (isDefined(compatibleWorkspaceMemberFieldTypes)) {
               const subFieldType = getCompositeSubFieldType(
                 field,
                 subField.subFieldName,
               );
 
-              if (subFieldType !== targetFieldType) {
+              if (
+                !isDefined(subFieldType) ||
+                !compatibleWorkspaceMemberFieldTypes.includes(subFieldType)
+              ) {
                 continue;
               }
             }

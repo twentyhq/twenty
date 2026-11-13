@@ -17,10 +17,10 @@ import {
   getFilterTypeFromFieldType,
   getFilterValueValidationIssue,
   isDefined,
-  isFieldMetadataArrayKind,
   isFilterValueExpectedAsArray,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
+  isWorkspaceMemberFieldCompatibleWithRlsPredicate,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
@@ -213,43 +213,42 @@ const buildPredicateRecordFilter = ({
     return buildValueRecordFilter(predicateValue);
   }
 
+  if (
+    !isWorkspaceMemberFieldCompatibleWithRlsPredicate({
+      fieldType: fieldMetadata.type,
+      subFieldName,
+      workspaceMemberFieldType: workspaceMemberFieldMetadata.type,
+      workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+    })
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
   if (isFilterValueExpectedAsArray({ filterType, operand, subFieldName })) {
     return buildValueRecordFilter(
       isString(predicateValue) ? [predicateValue] : predicateValue,
     );
   }
 
-  // Not decided on how many values the list holds: access groups see them one by one
-  if (
-    isFieldMetadataArrayKind(workspaceMemberFieldMetadata.type) ||
-    (Array.isArray(predicateValue) && predicateValue.length > 1)
-  ) {
-    return UNSATISFIABLE_RECORD_FILTER;
-  }
-
-  const singleValue = Array.isArray(predicateValue)
-    ? predicateValue[0]
-    : predicateValue;
-
   // A member value the filter would drop or misread must not widen the rule
   if (
     !isRecordFilterValueValid({
       operand,
-      value: convertViewFilterValueToString(singleValue),
+      value: convertViewFilterValueToString(predicateValue),
     }) ||
     isDefined(
       getFilterValueValidationIssue({
         fieldType: fieldMetadata.type,
         operand,
         subFieldName,
-        value: singleValue,
+        value: predicateValue,
       }),
     )
   ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  return buildValueRecordFilter(singleValue);
+  return buildValueRecordFilter(predicateValue);
 };
 
 const combineRecordFilters = (
