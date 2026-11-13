@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
@@ -28,6 +29,7 @@ type ProcessTwoDimensionalResultsParams = {
   rawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
   primaryDateGranularity?: ObjectRecordGroupByDateGranularity | null;
   primarySubFieldName?: string | null;
   secondaryDateGranularity?: ObjectRecordGroupByDateGranularity | null;
@@ -42,6 +44,7 @@ export const processTwoDimensionalResults = ({
   rawResults,
   primaryAxisGroupByField,
   secondaryAxisGroupByField,
+  flatFieldMetadataOptionMaps,
   primaryDateGranularity,
   primarySubFieldName,
   secondaryDateGranularity,
@@ -68,6 +71,7 @@ export const processTwoDimensionalResults = ({
     const xFormatted = formatDimensionValue({
       value: rawXValue,
       fieldMetadata: primaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: primaryDateGranularity ?? undefined,
       subFieldName: primarySubFieldName ?? undefined,
       userTimezone,
@@ -78,6 +82,7 @@ export const processTwoDimensionalResults = ({
     const yFormatted = formatDimensionValue({
       value: rawYValue,
       fieldMetadata: secondaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: secondaryDateGranularity ?? undefined,
       subFieldName: secondarySubFieldName ?? undefined,
       userTimezone,

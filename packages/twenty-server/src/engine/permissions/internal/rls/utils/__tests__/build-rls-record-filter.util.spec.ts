@@ -12,6 +12,8 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
+import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -108,6 +110,8 @@ const buildOwnerMorphField = (
     ...field,
   });
 
+const flatFieldMetadataOptionMaps = createEmptyFlatEntityMaps();
+
 const flatFieldMetadataMaps = buildMaps([
   getFlatFieldMetadataMock({
     id: FIELD_ID,
@@ -137,6 +141,11 @@ const flatFieldMetadataMaps = buildMaps([
         position: 1,
         color: 'red',
       },
+    ],
+    fieldMetadataOptionUniversalIdentifiers: [
+      'option-open',
+      'option-closed',
+      'option-sales',
     ],
   }),
   getFlatFieldMetadataMock({
@@ -360,6 +369,7 @@ const build = (roleIds: string[], workspaceMember?: RlsWorkspaceMember) =>
   buildRlsRecordFilter({
     isRelationHopEnabled: false,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
     rowLevelPermissionRules: roleIds.map(findRule),
     memberFieldValues: buildMemberFieldValuesOrThrow({
@@ -399,6 +409,7 @@ describe('buildRlsRecordFilter', () => {
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       });
 
     expect(filter).toEqual({
@@ -520,6 +531,7 @@ describe('buildRlsRecordFilter', () => {
             filter: build([roleId]),
             flatObjectMetadata,
             flatFieldMetadataMaps,
+            flatFieldMetadataOptionMaps,
           }),
         ).toBe(isMatching);
       },
@@ -580,13 +592,17 @@ describe('buildRecordFilterForRule with access group member values', () => {
   const buildForAccessGroup = ({
     roleId,
     memberFieldValues,
+    flatFieldMetadataOptionMaps:
+      targetFlatFieldMetadataOptionMaps = flatFieldMetadataOptionMaps,
   }: {
     roleId: string;
     memberFieldValues: Record<string, string | string[] | null>;
+    flatFieldMetadataOptionMaps?: FlatFieldMetadataOptionMapsForOptions;
   }) =>
     buildRecordFilterForRule({
       isRelationHopEnabled: false,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: targetFlatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
       rowLevelPermissionRule: findRule(roleId),
       memberFieldValues,
@@ -623,6 +639,36 @@ describe('buildRecordFilterForRule with access group member values', () => {
         },
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should read the options of the target field from its option rows', () => {
+    expect(
+      buildForAccessGroup({
+        roleId: TEAM_BOUND_ROLE_ID,
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN', 'SALES'],
+        },
+        flatFieldMetadataOptionMaps: {
+          byUniversalIdentifier: {
+            'option-open': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-open',
+              value: 'OPEN',
+              position: 0,
+            }),
+            'option-closed': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-closed',
+              value: 'CLOSED',
+              position: 1,
+            }),
+            'option-sales': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-sales',
+              value: 'SALES',
+              position: 2,
+            }),
+          },
+        },
+      }),
+    ).toEqual({ status: { in: ['OPEN', 'SALES'] } });
   });
 
   it('should use a whole list kept by the group as it is', () => {
@@ -662,6 +708,7 @@ describe('buildRecordFilterForRule with access group member values', () => {
       const filter = buildRecordFilterForRule({
         isRelationHopEnabled: false,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
         rowLevelPermissionRule: {
           predicates: [
@@ -687,6 +734,7 @@ describe('buildRecordFilterForRule with access group member values', () => {
           filter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         }),
       ).toBe(expected);
     },
@@ -697,6 +745,7 @@ describe('buildRecordFilterForRule with access group member values', () => {
       buildRecordFilterForRule({
         isRelationHopEnabled: false,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
         rowLevelPermissionRule: {
           predicates: [

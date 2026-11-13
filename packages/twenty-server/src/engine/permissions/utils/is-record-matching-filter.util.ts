@@ -46,6 +46,8 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
+import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -76,6 +78,7 @@ type RecordFilterEvaluationArgs = {
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
   shouldIgnoreSoftDeleteDefaultFilter?: boolean;
 };
 
@@ -111,6 +114,7 @@ const evaluateRecordFilter = ({
   filter,
   flatObjectMetadata,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   shouldIgnoreSoftDeleteDefaultFilter,
 }: RecordFilterEvaluationArgs): RecordFilterEvaluation => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
@@ -125,6 +129,7 @@ const evaluateRecordFilter = ({
           filter: { [filterKey]: value },
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           shouldIgnoreSoftDeleteDefaultFilter,
         }),
       ),
@@ -147,6 +152,7 @@ const evaluateRecordFilter = ({
           filter: andFilter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           shouldIgnoreSoftDeleteDefaultFilter,
         }),
       ),
@@ -166,6 +172,7 @@ const evaluateRecordFilter = ({
               filter: orFilter,
               flatObjectMetadata,
               flatFieldMetadataMaps,
+              flatFieldMetadataOptionMaps,
               shouldIgnoreSoftDeleteDefaultFilter,
             }),
           ),
@@ -180,6 +187,7 @@ const evaluateRecordFilter = ({
         filter: filterValue,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         shouldIgnoreSoftDeleteDefaultFilter,
       });
     }
@@ -203,6 +211,7 @@ const evaluateRecordFilter = ({
       filter: filterValue,
       flatObjectMetadata,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       shouldIgnoreSoftDeleteDefaultFilter,
     });
 
@@ -285,7 +294,10 @@ const evaluateRecordFilter = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: recordFieldValue,
-          options: objectMetadataField.options,
+          options: resolveFlatFieldMetadataOptionsFromCachedMaps({
+            flatFieldMetadata: objectMetadataField,
+            flatFieldMetadataOptionMaps,
+          }),
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -303,7 +315,10 @@ const evaluateRecordFilter = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: recordFieldValue,
-          options: objectMetadataField.options,
+          options: resolveFlatFieldMetadataOptionsFromCachedMaps({
+            flatFieldMetadata: objectMetadataField,
+            flatFieldMetadataOptionMaps,
+          }),
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({

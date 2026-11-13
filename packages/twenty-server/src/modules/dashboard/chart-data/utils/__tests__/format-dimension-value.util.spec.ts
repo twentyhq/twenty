@@ -4,6 +4,8 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 
@@ -31,6 +33,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: null,
         fieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -46,6 +49,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: undefined,
         fieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -67,6 +71,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'ACTIVE',
         fieldMetadata: selectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -78,11 +83,43 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'UNKNOWN',
         fieldMetadata: selectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
 
       expect(result).toBe('UNKNOWN');
+    });
+
+    it('should return the label of the option row over the stored option', () => {
+      const optionUniversalIdentifier = '20202020-0000-4000-8000-000000000101';
+
+      const result = formatDimensionValue({
+        value: 'ACTIVE',
+        fieldMetadata: createMockFieldMetadata({
+          type: FieldMetadataType.SELECT,
+          options: [
+            { value: 'ACTIVE', label: 'Active', color: 'green', position: 0 },
+          ],
+          fieldMetadataOptionUniversalIdentifiers: [optionUniversalIdentifier],
+        }),
+        flatFieldMetadataOptionMaps: {
+          ...createEmptyFlatEntityMaps(),
+          byUniversalIdentifier: {
+            [optionUniversalIdentifier]: getFlatFieldMetadataOptionMock({
+              universalIdentifier: optionUniversalIdentifier,
+              value: 'ACTIVE',
+              label: 'Renamed',
+              color: 'green',
+              position: 0,
+            }),
+          },
+        },
+        userTimezone,
+        firstDayOfTheWeek,
+      });
+
+      expect(result).toBe('Renamed');
     });
   });
 
@@ -100,6 +137,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: ['TAG1', 'TAG2'],
         fieldMetadata: multiSelectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -111,6 +149,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '{TAG1,TAG2}',
         fieldMetadata: multiSelectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -122,6 +161,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '{}',
         fieldMetadata: multiSelectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -133,6 +173,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'TAG1',
         fieldMetadata: multiSelectFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -150,6 +191,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: true,
         fieldMetadata: booleanFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -161,6 +203,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: false,
         fieldMetadata: booleanFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -182,6 +225,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Monday',
         fieldMetadata: dateFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK,
         userTimezone,
         firstDayOfTheWeek,
@@ -194,6 +238,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'January',
         fieldMetadata: dateFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.MONTH_OF_THE_YEAR,
         userTimezone,
         firstDayOfTheWeek,
@@ -206,6 +251,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Q1',
         fieldMetadata: dateFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.QUARTER_OF_THE_YEAR,
         userTimezone,
         firstDayOfTheWeek,
@@ -218,6 +264,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '2024-01-15',
         fieldMetadata: dateFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         userTimezone,
         firstDayOfTheWeek,
@@ -231,6 +278,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '2024-01-15',
         fieldMetadata: dateTimeFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.MONTH,
         userTimezone,
         firstDayOfTheWeek,
@@ -250,6 +298,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Company Name',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -261,6 +310,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '2024-01-15',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         userTimezone,
         firstDayOfTheWeek,
@@ -273,6 +323,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Monday',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK,
         userTimezone,
         firstDayOfTheWeek,
@@ -292,6 +343,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'record-id-1',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         relationLabelByRecordId,
@@ -304,6 +356,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'record-id-1',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         dateGranularity: ObjectRecordGroupByDateGranularity.DAY,
         userTimezone,
         firstDayOfTheWeek,
@@ -317,6 +370,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'record-id-2',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         relationLabelByRecordId,
@@ -329,6 +383,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Acme',
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         subFieldName: 'name',
         userTimezone,
         firstDayOfTheWeek,
@@ -342,6 +397,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: null,
         fieldMetadata: relationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         relationLabelByRecordId,
@@ -360,6 +416,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'record-id-1',
         fieldMetadata: morphRelationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
         relationLabelByRecordId: new Map([['record-id-1', 'Acme Inc']]),
@@ -372,6 +429,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'record-id-1',
         fieldMetadata: morphRelationFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -389,6 +447,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 1500,
         fieldMetadata: numberFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -400,6 +459,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '2000',
         fieldMetadata: numberFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -411,6 +471,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'not a number',
         fieldMetadata: numberFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -422,6 +483,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 0,
         fieldMetadata: numberFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -439,6 +501,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 1500,
         fieldMetadata: currencyFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -450,6 +513,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'USD',
         fieldMetadata: currencyFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         subFieldName: 'currencyCode',
         userTimezone,
         firstDayOfTheWeek,
@@ -462,6 +526,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: '',
         fieldMetadata: currencyFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         subFieldName: 'currencyCode',
         userTimezone,
         firstDayOfTheWeek,
@@ -480,6 +545,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 'Hello World',
         fieldMetadata: textFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });
@@ -491,6 +557,7 @@ describe('formatDimensionValue', () => {
       const result = formatDimensionValue({
         value: 123,
         fieldMetadata: textFieldMetadata,
+        flatFieldMetadataOptionMaps: undefined,
         userTimezone,
         firstDayOfTheWeek,
       });

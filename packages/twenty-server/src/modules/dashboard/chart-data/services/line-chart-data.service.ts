@@ -56,11 +56,19 @@ export class LineChartDataService {
     locale,
   }: GetLineChartDataParams): Promise<LineChartDataDTO> {
     try {
-      const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      const {
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+      } =
         await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+            flatMapsKeys: [
+              'flatObjectMetadataMaps',
+              'flatFieldMetadataMaps',
+              'flatFieldMetadataOptionMaps',
+            ],
           },
         );
 
@@ -202,6 +210,7 @@ export class LineChartDataService {
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
+          flatFieldMetadataOptionMaps,
           configuration,
           userTimezone,
           firstDayOfTheWeek,
@@ -216,6 +225,7 @@ export class LineChartDataService {
         filteredRawResults: resolvedResults,
         primaryAxisGroupByField,
         aggregateField,
+        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone,
         firstDayOfTheWeek,

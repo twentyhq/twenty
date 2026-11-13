@@ -61,13 +61,19 @@ import { transformRichTextValue } from 'src/engine/core-modules/record-transform
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class DataArgProcessorService {
-  constructor(private readonly recordPositionService: RecordPositionService) {}
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {}
 
   async process({
     partialRecordInputs,
@@ -109,6 +115,11 @@ export class DataArgProcessorService {
         },
         shouldBackfillPositionIfUndefined,
       });
+
+    const { flatFieldMetadataOptionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatFieldMetadataOptionMaps',
+      ]);
 
     const processedRecords: Partial<ObjectRecord>[] = [];
 
@@ -157,13 +168,14 @@ export class DataArgProcessorService {
           continue;
         }
 
-        processedRecord[key] = await this.processField(
+        processedRecord[key] = await this.processField({
           fieldMetadata,
           key,
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-        );
+          flatFieldMetadataOptionMaps,
+        });
       }
       processedRecords.push(processedRecord);
     }
@@ -171,13 +183,21 @@ export class DataArgProcessorService {
     return processedRecords;
   }
 
-  private async processField(
-    fieldMetadata: OrmFlatFieldMetadata,
-    key: string,
-    value: unknown,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  ): Promise<unknown> {
+  private async processField({
+    fieldMetadata,
+    key,
+    value,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
+  }: {
+    fieldMetadata: OrmFlatFieldMetadata;
+    key: string;
+    value: unknown;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
         return validateOverriddenPositionFieldOrThrow(value, key);
@@ -205,7 +225,10 @@ export class DataArgProcessorService {
         validateRatingAndSelectFieldOrThrow(
           value,
           key,
-          fieldMetadata.options?.map((option) => option.value),
+          resolveFlatFieldMetadataOptionsFromCachedMaps({
+            flatFieldMetadata: fieldMetadata,
+            flatFieldMetadataOptionMaps,
+          })?.map((option) => option.value),
         );
 
         return value;
@@ -215,7 +238,10 @@ export class DataArgProcessorService {
         const validatedValue = validateMultiSelectFieldOrThrow(
           value,
           key,
-          fieldMetadata.options?.map((option) => option.value),
+          resolveFlatFieldMetadataOptionsFromCachedMaps({
+            flatFieldMetadata: fieldMetadata,
+            flatFieldMetadataOptionMaps,
+          })?.map((option) => option.value),
         );
 
         return transformArrayField(validatedValue);
@@ -269,12 +295,13 @@ export class DataArgProcessorService {
         const connectWhere = connectOperation.connect?.where;
 
         if (isObject(connectWhere)) {
-          const processedWhere = await this.processConnectWhere(
-            connectWhere as Record<string, unknown>,
-            fieldMetadata,
+          const processedWhere = await this.processConnectWhere({
+            connectWhere: connectWhere as Record<string, unknown>,
+            relationFieldMetadata: fieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
-          );
+            flatFieldMetadataOptionMaps,
+          });
 
           return {
             ...connectOperation,
@@ -362,12 +389,19 @@ export class DataArgProcessorService {
     }
   }
 
-  private async processConnectWhere(
-    connectWhere: Record<string, unknown>,
-    relationFieldMetadata: OrmFlatFieldMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  ): Promise<Record<string, unknown>> {
+  private async processConnectWhere({
+    connectWhere,
+    relationFieldMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
+  }: {
+    connectWhere: Record<string, unknown>;
+    relationFieldMetadata: OrmFlatFieldMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): Promise<Record<string, unknown>> {
     if (!isDefined(relationFieldMetadata.relationTargetObjectMetadataId)) {
       throw new CommonQueryRunnerException(
         `Relation target object metadata id not found for field ${relationFieldMetadata.name}`,
@@ -417,13 +451,14 @@ export class DataArgProcessorService {
       }
 
       try {
-        const processedValue = await this.processField(
-          whereFieldMetadata,
-          whereKey,
-          whereValue,
+        const processedValue = await this.processField({
+          fieldMetadata: whereFieldMetadata,
+          key: whereKey,
+          value: whereValue,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-        );
+          flatFieldMetadataOptionMaps,
+        });
 
         // Only keep original keys — processField may add null subfields that alter WHERE semantics
         if (isObject(whereValue) && isObject(processedValue)) {

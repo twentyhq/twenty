@@ -21,7 +21,7 @@ export const getInvalidViewFilterSelectOptionError = ({
   value: ViewFilterValue;
 }) => {
   const invalidValues = getInvalidSelectFilterOptionValues({
-    fieldMetadata: referencedFieldMetadata,
+    options: referencedFieldMetadata.options,
     operand,
     value,
   });

@@ -29,6 +29,7 @@ const transform = ({
   transformToPieChartData({
     filteredRawResults,
     groupByField,
+    flatFieldMetadataOptionMaps: undefined,
     configuration,
     userTimezone: 'UTC',
     firstDayOfTheWeek: CalendarStartDay.SUNDAY,

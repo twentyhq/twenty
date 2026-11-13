@@ -3,6 +3,7 @@ import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
 import { convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek } from 'twenty-shared/utils';
 
+import { FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
@@ -22,6 +23,7 @@ export const transformToOneDimensionalLineChartData = ({
   filteredRawResults,
   primaryAxisGroupByField,
   aggregateField,
+  flatFieldMetadataOptionMaps,
   configuration,
   userTimezone,
   firstDayOfTheWeek,
@@ -32,6 +34,7 @@ export const transformToOneDimensionalLineChartData = ({
   filteredRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
   configuration: LineChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -46,6 +49,7 @@ export const transformToOneDimensionalLineChartData = ({
     applyGapFilling({
       data: filteredRawResults,
       primaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       omitNullValues: configuration.omitNullValues ?? false,
       isDescOrder,
@@ -53,7 +57,10 @@ export const transformToOneDimensionalLineChartData = ({
       splitMultiValueFields: configuration.splitMultiValueFields,
     });
 
-  const selectOptions = getSelectOptions(primaryAxisGroupByField);
+  const selectOptions = getSelectOptions({
+    fieldMetadata: primaryAxisGroupByField,
+    flatFieldMetadataOptionMaps,
+  });
 
   const convertedFirstDayOfTheWeek =
     convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
@@ -65,6 +72,7 @@ export const transformToOneDimensionalLineChartData = ({
     processOneDimensionalResults({
       rawResults: gapFilledResults,
       primaryAxisGroupByField,
+      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       subFieldName: configuration.primaryAxisGroupBySubFieldName,
       userTimezone,

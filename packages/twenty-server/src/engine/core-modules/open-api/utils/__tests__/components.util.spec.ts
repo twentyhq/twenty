@@ -63,11 +63,12 @@ describe('computeSchemaComponents', () => {
     };
 
     expect(
-      computeSchemaComponents(
-        [flatObjectMetadata],
+      computeSchemaComponents({
+        flatObjectMetadataItems: [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-      ),
+        flatFieldMetadataOptionMaps: undefined,
+      }),
     ).toMatchInlineSnapshot(`
 {
   "ObjectName": {
@@ -928,11 +929,12 @@ describe('computeSchemaComponents', () => {
     };
 
     expect(
-      computeSchemaComponents(
-        [flatObjectMetadata],
+      computeSchemaComponents({
+        flatObjectMetadataItems: [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-      ),
+        flatFieldMetadataOptionMaps: undefined,
+      }),
     ).toMatchSnapshot();
   });
 });

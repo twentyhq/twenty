@@ -1,3 +1,4 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -275,6 +276,61 @@ describe('field metadata option rows follow field options', () => {
         { ...openOption, label: 'Open in rows' },
         closedOption,
       ]);
+    } finally {
+      await updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: fieldMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
+      await deleteOneFieldMetadata({
+        expectToFail: false,
+        input: { idToDelete: fieldMetadataId },
+      });
+    }
+  });
+
+  it('validates a record value against the rows, not the stored options', async () => {
+    const { data } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        type: FieldMetadataType.SELECT,
+        name: 'recordReadsRowsField',
+        label: 'Record Reads Rows Field',
+        isLabelSyncedWithName: false,
+        options: [
+          { label: 'Open', value: 'OPEN', color: 'green', position: 0 },
+          { label: 'Closed', value: 'CLOSED', color: 'red', position: 1 },
+        ],
+      },
+      gqlFields: 'id options',
+    });
+    const fieldMetadataId: string = data.createOneField.id;
+    const [openOption] = data.createOneField.options as StoredOption[];
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."fieldMetadata" SET options = $2::jsonb WHERE id = $1`,
+      [fieldMetadataId, JSON.stringify([openOption])],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatFieldMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'flatFieldMetadataOptionMaps',
+    ]);
+
+    try {
+      const { data: recordData, errors } = await createOneOperation({
+        objectMetadataSingularName: 'optionRowsSync',
+        input: { recordReadsRowsField: 'CLOSED' },
+        gqlFields: 'id recordReadsRowsField',
+      });
+
+      expect(errors).toBeUndefined();
+      expect(recordData.createOneResponse.recordReadsRowsField).toBe('CLOSED');
     } finally {
       await updateOneFieldMetadata({
         expectToFail: false,

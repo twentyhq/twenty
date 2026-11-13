@@ -72,7 +72,11 @@ export class GqlTypeGenerator {
     context: SchemaGenerationContext,
     generators: TypeGenerators,
   ) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } = context;
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+    } = context;
     const objectMetadataCollection = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
@@ -89,10 +93,11 @@ export class GqlTypeGenerator {
         flatFieldMetadataMaps,
       );
 
-      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(
+      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore({
         flatObjectMetadata,
         fields,
-      );
+        flatFieldMetadataOptionMaps,
+      });
       generators.objectMetadataGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,
         fields,
