@@ -86,9 +86,9 @@ export type FindManyTimelineActivityTypesQueryVariables = Exact<{ [key: string]:
 
 export type FindManyTimelineActivityTypesQuery = { timelineActivityTypes: Array<{ __typename: 'TimelineActivityType', id: string, applicationId: string | null, universalIdentifier: string, name: string, label: string, icon: string | null, frontComponentUniversalIdentifier: string | null, isActive: boolean, emit: { __typename: 'TimelineActivityTypeEmit', on: string, objectUniversalIdentifier: string | null } | null }> };
 
-export type AgentChatThreadParticipantFieldsFragment = { __typename: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt: string | null, archivedAt: string | null, snoozedUntil: string | null, isSubscribed: boolean, lastMentionedAt: string | null, mentionsResolvedAt: string | null, updatedAt: string };
-
 export type AgentFieldsFragment = { __typename: 'Agent', id: string, name: string, label: string, description: string | null, icon: string | null, avatarColor: string | null, avatarShape: string | null, prompt: string, modelId: string, responseFormat: any, roleId: string | null, isSystem: boolean, isActive: boolean, modelConfiguration: any, triggers: Array<any>, applicationId: string | null, createdAt: string, updatedAt: string };
+
+export type AgentChatThreadParticipantFieldsFragment = { __typename: 'AgentChatThreadParticipant', id: string, threadId: string, lastReadAt: string | null, archivedAt: string | null, snoozedUntil: string | null, isSubscribed: boolean, lastMentionedAt: string | null, mentionsResolvedAt: string | null, updatedAt: string };
 
 export type SkillFieldsFragment = { __typename: 'Skill', id: string, name: string, label: string, description: string | null, icon: string | null, content: string, isSystem: boolean, isActive: boolean, applicationId: string | null, createdAt: string, updatedAt: string };
 
