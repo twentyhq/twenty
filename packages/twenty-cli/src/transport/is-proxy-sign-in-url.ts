@@ -1,23 +1,15 @@
-const SIGN_IN_HOST_LABELS = new Set([
-  'auth',
-  'authenticate',
-  'login',
-  'signin',
-  'sso',
-]);
+const SIGN_IN_KEYWORDS = ['auth', 'authenticate', 'login', 'signin', 'sso'];
+
+const SIGN_IN_HOST_LABELS = new Set(SIGN_IN_KEYWORDS);
 
 const SIGN_IN_PATH_SEGMENTS = new Set([
+  ...SIGN_IN_KEYWORDS,
   '.pomerium',
-  'auth',
-  'authenticate',
   'authorize',
-  'login',
   'oauth',
   'oauth2',
   'sign-in',
   'sign_in',
-  'signin',
-  'sso',
 ]);
 
 export const isProxySignInUrl = (url: URL) =>

@@ -67,8 +67,7 @@ export const runProxyHeaderCommandOrThrow = async ({
 }) => {
   signal.throwIfAborted();
 
-  // A shell, like git credential helpers, lets users compose $(...) commands;
-  // its own process group lets a stop reach processes those commands start.
+  // A shell allows $(...); its own process group lets a stop reach what it starts.
   const subprocess = execa(command, {
     shell: true,
     stdio: ['ignore', 'pipe', 'pipe'],
