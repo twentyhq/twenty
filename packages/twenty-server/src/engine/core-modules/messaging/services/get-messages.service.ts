@@ -279,6 +279,8 @@ export class GetMessagesService {
 
     return this.timelineMessagingService.getRecordThreadChannels({
       workspaceId,
+      objectNameSingular,
+      recordId,
       personIds,
       targetFilter,
     });

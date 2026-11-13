@@ -68,16 +68,18 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
-  const [lastLoadedPage, setLastLoadedPage] = useState(() => ({
-    pageNumber: Math.max(
-      1,
-      Math.ceil((data?.[queryName]?.[objectName]?.length ?? 0) / pageSize),
-    ),
+  const [lastLoadedPage, setLastLoadedPage] = useState({
+    pageNumber: 1,
     hasNextPage: true,
-  }));
+  });
+
+  const isLoadingFirstPage =
+    networkStatus === NetworkStatus.loading ||
+    networkStatus === NetworkStatus.setVariables ||
+    networkStatus === NetworkStatus.refetch;
 
   if (
-    networkStatus === NetworkStatus.refetch &&
+    isLoadingFirstPage &&
     (lastLoadedPage.pageNumber !== 1 || !lastLoadedPage.hasNextPage)
   ) {
     setLastLoadedPage({ pageNumber: 1, hasNextPage: true });

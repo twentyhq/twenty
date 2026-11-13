@@ -290,14 +290,31 @@ export class TimelineMessagingService {
 
   public async getRecordThreadChannels({
     workspaceId,
+    objectNameSingular,
+    recordId,
     personIds,
     targetFilter,
   }: {
     workspaceId: string;
+    objectNameSingular: string;
+    recordId: string;
     personIds: string[];
     targetFilter?: TargetFilter;
   }): Promise<TimelineThreadChannelDTO[]> {
-    const messageChannelIds =
+    const authContext = getWorkspaceAuthContext();
+
+    const recordPermissions =
+      await this.recordPermissionsReadService.findRecordsActions({
+        authContext,
+        objectNameSingular,
+        recordIds: [recordId],
+      });
+
+    if (!recordPermissions.get(recordId)?.canRead) {
+      return [];
+    }
+
+    const threadChannelRows =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const messageThreadRepository =
           this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
@@ -306,7 +323,8 @@ export class TimelineMessagingService {
 
         const queryBuilder = messageThreadRepository
           .createQueryBuilder('messageThread')
-          .select(
+          .select('messageThread.id', 'messageThreadId')
+          .addSelect(
             'messageChannelMessageAssociations.messageChannelId',
             'messageChannelId',
           )
@@ -318,14 +336,37 @@ export class TimelineMessagingService {
 
         this.applyRecordFilter(queryBuilder, { targetFilter, personIds });
 
-        const rows = await queryBuilder
-          .groupBy('messageChannelMessageAssociations.messageChannelId')
+        return queryBuilder
+          .groupBy('messageThread.id')
+          .addGroupBy('messageChannelMessageAssociations.messageChannelId')
           .getRawMany<{
+            messageThreadId: string;
             messageChannelId: string;
           }>();
-
-        return rows.map((row) => row.messageChannelId);
       }, buildSystemAuthContext(workspaceId));
+
+    if (threadChannelRows.length === 0) {
+      return [];
+    }
+
+    const messageThreadPermissions =
+      await this.recordPermissionsReadService.findRecordsActions({
+        authContext,
+        objectNameSingular: 'messageThread',
+        recordIds: [
+          ...new Set(threadChannelRows.map((row) => row.messageThreadId)),
+        ],
+      });
+
+    const messageChannelIds = [
+      ...new Set(
+        threadChannelRows
+          .filter(
+            (row) => messageThreadPermissions.get(row.messageThreadId)?.canRead,
+          )
+          .map((row) => row.messageChannelId),
+      ),
+    ];
 
     if (messageChannelIds.length === 0) {
       return [];

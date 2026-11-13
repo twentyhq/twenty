@@ -115,13 +115,19 @@ describe('useCustomResolver', () => {
       }),
     );
 
-  it('requests the page after the pages already in the cache', async () => {
-    const fetchMore = mockLoadedThreads({ count: 4, loading: false });
-    const { result } = renderTimelineResolver();
+  it('requests page 2 once a remount has reloaded the first page over the cached pages', async () => {
+    mockLoadedThreads({ count: 4, loading: true });
+    useQueryMock.mockReturnValue({
+      ...useQueryMock(),
+      networkStatus: NetworkStatus.loading,
+    });
+    const { result, rerender } = renderTimelineResolver();
+
+    const reloadedFetchMore = mockLoadedThreads({ count: 2, loading: false });
+    rerender();
 
     await act(() => result.current.fetchMoreRecords());
-
-    expectRequestedPage({ fetchMore, page: 3 });
+    expectRequestedPage({ fetchMore: reloadedFetchMore, page: 2 });
   });
 
   it('waits for the first page to reload before requesting more', async () => {

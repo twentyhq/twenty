@@ -2,10 +2,18 @@ import gql from 'graphql-tag';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
@@ -113,6 +121,80 @@ const createRecord = async ({
   );
 
   expect(response.body.errors).toBeUndefined();
+};
+
+const requestChannels = (token?: string) =>
+  makeGraphqlApiRequest(
+    {
+      query: GET_TIMELINE_THREAD_CHANNELS,
+      variables: { objectNameSingular: 'company', recordId: COMPANY_ID },
+    },
+    token,
+  );
+
+const assignRoleToPhil = (roleId: string) =>
+  updateWorkspaceMemberRole({
+    expectToFail: false,
+    input: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL, roleId },
+  });
+
+const requestChannelsAsPhilWithoutReadAccessTo = async (
+  objectNameSingular: string,
+) => {
+  const { objects } = await findManyObjectMetadata({
+    expectToFail: false,
+    input: { filter: {}, paging: { first: 1000 } },
+    gqlFields: 'id nameSingular',
+  });
+  const objectMetadataId = objects.find(
+    (objectMetadata) => objectMetadata.nameSingular === objectNameSingular,
+  )?.id;
+
+  jestExpectToBeDefined(objectMetadataId);
+  const guestRoleId = (await findOneRoleByLabel({ label: 'Guest' })).id;
+  const { data } = await createOneRole({
+    expectToFail: false,
+    input: {
+      label: `Timeline channels without ${objectNameSingular} read`,
+      canUpdateAllSettings: false,
+      canAccessAllTools: false,
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+      canSoftDeleteAllObjectRecords: false,
+      canDestroyAllObjectRecords: false,
+    },
+  });
+  const restrictedRoleId = data.createOneRole.id;
+
+  try {
+    await upsertObjectPermissions({
+      expectToFail: false,
+      input: {
+        roleId: restrictedRoleId,
+        objectPermissions: [
+          {
+            objectMetadataId,
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+            canSoftDeleteObjectRecords: false,
+            canDestroyObjectRecords: false,
+          },
+        ],
+      },
+    });
+    await assignRoleToPhil(restrictedRoleId);
+
+    return await requestChannels(APPLE_PHIL_GUEST_ACCESS_TOKEN);
+  } finally {
+    try {
+      await assignRoleToPhil(guestRoleId);
+    } finally {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: restrictedRoleId },
+      });
+    }
+  }
 };
 
 const requestThreads = ({
@@ -243,10 +325,7 @@ describe('timeline thread channel filter (integration)', () => {
   });
 
   it('lists only the channels the record conversations use', async () => {
-    const response = await makeGraphqlApiRequest({
-      query: GET_TIMELINE_THREAD_CHANNELS,
-      variables: { objectNameSingular: 'company', recordId: COMPANY_ID },
-    });
+    const response = await requestChannels();
 
     expect(response.body.errors).toBeUndefined();
     expect(
@@ -303,4 +382,17 @@ describe('timeline thread channel filter (integration)', () => {
       timelineThreads: [],
     });
   });
+
+  it.each(['company', 'messageThread'])(
+    'lists no channel to a member who cannot read %s records',
+    async (objectNameSingular) => {
+      const response =
+        await requestChannelsAsPhilWithoutReadAccessTo(objectNameSingular);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.getTimelineThreadChannelsFromObjectRecord,
+      ).toEqual([]);
+    },
+  );
 });
