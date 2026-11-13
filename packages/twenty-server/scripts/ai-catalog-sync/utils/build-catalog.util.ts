@@ -67,7 +67,6 @@ const extractCost = ({
   model.cachedInputCostPerMillionTokens = cost.cache_read;
   model.cacheCreationCostPerMillionTokens = cost.cache_write;
 
-  // The catalog holds one long-context tier, so price from the first threshold crossed
   const contextTier = (cost.tiers ?? [])
     .filter((costTier) => costTier.tier.type === 'context')
     .sort((left, right) => left.tier.size - right.tier.size)[0];
