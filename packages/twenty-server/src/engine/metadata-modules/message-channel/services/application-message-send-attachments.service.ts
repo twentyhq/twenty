@@ -119,6 +119,7 @@ export class ApplicationMessageSendAttachmentsService {
           workspaceId,
           fieldMetadataUniversalIdentifier:
             STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+          shouldAssertStorageStock: false,
         });
 
         return { fileId: copiedFile.id, label: name };

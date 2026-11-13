@@ -137,6 +137,7 @@ describe('ApplicationMessageSendAttachmentsService', () => {
         workspaceId: 'workspace-1',
         fieldMetadataUniversalIdentifier:
           STANDARD_OBJECTS.attachment.fields.file.universalIdentifier,
+        shouldAssertStorageStock: false,
       });
     });
 

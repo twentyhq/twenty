@@ -196,10 +196,12 @@ export class FilesFieldService {
   async copyFileIntoFilesField({
     fileId,
     workspaceId,
+    shouldAssertStorageStock,
     ...fieldMetadataReference
   }: {
     fileId: string;
     workspaceId: string;
+    shouldAssertStorageStock?: boolean;
   } & FieldMetadataReference): Promise<FileEntity> {
     const sourceFile = await this.fileRepository.findOne(workspaceId, {
       where: { id: fileId },
@@ -269,6 +271,7 @@ export class FilesFieldService {
         isTemporaryFile: true,
         toDelete: false,
       },
+      shouldAssertStorageStock,
     });
   }
 
