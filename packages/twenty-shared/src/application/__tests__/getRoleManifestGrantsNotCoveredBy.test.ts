@@ -1,8 +1,4 @@
-import {
-  type RoleManifest,
-  type LegacyCompliantRoleManifest,
-} from '@/application/roleManifestType';
-import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
+import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
 import { SystemPermissionFlag } from '@/constants';
 import {
@@ -16,11 +12,11 @@ const EMAIL_FIELD = 'field-email';
 
 const buildRole = (
   overrides: Partial<LegacyCompliantRoleManifest> = {},
-): RoleManifest =>
-  normalizeLegacyCompliantRoleManifest({
-    role: { universalIdentifier: 'role', label: 'Role', ...overrides },
-    applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
-  });
+): LegacyCompliantRoleManifest => ({
+  universalIdentifier: 'role',
+  label: 'Role',
+  ...overrides,
+});
 
 describe('getRoleManifestGrantsNotCoveredBy', () => {
   it('returns nothing when the superset covers the role', () => {
