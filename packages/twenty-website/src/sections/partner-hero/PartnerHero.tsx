@@ -72,7 +72,6 @@ type PartnerHeroProps = {
   visualImageUrl?: string;
 };
 
-// Program pages (integrators, creators) share the /partners hero composition.
 export function PartnerHero({
   heading,
   body,

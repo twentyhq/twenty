@@ -19,8 +19,7 @@ import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
 
 import { type ProgramStep } from './program-step.type';
 
-// Same recipe as partner-lead/PartnerServicesExplainer, so program pages read
-// like /partners; sections may not import each other.
+// Mirrors partner-lead/PartnerServicesExplainer: sections may not import each other.
 const ExplainerGrid = styled.div`
   column-gap: ${spacing(10)};
   display: grid;

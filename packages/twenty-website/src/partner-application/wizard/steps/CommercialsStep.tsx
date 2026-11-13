@@ -1,5 +1,6 @@
 'use client';
 
+import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -92,7 +93,7 @@ export function CommercialsStep({
       </Field>
       <TermsRow>
         <input
-          aria-invalid={state.fieldErrors.acceptsTerms !== undefined}
+          aria-invalid={isDefined(state.fieldErrors.acceptsTerms)}
           aria-labelledby={ACCEPTS_TERMS_LABEL_ID}
           checked={state.acceptsTerms}
           name="acceptsTerms"
