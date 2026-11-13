@@ -1,1 +1,0 @@
-export const WORKSPACE_TABLE_REBUILD_LOCK_TIMEOUT = '8s';

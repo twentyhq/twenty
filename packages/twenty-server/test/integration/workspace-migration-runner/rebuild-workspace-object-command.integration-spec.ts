@@ -1,26 +1,28 @@
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type RebuildWorkspaceTableCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/rebuild-workspace-table.command';
+import { type RebuildWorkspaceObjectCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/rebuild-workspace-object.command';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-const TABLE_NAME = 'person';
+const OBJECT_NAME_SINGULAR = 'person';
+const TABLE_NAME = OBJECT_NAME_SINGULAR;
 const QUALIFIED_TABLE_NAME = `"${SCHEMA}"."${TABLE_NAME}"`;
 const DROPPED_COLUMN_COUNT = 3;
 
-describe('workspace:rebuild-table command (integration)', () => {
-  let command: RebuildWorkspaceTableCommand;
+describe('workspace:rebuild-object command (integration)', () => {
+  let command: RebuildWorkspaceObjectCommand;
   let personId: string;
 
   const runOnWorkspace = (
-    options: { dryRun?: boolean; tableName?: string[] } = {},
+    options: { dryRun?: boolean; objectNameSingular?: string[] } = {},
   ) =>
     command.runOnWorkspace({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      options: { tableName: [TABLE_NAME], ...options },
+      options: { objectNameSingular: [OBJECT_NAME_SINGULAR], ...options },
       index: 0,
       total: 1,
       dataSource: global.testDataSource,
@@ -84,8 +86,8 @@ describe('workspace:rebuild-table command (integration)', () => {
   };
 
   beforeAll(async () => {
-    command = getAppProviderByClassName<RebuildWorkspaceTableCommand>(
-      'RebuildWorkspaceTableCommand',
+    command = getAppProviderByClassName<RebuildWorkspaceObjectCommand>(
+      'RebuildWorkspaceObjectCommand',
     );
 
     const { data } = await createOneOperation({
@@ -105,18 +107,26 @@ describe('workspace:rebuild-table command (integration)', () => {
     });
   });
 
-  it('should leave the table untouched on a dry run', async () => {
-    const columnSlotsBefore = await readColumnSlots();
+  const countScheduledRebuilds = async (): Promise<number> => {
+    const [{ count }] = await global.testDataSource.query(
+      `SELECT COUNT(*)::int AS count FROM core."deferredWorkspaceOperation"
+        WHERE "workspaceId" = $1 AND name = 'rebuild_object'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
 
+    return count;
+  };
+
+  it('should schedule nothing on a dry run', async () => {
     await runOnWorkspace({ dryRun: true });
 
-    expect(await readColumnSlots()).toEqual(columnSlotsBefore);
+    expect(await countScheduledRebuilds()).toBe(0);
   });
 
-  it('should throw when the table does not exist', async () => {
+  it('should throw when the object does not exist', async () => {
     await expect(
-      runOnWorkspace({ tableName: ['tableThatDoesNotExist'] }),
-    ).rejects.toMatchObject({ code: 'TABLE_NOT_FOUND' });
+      runOnWorkspace({ objectNameSingular: ['objectThatDoesNotExist'] }),
+    ).rejects.toMatchObject({ code: 'OBJECT_METADATA_NOT_FOUND' });
   });
 
   it('should free dropped column slots and keep rows, indexes and foreign keys', async () => {
@@ -130,26 +140,19 @@ describe('workspace:rebuild-table command (integration)', () => {
 
     await runOnWorkspace();
 
-    expect(await readColumnSlots()).toEqual({
-      usedColumnSlotCount: tableShapeBefore.columns.length,
-      droppedColumnCount: 0,
+    await expectEventually(async () => {
+      expect(await readColumnSlots()).toEqual({
+        usedColumnSlotCount: tableShapeBefore.columns.length,
+        droppedColumnCount: 0,
+      });
+      expect(await countScheduledRebuilds()).toBe(0);
     });
     expect(await readTableShape()).toEqual(tableShapeBefore);
   });
 
-  it('should skip a table that has no dropped column', async () => {
-    const [{ oid: oidBefore }] = await global.testDataSource.query(
-      `SELECT $1::regclass::oid AS oid`,
-      [QUALIFIED_TABLE_NAME],
-    );
-
+  it('should schedule nothing for an object whose table has no dropped column', async () => {
     await runOnWorkspace();
 
-    const [{ oid: oidAfter }] = await global.testDataSource.query(
-      `SELECT $1::regclass::oid AS oid`,
-      [QUALIFIED_TABLE_NAME],
-    );
-
-    expect(oidAfter).toEqual(oidBefore);
+    expect(await countScheduledRebuilds()).toBe(0);
   });
 });
