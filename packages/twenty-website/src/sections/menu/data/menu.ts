@@ -111,7 +111,7 @@ export const MENU: {
           icon: IconHeartHandshake,
           preview: {
             image: '/images/menu/integrators.webp',
-            imageAlt: msg`Blue monitor illustration`,
+            imageAlt: msg`Blue laptop illustration`,
             imagePosition: 'center',
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Grow your practice with Twenty`,
@@ -125,7 +125,7 @@ export const MENU: {
           icon: IconMovie,
           preview: {
             image: '/images/menu/creators.webp',
-            imageAlt: msg`Blue film camera illustration`,
+            imageAlt: msg`Blue play button illustration`,
             imagePosition: 'center',
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Get paid to share Twenty`,
