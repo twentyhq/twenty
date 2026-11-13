@@ -1264,7 +1264,7 @@ export default {
                 4
             ],
             "userId": [
-                557
+                561
             ],
             "workspaceId": [
                 561
@@ -9018,7 +9018,7 @@ export default {
                 1,
                 {
                     "applicationAuthorizationId": [
-                        557,
+                        561,
                         "UUID!"
                     ]
                 }
@@ -12548,7 +12548,7 @@ export default {
                 689
             ],
             "workspaceApplicationAuthorizations": [
-                55
+                59
             ],
             "__typename": [
                 4
