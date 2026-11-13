@@ -1,3 +1,4 @@
+import { CONTROL_CHARACTERS_RULE } from '../rules/control-characters.rule';
 import { CORRUPTED_MODEL_OUTPUT_RULE } from '../rules/corrupted-model-output.rule';
 import { ESCAPED_EVERY_CHARACTER_RULE } from '../rules/escaped-every-character.rule';
 import { ESCAPED_INLINE_CODE_TAGS_RULE } from '../rules/escaped-inline-code-tags.rule';
@@ -9,6 +10,7 @@ import { WORDLESS_TRANSLATION_RULE } from '../rules/wordless-translation.rule';
 import { type NormalizationRule } from '../types/normalization-rule.type';
 
 export const NORMALIZATION_RULES: NormalizationRule[] = [
+  CONTROL_CHARACTERS_RULE,
   ESCAPED_UNICODE_RULE,
   ESCAPED_EVERY_CHARACTER_RULE,
   ESCAPED_INLINE_CODE_TAGS_RULE,
