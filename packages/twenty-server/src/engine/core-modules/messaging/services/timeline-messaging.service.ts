@@ -260,6 +260,15 @@ export class TimelineMessagingService {
     return { ownedMessageChannelIds, subjectVisibleMessageChannelIds };
   }
 
+  private async isReadStateProvisioned(workspaceId: string): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isMessageReadStateProvisioned(flatFieldMetadataMaps);
+  }
+
   public async findUnreadMessageThreadIds({
     messageThreadIds,
     userWorkspaceId,
@@ -271,10 +280,7 @@ export class TimelineMessagingService {
   }): Promise<Set<string>> {
     if (
       messageThreadIds.length === 0 ||
-      !(await isMessageReadStateProvisioned({
-        workspaceCacheService: this.workspaceCacheService,
-        workspaceId,
-      }))
+      !(await this.isReadStateProvisioned(workspaceId))
     ) {
       return new Set();
     }
@@ -323,12 +329,7 @@ export class TimelineMessagingService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    if (
-      !(await isMessageReadStateProvisioned({
-        workspaceCacheService: this.workspaceCacheService,
-        workspaceId,
-      }))
-    ) {
+    if (!(await this.isReadStateProvisioned(workspaceId))) {
       return;
     }
 

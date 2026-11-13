@@ -87,10 +87,14 @@ export class ApplicationMessageIngestionService {
         messageChannel.participantHandleFieldUniversalIdentifier,
     });
 
-    const isReadStateProvisioned = await isMessageReadStateProvisioned({
-      workspaceCacheService: this.workspaceCacheService,
-      workspaceId,
-    });
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    const isReadStateProvisioned = isMessageReadStateProvisioned(
+      flatFieldMetadataMaps,
+    );
 
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({

@@ -10,6 +10,7 @@ import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/c
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -109,7 +110,10 @@ export class ApplyMessageChannelMessageAssociationsVisibilityRestrictionsService
     const ownedMessageChannelIds = new Set(
       messageChannels
         .filter((messageChannel) =>
-          this.isMessageChannelOwnedByViewer({ messageChannel, authContext }),
+          this.isConnectedAccountOwnedByViewer({
+            connectedAccount: messageChannel.connectedAccount,
+            authContext,
+          }),
         )
         .map(({ id }) => id),
     );
@@ -123,25 +127,22 @@ export class ApplyMessageChannelMessageAssociationsVisibilityRestrictionsService
     );
   }
 
-  private isMessageChannelOwnedByViewer({
-    messageChannel,
+  private isConnectedAccountOwnedByViewer({
+    connectedAccount,
     authContext,
   }: {
-    messageChannel: MessageChannelEntity;
+    connectedAccount: Pick<
+      ConnectedAccountEntity,
+      'userWorkspaceId' | 'applicationId'
+    >;
     authContext: WorkspaceAuthContext;
   }): boolean {
     if (isUserAuthContext(authContext)) {
-      return (
-        messageChannel.connectedAccount.userWorkspaceId ===
-        authContext.userWorkspaceId
-      );
+      return connectedAccount.userWorkspaceId === authContext.userWorkspaceId;
     }
 
     if (isApplicationAuthContext(authContext)) {
-      return (
-        messageChannel.connectedAccount.applicationId ===
-        authContext.application.id
-      );
+      return connectedAccount.applicationId === authContext.application.id;
     }
 
     return false;

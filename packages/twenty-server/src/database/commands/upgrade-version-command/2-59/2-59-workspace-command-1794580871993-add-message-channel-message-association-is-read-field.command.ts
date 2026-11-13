@@ -11,6 +11,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION =
@@ -108,11 +109,8 @@ export class AddMessageChannelMessageAssociationIsReadFieldCommand extends Provi
       );
 
     if (result.status === 'fail') {
-      this.logger.error(
-        `Failed to add the messageChannelMessageAssociation isRead field for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
-
-      throw new Error(
+      throw new WorkspaceMigrationBuilderException(
+        result,
         `Failed to add the messageChannelMessageAssociation isRead field for workspace ${workspaceId}`,
       );
     }

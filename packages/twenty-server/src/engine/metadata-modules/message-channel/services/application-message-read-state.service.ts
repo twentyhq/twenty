@@ -44,12 +44,12 @@ export class ApplicationMessageReadStateService {
       id: messageChannelId,
     });
 
-    if (
-      !(await isMessageReadStateProvisioned({
-        workspaceCacheService: this.workspaceCacheService,
-        workspaceId,
-      }))
-    ) {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (!isMessageReadStateProvisioned(flatFieldMetadataMaps)) {
       return { updatedMessageCount: 0 };
     }
 

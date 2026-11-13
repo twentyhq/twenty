@@ -150,13 +150,13 @@ describe('app message thread read state (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.ingestAppMessages.messages as {
-      externalId: string;
-      messageThreadId: string;
-    }[];
+    const ingestedMessages: { externalId: string; messageThreadId: string }[] =
+      response.body.data.ingestAppMessages.messages;
+
+    return ingestedMessages;
   };
 
-  const setThreadReadState = async (isRead: boolean) => {
+  const setThreadReadState = async (isRead: boolean): Promise<number> => {
     const response = await asApplication({
       query: SET_THREAD_READ_STATE_MUTATION,
       variables: {
@@ -170,8 +170,7 @@ describe('app message thread read state (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    return response.body.data.setAppMessageThreadReadState
-      .updatedMessageCount as number;
+    return response.body.data.setAppMessageThreadReadState.updatedMessageCount;
   };
 
   const isThreadReadOnTimeline = async (token?: string) => {
@@ -185,12 +184,12 @@ describe('app message thread read state (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    const timelineThread = (
-      response.body.data.getTimelineThreadsFromPersonId.timelineThreads as {
-        id: string;
-        read: boolean;
-      }[]
-    ).find(({ id }) => id === messageThreadId);
+    const timelineThreads: { id: string; read: boolean }[] =
+      response.body.data.getTimelineThreadsFromPersonId.timelineThreads;
+
+    const timelineThread = timelineThreads.find(
+      ({ id }) => id === messageThreadId,
+    );
 
     return timelineThread?.read;
   };
