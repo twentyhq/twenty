@@ -244,7 +244,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
               new Error('DM identity is disabled for the migration fixture'),
             ),
         },
-        { publish: jest.fn().mockResolvedValue(undefined) },
+        {
+          publish: jest.fn().mockResolvedValue(undefined),
+          publishThreadsDestroyed: jest.fn().mockResolvedValue(undefined),
+        },
       ),
       {
         getOrRecompute: async () => ({
