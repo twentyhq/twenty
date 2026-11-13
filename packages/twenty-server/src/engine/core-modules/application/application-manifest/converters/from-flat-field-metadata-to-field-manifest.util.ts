@@ -70,9 +70,11 @@ export const fromFlatFieldMetadataToFieldManifest = ({
     ...(isDefined(flatFieldMetadata.icon)
       ? { icon: flatFieldMetadata.icon }
       : {}),
+    // Reapplying an export writes the app's base rows, so workspace overrides stay out of it.
     options: resolveFlatFieldMetadataOptions({
       flatFieldMetadata,
       flatFieldMetadataOptionMaps,
+      shouldApplyOverrides: false,
     }),
     defaultValue: buildDefaultValue(flatFieldMetadata),
     isUIEditable: flatFieldMetadata.isUIEditable,

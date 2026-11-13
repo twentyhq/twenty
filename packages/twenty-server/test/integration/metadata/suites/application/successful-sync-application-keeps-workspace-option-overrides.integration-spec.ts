@@ -8,7 +8,7 @@ import {
   type FieldManifest,
   type ObjectManifest,
 } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
@@ -25,6 +25,7 @@ const OPEN_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000d1';
 const CLOSED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000d2';
 const PAUSED_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000d3';
 const PENDING_OPTION_ID = 'd1b2c3d4-0200-4000-a000-0000000000d4';
+const KANBAN_VIEW_ID = 'd1b2c3d4-0300-4000-a000-0000000000d1';
 
 type SelectFieldOptions = NonNullable<
   Extract<FieldManifest, { type: FieldMetadataType.SELECT }>['options']
@@ -34,10 +35,12 @@ const buildManifest = ({
   options,
   selectFieldLabel = 'Status',
   selectFieldDefaultValue,
+  kanbanGroupValues = [],
 }: {
   options: SelectFieldOptions;
   selectFieldLabel?: string;
   selectFieldDefaultValue?: string;
+  kanbanGroupValues?: string[];
 }) => {
   const object: ObjectManifest = {
     universalIdentifier: TEST_OBJECT_ID,
@@ -69,8 +72,41 @@ const buildManifest = ({
   return buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
-    overrides: { objects: [object] },
+    overrides: {
+      objects: [object],
+      views:
+        kanbanGroupValues.length > 0
+          ? [
+              {
+                universalIdentifier: KANBAN_VIEW_ID,
+                name: 'Status board',
+                objectUniversalIdentifier: TEST_OBJECT_ID,
+                type: ViewType.KANBAN,
+                mainGroupByFieldMetadataUniversalIdentifier: SELECT_FIELD_ID,
+                groups: kanbanGroupValues.map((fieldValue, position) => ({
+                  universalIdentifier: `d1b2c3d4-0400-4000-a000-00000000000${position}`,
+                  fieldValue,
+                  position,
+                })),
+              },
+            ]
+          : [],
+    },
   });
+};
+
+const findKanbanGroupValues = async (): Promise<string[]> => {
+  const viewGroups: { fieldValue: string }[] =
+    await globalThis.testDataSource.query(
+      `SELECT "viewGroup"."fieldValue" FROM core."viewGroup" "viewGroup"
+        JOIN core.view view ON view.id = "viewGroup"."viewId"
+        WHERE view."workspaceId" = $1 AND view."universalIdentifier" = $2
+          AND "viewGroup"."deletedAt" IS NULL
+        ORDER BY "viewGroup"."fieldValue"`,
+      [SEED_APPLE_WORKSPACE_ID, KANBAN_VIEW_ID],
+    );
+
+  return viewGroups.map(({ fieldValue }) => fieldValue);
 };
 
 const MANIFEST_OPTIONS: SelectFieldOptions = [
@@ -322,5 +358,20 @@ describe('Sync application keeps the option edits a workspace made on its fields
     });
 
     expect((await findSelectField()).defaultValue).toBe("'PAUSED'");
+  }, 120000);
+
+  it('does not bring back the board column of an option the workspace deactivated', async () => {
+    const manifest = buildManifest({
+      options: FINAL_MANIFEST_OPTIONS,
+      kanbanGroupValues: ['OPEN', 'CLOSED', 'PAUSED'],
+    });
+
+    await syncApplication({ manifest, expectToFail: false });
+
+    expect(await findKanbanGroupValues()).toEqual(['CLOSED', 'OPEN']);
+
+    await syncApplication({ manifest, expectToFail: false });
+
+    expect(await findKanbanGroupValues()).toEqual(['CLOSED', 'OPEN']);
   }, 120000);
 });

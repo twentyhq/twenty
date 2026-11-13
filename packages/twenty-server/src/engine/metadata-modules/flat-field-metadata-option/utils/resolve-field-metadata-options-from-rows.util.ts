@@ -32,11 +32,13 @@ export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
   shouldRowsCoverStoredOptions = false,
+  shouldApplyOverrides = true,
 }: {
   fieldMetadataEntity: Pick<FieldMetadataEntity, 'type' | 'options'> &
     Partial<Pick<FieldMetadataEntity, 'applicationId'>>;
   fieldMetadataOptionRows: FieldMetadataOptionRowForOptions[] | undefined;
   shouldRowsCoverStoredOptions?: boolean;
+  shouldApplyOverrides?: boolean;
 }): FieldMetadataEntity['options'] => {
   if (
     !isEnumFieldMetadataType(fieldMetadataEntity.type) ||
@@ -59,10 +61,12 @@ export const resolveFieldMetadataOptionsFromRows = ({
   // Caches are built without an author, so a workspace override is read before the owner's.
   return fieldMetadataOptionRows
     .map((fieldMetadataOptionRow) =>
-      resolveEffectiveFlatEntity({
-        metadataName: 'fieldMetadataOption',
-        flatEntity: fieldMetadataOptionRow,
-      }),
+      shouldApplyOverrides
+        ? resolveEffectiveFlatEntity({
+            metadataName: 'fieldMetadataOption',
+            flatEntity: fieldMetadataOptionRow,
+          })
+        : fieldMetadataOptionRow,
     )
     .sort(
       (first, second) =>

@@ -11,6 +11,7 @@ import {
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
 
@@ -146,6 +147,46 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
+  });
+
+  it('should export the base values of an option a workspace overrides', () => {
+    const optionUniversalIdentifier = '77777777-7777-4777-8777-777777777777';
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      type: FieldMetadataType.SELECT,
+      fieldMetadataOptionUniversalIdentifiers: [optionUniversalIdentifier],
+    });
+
+    const fieldManifest = fromFlatFieldMetadataToFieldManifest({
+      flatFieldMetadata,
+      flatFieldMetadataOptionMaps: {
+        ...createEmptyFlatEntityMaps(),
+        byUniversalIdentifier: {
+          [optionUniversalIdentifier]: getFlatFieldMetadataOptionMock({
+            universalIdentifier: optionUniversalIdentifier,
+            value: 'SCREENING',
+            label: 'Screening',
+            color: 'blue',
+            position: 0,
+            applicationId: flatFieldMetadata.applicationId,
+            overrides: {
+              [APP_UID]: { label: 'Workspace screening', color: 'red' },
+            },
+          }),
+        },
+      },
+    });
+
+    expect(fieldManifest.options).toEqual([
+      {
+        id: optionUniversalIdentifier,
+        value: 'SCREENING',
+        label: 'Screening',
+        color: 'blue',
+        position: 0,
+      },
+    ]);
   });
 
   it('should copy the universal settings of a junction relation', () => {

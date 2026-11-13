@@ -31,9 +31,11 @@ export type FlatFieldMetadataOptionMapsForOptions =
 export const resolveFlatFieldMetadataOptions = ({
   flatFieldMetadata,
   flatFieldMetadataOptionMaps,
+  shouldApplyOverrides,
 }: {
   flatFieldMetadata: FlatFieldMetadataForOptions;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
+  shouldApplyOverrides?: boolean;
 }): FlatFieldMetadata['options'] => {
   return resolveFieldMetadataOptionsFromRows({
     fieldMetadataEntity: {
@@ -53,5 +55,6 @@ export const resolveFlatFieldMetadataOptions = ({
       .filter(isDefined),
     // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
     shouldRowsCoverStoredOptions: true,
+    shouldApplyOverrides,
   });
 };
