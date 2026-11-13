@@ -8,5 +8,7 @@ export type OpenTableCellArgs = {
   isReadOnly: boolean;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   recordId: string;
+  recordFieldId: string;
+  fieldValueKey?: string;
   isNavigating: boolean;
 };

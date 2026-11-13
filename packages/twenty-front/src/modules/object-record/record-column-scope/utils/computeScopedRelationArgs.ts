@@ -6,8 +6,7 @@ import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFi
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { type RecordFilterValueDependencies } from 'twenty-shared/types';
 
-export const computeScopedRelationQueryVariables = ({
-  parentRecordIds,
+export const computeScopedRelationArgs = ({
   scopeView,
   recordLimit,
   relationObjectMetadataItem,
@@ -15,7 +14,6 @@ export const computeScopedRelationQueryVariables = ({
   fieldMetadataItems,
   filterValueDependencies,
 }: {
-  parentRecordIds: string[];
   scopeView:
     | Pick<View, 'viewFilters' | 'viewFilterGroups' | 'viewSorts'>
     | undefined;
@@ -25,29 +23,22 @@ export const computeScopedRelationQueryVariables = ({
   fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
 }) => {
-  const { filter: relationFilter, orderBy: relationOrderBy } =
-    getQueryVariablesFromFiltersAndSorts({
-      recordFilterGroups: mapViewFilterGroupsToRecordFilterGroups(
-        scopeView?.viewFilterGroups ?? [],
-      ),
-      recordFilters: mapViewFiltersToFilters(
-        scopeView?.viewFilters ?? [],
-        fieldMetadataItems,
-      ),
-      recordSorts: (scopeView?.viewSorts ?? []).map(
-        ({ viewId: _viewId, ...recordSort }) => recordSort,
-      ),
-      objectMetadataItem: relationObjectMetadataItem,
-      objectMetadataItems,
+  const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
+    recordFilterGroups: mapViewFilterGroupsToRecordFilterGroups(
+      scopeView?.viewFilterGroups ?? [],
+    ),
+    recordFilters: mapViewFiltersToFilters(
+      scopeView?.viewFilters ?? [],
       fieldMetadataItems,
-      filterValueDependencies,
-    });
+    ),
+    recordSorts: (scopeView?.viewSorts ?? []).map(
+      ({ viewId: _viewId, ...recordSort }) => recordSort,
+    ),
+    objectMetadataItem: relationObjectMetadataItem,
+    objectMetadataItems,
+    fieldMetadataItems,
+    filterValueDependencies,
+  });
 
-  return {
-    filter: { id: { in: parentRecordIds } },
-    limit: parentRecordIds.length,
-    relationFilter,
-    relationOrderBy,
-    relationLimit: recordLimit ?? undefined,
-  };
+  return { filter, orderBy, first: recordLimit ?? undefined };
 };

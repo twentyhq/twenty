@@ -6,7 +6,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const isLookupTargetCandidateField = (
   fieldMetadataItem: FieldMetadataItem,
 ) =>
-  fieldMetadataItem.isActive === true &&
+  fieldMetadataItem.isActive &&
   !isHiddenSystemField(fieldMetadataItem) &&
   fieldMetadataItem.type !== FieldMetadataType.RELATION &&
   fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION;

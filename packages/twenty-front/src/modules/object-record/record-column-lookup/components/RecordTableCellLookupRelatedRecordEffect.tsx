@@ -2,7 +2,10 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useEffect } from 'react';
 
-// The table stores related records nested in their parent, but field cells read them by their own id
+// A nested record is a snapshot of the parent query: copy each snapshot once,
+// so a remounting cell cannot overwrite values saved since that query
+const copiedRelatedRecordSnapshots = new WeakSet<ObjectRecord>();
+
 export const RecordTableCellLookupRelatedRecordEffect = ({
   relatedRecord,
 }: {
@@ -11,6 +14,11 @@ export const RecordTableCellLookupRelatedRecordEffect = ({
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   useEffect(() => {
+    if (copiedRelatedRecordSnapshots.has(relatedRecord)) {
+      return;
+    }
+
+    copiedRelatedRecordSnapshots.add(relatedRecord);
     upsertRecordsInStore({ partialRecords: [relatedRecord] });
   }, [relatedRecord, upsertRecordsInStore]);
 

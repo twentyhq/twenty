@@ -35,10 +35,54 @@ const PERSON_CITY_FIELD = {
   objectMetadataUniversalIdentifier: PERSON_OBJECT,
 };
 
+type FieldMetadataForValidation = NonNullable<
+  Parameters<
+    typeof validateFlatViewFieldRelationTarget
+  >[0]['flatFieldMetadataMaps']['byUniversalIdentifier'][string]
+>;
+
+const validate = ({
+  isCanonical,
+  flatFieldMetadata,
+  relationTargetFlatFieldMetadata,
+}: {
+  isCanonical: boolean;
+  flatFieldMetadata: FieldMetadataForValidation;
+  relationTargetFlatFieldMetadata: FieldMetadataForValidation | undefined;
+}) =>
+  validateFlatViewFieldRelationTarget({
+    flatViewField: {
+      isCanonical,
+      fieldMetadataUniversalIdentifier: 'view-field-field',
+      relationTargetFieldMetadataUniversalIdentifier: 'relation-target-field',
+    },
+    flatFieldMetadataMaps: {
+      byUniversalIdentifier: {
+        'view-field-field': flatFieldMetadata,
+        'relation-target-field': relationTargetFlatFieldMetadata,
+      },
+    },
+  });
+
 describe('validateFlatViewFieldRelationTarget', () => {
-  it('accepts a field of the related record on an added many-to-one column', () => {
+  it('accepts a view field without a relation target', () => {
     expect(
       validateFlatViewFieldRelationTarget({
+        flatViewField: {
+          isCanonical: true,
+          fieldMetadataUniversalIdentifier: 'view-field-field',
+          relationTargetFieldMetadataUniversalIdentifier: null,
+        },
+        flatFieldMetadataMaps: {
+          byUniversalIdentifier: { 'view-field-field': PERSON_CITY_FIELD },
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  it('accepts a field of the related record on an added many-to-one column', () => {
+    expect(
+      validate({
         isCanonical: false,
         flatFieldMetadata: PERSON_COMPANY_FIELD,
         relationTargetFlatFieldMetadata: COMPANY_INDUSTRY_FIELD,
@@ -97,7 +141,7 @@ describe('validateFlatViewFieldRelationTarget', () => {
       relationTargetFlatFieldMetadata,
       expectedMessage,
     }) => {
-      const errors = validateFlatViewFieldRelationTarget({
+      const errors = validate({
         isCanonical,
         flatFieldMetadata,
         relationTargetFlatFieldMetadata,

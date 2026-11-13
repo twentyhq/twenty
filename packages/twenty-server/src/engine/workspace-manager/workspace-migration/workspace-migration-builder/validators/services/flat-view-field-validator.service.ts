@@ -95,31 +95,12 @@ export class FlatViewFieldValidatorService {
       );
     }
 
-    const relationTargetFieldMetadataUniversalIdentifier =
-      flatEntityUpdate.relationTargetFieldMetadataUniversalIdentifier;
-
-    if (isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
-      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          updatedFlatViewField.fieldMetadataUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      if (isDefined(flatFieldMetadata)) {
-        validationResult.errors.push(
-          ...validateFlatViewFieldRelationTarget({
-            isCanonical: updatedFlatViewField.isCanonical,
-            flatFieldMetadata,
-            relationTargetFlatFieldMetadata:
-              findFlatEntityByUniversalIdentifier({
-                universalIdentifier:
-                  relationTargetFieldMetadataUniversalIdentifier,
-                flatEntityMaps: flatFieldMetadataMaps,
-              }),
-          }),
-        );
-      }
-    }
+    validationResult.errors.push(
+      ...validateFlatViewFieldRelationTarget({
+        flatViewField: updatedFlatViewField,
+        flatFieldMetadataMaps,
+      }),
+    );
 
     const flatView = findFlatEntityByUniversalIdentifier({
       universalIdentifier: updatedFlatViewField.viewUniversalIdentifier,
@@ -271,24 +252,12 @@ export class FlatViewFieldValidatorService {
         }),
       );
 
-      if (
-        isDefined(
-          flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
-        )
-      ) {
-        validationResult.errors.push(
-          ...validateFlatViewFieldRelationTarget({
-            isCanonical: flatViewFieldToValidate.isCanonical,
-            flatFieldMetadata,
-            relationTargetFlatFieldMetadata:
-              findFlatEntityByUniversalIdentifier({
-                universalIdentifier:
-                  flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
-                flatEntityMaps: flatFieldMetadataMaps,
-              }),
-          }),
-        );
-      }
+      validationResult.errors.push(
+        ...validateFlatViewFieldRelationTarget({
+          flatViewField: flatViewFieldToValidate,
+          flatFieldMetadataMaps,
+        }),
+      );
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({

@@ -51,11 +51,13 @@ export const useOpenFieldInputEditMode = () => {
       fieldDefinition,
       recordId,
       prefix,
+      fieldValueKey,
       onFileUploadClose,
     }: {
       fieldDefinition: FieldDefinition<FieldMetadata>;
       recordId: string;
       prefix?: string;
+      fieldValueKey?: string;
       onFileUploadClose?: () => void;
     }) => {
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
@@ -153,6 +155,7 @@ export const useOpenFieldInputEditMode = () => {
         ) {
           openRelationFromManyFieldInput({
             fieldName: fieldDefinition.metadata.fieldName,
+            fieldValueKey,
             objectNameSingular:
               fieldDefinition.metadata.relationObjectMetadataNameSingular,
             recordId,
