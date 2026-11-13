@@ -365,7 +365,9 @@ export const SettingsDataModelFieldSelectForm = ({
     }));
   };
 
-  const removeAllSelectOptions = (options: FieldMetadataItemOption[]) =>
+  const clearSelectOptionsKeepingApplicationOnes = (
+    options: FieldMetadataItemOption[],
+  ) =>
     keepDefaultSelectOptionsActive(
       options
         .filter((option) => applicationOptionIds.has(option.id))
@@ -475,7 +477,9 @@ export const SettingsDataModelFieldSelectForm = ({
                           color="danger"
                           startIcon={<IconTrash />}
                           onClick={() =>
-                            onChange(removeAllSelectOptions(options))
+                            onChange(
+                              clearSelectOptionsKeepingApplicationOnes(options),
+                            )
                           }
                         >{t`Remove all`}</Dropdown.ActionItem>
                       </Dropdown.Section>
