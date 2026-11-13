@@ -3191,6 +3191,11 @@ type LoginToken {
   loginToken: AuthToken!
 }
 
+input MarkAppChannelThreadAsReadInput {
+  messageChannelId: UUID!
+  messageThreadId: UUID!
+}
+
 type MarketplaceApp {
   author: String!
   category: String!
@@ -3683,6 +3688,7 @@ type Mutation {
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
+  markAppChannelThreadAsRead(input: MarkAppChannelThreadAsReadInput!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   openDirectMessage(workspaceMemberId: UUID!): UUID!
   prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
