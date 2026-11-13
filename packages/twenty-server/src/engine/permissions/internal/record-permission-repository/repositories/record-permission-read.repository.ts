@@ -217,29 +217,46 @@ export class RecordPermissionReadRepository {
     return rows.map(({ joinValue }) => joinValue);
   }
 
-  async findRelatedRecordPathSourceIds({
+  async findRelatedRecordPathsSourceIds({
     workspaceId,
-    sourceIdsQuery,
-    limit,
+    sourceIdsQueries,
+    limitPerPath,
     transactionScope,
   }: {
     workspaceId: string;
-    sourceIdsQuery: SQLCondition;
-    limit: number;
+    sourceIdsQueries: SQLCondition[];
+    limitPerPath: number;
     transactionScope?: RecordPermissionTransactionScope;
-  }): Promise<string[]> {
+  }): Promise<string[][]> {
+    if (sourceIdsQueries.length === 0) {
+      return [];
+    }
+
     const rows = await this.recordPermissionQueryService.execute<{
+      pathIndex: number;
       sourceId: string;
     }>({
       workspaceId,
       transactionScope,
       query: {
-        sql: `SELECT "sourceIds"."sourceId" FROM (${sourceIdsQuery.sql}) AS "sourceIds"("sourceId") WHERE "sourceIds"."sourceId" IS NOT NULL LIMIT :sourceIdsLimit`,
-        parameters: { ...sourceIdsQuery.parameters, sourceIdsLimit: limit },
+        sql: sourceIdsQueries
+          .map(
+            ({ sql }, pathIndex) =>
+              `(SELECT ${pathIndex} AS "pathIndex", "sourceIds"."sourceId" FROM (${sql}) AS "sourceIds"("sourceId") WHERE "sourceIds"."sourceId" IS NOT NULL LIMIT :sourceIdsLimitPerPath)`,
+          )
+          .join(' UNION ALL '),
+        parameters: Object.assign(
+          { sourceIdsLimitPerPath: limitPerPath },
+          ...sourceIdsQueries.map(({ parameters }) => parameters),
+        ),
       },
     });
 
-    return rows.map(({ sourceId }) => sourceId);
+    return sourceIdsQueries.map((_, pathIndex) =>
+      rows
+        .filter((row) => Number(row.pathIndex) === pathIndex)
+        .map(({ sourceId }) => sourceId),
+    );
   }
 
   async findRecordIdsMatchingSQLCondition({

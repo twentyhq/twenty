@@ -419,23 +419,18 @@ export class RecordPermissionsReadService {
       return false;
     });
 
+    const pathKeys = [...sourceIdsQueryByPathKey.keys()];
+    const sourceIdsOfPaths =
+      await this.recordPermissionReadRepository.findRelatedRecordPathsSourceIds(
+        {
+          workspaceId: objectAccessRequest.principals.workspaceId,
+          sourceIdsQueries: [...sourceIdsQueryByPathKey.values()],
+          limitPerPath: MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS + 1,
+          transactionScope,
+        },
+      );
     const sourceIdsByPathKey = new Map(
-      await Promise.all(
-        [...sourceIdsQueryByPathKey].map(
-          async ([pathKey, sourceIdsQuery]) =>
-            [
-              pathKey,
-              await this.recordPermissionReadRepository.findRelatedRecordPathSourceIds(
-                {
-                  workspaceId: objectAccessRequest.principals.workspaceId,
-                  sourceIdsQuery,
-                  limit: MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS + 1,
-                  transactionScope,
-                },
-              ),
-            ] as const,
-        ),
-      ),
+      pathKeys.map((pathKey, index) => [pathKey, sourceIdsOfPaths[index]]),
     );
 
     return buildSQLCondition(
