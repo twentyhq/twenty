@@ -165,19 +165,18 @@ describe('ApplicationMessageReadService', () => {
 
     await service.markThreadAsRead(MARK_AS_READ_ARGS);
 
-    expect(findAppThreadLatestMessages).not.toHaveBeenCalled();
     expect(
       messagingProviderThreadReadMarkerService.markAsReadOrThrow,
     ).not.toHaveBeenCalled();
   });
 
-  it('remembers the call so the next one in the window is skipped', async () => {
+  it('remembers the call for the latest message so only a new message reopens the window', async () => {
     const { service, cacheStorageService } = buildService();
 
     await service.markThreadAsRead(MARK_AS_READ_ARGS);
 
     expect(cacheStorageService.setIfAbsent).toHaveBeenCalledWith(
-      `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}`,
+      `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}:message-1`,
       true,
       30 * 1000,
     );
@@ -230,7 +229,7 @@ describe('ApplicationMessageReadService', () => {
     expect(
       messagingProviderThreadReadMarkerService.markAsReadOrThrow,
     ).not.toHaveBeenCalled();
-    expect(cacheStorageService.del).toHaveBeenCalledTimes(1);
+    expect(cacheStorageService.setIfAbsent).not.toHaveBeenCalled();
   });
 
   it('releases the window when the provider fails so the next open retries', async () => {
@@ -248,7 +247,7 @@ describe('ApplicationMessageReadService', () => {
     );
 
     expect(cacheStorageService.del).toHaveBeenCalledWith(
-      `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}`,
+      `app-thread-mark-as-read:${WORKSPACE_ID}:${USER_WORKSPACE_ID}:${MESSAGE_CHANNEL_ID}:${MESSAGE_THREAD_ID}:message-1`,
     );
   });
 });

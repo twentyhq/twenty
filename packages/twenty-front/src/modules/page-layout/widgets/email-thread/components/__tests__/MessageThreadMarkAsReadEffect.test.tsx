@@ -51,6 +51,7 @@ const renderEffect = () =>
     <MessageThreadMarkAsReadEffect
       messageChannelId="channel-id"
       messageThreadId="thread-id"
+      latestMessageId="message-1"
     />,
   );
 
@@ -68,6 +69,7 @@ describe('MessageThreadMarkAsReadEffect', () => {
       <MessageThreadMarkAsReadEffect
         messageChannelId="channel-id"
         messageThreadId="thread-id"
+        latestMessageId="message-1"
       />,
     );
 
@@ -76,6 +78,20 @@ describe('MessageThreadMarkAsReadEffect', () => {
       messageChannelId: 'channel-id',
       messageThreadId: 'thread-id',
     });
+  });
+
+  it('marks the thread as read again when a new message arrives while it is open', () => {
+    const { rerender } = renderEffect();
+
+    rerender(
+      <MessageThreadMarkAsReadEffect
+        messageChannelId="channel-id"
+        messageThreadId="thread-id"
+        latestMessageId="message-2"
+      />,
+    );
+
+    expect(mockMarkAppChannelThreadAsRead).toHaveBeenCalledTimes(2);
   });
 
   it('does not mark the thread as read for a member the channel is shared with', () => {

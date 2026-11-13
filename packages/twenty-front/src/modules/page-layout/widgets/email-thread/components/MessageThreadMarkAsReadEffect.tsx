@@ -12,11 +12,13 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 type MessageThreadMarkAsReadEffectProps = {
   messageChannelId: string | null;
   messageThreadId: string;
+  latestMessageId: string;
 };
 
 export const MessageThreadMarkAsReadEffect = ({
   messageChannelId,
   messageThreadId,
+  latestMessageId,
 }: MessageThreadMarkAsReadEffectProps) => {
   const { markAppChannelThreadAsRead } = useMarkAppChannelThreadAsRead();
   const { messageChannel, connectedAccount } =
@@ -47,7 +49,7 @@ export const MessageThreadMarkAsReadEffect = ({
       messageThreadId,
     });
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [appChannelIdToMark, messageThreadId]);
+  }, [appChannelIdToMark, messageThreadId, latestMessageId]);
 
   return <></>;
 };

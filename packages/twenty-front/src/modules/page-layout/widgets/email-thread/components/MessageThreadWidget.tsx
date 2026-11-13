@@ -86,6 +86,7 @@ export const MessageThreadWidget = ({
     <MessageThreadMarkAsReadEffect
       messageChannelId={lastMessageChannelId}
       messageThreadId={thread.id}
+      latestMessageId={lastMessage.id}
     />
   );
 

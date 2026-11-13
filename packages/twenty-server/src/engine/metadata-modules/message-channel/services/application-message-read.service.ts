@@ -91,7 +91,23 @@ export class ApplicationMessageReadService {
       return;
     }
 
-    const throttleKey = `app-thread-mark-as-read:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}`;
+    const latestThreadMessages =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.applicationThreadLatestMessagesService.find({
+            messageChannelId,
+            messageThreadId,
+          }),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    if (!isDefined(latestThreadMessages)) {
+      return;
+    }
+
+    const [latestMessageId] = latestThreadMessages.latestMessageIds;
+    const throttleKey = `app-thread-mark-as-read:${workspaceId}:${userWorkspaceId}:${messageChannelId}:${messageThreadId}:${latestMessageId}`;
 
     const hasClaimedThrottle = await this.cacheStorageService.setIfAbsent(
       throttleKey,
@@ -104,23 +120,6 @@ export class ApplicationMessageReadService {
     }
 
     try {
-      const latestThreadMessages =
-        await this.workspaceOrmManager.executeInWorkspaceContext(
-          () =>
-            this.applicationThreadLatestMessagesService.find({
-              messageChannelId,
-              messageThreadId,
-            }),
-          buildSystemAuthContext(workspaceId),
-          { lite: true },
-        );
-
-      if (!isDefined(latestThreadMessages)) {
-        await this.cacheStorageService.del(throttleKey);
-
-        return;
-      }
-
       await this.messagingProviderThreadReadMarkerService.markAsReadOrThrow({
         marker,
         workspaceId,
