@@ -2,7 +2,9 @@ import { randomUUID } from 'crypto';
 
 import gql from 'graphql-tag';
 import request from 'supertest';
+import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
+import { deleteCurrentWorkspace } from 'test/integration/graphql/utils/delete-current-workspace.util';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { signUpOperationFactory } from 'test/integration/graphql/utils/sign-up-operation-factory.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
@@ -10,6 +12,7 @@ import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { createPermissionTestActiveWorkspace } from 'test/integration/permissions/utils/create-permission-test-active-workspace.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { In, Not } from 'typeorm';
 
@@ -231,6 +234,7 @@ describe('last server admin removal', () => {
     workspaceMemberId: string;
     accessToken: string;
   };
+  let demotedServerAdminIds: string[] = [];
 
   const setCanAccessFullAdminPanel = async ({
     userIds,
@@ -256,43 +260,52 @@ describe('last server admin removal', () => {
     );
   };
 
-  const isServerAdminActive = () =>
-    getCoreRepository<UserEntity>(UserEntity).exists({
-      where: { id: serverAdmin.id },
+  const promoteToServerAdmin = async (accessToken: string) => {
+    const { data } = await currentUser({
+      token: accessToken,
+      gqlFields: 'id workspaceMember { id }',
+      expectToFail: false,
     });
 
-  beforeEach(async () => {
-    const accessToken = await signUpInWorkspaceAndGetAccessToken(
-      `last-server-admin-${randomUUID()}@example.com`,
-    );
-
-    const response = await makeMetadataApiRequest(
-      {
-        query: gql`
-          query CurrentUser {
-            currentUser {
-              id
-              workspaceMember {
-                id
-              }
-            }
-          }
-        `,
-      },
-      accessToken,
-    );
-
-    const { id, workspaceMember } = response.body.data.currentUser;
-
-    serverAdmin = { id, workspaceMemberId: workspaceMember.id, accessToken };
+    const { id, workspaceMember } = data.currentUser;
 
     await setCanAccessFullAdminPanel({
       userIds: [id],
       canAccessFullAdminPanel: true,
     });
-  });
+
+    return { id, workspaceMemberId: workspaceMember.id, accessToken };
+  };
+
+  const demoteOtherServerAdmins = async () => {
+    const otherServerAdmins = await getCoreRepository<UserEntity>(
+      UserEntity,
+    ).find({
+      select: { id: true },
+      where: { id: Not(serverAdmin.id), canAccessFullAdminPanel: true },
+    });
+
+    demotedServerAdminIds = otherServerAdmins.map(({ id }) => id);
+
+    await setCanAccessFullAdminPanel({
+      userIds: demotedServerAdminIds,
+      canAccessFullAdminPanel: false,
+    });
+  };
+
+  const isServerAdminActive = () =>
+    getCoreRepository<UserEntity>(UserEntity).exists({
+      where: { id: serverAdmin.id },
+    });
 
   afterEach(async () => {
+    await setCanAccessFullAdminPanel({
+      userIds: demotedServerAdminIds,
+      canAccessFullAdminPanel: true,
+    });
+
+    demotedServerAdminIds = [];
+
     if (await isServerAdminActive()) {
       await deleteUser({
         accessToken: serverAdmin.accessToken,
@@ -301,71 +314,94 @@ describe('last server admin removal', () => {
     }
   });
 
-  describe('when no other server admin is left', () => {
-    let otherServerAdminIds: string[];
-
+  describe('in a shared workspace', () => {
     beforeEach(async () => {
-      const otherServerAdmins = await getCoreRepository<UserEntity>(
-        UserEntity,
-      ).find({
-        select: { id: true },
-        where: { id: Not(serverAdmin.id), canAccessFullAdminPanel: true },
+      serverAdmin = await promoteToServerAdmin(
+        await signUpInWorkspaceAndGetAccessToken(
+          `last-server-admin-${randomUUID()}@example.com`,
+        ),
+      );
+    });
+
+    describe('when no other server admin is left', () => {
+      beforeEach(demoteOtherServerAdmins);
+
+      it('should not allow removing their member from their only workspace', async () => {
+        const { data, errors } = await deleteUserFromWorkspace({
+          input: { workspaceMemberIdToDelete: serverAdmin.workspaceMemberId },
+          expectToFail: true,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        expect(data).toBeNull();
+        expect(errors[0].message).toBe(
+          PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+        );
+        expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        expect(await isServerAdminActive()).toBe(true);
       });
 
-      otherServerAdminIds = otherServerAdmins.map(({ id }) => id);
+      it('should not allow deleting their account', async () => {
+        const { data, errors } = await deleteUser({
+          accessToken: serverAdmin.accessToken,
+          expectToFail: true,
+        });
 
-      await setCanAccessFullAdminPanel({
-        userIds: otherServerAdminIds,
-        canAccessFullAdminPanel: false,
+        expect(data).toBeNull();
+        expect(errors[0].message).toBe(
+          PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+        );
+        expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        expect(await isServerAdminActive()).toBe(true);
       });
     });
 
-    afterEach(() =>
-      setCanAccessFullAdminPanel({
-        userIds: otherServerAdminIds,
-        canAccessFullAdminPanel: true,
-      }),
-    );
-
-    it('should not allow removing their member from their only workspace', async () => {
-      const { data, errors } = await deleteUserFromWorkspace({
+    it('should remove their member from their only workspace when another server admin is left', async () => {
+      const { errors } = await deleteUserFromWorkspace({
         input: { workspaceMemberIdToDelete: serverAdmin.workspaceMemberId },
-        expectToFail: true,
+        expectToFail: false,
         token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      expect(data).toBeNull();
-      expect(errors[0].message).toBe(
-        PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
-      );
-      expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-      expect(await isServerAdminActive()).toBe(true);
-    });
-
-    it('should not allow deleting their account', async () => {
-      const { data, errors } = await deleteUser({
-        accessToken: serverAdmin.accessToken,
-        expectToFail: true,
-      });
-
-      expect(data).toBeNull();
-      expect(errors[0].message).toBe(
-        PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
-      );
-      expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-      expect(await isServerAdminActive()).toBe(true);
+      expect(errors).toBeUndefined();
+      expect(await isServerAdminActive()).toBe(false);
     });
   });
 
-  it('should remove a server admin from their only workspace when another server admin is left', async () => {
-    const { errors } = await deleteUserFromWorkspace({
-      input: { workspaceMemberIdToDelete: serverAdmin.workspaceMemberId },
-      expectToFail: false,
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  describe('as the only member of their workspace', () => {
+    beforeEach(async () => {
+      const { adminAccessToken } = await createPermissionTestActiveWorkspace();
+
+      serverAdmin = await promoteToServerAdmin(adminAccessToken);
     });
 
-    expect(errors).toBeUndefined();
-    expect(await isServerAdminActive()).toBe(false);
+    describe('when no other server admin is left', () => {
+      beforeEach(demoteOtherServerAdmins);
+
+      it('should not allow deleting their workspace', async () => {
+        const { data, errors } = await deleteCurrentWorkspace({
+          accessToken: serverAdmin.accessToken,
+          expectToFail: true,
+        });
+
+        expect(data).toBeNull();
+        expect(errors[0].message).toBe(
+          PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+        );
+        expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        expect(await isServerAdminActive()).toBe(true);
+      });
+    });
+
+    it('should delete their workspace when another server admin is left', async () => {
+      const { errors } = await deleteCurrentWorkspace({
+        accessToken: serverAdmin.accessToken,
+        expectToFail: false,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(await isServerAdminActive()).toBe(false);
+    });
   });
 });
 
