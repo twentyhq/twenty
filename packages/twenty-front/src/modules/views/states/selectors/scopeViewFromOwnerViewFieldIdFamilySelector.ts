@@ -12,5 +12,4 @@ export const scopeViewFromOwnerViewFieldIdFamilySelector =
       ({ ownerViewFieldId }) =>
       ({ get }) =>
         get(scopeViewsByOwnerViewFieldIdMapSelector).get(ownerViewFieldId),
-    areEqual: (previous, next) => previous === next,
   });

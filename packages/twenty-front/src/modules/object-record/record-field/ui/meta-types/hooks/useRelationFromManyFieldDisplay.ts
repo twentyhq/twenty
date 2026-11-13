@@ -47,9 +47,12 @@ export const useRelationFromManyFieldDisplay = () => {
     fieldDefinition,
   );
 
+  // Unscoped cells share one atom instead of creating one per record
   const scopedRelationRecords = useAtomFamilyStateValue(
     scopedRelationRecordsFamilyState,
-    { viewFieldId: scopedRelationViewFieldId ?? '', recordId },
+    isDefined(scopedRelationViewFieldId)
+      ? { viewFieldId: scopedRelationViewFieldId, recordId }
+      : { viewFieldId: '', recordId: '' },
   );
 
   const fieldValue = isDefined(scopedRelationViewFieldId)

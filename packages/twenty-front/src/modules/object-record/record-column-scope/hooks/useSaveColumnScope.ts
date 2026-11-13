@@ -105,17 +105,16 @@ export const useSaveColumnScope = () => {
         return false;
       }
 
-      const areFiltersSaved = await saveRecordFiltersToView({
-        view: viewToSave,
-        recordFilters,
-        recordFilterGroups,
-      });
+      const [areFiltersSaved, areSortsSaved] = await Promise.all([
+        saveRecordFiltersToView({
+          view: viewToSave,
+          recordFilters,
+          recordFilterGroups,
+        }),
+        saveRecordSortsToView({ view: viewToSave, recordSorts }),
+      ]);
 
-      if (!areFiltersSaved) {
-        return false;
-      }
-
-      return saveRecordSortsToView({ view: viewToSave, recordSorts });
+      return areFiltersSaved && areSortsSaved;
     },
     [
       createScopeView,
