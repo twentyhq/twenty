@@ -277,6 +277,11 @@ msgstr "קישור שנמצא במעקב בקמפיין"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "אפשר לשלוח אימייל שיווקי לנמען אחד בלבד בכל פעם, כך שכל אדם מקבל קישור הסרה משלו."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "הודעה זקוקה לטקסט או לקובץ מצורף אחד לפחות."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "ווידג׳ט קשר מקונן חייב להשתמש בפריסת טב
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "אירעה שגיאת רשת בעת הגישה ללוח השנה."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "ייצוא כבר פועל בסביבת עבודה זו. נא להמתי
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "לשירות חיצוני לקח זמן רב מדי להגיב."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2716,6 +2731,11 @@ msgstr "לא ניתן לשנות תנאי כדי לשנות את התפקיד ש
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "לא ניתן להסיר את המנהל האחרון מסביבת העבודה."
+
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5353,6 +5373,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "מזהה הקלטה חיצוני"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5488,6 +5513,11 @@ msgstr "תצורת תכונה לא נמצאה."
 msgid "February"
 msgstr "פברואר"
 
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
+
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
@@ -5497,11 +5527,6 @@ msgstr "השדה \"{fieldName}\" אינו שייך לאובייקט שאליו �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "השדה \"{fieldName}\" אינו קשר רבים-לאחד, ואין לו עמודת צירוף להשוואה"
-
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "השדה \"{fieldName}\" מקבל ערך יחיד עם האופרנד \"{operand}\", ולא ניתן להשוות אותו לרשימה המוחזקת בשדה חבר סביבת העבודה \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8481,6 +8506,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "סמן כלא נקרא"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "פונקציית הלוגיקה לסימון שרשור כנקרא \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" לא נמצאה ביישום זה"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8672,6 +8702,11 @@ msgstr "הודעה"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "הודעה"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "לא ניתן היה לשמור את קבצי ההודעות המצורפים. נסו שוב."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9517,6 +9552,11 @@ msgstr "לא צוינו נמענים תקינים"
 msgid "No verified sending domain matches this from address."
 msgstr "אין דומיין שליחה מאומת התואם לכתובת השולח הזו."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10008,6 +10048,11 @@ msgstr "ניתן לבטל רק קמפיין מתוזמן או קמפיין שנ�
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "רק מנהל שרת יכול לנהל קודי שחזור עבור חבר זה."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10050,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "רק היישום שבבעלותו סוכן זה יכול לשנות את המפעילים שלו"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "רק האדם שיצר זרימת עבודה זו יכול לשנות מי רואה אותה"
 
@@ -10289,7 +10334,7 @@ msgstr "ערך אפשרות חורג מ-63 תווים."
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
-msgstr "פורמט ערך האפשרות אינו נתמך"
+msgstr ""
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
@@ -10300,7 +10345,7 @@ msgstr "נדרש ערך אפשרות."
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr "ערך האפשרות חייב להיות מחרוזת של לפחות תו אחד"
+msgstr ""
 
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
@@ -14080,6 +14125,11 @@ msgstr "פונקציית הלוגיקה שמזהה את החשבון המחוב�
 msgid "The logic function that starts the connection was not found."
 msgstr "פונקציית הלוגיקה שמתחילה את החיבור לא נמצאה."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "פונקציית הלוגיקה שבה ספק הודעות זה מסמן שרשורים כנקראו לא נמצאה ביישום שלו."
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14813,10 +14863,10 @@ msgstr "תכונה זו ניתנת ללא עלות עבור עד {MAX_SEATS_WITH
 msgid "This feature is not enabled."
 msgstr "תכונה זו אינה מופעלת."
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "לא ניתן להשוות שדה זה לרשימת ערכים"
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -16613,7 +16663,7 @@ msgstr "הערך \"{stringifiedValue}\" אינו מוביל לשום רשומה 
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr " תַאִים לִהְיוֹת בְּאוֹתִיּוֹת רִשׁוֹנוֹת   ובפורמט snake_case \"{sanitizedValue}\""
+msgstr ""
 
 #. js-lingui-id: OG7PgU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -17062,6 +17112,11 @@ msgstr "לא ניתן היה להשלים את החיבור. אנא נסה שו�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "לא הצלחנו לזהות את החשבון שאישרת. נסה שוב."
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "לא הצלחנו לסמן את השיחה הזו כנקראה."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

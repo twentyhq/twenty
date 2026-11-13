@@ -25,6 +25,7 @@ type TestSetup = {
   companyObjectMetadataId: string;
   companyNameFieldMetadataId: string;
   personCompanyFieldMetadataId: string;
+  workspaceMemberCalendarStartDayFieldMetadataId: string;
 };
 
 type TestContext = {
@@ -176,6 +177,25 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       },
     },
     {
+      title:
+        'when the predicate compares a field to a workspace member field of another type',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: testSetup.companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId:
+                testSetup.workspaceMemberCalendarStartDayFieldMetadataId,
+            },
+          ],
+          predicateGroups: [],
+        }),
+      },
+    },
+    {
       title: 'when the relation hop is not a relation field',
       context: {
         input: (testSetup) => ({
@@ -272,6 +292,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let companyNameFieldMetadataId: string;
   let personObjectMetadataId: string;
   let personCompanyFieldMetadataId: string;
+  let workspaceMemberCalendarStartDayFieldMetadataId: string;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -321,6 +342,18 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     jestExpectToBeDefined(personCompanyField);
     personCompanyFieldMetadataId = personCompanyField.id;
+
+    const calendarStartDayField = objects
+      .find(
+        (object: { nameSingular: string }) =>
+          object.nameSingular === 'workspaceMember',
+      )
+      ?.fieldsList?.find(
+        (field: { name: string }) => field.name === 'calendarStartDay',
+      );
+
+    jestExpectToBeDefined(calendarStartDayField);
+    workspaceMemberCalendarStartDayFieldMetadataId = calendarStartDayField.id;
 
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -395,6 +428,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
         companyObjectMetadataId,
         companyNameFieldMetadataId,
         personCompanyFieldMetadataId,
+        workspaceMemberCalendarStartDayFieldMetadataId,
       }),
     });
 

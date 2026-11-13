@@ -6,10 +6,10 @@ import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastM
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
-import { AiChatThreadInboxStateNotice } from '@/ai/components/AiChatThreadInboxStateNotice';
-import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { InboxThreadStatusNotice } from '@/ai/components/InboxThreadStatusNotice';
+import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
+import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AiChatStreamingAutoScrollEffect';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
 import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
@@ -57,13 +57,13 @@ export const AiChatTabMessageList = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const aiChatSurface = useContext(AiChatSurfaceContext);
   const hasPageContentInset = useHasAiChatPageContentInset();
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
 
   const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(
     aiChatSurface ?? AI_CHAT_SURFACE.SIDE_PANEL,
   );
 
-  if (!agentChatHasMessage) {
+  if (!aiChatHasMessage) {
     if (!isWorkspaceSetupChat) {
       return null;
     }
@@ -97,10 +97,10 @@ export const AiChatTabMessageList = () => {
               <AiChatLastMessageWithStreamingState />
               <AiChatPendingResponseIndicator />
               <AiChatErrorUnderMessageList />
-              <AiChatThreadInboxStateNotice />
+              <InboxThreadStatusNotice />
             </StyledMessageListContent>
-            <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-            <AgentChatStreamingAutoScrollEffect />
+            <AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
+            <AiChatStreamingAutoScrollEffect />
           </ScrollWrapper>
           <AiChatScrollToBottomButton />
         </StyledScrollWrapperContainer>

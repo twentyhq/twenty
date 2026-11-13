@@ -39,6 +39,7 @@ export default defineView({
 * `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
 * Vizualizarea principală a listei obiectului aparține serverului: `key` este învechit și este ignorat, astfel încât o vizualizare din manifest nu o poate revendica niciodată. Livrați un element de navigare `VIEW` dacă doriți ca vizualizarea dvs. să fie la un singur clic distanță în bara laterală.
 * `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`. Pentru a face referire la un câmp de sistem creat automat, cum ar fi `createdAt`, consultă [Țintirea metadatelor de sistem](/ro/developers/extend/apps/data/system-fields).
+* Setați `isCanonical: false` pe un câmp pentru a adăuga o coloană suplimentară pentru un câmp pe care vizualizarea îl afișează deja. O vizualizare are cel mult o coloană canonică per câmp, dar oricâte coloane necanonice. Acestea nu sunt permise pe câmpul identificator al etichetei obiectului sau în vizualizările widgeturilor, iar `isCanonical` este setat atunci când este creată coloana: modificarea lui ulterior nu are niciun efect.
 * Puteți declara, de asemenea, `filters`, `filterGroups`, `sorts`, `groups` și `fieldGroups` pentru configurații avansate.
 * `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 

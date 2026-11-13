@@ -277,6 +277,11 @@ msgstr "Bir kampanyada izlenen bağlantı"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Pazarlama e-postası aynı anda yalnızca bir alıcıya gönderilebilir; böylece her kişi kendi abonelikten çıkma bağlantısını alır."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Bir ileti için metin veya en az bir ek gereklidir."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "İç içe ilişki bileşeni tablo yerleşimini kullanmalıdır."
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "Takvime erişilirken bir ağ hatası oluştu."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "Bu çalışma alanında zaten bir dışa aktarma çalışıyor. Lütfen 
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Harici bir hizmetin yanıt vermesi çok uzun sürdü."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2716,6 +2731,11 @@ msgstr "Koşul, rolünü {existingRoleIdentifier} değerinden {updatedRoleIdenti
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Son yönetici çalışma alanından kaldırılamaz."
+
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5353,6 +5373,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Harici Kayıt Kimliği"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5488,6 +5513,11 @@ msgstr "Özellik yapılandırması bulunamadı."
 msgid "February"
 msgstr "Şubat"
 
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
+
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
@@ -5497,11 +5527,6 @@ msgstr "\"{fieldName}\" alanı, \"{relationFieldName}\" ilişkisi aracılığıy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "\"{fieldName}\" alanı çoka-bir ilişki değildir, karşılaştırılacak bir birleştirme sütunu yoktur"
-
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "\"{fieldName}\" alanı, \"{operand}\" işlecinin kullanıldığı tek bir değer alır; \"{workspaceMemberFieldName}\" çalışma alanı üyesi alanında bulunan listeyle karşılaştırılamaz"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8481,6 +8506,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Okunmadı olarak işaretle"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "İş parçacığını okundu olarak işaretleme mantık işlevi \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" bu uygulamada bulunamadı"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8672,6 +8702,11 @@ msgstr "Mesaj"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Mesaj"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "İleti ekleri kaydedilemedi. Lütfen yeniden deneyin."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9517,6 +9552,11 @@ msgstr "Geçerli alıcı belirtilmedi"
 msgid "No verified sending domain matches this from address."
 msgstr "Hiçbir doğrulanmış gönderim alan adı bu gönderen adresiyle eşleşmiyor."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10008,6 +10048,11 @@ msgstr "Yalnızca zamanlanmış veya gönderilmekte olan bir kampanya iptal edil
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Bu üye için kurtarma kodlarını yalnızca bir sunucu yöneticisi yönetebilir."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10050,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Yalnızca bu aracının sahibi olan uygulama tetikleyicilerini değiştirebilir"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bu iş akışını kimin göreceğini yalnızca onu oluşturan kişi değiştirebilir"
 
@@ -14080,6 +14125,11 @@ msgstr "Bağlı hesabı tanımlayan mantık işlevi bulunamadı."
 msgid "The logic function that starts the connection was not found."
 msgstr "Bağlantıyı başlatan mantık işlevi bulunamadı."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Bu mesajlaşma sağlayıcısının iş parçacıklarını okundu olarak işaretlemek için kullandığı mantık işlevi uygulamasında bulunamadı."
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14813,10 +14863,10 @@ msgstr "Bu özellik, {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} kullanıcıya kadar ücr
 msgid "This feature is not enabled."
 msgstr "Bu özellik etkin değil."
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "Bu alan bir değer listesiyle karşılaştırılamaz"
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17062,6 +17112,11 @@ msgstr "Bağlantıyı tamamlayamadık. Lütfen tekrar deneyin."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Yetkilendirdiğiniz hesabı tanımlayamadık. Lütfen tekrar deneyin."
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Bu konuşmayı okundu olarak işaretleyemedik."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

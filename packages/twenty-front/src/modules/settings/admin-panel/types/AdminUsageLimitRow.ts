@@ -13,9 +13,10 @@ export type AdminUsageLimitRow = {
   periodCount: number;
   periodUnit: string;
   unit: UsageUnit;
-  defaultValue: number;
-  limitValue: number;
+  defaultValue: number | null;
+  limitValue: number | null;
   burstValue: number | null;
   usageLimitId: string | null;
+  endsAt: string | null;
   isOverridden: boolean;
 };

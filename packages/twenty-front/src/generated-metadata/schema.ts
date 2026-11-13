@@ -2077,6 +2077,7 @@ export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
+  isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -2635,10 +2636,12 @@ export enum FeatureFlagKey {
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
   IS_HTTP_EGRESS_LAMBDA_ENABLED = 'IS_HTTP_EGRESS_LAMBDA_ENABLED',
+  IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
   IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
@@ -7265,6 +7268,11 @@ export type SearchField = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendAppChannelMessageAttachmentInput = {
+  id: Scalars['UUID']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type SendAppChannelMessageEmailInput = {
   bcc?: InputMaybe<Scalars['String']['input']>;
   body: Scalars['String']['input'];
@@ -7275,6 +7283,7 @@ export type SendAppChannelMessageEmailInput = {
 };
 
 export type SendAppChannelMessageInput = {
+  attachments?: InputMaybe<Array<SendAppChannelMessageAttachmentInput>>;
   email?: InputMaybe<SendAppChannelMessageEmailInput>;
   idempotencyKey: Scalars['UUID']['input'];
   messageChannelId: Scalars['UUID']['input'];
@@ -8286,6 +8295,7 @@ export type UpdateWorkspaceInput = {
   isCampaignOpenTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isInternalImportEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isInternalMessagesImportEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -8792,6 +8802,7 @@ export type ViewField = {
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
+  isCanonical: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
   isSystemSideEffect: Scalars['Boolean']['output'];
@@ -9091,6 +9102,8 @@ export type Workspace = {
   isCustomDomainEnabled: Scalars['Boolean']['output'];
   isGoogleAuthBypassEnabled: Scalars['Boolean']['output'];
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
+  isInternalImportEnabled: Scalars['Boolean']['output'];
+  /** @deprecated Use isInternalImportEnabled */
   isInternalMessagesImportEnabled: Scalars['Boolean']['output'];
   isMicrosoftAuthBypassEnabled: Scalars['Boolean']['output'];
   isMicrosoftAuthEnabled: Scalars['Boolean']['output'];

@@ -5,7 +5,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
 
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 
@@ -24,7 +24,7 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
 const switchToNewChatAt = (pathname: string) => {
   const store = createStore();
 
-  store.set(agentChatNewThreadChannelIdState.atom, CHANNEL_ID);
+  store.set(inboxNewThreadChannelIdState.atom, CHANNEL_ID);
   window.history.pushState({}, '', pathname);
 
   const { result } = renderHook(() => useSwitchToNewAiChat(), {
@@ -52,7 +52,7 @@ describe('useSwitchToNewAiChat', () => {
       }),
     );
 
-    expect(store.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
+    expect(store.get(inboxNewThreadChannelIdState.atom)).toBeNull();
   });
 
   it('leaves the channel of a new chat started in the inbox to the inbox', () => {
@@ -60,6 +60,6 @@ describe('useSwitchToNewAiChat', () => {
       getAppPath(AppPath.AiChatInbox, { threadId: null }),
     );
 
-    expect(store.get(agentChatNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
+    expect(store.get(inboxNewThreadChannelIdState.atom)).toBe(CHANNEL_ID);
   });
 });

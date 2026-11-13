@@ -1,5 +1,5 @@
-import gql from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { findViewChildQueryFactory } from 'test/integration/metadata/suites/view/utils/find-view-child-query-factory.util';
 
 export const findViewChild = async ({
   oneQueryName,
@@ -11,16 +11,7 @@ export const findViewChild = async ({
   token?: string;
 }): Promise<{ child: { id: string } | null; errorCode?: string }> => {
   const response = await makeMetadataApiRequest(
-    {
-      query: gql`
-        query FindViewChild($id: String!) {
-          ${oneQueryName}(id: $id) {
-            id
-          }
-        }
-      `,
-      variables: { id: childId },
-    },
+    findViewChildQueryFactory({ oneQueryName, childId }),
     token,
   );
 

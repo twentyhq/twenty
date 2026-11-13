@@ -277,6 +277,11 @@ msgstr "Քարոզարշավում հետևվող հղում"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Մարքեթինգային էլեկտրոնային նամակը կարող է միաժամանակ ուղարկվել միայն մեկ ստացողի, ուստի յուրաքանչյուր անձ ստանում է բաժանորդագրությունից հրաժարվելու իր հղումը։"
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Հաղորդագրությանը անհրաժեշտ է տեքստ կամ առնվազն մեկ կցորդ։"
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "Ներդրված հարաբերության վիջեթը պետք է օ�
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "Կալենդարին մուտք գործելիս տեղի ունեցավ ցանցային սխալ։"
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "Այս աշխատանքային տարածքում արդեն արտահ
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Արտաքին ծառայությունը չափազանց երկար պատասխանեց։"
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2716,6 +2731,11 @@ msgstr "Չի կարող փոփոխվել պրեդիկատը՝ նրա դերը {e
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Հնարավոր չէ աշխատանքային տարածքից հեռացնել վերջին ադմինին։"
+
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5353,6 +5373,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Արտաքին ձայնագրության ID"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5488,6 +5513,11 @@ msgstr "Հնարավորության կարգավորումը չի գտնվել�
 msgid "February"
 msgstr "Փետրվար"
 
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
+
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
@@ -5497,11 +5527,6 @@ msgstr "«{fieldName}» դաշտը չի պատկանում «{relationFieldName}
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "\"{fieldName}\" դաշտը many-to-one կապ չէ, այն չունի join սյունակ, որի հետ կարելի է համեմատել"
-
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "\"{fieldName}\" դաշտը \"{operand}\" օպերանդով ընդունում է մեկ արժեք, այն չի կարող համեմատվել աշխատանքային տարածքի անդամի \"{workspaceMemberFieldName}\" դաշտի կողմից պահվող ցանկի հետ"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8481,6 +8506,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Նշել որպես չկարդացված"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Այս հավելվածում չգտնվեց թեման որպես կարդացված նշելու տրամաբանական գործառույթը \"{markThreadAsReadLogicFunctionUniversalIdentifier}\""
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8672,6 +8702,11 @@ msgstr "Հաղորդագրություն"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Հաղորդագրություն"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Չհաջողվեց պահպանել հաղորդագրության կցորդները։ Խնդրում ենք կրկին փորձել։"
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9517,6 +9552,11 @@ msgstr "Վավեր ստացողներ նշված չեն"
 msgid "No verified sending domain matches this from address."
 msgstr "Չկա հաստատված ուղարկման դոմեն, որը համապատասխանում է այս ուղարկողի հասցեին։"
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10008,6 +10048,11 @@ msgstr "Միայն պլանավորված կամ ուղարկվող արշավը
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Միայն սերվերի ադմինիստրատորը կարող է կառավարել այս անդամի վերականգնման կոդերը։"
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10050,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Միայն այս գործակալին պատկանող հավելվածը կարող է փոխել դրա գործարկիչները"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Միայն այս աշխատահոսքը ստեղծած անձը կարող է փոխել, թե ով է այն տեսնում"
 
@@ -14080,6 +14125,11 @@ msgstr "Միացված հաշիվը նույնականացնող տրամաբա�
 msgid "The logic function that starts the connection was not found."
 msgstr "Միացումը սկսող տրամաբանության ֆունկցիան չի գտնվել։"
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Այս հաղորդագրությունների մատակարարի՝ թեմաները որպես կարդացված նշելու համար օգտագործվող տրամաբանական գործառույթը չգտնվեց դրա հավելվածում։"
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14813,10 +14863,10 @@ msgstr "Այս գործառույթն անվճար է մինչև {MAX_SEATS_WITH
 msgid "This feature is not enabled."
 msgstr "Այս հնարավորությունն ակտիվացված չէ։"
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "Այս դաշտը չի կարող համեմատվել արժեքների ցանկի հետ"
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17062,6 +17112,11 @@ msgstr "Չհաջողվեց ավարտել միացումը։ Խնդրում են
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Չհաջողվեց նույնականացնել ձեր լիազորած հաշիվը։ Խնդրում ենք կրկին փորձել։"
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Չհաջողվեց նշել այս խոսակցությունը որպես կարդացված։"
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

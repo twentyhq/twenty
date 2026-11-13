@@ -54,6 +54,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
     });
     const labelMetadataIdentifierViewField = flatViewFields.find(
       (viewField) =>
+        viewField.isCanonical &&
         viewField.fieldMetadataId === updatedLabelIdentifierFieldMetadataId,
     );
 
@@ -76,6 +77,7 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         isVisible: true,
         isActive: true,
         isSystemSideEffect: flatView.isSystemSideEffect,
+        isCanonical: true,
         size: DEFAULT_VIEW_FIELD_SIZE,
         viewId: flatView.id,
         viewUniversalIdentifier: flatView.universalIdentifier,
