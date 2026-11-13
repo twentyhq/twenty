@@ -29,7 +29,11 @@ export class MergeManyResolverFactory implements WorkspaceResolverBuilderFactory
     const internalContext = context;
 
     return async (_source, args, _requestContext, info) => {
-      const selectedFields = graphqlFields(info);
+      const selectedFields = graphqlFields(
+        info,
+        {},
+        { processArguments: true },
+      );
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,

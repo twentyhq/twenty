@@ -124,6 +124,8 @@ export class GroupByWithRecordsService {
         limit: RELATIONS_PER_RECORD_LIMIT,
         authContext,
         selectedFields: selectedFieldsResult.select,
+        nestedRelationQueryArgsByFieldName:
+          selectedFieldsResult.nestedRelationQueryArgsByFieldName,
         ...nestedRelationsReadPathOptions,
       });
     }

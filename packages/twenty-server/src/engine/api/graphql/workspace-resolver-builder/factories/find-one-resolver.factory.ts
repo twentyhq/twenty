@@ -30,7 +30,11 @@ export class FindOneResolverFactory implements WorkspaceResolverBuilderFactoryIn
 
     return async (_source, args, _requestContext, info) => {
       try {
-        const selectedFields = graphqlFields(info);
+        const selectedFields = graphqlFields(
+          info,
+          {},
+          { processArguments: true },
+        );
 
         const resolverContext = createQueryRunnerContext({
           workspaceSchemaBuilderContext: internalContext,
