@@ -4,6 +4,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -44,7 +45,8 @@ export const useChangeRecordFieldVisibility = (
       (recordFieldToFind) =>
         isDefined(recordFieldId)
           ? recordFieldToFind.id === recordFieldId
-          : recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
+          : recordFieldToFind.fieldMetadataItemId === fieldMetadataId &&
+            isCanonicalRecordField(recordFieldToFind),
     );
 
     const noExistingRecordField = !isDefined(correspondingRecordField);

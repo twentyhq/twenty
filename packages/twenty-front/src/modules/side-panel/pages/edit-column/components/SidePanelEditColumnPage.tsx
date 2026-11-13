@@ -1,6 +1,7 @@
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useUpdateRecordTableColumnSettings } from '@/object-record/record-table/hooks/useUpdateRecordTableColumnSettings';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
@@ -68,11 +69,10 @@ const SidePanelEditColumnPageContent = ({
   );
 
   const recordField = currentRecordFields.find(
-    (currentRecordField) =>
-      currentRecordField.fieldMetadataItemId === request.fieldMetadataItemId,
+    (currentRecordField) => currentRecordField.id === request.recordFieldId,
   );
 
-  if (!isDefined(recordField)) {
+  if (!isDefined(recordField) || isCanonicalRecordField(recordField)) {
     return null;
   }
 
@@ -82,7 +82,7 @@ const SidePanelEditColumnPageContent = ({
 };
 
 const SidePanelEditColumnForm = ({
-  request: { recordTableId, fieldMetadataItemId },
+  request: { recordTableId },
   recordField,
 }: {
   request: EditColumnRequest;
@@ -98,7 +98,7 @@ const SidePanelEditColumnForm = ({
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
-      fieldMetadataItemId,
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
     });
 
   const [columnName, setColumnName] = useState(
@@ -108,7 +108,7 @@ const SidePanelEditColumnForm = ({
   const handleSaveClick = async () => {
     await updateRecordTableColumnSettings({
       recordTableId,
-      fieldMetadataItemId,
+      recordFieldId: recordField.id,
       settings: computeViewFieldSettingsWithLabel({
         settings: recordField.settings,
         label: columnName,

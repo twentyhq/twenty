@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
@@ -38,8 +39,10 @@ export const ViewFieldsHiddenDropdownSection = () => {
     currentRecordFieldsComponentState,
   );
 
-  const visibleRecordFields = currentRecordFields.filter(
-    (recordFieldToFilter) => recordFieldToFilter.isVisible === true,
+  const visibleCanonicalRecordFields = currentRecordFields.filter(
+    (recordFieldToFilter) =>
+      recordFieldToFilter.isVisible === true &&
+      isCanonicalRecordField(recordFieldToFilter),
   );
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
@@ -48,7 +51,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
 
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItemToFilter) =>
-      !visibleRecordFields
+      !visibleCanonicalRecordFields
         .map((recordField) => recordField.fieldMetadataItemId)
         .includes(fieldMetadataItemToFilter.id),
   );
