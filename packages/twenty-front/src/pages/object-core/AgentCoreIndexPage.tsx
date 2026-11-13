@@ -19,7 +19,7 @@ import { useCoreAgentsSelection } from '@/object-core/agents/hooks/useCoreAgents
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { useListenToCoreAgentEvents } from '@/object-core/agents/hooks/useListenToCoreAgentEvents';
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
-import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { type CoreAgentTableRow } from '@/object-core/agents/types/CoreAgentTableRow';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { CoreAgentPinnedCommandMenuItems } from '@/object-core/commands/components/CoreAgentPinnedCommandMenuItems';
 import { CORE_AGENTS_CREATE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsCreateCommandId';
@@ -33,7 +33,8 @@ import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
-const getCoreAgentItemLink = (agent: CoreAgent) => getCoreAgentLink(agent.id);
+const getCoreAgentItemLink = (agent: Pick<CoreAgentTableRow, 'id'>) =>
+  getCoreAgentLink(agent.id);
 
 export const AgentCoreIndexPage = () => {
   const { t } = useLingui();

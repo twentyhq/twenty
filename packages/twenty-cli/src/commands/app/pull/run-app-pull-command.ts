@@ -71,6 +71,7 @@ export const runAppPullCommand: CommandRun<TargetCommandContext> = async (
     signal,
     shouldIncludeDependencies: true,
     shouldIncludeSourceFiles: true,
+    shouldIncludePublicAssets: true,
   });
   if (!isDefined(project)) {
     project = await createPullProject({
