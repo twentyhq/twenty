@@ -270,6 +270,8 @@ describe('app connection OAuth discovery flow', () => {
     expect(response.body).toMatchObject({
       client_id: `${getServerUrl()}/auth/apps/client-metadata.json`,
       client_name: 'Twenty',
+      logo_uri: expect.stringMatching(/\/images\/icons\/ios\/192\.png$/),
+      software_id: 'twenty',
       redirect_uris: [`${getServerUrl()}/auth/apps/callback`],
       token_endpoint_auth_method: 'none',
     });

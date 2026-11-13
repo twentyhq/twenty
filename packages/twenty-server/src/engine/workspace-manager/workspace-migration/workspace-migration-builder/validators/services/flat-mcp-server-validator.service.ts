@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { MCP_SERVER_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
-import { MCP_SERVER_NAME_MAX_LENGTH } from 'src/engine/metadata-modules/mcp-server/constants/mcp-server-name-max-length.constant';
 import { McpServerExceptionCode } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import {
   type FailedFlatEntityValidation,
@@ -147,11 +147,13 @@ export class FlatMcpServerValidatorService {
         : []),
     );
 
-    // Tokens minted for the current resource must not be sent to another host.
+    // Tokens minted for the current resource must not be sent to another host; a new provider brings its own.
     if (
       isDefined(url) &&
       url !== existingMcpServer.url &&
-      isDefined(nextConnectionProviderUniversalIdentifier)
+      isDefined(nextConnectionProviderUniversalIdentifier) &&
+      nextConnectionProviderUniversalIdentifier ===
+        existingMcpServer.connectionProviderUniversalIdentifier
     ) {
       validationResult.errors.push({
         code: McpServerExceptionCode.MCP_SERVER_URL_CHANGE_WHILE_CONNECTED,
