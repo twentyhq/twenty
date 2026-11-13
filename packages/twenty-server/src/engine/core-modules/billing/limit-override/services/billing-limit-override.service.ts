@@ -58,34 +58,40 @@ export class BillingLimitOverrideService {
       );
     }
 
+    if (!isBillingEnabled) {
+      return this.usageLimitService.create({
+        workspaceId,
+        input,
+        isOperator: true,
+      });
+    }
+
     return this.usageLimitService.create({
       workspaceId,
       input,
       isOperator: true,
-      writeAlongside: isBillingEnabled
-        ? async ({ entityManager, usageLimit }) => {
-            await this.billingArrangementService.insertArrangement({
-              workspaceId,
-              arrangement: {
-                type: BillingArrangementType.LIMIT_OVERRIDE,
-                label: BillingArrangementLabel.OTHER,
-                comment: null,
-                seats: null,
-                seatCapMode: null,
-                stripePriceId: null,
-                stripeDiscountId: null,
-                creditAllowanceMicro: null,
-                stripeCreditNoteId: null,
-                creditGrantId: null,
-                usageLimitId: usageLimit.id,
-                startsAt,
-                endsAt,
-              },
-              grantedByUserId,
-              entityManager,
-            });
-          }
-        : undefined,
+      writeAlongside: async ({ entityManager, usageLimit }) => {
+        await this.billingArrangementService.insertArrangement({
+          workspaceId,
+          arrangement: {
+            type: BillingArrangementType.LIMIT_OVERRIDE,
+            label: BillingArrangementLabel.OTHER,
+            comment: null,
+            seats: null,
+            seatCapMode: null,
+            stripePriceId: null,
+            stripeDiscountId: null,
+            creditAllowanceMicro: null,
+            stripeCreditNoteId: null,
+            creditGrantId: null,
+            usageLimitId: usageLimit.id,
+            startsAt,
+            endsAt,
+          },
+          grantedByUserId,
+          entityManager,
+        });
+      },
     });
   }
 
@@ -98,19 +104,25 @@ export class BillingLimitOverrideService {
     usageLimitId: string;
     revokedByUserId: string;
   }): Promise<boolean> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return this.usageLimitService.delete({
+        workspaceId,
+        usageLimitId,
+        isOperator: true,
+      });
+    }
+
     return this.usageLimitService.delete({
       workspaceId,
       usageLimitId,
       isOperator: true,
-      writeAlongside: this.twentyConfigService.get('IS_BILLING_ENABLED')
-        ? ({ entityManager }) =>
-            this.endLimitOverrides({
-              entityManager,
-              workspaceId,
-              usageLimitId,
-              revokedByUserId,
-            })
-        : undefined,
+      writeAlongside: ({ entityManager }) =>
+        this.endLimitOverrides({
+          entityManager,
+          workspaceId,
+          usageLimitId,
+          revokedByUserId,
+        }),
     });
   }
 
