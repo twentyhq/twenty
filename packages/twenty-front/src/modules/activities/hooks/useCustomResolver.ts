@@ -48,8 +48,6 @@ export const useCustomResolver = <
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const [hasNextPage, setHasNextPage] = useState(true);
-
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const queryVariables = {
@@ -70,41 +68,44 @@ export const useCustomResolver = <
   const firstQueryLoading = loading && !data;
 
   const loadedRecordsCount = data?.[queryName]?.[objectName]?.length ?? 0;
-  const hasLoadedPartialLastPage = loadedRecordsCount % pageSize !== 0;
+
+  const [lastLoadedPage, setLastLoadedPage] = useState(() => ({
+    pageNumber: Math.max(1, Math.ceil(loadedRecordsCount / pageSize)),
+    recordsCount: loadedRecordsCount,
+    hasNextPage: true,
+  }));
+
+  const pagination =
+    loadedRecordsCount < lastLoadedPage.recordsCount
+      ? { pageNumber: 1, recordsCount: loadedRecordsCount, hasNextPage: true }
+      : lastLoadedPage;
 
   const fetchMoreRecords = async () => {
-    if (
-      hasNextPage &&
-      !hasLoadedPartialLastPage &&
-      !isFetchingMore &&
-      !loading
-    ) {
+    if (pagination.hasNextPage && !isFetchingMore && !loading) {
       setIsFetchingMore(true);
+
+      const nextPageNumber = pagination.pageNumber + 1;
 
       await fetchMore({
         variables: {
           ...queryVariables,
-          page: Math.floor(loadedRecordsCount / pageSize) + 1,
+          page: nextPageNumber,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
-            setHasNextPage(false);
+          const fetchedRecords =
+            fetchMoreResult?.[queryName]?.[objectName] ?? [];
+          const previousRecords = prev?.[queryName]?.[objectName] ?? [];
 
-            return {
-              [queryName]: {
-                ...prev?.[queryName],
-                [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
-              },
-            };
-          }
+          setLastLoadedPage({
+            pageNumber: nextPageNumber,
+            recordsCount: previousRecords.length + fetchedRecords.length,
+            hasNextPage: fetchedRecords.length > 0,
+          });
 
           return {
             [queryName]: {
               ...prev?.[queryName],
-              [objectName]: [
-                ...(prev?.[queryName]?.[objectName] ?? []),
-                ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
-              ],
+              [objectName]: [...previousRecords, ...fetchedRecords],
             },
           };
         },

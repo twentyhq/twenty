@@ -68,23 +68,31 @@ describe('useCustomResolver', () => {
       }),
     );
 
+  const buildThreadsData = (count: number) => ({
+    getTimelineThreadsFromObjectRecord: {
+      timelineThreads: Array.from({ length: count }, (_, index) => ({
+        id: `thread-${index}`,
+      })),
+    },
+  });
+
   const mockLoadedThreads = ({
     count,
     loading,
+    fetchedCount = 0,
   }: {
     count: number;
     loading: boolean;
+    fetchedCount?: number;
   }) => {
-    const fetchMore = jest.fn().mockResolvedValue(undefined);
+    const fetchMore = jest.fn(async ({ updateQuery }) => {
+      updateQuery(buildThreadsData(count), {
+        fetchMoreResult: buildThreadsData(fetchedCount),
+      });
+    });
 
     useQueryMock.mockReturnValue({
-      data: {
-        getTimelineThreadsFromObjectRecord: {
-          timelineThreads: Array.from({ length: count }, (_, index) => ({
-            id: `thread-${index}`,
-          })),
-        },
-      },
+      data: buildThreadsData(count),
       loading,
       fetchMore,
       error: undefined,
@@ -93,17 +101,20 @@ describe('useCustomResolver', () => {
     return fetchMore;
   };
 
-  it('requests the page after the rows already in the cache', async () => {
+  const expectRequestedPage = (fetchMore: jest.Mock, page: number) =>
+    expect(fetchMore).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({ page }),
+      }),
+    );
+
+  it('requests the page after the pages already in the cache', async () => {
     const fetchMore = mockLoadedThreads({ count: 4, loading: false });
     const { result } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
 
-    expect(fetchMore).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: expect.objectContaining({ page: 3 }),
-      }),
-    );
+    expectRequestedPage(fetchMore, 3);
   });
 
   it('waits for the first page to reload before requesting more', async () => {
@@ -115,12 +126,49 @@ describe('useCustomResolver', () => {
     expect(fetchMore).not.toHaveBeenCalled();
   });
 
-  it('stops after a partial last page instead of requesting it again', async () => {
-    const fetchMore = mockLoadedThreads({ count: 5, loading: false });
+  it('keeps paginating after a page shorter than the page size', async () => {
+    const fetchMore = mockLoadedThreads({
+      count: 2,
+      loading: false,
+      fetchedCount: 1,
+    });
+    const { result, rerender } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(fetchMore, 2);
+
+    const nextFetchMore = mockLoadedThreads({ count: 3, loading: false });
+    rerender();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(nextFetchMore, 3);
+  });
+
+  it('stops once a page comes back empty', async () => {
+    const fetchMore = mockLoadedThreads({ count: 2, loading: false });
     const { result } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
+    await act(() => result.current.fetchMoreRecords());
 
-    expect(fetchMore).not.toHaveBeenCalled();
+    expect(fetchMore).toHaveBeenCalledTimes(1);
+  });
+
+  it('starts over from the second page after the list is refetched', async () => {
+    const fetchMore = mockLoadedThreads({
+      count: 4,
+      loading: false,
+      fetchedCount: 2,
+    });
+    const { result, rerender } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(fetchMore, 3);
+
+    const refetchedFetchMore = mockLoadedThreads({ count: 2, loading: false });
+    rerender();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(refetchedFetchMore, 2);
   });
 });
