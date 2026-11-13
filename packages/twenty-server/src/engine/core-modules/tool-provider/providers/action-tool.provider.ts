@@ -267,6 +267,7 @@ export class ActionToolProvider implements ToolProvider {
 
     return tool.execute(args, {
       workspaceId: context.workspaceId,
+      actorContext: context.actorContext,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
       workspaceMemberId:

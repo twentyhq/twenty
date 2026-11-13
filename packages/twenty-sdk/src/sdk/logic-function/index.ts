@@ -57,6 +57,7 @@ export type {
   IdentifyAccountPayload,
   IdentifyAccountResult,
   MarkAppThreadAsReadPayload,
+  SendAppMessageAttachment,
   SendAppMessagePayload,
   SendAppMessageRecipient,
   SendAppMessageResult,
