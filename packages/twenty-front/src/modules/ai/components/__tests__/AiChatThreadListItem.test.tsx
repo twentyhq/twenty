@@ -8,11 +8,11 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -43,8 +43,8 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
 }));
 
 const buildThread = (
-  thread: Partial<AgentChatThreadRecord>,
-): AgentChatThreadRecord => ({
+  thread: Partial<AiChatThreadRecord>,
+): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id: '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60',
   title: 'Q3 renewal outreach',
@@ -72,15 +72,15 @@ const renderListItem = ({
   onClick = jest.fn(),
   onCheckboxClick,
 }: Pick<
-  ComponentProps<typeof AiChatThreadListItem>,
+  ComponentProps<typeof InboxThreadListItem>,
   'thread' | 'isChecked' | 'onCheckboxClick'
 > &
-  Partial<Pick<ComponentProps<typeof AiChatThreadListItem>, 'onClick'>>) =>
+  Partial<Pick<ComponentProps<typeof InboxThreadListItem>, 'onClick'>>) =>
   render(
     <JotaiProvider store={jotaiStore}>
       <MemoryRouter initialEntries={['/inbox']}>
         <I18nProvider i18n={i18n}>
-          <AiChatThreadListItem
+          <InboxThreadListItem
             thread={thread}
             isSelected={false}
             isChecked={isChecked}
@@ -92,7 +92,7 @@ const renderListItem = ({
     </JotaiProvider>,
   );
 
-describe('AiChatThreadListItem', () => {
+describe('InboxThreadListItem', () => {
   beforeAll(() => {
     // jsdom has no PointerEvent, which the checkbox dispatches on click
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
@@ -134,7 +134,7 @@ describe('AiChatThreadListItem', () => {
   it('shows an unsent draft in place of the last message', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [thread.id]: serializePlainTextAsAdvancedTextEditorDocument(
         'Quote the **annual** plan',
       ),
@@ -152,7 +152,7 @@ describe('AiChatThreadListItem', () => {
   it('shows no draft once the composer is cleared', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, { [thread.id]: '' });
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, { [thread.id]: '' });
 
     renderListItem({ thread });
 
@@ -195,7 +195,7 @@ describe('AiChatThreadListItem', () => {
   });
 
   it('shows the channel a chat belongs to next to its time', () => {
-    jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
+    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
 
     renderListItem({ thread: buildThread({ channelId: SALES_CHANNEL.id }) });
 
@@ -204,7 +204,7 @@ describe('AiChatThreadListItem', () => {
   });
 
   it('shows no channel for a chat outside channels', () => {
-    jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
+    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
 
     renderListItem({ thread: buildThread({ channelId: null }) });
 
@@ -212,8 +212,8 @@ describe('AiChatThreadListItem', () => {
   });
 
   it('shows no channel while viewing that channel', () => {
-    jotaiStore.set(agentChatChannelsState.atom, [SALES_CHANNEL]);
-    setAgentChatSelectedChannelView(jotaiStore, {
+    jotaiStore.set(inboxChannelsState.atom, [SALES_CHANNEL]);
+    setInboxSelectedChannelView(jotaiStore, {
       channelId: SALES_CHANNEL.id,
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,

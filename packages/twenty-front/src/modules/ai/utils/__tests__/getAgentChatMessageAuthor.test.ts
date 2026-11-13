@@ -1,4 +1,4 @@
-import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 
 const JULIA = {
   id: 'julia-id',
@@ -12,10 +12,10 @@ const AUTHOR_CONTEXT = {
   currentWorkspace: null,
 };
 
-describe('getAgentChatMessageAuthor', () => {
+describe('getAiChatMessageAuthor', () => {
   it('names a member by their name', () => {
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'user',
@@ -34,7 +34,7 @@ describe('getAgentChatMessageAuthor', () => {
 
   it('labels a member who left the workspace', () => {
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'user',
@@ -47,7 +47,7 @@ describe('getAgentChatMessageAuthor', () => {
 
   it('names the built-in assistant with its profile name', () => {
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'assistant',
@@ -66,7 +66,7 @@ describe('getAgentChatMessageAuthor', () => {
     };
 
     expect(
-      getAgentChatMessageAuthor({ message, authorLookup: AUTHOR_CONTEXT }),
+      getAiChatMessageAuthor({ message, authorLookup: AUTHOR_CONTEXT }),
     ).toEqual({
       type: 'agent',
       agentId: 'agent-id',
@@ -74,7 +74,7 @@ describe('getAgentChatMessageAuthor', () => {
       isNameResolved: false,
     });
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message,
         authorLookup: AUTHOR_CONTEXT,
         agentName: 'Sales agent',
@@ -84,7 +84,7 @@ describe('getAgentChatMessageAuthor', () => {
 
   it('names an application sender', () => {
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'assistant',
@@ -102,13 +102,13 @@ describe('getAgentChatMessageAuthor', () => {
 
   it('falls back to a neutral label without a known sender', () => {
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: { id: 'message-id', role: 'assistant' },
         authorLookup: AUTHOR_CONTEXT,
       }).name,
     ).toBe('Assistant');
     expect(
-      getAgentChatMessageAuthor({
+      getAiChatMessageAuthor({
         message: { id: 'message-id', role: 'user' },
         authorLookup: AUTHOR_CONTEXT,
       }).name,

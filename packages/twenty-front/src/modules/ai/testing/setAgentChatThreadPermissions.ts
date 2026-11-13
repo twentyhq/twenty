@@ -7,7 +7,7 @@ import { recordPermissionsFamilyState } from '@/object-record/record-sharing/sta
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
-export const setAgentChatThreadPermissions = ({
+export const setAiChatThreadPermissions = ({
   store,
   threadId,
   permissions,

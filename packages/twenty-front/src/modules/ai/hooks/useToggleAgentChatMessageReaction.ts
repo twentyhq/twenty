@@ -4,8 +4,8 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -23,13 +23,13 @@ type ReactionRequestQueue = {
 // Shared by every caller so one emoji's changes reach the server in the order they were made
 const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
 
-export const useToggleAgentChatMessageReaction = () => {
+export const useToggleAiChatMessageReaction = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
 
   // Live snapshots carry the server's state, so a refused change only takes back its own reaction
-  const toggleAgentChatMessageReaction = useCallback(
+  const toggleAiChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
 
@@ -37,7 +37,7 @@ export const useToggleAgentChatMessageReaction = () => {
         return;
       }
 
-      const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+      const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
         messageId,
       });
       const hasReacted = store
@@ -68,7 +68,7 @@ export const useToggleAgentChatMessageReaction = () => {
       };
 
       const liveRevisionsAtom =
-        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatLiveReactionRevisionsFamilyState.atomFamily({
           threadId: store.get(currentAiChatThreadState.atom),
         });
       const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];
@@ -108,5 +108,5 @@ export const useToggleAgentChatMessageReaction = () => {
     [apolloClient, enqueueToast, store],
   );
 
-  return { toggleAgentChatMessageReaction };
+  return { toggleAiChatMessageReaction };
 };

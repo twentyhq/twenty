@@ -1,8 +1,8 @@
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-export const AI_CHAT_THREAD_INBOX_ACTION_BY_TRIAGE_STATUS: Record<
-  AiChatThreadTriageStatus,
+export const INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS: Record<
+  InboxThreadTriageStatus,
   AgentChatInboxAction
 > = {
   open: AgentChatInboxAction.MOVE_TO_INBOX,

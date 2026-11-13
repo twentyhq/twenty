@@ -14,7 +14,7 @@ jest.mock('twenty-ui/components/feedback', () => ({
 }));
 
 jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
-  AgentChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
+  AiChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
 }));
 
 const getComposerFileInputOrThrow = (container: HTMLElement) => {

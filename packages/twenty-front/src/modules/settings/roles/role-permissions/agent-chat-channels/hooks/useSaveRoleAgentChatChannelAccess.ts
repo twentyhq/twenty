@@ -1,18 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
-import { useResetRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
-import { useRoleAgentChatChannelsWithChangedAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelsWithChangedAccess';
+import { useUpdateInboxChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
+import { useResetRoleInboxChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
+import { useRoleInboxChannelsWithChangedAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useRoleAgentChatChannelsWithChangedAccess';
 
-export const useSaveRoleAgentChatChannelAccess = (roleId: string) => {
-  const roleAgentChatChannelsWithChangedAccess =
-    useRoleAgentChatChannelsWithChangedAccess(roleId);
-  const { resetRoleAgentChatChannelAccess } =
-    useResetRoleAgentChatChannelAccess(roleId);
-  const { updateAgentChatChannel } = useUpdateAgentChatChannel();
+export const useSaveRoleInboxChannelAccess = (roleId: string) => {
+  const roleInboxChannelsWithChangedAccess =
+    useRoleInboxChannelsWithChangedAccess(roleId);
+  const { resetRoleInboxChannelAccess } =
+    useResetRoleInboxChannelAccess(roleId);
+  const { updateAgentChatChannel } = useUpdateInboxChannel();
 
-  const saveRoleAgentChatChannelAccess = async () => {
-    for (const channel of roleAgentChatChannelsWithChangedAccess) {
+  const saveRoleInboxChannelAccess = async () => {
+    for (const channel of roleInboxChannelsWithChangedAccess) {
       const updatedChannel = await updateAgentChatChannel({
         channelId: channel.id,
         input: {
@@ -29,8 +29,8 @@ export const useSaveRoleAgentChatChannelAccess = (roleId: string) => {
       }
     }
 
-    resetRoleAgentChatChannelAccess();
+    resetRoleInboxChannelAccess();
   };
 
-  return { saveRoleAgentChatChannelAccess };
+  return { saveRoleInboxChannelAccess };
 };

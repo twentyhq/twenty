@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-export const upsertAgentChatMessage = (
+export const upsertAiChatMessage = (
   messages: ExtendedUIMessage[],
   message: ExtendedUIMessage,
 ): ExtendedUIMessage[] => {

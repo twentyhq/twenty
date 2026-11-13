@@ -1,38 +1,36 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
+import { NavigationDrawerInboxChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
-import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
-import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
+import { inboxChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
+import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
+const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
-type NavigationDrawerAiChatFavoritesSectionProps = {
+type NavigationDrawerInboxFavoritesSectionProps = {
   channels: AgentChatChannel[];
-  threads: AgentChatThreadListItem[];
+  threads: InboxThreadListItemData[];
   currentThreadId: string | null;
-  onThreadClick: (thread: AgentChatThreadListItem) => void;
+  onThreadClick: (thread: InboxThreadListItemData) => void;
 };
 
-export const NavigationDrawerAiChatFavoritesSection = ({
+export const NavigationDrawerInboxFavoritesSection = ({
   channels,
   threads,
   currentThreadId,
   onThreadClick,
-}: NavigationDrawerAiChatFavoritesSectionProps) => {
+}: NavigationDrawerInboxFavoritesSectionProps) => {
   const { t } = useLingui();
-  const agentChatAccessibleChannels = useAtomStateValue(
-    agentChatAccessibleChannelsSelector,
+  const inboxAccessibleChannels = useAtomStateValue(
+    inboxAccessibleChannelsSelector,
   );
-  const agentChatChannelSummaries = useAtomStateValue(
-    agentChatChannelSummariesState,
-  );
+  const inboxChannelSummaries = useAtomStateValue(inboxChannelSummariesState);
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
@@ -43,15 +41,15 @@ export const NavigationDrawerAiChatFavoritesSection = ({
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID}
+      sectionId={INBOX_FAVORITES_NAVIGATION_SECTION_ID}
       label={t`Favorites`}
     >
       {channels.map((channel) => (
-        <NavigationDrawerAiChatChannelItem
+        <NavigationDrawerInboxChannelItem
           key={channel.id}
           channel={channel}
-          summary={agentChatChannelSummaries[channel.id]}
-          destinationChannels={agentChatAccessibleChannels.filter(
+          summary={inboxChannelSummaries[channel.id]}
+          destinationChannels={inboxAccessibleChannels.filter(
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}

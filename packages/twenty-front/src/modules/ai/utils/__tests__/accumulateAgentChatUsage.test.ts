@@ -1,4 +1,4 @@
-import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
+import { accumulateAiChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 
 const messageUsage = {
   inputTokens: 100,
@@ -9,10 +9,10 @@ const messageUsage = {
   conversationSize: 120,
 };
 
-describe('accumulateAgentChatUsage', () => {
+describe('accumulateAiChatUsage', () => {
   it('starts totals from the first message usage', () => {
     expect(
-      accumulateAgentChatUsage(null, messageUsage, {
+      accumulateAiChatUsage(null, messageUsage, {
         contextWindowTokens: 200_000,
       }),
     ).toEqual({
@@ -34,12 +34,12 @@ describe('accumulateAgentChatUsage', () => {
   });
 
   it('sums totals and takes the latest message, conversation size and context window', () => {
-    const previousUsage = accumulateAgentChatUsage(null, messageUsage, {
+    const previousUsage = accumulateAiChatUsage(null, messageUsage, {
       contextWindowTokens: 200_000,
     });
 
     expect(
-      accumulateAgentChatUsage(
+      accumulateAiChatUsage(
         previousUsage,
         {
           inputTokens: 300,

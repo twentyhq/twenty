@@ -1,5 +1,5 @@
-import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import { resetClosingAiChatInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
+import { aiChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { resetClosingInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -19,8 +19,8 @@ export const useOpenAskAiPageInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const setAgentChatUISessionStartTime = useSetAtomState(
-    agentChatUISessionStartTimeState,
+  const setAiChatUISessionStartTime = useSetAtomState(
+    aiChatUISessionStartTimeState,
   );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -36,16 +36,16 @@ export const useOpenAskAiPageInSidePanel = () => {
         return;
       }
 
-      resetClosingAiChatInboxThread(store);
+      resetClosingInboxThread(store);
 
       const shouldReset =
         resetNavigationStack !== undefined
           ? resetNavigationStack
           : isSidePanelOpened;
 
-      setAgentChatUISessionStartTime(
-        (agentChatUISessionStartTime) =>
-          agentChatUISessionStartTime ?? Temporal.Now.instant(),
+      setAiChatUISessionStartTime(
+        (aiChatUISessionStartTime) =>
+          aiChatUISessionStartTime ?? Temporal.Now.instant(),
       );
 
       navigateSidePanelMenu({
@@ -59,7 +59,7 @@ export const useOpenAskAiPageInSidePanel = () => {
     [
       navigateSidePanelMenu,
       isSidePanelOpened,
-      setAgentChatUISessionStartTime,
+      setAiChatUISessionStartTime,
       isWorkspaceSuspended,
       store,
     ],

@@ -5,13 +5,13 @@ import { applyAgentChatInboxAction } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
-  type AgentChatThreadVisit,
-  agentChatThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   AgentChatInboxAction,
@@ -21,7 +21,7 @@ import {
 // On the thread on screen, a chat marked unread stays unread until the member
 // leaves it, and its unread line moves to the first message from someone else
 const OPTIMISTIC_VISIT_BY_ACTION: Partial<
-  Record<AgentChatInboxAction, Partial<AgentChatThreadVisit>>
+  Record<AgentChatInboxAction, Partial<AiChatThreadVisit>>
 > = {
   [AgentChatInboxAction.READ]: { isKeptUnread: false },
   [AgentChatInboxAction.UNREAD]: {
@@ -31,7 +31,7 @@ const OPTIMISTIC_VISIT_BY_ACTION: Partial<
   },
 };
 
-export const useUpdateAgentChatThreadInboxState = () => {
+export const useUpdateInboxThreadStatus = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
@@ -49,9 +49,9 @@ export const useUpdateAgentChatThreadInboxState = () => {
     }) => {
       const now = new Date();
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
-      const previousVisit = store.get(agentChatThreadVisitState.atom);
+      const previousVisit = store.get(aiChatThreadVisitState.atom);
       const previousParticipants = store.get(
-        agentChatThreadParticipantsState.atom,
+        aiChatThreadParticipantsState.atom,
       );
 
       if (
@@ -59,19 +59,19 @@ export const useUpdateAgentChatThreadInboxState = () => {
         isDefined(previousVisit) &&
         threadIds.includes(previousVisit.threadId)
       ) {
-        store.set(agentChatThreadVisitState.atom, {
+        store.set(aiChatThreadVisitState.atom, {
           ...previousVisit,
           ...optimisticVisit,
         });
       }
-      const optimisticVisitState = store.get(agentChatThreadVisitState.atom);
+      const optimisticVisitState = store.get(aiChatThreadVisitState.atom);
       const getThreadLastActivityAt = (threadId: string) =>
-        store.get(agentChatThreadRecordFamilySelector.selectorFamily(threadId))
+        store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
           ?.lastActivityAt ?? null;
 
       if (action === AgentChatInboxAction.MOVE_TO_INBOX) {
         store.set(
-          agentChatReopenedThreadActivityState.atom,
+          aiChatReopenedThreadActivityState.atom,
           (reopenedThreadActivity) => ({
             ...reopenedThreadActivity,
             ...Object.fromEntries(
@@ -84,7 +84,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
         );
       }
 
-      store.set(agentChatThreadParticipantsState.atom, (participants) => {
+      store.set(aiChatThreadParticipantsState.atom, (participants) => {
         if (!isDefined(participants)) {
           return participants;
         }
@@ -108,7 +108,7 @@ export const useUpdateAgentChatThreadInboxState = () => {
         return updatedParticipants;
       });
       const optimisticParticipants = store.get(
-        agentChatThreadParticipantsState.atom,
+        aiChatThreadParticipantsState.atom,
       );
 
       try {
@@ -124,12 +124,12 @@ export const useUpdateAgentChatThreadInboxState = () => {
         enqueueToast(getToastOptionsFromError({ error }));
 
         // A visit to another chat since then is kept
-        store.set(agentChatThreadVisitState.atom, (visit) =>
+        store.set(aiChatThreadVisitState.atom, (visit) =>
           visit === optimisticVisitState ? previousVisit : visit,
         );
 
         // A newer row may have arrived since, and is kept
-        store.set(agentChatThreadParticipantsState.atom, (participants) => {
+        store.set(aiChatThreadParticipantsState.atom, (participants) => {
           if (!isDefined(participants)) {
             return participants;
           }

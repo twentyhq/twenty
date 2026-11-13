@@ -1,4 +1,4 @@
-export type AgentChatMessageQuote = {
+export type AiChatMessageQuote = {
   authorName: string;
   excerpt: string;
   replyText: string;

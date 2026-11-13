@@ -5,7 +5,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 // Rows arrive from loads and from changes, possibly out of order, so a row
 // only replaces one it is at least as recent as
-export const mergeAgentChatThreadParticipants = (
+export const mergeAiChatThreadParticipants = (
   participants: Record<string, AgentChatThreadParticipantFieldsFragment>,
   incomingParticipants: AgentChatThreadParticipantFieldsFragment[],
 ): Record<string, AgentChatThreadParticipantFieldsFragment> =>

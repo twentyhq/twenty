@@ -1,14 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
+import { type AiChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
 
 const QUOTE_HEADER_REGEX = /^\*\*(.+?):\*\* ?([\s\S]*)$/;
 
-// reads back the quote written by prependAgentChatQuoteToText
-export const parseAgentChatMessageQuote = (
+// reads back the quote written by prependAiChatQuoteToText
+export const parseAiChatMessageQuote = (
   text: string,
-): AgentChatMessageQuote | null => {
+): AiChatMessageQuote | null => {
   const lines = text.split('\n');
   const firstReplyLineIndex = lines.findIndex((line) => !line.startsWith('>'));
 

@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
-import { AgentChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
+import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
 import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai/constants/ToolIndexInvalidationDebounceTimeInMs';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
@@ -46,7 +46,7 @@ const buildChat = (toolStepCount: number) => (
     defaultOptions={{ watchQuery: { fetchPolicy: 'cache-and-network' } }}
   >
     <>
-      <AgentChatToolIndexInvalidationEffect />
+      <AiChatToolIndexInvalidationEffect />
       {Array.from({ length: toolStepCount }, (_, index) => (
         <ToolStepLabel key={index} />
       ))}

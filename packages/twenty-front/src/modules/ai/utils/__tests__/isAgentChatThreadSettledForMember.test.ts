@@ -1,4 +1,4 @@
-import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
+import { isAiChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const MEMBER_ID = 'member';
@@ -6,7 +6,7 @@ const OTHER_MEMBER_ID = 'other-member';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
 const SETTLED_THREAD: Parameters<
-  typeof isAgentChatThreadSettledForMember
+  typeof isAiChatThreadSettledForMember
 >[0]['thread'] = {
   deletedAt: null,
   lastActivityAt: LAST_ACTIVITY_AT,
@@ -36,13 +36,13 @@ const isSettled = ({
   thread?: Partial<typeof SETTLED_THREAD>;
   participant?: Partial<typeof READ_PARTICIPANT>;
 } = {}) =>
-  isAgentChatThreadSettledForMember({
+  isAiChatThreadSettledForMember({
     thread: { ...SETTLED_THREAD, ...thread },
     participant: { ...READ_PARTICIPANT, ...participant },
     workspaceMemberId: MEMBER_ID,
   });
 
-describe('isAgentChatThreadSettledForMember', () => {
+describe('isAiChatThreadSettledForMember', () => {
   it('settles a read chat of the member where the agent had the last word', () => {
     expect(isSettled()).toBe(true);
   });

@@ -1,14 +1,14 @@
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type AiChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
-export const getAgentChatInitialRecipients = ({
+export const getAiChatInitialRecipients = ({
   recipientWorkspaceMemberIds,
   workspaceMembers,
 }: {
   recipientWorkspaceMemberIds: string[];
   workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
-}): AgentChatParticipantMention[] =>
+}): AiChatParticipantMention[] =>
   workspaceMembers
     .filter(({ id }) => recipientWorkspaceMemberIds.includes(id))
     .map((workspaceMember) => ({

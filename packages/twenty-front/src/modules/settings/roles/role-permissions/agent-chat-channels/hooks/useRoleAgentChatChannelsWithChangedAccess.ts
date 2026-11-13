@@ -1,18 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { useSettingsAgentChatChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
-import { settingsDraftRoleAgentChatChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
+import { useSettingsInboxChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
+import { settingsDraftRoleInboxChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const useRoleAgentChatChannelsWithChangedAccess = (roleId: string) => {
-  const settingsAgentChatChannels = useSettingsAgentChatChannels();
-  const settingsDraftRoleAgentChatChannelAccess = useAtomFamilyStateValue(
-    settingsDraftRoleAgentChatChannelAccessFamilyState,
+export const useRoleInboxChannelsWithChangedAccess = (roleId: string) => {
+  const settingsInboxChannels = useSettingsInboxChannels();
+  const settingsDraftRoleInboxChannelAccess = useAtomFamilyStateValue(
+    settingsDraftRoleInboxChannelAccessFamilyState,
     roleId,
   );
 
-  return settingsAgentChatChannels.filter((channel) => {
-    const hasDraftAccess = settingsDraftRoleAgentChatChannelAccess[channel.id];
+  return settingsInboxChannels.filter((channel) => {
+    const hasDraftAccess = settingsDraftRoleInboxChannelAccess[channel.id];
 
     return (
       isDefined(hasDraftAccess) &&

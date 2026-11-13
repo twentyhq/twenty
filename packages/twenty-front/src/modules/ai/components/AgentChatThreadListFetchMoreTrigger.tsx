@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
 
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledFetchMoreTrigger = styled.div`
@@ -13,27 +13,27 @@ const StyledFetchMoreTrigger = styled.div`
   width: 100%;
 `;
 
-type AgentChatThreadListFetchMoreTriggerProps = {
-  source: AgentChatThreadListSource;
+type InboxThreadListFetchMoreTriggerProps = {
+  source: InboxThreadListSource;
 };
 
-export const AgentChatThreadListFetchMoreTrigger = ({
+export const InboxThreadListFetchMoreTrigger = ({
   source,
-}: AgentChatThreadListFetchMoreTriggerProps) => {
-  const agentChatThreadList = useAtomFamilyStateValue(
-    agentChatThreadListFamilyState,
-    getAgentChatThreadListSourceKey(source),
+}: InboxThreadListFetchMoreTriggerProps) => {
+  const inboxThreadList = useAtomFamilyStateValue(
+    inboxThreadListFamilyState,
+    getInboxThreadListSourceKey(source),
   );
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+  const { loadInboxThreadList } = useLoadInboxThreadList();
   const { ref } = useInView({
     onChange: (inView) => {
       if (inView) {
-        void loadAgentChatThreadList({ source, mode: 'fetch-more' });
+        void loadInboxThreadList({ source, mode: 'fetch-more' });
       }
     },
   });
 
-  if (!agentChatThreadList?.hasNextPage) {
+  if (!inboxThreadList?.hasNextPage) {
     return null;
   }
 

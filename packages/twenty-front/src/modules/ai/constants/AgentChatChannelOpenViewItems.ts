@@ -4,7 +4,7 @@ import {
   AgentChatChannelThreadFilter,
 } from '~/generated-metadata/graphql';
 
-export const AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS = [
+export const INBOX_CHANNEL_OPEN_VIEW_ITEMS = [
   {
     presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     assignment: AgentChatChannelAssignmentFilter.ANY,

@@ -34,6 +34,7 @@ const buildLimit = (
   periodUnit: 'lifetime',
   limitValue: 50,
   burstValue: null,
+  endsAt: null,
   ...overrides,
 });
 
@@ -73,6 +74,17 @@ describe('buildAdminUsageLimitRows', () => {
     expect(row.usageLimitId).toBe('limit-1');
     expect(row.limitValue).toBe(50);
     expect(row.defaultValue).toBe(100);
+  });
+
+  it('carries the end date of the override', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [buildDefault({ overriddenByUsageLimitId: 'limit-1' })],
+        limits: [buildLimit({ endsAt: '2026-12-31T00:00:00.000Z' })],
+      }),
+    );
+
+    expect(row.endsAt).toBe('2026-12-31T00:00:00.000Z');
   });
 
   it('shows the instance value on a default nothing replaced', () => {

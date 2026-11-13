@@ -2,8 +2,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -11,26 +11,25 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const AgentChatStreamingAutoScrollEffect = () => {
+export const AiChatStreamingAutoScrollEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const agentChatMessages = useAtomFamilyStateValue(
-    agentChatMessagesFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const aiChatMessages = useAtomFamilyStateValue(aiChatMessagesFamilyState, {
+    threadId: currentAiChatThread,
+  });
 
-  const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
-    agentChatIsScrolledToBottomComponentSelector,
+  const aiChatIsScrolledToBottom = useAtomComponentSelectorValue(
+    aiChatIsScrolledToBottomComponentSelector,
   );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    if (!isNonEmptyArray(agentChatMessages)) {
+    if (!isNonEmptyArray(aiChatMessages)) {
       return;
     }
 
-    if (!agentChatIsScrolledToBottom) {
+    if (!aiChatIsScrolledToBottom) {
       return;
     }
 
@@ -39,7 +38,7 @@ export const AgentChatStreamingAutoScrollEffect = () => {
     if (isDefined(scrollWrapperElement)) {
       scrollAiChatToBottom(scrollWrapperElement);
     }
-  }, [agentChatMessages, agentChatIsScrolledToBottom, getScrollWrapperElement]);
+  }, [aiChatMessages, aiChatIsScrolledToBottom, getScrollWrapperElement]);
 
   return null;
 };

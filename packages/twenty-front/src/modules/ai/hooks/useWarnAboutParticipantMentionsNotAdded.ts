@@ -3,14 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { getAgentChatParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
+import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { type AiChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { getAiChatParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
 import { logError } from '~/utils/logError';
 
 export const useWarnAboutParticipantMentionsNotAdded = () => {
   const { enqueueToast } = useToast();
-  const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
+  const { fetchAiChatThreadsPage } = useFetchAiChatThreadsPage();
 
   const warnAboutParticipantMentionsNotAdded = useCallback(
     async ({
@@ -20,8 +20,8 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
       addedWorkspaceMemberIds,
     }: {
       threadId: string;
-      initialRecipients: AgentChatParticipantMention[];
-      participantMentions: AgentChatParticipantMention[];
+      initialRecipients: AiChatParticipantMention[];
+      participantMentions: AiChatParticipantMention[];
       addedWorkspaceMemberIds: string[];
     }) => {
       const requestedParticipants = {
@@ -30,9 +30,9 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         addedWorkspaceMemberIds,
       };
       const { hasUnverifiedInitialRecipients: shouldVerifyInitialRecipients } =
-        getAgentChatParticipantAdditionStatus(requestedParticipants);
+        getAiChatParticipantAdditionStatus(requestedParticipants);
       const verificationPage = shouldVerifyInitialRecipients
-        ? await fetchAgentChatThreadsPage({
+        ? await fetchAiChatThreadsPage({
             lastCursor: null,
             threadIdFilter: { id: { eq: threadId } },
           }).catch((error) => {
@@ -45,7 +45,7 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         ({ id }) => id === threadId,
       )?.writerWorkspaceMemberIds;
       const { hasUnverifiedInitialRecipients, notAddedLabels } =
-        getAgentChatParticipantAdditionStatus({
+        getAiChatParticipantAdditionStatus({
           ...requestedParticipants,
           writerWorkspaceMemberIds,
         });
@@ -64,7 +64,7 @@ export const useWarnAboutParticipantMentionsNotAdded = () => {
         });
       }
     },
-    [enqueueToast, fetchAgentChatThreadsPage],
+    [enqueueToast, fetchAiChatThreadsPage],
   );
 
   return { warnAboutParticipantMentionsNotAdded };

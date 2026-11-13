@@ -4,13 +4,13 @@ import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChat
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
-type AiChatInboxSelectionToContextStoreEffectProps = {
+type InboxSelectionToContextStoreEffectProps = {
   contextStoreInstanceId: string;
 };
 
-export const AiChatInboxSelectionToContextStoreEffect = ({
+export const InboxSelectionToContextStoreEffect = ({
   contextStoreInstanceId,
-}: AiChatInboxSelectionToContextStoreEffectProps) => {
+}: InboxSelectionToContextStoreEffectProps) => {
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );

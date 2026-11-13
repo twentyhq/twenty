@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 
-import { useRunAgentChatChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
+import { useRunInboxChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
 import { DeleteAgentChatChannelDocument } from '~/generated-metadata/graphql';
 
-export const useDeleteAgentChatChannel = () => {
-  const { runAgentChatChannelMutation } = useRunAgentChatChannelMutation();
+export const useDeleteInboxChannel = () => {
+  const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
   const deleteAgentChatChannel = useCallback(
     ({
@@ -14,11 +14,11 @@ export const useDeleteAgentChatChannel = () => {
       channelId: string;
       destinationChannelId: string | null;
     }) =>
-      runAgentChatChannelMutation({
+      runInboxChannelMutation({
         mutation: DeleteAgentChatChannelDocument,
         variables: { channelId, destinationChannelId },
       }),
-    [runAgentChatChannelMutation],
+    [runInboxChannelMutation],
   );
 
   return { deleteAgentChatChannel };

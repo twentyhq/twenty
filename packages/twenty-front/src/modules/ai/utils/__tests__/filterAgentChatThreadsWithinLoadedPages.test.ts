@@ -1,5 +1,5 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { filterAgentChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { filterAiChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
 
 const buildThread = ({
   id,
@@ -7,7 +7,7 @@ const buildThread = ({
 }: {
   id: string;
   lastActivityAt: string | null;
-}): AgentChatThreadRecord => ({
+}): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -28,14 +28,13 @@ const THREADS = [
   buildThread({ id: 'loaded-no-activity', lastActivityAt: null }),
 ];
 
-const getIds = (threads: AgentChatThreadRecord[]) =>
-  threads.map(({ id }) => id);
+const getIds = (threads: AiChatThreadRecord[]) => threads.map(({ id }) => id);
 
-describe('filterAgentChatThreadsWithinLoadedPages', () => {
+describe('filterAiChatThreadsWithinLoadedPages', () => {
   it('keeps every chat once all pages are loaded', () => {
     expect(
       getIds(
-        filterAgentChatThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: [],
@@ -50,7 +49,7 @@ describe('filterAgentChatThreadsWithinLoadedPages', () => {
   it('hides chats past the last loaded page, but never a loaded one', () => {
     expect(
       getIds(
-        filterAgentChatThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-older', 'loaded-no-activity'],
@@ -65,7 +64,7 @@ describe('filterAgentChatThreadsWithinLoadedPages', () => {
   it('keeps chats with activity once the pages reach chats without any', () => {
     expect(
       getIds(
-        filterAgentChatThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-no-activity'],

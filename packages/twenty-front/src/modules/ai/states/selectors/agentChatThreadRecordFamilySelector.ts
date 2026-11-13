@@ -1,18 +1,18 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 // The record store holds untyped records, so chat code reads threads here
-export const agentChatThreadRecordFamilySelector = createAtomFamilySelector<
-  AgentChatThreadRecord | null,
+export const aiChatThreadRecordFamilySelector = createAtomFamilySelector<
+  AiChatThreadRecord | null,
   string
 >({
-  key: 'agentChatThreadRecordFamilySelector',
+  key: 'aiChatThreadRecordFamilySelector',
   get:
     (threadId) =>
     ({ get }) =>
       (get(recordStoreFamilyState, threadId) as
-        | AgentChatThreadRecord
+        | AiChatThreadRecord
         | null
         | undefined) ?? null,
 });

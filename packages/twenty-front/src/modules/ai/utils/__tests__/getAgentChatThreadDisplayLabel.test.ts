@@ -1,6 +1,6 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { getAgentChatThreadDisplayLabel } from '@/ai/utils/getAgentChatThreadDisplayLabel';
+import { getAiChatThreadDisplayLabel } from '@/ai/utils/getAgentChatThreadDisplayLabel';
 
 const workspaceMembers = [
   {
@@ -29,17 +29,17 @@ const displayOptions = {
   formerMemberLabel: 'Former member',
 };
 
-describe('getAgentChatThreadDisplayLabel', () => {
+describe('getAiChatThreadDisplayLabel', () => {
   it('follows the current peer name and ignores stored titles', () => {
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
       }),
     ).toBe('Bob Jones');
 
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
         workspaceMembers: [
@@ -55,7 +55,7 @@ describe('getAgentChatThreadDisplayLabel', () => {
 
   it('selects the peer from either side of the canonical pair', () => {
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
         currentWorkspaceMemberId: 'bob',
@@ -65,7 +65,7 @@ describe('getAgentChatThreadDisplayLabel', () => {
 
   it('falls back to email for unnamed peers and labels departed peers', () => {
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
         workspaceMembers: [
@@ -78,7 +78,7 @@ describe('getAgentChatThreadDisplayLabel', () => {
     ).toBe('bob@example.com');
 
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
         workspaceMembers: [],
@@ -88,7 +88,7 @@ describe('getAgentChatThreadDisplayLabel', () => {
 
   it('labels both pair members for another member who can read the conversation', () => {
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: directMessage,
         currentWorkspaceMemberId: 'charlie',
@@ -98,14 +98,14 @@ describe('getAgentChatThreadDisplayLabel', () => {
 
   it('preserves ordinary conversation titles and their fallback', () => {
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: { title: 'Quarterly review' },
       }),
     ).toBe('Quarterly review');
 
     expect(
-      getAgentChatThreadDisplayLabel({
+      getAiChatThreadDisplayLabel({
         ...displayOptions,
         thread: { title: null },
       }),

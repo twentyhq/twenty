@@ -1,4 +1,4 @@
-import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
+import { aiChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { ScrollOverlayButton } from '@/ui/utilities/scroll/components/ScrollOverlayButton';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
@@ -9,8 +9,8 @@ import { useLingui } from '@lingui/react/macro';
 
 export const AiChatScrollToBottomButton = () => {
   const { t } = useLingui();
-  const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
-    agentChatIsScrolledToBottomComponentSelector,
+  const aiChatIsScrolledToBottom = useAtomComponentSelectorValue(
+    aiChatIsScrolledToBottomComponentSelector,
   );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
@@ -27,7 +27,7 @@ export const AiChatScrollToBottomButton = () => {
     <ScrollOverlayButton
       Icon={IconArrowDown}
       ariaLabel={t`Scroll to bottom`}
-      isVisible={!agentChatIsScrolledToBottom}
+      isVisible={!aiChatIsScrolledToBottom}
       onClick={handleClick}
     />
   );

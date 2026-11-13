@@ -1,28 +1,27 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type AgentChatThreadsSharedAssignee = {
+type AiChatThreadsSharedAssignee = {
   // Set only when every chat has the same assignee
   sharedAssigneeId: string | null;
   hasAssignee: boolean;
 };
 
-export const agentChatThreadsSharedAssigneeIdFamilySelector =
+export const aiChatThreadsSharedAssigneeIdFamilySelector =
   createAtomFamilySelector<
-    AgentChatThreadsSharedAssignee,
+    AiChatThreadsSharedAssignee,
     { threadIds: string[] }
   >({
-    key: 'agentChatThreadsSharedAssigneeIdFamilySelector',
+    key: 'aiChatThreadsSharedAssigneeIdFamilySelector',
     get:
       ({ threadIds }) =>
       ({ get }) => {
         const assigneeIds = threadIds.map(
           (threadId) =>
-            get(agentChatThreadRecordFamilySelector, threadId)?.assigneeId ??
-            null,
+            get(aiChatThreadRecordFamilySelector, threadId)?.assigneeId ?? null,
         );
         const [firstAssigneeId] = assigneeIds;
 

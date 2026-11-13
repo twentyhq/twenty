@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { AiChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
@@ -73,7 +73,7 @@ export const ChatThreadPendingMessage = ({
       {isNonEmptyArray(pendingMessage.files) && (
         <StyledFiles isDimmed={isSending}>
           {pendingMessage.files.map((file, index) => (
-            <AgentChatFilePreview key={`${index}-${file.name}`} file={file} />
+            <AiChatFilePreview key={`${index}-${file.name}`} file={file} />
           ))}
         </StyledFiles>
       )}

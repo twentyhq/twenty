@@ -3,10 +3,10 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { aiChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -19,19 +19,17 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 `;
 
 export const AiChatStandaloneError = () => {
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
+  const aiChatIsLoading = useAtomStateValue(aiChatIsLoadingSelector);
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
-  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
+    threadId: aiChatDisplayedThread,
   });
 
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
 
   const shouldRender =
-    !agentChatHasMessage && isDefined(agentChatError) && !agentChatIsLoading;
+    !aiChatHasMessage && isDefined(aiChatError) && !aiChatIsLoading;
 
   if (!shouldRender) {
     return null;
@@ -39,7 +37,7 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer error={agentChatError} />
+      <AiChatErrorRenderer error={aiChatError} />
     </StyledErrorContainer>
   );
 };

@@ -1,4 +1,4 @@
-import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
+import { getAiChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 
 const MEMBERS = [
   {
@@ -20,14 +20,14 @@ const getText = ({
   lastMessageSenderWorkspaceMemberId: string | null;
   lastMessageText?: string;
 }) =>
-  getAgentChatThreadPreviewText({
+  getAiChatThreadPreviewText({
     thread: { lastMessageText, lastMessageSenderWorkspaceMemberId },
     workspaceMembers: MEMBERS,
     currentWorkspaceMemberId: 'me',
     assistantDisplayName: 'Scout',
   });
 
-describe('getAgentChatThreadPreviewText', () => {
+describe('getAiChatThreadPreviewText', () => {
   it('names the member who wrote the last message', () => {
     expect(getText({ lastMessageSenderWorkspaceMemberId: 'teammate' })).toBe(
       'Tim Apple: Legal is reviewing the terms',

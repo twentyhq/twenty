@@ -145,6 +145,7 @@ export type AdminPanelUsageLimit = {
   __typename?: 'AdminPanelUsageLimit';
   burstValue?: Maybe<Scalars['BigInt']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];
@@ -423,6 +424,13 @@ export type ApplicationRegistrationVariable = {
   value?: Maybe<Scalars['String']['output']>;
 };
 
+/** Why a billing arrangement was granted, used for reporting */
+export enum BillingArrangementLabel {
+  APP_OWNER_WORKSPACE = 'APP_OWNER_WORKSPACE',
+  COMPENSATION = 'COMPENSATION',
+  OTHER = 'OTHER'
+}
+
 /** The origin of a batch of credits granted to a workspace */
 export enum BillingCreditGrantType {
   COMPENSATION = 'COMPENSATION',
@@ -691,7 +699,6 @@ export type Mutation = {
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
-  updateWorkspaceUsageLimit: AdminPanelUsageLimit;
 };
 
 
@@ -719,6 +726,9 @@ export type MutationCreateWorkspaceDataExportArgs = {
 
 
 export type MutationCreateWorkspaceUsageLimitArgs = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  label?: InputMaybe<BillingArrangementLabel>;
   payload: CreateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
@@ -838,12 +848,6 @@ export type MutationUpdateServerAdminAccessArgs = {
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String']['input'];
   value: Scalars['Boolean']['input'];
-  workspaceId: Scalars['UUID']['input'];
-};
-
-
-export type MutationUpdateWorkspaceUsageLimitArgs = {
-  payload: UpdateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };
 
@@ -1162,11 +1166,6 @@ export type UpdateApplicationRegistrationVariablePayload = {
   description?: InputMaybe<Scalars['String']['input']>;
   resetValue?: InputMaybe<Scalars['Boolean']['input']>;
   value?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type UpdateUsageLimitInput = {
-  id: Scalars['UUID']['input'];
-  payload: CreateUsageLimitInput;
 };
 
 export enum UpgradeHealth {

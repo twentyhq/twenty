@@ -6,27 +6,25 @@ import {
   type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
-import { AiChatInboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
-import { AGENT_CHAT_OPEN_THREAD_PRESET_FILTERS } from '@/ai/constants/AgentChatOpenThreadPresetFilters';
-import { AGENT_CHAT_THREAD_PRESET_FILTER_ICONS } from '@/ai/constants/AgentChatThreadPresetFilterIcons';
-import { AGENT_CHAT_THREAD_PRESET_FILTER_LABELS } from '@/ai/constants/AgentChatThreadPresetFilterLabels';
-import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { isAgentChatOpenThreadPresetFilter } from '@/ai/utils/isAgentChatOpenThreadPresetFilter';
+import { InboxFilterDropdown } from '@/ai/components/AiChatInboxFilterDropdown';
+import { INBOX_OPEN_THREAD_PRESET_FILTERS } from '@/ai/constants/AgentChatOpenThreadPresetFilters';
+import { INBOX_THREAD_PRESET_FILTER_ICONS } from '@/ai/constants/AgentChatThreadPresetFilterIcons';
+import { INBOX_THREAD_PRESET_FILTER_LABELS } from '@/ai/constants/AgentChatThreadPresetFilterLabels';
+import { useInboxOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { isInboxOpenThreadPresetFilter } from '@/ai/utils/isAgentChatOpenThreadPresetFilter';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-export const AiChatInboxPersonalViewDropdown = () => {
+export const InboxPersonalViewDropdown = () => {
   const { t } = useLingui();
   const navigate = useNavigateApp();
-  const [
-    agentChatSelectedThreadListSource,
-    setAgentChatSelectedThreadListSource,
-  ] = useAtomState(agentChatSelectedThreadListSourceState);
+  const [inboxSelectedThreadListSource, setInboxSelectedThreadListSource] =
+    useAtomState(inboxSelectedThreadListSourceState);
   const selectedPresetFilter =
-    agentChatSelectedThreadListSource.type === 'presetFilter'
-      ? agentChatSelectedThreadListSource.presetFilter
+    inboxSelectedThreadListSource.type === 'presetFilter'
+      ? inboxSelectedThreadListSource.presetFilter
       : undefined;
   const {
     openThreadCount,
@@ -35,7 +33,7 @@ export const AiChatInboxPersonalViewDropdown = () => {
     assignedToMeThreadCount,
     assignedThreadCount,
     unassignedThreadCount,
-  } = useAgentChatOpenThreadsSummary();
+  } = useInboxOpenThreadsSummary();
   const { resetRecordSelection } = useResetRecordSelection();
   const countByPresetFilter: Partial<
     Record<AgentChatThreadPresetFilter, number>
@@ -50,7 +48,7 @@ export const AiChatInboxPersonalViewDropdown = () => {
 
   const handleSelect = (presetFilter: AgentChatThreadPresetFilter) => {
     resetRecordSelection();
-    setAgentChatSelectedThreadListSource({
+    setInboxSelectedThreadListSource({
       type: 'presetFilter',
       presetFilter,
     });
@@ -58,16 +56,16 @@ export const AiChatInboxPersonalViewDropdown = () => {
   };
 
   return (
-    <AiChatInboxFilterDropdown
+    <InboxFilterDropdown
       isFiltered={
         isDefined(selectedPresetFilter) &&
         selectedPresetFilter !== AGENT_CHAT_THREAD_PRESET_FILTER.OPEN &&
-        isAgentChatOpenThreadPresetFilter(selectedPresetFilter)
+        isInboxOpenThreadPresetFilter(selectedPresetFilter)
       }
-      options={AGENT_CHAT_OPEN_THREAD_PRESET_FILTERS.map((presetFilter) => ({
+      options={INBOX_OPEN_THREAD_PRESET_FILTERS.map((presetFilter) => ({
         key: presetFilter,
-        label: t(AGENT_CHAT_THREAD_PRESET_FILTER_LABELS[presetFilter]),
-        Icon: AGENT_CHAT_THREAD_PRESET_FILTER_ICONS[presetFilter],
+        label: t(INBOX_THREAD_PRESET_FILTER_LABELS[presetFilter]),
+        Icon: INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter],
         count: countByPresetFilter[presetFilter],
         isSelected: presetFilter === selectedPresetFilter,
         onSelect: () => handleSelect(presetFilter),

@@ -11,9 +11,9 @@ jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
   useRefreshFrontComponents: () => ({ refreshFrontComponents: jest.fn() }),
 }));
 
-const answerAgentChatToolCall = jest.fn();
+const answerAiChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
-  useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
+  useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
 jest.mock(
@@ -107,12 +107,12 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
 
 describe('AiChatToolCallApprovalCard for an email', () => {
   beforeEach(() => {
-    answerAgentChatToolCall.mockReset();
+    answerAiChatToolCall.mockReset();
   });
 
   it('sends the email as the person edited it', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
+    answerAiChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
 
@@ -128,7 +128,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     });
     await user.click(screen.getByRole('button', { name: 'Send' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
+    expect(answerAiChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: {
         decision: 'approve',
@@ -155,13 +155,13 @@ describe('AiChatToolCallApprovalCard for an email', () => {
 
   it('saves the email as a draft through the alternative tool', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(true);
+    answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
     await user.click(screen.getByRole('button', { name: 'Save as draft' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'approve',
@@ -174,7 +174,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
 
   it('discards the email with the feedback the person wrote', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(true);
+    answerAiChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
@@ -185,7 +185,7 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Discard' }));
 
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+    expect(answerAiChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: { decision: 'reject', feedback: 'Too formal' },
       }),

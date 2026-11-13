@@ -3,9 +3,9 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-export const agentChatIsScrolledToBottomComponentSelector =
+export const aiChatIsScrolledToBottomComponentSelector =
   createAtomComponentSelector<boolean>({
-    key: 'agentChatIsScrolledToBottomComponentSelector',
+    key: 'aiChatIsScrolledToBottomComponentSelector',
     componentInstanceContext: ScrollWrapperComponentInstanceContext,
     get:
       ({ instanceId }) =>

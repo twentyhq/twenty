@@ -3,7 +3,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 const MINIMUM_WORK_DURATION_MS = 1000;
 
-export const getAgentChatMessageWorkDurationMs = ({
+export const getAiChatMessageWorkDurationMs = ({
   metadata,
   isStreaming,
 }: {

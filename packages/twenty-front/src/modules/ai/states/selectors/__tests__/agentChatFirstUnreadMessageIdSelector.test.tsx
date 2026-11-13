@@ -3,13 +3,13 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
-  type AgentChatThreadVisit,
-  agentChatThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
+import { aiChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -46,28 +46,28 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const getFirstUnreadMessageId = (
-  visit: Omit<AgentChatThreadVisit, 'isKeptUnread'>,
+  visit: Omit<AiChatThreadVisit, 'isKeptUnread'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(agentChatThreadVisitState.atom, {
+  jotaiStore.set(aiChatThreadVisitState.atom, {
     ...visit,
     isKeptUnread: false,
   });
   jotaiStore.set(
-    agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     messages,
   );
 
   return renderHook(
-    () => useAtomStateValue(agentChatFirstUnreadMessageIdSelector),
+    () => useAtomStateValue(aiChatFirstUnreadMessageIdSelector),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('agentChatFirstUnreadMessageIdSelector', () => {
+describe('aiChatFirstUnreadMessageIdSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: ME,
     } as never);

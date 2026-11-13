@@ -5,8 +5,8 @@ import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTi
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
-import { AI_CHAT_INBOX_SELECTION_PILE_MAX_CARDS } from '@/ai/constants/AiChatInboxSelectionPileMaxCards';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { INBOX_SELECTION_PILE_MAX_CARDS } from '@/ai/constants/AiChatInboxSelectionPileMaxCards';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledPile = styled.div`
   display: flex;
@@ -57,14 +57,12 @@ const StyledHeading = styled.div`
   min-width: 0;
 `;
 
-type AiChatInboxSelectionPileProps = {
-  threads: AgentChatThreadRecord[];
+type InboxSelectionPileProps = {
+  threads: AiChatThreadRecord[];
 };
 
-export const AiChatInboxSelectionPile = ({
-  threads,
-}: AiChatInboxSelectionPileProps) => {
-  const pileThreads = threads.slice(0, AI_CHAT_INBOX_SELECTION_PILE_MAX_CARDS);
+export const InboxSelectionPile = ({ threads }: InboxSelectionPileProps) => {
+  const pileThreads = threads.slice(0, INBOX_SELECTION_PILE_MAX_CARDS);
 
   return (
     <StyledPile aria-hidden>

@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -20,7 +20,7 @@ jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
   AiChatThreadActionsDropdown: () => null,
 }));
 
-const THREAD: AgentChatThreadRecord = {
+const THREAD: AiChatThreadRecord = {
   __typename: 'AgentChatThread',
   id: '20202020-0000-4000-8000-0000000000aa',
   title: 'Pricing questions',
@@ -39,7 +39,7 @@ const renderContent = ({
   loading?: boolean;
   error?: unknown;
   onRetry?: () => void;
-  threads?: AgentChatThreadRecord[];
+  threads?: AiChatThreadRecord[];
 }) =>
   render(
     <I18nProvider i18n={i18n}>

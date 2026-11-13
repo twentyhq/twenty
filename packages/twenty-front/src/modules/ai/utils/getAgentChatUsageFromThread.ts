@@ -1,15 +1,15 @@
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatUsageState } from '@/ai/states/agentChatUsageFamilyState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatUsageState } from '@/ai/states/agentChatUsageFamilyState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const toDisplayCredits = (internalCredits: number | string | undefined) =>
   Number(internalCredits ?? 0) / INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
 
-export const getAgentChatUsageFromThread = (
+export const getAiChatUsageFromThread = (
   thread: Pick<
-    AgentChatThreadRecord,
+    AiChatThreadRecord,
     | 'conversationSize'
     | 'contextWindowTokens'
     | 'totalCacheReadTokens'
@@ -18,7 +18,7 @@ export const getAgentChatUsageFromThread = (
     | 'totalInputCredits'
     | 'totalOutputCredits'
   >,
-): AgentChatUsageState | null => {
+): AiChatUsageState | null => {
   const conversationSize = thread.conversationSize ?? 0;
 
   if (conversationSize <= 0 || !isDefined(thread.contextWindowTokens)) {

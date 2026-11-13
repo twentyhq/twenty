@@ -1,10 +1,10 @@
-import { type AgentChatThreadList } from '@/ai/types/AgentChatThreadList';
+import { type InboxLoadedThreadList } from '@/ai/types/AgentChatThreadList';
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatThreadListFamilyState = createAtomFamilyState<
-  AgentChatThreadList | null,
+export const inboxThreadListFamilyState = createAtomFamilyState<
+  InboxLoadedThreadList | null,
   string
 >({
-  key: 'agentChatThreadListFamilyState',
+  key: 'inboxThreadListFamilyState',
   defaultValue: null,
 });

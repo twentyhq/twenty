@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
 import { AppPath } from 'twenty-shared/types';
 
-import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const navigate = jest.fn();
 
@@ -10,7 +10,7 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigate,
 }));
 
-const buildThreads = (ids: string[]): Pick<AgentChatThreadRecord, 'id'>[] =>
+const buildThreads = (ids: string[]): Pick<AiChatThreadRecord, 'id'>[] =>
   ids.map((id) => ({ id }));
 
 const expectSelected = (threadId: string | null) =>
@@ -21,14 +21,14 @@ const expectSelected = (threadId: string | null) =>
     { replace: true },
   );
 
-describe('AiChatInboxSelectionEffect', () => {
+describe('InboxSelectionEffect', () => {
   beforeEach(() => {
     navigate.mockClear();
   });
 
   it('selects the chat that takes the place of the one leaving the list', () => {
     const { rerender } = render(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-2"
         threads={buildThreads(['thread-1', 'thread-2', 'thread-3'])}
       />,
@@ -37,7 +37,7 @@ describe('AiChatInboxSelectionEffect', () => {
     expect(navigate).not.toHaveBeenCalled();
 
     rerender(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-2"
         threads={buildThreads(['thread-1', 'thread-3'])}
       />,
@@ -48,14 +48,14 @@ describe('AiChatInboxSelectionEffect', () => {
 
   it('selects the previous chat when the last one leaves the list', () => {
     const { rerender } = render(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-2"
         threads={buildThreads(['thread-1', 'thread-2'])}
       />,
     );
 
     rerender(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-2"
         threads={buildThreads(['thread-1'])}
       />,
@@ -66,22 +66,20 @@ describe('AiChatInboxSelectionEffect', () => {
 
   it('clears the selection when the list empties', () => {
     const { rerender } = render(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-1"
         threads={buildThreads(['thread-1'])}
       />,
     );
 
-    rerender(
-      <AiChatInboxSelectionEffect selectedThreadId="thread-1" threads={[]} />,
-    );
+    rerender(<InboxSelectionEffect selectedThreadId="thread-1" threads={[]} />);
 
     expectSelected(null);
   });
 
   it('keeps a chat opened from a link that is not listed', () => {
     render(
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         selectedThreadId="thread-9"
         threads={buildThreads(['thread-1'])}
       />,

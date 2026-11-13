@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { findAgentChatChannelFavoriteNavigationMenuItem } from '@/ai/utils/findAgentChatChannelFavoriteNavigationMenuItem';
+import { findInboxChannelFavoriteNavigationMenuItem } from '@/ai/utils/findAgentChatChannelFavoriteNavigationMenuItem';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-export const useIsAgentChatChannelFavorite = (channelId: string) => {
+export const useIsInboxChannelFavorite = (channelId: string) => {
   const { navigationMenuItems } = useNavigationMenuItemsData();
 
   return isDefined(
-    findAgentChatChannelFavoriteNavigationMenuItem({
+    findInboxChannelFavoriteNavigationMenuItem({
       navigationMenuItems,
       channelId,
     }),

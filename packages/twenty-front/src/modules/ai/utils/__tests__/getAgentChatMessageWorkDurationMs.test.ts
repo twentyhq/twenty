@@ -1,8 +1,8 @@
-import { getAgentChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
+import { getAiChatMessageWorkDurationMs } from '@/ai/utils/getAgentChatMessageWorkDurationMs';
 
 const STARTED_AT = '2026-01-01T10:00:00.000Z';
 
-describe('getAgentChatMessageWorkDurationMs', () => {
+describe('getAiChatMessageWorkDurationMs', () => {
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-01-01T10:00:30.000Z'));
   });
@@ -13,7 +13,7 @@ describe('getAgentChatMessageWorkDurationMs', () => {
 
   it('returns the time between start and finish', () => {
     expect(
-      getAgentChatMessageWorkDurationMs({
+      getAiChatMessageWorkDurationMs({
         metadata: {
           createdAt: STARTED_AT,
           startedAt: STARTED_AT,
@@ -26,7 +26,7 @@ describe('getAgentChatMessageWorkDurationMs', () => {
 
   it('measures up to now while the message is still streaming', () => {
     expect(
-      getAgentChatMessageWorkDurationMs({
+      getAiChatMessageWorkDurationMs({
         metadata: { createdAt: STARTED_AT, startedAt: STARTED_AT },
         isStreaming: true,
       }),
@@ -35,7 +35,7 @@ describe('getAgentChatMessageWorkDurationMs', () => {
 
   it('returns null when a message stopped streaming without a finish time', () => {
     expect(
-      getAgentChatMessageWorkDurationMs({
+      getAiChatMessageWorkDurationMs({
         metadata: { createdAt: STARTED_AT, startedAt: STARTED_AT },
         isStreaming: false,
       }),
@@ -44,7 +44,7 @@ describe('getAgentChatMessageWorkDurationMs', () => {
 
   it('returns null without a start time', () => {
     expect(
-      getAgentChatMessageWorkDurationMs({
+      getAiChatMessageWorkDurationMs({
         metadata: { createdAt: STARTED_AT },
         isStreaming: true,
       }),
@@ -53,7 +53,7 @@ describe('getAgentChatMessageWorkDurationMs', () => {
 
   it('returns null for a message saved in one go', () => {
     expect(
-      getAgentChatMessageWorkDurationMs({
+      getAiChatMessageWorkDurationMs({
         metadata: {
           createdAt: STARTED_AT,
           startedAt: STARTED_AT,

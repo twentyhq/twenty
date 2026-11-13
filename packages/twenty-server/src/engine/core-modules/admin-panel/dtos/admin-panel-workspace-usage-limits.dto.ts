@@ -45,7 +45,10 @@ export class AdminPanelUsageLimitDefaultDTO {
 }
 
 @ObjectType('AdminPanelUsageLimit')
-export class AdminPanelUsageLimitDTO extends UsageLimitDTO {}
+export class AdminPanelUsageLimitDTO extends UsageLimitDTO {
+  @Field(() => Date, { nullable: true })
+  endsAt: Date | null;
+}
 
 @ObjectType('AdminPanelWorkspaceUsageLimits')
 export class AdminPanelWorkspaceUsageLimitsDTO {

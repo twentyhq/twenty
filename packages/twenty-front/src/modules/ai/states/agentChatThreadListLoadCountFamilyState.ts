@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatThreadListLoadCountFamilyState = createAtomFamilyState<
+export const inboxThreadListLoadCountFamilyState = createAtomFamilyState<
   number,
   string
 >({
-  key: 'agentChatThreadListLoadCountFamilyState',
+  key: 'inboxThreadListLoadCountFamilyState',
   defaultValue: 0,
 });

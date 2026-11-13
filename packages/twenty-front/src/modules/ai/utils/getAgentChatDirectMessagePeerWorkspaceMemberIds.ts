@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export const getAgentChatDirectMessagePeerWorkspaceMemberIds = ({
+export const getInboxDirectMessagePeerWorkspaceMemberIds = ({
   thread,
   currentWorkspaceMemberId,
 }: {
   thread: Pick<
-    AgentChatThreadRecord,
+    AiChatThreadRecord,
     | 'directMessageFirstWorkspaceMemberId'
     | 'directMessageSecondWorkspaceMemberId'
   >;

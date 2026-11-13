@@ -1,6 +1,6 @@
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
@@ -43,7 +43,7 @@ import {
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 import { useLocation } from 'react-router-dom';
 
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isAiChatInboxPath';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const workspaceSurface = useWorkspaceSurface();
@@ -107,26 +107,26 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   // A chat's read and done state belongs to the member, not to the record,
   // so the inbox commands read it from here. They stay hidden until the
   // member state loads rather than offering the wrong half of a pair
-  const agentChatThreadParticipants = useAtomStateValue(
-    agentChatThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
       StandardObjectNameSingular.AgentChatThread &&
-    isDefined(agentChatThreadParticipants)
+    isDefined(aiChatThreadParticipants)
       ? (recordIds ?? [])
       : [];
-  const agentChatSelectedChannelView = useAtomStateValue(
-    agentChatSelectedChannelViewSelector,
+  const inboxSelectedChannelView = useAtomStateValue(
+    inboxSelectedChannelViewSelector,
   );
-  const agentChatThreadInboxStatusByThreadId = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusByThreadIdFamilySelector,
+  const inboxThreadMemberStateByThreadId = useAtomFamilySelectorValue(
+    inboxThreadMemberStateByThreadIdFamilySelector,
     {
       threadIds: inboxStatusThreadIds,
       // Every menu on the inbox page, the open chat's included, files the
       // chats of the channel on screen for the channel
-      channelId: isAiChatInboxPath(location.pathname)
-        ? (agentChatSelectedChannelView?.channelId ?? null)
+      channelId: isInboxPath(location.pathname)
+        ? (inboxSelectedChannelView?.channelId ?? null)
         : null,
     },
   );
@@ -137,8 +137,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     ...(isDefined(recordPermissionsByRecordId[record.id]) && {
       recordPermissions: recordPermissionsByRecordId[record.id],
     }),
-    ...(isDefined(agentChatThreadInboxStatusByThreadId[record.id]) && {
-      inboxStatus: agentChatThreadInboxStatusByThreadId[record.id],
+    ...(isDefined(inboxThreadMemberStateByThreadId[record.id]) && {
+      inboxStatus: inboxThreadMemberStateByThreadId[record.id],
     }),
   }));
 

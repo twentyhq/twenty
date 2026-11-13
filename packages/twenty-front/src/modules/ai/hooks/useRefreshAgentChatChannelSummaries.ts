@@ -3,15 +3,15 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { inboxChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
 import { GetAgentChatChannelSummariesDocument } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useRefreshAgentChatChannelSummaries = () => {
+export const useRefreshInboxChannelSummaries = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
 
-  const refreshAgentChatChannelSummaries = useCallback(async () => {
+  const refreshInboxChannelSummaries = useCallback(async () => {
     const summaries = (
       await apolloClient
         .query({
@@ -32,13 +32,13 @@ export const useRefreshAgentChatChannelSummaries = () => {
     // Most chat changes leave the counts as they were
     if (
       !isDeeplyEqual(
-        store.get(agentChatChannelSummariesState.atom),
+        store.get(inboxChannelSummariesState.atom),
         summariesByChannelId,
       )
     ) {
-      store.set(agentChatChannelSummariesState.atom, summariesByChannelId);
+      store.set(inboxChannelSummariesState.atom, summariesByChannelId);
     }
   }, [apolloClient, store]);
 
-  return { refreshAgentChatChannelSummaries };
+  return { refreshInboxChannelSummaries };
 };

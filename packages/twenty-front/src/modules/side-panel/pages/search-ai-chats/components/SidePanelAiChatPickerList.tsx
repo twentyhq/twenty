@@ -7,7 +7,7 @@ import { Loader } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AgentChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { type AiChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
@@ -29,7 +29,7 @@ const StyledStatus = styled.div`
 `;
 
 type SidePanelAiChatPickerListProps = {
-  threads: (AgentChatThreadDisplayIdentity & { id: string })[];
+  threads: (AiChatThreadDisplayIdentity & { id: string })[];
   isLoading: boolean;
   loadingLabel: string;
   noResultsText: string;

@@ -3,13 +3,13 @@ import {
   type AiChatUsageMetadata,
 } from 'twenty-shared/ai';
 
-import { type AgentChatUsageState } from '@/ai/states/agentChatUsageFamilyState';
+import { type AiChatUsageState } from '@/ai/states/agentChatUsageFamilyState';
 
-export const accumulateAgentChatUsage = (
-  previousUsage: AgentChatUsageState | null,
+export const accumulateAiChatUsage = (
+  previousUsage: AiChatUsageState | null,
   messageUsage: AiChatUsageMetadata,
   model: AiChatModelMetadata,
-): AgentChatUsageState => ({
+): AiChatUsageState => ({
   lastMessage: {
     inputTokens: messageUsage.inputTokens,
     outputTokens: messageUsage.outputTokens,

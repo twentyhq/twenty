@@ -5,7 +5,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconMoodSmile } from 'twenty-ui/icon';
 
 import { AiChatMessageReactionPickerContent } from '@/ai/components/AiChatMessageReactionPickerContent';
-import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -25,12 +25,11 @@ export const AiChatMessageReactionPicker = ({
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const dropdownId = `ai-chat-message-reaction-picker-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
-  const { toggleAgentChatMessageReaction } =
-    useToggleAgentChatMessageReaction();
+  const { toggleAiChatMessageReaction } = useToggleAiChatMessageReaction();
 
   const react = (emoji: string) => {
     closeDropdown(dropdownId);
-    void toggleAgentChatMessageReaction({ messageId, emoji });
+    void toggleAiChatMessageReaction({ messageId, emoji });
   };
 
   return (

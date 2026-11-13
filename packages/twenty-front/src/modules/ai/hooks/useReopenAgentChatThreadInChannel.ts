@@ -1,15 +1,14 @@
 import { useCallback } from 'react';
 
-import { useUpdateAgentChatThreadChannelCopy } from '@/ai/hooks/useUpdateAgentChatThreadChannelCopy';
+import { useUpdateInboxThreadChannelCopy } from '@/ai/hooks/useUpdateAgentChatThreadChannelCopy';
 import { ReopenAgentChatThreadInChannelDocument } from '~/generated-metadata/graphql';
 
-export const useReopenAgentChatThreadInChannel = () => {
-  const { updateAgentChatThreadChannelCopy } =
-    useUpdateAgentChatThreadChannelCopy();
+export const useReopenInboxThreadInChannel = () => {
+  const { updateInboxThreadChannelCopy } = useUpdateInboxThreadChannelCopy();
 
   const reopenAgentChatThreadInChannel = useCallback(
     (threadId: string) =>
-      updateAgentChatThreadChannelCopy({
+      updateInboxThreadChannelCopy({
         mutation: ReopenAgentChatThreadInChannelDocument,
         variables: { threadId },
         optimisticChannelCopy: {
@@ -17,7 +16,7 @@ export const useReopenAgentChatThreadInChannel = () => {
           channelSnoozedUntil: null,
         },
       }),
-    [updateAgentChatThreadChannelCopy],
+    [updateInboxThreadChannelCopy],
   );
 
   return { reopenAgentChatThreadInChannel };

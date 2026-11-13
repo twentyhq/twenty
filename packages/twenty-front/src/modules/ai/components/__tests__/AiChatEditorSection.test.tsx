@@ -9,7 +9,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -39,7 +39,7 @@ const renderEditorSection = (currentAiChatThread: string) => {
     onInitializeJotaiStore: (store) => {
       store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
       store.set(currentAiChatThreadState.atom, currentAiChatThread);
-      store.set(agentChatDisplayedThreadState.atom, currentAiChatThread);
+      store.set(aiChatDisplayedThreadState.atom, currentAiChatThread);
     },
   });
 

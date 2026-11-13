@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getAgentChatAgentAuthor = ({
+export const getAiChatAgentAuthor = ({
   agentId,
   agentName,
 }: {

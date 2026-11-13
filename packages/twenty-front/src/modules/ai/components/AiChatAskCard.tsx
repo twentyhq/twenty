@@ -3,10 +3,10 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
-import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
+import { type AiChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
 type AiChatAskCardProps = {
-  pendingToolCall: AgentChatPendingToolCall;
+  pendingToolCall: AiChatPendingToolCall;
   isActive?: boolean;
 };
 

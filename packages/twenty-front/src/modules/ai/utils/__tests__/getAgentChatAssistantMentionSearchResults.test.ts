@@ -1,11 +1,11 @@
 import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared/ai';
 
-import { getAgentChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
+import { getAiChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
 
-describe('getAgentChatAssistantMentionSearchResults', () => {
+describe('getAiChatAssistantMentionSearchResults', () => {
   it('offers the assistant before anything is typed', () => {
     expect(
-      getAgentChatAssistantMentionSearchResults({
+      getAiChatAssistantMentionSearchResults({
         query: '',
         assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
@@ -16,7 +16,7 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
 
   it('offers the assistant when its name is typed', () => {
     expect(
-      getAgentChatAssistantMentionSearchResults({
+      getAiChatAssistantMentionSearchResults({
         query: 'AD',
         assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
@@ -27,7 +27,7 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
 
   it('leaves the assistant out when the name does not match', () => {
     expect(
-      getAgentChatAssistantMentionSearchResults({
+      getAiChatAssistantMentionSearchResults({
         query: 'jane',
         assistantDisplayName: 'Ada',
         objectLabelSingular: 'Assistant',
@@ -38,7 +38,7 @@ describe('getAgentChatAssistantMentionSearchResults', () => {
 
   it('uses the renamed display label while preserving the canonical identity', () => {
     expect(
-      getAgentChatAssistantMentionSearchResults({
+      getAiChatAssistantMentionSearchResults({
         query: 'SCOUT',
         assistantDisplayName: 'Scout Bot',
         objectLabelSingular: 'Assistant',

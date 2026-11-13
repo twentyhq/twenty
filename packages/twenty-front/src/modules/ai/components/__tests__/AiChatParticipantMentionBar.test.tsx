@@ -11,7 +11,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
@@ -49,7 +49,7 @@ describe('AiChatParticipantMentionBar', () => {
     editor = new Editor({
       extensions: [Document, Paragraph, Text, MentionTag],
       onUpdate: ({ editor: updatedEditor }) => {
-        jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+        jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
           [THREAD_ID]: serializeAdvancedTextEditorDocument(updatedEditor),
         });
       },

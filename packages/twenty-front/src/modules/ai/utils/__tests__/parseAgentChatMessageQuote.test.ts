@@ -1,11 +1,11 @@
-import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
-import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
+import { parseAiChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
+import { prependAiChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 
-describe('parseAgentChatMessageQuote', () => {
+describe('parseAiChatMessageQuote', () => {
   it('reads back a quote written above a reply', () => {
     expect(
-      parseAgentChatMessageQuote(
-        prependAgentChatQuoteToText({
+      parseAiChatMessageQuote(
+        prependAiChatQuoteToText({
           text: 'I will take Stripe.',
           authorName: 'Marco Rossi',
           excerpt: 'Can you take Stripe?',
@@ -20,8 +20,8 @@ describe('parseAgentChatMessageQuote', () => {
 
   it('keeps every line of a multi-line excerpt', () => {
     expect(
-      parseAgentChatMessageQuote(
-        prependAgentChatQuoteToText({
+      parseAiChatMessageQuote(
+        prependAiChatQuoteToText({
           text: 'Done.\n\nBoth are handled.',
           authorName: 'Marco Rossi',
           excerpt: 'Can you take Stripe?\n\n> They asked twice.',
@@ -35,25 +35,23 @@ describe('parseAgentChatMessageQuote', () => {
   });
 
   it('ignores a message without a leading quote', () => {
-    expect(parseAgentChatMessageQuote('Which deals close this week?')).toBe(
-      null,
-    );
+    expect(parseAiChatMessageQuote('Which deals close this week?')).toBe(null);
   });
 
   it('ignores a blockquote that does not name an author', () => {
-    expect(parseAgentChatMessageQuote('> Ship it on Friday.\n\nAgreed.')).toBe(
+    expect(parseAiChatMessageQuote('> Ship it on Friday.\n\nAgreed.')).toBe(
       null,
     );
   });
 
   it('ignores a quote with no reply below it', () => {
-    expect(parseAgentChatMessageQuote('> **Marco Rossi:** On it.')).toBe(null);
+    expect(parseAiChatMessageQuote('> **Marco Rossi:** On it.')).toBe(null);
   });
 
   it('reads back a quote of a message without text', () => {
     expect(
-      parseAgentChatMessageQuote(
-        prependAgentChatQuoteToText({
+      parseAiChatMessageQuote(
+        prependAiChatQuoteToText({
           text: 'Thanks for the update.',
           authorName: 'Ada',
           excerpt: '',

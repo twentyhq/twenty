@@ -1,14 +1,14 @@
 import { AUTO_SELECT_MODEL_ID_BY_TIER } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // undefined lets the server fall back to the workspace chat tier.
-export const useAgentChatModelId = () => {
-  const agentChatUserSelectedModelTier = useAtomStateValue(
-    agentChatUserSelectedModelTierState,
+export const useAiChatModelId = () => {
+  const aiChatUserSelectedModelTier = useAtomStateValue(
+    aiChatUserSelectedModelTierState,
   );
   // The shared sender mounts above the chat surface providers.
   const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
@@ -19,8 +19,8 @@ export const useAgentChatModelId = () => {
     ? AUTO_SELECT_MODEL_ID_BY_TIER.fast
     : undefined;
 
-  const modelIdForRequest = isDefined(agentChatUserSelectedModelTier)
-    ? AUTO_SELECT_MODEL_ID_BY_TIER[agentChatUserSelectedModelTier]
+  const modelIdForRequest = isDefined(aiChatUserSelectedModelTier)
+    ? AUTO_SELECT_MODEL_ID_BY_TIER[aiChatUserSelectedModelTier]
     : workspaceSetupModelId;
 
   return { modelIdForRequest };

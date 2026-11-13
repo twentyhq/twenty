@@ -6,12 +6,12 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
-import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
+import { type AiChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
-let pendingToolCalls: AgentChatPendingToolCall[] = [];
+let pendingToolCalls: AiChatPendingToolCall[] = [];
 
 jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
-  useAgentChatPendingToolCalls: () => pendingToolCalls,
+  useAiChatPendingToolCalls: () => pendingToolCalls,
 }));
 
 jest.mock('@/ai/components/AiChatFrontComponentPreview', () => ({
@@ -35,7 +35,7 @@ const TOOL_PART: ToolUIPart = {
 const approval = (
   draftId: string,
   toolName = PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-): AgentChatPendingToolCall => ({
+): AiChatPendingToolCall => ({
   kind: 'toolCallApproval',
   toolCallId: 'approval-call',
   proposal: {
