@@ -13,6 +13,9 @@ export class ApplicationAuthorizationDTO {
   @Field(() => UUIDScalarType)
   workspaceId: string;
 
+  @Field(() => UUIDScalarType)
+  userId: string;
+
   @Field(() => String)
   applicationName: string;
 
@@ -21,6 +24,9 @@ export class ApplicationAuthorizationDTO {
   applicationUniversalIdentifier: string | null;
 
   // Null for grants backfilled from refresh tokens predating the authorization record
+  @Field(() => String, { nullable: true })
+  marketplaceAppUniversalIdentifier: string | null;
+
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
 

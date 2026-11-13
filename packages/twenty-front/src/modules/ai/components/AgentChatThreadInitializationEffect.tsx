@@ -12,7 +12,7 @@ import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThr
 import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatThreadsLoadingSelector } from '@/ai/states/selectors/agentChatThreadsLoadingSelector';
+import { agentChatRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
@@ -66,8 +66,8 @@ export const AgentChatThreadInitializationEffect = () => {
       'fieldMetadataItems',
     ) === 'up-to-date';
 
-  const agentChatThreadsLoading = useAtomStateValue(
-    agentChatThreadsLoadingSelector,
+  const agentChatRecentThreadsLoading = useAtomStateValue(
+    agentChatRecentThreadsLoadingSelector,
   );
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -97,7 +97,7 @@ export const AgentChatThreadInitializationEffect = () => {
       .get(agentChatFavoriteThreadsSelector.atom)
       .some(({ conversationType }) => !isDefined(conversationType));
 
-    if (!agentChatThreadsLoading && !hasUnloadedFavoriteThreads) {
+    if (!agentChatRecentThreadsLoading && !hasUnloadedFavoriteThreads) {
       return;
     }
 
@@ -130,7 +130,7 @@ export const AgentChatThreadInitializationEffect = () => {
       }
     };
   }, [
-    agentChatThreadsLoading,
+    agentChatRecentThreadsLoading,
     areFieldMetadataItemsLoaded,
     canLoadChatThreads,
     favoriteThreadIdsKey,
@@ -139,7 +139,7 @@ export const AgentChatThreadInitializationEffect = () => {
   ]);
 
   useEffect(() => {
-    if (hasInitializedAgentChatThreads || agentChatThreadsLoading) {
+    if (hasInitializedAgentChatThreads || agentChatRecentThreadsLoading) {
       return;
     }
 
@@ -178,7 +178,7 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatThreadListThreads,
     currentAiChatThread,
-    agentChatThreadsLoading,
+    agentChatRecentThreadsLoading,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     setCurrentAiChatThread,

@@ -14,7 +14,7 @@ const isAfter = (date: string, dateToCompare: string): boolean =>
 // under done whatever happens in it. A chat the member can open but does not
 // follow stays out of their inbox until they take part in it or file it, and
 // only has unread messages once they have opened it.
-// Keep in sync with computeAgentChatThreadFilterStatusGqlFilter, which loads the tabs from the server.
+// Keep in sync with computeAgentChatThreadPresetFilterGqlFilter, which loads the tabs from the server.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
