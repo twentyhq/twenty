@@ -52,7 +52,7 @@ export class DeleteWorkflowVersionActionHandlerService extends WorkspaceMigratio
     return;
   }
 
-  protected override getDeferredAction({
+  protected override getDeferredOperation({
     flatAction,
     allFlatEntityMaps,
   }: WorkspaceMigrationActionRunnerContext<FlatDeleteWorkflowVersionAction>) {

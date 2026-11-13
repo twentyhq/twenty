@@ -6,8 +6,9 @@ import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadTo
 import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
@@ -21,7 +22,7 @@ export const useLeaveRemovedAiChatThread = () => {
   const leaveRemovedAiChatThread = useCallback(async () => {
     const currentThreadId = store.get(currentAiChatThreadState.atom);
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
-    const threads = store.get(agentChatThreadsSelector.atom);
+    const threads = store.get(agentChatRecentThreadsSelector.atom);
 
     if (
       !isDefined(currentThreadId) ||
@@ -43,7 +44,11 @@ export const useLeaveRemovedAiChatThread = () => {
 
     const nextThreadId =
       sortChatThreadsByLastActivityDesc(
-        store.get(agentChatVisibleThreadsSelector.atom),
+        store.get(
+          agentChatThreadListThreadsFamilySelector.selectorFamily(
+            store.get(agentChatSelectedThreadListSourceState.atom),
+          ),
+        ),
       )[0]?.id ?? newAiChatThreadId;
     store.set(currentAiChatThreadState.atom, nextThreadId);
     projectAiChatThreadToUrl(nextThreadId);

@@ -1186,8 +1186,14 @@ export default {
             "lastUsedAt": [
                 223
             ],
+            "marketplaceAppUniversalIdentifier": [
+                4
+            ],
             "scopes": [
                 4
+            ],
+            "userId": [
+                557
             ],
             "workspaceId": [
                 558
@@ -6518,6 +6524,9 @@ export default {
             "category": [
                 4
             ],
+            "connectUrl": [
+                4
+            ],
             "description": [
                 4
             ],
@@ -6551,6 +6560,9 @@ export default {
                 1
             ],
             "category": [
+                4
+            ],
+            "connectUrl": [
                 4
             ],
             "content": [
@@ -7250,6 +7262,9 @@ export default {
                     "redirectUrl": [
                         4,
                         "String!"
+                    ],
+                    "resource": [
+                        4
                     ],
                     "scope": [
                         4
@@ -8924,6 +8939,15 @@ export default {
                 {
                     "userSessionId": [
                         558,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "revokeWorkspaceApplicationAuthorization": [
+                1,
+                {
+                    "applicationAuthorizationId": [
+                        557,
                         "UUID!"
                     ]
                 }
@@ -11121,6 +11145,12 @@ export default {
             "id": [
                 558
             ],
+            "isClaimingVerifiedClientName": [
+                1
+            ],
+            "isVerified": [
+                1
+            ],
             "logoUrl": [
                 4
             ],
@@ -11572,6 +11602,9 @@ export default {
                 62,
                 {
                     "shouldIncludeDependencies": [
+                        1
+                    ],
+                    "shouldIncludePublicAssets": [
                         1
                     ],
                     "shouldIncludeSourceFiles": [
@@ -12426,6 +12459,9 @@ export default {
             ],
             "webhooks": [
                 686
+            ],
+            "workspaceApplicationAuthorizations": [
+                55
             ],
             "__typename": [
                 4

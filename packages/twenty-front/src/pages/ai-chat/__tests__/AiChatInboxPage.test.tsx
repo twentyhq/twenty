@@ -1,4 +1,4 @@
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { i18n } from '@lingui/core';
@@ -20,8 +20,10 @@ import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId'
 import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -110,27 +112,17 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     )),
 }));
 
-jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
-  AgentChatThreadsFetchMoreTrigger: () => null,
+jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
+  AgentChatThreadListFetchMoreTrigger: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatChannelThreadsLoadEffect', () => ({
-  AgentChatChannelThreadsLoadEffect: () => null,
+jest.mock('@/ai/components/AgentChatThreadListLoadEffect', () => ({
+  AgentChatThreadListLoadEffect: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatChannelThreadsFetchMoreTrigger', () => ({
-  AgentChatChannelThreadsFetchMoreTrigger: () => null,
-}));
-
-jest.mock('@/ai/hooks/useLoadAgentChatChannelThreads', () => ({
-  useLoadAgentChatChannelThreads: () => ({
-    loadAgentChatChannelThreads: jest.fn(),
-  }),
-}));
-
-jest.mock('@/ai/hooks/useFetchMoreAgentChatThreads', () => ({
-  useFetchMoreAgentChatThreads: () => ({
-    fetchMoreAgentChatThreads: jest.fn(),
+jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
+  useLoadAgentChatThreadList: () => ({
+    loadAgentChatThreadList: jest.fn(),
   }),
 }));
 
@@ -284,11 +276,17 @@ describe('AiChatInboxPage', () => {
     THREADS.forEach((thread) =>
       jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
     );
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: THREADS.map(({ id }) => id),
-      hasNextPage: false,
-      endCursor: null,
-    });
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: THREADS.map(({ id }) => id),
+        hasNextPage: false,
+        endCursor: null,
+        lastLoadedActivityAt: null,
+      },
+    );
     // The member's own chats, which they follow
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
@@ -356,10 +354,10 @@ describe('AiChatInboxPage', () => {
   });
 
   it('stays on a done chat the member writes in, though it leaves the done list', () => {
-    jotaiStore.set(
-      agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
-    );
+    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
+    });
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
       Object.fromEntries(
