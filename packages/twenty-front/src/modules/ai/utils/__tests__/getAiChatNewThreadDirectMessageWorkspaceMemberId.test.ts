@@ -15,7 +15,7 @@ const ONE_PERSON_WITHOUT_ADA = {
   participantMentions: [],
 };
 
-describe('getInboxNewThreadDirectMessageWorkspaceMemberId', () => {
+describe('getAiChatNewThreadDirectMessageWorkspaceMemberId', () => {
   it('returns the only person addressed when Ada and channels are left out', () => {
     expect(
       getAiChatNewThreadDirectMessageWorkspaceMemberId(ONE_PERSON_WITHOUT_ADA),
