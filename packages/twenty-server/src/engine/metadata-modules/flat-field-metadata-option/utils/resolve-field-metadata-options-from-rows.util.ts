@@ -31,31 +31,18 @@ const isOwnedByAnotherApplicationThanField = ({
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
-  shouldRowsCoverStoredOptions = false,
   shouldApplyOverrides = true,
 }: {
-  fieldMetadataEntity: Pick<FieldMetadataEntity, 'type' | 'options'> &
-    Partial<Pick<FieldMetadataEntity, 'applicationId'>>;
+  fieldMetadataEntity: Pick<FieldMetadataEntity, 'type'> &
+    Partial<Pick<FieldMetadataEntity, 'options' | 'applicationId'>>;
   fieldMetadataOptionRows: FieldMetadataOptionRowForOptions[] | undefined;
-  shouldRowsCoverStoredOptions?: boolean;
   shouldApplyOverrides?: boolean;
 }): FieldMetadataEntity['options'] => {
   if (
     !isEnumFieldMetadataType(fieldMetadataEntity.type) ||
     !isNonEmptyArray(fieldMetadataOptionRows)
   ) {
-    return fieldMetadataEntity.options;
-  }
-
-  const rowValues = new Set(fieldMetadataOptionRows.map(({ value }) => value));
-
-  if (
-    shouldRowsCoverStoredOptions &&
-    (fieldMetadataEntity.options ?? []).some(
-      ({ value }) => !rowValues.has(value),
-    )
-  ) {
-    return fieldMetadataEntity.options;
+    return fieldMetadataEntity.options ?? null;
   }
 
   // Caches are built without an author, so a workspace override is read before the owner's.

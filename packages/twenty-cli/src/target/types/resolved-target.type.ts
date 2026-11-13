@@ -1,3 +1,4 @@
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { type CredentialKind } from '@/target/types/credential-kind.type';
 import { type TargetSource } from '@/target/types/target-source.type';
 
@@ -7,4 +8,5 @@ export type ResolvedTarget = {
   credentialKind: CredentialKind;
   source: TargetSource;
   remoteName?: string;
+  proxyHeaders?: ProxyHeaders;
 };

@@ -42,6 +42,7 @@ import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { fromFlatSearchFieldMetadataToSearchFieldMetadataDto } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/from-flat-search-field-metadata-to-search-field-metadata-dto.util';
+import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
 import { fromFlatViewFieldGroupToViewFieldGroupDto } from 'src/engine/metadata-modules/view-field-group/utils/from-flat-view-field-group-to-view-field-group-dto.util';
 import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/view-field/utils/from-flat-view-field-to-view-field-dto.util';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
@@ -113,36 +114,43 @@ export type ObjectMetadataLoaderPayload = {
 export type ViewFieldGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewFieldGroupIdLoaderPayload = {
   workspaceId: string;
   viewFieldGroupId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFiltersByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewSortsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFilterGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type WorkspaceMembersByRoleIdLoaderPayload = {
@@ -717,13 +725,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -752,11 +763,15 @@ export class DataloaderService {
     >(async (dataLoaderParams: ViewFieldsByViewFieldGroupIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
 
-      const { flatViewFieldGroupMaps, flatViewFieldMaps } =
+      const { flatViewMaps, flatViewFieldGroupMaps, flatViewFieldMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewFieldMaps'],
+            flatMapsKeys: [
+              'flatViewMaps',
+              'flatViewFieldGroupMaps',
+              'flatViewFieldMaps',
+            ],
           },
         );
 
@@ -799,13 +814,25 @@ export class DataloaderService {
           .push(fromFlatViewFieldToViewFieldDto(flatViewField));
       }
 
-      return dataLoaderParams.map(({ viewFieldGroupId }) => {
+      return dataLoaderParams.map(({ viewFieldGroupId, userWorkspaceId }) => {
         const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewFieldGroupId,
           flatEntityMaps: flatViewFieldGroupMaps,
         });
 
         if (!isDefined(flatViewFieldGroup)) {
+          return [];
+        }
+
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatViewFieldGroup.viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -829,13 +856,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -872,13 +902,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -907,13 +940,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -942,13 +978,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 
@@ -977,13 +1016,16 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
         const flatView = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewId,
           flatEntityMaps: flatViewMaps,
         });
 
-        if (!isDefined(flatView)) {
+        if (
+          !isDefined(flatView) ||
+          !isViewAvailableToUser({ flatView, userWorkspaceId })
+        ) {
           return [];
         }
 

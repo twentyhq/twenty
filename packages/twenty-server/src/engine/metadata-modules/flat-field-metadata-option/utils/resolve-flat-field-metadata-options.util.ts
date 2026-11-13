@@ -5,28 +5,18 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
-// TODO: keep only the option rows once 2.59 has run on every workspace, together with the options column drop.
 export type FlatFieldMetadataForOptions = Pick<FlatFieldMetadata, 'type'> &
   Partial<
     Pick<
       FlatFieldMetadata,
-      'applicationId' | 'fieldMetadataOptionUniversalIdentifiers'
+      'applicationId' | 'fieldMetadataOptionUniversalIdentifiers' | 'options'
     >
-  > &
-  (
-    | Pick<FlatFieldMetadata, 'options'>
-    | { storedOptions: FlatFieldMetadata['options'] }
-  );
+  >;
 
-const getStoredFlatFieldMetadataOptions = (
-  flatFieldMetadata: FlatFieldMetadataForOptions,
-): FlatFieldMetadata['options'] =>
-  'storedOptions' in flatFieldMetadata
-    ? flatFieldMetadata.storedOptions
-    : flatFieldMetadata.options;
-
-export type FlatFieldMetadataOptionMapsForOptions =
-  UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>;
+export type FlatFieldMetadataOptionMapsForOptions = Pick<
+  UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>,
+  'byUniversalIdentifier'
+>;
 
 export const resolveFlatFieldMetadataOptions = ({
   flatFieldMetadata,
@@ -41,7 +31,7 @@ export const resolveFlatFieldMetadataOptions = ({
     fieldMetadataEntity: {
       type: flatFieldMetadata.type,
       applicationId: flatFieldMetadata.applicationId,
-      options: getStoredFlatFieldMetadataOptions(flatFieldMetadata),
+      options: flatFieldMetadata.options,
     },
     fieldMetadataOptionRows: (
       flatFieldMetadata.fieldMetadataOptionUniversalIdentifiers ?? []
@@ -53,8 +43,6 @@ export const resolveFlatFieldMetadataOptions = ({
           ],
       )
       .filter(isDefined),
-    // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
-    shouldRowsCoverStoredOptions: true,
     shouldApplyOverrides,
   });
 };

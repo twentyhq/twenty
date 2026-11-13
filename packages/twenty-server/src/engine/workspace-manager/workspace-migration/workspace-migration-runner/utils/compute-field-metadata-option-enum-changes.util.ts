@@ -8,7 +8,6 @@ import { type FieldMetadataOptionEnumChangeOfMigration } from 'src/engine/worksp
 type OptionRow = FieldMetadataOptionRowForOptions &
   Pick<FlatFieldMetadataOption, 'fieldMetadataUniversalIdentifier'>;
 
-// The option rows before and after the migration of each field an option action touches.
 export const computeFieldMetadataOptionEnumChanges = ({
   actions,
   flatFieldMetadataOptionMaps,
@@ -69,10 +68,13 @@ export const computeFieldMetadataOptionEnumChanges = ({
     }
   }
 
-  const getOptionRowsOfField = (
-    optionRowByUniversalIdentifier: Partial<Record<string, OptionRow>>,
-    fieldMetadataUniversalIdentifier: string,
-  ) =>
+  const getOptionRowsOfField = ({
+    optionRowByUniversalIdentifier,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    optionRowByUniversalIdentifier: Partial<Record<string, OptionRow>>;
+    fieldMetadataUniversalIdentifier: string;
+  }) =>
     Object.values(optionRowByUniversalIdentifier).filter(
       (optionRow): optionRow is OptionRow =>
         optionRow?.fieldMetadataUniversalIdentifier ===
@@ -84,14 +86,14 @@ export const computeFieldMetadataOptionEnumChanges = ({
       (fieldMetadataUniversalIdentifier) => [
         fieldMetadataUniversalIdentifier,
         {
-          fromOptionRows: getOptionRowsOfField(
-            fromOptionRowByUniversalIdentifier,
+          fromOptionRows: getOptionRowsOfField({
+            optionRowByUniversalIdentifier: fromOptionRowByUniversalIdentifier,
             fieldMetadataUniversalIdentifier,
-          ),
-          toOptionRows: getOptionRowsOfField(
-            toOptionRowByUniversalIdentifier,
+          }),
+          toOptionRows: getOptionRowsOfField({
+            optionRowByUniversalIdentifier: toOptionRowByUniversalIdentifier,
             fieldMetadataUniversalIdentifier,
-          ),
+          }),
           hasFieldAction: fieldMetadataUniversalIdentifiersWithFieldAction.has(
             fieldMetadataUniversalIdentifier,
           ),

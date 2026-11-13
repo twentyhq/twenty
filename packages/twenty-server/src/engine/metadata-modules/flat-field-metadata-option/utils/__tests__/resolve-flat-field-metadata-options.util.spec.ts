@@ -51,45 +51,29 @@ describe('resolveFlatFieldMetadataOptions', () => {
     ]);
   });
 
-  it('keeps the stored options while a stored option has no row', () => {
-    const storedOptions = [
-      storedOpenOption,
-      { id: 'legacy', value: 'LEGACY', label: 'Legacy', position: 1 },
-    ];
-
+  it('reads the rows even when a stored option has no row', () => {
     expect(
       resolveFlatFieldMetadataOptions({
         flatFieldMetadata: {
           type: FieldMetadataType.SELECT,
-          options: storedOptions,
+          options: [
+            storedOpenOption,
+            { id: 'legacy', value: 'LEGACY', label: 'Legacy', position: 1 },
+          ],
           fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
         },
         flatFieldMetadataOptionMaps,
       }),
-    ).toEqual(storedOptions);
+    ).toEqual([
+      { id: OPEN_OPTION_ID, value: 'OPEN', label: 'Open', position: 0 },
+    ]);
   });
 
-  it('falls back to the stored options of an ORM field', () => {
-    const storedOptions = [
-      storedOpenOption,
-      { id: 'legacy', value: 'LEGACY', label: 'Legacy', position: 1 },
-    ];
-
+  it('reads the rows of an ORM field, which carries no options', () => {
     expect(
       resolveFlatFieldMetadataOptions({
         flatFieldMetadata: {
           type: FieldMetadataType.SELECT,
-          storedOptions,
-          fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
-        },
-        flatFieldMetadataOptionMaps,
-      }),
-    ).toEqual(storedOptions);
-    expect(
-      resolveFlatFieldMetadataOptions({
-        flatFieldMetadata: {
-          type: FieldMetadataType.SELECT,
-          storedOptions: [storedOpenOption],
           fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
         },
         flatFieldMetadataOptionMaps,

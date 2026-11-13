@@ -11,6 +11,7 @@ import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/Na
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
+import { useIsAiChatInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
 import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
 import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
@@ -59,6 +60,8 @@ export const NavigationDrawerAiChatChannelItem = ({
   const agentChatSelectedChannelView = useAtomStateValue(
     agentChatSelectedChannelViewSelector,
   );
+  const isAiChatInboxShowingDirectMessage =
+    useIsAiChatInboxShowingDirectMessage();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -147,6 +150,7 @@ export const NavigationDrawerAiChatChannelItem = ({
         channelView={agentChatSelectedChannelView}
         isActive={
           isAiChatInboxPath(location.pathname) &&
+          !isAiChatInboxShowingDirectMessage &&
           agentChatSelectedChannelView?.channelId === channel.id
         }
         isExpandable={isExpandable}

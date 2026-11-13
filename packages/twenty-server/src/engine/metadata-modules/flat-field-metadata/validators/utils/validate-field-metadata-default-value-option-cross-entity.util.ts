@@ -144,19 +144,14 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       continue;
     }
 
-    const rowOptionValues = optionValuesByFieldMetadataUniversalIdentifier.get(
-      fieldMetadataUniversalIdentifier,
-    );
-    const storedOptionValues = (universalFlatFieldMetadata.options ?? []).map(
-      ({ value }) => value,
-    );
-    // Same rule as reads: the stored options stand while one of them has no row
-    // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
+    // Same rule as reads: a field without option rows keeps its options.
     const optionValues =
-      isDefined(rowOptionValues) &&
-      storedOptionValues.every((value) => rowOptionValues.has(value))
-        ? rowOptionValues
-        : new Set(storedOptionValues);
+      optionValuesByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      ) ??
+      new Set(
+        (universalFlatFieldMetadata.options ?? []).map(({ value }) => value),
+      );
 
     const defaultValues: unknown[] = Array.isArray(
       universalFlatFieldMetadata.defaultValue,
