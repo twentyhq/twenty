@@ -350,7 +350,6 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
                 ],
             )
             .filter(isDefined),
-        requestedFlatRole,
         buildGrantRoleFlatObjectPermission: ({
           objectMetadataUniversalIdentifier,
           grants,
