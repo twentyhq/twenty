@@ -84,7 +84,7 @@ export const useTestHttpRequest = (actionId: string) => {
         throw new Error(t`No response from server`);
       }
 
-      if (response.success === true) {
+      if (response.success) {
         const resultData = isString(response.result)
           ? response.result
           : JSON.stringify(response.result, null, 2);

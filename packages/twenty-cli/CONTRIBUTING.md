@@ -15,6 +15,8 @@ yarn nx lint twenty-cli
 yarn exec tsgo -p packages/twenty-cli/tsconfig.json --noEmit
 ```
 
+### Run tests
+
 Tests that use real applications or SDK parity references require the repository
 SDK to be built. Its Nx target builds its dependencies:
 
@@ -27,13 +29,16 @@ yarn exec vitest run --maxWorkers=2
 For a focused change, pass its test file or directory to `vitest run`. Command
 tests execute the public command runner with local HTTP fixtures. Worker tests
 exercise subprocess output, cancellation and snapshot lifetime. Parity suites
-compare generated source and artifacts against the SDK implementation;
-the SDK is a test reference, not a runtime tooling dependency.
+compare generated source and artifacts against the SDK implementation; the SDK
+is a test reference, not a runtime tooling dependency.
 
-Rebuild `twenty-shared` with `--skip-nx-cache` after switching branches or changing
-shared exports. Generated `dist` directories are not tracked, and stale outputs
-can invalidate dependent test and typecheck results. Use the direct TypeScript
-command above when checking a fix rather than relying on an Nx cache hit.
+### Avoid stale build results
+
+Rebuild `twenty-shared` with `--skip-nx-cache` after switching branches or
+changing shared exports. Generated `dist` directories are not tracked, and stale
+outputs can invalidate dependent test and typecheck results. Use the direct
+TypeScript command above when checking a fix rather than relying on an Nx cache
+hit.
 
 No live workspace is required for the unit suite. Passing it does not establish
 live authorization, remote upload or server-version compatibility. Exercise
@@ -41,19 +46,19 @@ changed server workflows against a disposable workspace when appropriate.
 
 ## Package map
 
-| Location | Responsibility |
-| --- | --- |
-| `src/catalog` | Command definitions, topics and lazy handler loading |
-| `src/commands` | Command orchestration and user-visible results |
-| `src/program` | Argument parsing, target setup, interaction and command lifecycle |
-| `src/config`, `src/target`, `src/oauth` | Saved connections, target selection and authentication |
-| `src/transport` | HTTP/GraphQL requests, proxy routing, limits and cancellation |
-| `src/metadata`, `src/data` | Workspace metadata inspection and record reads |
-| `src/local` | Local development instance lifecycle, Docker subprocesses, image selection and readiness |
-| `src/doctor` | Read-only setup and connection diagnostics |
-| `src/app` | Project tooling and application lifecycle, see its [module map](src/app/README.md) |
-| `src/input`, `src/output` | Input parsing, human/JSON/NDJSON output and error contracts |
-| `app-template` | App source, configuration and CLI-based integration-test harness copied by `app init` |
+| Location                                | Responsibility                                                                           |
+| --------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `src/catalog`                           | Command definitions, topics and lazy handler loading                                     |
+| `src/commands`                          | Command orchestration and user-visible results                                           |
+| `src/program`                           | Argument parsing, target setup, interaction and command lifecycle                        |
+| `src/config`, `src/target`, `src/oauth` | Saved connections, target selection and authentication                                   |
+| `src/transport`                         | HTTP/GraphQL requests, proxy routing, limits and cancellation                            |
+| `src/metadata`, `src/data`              | Workspace metadata inspection and record reads                                           |
+| `src/local`                             | Local development instance lifecycle, Docker subprocesses, image selection and readiness |
+| `src/doctor`                            | Read-only setup and connection diagnostics                                               |
+| `src/app`                               | Project tooling and application lifecycle, see its [module map](src/app/README.md)       |
+| `src/input`, `src/output`               | Input parsing, human/JSON/NDJSON output and error contracts                              |
+| `app-template`                          | App source, configuration and CLI-based integration-test harness copied by `app init`    |
 
 Command definitions are the source for help and `twenty commands`. Keep handlers
 lazy so discovery does not load compiler or app code. Put a workflow's rules in
@@ -86,14 +91,15 @@ Changes must preserve these contracts:
 ## Packaging
 
 Vite builds the CLI, its worker and lazy chunks into `dist`. It also copies the
-CLI-owned `app-template` there. Chokidar,
-esbuild, tinyglobby and the CLI's TypeScript parser are runtime dependencies;
-other imported libraries are bundled. The parser is separate from the app's
-compiler used for typechecking.
+CLI-owned `app-template` there. Chokidar, esbuild, tinyglobby and the CLI's
+TypeScript parser are runtime dependencies; other imported libraries are
+bundled. The parser is separate from the app's compiler used for typechecking.
 
 The archive includes the command reference, contributor guide and application
 module READMEs so their relative links also work outside a repository checkout.
 It does not include the CLI's TypeScript implementation or tests.
+
+### Verify an installed package
 
 For packaging changes, run the build and installation checks:
 
@@ -101,20 +107,29 @@ For packaging changes, run the build and installation checks:
 yarn nx run twenty-cli:test:package
 ```
 
-This runs the binary declared in the workspace's `package.json` directly, packs
-the CLI, and installs the archive with only its production dependencies in a
-temporary directory outside the monorepo. It checks help, offline doctor, app initialization including the
-integration-test harness, and a compiler diagnostic from the installed worker. npm
-registry access is required for installation; the commands do not contact a
-Twenty workspace. Temporary files are removed afterward, and nothing is
-published. CI runs the same target for CLI and dependency changes.
+The package checks:
+
+1. Run the binary declared in the workspace's `package.json`.
+2. Pack the CLI and install the archive with production dependencies only, in a
+   temporary directory outside the monorepo.
+3. Check help, offline doctor, app initialization (including the
+   integration-test harness), and a compiler diagnostic from the installed
+   worker.
+
+Installation requires npm registry access. These commands do not contact a
+Twenty workspace or publish anything. Temporary files are removed afterward. CI
+runs the same target for CLI and dependency changes.
+
+### Verify app publishing
 
 The CLI CI job also runs `scripts/test-app-publish.mjs` after building the CLI
 and SDK. It starts a disposable Verdaccio registry with no upstream registries,
-publishes a fixture with real npm, downloads and inspects the tarball, and checks
-version rejection, incomplete packages and cleanup. On Linux CI the test runs
-inside a network namespace with only loopback enabled, so it cannot reach public
-npm. It uses temporary npm configuration and a local test token.
+publishes a fixture with real npm, downloads and inspects the tarball, and
+checks version rejection, incomplete packages and cleanup.
+
+On Linux CI the test runs inside a network namespace with only loopback enabled,
+so it cannot reach public npm. It uses temporary npm configuration and a local
+test token.
 
 ## Releases
 
@@ -123,39 +138,50 @@ require a CLI release; skip versions when the CLI has no changes worth shipping.
 When publishing, aim to align the CLI version with the corresponding Twenty
 server, SDK and UI version.
 
+### Release tags
+
 Publishing is independent through the `cli/` tag family: `cli/v2.46.0` publishes
 only `twenty@2.46.0`. The tag version must match
 `packages/twenty-cli/package.json`. Bumping the package version alone does not
 publish the CLI.
 
-`app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
-`twenty-sdk` version of the commit the CLI was built from. `main` moves
-to the next, unpublished SDK version right after each SDK release:
+### Choose the release commit
 
-1. Start from the matching `sdk/vA.B.C` release commit. If a CLI version bump
-   is still needed, make it on a branch from that commit.
+`app init` pins `twenty-client-sdk`, `twenty-sdk` and `twenty-ui` to the
+`twenty-sdk` version of the commit the CLI was built from. `main` moves to the
+next, unpublished SDK version right after each SDK release:
+
+1. Start from the matching `sdk/vA.B.C` release commit. If a CLI version bump is
+   still needed, make it on a branch from that commit.
 2. Once the SDK, client SDK and UI packages at `A.B.C` are on npm, tag the
    prepared commit `cli/vA.B.C`.
 3. Run the `Publish npm packages` workflow in `twenty-infra` with that tag as
    its `ref`. Creating the tag alone does not publish the package.
 
+### Prepublish checks
+
 `yarn npm publish` first runs `scripts/prepublish.mjs`, which needs a fresh
 build and npm registry access. It checks the build first, and fails when the
 executable, worker, lazy chunks or templates are missing, when `dist` was built
 for another version, when one of its CLI runs fails or times out, or when
-`app init` would pin versions that are not on npm. An unreachable registry is
-reported separately from a missing version. The check does not read tags: it
-confirms that the pinned versions are published. Selecting the matching SDK
-release remains a release step.
+`app init` would pin versions that are not on npm.
+
+An unreachable registry is reported separately from a missing version. The check
+does not read tags: it confirms that the pinned versions are published.
+Selecting the matching SDK release remains a release step.
+
+### Template lockfile
 
 Once the check passes, the script resolves the built app template's
 dependencies, with the versions that `app init` pinned during the check, using
-the repository's Yarn against the public registry, under a 3-day minimum
-release age that exempts the pinned Twenty packages. It then writes
-`dist/app-template/yarn.lock`. Apps created with `app init` then install exact,
-integrity-checked versions, including for people who enforce a minimum release
-age. The lockfile keeps the template's placeholder name, and the first
-`yarn install` renames that root entry.
+the repository's Yarn against the public registry, under a 3-day minimum release
+age that exempts the pinned Twenty packages. It then writes
+`dist/app-template/yarn.lock`.
+
+Apps created with `app init` then install exact, integrity-checked versions,
+including for people who enforce a minimum release age. The lockfile keeps the
+template's placeholder name, and the first `yarn install` renames that root
+entry.
 
 The tests of both steps run with `twenty-cli:test:package`. To run the script
 before tagging:
@@ -171,9 +197,11 @@ node packages/twenty-cli/scripts/prepublish.mjs
 `app-template/example/files/` and `example/scripts.json` onto it; `app pull`
 uses only the shared scaffold before writing the exported definitions.
 
-`app-template/example/files/src/__tests__` supplies the integration-test setup for CLI-created apps.
-It deploys the app before tests and uninstalls it afterward by invoking the
-installed CLI with `--json`. Apps invoke the executable rather than import the
-CLI as a library or add it as a dependency. See the
-[template contract](docs/commands.md#create-an-app) for executable selection and
-the [compiler requirements](src/app/typecheck/README.md) for project setup.
+`app-template/example/files/src/__tests__` supplies the integration-test setup
+for CLI-created apps. It deploys the app before tests and uninstalls it
+afterward by invoking the installed CLI with `--json`. Apps invoke the
+executable rather than import the CLI as a library or add it as a dependency.
+
+See the [template contract](docs/commands.md#create-an-app) for executable
+selection and the [compiler requirements](src/app/typecheck/README.md) for
+project setup.

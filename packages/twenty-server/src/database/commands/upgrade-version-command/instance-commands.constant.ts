@@ -302,7 +302,9 @@ import { AddRowLevelPermissionRuleTableFastInstanceCommand } from 'src/database/
 import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-58/2-58-instance-command-fast-1794337540366-add-row-level-permission-rule-links';
 import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
 import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
-import { AddViewFieldSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794549225451-add-view-field-settings';
+import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
+import { AddViewFieldIsCanonicalFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794578763738-add-view-field-is-canonical';
+import { AddViewFieldSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794587551201-add-view-field-settings';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -607,5 +609,7 @@ export const INSTANCE_COMMANDS = [
   AddRowLevelPermissionRuleLinksFastInstanceCommand,
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
   RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand,
+  AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
+  AddViewFieldIsCanonicalFastInstanceCommand,
   AddViewFieldSettingsFastInstanceCommand,
 ];

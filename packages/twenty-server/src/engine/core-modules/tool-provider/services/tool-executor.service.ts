@@ -204,7 +204,7 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecord: records[0],
           authContext,
-          createdBy: context.actorContext,
+          createdBy: context.actorMetadata,
           slimResponse: true,
         });
 
@@ -223,7 +223,7 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          createdBy: context.actorContext,
+          createdBy: context.actorMetadata,
           slimResponse: true,
         });
 
@@ -275,7 +275,7 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           objectRecords: records,
           authContext,
-          createdBy: context.actorContext,
+          createdBy: context.actorMetadata,
           slimResponse: true,
         });
 

@@ -62,11 +62,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
   );
 
   const draggableRecordFields = visibleRecordFields
-    .filter(
-      (recordField) =>
-        nonDraggableRecordField?.fieldMetadataItemId !==
-        recordField.fieldMetadataItemId,
-    )
+    .filter((recordField) => nonDraggableRecordField?.id !== recordField.id)
     .toSorted(sortByProperty('position'));
 
   const handleDragEnd = (result: DraggableListDropResult) => {
@@ -82,8 +78,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
     onFieldUpdated?.(updatedField.id, { position: updatedField.position });
   };
 
-  const handleHideField = (fieldMetadataId: string) => {
-    const updatedField = updateRecordField(fieldMetadataId, {
+  const handleHideField = (recordFieldId: string) => {
+    const updatedField = updateRecordField(recordFieldId, {
       isVisible: false,
     });
 
@@ -122,8 +118,8 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataItemId}
-                      draggableId={recordField.fieldMetadataItemId}
+                      key={recordField.id}
+                      draggableId={recordField.id}
                       index={index}
                       itemComponent={
                         <DraggableListRow
@@ -136,9 +132,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                           actions={
                             <LightIconButton
                               aria-label={t`Hide ${fieldMetadataItem.label}`}
-                              onClick={() =>
-                                handleHideField(recordField.fieldMetadataItemId)
-                              }
+                              onClick={() => handleHideField(recordField.id)}
                             >
                               <IconEyeOff />
                             </LightIconButton>

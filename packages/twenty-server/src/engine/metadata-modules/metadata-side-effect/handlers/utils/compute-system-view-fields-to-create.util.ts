@@ -55,6 +55,7 @@ export const computeSystemViewFieldsToCreate = ({
     settings: null,
     isActive: true,
     isSystemSideEffect: true,
+    isCanonical: true,
     universalOverrides: null,
     applicationUniversalIdentifier,
   }));

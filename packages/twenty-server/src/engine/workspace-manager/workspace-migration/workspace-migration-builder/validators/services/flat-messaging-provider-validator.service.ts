@@ -42,6 +42,7 @@ const validateMessagingProviderReferences = ({
     | 'applicationUniversalIdentifier'
     | 'connectionProviderUniversalIdentifier'
     | 'sendMessageLogicFunctionUniversalIdentifier'
+    | 'markThreadAsReadLogicFunctionUniversalIdentifier'
     | 'conversationStyle'
   >;
   flatConnectionProviderMaps: MetadataUniversalFlatEntityMaps<'connectionProvider'>;
@@ -81,6 +82,25 @@ const validateMessagingProviderReferences = ({
       code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
       message: t`Send message logic function "${sendMessageLogicFunctionUniversalIdentifier}" was not found in this application`,
       userFriendlyMessage: msg`The logic function this messaging provider sends with was not found in its application.`,
+    });
+  }
+
+  const markThreadAsReadLogicFunctionUniversalIdentifier =
+    flatMessagingProvider.markThreadAsReadLogicFunctionUniversalIdentifier;
+
+  if (
+    isDefined(markThreadAsReadLogicFunctionUniversalIdentifier) &&
+    !isInApplication({
+      flatEntityMaps: flatLogicFunctionMaps,
+      universalIdentifier: markThreadAsReadLogicFunctionUniversalIdentifier,
+      applicationUniversalIdentifier:
+        flatMessagingProvider.applicationUniversalIdentifier,
+    })
+  ) {
+    errors.push({
+      code: MessagingProviderExceptionCode.INVALID_MESSAGING_PROVIDER_INPUT,
+      message: t`Mark thread as read logic function "${markThreadAsReadLogicFunctionUniversalIdentifier}" was not found in this application`,
+      userFriendlyMessage: msg`The logic function this messaging provider marks threads as read with was not found in its application.`,
     });
   }
 

@@ -25,6 +25,7 @@ import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPa
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
+import { useIsAiChatInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
@@ -122,6 +123,10 @@ const AiChatInboxPageContent = () => {
   const agentChatSelectedChannelView = useAtomStateValue(
     agentChatSelectedChannelViewSelector,
   );
+  const isChannelHiddenForDirectMessage =
+    useIsAiChatInboxShowingDirectMessage() &&
+    isDefined(agentChatSelectedChannelView);
+  const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const agentChatSelectedThreadListSource = useAtomStateValue(
     agentChatSelectedThreadListSourceState,
@@ -206,8 +211,8 @@ const AiChatInboxPageContent = () => {
   // Split view shows the list beside the chat or the selection; otherwise
   // the list and a chat each take the whole page
   const isListShown =
-    isSplitView || (!isDefined(selectedThreadId) && !isNewThreadRoute);
-  const isSelectionPaneShown = isSplitView && isSelectionShown;
+    isSplitLayout || (!isDefined(selectedThreadId) && !isNewThreadRoute);
+  const isSelectionPaneShown = isSplitLayout && isSelectionShown;
   const isThreadShown = isDefined(selectedThreadId) && !isSelectionPaneShown;
   const isNewThreadShown = isNewThreadRoute && !isSelectionPaneShown;
   const isSecondaryPaneShown =
@@ -359,7 +364,7 @@ const AiChatInboxPageContent = () => {
       {shouldRenderConversationPane && (
         <AnimatePresence initial={false}>
           {(isNewThreadShown || isThreadShown) && (
-            <AiChatInboxConversationPane isSplitView={isSplitView}>
+            <AiChatInboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
                   <AiChatPageEffects />
@@ -375,7 +380,11 @@ const AiChatInboxPageContent = () => {
                   <AiChatThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={
-                      !isSplitView && !isMobile && <AiChatInboxBreadcrumb />
+                      !isSplitView &&
+                      !isMobile &&
+                      !isChannelHiddenForDirectMessage && (
+                        <AiChatInboxBreadcrumb />
+                      )
                     }
                     headerActions={
                       isMobile ? backToInboxButton : desktopThreadHeaderActions
