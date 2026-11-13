@@ -1,13 +1,13 @@
 import { msg, t } from '@lingui/core/macro';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { RelationType, type ViewFieldSettings } from 'twenty-shared/types';
+import { type ViewFieldSettings } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
+import { isOneToManyRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-one-to-many-relation-universal-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type ViewFieldSettingsFlatFieldMetadata = Pick<
@@ -19,15 +19,6 @@ const VIEW_FIELD_SETTINGS_KEYS = new Set<string>([
   'label',
   'recordLimit',
 ] satisfies (keyof ViewFieldSettings)[]);
-
-const isOneToManyRelationField = ({
-  type,
-  universalSettings,
-}: ViewFieldSettingsFlatFieldMetadata): boolean =>
-  isMorphOrRelationFieldMetadataType(type) &&
-  isDefined(universalSettings) &&
-  'relationType' in universalSettings &&
-  universalSettings.relationType === RelationType.ONE_TO_MANY;
 
 export const validateFlatViewFieldSettings = ({
   settings,
@@ -95,7 +86,7 @@ export const validateFlatViewFieldSettings = ({
     return errors;
   }
 
-  if (!isOneToManyRelationField(flatFieldMetadata)) {
+  if (!isOneToManyRelationUniversalFlatFieldMetadata(flatFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`View field record limit is only supported on one-to-many relation fields`,

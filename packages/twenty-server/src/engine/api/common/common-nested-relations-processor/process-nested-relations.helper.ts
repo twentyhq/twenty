@@ -315,19 +315,13 @@ export class ProcessNestedRelationsHelper {
           aggregate,
           sourceFieldName,
           targetObjectNameSingular,
-          resolvedQueryArgs:
-            relationType === RelationType.ONE_TO_MANY
-              ? this.resolveNestedRelationQueryArgs({
-                  relationQueryArgs,
-                  targetObjectMetadata,
-                  flatObjectMetadataMaps,
-                  flatFieldMetadataMaps,
-                })
-              : undefined,
-          perParentLimit:
-            relationType === RelationType.ONE_TO_MANY
-              ? Math.min(relationQueryArgs?.first ?? limit, limit)
-              : limit,
+          resolvedQueryArgs: this.resolveNestedRelationQueryArgs({
+            relationQueryArgs,
+            targetObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
+          perParentLimit: Math.min(relationQueryArgs?.first ?? limit, limit),
         }),
       );
 
