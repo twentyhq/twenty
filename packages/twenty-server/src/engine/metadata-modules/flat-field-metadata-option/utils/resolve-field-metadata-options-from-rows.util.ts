@@ -47,8 +47,8 @@ export const resolveFieldMetadataOptionsFromRows = ({
     return fieldMetadataEntity.options;
   }
 
+  // Caches are built without an author, so a workspace override is read before the owner's.
   return fieldMetadataOptionRows
-    // Caches are built without an author, so a workspace override is read before the owner's.
     .map((fieldMetadataOptionRow) =>
       resolveEffectiveFlatEntity({
         metadataName: 'fieldMetadataOption',
