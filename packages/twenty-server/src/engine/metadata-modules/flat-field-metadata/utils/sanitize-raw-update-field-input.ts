@@ -15,6 +15,8 @@ import {
   FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
   FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES,
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { normalizeUpdatedFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-updated-field-metadata-options.util';
@@ -28,11 +30,13 @@ import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/over
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
   existingFlatFieldMetadata: FlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   isSystemBuild: boolean;
   workspaceCustomApplicationUniversalIdentifier: string;
 };
 export const sanitizeRawUpdateFieldInput = ({
   existingFlatFieldMetadata,
+  flatFieldMetadataOptionMaps,
   rawUpdateFieldInput,
   isSystemBuild,
   workspaceCustomApplicationUniversalIdentifier,
@@ -87,7 +91,11 @@ export const sanitizeRawUpdateFieldInput = ({
   if (isDefined(updatedEditableFieldProperties.options)) {
     const normalizedOptions = normalizeUpdatedFieldMetadataOptions({
       updatedOptions: updatedEditableFieldProperties.options,
-      existingOptions: existingFlatFieldMetadata.options ?? [],
+      existingOptions:
+        resolveFlatFieldMetadataOptions({
+          flatFieldMetadata: existingFlatFieldMetadata,
+          flatFieldMetadataOptionMaps,
+        }) ?? [],
     });
 
     updatedEditableFieldProperties.options = isFieldMetadataSelectKind(

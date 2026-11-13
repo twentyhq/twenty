@@ -10,7 +10,7 @@ export const getSelectOptions = ({
   flatFieldMetadataOptionMaps,
 }: {
   fieldMetadata: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
 }): FieldMetadataOption[] | null => {
   if (!isFieldMetadataSelectKind(fieldMetadata.type)) {
     return null;

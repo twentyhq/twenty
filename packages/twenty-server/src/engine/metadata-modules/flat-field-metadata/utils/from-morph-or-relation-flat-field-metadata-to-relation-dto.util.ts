@@ -20,13 +20,14 @@ export const fromMorphOrRelationFlatFieldMetadataToRelationDto = ({
   sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
     sourceFlatObjectMetadata,
   ),
+  // Relation fields have no options to resolve.
   sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto({
-    flatFieldMetadata: sourceFlatFieldMetadata,
+    flatFieldMetadataWithResolvedOptions: sourceFlatFieldMetadata,
   }),
   targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
     targetFlatObjectMetadata,
   ),
   targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto({
-    flatFieldMetadata: targetFlatFieldMetadata,
+    flatFieldMetadataWithResolvedOptions: targetFlatFieldMetadata,
   }),
 });

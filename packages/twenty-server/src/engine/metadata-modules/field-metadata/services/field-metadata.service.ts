@@ -87,6 +87,7 @@ export class FieldMetadataService {
     );
   }
 
+  // Fields returned to API callers carry their resolved options.
   private resolveFlatFieldMetadataWithOptions({
     flatFieldMetadata,
     flatFieldMetadataOptionMaps,
@@ -314,6 +315,7 @@ export class FieldMetadataService {
       flatViewGroupMaps: existingFlatViewGroupMaps,
       flatViewMaps: existingFlatViewMaps,
       flatViewFieldMaps: existingFlatViewFieldMaps,
+      flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,
       flatApplication: resolvedOwnerFlatApplication,
       isSystemBuild,
       workspaceCustomApplicationUniversalIdentifier:
@@ -371,7 +373,10 @@ export class FieldMetadataService {
             fieldMetadataOption:
               computeFieldMetadataOptionOperationsForFieldMetadatas({
                 flatFieldMetadatasToCreate,
-                flatFieldMetadatasToUpdate,
+                // Without options in the input, a field only carries its stale stored copy.
+                flatFieldMetadatasToUpdate: isDefined(updateFieldInput.options)
+                  ? flatFieldMetadatasToUpdate
+                  : [],
                 existingFlatFieldMetadataOptionMaps,
                 applicationUniversalIdentifier:
                   resolvedOwnerFlatApplication.universalIdentifier,

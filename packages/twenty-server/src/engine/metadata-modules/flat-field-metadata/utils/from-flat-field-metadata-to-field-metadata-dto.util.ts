@@ -6,13 +6,21 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-export const fromFlatFieldMetadataToFieldMetadataDto = ({
-  flatFieldMetadata,
-  flatFieldMetadataOptionMaps,
-}: {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps?: FlatFieldMetadataOptionMapsForOptions;
-}): FieldMetadataDTO => {
+type FromFlatFieldMetadataToFieldMetadataDtoArgs =
+  | {
+      flatFieldMetadata: FlatFieldMetadata;
+      flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
+    }
+  | { flatFieldMetadataWithResolvedOptions: FlatFieldMetadata };
+
+export const fromFlatFieldMetadataToFieldMetadataDto = (
+  args: FromFlatFieldMetadataToFieldMetadataDtoArgs,
+): FieldMetadataDTO => {
+  const flatFieldMetadata =
+    'flatFieldMetadataWithResolvedOptions' in args
+      ? args.flatFieldMetadataWithResolvedOptions
+      : args.flatFieldMetadata;
+
   const {
     createdAt,
     updatedAt,
@@ -61,10 +69,13 @@ export const fromFlatFieldMetadataToFieldMetadataDto = ({
     isUIReadOnly: !isUIEditable,
     isSystemSideEffect,
     disabledFieldPermissionActions,
-    options: resolveFlatFieldMetadataOptions({
-      flatFieldMetadata,
-      flatFieldMetadataOptionMaps,
-    }),
+    options:
+      'flatFieldMetadataWithResolvedOptions' in args
+        ? flatFieldMetadata.options
+        : resolveFlatFieldMetadataOptions({
+            flatFieldMetadata,
+            flatFieldMetadataOptionMaps: args.flatFieldMetadataOptionMaps,
+          }),
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
     description: description ?? undefined,

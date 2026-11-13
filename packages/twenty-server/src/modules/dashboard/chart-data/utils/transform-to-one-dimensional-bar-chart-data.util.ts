@@ -38,7 +38,7 @@ export const transformToOneDimensionalBarChartData = ({
   filteredRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: BarChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;

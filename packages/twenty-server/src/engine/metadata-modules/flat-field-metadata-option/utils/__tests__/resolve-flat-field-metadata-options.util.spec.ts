@@ -70,19 +70,6 @@ describe('resolveFlatFieldMetadataOptions', () => {
     ).toEqual(storedOptions);
   });
 
-  it('keeps the stored options when the option maps are not provided', () => {
-    expect(
-      resolveFlatFieldMetadataOptions({
-        flatFieldMetadata: {
-          type: FieldMetadataType.SELECT,
-          options: [storedOpenOption],
-          fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
-        },
-        flatFieldMetadataOptionMaps: undefined,
-      }),
-    ).toEqual([storedOpenOption]);
-  });
-
   it('falls back to the stored options of an ORM field', () => {
     const storedOptions = [
       storedOpenOption,

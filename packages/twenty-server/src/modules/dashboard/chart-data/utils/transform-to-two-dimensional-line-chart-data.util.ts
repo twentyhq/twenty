@@ -44,7 +44,7 @@ export const transformToTwoDimensionalLineChartData = ({
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: LineChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;

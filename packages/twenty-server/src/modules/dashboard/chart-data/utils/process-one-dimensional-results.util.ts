@@ -25,7 +25,7 @@ export type ProcessOneDimensionalResultsOutput = {
 type ProcessOneDimensionalResultsParams = {
   rawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
   userTimezone: string;

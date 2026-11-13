@@ -29,7 +29,7 @@ type ProcessTwoDimensionalResultsParams = {
   rawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   primaryDateGranularity?: ObjectRecordGroupByDateGranularity | null;
   primarySubFieldName?: string | null;
   secondaryDateGranularity?: ObjectRecordGroupByDateGranularity | null;

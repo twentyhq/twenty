@@ -8,6 +8,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -78,6 +79,7 @@ const roundTripFlatFieldMetadata = (
     toUniversalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
       fieldManifest: fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
       applicationUniversalIdentifier: APP_UID,
       now: NOW,
@@ -97,6 +99,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(
       fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toEqual(TEXT_FIELD_MANIFEST);
   });
@@ -112,6 +115,7 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(
       fromFlatFieldMetadataToFieldManifest({
         flatFieldMetadata: universalFlatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toEqual(RELATION_FIELD_MANIFEST);
   });
@@ -162,8 +166,10 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     });
 
     expect(
-      fromFlatFieldMetadataToFieldManifest({ flatFieldMetadata })
-        .universalSettings,
+      fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
+      }).universalSettings,
     ).toEqual({
       relationType: RelationType.ONE_TO_MANY,
       junctionTargetFieldUniversalIdentifier: TARGET_FIELD_UID,

@@ -96,6 +96,7 @@ export class FieldMetadataOptionEnumSchemaService {
     workspaceId: string;
   }): Promise<boolean> {
     // A field whose missing rows are being created already holds the values of its options
+    // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
     const fromUniversalIdentifiers = new Set(
       fromOptionRowsOfChange.map(
         ({ universalIdentifier }) => universalIdentifier,

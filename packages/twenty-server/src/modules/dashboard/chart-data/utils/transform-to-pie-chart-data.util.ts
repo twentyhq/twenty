@@ -30,7 +30,7 @@ export const transformToPieChartData = ({
     aggregateValue: number;
   }>;
   groupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: PieChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;

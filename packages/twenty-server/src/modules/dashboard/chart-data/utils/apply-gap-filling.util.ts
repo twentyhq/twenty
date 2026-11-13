@@ -21,7 +21,7 @@ import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-sel
 type ApplyGapFillingParams = {
   data: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   omitNullValues: boolean;
   isDescOrder: boolean;

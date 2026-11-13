@@ -44,7 +44,7 @@ export const transformToTwoDimensionalBarChartData = ({
   primaryAxisGroupByField: FlatFieldMetadata;
   secondaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: BarChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;

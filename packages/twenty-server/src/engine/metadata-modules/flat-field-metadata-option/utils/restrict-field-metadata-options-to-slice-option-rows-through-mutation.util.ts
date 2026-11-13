@@ -57,10 +57,7 @@ export const restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation = ({
         fieldMetadataUniversalIdentifier
       ];
 
-    if (
-      !isDefined(flatFieldMetadata) ||
-      fieldMetadataOptionRows.length === flatFieldMetadata.options?.length
-    ) {
+    if (!isDefined(flatFieldMetadata)) {
       continue;
     }
 

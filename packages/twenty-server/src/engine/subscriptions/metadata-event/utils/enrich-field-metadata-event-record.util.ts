@@ -3,7 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { resolveMorphRelationsFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-morph-relations-from-flat-field-metadata.util';
 import { resolveRelationFromFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/resolve-relation-from-flat-field-metadata.util';
@@ -12,12 +15,14 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 type EnrichFieldMetadataEventArgs = {
   record: Record<string, unknown>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 };
 
-export const enrichFieldMetadataEventWithRelations = ({
+export const enrichFieldMetadataEventRecord = ({
   record,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
 }: EnrichFieldMetadataEventArgs): Record<string, unknown> => {
   const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -27,6 +32,16 @@ export const enrichFieldMetadataEventWithRelations = ({
 
   if (!isDefined(flatFieldMetadata)) {
     return record;
+  }
+
+  if (isEnumFlatFieldMetadata(flatFieldMetadata)) {
+    return {
+      ...record,
+      options: resolveFlatFieldMetadataOptions({
+        flatFieldMetadata,
+        flatFieldMetadataOptionMaps,
+      }),
+    };
   }
 
   try {

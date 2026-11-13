@@ -20,7 +20,7 @@ import { formatDateByGranularity } from 'src/modules/dashboard/chart-data/utils/
 type FormatDimensionValueParams = {
   value: unknown;
   fieldMetadata: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   subFieldName?: string;
   userTimezone: string;

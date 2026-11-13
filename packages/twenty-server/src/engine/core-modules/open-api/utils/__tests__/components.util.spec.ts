@@ -6,6 +6,7 @@ import {
   PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
 
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import {
   computeMetadataSchemaComponents,
@@ -67,7 +68,7 @@ describe('computeSchemaComponents', () => {
         flatObjectMetadataItems: [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps: undefined,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toMatchInlineSnapshot(`
 {
@@ -933,7 +934,7 @@ describe('computeSchemaComponents', () => {
         flatObjectMetadataItems: [flatObjectMetadata],
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps: undefined,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       }),
     ).toMatchSnapshot();
   });

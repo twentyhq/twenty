@@ -6,6 +6,7 @@ import { type FieldMetadataOptionEnumChange } from 'src/engine/workspace-manager
 import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-field-metadata-options-to-option-rows.util';
 
 // Before the option table exists there are no option rows, so the enum follows the options of the field update.
+// TODO: remove once every instance has run the 2.56 option table command, together with the options column drop.
 export const buildFieldMetadataOptionEnumChangeFromOptions = ({
   fromOptions,
   toOptions,
