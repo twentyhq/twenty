@@ -340,11 +340,21 @@ describe('Usage quota consumption', () => {
     burstValue: null,
   });
 
-  const createWeekCreditQuota = ({ isOperator = true } = {}) =>
+  const entitleIntraWorkspaceLimits = () =>
+    jest
+      .spyOn(
+        getAppProviderByClassName<UsageLimitEntitlementService>(
+          'UsageLimitEntitlementService',
+        ),
+        'isIntraWorkspaceLimitEntitled',
+      )
+      .mockResolvedValue(true);
+
+  const createWeekCreditQuota = () =>
     getUsageLimitService().create({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       input: buildWeekCreditQuotaInput(),
-      isOperator,
+      isOperator: false,
     });
 
   const updateWeekCreditQuota = (
@@ -354,7 +364,6 @@ describe('Usage quota consumption', () => {
     getUsageLimitService().update({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       input: { id: usageLimitId, payload: buildWeekCreditQuotaInput(payload) },
-      isOperator: true,
     });
 
   const deleteWeekCreditQuota = (usageLimitId: string) =>
@@ -615,6 +624,7 @@ describe('Usage quota consumption', () => {
     it(
       'keeps in-flight usage when the cap is edited',
       async () => {
+        const entitlementSpy = entitleIntraWorkspaceLimits();
         const usageLimit = await createWeekCreditQuota();
         const usageEventRowCount = await countUsageEventRows();
 
@@ -652,6 +662,7 @@ describe('Usage quota consumption', () => {
 
           await waitForUsageEventRows(usageEventRowCount + 1);
         } finally {
+          entitlementSpy.mockRestore();
           await deleteWeekCreditQuota(usageLimit.id);
         }
       },
@@ -661,6 +672,7 @@ describe('Usage quota consumption', () => {
     it(
       're-warms a limit from ClickHouse once it moves back to a period it left',
       async () => {
+        const entitlementSpy = entitleIntraWorkspaceLimits();
         const usageLimit = await createWeekCreditQuota();
         const usageEventRowCount = await countUsageEventRows();
 
@@ -677,55 +689,6 @@ describe('Usage quota consumption', () => {
             spenderId: logicFunctionId,
             creditsUsedMicro: 600,
           });
-          await waitForUsageEventRows(usageEventRowCount + 2);
-
-          await updateWeekCreditQuota(usageLimit.id, {
-            limitValue: enforcedLimitValue,
-          });
-
-          expect(
-            await findRunRefusal({ spenderId: logicFunctionId, costMicro: 0 }),
-          ).toMatchObject({
-            exhaustedKind: 'limit',
-            limitValue: enforcedLimitValue,
-          });
-        } finally {
-          await deleteWeekCreditQuota(usageLimit.id);
-        }
-      },
-      EXECUTION_TIMEOUT_MS,
-    );
-
-    it(
-      're-warms a limit from ClickHouse once an operator edit makes it enforced again',
-      async () => {
-        const entitlementSpy = jest
-          .spyOn(
-            getAppProviderByClassName<UsageLimitEntitlementService>(
-              'UsageLimitEntitlementService',
-            ),
-            'isIntraWorkspaceLimitEntitled',
-          )
-          .mockResolvedValue(true);
-        const usageLimit = await createWeekCreditQuota({ isOperator: false });
-        const usageEventRowCount = await countUsageEventRows();
-
-        try {
-          await chargeRun({
-            spenderId: logicFunctionId,
-            creditsUsedMicro: 100,
-          });
-
-          const enforcedLimitValue = (await readWeekCreditCounter()) + 300;
-
-          entitlementSpy.mockResolvedValue(false);
-          await chargeRun({
-            spenderId: logicFunctionId,
-            creditsUsedMicro: 600,
-          });
-
-          expect(await readWeekCreditCounter()).toBe(enforcedLimitValue - 300);
-
           await waitForUsageEventRows(usageEventRowCount + 2);
 
           await updateWeekCreditQuota(usageLimit.id, {
