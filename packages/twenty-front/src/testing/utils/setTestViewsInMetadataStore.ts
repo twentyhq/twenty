@@ -15,6 +15,7 @@ export const setTestViewsInMetadataStore = (
     flatViewFilters,
     flatViewSorts,
     flatViewGroups,
+    flatViewTabs,
     flatViewFilterGroups,
     flatViewFieldGroups,
   } = splitViewWithRelated(views);
@@ -45,6 +46,12 @@ export const setTestViewsInMetadataStore = (
 
   store.set(metadataStoreState.atomFamily('viewGroups'), {
     current: flatViewGroups,
+    draft: [],
+    status: 'up-to-date',
+  });
+
+  store.set(metadataStoreState.atomFamily('viewTabs'), {
+    current: flatViewTabs,
     draft: [],
     status: 'up-to-date',
   });

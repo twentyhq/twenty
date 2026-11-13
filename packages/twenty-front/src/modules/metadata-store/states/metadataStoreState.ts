@@ -15,6 +15,7 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'viewFilters',
   'viewSorts',
   'viewGroups',
+  'viewTabs',
   'viewFilterGroups',
   'viewFieldGroups',
   'pageLayouts',

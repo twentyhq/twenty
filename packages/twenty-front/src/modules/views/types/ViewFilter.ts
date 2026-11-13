@@ -10,6 +10,7 @@ export type ViewFilter = {
   updatedAt?: string;
   viewId?: string;
   viewFilterGroupId?: string | null;
+  viewTabId?: string | null;
   positionInViewFilterGroup?: number | null;
   subFieldName?: string | null;
   relationTargetFieldMetadataId?: string | null;

@@ -7,9 +7,11 @@ import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
+import { type FlatViewTab } from '@/metadata-store/types/FlatViewTab';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { resolveViewNamePlaceholders } from '@/views/utils/resolveViewNamePlaceholders';
+import { splitViewFiltersByViewTab } from '@/views/utils/splitViewFiltersByViewTab';
 
 export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
   key: 'viewsSelector',
@@ -33,6 +35,8 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       .current as FlatViewSort[];
     const flatViewGroups = get(metadataStoreState, 'viewGroups')
       .current as FlatViewGroup[];
+    const flatViewTabs = get(metadataStoreState, 'viewTabs')
+      .current as FlatViewTab[];
     const flatViewFilterGroups = get(metadataStoreState, 'viewFilterGroups')
       .current as FlatViewFilterGroup[];
     const allFlatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
@@ -47,6 +51,7 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
     const viewFiltersByViewId = new Map<string, FlatViewFilter[]>();
     const viewSortsByViewId = new Map<string, FlatViewSort[]>();
     const viewGroupsByViewId = new Map<string, FlatViewGroup[]>();
+    const viewTabsByViewId = new Map<string, FlatViewTab[]>();
     const viewFilterGroupsByViewId = new Map<string, FlatViewFilterGroup[]>();
     const viewFieldGroupsByViewId = new Map<string, FlatViewFieldGroup[]>();
 
@@ -56,7 +61,10 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       viewFieldsByViewId.set(field.viewId, existing);
     }
 
-    for (const filter of flatViewFilters) {
+    const { viewFiltersWithoutViewTab, viewTabFiltersByViewTabId } =
+      splitViewFiltersByViewTab(flatViewFilters);
+
+    for (const filter of viewFiltersWithoutViewTab) {
       const existing = viewFiltersByViewId.get(filter.viewId) ?? [];
       existing.push(filter);
       viewFiltersByViewId.set(filter.viewId, existing);
@@ -72,6 +80,12 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       const existing = viewGroupsByViewId.get(group.viewId) ?? [];
       existing.push(group);
       viewGroupsByViewId.set(group.viewId, existing);
+    }
+
+    for (const viewTab of flatViewTabs) {
+      const existing = viewTabsByViewId.get(viewTab.viewId) ?? [];
+      existing.push(viewTab);
+      viewTabsByViewId.set(viewTab.viewId, existing);
     }
 
     for (const filterGroup of flatViewFilterGroups) {
@@ -100,6 +114,10 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       viewFilters: viewFiltersByViewId.get(view.id) ?? [],
       viewSorts: viewSortsByViewId.get(view.id) ?? [],
       viewGroups: viewGroupsByViewId.get(view.id) ?? [],
+      viewTabs: (viewTabsByViewId.get(view.id) ?? []).map((viewTab) => ({
+        ...viewTab,
+        viewFilters: viewTabFiltersByViewTabId.get(viewTab.id) ?? [],
+      })),
       viewFilterGroups: viewFilterGroupsByViewId.get(view.id) ?? [],
       viewFieldGroups: (viewFieldGroupsByViewId.get(view.id) ?? []).map(
         (fieldGroup) => ({

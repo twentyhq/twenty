@@ -7,6 +7,7 @@ export const VIEW_FILTER_FRAGMENT = gql`
     operand
     value
     viewFilterGroupId
+    viewTabId
     positionInViewFilterGroup
     subFieldName
     relationTargetFieldMetadataId

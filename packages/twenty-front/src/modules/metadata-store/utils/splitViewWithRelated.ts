@@ -5,6 +5,7 @@ import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
+import { type FlatViewTab } from '@/metadata-store/types/FlatViewTab';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { convertViewFilterValueToString } from 'twenty-shared/utils';
 
@@ -14,6 +15,7 @@ type SplitResult = {
   flatViewFilters: FlatViewFilter[];
   flatViewSorts: FlatViewSort[];
   flatViewGroups: FlatViewGroup[];
+  flatViewTabs: FlatViewTab[];
   flatViewFilterGroups: FlatViewFilterGroup[];
   flatViewFieldGroups: FlatViewFieldGroup[];
 };
@@ -26,6 +28,7 @@ export const splitViewWithRelated = (
   const flatViewFilters: FlatViewFilter[] = [];
   const flatViewSorts: FlatViewSort[] = [];
   const flatViewGroups: FlatViewGroup[] = [];
+  const flatViewTabs: FlatViewTab[] = [];
   const flatViewFilterGroups: FlatViewFilterGroup[] = [];
   const flatViewFieldGroups: FlatViewFieldGroup[] = [];
 
@@ -35,6 +38,7 @@ export const splitViewWithRelated = (
       viewFilters = [],
       viewSorts = [],
       viewGroups = [],
+      viewTabs = [],
       viewFilterGroups = [],
       viewFieldGroups = [],
       ...viewProperties
@@ -71,6 +75,13 @@ export const splitViewWithRelated = (
       });
     }
 
+    for (const { viewFilters: _viewFilters, ...viewTab } of viewTabs) {
+      flatViewTabs.push({
+        ...viewTab,
+        viewId: viewWithRelated.id,
+      });
+    }
+
     for (const viewFilterGroup of viewFilterGroups) {
       flatViewFilterGroups.push(viewFilterGroup);
     }
@@ -91,6 +102,7 @@ export const splitViewWithRelated = (
     flatViewFilters,
     flatViewSorts,
     flatViewGroups,
+    flatViewTabs,
     flatViewFilterGroups,
     flatViewFieldGroups,
   };

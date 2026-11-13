@@ -22,6 +22,7 @@ import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
+import { type FlatViewTab } from '@/metadata-store/types/FlatViewTab';
 import { type FlatWebhook } from '@/metadata-store/types/FlatWebhook';
 
 export type MetadataEntityTypeMap = {
@@ -33,6 +34,7 @@ export type MetadataEntityTypeMap = {
   viewFilters: FlatViewFilter;
   viewSorts: FlatViewSort;
   viewGroups: FlatViewGroup;
+  viewTabs: FlatViewTab;
   viewFilterGroups: FlatViewFilterGroup;
   viewFieldGroups: FlatViewFieldGroup;
   pageLayouts: FlatPageLayout;

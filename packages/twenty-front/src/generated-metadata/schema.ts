@@ -423,6 +423,7 @@ export enum AllMetadataName {
   viewFilterGroup = 'viewFilterGroup',
   viewGroup = 'viewGroup',
   viewSort = 'viewSort',
+  viewTab = 'viewTab',
   webhook = 'webhook',
   workflow = 'workflow',
   workflowVersion = 'workflowVersion'
@@ -2058,6 +2059,7 @@ export type CreateViewFilterInput = {
   value: Scalars['JSON']['input'];
   viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
   viewId: Scalars['UUID']['input'];
+  viewTabId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type CreateViewGroupInput = {
@@ -2099,6 +2101,16 @@ export type CreateViewSortInput = {
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
+  viewId: Scalars['UUID']['input'];
+};
+
+export type CreateViewTabInput = {
+  fieldValue?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['UUID']['input']>;
+  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
+  type: ViewTabType;
   viewId: Scalars['UUID']['input'];
 };
 
@@ -2200,6 +2212,11 @@ export type DeleteViewSortInput = {
   id: Scalars['UUID']['input'];
 };
 
+export type DeleteViewTabInput = {
+  /** The id of the view tab to delete. */
+  id: Scalars['UUID']['input'];
+};
+
 export type DeletedWorkspaceMember = {
   __typename?: 'DeletedWorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']['output']>;
@@ -2231,6 +2248,11 @@ export type DestroyViewGroupInput = {
 
 export type DestroyViewSortInput = {
   /** The id of the view sort to destroy. */
+  id: Scalars['UUID']['input'];
+};
+
+export type DestroyViewTabInput = {
+  /** The id of the view tab to destroy. */
   id: Scalars['UUID']['input'];
 };
 
@@ -3709,6 +3731,7 @@ export type Mutation = {
   createManyViewFieldGroups: Array<ViewFieldGroup>;
   createManyViewFields: Array<ViewField>;
   createManyViewGroups: Array<ViewGroup>;
+  createManyViewTabs: Array<ViewTab>;
   createMcpServer: McpServer;
   createMessageSuppression: MessageSuppression;
   createNavigationMenuItem: NavigationMenuItem;
@@ -3739,6 +3762,7 @@ export type Mutation = {
   createViewFilterGroup: ViewFilterGroup;
   createViewGroup: ViewGroup;
   createViewSort: ViewSort;
+  createViewTab: ViewTab;
   createWebhook: Webhook;
   deactivateSkill: Skill;
   deleteAgentChatChannel: Scalars['Boolean']['output'];
@@ -3780,6 +3804,7 @@ export type Mutation = {
   deleteViewFilterGroup: Scalars['Boolean']['output'];
   deleteViewGroup: ViewGroup;
   deleteViewSort: Scalars['Boolean']['output'];
+  deleteViewTab: ViewTab;
   deleteWebhook: Webhook;
   deleteWorkspaceInvitation: Scalars['String']['output'];
   destroyPageLayout: Scalars['Boolean']['output'];
@@ -3792,6 +3817,7 @@ export type Mutation = {
   destroyViewFilterGroup: Scalars['Boolean']['output'];
   destroyViewGroup: ViewGroup;
   destroyViewSort: Scalars['Boolean']['output'];
+  destroyViewTab: ViewTab;
   detachRecordFromInboxThread: Scalars['Boolean']['output'];
   disconnectConnectedAccount: ConnectedAccountPublicDto;
   duplicateDashboard: DuplicatedDashboard;
@@ -3917,6 +3943,7 @@ export type Mutation = {
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
   updateManyViewGroups: Array<ViewGroup>;
+  updateManyViewTabs: Array<ViewTab>;
   updateMcpServer: McpServer;
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
@@ -3948,6 +3975,7 @@ export type Mutation = {
   updateViewFilterGroup: ViewFilterGroup;
   updateViewGroup: ViewGroup;
   updateViewSort: ViewSort;
+  updateViewTab: ViewTab;
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
   updateWorkspaceAllowedEmbeddingOrigins: Workspace;
@@ -4203,6 +4231,11 @@ export type MutationCreateManyViewGroupsArgs = {
 };
 
 
+export type MutationCreateManyViewTabsArgs = {
+  inputs: Array<CreateViewTabInput>;
+};
+
+
 export type MutationCreateMcpServerArgs = {
   input: CreateMcpServerInput;
 };
@@ -4360,6 +4393,11 @@ export type MutationCreateViewGroupArgs = {
 
 export type MutationCreateViewSortArgs = {
   input: CreateViewSortInput;
+};
+
+
+export type MutationCreateViewTabArgs = {
+  input: CreateViewTabInput;
 };
 
 
@@ -4560,6 +4598,11 @@ export type MutationDeleteViewSortArgs = {
 };
 
 
+export type MutationDeleteViewTabArgs = {
+  input: DeleteViewTabInput;
+};
+
+
 export type MutationDeleteWebhookArgs = {
   id: Scalars['UUID']['input'];
 };
@@ -4617,6 +4660,11 @@ export type MutationDestroyViewGroupArgs = {
 
 export type MutationDestroyViewSortArgs = {
   input: DestroyViewSortInput;
+};
+
+
+export type MutationDestroyViewTabArgs = {
+  input: DestroyViewTabInput;
 };
 
 
@@ -5231,6 +5279,11 @@ export type MutationUpdateManyViewGroupsArgs = {
 };
 
 
+export type MutationUpdateManyViewTabsArgs = {
+  inputs: Array<UpdateViewTabInput>;
+};
+
+
 export type MutationUpdateMcpServerArgs = {
   input: UpdateMcpServerInput;
 };
@@ -5395,6 +5448,11 @@ export type MutationUpdateViewGroupArgs = {
 
 export type MutationUpdateViewSortArgs = {
   input: UpdateViewSortInput;
+};
+
+
+export type MutationUpdateViewTabArgs = {
+  input: UpdateViewTabInput;
 };
 
 
@@ -6208,6 +6266,8 @@ export type Query = {
   getViewGroups: Array<ViewGroup>;
   getViewSort?: Maybe<ViewSort>;
   getViewSorts: Array<ViewSort>;
+  getViewTab?: Maybe<ViewTab>;
+  getViewTabs: Array<ViewTab>;
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
   gettingStartedProgress: GettingStartedProgress;
@@ -6666,6 +6726,16 @@ export type QueryGetViewSortArgs = {
 
 
 export type QueryGetViewSortsArgs = {
+  viewId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryGetViewTabArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type QueryGetViewTabsArgs = {
   viewId?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8111,6 +8181,7 @@ export type UpdateViewFilterInputUpdates = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
   viewFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+  viewTabId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type UpdateViewGroupInput = {
@@ -8162,6 +8233,20 @@ export type UpdateViewSortInput = {
 export type UpdateViewSortInputUpdates = {
   direction?: InputMaybe<ViewSortDirection>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateViewTabInput = {
+  /** The id of the view tab to update */
+  id: Scalars['UUID']['input'];
+  /** The view tab to update */
+  update: UpdateViewTabInputUpdates;
+};
+
+export type UpdateViewTabInputUpdates = {
+  fieldValue?: InputMaybe<Scalars['String']['input']>;
+  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateWebhookInput = {
@@ -8696,6 +8781,7 @@ export type View = {
   viewFilters: Array<ViewFilter>;
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
+  viewTabs: Array<ViewTab>;
   visibility: ViewVisibility;
   workspaceId: Scalars['UUID']['output'];
 };
@@ -8764,6 +8850,7 @@ export type ViewFilter = {
   value: Scalars['JSON']['output'];
   viewFilterGroupId?: Maybe<Scalars['UUID']['output']>;
   viewId: Scalars['UUID']['output'];
+  viewTabId?: Maybe<Scalars['UUID']['output']>;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -8843,6 +8930,28 @@ export type ViewSort = {
 export enum ViewSortDirection {
   ASC = 'ASC',
   DESC = 'DESC'
+}
+
+export type ViewTab = {
+  __typename?: 'ViewTab';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  fieldValue?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  isVisible: Scalars['Boolean']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Float']['output'];
+  type: ViewTabType;
+  updatedAt: Scalars['DateTime']['output'];
+  viewId: Scalars['UUID']['output'];
+  workspaceId: Scalars['UUID']['output'];
+};
+
+export enum ViewTabType {
+  ALL = 'ALL',
+  CUSTOM = 'CUSTOM',
+  FIELD_VALUE = 'FIELD_VALUE',
+  NO_VALUE = 'NO_VALUE'
 }
 
 export enum ViewType {

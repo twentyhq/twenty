@@ -11,6 +11,7 @@ import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
 import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { type FlatViewGroup } from '@/metadata-store/types/FlatViewGroup';
 import { type FlatViewSort } from '@/metadata-store/types/FlatViewSort';
+import { type FlatViewTab } from '@/metadata-store/types/FlatViewTab';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export type PreloadedMockedMetadata = {
@@ -22,6 +23,7 @@ export type PreloadedMockedMetadata = {
   flatViewFilters: FlatViewFilter[];
   flatViewSorts: FlatViewSort[];
   flatViewGroups: FlatViewGroup[];
+  flatViewTabs: FlatViewTab[];
   flatViewFilterGroups: FlatViewFilterGroup[];
   flatViewFieldGroups: FlatViewFieldGroup[];
   navigationMenuItems: NavigationMenuItem[];
@@ -48,6 +50,7 @@ export const preloadMockedMetadata =
       flatViewFilters,
       flatViewSorts,
       flatViewGroups,
+      flatViewTabs,
       flatViewFilterGroups,
       flatViewFieldGroups,
     } = splitViewWithRelated(mockedViews);
@@ -61,6 +64,7 @@ export const preloadMockedMetadata =
       flatViewFilters,
       flatViewSorts,
       flatViewGroups,
+      flatViewTabs,
       flatViewFilterGroups,
       flatViewFieldGroups,
       navigationMenuItems: mockedNavigationMenuItems,

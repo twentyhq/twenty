@@ -4,6 +4,7 @@ import { VIEW_FILTER_FRAGMENT } from '@/views/graphql/fragments/viewFilterFragme
 import { VIEW_FILTER_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewFilterGroupFragment';
 import { VIEW_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewGroupFragment';
 import { VIEW_SORT_FRAGMENT } from '@/views/graphql/fragments/viewSortFragment';
+import { VIEW_TAB_FRAGMENT } from '@/views/graphql/fragments/viewTabFragment';
 import { gql } from '@apollo/client';
 
 export const VIEW_FRAGMENT = gql`
@@ -13,6 +14,7 @@ export const VIEW_FRAGMENT = gql`
   ${VIEW_FILTER_GROUP_FRAGMENT}
   ${VIEW_SORT_FRAGMENT}
   ${VIEW_GROUP_FRAGMENT}
+  ${VIEW_TAB_FRAGMENT}
 
   fragment ViewFragment on View {
     id
@@ -56,6 +58,9 @@ export const VIEW_FRAGMENT = gql`
     }
     viewGroups {
       ...ViewGroupFragment
+    }
+    viewTabs {
+      ...ViewTabFragment
     }
   }
 `;

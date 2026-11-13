@@ -4,6 +4,7 @@ import { type ViewFieldGroup } from '@/views/types/ViewFieldGroup';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { type ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewTab } from '@/views/types/ViewTab';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewType } from '@/views/types/ViewType';
 import {
@@ -22,6 +23,7 @@ export type View = {
   viewFields: ViewField[];
   viewFieldGroups?: ViewFieldGroup[];
   viewGroups: ViewGroup[];
+  viewTabs?: ViewTab[];
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];

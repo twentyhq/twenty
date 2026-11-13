@@ -34,6 +34,7 @@ const VIEWS_GROUP_KEYS: MetadataEntityKey[] = [
   'viewFilters',
   'viewSorts',
   'viewGroups',
+  'viewTabs',
   'viewFilterGroups',
   'viewFieldGroups',
 ];
@@ -129,6 +130,7 @@ export const useLoadStaleMetadataEntities = () => {
                 flatViewFilters,
                 flatViewSorts,
                 flatViewGroups,
+                flatViewTabs,
                 flatViewFilterGroups,
                 flatViewFieldGroups,
               } = splitViewWithRelated(allViews);
@@ -138,6 +140,7 @@ export const useLoadStaleMetadataEntities = () => {
               replaceDraft('viewFilters', flatViewFilters);
               replaceDraft('viewSorts', flatViewSorts);
               replaceDraft('viewGroups', flatViewGroups);
+              replaceDraft('viewTabs', flatViewTabs);
               replaceDraft('viewFilterGroups', flatViewFilterGroups);
               replaceDraft('viewFieldGroups', flatViewFieldGroups);
             },

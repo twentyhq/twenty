@@ -5,6 +5,7 @@ export type FlatView = Omit<
   | 'viewFields'
   | 'viewFieldGroups'
   | 'viewGroups'
+  | 'viewTabs'
   | 'viewFilters'
   | 'viewFilterGroups'
   | 'viewSorts'

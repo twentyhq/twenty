@@ -8,6 +8,7 @@ const METADATA_NAME_TO_ENTITY_KEY: Record<string, MetadataEntityKey> = {
   viewField: 'viewFields',
   viewFieldGroup: 'viewFieldGroups',
   viewGroup: 'viewGroups',
+  viewTab: 'viewTabs',
   viewSort: 'viewSorts',
   viewFilter: 'viewFilters',
   viewFilterGroup: 'viewFilterGroups',
