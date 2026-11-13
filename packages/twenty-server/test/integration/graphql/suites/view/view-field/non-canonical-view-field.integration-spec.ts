@@ -4,7 +4,10 @@ import {
   setupViewFieldTest,
 } from 'test/integration/graphql/suites/view/utils/setup-view-field-test.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
+import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
+import { updateOneViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-view-field.util';
 import { isDefined } from 'twenty-shared/utils';
 
 const VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS = `
@@ -16,6 +19,7 @@ const VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS = `
 describe('Non-canonical view fields', () => {
   let testSetup: ViewFieldTestSetup;
   let labelIdentifierFieldMetadataId: string;
+  const nonCanonicalViewFieldIds: string[] = [];
 
   beforeAll(async () => {
     testSetup = await setupViewFieldTest();
@@ -73,6 +77,8 @@ describe('Non-canonical view fields', () => {
         },
       });
 
+      nonCanonicalViewFieldIds.push(nonCanonicalViewField.id);
+
       expect(nonCanonicalViewField).toMatchObject({
         fieldMetadataId: testSetup.testFieldMetadataId,
         isCanonical: false,
@@ -110,5 +116,32 @@ describe('Non-canonical view fields', () => {
     expect(JSON.stringify(response.errors)).toContain(
       'A non-canonical view field cannot use the label identifier field',
     );
+  });
+
+  it('keeps non-canonical columns editable when their field becomes the label identifier', async () => {
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: testSetup.testObjectMetadataId,
+        updatePayload: {
+          labelIdentifierFieldMetadataId: testSetup.testFieldMetadataId,
+        },
+      },
+    });
+
+    const [resizedViewFieldId, destroyedViewFieldId] = nonCanonicalViewFieldIds;
+
+    await updateOneViewField({
+      expectToFail: false,
+      input: {
+        id: resizedViewFieldId,
+        update: { size: 320, isVisible: false },
+      },
+    });
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: destroyedViewFieldId },
+    });
   });
 });

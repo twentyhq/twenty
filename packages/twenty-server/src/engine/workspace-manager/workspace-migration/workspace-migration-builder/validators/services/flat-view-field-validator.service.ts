@@ -97,6 +97,7 @@ export class FlatViewFieldValidatorService {
 
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
+      updatedFlatViewField.isCanonical &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         updatedFlatViewField.fieldMetadataUniversalIdentifier
     ) {
@@ -298,8 +299,9 @@ export class FlatViewFieldValidatorService {
       flatView.type !== ViewType.FIELDS_WIDGET &&
       otherFlatViewFields.some(
         (flatViewField) =>
+          flatViewField.isCanonical &&
           flatViewField.fieldMetadataUniversalIdentifier ===
-          flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
+            flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
       ) &&
       isViewFieldInLowestPosition({
         flatViewField: flatViewFieldToValidate,
