@@ -2036,7 +2036,7 @@ export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
-  isCustom?: InputMaybe<Scalars['Boolean']['input']>;
+  isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -8733,7 +8733,7 @@ export type ViewField = {
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
-  isCustom: Scalars['Boolean']['output'];
+  isCanonical: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
   isSystemSideEffect: Scalars['Boolean']['output'];

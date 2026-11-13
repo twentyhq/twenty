@@ -4308,7 +4308,7 @@ export default {
             "id": [
                 557
             ],
-            "isCustom": [
+            "isCanonical": [
                 1
             ],
             "isVisible": [
@@ -16523,7 +16523,7 @@ export default {
             "isActive": [
                 1
             ],
-            "isCustom": [
+            "isCanonical": [
                 1
             ],
             "isOverridden": [

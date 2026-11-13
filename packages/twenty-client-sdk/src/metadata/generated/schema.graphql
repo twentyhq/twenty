@@ -1907,7 +1907,7 @@ input CreateViewFieldInput {
   aggregateOperation: AggregateOperations
   fieldMetadataId: UUID!
   id: UUID
-  isCustom: Boolean = false
+  isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
   size: Float = 0
@@ -6330,7 +6330,7 @@ type ViewField {
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
-  isCustom: Boolean!
+  isCanonical: Boolean!
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!

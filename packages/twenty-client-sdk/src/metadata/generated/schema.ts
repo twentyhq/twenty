@@ -4203,7 +4203,7 @@ export interface ViewField {
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
-    isCustom: Scalars['Boolean']
+    isCanonical: Scalars['Boolean']
     /** @deprecated isOverridden is deprecated */
     isOverridden?: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
@@ -6091,7 +6091,7 @@ export interface CreateValidationRuleInput {description?: (Scalars['String'] | n
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),name: Scalars['String'],position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCustom?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
+export interface CreateViewFieldInput {aggregateOperation?: (AggregateOperations | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),isCanonical?: (Scalars['Boolean'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),size?: (Scalars['Float'] | null),viewFieldGroupId?: (Scalars['UUID'] | null),viewId: Scalars['UUID']}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -9430,7 +9430,7 @@ export interface ViewFieldGenqlSelection{
     fieldMetadataId?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
-    isCustom?: boolean | number
+    isCanonical?: boolean | number
     /** @deprecated isOverridden is deprecated */
     isOverridden?: boolean | number
     isSystemSideEffect?: boolean | number
