@@ -6,6 +6,7 @@ import {
   IconBrandX,
   IconBulb,
   IconCode,
+  IconHeartHandshake,
   IconTag,
   IconUsers,
 } from '@tabler/icons-react';
@@ -100,6 +101,20 @@ export const MENU: {
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Team up with a Twenty expert`,
             description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
+          },
+        },
+        {
+          label: msg`Become an integrator`,
+          description: msg`Implement Twenty for clients`,
+          href: '/partners/integrators',
+          icon: IconHeartHandshake,
+          preview: {
+            image: '/images/menu/partners.webp',
+            imageAlt: msg`Twenty partner ecosystem`,
+            imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
+            title: msg`Grow your practice with Twenty`,
+            description: msg`Earn 20% on every client you bring, every month for a year.`,
           },
         },
         {
