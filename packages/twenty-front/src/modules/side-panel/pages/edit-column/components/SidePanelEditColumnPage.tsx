@@ -1,14 +1,11 @@
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
-import { useUpdateRecordTableColumnSettings } from '@/object-record/record-table/hooks/useUpdateRecordTableColumnSettings';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import {
-  type EditColumnRequest,
-  editColumnRequestComponentState,
-} from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
+import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -18,7 +15,9 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { computeViewFieldSettingsWithLabel } from '@/views/utils/computeViewFieldSettingsWithLabel';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -55,21 +54,28 @@ export const SidePanelEditColumnPage = () => {
     return null;
   }
 
-  return <SidePanelEditColumnPageContent request={editColumnRequest} />;
+  return (
+    <SidePanelEditColumnPageContent
+      recordTableId={editColumnRequest.recordTableId}
+      recordFieldId={editColumnRequest.recordFieldId}
+    />
+  );
 };
 
 const SidePanelEditColumnPageContent = ({
-  request,
+  recordTableId,
+  recordFieldId,
 }: {
-  request: EditColumnRequest;
+  recordTableId: string;
+  recordFieldId: string;
 }) => {
   const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
-    request.recordTableId,
+    recordTableId,
   );
 
   const recordField = currentRecordFields.find(
-    (currentRecordField) => currentRecordField.id === request.recordFieldId,
+    (currentRecordField) => currentRecordField.id === recordFieldId,
   );
 
   if (!isDefined(recordField) || isCanonicalRecordField(recordField)) {
@@ -77,15 +83,18 @@ const SidePanelEditColumnPageContent = ({
   }
 
   return (
-    <SidePanelEditColumnForm request={request} recordField={recordField} />
+    <SidePanelEditColumnForm
+      recordTableId={recordTableId}
+      recordField={recordField}
+    />
   );
 };
 
 const SidePanelEditColumnForm = ({
-  request: { recordTableId },
+  recordTableId,
   recordField,
 }: {
-  request: EditColumnRequest;
+  recordTableId: string;
   recordField: RecordField;
 }) => {
   const { t } = useLingui();
@@ -93,8 +102,8 @@ const SidePanelEditColumnForm = ({
   const { getIcon } = useIcons();
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
   const { goBackFromSidePanel } = useSidePanelHistory();
-  const { updateRecordTableColumnSettings } =
-    useUpdateRecordTableColumnSettings();
+  const { upsertRecordField } = useUpsertRecordField(recordTableId);
+  const { saveViewFields } = useSaveCurrentViewFields();
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
@@ -106,14 +115,16 @@ const SidePanelEditColumnForm = ({
   );
 
   const handleSaveClick = async () => {
-    await updateRecordTableColumnSettings({
-      recordTableId,
-      recordFieldId: recordField.id,
+    const updatedRecordField = {
+      ...recordField,
       settings: computeViewFieldSettingsWithLabel({
         settings: recordField.settings,
         label: columnName,
       }),
-    });
+    };
+
+    upsertRecordField(updatedRecordField);
+    await saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
 
     goBackFromSidePanel();
   };

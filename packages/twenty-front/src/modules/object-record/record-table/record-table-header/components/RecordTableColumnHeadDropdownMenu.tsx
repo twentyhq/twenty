@@ -146,17 +146,6 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const handleEditColumnClick = () => {
-    openEditColumnInSidePanel({
-      recordTableId,
-      recordFieldId: recordField.id,
-    });
-  };
-
-  const handleDeleteColumnClick = async () => {
-    await deleteRecordTableColumn(recordField.id);
-  };
-
   const hasColumnActions =
     canAddColumn ||
     canEditColumn ||
@@ -190,7 +179,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
       {canEditColumn && (
         <Dropdown.ActionItem
           startIcon={<IconEdit />}
-          onClick={handleEditColumnClick}
+          onClick={() =>
+            openEditColumnInSidePanel({
+              recordTableId,
+              recordFieldId: recordField.id,
+            })
+          }
         >{t`Edit column`}</Dropdown.ActionItem>
       )}
       {canMoveLeft && (
@@ -216,7 +210,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
       {canDeleteColumn && (
         <Dropdown.ActionItem
           startIcon={<IconTrash />}
-          onClick={handleDeleteColumnClick}
+          onClick={() => deleteRecordTableColumn(recordField.id)}
         >{t`Delete column`}</Dropdown.ActionItem>
       )}
     </Dropdown.Section>
