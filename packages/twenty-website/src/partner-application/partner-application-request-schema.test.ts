@@ -31,6 +31,26 @@ const fullValid = {
 };
 
 describe('partnerApplicationRequestSchema', () => {
+  it('adds https:// to links typed without it', () => {
+    const result = partnerApplicationRequestSchema.safeParse({
+      ...minimalValid,
+      website: 'analyticalengines.example',
+      calendarLink: 'cal.com/ada',
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.website).toBe('https://analyticalengines.example');
+    expect(result.data?.calendarLink).toBe('https://cal.com/ada');
+  });
+
+  it('rejects an email typed as a website', () => {
+    expect(
+      partnerApplicationRequestSchema.safeParse({
+        ...minimalValid,
+        website: 'ada@gmail.com',
+      }).success,
+    ).toBe(false);
+  });
+
   it('rejects an application without the program terms accepted', () => {
     expect(
       partnerApplicationRequestSchema.safeParse({

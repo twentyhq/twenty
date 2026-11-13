@@ -39,6 +39,18 @@ describe('validatePartnerApplicationStep', () => {
     expect(errors.twentyExperienceProofLink).toBe('invalid_url');
   });
 
+  it('accepts a website typed without https:// on Identity', () => {
+    const errors = validatePartnerApplicationStep({
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 0,
+      name: 'Ada Lovelace',
+      email: 'ada@example.com',
+      company: 'Analytical Engines',
+      website: 'analyticalengines.example',
+    });
+    expect(errors).toEqual({});
+  });
+
   it('requires the program terms on the last step', () => {
     const commercials = {
       ...INITIAL_PARTNER_APPLICATION_STATE,

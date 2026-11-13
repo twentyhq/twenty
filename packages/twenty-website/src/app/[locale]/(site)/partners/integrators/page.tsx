@@ -60,7 +60,7 @@ export default async function IntegratorProgramPage({
       <main>
         <PartnerHero
           heading={msg`Become a\n*Twenty integrator*`}
-          body={msg`You implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
+          body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           actions={
             <>
               <BecomePartnerButton label={msg`Apply as an integrator`} />
@@ -72,8 +72,6 @@ export default async function IntegratorProgramPage({
             </>
           }
         />
-        <PartnerLevels />
-        <PartnerTestimonials />
         <ProgramExplainer
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
           eyebrow={msg`How it works`}
@@ -81,17 +79,8 @@ export default async function IntegratorProgramPage({
           body={msg`Four steps, and no fee to join. You set your own rates and keep what you bill.`}
           steps={INTEGRATOR_STEPS}
         />
-        <ProgramStrip
-          heading={msg`You create content, *not implementations?*`}
-          body={msg`Creators, communities and tech partners earn 20% on every team they bring to Twenty.`}
-          action={
-            <Button
-              href="/partners/creators"
-              label={i18n._(msg`See the creator program`)}
-              variant="outlined"
-            />
-          }
-        />
+        <PartnerTestimonials />
+        <PartnerLevels />
         <BecomePartnerFaq />
         <ProgramStrip
           heading={msg`Ready to *apply?*`}

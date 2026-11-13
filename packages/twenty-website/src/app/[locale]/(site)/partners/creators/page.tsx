@@ -59,7 +59,7 @@ export default async function CreatorProgramPage({
       <main>
         <PartnerHero
           heading={msg`Become a\n*Twenty creator*`}
-          body={msg`You create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
+          body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
           actions={
             <>
               <AffiliateApplyButton label={msg`Apply as a creator`} />

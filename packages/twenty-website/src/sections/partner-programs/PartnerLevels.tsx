@@ -80,7 +80,7 @@ export function PartnerLevels() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell rhythm="section" scheme="light">
+    <SectionShell keepsTopRhythm rhythm="section" scheme="light">
       <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Levels`)}</Eyebrow>
