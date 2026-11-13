@@ -275,6 +275,7 @@ exports[`endpoint permission declarations should match the auth principals, perm
   "ConnectedAccountSyncWebhooksController.handleGoogleMessaging {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "ConnectedAccountSyncWebhooksController.handleMicrosoftCalendar {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "ConnectedAccountSyncWebhooksController.handleMicrosoftMessaging {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
+  "ConnectionProviderApiKeyResolver.connectApplicationWithApiKey {"acceptedAuthPrincipals":{"apiKey":false,"application":{"withAgent":false,"withUser":false,"withoutUser":false},"oauthClient":{"withUser":false,"withoutUser":false},"userSession":{"impersonated":false,"playground":false,"standard":true,"workspaceAgnostic":false}},"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "ConnectionProviderCustomController.callback {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "ConnectionProviderCustomController.callbackNotification {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
   "ConnectionProviderOAuthController.authorize {"acceptedAuthPrincipals":null,"applicationTarget":null,"requiredFeatureFlags":[],"requiredPermissionFlags":[]}",
