@@ -23,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
+import { McpToolActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool-action.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
@@ -44,6 +45,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionValidationModule,
     CoreWorkflowServicesModule,
     CodeActionModule,
+    McpToolActionModule,
     WorkspaceCacheModule,
   ],
   controllers: [WorkflowTriggerController],

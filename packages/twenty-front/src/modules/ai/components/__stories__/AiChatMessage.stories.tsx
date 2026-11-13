@@ -22,8 +22,11 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
+import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/aiChatThreadReadPositionsFamilyState';
+import { type AiChatThreadReadPosition } from '@/ai/types/AiChatThreadReadPosition';
+import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -35,15 +38,17 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
+import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 
 import { styled } from '@linaria/react';
 import { useStore } from 'jotai';
@@ -485,7 +490,7 @@ const allMockMessages = [
   mockNamedAssistantMessage,
 ];
 
-const AgentChatMessagesSetterEffect = ({
+const AiChatMessagesSetterEffect = ({
   messages,
   isInboxEnabled,
   assistantProfile,
@@ -499,23 +504,21 @@ const AgentChatMessagesSetterEffect = ({
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
     const previousCurrentThread = store.get(currentAiChatThreadState.atom);
-    const previousDisplayedThread = store.get(
-      agentChatDisplayedThreadState.atom,
-    );
+    const previousDisplayedThread = store.get(aiChatDisplayedThreadState.atom);
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(agentChatThreadVisitState.atom);
-    const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
-    const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+    const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
       messageId: mockTeammateMessage.id,
     });
 
     store.set(currentAiChatThreadState.atom, currentThreadId);
-    store.set(agentChatDisplayedThreadState.atom, currentThreadId);
+    store.set(aiChatDisplayedThreadState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -532,7 +535,7 @@ const AgentChatMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(agentChatThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: currentThreadId,
       isUnread: true,
       isKeptUnread: false,
@@ -550,12 +553,12 @@ const AgentChatMessagesSetterEffect = ({
 
     return () => {
       store.set(currentAiChatThreadState.atom, previousCurrentThread);
-      store.set(agentChatDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(aiChatDisplayedThreadState.atom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(agentChatThreadVisitState.atom, previousVisit);
+      store.set(aiChatThreadVisitState.atom, previousVisit);
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };
@@ -564,9 +567,9 @@ const AgentChatMessagesSetterEffect = ({
   return null;
 };
 
-const AgentChatMessagesDecorator: Decorator = (Story, { parameters }) => (
+const AiChatMessagesDecorator: Decorator = (Story, { parameters }) => (
   <>
-    <AgentChatMessagesSetterEffect
+    <AiChatMessagesSetterEffect
       messages={parameters.messages ?? allMockMessages}
       isInboxEnabled={parameters.isInboxEnabled ?? false}
       assistantProfile={
@@ -586,7 +589,7 @@ const meta: Meta<typeof AiChatMessage> = {
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
-    AgentChatMessagesDecorator,
+    AiChatMessagesDecorator,
   ],
   parameters: {
     container: { width: 700 },
@@ -617,7 +620,7 @@ const playInWritableThread = async (play: () => Promise<void>) => {
   );
   const previousObjectMetadataItems = jotaiStore.get(objectMetadataItemsAtom);
 
-  setAgentChatThreadPermissions({
+  setAiChatThreadPermissions({
     store: jotaiStore,
     threadId,
     permissions: {
@@ -876,6 +879,125 @@ export const MultiplayerConversation: Story = {
   },
 };
 
+const READ_RECEIPTS_THREAD_ID = 'conversation-presentation-story';
+
+const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
+  const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
+    threadId: READ_RECEIPTS_THREAD_ID,
+  });
+
+  jotaiStore.set(readPositionsAtom, readPositions);
+
+  return () => jotaiStore.set(readPositionsAtom, null);
+};
+
+export const ReadReceipts: Story = {
+  ...MultiplayerConversation,
+  beforeEach: () =>
+    seedReadPositions([
+      {
+        workspaceMemberId: mockedWorkspaceMemberData.id,
+        lastReadAt: MOCKED_DATE,
+      },
+      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
+      { workspaceMemberId: 'former-member', lastReadAt: null },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const receipts = await canvas.findAllByRole('img', { name: 'Read' });
+
+    await expect(receipts).toHaveLength(3);
+    await userEvent.hover(receipts[0]);
+    await expect(
+      await within(document.body).findByText('Read by 1 of 2'),
+    ).toBeVisible();
+    await expect(within(document.body).getByText('Not yet')).toBeVisible();
+  },
+};
+
+export const SentReceipts: Story = {
+  ...MultiplayerConversation,
+  beforeEach: () =>
+    seedReadPositions([
+      {
+        workspaceMemberId: mockedWorkspaceMemberData.id,
+        lastReadAt: MOCKED_DATE,
+      },
+      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'Sent' }),
+    ).toBeVisible();
+    await expect(canvas.getAllByRole('img', { name: 'Read' })).toHaveLength(2);
+  },
+};
+
+export const SendingThenSentReceipt: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockTeammateMessage, mockUserMessage],
+  },
+  args: { messageId: mockUserMessage.id },
+  beforeEach: () => {
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: READ_RECEIPTS_THREAD_ID,
+    });
+    const resetReadPositions = seedReadPositions([
+      { workspaceMemberId: mockTeammate.id, lastReadAt: null },
+    ]);
+
+    jotaiStore.set(isSendingMessageAtom, true);
+
+    return () => {
+      jotaiStore.set(isSendingMessageAtom, false);
+      resetReadPositions();
+    };
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'Sending' }),
+    ).toBeVisible();
+
+    jotaiStore.set(
+      aiChatIsSendingMessageFamilyState.atomFamily({
+        threadId: READ_RECEIPTS_THREAD_ID,
+      }),
+      false,
+    );
+
+    await expect(
+      await canvas.findByRole('img', { name: 'Sent' }),
+    ).toBeVisible();
+  },
+};
+
+export const LongOwnMessageWithReceipt: Story = {
+  parameters: { isInboxEnabled: true },
+  args: { messageId: mockLongUserMessage.id },
+  beforeEach: () =>
+    seedReadPositions([
+      { workspaceMemberId: mockTeammate.id, lastReadAt: MOCKED_DATE },
+    ]),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = await canvas.findByRole('button', { name: 'Show more' });
+    const text = canvas.getByText(/Help me set up my workspace/);
+    const receipt = await canvas.findByRole('img', { name: 'Read' });
+
+    await expect(toggle.getBoundingClientRect().top).toBeGreaterThan(
+      text.getBoundingClientRect().top,
+    );
+    await expect(toggle.getBoundingClientRect().right).toBeLessThanOrEqual(
+      receipt.getBoundingClientRect().left,
+    );
+  },
+};
+
 export const SenderFallbacks: Story = {
   parameters: { isInboxEnabled: true },
   render: () => (
@@ -1024,5 +1146,276 @@ export const AgentLookupFailure: Story = {
     ).toBeVisible();
     expect(body.getAllByText('Failed to load agent details.')).toHaveLength(1);
     expect(canvas.getAllByText('Agent')).toHaveLength(2);
+  },
+};
+
+const mockImageFilePart: AiChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-dashboard',
+  filename: 'dashboard.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
+const mockSecondImageFilePart: AiChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-team',
+  filename: 'team.png',
+  mediaType: 'image/png',
+  url: IMAGE_URL_MOCK,
+};
+
+const mockBrokenImageFilePart: AiChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-broken',
+  filename: 'broken.png',
+  mediaType: 'image/png',
+  url: 'data:image/png;base64,broken',
+};
+
+const mockPdfFilePart: AiChatFileUIPart = {
+  type: 'file',
+  fileId: 'file-brief',
+  filename: 'brief.pdf',
+  mediaType: 'application/pdf',
+  url: 'https://example.com/brief.pdf',
+};
+
+const mockUserMessageWithImage: ExtendedUIMessage = {
+  id: 'msg-user-image',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Here is the dashboard and the brief.' },
+    mockImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+const mockUserMessageWithImages: ExtendedUIMessage = {
+  id: 'msg-user-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'Screenshots from the review.' },
+    mockImageFilePart,
+    mockSecondImageFilePart,
+    mockBrokenImageFilePart,
+    mockPdfFilePart,
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithImage: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithImage],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithImage.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('img', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
+  },
+};
+
+export const UserMessageWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'dashboard.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'team.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'broken.png' }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('img', { name: 'broken.png' }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(canvas.getByText('brief.pdf')).toBeVisible();
+  },
+};
+
+const mockUserMessageWithManyImages: ExtendedUIMessage = {
+  id: 'msg-user-many-images',
+  role: 'user',
+  parts: [
+    { type: 'text', text: 'All the photos from the offsite.' },
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AiChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-photo-${photoNumber}`,
+      filename: `photo-${photoNumber}.png`,
+      mediaType: 'image/png',
+      url: IMAGE_URL_MOCK,
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+  },
+};
+
+export const UserMessageWithManyImages: Story = {
+  beforeEach: () => {
+    jotaiStore.set(isAttachmentPreviewEnabledState.atom, true);
+  },
+  parameters: {
+    isInboxEnabled: true,
+    messages: [mockUserMessageWithManyImages],
+  },
+  render: () => <AiChatMessage messageId={mockUserMessageWithManyImages.id} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show 3 more images' }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('button', { name: 'photo-3.png' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByRole('button', { name: 'photo-5.png' }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const getSizedImageUrlMock = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) =>
+  `data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#dbeafe"/><rect x="1" y="1" width="${width - 2}" height="${height - 2}" fill="none" stroke="#3b82f6" stroke-width="2"/></svg>`,
+  )}`;
+
+const getUserMessageWithImagesMock = ({
+  id,
+  text,
+  images,
+  senderWorkspaceMemberId = mockedWorkspaceMemberData.id,
+}: {
+  id: string;
+  text: string;
+  images: { filename: string; width: number; height: number }[];
+  senderWorkspaceMemberId?: string;
+}): ExtendedUIMessage => ({
+  id,
+  role: 'user',
+  parts: [
+    { type: 'text', text },
+    ...images.map(({ filename, width, height }): AiChatFileUIPart => ({
+      type: 'file',
+      fileId: `file-${filename}`,
+      filename,
+      mediaType: 'image/png',
+      url: getSizedImageUrlMock({ width, height }),
+    })),
+  ],
+  metadata: {
+    createdAt: MOCKED_DATE,
+    senderWorkspaceMemberId,
+  },
+});
+
+const mockOwnMessagesWithImages = [
+  getUserMessageWithImagesMock({
+    id: 'msg-own-portrait',
+    text: 'Portrait screenshot from the mobile app',
+    images: [{ filename: 'portrait.png', width: 390, height: 844 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-landscape',
+    text: 'Landscape',
+    images: [{ filename: 'landscape.png', width: 1600, height: 200 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-small',
+    text: 'Small logo for the company record',
+    images: [{ filename: 'small.png', width: 48, height: 48 }],
+  }),
+  getUserMessageWithImagesMock({
+    id: 'msg-own-two-images',
+    text: 'Two',
+    images: [
+      { filename: 'first.png', width: 1440, height: 900 },
+      { filename: 'second.png', width: 390, height: 844 },
+    ],
+  }),
+];
+
+const mockTeammateMessageWithImage = getUserMessageWithImagesMock({
+  id: 'msg-teammate-landscape',
+  text: 'Reply',
+  images: [{ filename: 'teammate-landscape.png', width: 1600, height: 200 }],
+  senderWorkspaceMemberId: mockTeammate.id,
+});
+
+const mockMessagesWithImages = [
+  ...mockOwnMessagesWithImages,
+  mockTeammateMessageWithImage,
+];
+
+export const MessagesWithImages: Story = {
+  parameters: {
+    isInboxEnabled: true,
+    messages: mockMessagesWithImages,
+  },
+  render: () => (
+    <StyledConversationContainer>
+      {mockMessagesWithImages.map((message) => (
+        <AiChatMessage key={message.id} messageId={message.id} />
+      ))}
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const [text, lastImageName] of [
+      ['Portrait screenshot from the mobile app', 'portrait.png'],
+      ['Landscape', 'landscape.png'],
+      ['Small logo for the company record', 'small.png'],
+      ['Two', 'second.png'],
+    ]) {
+      const image = await canvas.findByRole('img', { name: lastImageName });
+
+      await expect(image).toBeVisible();
+
+      const ownTextToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right -
+        canvas.getByText(text).getBoundingClientRect().right;
+
+      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
+    }
+
+    const teammateImage = await canvas.findByRole('img', {
+      name: 'teammate-landscape.png',
+    });
+    const teammateImageToTextLeftEdgeGapInPx =
+      canvas.getByText('Reply').getBoundingClientRect().left -
+      teammateImage.getBoundingClientRect().left;
+
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeGreaterThanOrEqual(0);
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeLessThan(16);
   },
 };

@@ -36,7 +36,7 @@ import {
   useApplicationConnectedAccounts,
 } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { SettingsSyncFailedStatus } from '@/settings/applications/components/SettingsSyncFailedStatus';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
 const DETAIL_GRID_TEMPLATE = '220px 1fr';
@@ -86,7 +86,7 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const navigate = useNavigateSettings();
   const { openDialog } = useDialog();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startAppConnection } = useStartAppConnection();
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -155,9 +155,10 @@ export const SettingsApplicationConnectionDetail = () => {
       return;
     }
 
-    triggerAppOAuth({
+    startAppConnection({
       applicationId,
-      providerName: provider.name,
+      connectionProviderName: provider.name,
+      connectionProviderType: provider.type,
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -187,7 +188,12 @@ export const SettingsApplicationConnectionDetail = () => {
   }: {
     connection: ApplicationConnectedAccount;
     provider: FrontendApplicationConnectionProvider;
-  }): { key: string; label: string; value: ReactNode }[] => {
+  }): {
+    key: string;
+    label: string;
+    value: ReactNode;
+    isMultiline?: boolean;
+  }[] => {
     const scopes = connection.scopes ?? [];
 
     return [
@@ -213,6 +219,7 @@ export const SettingsApplicationConnectionDetail = () => {
       {
         key: 'scopes',
         label: t`Granted OAuth scopes`,
+        isMultiline: true,
         value:
           scopes.length > 0 ? (
             <StyledScopeList>
@@ -338,7 +345,16 @@ export const SettingsApplicationConnectionDetail = () => {
                       <TableCell color={themeCssVariables.font.color.secondary}>
                         {row.label}
                       </TableCell>
-                      <TableCell minWidth="0" overflow="hidden">
+                      <TableCell
+                        minWidth="0"
+                        overflow="hidden"
+                        height={row.isMultiline ? 'auto' : undefined}
+                        padding={
+                          row.isMultiline
+                            ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`
+                            : undefined
+                        }
+                      >
                         {row.value}
                       </TableCell>
                     </TableRow>

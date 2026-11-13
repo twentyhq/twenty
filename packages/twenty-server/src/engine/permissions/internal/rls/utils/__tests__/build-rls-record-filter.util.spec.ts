@@ -29,6 +29,8 @@ const FIELD_ID = 'field-1';
 const STATUS_FIELD_ID = 'status-field';
 const WORKSPACE_MEMBER_LOCALE_FIELD_ID = 'workspace-member-locale-field';
 const WORKSPACE_MEMBER_TEAM_FIELD_ID = 'workspace-member-team-field';
+const WORKSPACE_MEMBER_TAGS_FIELD_ID = 'workspace-member-tags-field';
+const WORKSPACE_MEMBER_ID_FIELD_ID = 'workspace-member-id-field';
 const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const UNRESTRICTED_ROLE_ID = 'unrestricted-role-1';
@@ -167,6 +169,20 @@ const flatFieldMetadataMaps = buildMaps([
         color: 'blue',
       },
     ],
+  }),
+  getFlatFieldMetadataMock({
+    id: WORKSPACE_MEMBER_TAGS_FIELD_ID,
+    universalIdentifier: WORKSPACE_MEMBER_TAGS_FIELD_ID,
+    name: 'tags',
+    type: FieldMetadataType.ARRAY,
+    objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
+  }),
+  getFlatFieldMetadataMock({
+    id: WORKSPACE_MEMBER_ID_FIELD_ID,
+    universalIdentifier: WORKSPACE_MEMBER_ID_FIELD_ID,
+    name: 'id',
+    type: FieldMetadataType.UUID,
+    objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
   }),
   buildOwnerMorphField({ id: OWNER_MORPH_ID, name: 'owner' }),
   buildOwnerMorphField({
@@ -632,6 +648,80 @@ describe('buildRecordFilterForRule with access group member values', () => {
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
   });
+
+  it('should compare a relation field to the id of the member', () => {
+    expect(
+      buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-relation-member-id', USER_ROLE_ID, {
+              fieldMetadataId: OWNER_COMPANY_FIELD_ID,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_ID_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_ID_FIELD_ID}:`]: OWNER_RECORD_ID,
+        },
+      }),
+    ).toEqual({
+      or: [
+        { ownerCompanyId: { in: [OWNER_RECORD_ID] } },
+        { ownerPersonId: { in: [OWNER_RECORD_ID] } },
+      ],
+    });
+  });
+
+  it('should match nothing for a field compared to a member field of another type', () => {
+    expect(
+      buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-select-member-text', USER_ROLE_ID, {
+              fieldMetadataId: STATUS_FIELD_ID,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: { [`${WORKSPACE_MEMBER_LOCALE_FIELD_ID}:`]: 'OPEN' },
+      }),
+    ).toEqual(UNSATISFIABLE_RECORD_FILTER);
+  });
+
+  it.each([['sales'], 'sales', ['sales', 'support']])(
+    'should match nothing for a text field compared to a member list, whatever it holds (%j)',
+    (memberValue) => {
+      expect(
+        buildRecordFilterForRule({
+          isRelationHopEnabled: false,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+          rowLevelPermissionRule: {
+            predicates: [
+              buildPredicate('predicate-text-member-array', USER_ROLE_ID, {
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_TAGS_FIELD_ID,
+              }),
+            ],
+            predicateGroups: [],
+          },
+          memberFieldValues: {
+            [`${WORKSPACE_MEMBER_TAGS_FIELD_ID}:`]: memberValue,
+          },
+        }),
+      ).toEqual(UNSATISFIABLE_RECORD_FILTER);
+    },
+  );
 
   it('should match nothing when the group holds no value', () => {
     expect(

@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
 import { useAiChatThreadDetailsStatus } from '@/ai/hooks/useAiChatThreadDetailsStatus';
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 type AiChatThreadDetailsStatusProps = {
@@ -21,7 +21,7 @@ export const AiChatThreadDetailsStatus = ({
   const handleStatusChange = ({
     status: nextStatus,
   }: {
-    status: AiChatThreadTriageStatus;
+    status: InboxThreadTriageStatus;
   }) => {
     if (nextStatus === 'snoozed') {
       closeDropdown(dropdownId);

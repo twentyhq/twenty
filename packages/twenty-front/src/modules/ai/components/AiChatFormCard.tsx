@@ -6,7 +6,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatFormCardContent } from '@/ai/components/AiChatFormCardContent';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
 
 type AiChatFormCardProps = {
   toolCallId: string;
@@ -14,7 +14,7 @@ type AiChatFormCardProps = {
 };
 
 export const AiChatFormCard = ({ toolCallId, fields }: AiChatFormCardProps) => {
-  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
+  const { answerAiChatToolCall } = useAnswerAiChatToolCall();
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [error, setError] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,7 +26,7 @@ export const AiChatFormCard = ({ toolCallId, fields }: AiChatFormCardProps) => {
 
     setIsSubmitting(true);
 
-    const isAnswered = await answerAgentChatToolCall({
+    const isAnswered = await answerAiChatToolCall({
       toolCallId,
       response: values,
       optimisticToolOutput: {

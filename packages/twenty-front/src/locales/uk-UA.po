@@ -186,6 +186,7 @@ msgstr "(обрано: {selectedIconKey})"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "[empty string]"
 msgstr "[empty string]"
 
@@ -227,13 +228,13 @@ msgstr "{0, plural, one {{years} рік} few {{years} роки} many {{years} р
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {Вибрано # чат} few {Вибрано # чати} many {Вибрано # чатів} other {Вибрано # чату}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# чат} few {# чати} many {# чатів} other {# чату}}"
 
@@ -468,7 +469,7 @@ msgstr "{0} повторних спроб"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -667,6 +668,11 @@ msgstr "{cardCount, plural, one {Схвалити # дію?} few {Схвалит
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "{channelName} відключено."
+
+#. js-lingui-id: 3gdGx+
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
+msgid "{connectionProviderDisplayName} connected"
+msgstr ""
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1117,10 +1123,10 @@ msgstr "{roleTargetName} буде призначено на роль \"{newRoleN
 msgid "{runCount, plural, one {# turn} other {# turns}}"
 msgstr "{runCount, plural, one {# хід} few {# ходи} many {# ходів} other {# ходу}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — значення за замовчуванням для екземпляра: {defaultText}. Збереження застосовується лише до цього робочого простору."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — типовим значенням для цього робочого простору є {defaultText}. Збереження застосовується лише до цього робочого простору."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1168,7 +1174,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "Вибрано записів: {selectedCount} · пропущено записів: {skippedCount}"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} вибрано"
 
@@ -1178,7 +1184,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} варіантів"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1652,6 +1658,11 @@ msgstr "Форма відкривається для особи, яка запу
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Для людини, яка запускає робочий процес, відкривається форма, яку вона заповнює на місці. З цим тригером вона відображається лише під час запуску робочого процесу. Щоб попросити когось про відповідь або схвалення у вхідних, натомість використайте крок «Надіслати до вхідних»."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "Повідомлення може містити до {maxAttachmentCount} файлів"
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1873,6 +1884,7 @@ msgstr "Налаштування акаунта"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Accounts"
 msgstr "Аккаунти"
 
@@ -2110,7 +2122,7 @@ msgid "Add a recipient before sending"
 msgstr "Додайте одержувача перед надсиланням"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Додайте одержувача або канал перед надсиланням."
 
@@ -2235,7 +2247,7 @@ msgid "Add CC"
 msgstr "Додати копію"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Додати канал"
 
@@ -2636,7 +2648,7 @@ msgid "Add to Favorite"
 msgstr "Додати до обраних"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Додати до обраних"
 
@@ -2876,6 +2888,7 @@ msgstr "Адміністратори"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Розширені"
 
@@ -2940,7 +2953,7 @@ msgid "agent"
 msgstr "агент"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3292,7 +3305,7 @@ msgid "All {objectLabelPlural}"
 msgstr "Всі ({objectLabelPlural})"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "Усі дії"
 
@@ -3322,8 +3335,8 @@ msgid "All applications"
 msgstr "Усі застосування"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "Усі канали"
 
@@ -3331,6 +3344,11 @@ msgstr "Усі канали"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Усі компанії"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "Усі розмови"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3701,6 +3719,7 @@ msgstr "Під час завантаження зображення сталас
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3833,6 +3852,7 @@ msgstr "Виклики API"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions.ts
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "API key"
 msgstr "API-ключ"
 
@@ -3967,6 +3987,11 @@ msgstr "Журнали застосунку"
 msgid "App Operation"
 msgstr "Операція застосунку"
 
+#. js-lingui-id: 7f2JWJ
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
+msgid "App owner workspace"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -4063,6 +4088,7 @@ msgstr "змінна застосунку"
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -4442,7 +4468,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Призначено"
 
@@ -4457,7 +4483,7 @@ msgid "Assigned to"
 msgstr "Призначено"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Призначено мені"
 
@@ -4477,8 +4503,8 @@ msgid "Assignment"
 msgstr "Призначення"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Асистент"
 
@@ -4862,6 +4888,7 @@ msgid "Average"
 msgstr "Середнє"
 
 #. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
 msgstr "Сер. тривалість"
@@ -4912,7 +4939,7 @@ msgid "Back to customization"
 msgstr "Повернутися до налаштування"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Назад до вхідних"
 
@@ -5802,7 +5829,7 @@ msgstr "Скасовано"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Скасовано"
 
@@ -5951,7 +5978,7 @@ msgid "Cell controls"
 msgstr "Елементи керування коміркою"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Змінити"
 
@@ -6052,13 +6079,13 @@ msgid "Channel"
 msgstr "Канал"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Назва каналу"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Параметри каналу"
 
@@ -6068,8 +6095,8 @@ msgid "channel role"
 msgstr "роль каналу"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Канали"
@@ -6092,7 +6119,7 @@ msgid "Chat actions"
 msgstr "Дії чату"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Канали чату, у яких ця роль читає та відповідає"
 
@@ -6119,7 +6146,7 @@ msgid "Chat Sessions"
 msgstr "Сеанси чату"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Чат зупинено: більше немає доступних кредитів."
 
@@ -6348,7 +6375,7 @@ msgid "Choose icon"
 msgstr "Вибрати значок"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Вибрати значок і колір"
@@ -6535,6 +6562,7 @@ msgid "Clear"
 msgstr "Очистити"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -6552,8 +6580,8 @@ msgid "Clear search, go back, or close"
 msgstr "Очистити пошук, повернутися назад або закрити"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Очистити вибір"
@@ -6689,7 +6717,7 @@ msgstr "Буфер обміну вимагає захищеного з'єдна�
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Закрити"
@@ -6849,6 +6877,7 @@ msgstr "згорнути"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Collapse"
 msgstr "Згорнути"
 
@@ -6999,6 +7028,11 @@ msgstr "Команди скопійовані в буфер обміну"
 msgid "Commas and dot"
 msgstr "Коми та крапка"
 
+#. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Comment"
+msgstr ""
+
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -7049,9 +7083,15 @@ msgid "Compare plans"
 msgstr "Порівняти плани"
 
 #. js-lingui-id: amPBVF
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Compensation"
 msgstr "Компенсація"
+
+#. js-lingui-id: 63EmVV
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Compensation for the October outage"
+msgstr ""
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7073,7 +7113,7 @@ msgstr "завершено"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7130,7 +7170,7 @@ msgstr "Умова"
 #. js-lingui-id: jZ2sd2
 #: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
 msgid "Condition (Optional)"
-msgstr ""
+msgstr "Умова (необов'язково)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7372,6 +7412,11 @@ msgstr "Підтвердити оновлення"
 msgid "Confirming your payment"
 msgstr "Підтвердження вашого платежу"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr "Підключити"
+
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
@@ -7381,6 +7426,11 @@ msgstr "Підключити {appName} до {workspaceName}"
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
 msgstr "Підключити {appName} до вашого облікового запису"
+
+#. js-lingui-id: ZdoGKt
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Connect {connectionProviderDisplayName}"
+msgstr ""
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7518,7 +7568,7 @@ msgid "Connection successfully updated"
 msgstr "З'єднання успішно оновлено"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "З’єднання з помічником втрачено. Перезавантажте сторінку, щоб побачити відповідь."
 
@@ -7682,8 +7732,8 @@ msgstr "Контролювати, до яких типів суб'єктів м�
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7700,7 +7750,7 @@ msgid "Conversation key"
 msgstr "Ключ розмови"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Список розмов"
 
@@ -7715,7 +7765,7 @@ msgid "Conversations"
 msgstr "Розмови"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Розмови в цьому каналі з’являться тут."
 
@@ -7725,7 +7775,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Розмови, пов’язані з цим записом, з’являться тут."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Розмови, які ви можете відкрити, з’являться тут."
 
@@ -8001,7 +8051,7 @@ msgid "Could not load related records"
 msgstr "Не вдалося завантажити пов’язані записи"
 
 #. js-lingui-id: 3167/q
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 msgid "Could not load run insights"
 msgstr "Не вдалося завантажити статистику запусків"
 
@@ -8676,6 +8726,7 @@ msgstr "кредити"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8684,6 +8735,11 @@ msgstr "кредити"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Кредити"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr "Кредити · 14 днів"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8719,6 +8775,11 @@ msgstr "кредити, доступні під час пробного пері
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Кредити, надані понад ліміт плану. Їх можна витрачати, доки їх не буде вичерпано."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr "Кредитів на день"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9679,7 +9740,7 @@ msgid "Delete"
 msgstr "Видалити"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "Видалити {channelName}?"
 
@@ -9813,9 +9874,9 @@ msgid "Delete app"
 msgstr "Видалити додаток"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Видалити канал"
 
@@ -10313,7 +10374,12 @@ msgstr "Ідентичність пари в особистому повідом
 #. js-lingui-id: 23aX1b
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Direct messages"
-msgstr ""
+msgstr "Прямі повідомлення"
+
+#. js-lingui-id: Rz4s9r
+#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+msgid "Direct messages don't support attachments."
+msgstr "Прямі повідомлення не підтримують вкладення."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10570,12 +10636,12 @@ msgid "Don't import events marked as private"
 msgstr "Не імпортувати події, позначені як приватні"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Виконано"
@@ -11180,7 +11246,7 @@ msgid "else if"
 msgstr "інакше якщо"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -11480,6 +11546,7 @@ msgstr "Порожньо"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Array"
 msgstr "Порожній масив"
 
@@ -11498,6 +11565,7 @@ msgstr "Порожній масив"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Object"
 msgstr "Порожній об'єкт"
 
@@ -11608,8 +11676,14 @@ msgstr "URL-адреса ендпоінту"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr "Закінчується"
+
+#. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Ends (optional)"
+msgstr ""
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11892,7 +11966,7 @@ msgid "Enter phone number"
 msgstr "Введіть номер телефону"
 
 #. js-lingui-id: xCiJkz
-#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepTestVariableInput.tsx
 msgid "Enter test value"
 msgstr "Введіть тестове значення"
 
@@ -12317,7 +12391,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "кожні {stepNumStr} місяців, між {startMonth} та {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Кожен канал, включно з тими, що буде створено пізніше"
 
@@ -12546,6 +12620,7 @@ msgstr "Вийти з потоку імпорту"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Expand"
 msgstr "Розгорнути"
 
@@ -12781,8 +12856,8 @@ msgstr "Обличчя"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -13048,7 +13123,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Не вдалося пов’язати пов’язані записи з цією подією"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Не вдалося завантажити відомості про агента."
 
@@ -13386,7 +13461,7 @@ msgid "Fast"
 msgstr "Швидкий"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Обрані"
@@ -13743,10 +13818,15 @@ msgid "Filter by record ID"
 msgstr "Фільтрувати за ID запису"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Фільтрувати чати"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr "Фільтрувати розмови"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14063,8 +14143,9 @@ msgstr "Формати"
 
 #. js-lingui-id: CjVkbV
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 msgid "Former member"
 msgstr "Колишній учасник"
 
@@ -15083,7 +15164,7 @@ msgid "Hide hidden groups"
 msgstr "Приховати приховані групи"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Приховати вхідні"
 
@@ -15325,7 +15406,7 @@ msgid "Icon"
 msgstr "Іконка"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Іконка та колір"
 
@@ -15636,7 +15717,7 @@ msgid "Importing Data ..."
 msgstr "Імпорт даних ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "За {channelName}"
 
@@ -16047,6 +16128,11 @@ msgstr "Інтелект"
 msgid "Interface"
 msgstr "Інтерфейс"
 
+#. js-lingui-id: m/FXoF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Internal import setting column"
+msgstr ""
+
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Internet accounts per user"
@@ -16442,7 +16528,7 @@ msgid "Iterator"
 msgstr "Ітератор"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Його чати буде переміщено до {destinationChannelName}. Цю дію неможливо скасувати."
 
@@ -16929,6 +17015,7 @@ msgid "Last refreshed"
 msgstr "Востаннє оновлено"
 
 #. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last run"
 msgstr "Останній запуск"
@@ -16963,7 +17050,7 @@ msgid "Last Updated: {0}"
 msgstr "Останнє оновлення: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Сьогодні пізніше"
 
@@ -17646,7 +17733,7 @@ msgid "Loading retention configuration..."
 msgstr "Завантаження конфігурації збереження..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Завантаження ролей"
 
@@ -18130,7 +18217,7 @@ msgid "Margin"
 msgstr "Зовнішній відступ"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Позначити все як виконане"
 
@@ -18150,7 +18237,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Позначено як виконане {eventTime}"
 
@@ -18276,6 +18363,11 @@ msgstr "Сервери MCP"
 msgid "MCP servers unavailable"
 msgstr "Сервери MCP недоступні"
 
+#. js-lingui-id: iwK6Ak
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP tool step"
+msgstr "Крок інструмента MCP"
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
@@ -18394,7 +18486,7 @@ msgid "Mentioned you"
 msgstr "Вас згадано"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Згадки"
 
@@ -18936,8 +19028,8 @@ msgid "Move Down"
 msgstr "Перемістити вниз"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Перемістити його чати до"
 
@@ -18968,9 +19060,9 @@ msgid "Move to another tab"
 msgstr "Перемістити на іншу вкладку"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Перемістити до каналу"
 
@@ -19114,7 +19206,7 @@ msgstr "Н/Д"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19257,8 +19349,8 @@ msgid "Needs a Select field"
 msgstr "Потрібне поле вибору"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Потребує введення"
 
@@ -19271,6 +19363,7 @@ msgstr "Помилка мережі"
 
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
@@ -19360,14 +19453,14 @@ msgid "New calendar event"
 msgstr "Нова подія календаря"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "Новий канал"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Новий чат"
@@ -19391,7 +19484,7 @@ msgstr "Новий пакет кредитів"
 #. js-lingui-id: ctNfZE
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "New direct message"
-msgstr ""
+msgstr "Нове пряме повідомлення"
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -19597,9 +19690,14 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Наступне списання {totalRenewDate}. Сума у рахунку може відрізнятися, якщо ви додаєте учасників або кредити між періодами"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Наступний чат"
+
+#. js-lingui-id: SKW82h
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Next file"
+msgstr "Наступний файл"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19659,7 +19757,7 @@ msgid "Next Step"
 msgstr "Наступний крок"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Наступного тижня"
 
@@ -19774,7 +19872,7 @@ msgstr "Жодна модель ШІ в цьому робочому просто
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Для цього екземпляра не налаштовано постачальника ШІ."
@@ -19877,7 +19975,7 @@ msgid "No calling code"
 msgstr "Без коду країни"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "Немає каналу"
 
@@ -19917,9 +20015,14 @@ msgstr "Жодних змінних конфігурації, що відпов�
 msgid "No content"
 msgstr "Немає вмісту"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "Жодна розмова не використовує цей канал."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Немає розмов"
 
@@ -20033,6 +20136,11 @@ msgstr "Ланцюжків електронних листів не знайде
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Емодзі не знайдено"
+
+#. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "No end date"
+msgstr ""
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -20190,6 +20298,11 @@ msgstr "Для цього кроку не було зафіксовано жод
 msgid "No matching activity"
 msgstr "Немає відповідних дій"
 
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "Немає відповідних розмов"
+
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "No matching people or roles"
@@ -20289,6 +20402,11 @@ msgstr "Немає виводу"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
 msgstr "Немає доступних результатів"
+
+#. js-lingui-id: LF3XrW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No output returned"
+msgstr "Вивід не повернуто"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20447,7 +20565,7 @@ msgid "No role assigned to this member"
 msgstr "Цьому учаснику не призначено жодної ролі"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "Немає ролей"
 
@@ -20526,6 +20644,16 @@ msgstr "Без теми"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView.tsx
 msgid "No targets available"
 msgstr "Немає доступних цілей"
+
+#. js-lingui-id: n75Kxz
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No test result yet"
+msgstr "Результату тестування ще немає"
+
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "Немає текстового вмісту"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -20738,6 +20866,8 @@ msgstr "Налаштування вузла"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -20849,7 +20979,7 @@ msgid "Not now"
 msgstr "Не зараз"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Не відкрито для вас"
 
@@ -20915,6 +21045,11 @@ msgstr "Не розпочато"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Не синхронізовано"
+
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "Ще ні"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -21199,6 +21334,11 @@ msgstr "Не по традиційному шляху"
 msgid "Official app"
 msgstr "Офіційний застосунок"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr "Не в мережі"
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -21326,10 +21466,20 @@ msgstr "Одна підписка надає один ключ Організа�
 msgid "One-to-one conversations between people"
 msgstr "Особисті розмови між людьми"
 
+#. js-lingui-id: oXOSPE
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr "У мережі"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Тільки застосунки, опубліковані в npm, можна заявляти таким чином."
+
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr "Продовжуйте, лише якщо ви розпочали це підключення з {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -21430,8 +21580,8 @@ msgstr "Лише ви зможете бачити свої електронні 
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21477,9 +21627,9 @@ msgid "Open chat"
 msgstr "Відкрити чат"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Відкривати чати у"
 
@@ -21864,9 +22014,10 @@ msgstr "Оригінальне повідомлення недоступне"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -21985,6 +22136,11 @@ msgstr "Вивід"
 msgid "Output cost"
 msgstr "Вартість вихідних даних"
 
+#. js-lingui-id: SkbJO4
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Output saved"
+msgstr "Вивід збережено"
+
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
@@ -22008,6 +22164,7 @@ msgid "Override Draft"
 msgstr "Перезаписати нарис"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -22238,6 +22395,11 @@ msgstr "Прострочено"
 msgid "Past Due"
 msgstr "Прострочено"
 
+#. js-lingui-id: ENlZ6C
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
+msgstr ""
+
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Paste expected call response here to use its keys later in the workflow"
@@ -22269,7 +22431,7 @@ msgid "Path"
 msgstr "Шлях"
 
 #. js-lingui-id: IgrLD/
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22496,11 +22658,6 @@ msgstr "Особисте використання ШІ"
 msgid "Personal usage"
 msgstr "Особисте використання"
 
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Ліміт особистого використання буде скинуто через {daysUntilReset, plural, one {# день} few {# дні} many {# днів} other {# дня}}."
-
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormPhonesFieldInput.tsx
@@ -22694,7 +22851,7 @@ msgid "Plans"
 msgstr "Плани"
 
 #. js-lingui-id: T91vKp
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Відтворити"
@@ -22934,9 +23091,14 @@ msgid "Previous approval"
 msgstr "Попереднє схвалення"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Попередній чат"
+
+#. js-lingui-id: QY5Szd
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Previous file"
+msgstr "Попередній файл"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23448,6 +23610,16 @@ msgstr "Читати та записувати {target}"
 msgid "Read and write data model configuration"
 msgstr "Читати та записувати конфігурацію моделі даних"
 
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "Прочитано {readerCount} з {recipientCount}"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "Прочитано: {readerNames}"
+
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
@@ -23471,6 +23643,11 @@ msgstr "Читати електронні листи"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Прочитати системні інструкції"
+
+#. js-lingui-id: h1Az4D
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
+msgstr ""
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -23522,6 +23699,7 @@ msgstr "Дозволи на читання/редагування/видален
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23577,7 +23755,8 @@ msgid "Recent failed runs"
 msgstr "Останні невдалі запуски"
 
 #. js-lingui-id: dF8kMd
-#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Recent runs"
 msgstr "Останні запуски"
@@ -23774,7 +23953,7 @@ msgid "Record label"
 msgstr "Мітка запису"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Сторінка запису"
@@ -24006,6 +24185,11 @@ msgstr "Зареєструйте зовнішні сервери MCP у нала
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Зареєстровано як екземпляр для розробки. Цей екземпляр не тарифікуватиметься."
 
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr "Зареєстровано в Twenty як офіційний {appName}"
+
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -24159,7 +24343,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Видалити {0} пункти навігаційного меню?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Вилучити {displayName}"
 
@@ -24240,7 +24424,7 @@ msgid "Remove from blocklist"
 msgstr "Вилучити зі списку блокування"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24392,13 +24576,13 @@ msgstr "Видалити віджет"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Перейменувати"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Перейменувати чат"
 
@@ -24428,7 +24612,7 @@ msgid "Renews on"
 msgstr "Поновлюється"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Повторно відкрити"
 
@@ -24469,12 +24653,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Посилання для встановлення Replit вимагають HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Відповісти"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Відповідь на"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -24750,6 +24940,7 @@ msgstr "Обмежено"
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Result"
 msgstr "Результат"
 
@@ -24960,7 +25151,7 @@ msgid "Role updated successfully"
 msgstr "Роль успішно оновлено"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -24973,8 +25164,8 @@ msgid "Roles"
 msgstr "Ролі"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Ролі в цьому каналі"
 
@@ -25080,6 +25271,11 @@ msgstr "Правило увімкнено."
 msgid "Rule updated."
 msgstr "Правило оновлено."
 
+#. js-lingui-id: 1GQ5z+
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Run a test to see what the tool returns and use its fields in the next steps."
+msgstr "Запустіть тест, щоб побачити, що повертає інструмент, і використати його поля в наступних кроках."
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -25105,9 +25301,19 @@ msgstr "Запускати код для аналізу файлів і дани
 msgid "Run Function"
 msgstr "Запустити функцію"
 
+#. js-lingui-id: scFhaW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run this tool for real?"
+msgstr "Запустити цей інструмент насправді?"
+
+#. js-lingui-id: dLtKV9
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run tool"
+msgstr "Запустити інструмент"
+
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "Виконується"
@@ -25126,6 +25332,11 @@ msgstr "Виконання коду"
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
 msgstr "Виконується функція"
+
+#. js-lingui-id: cHCb42
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Running the tool..."
+msgstr "Інструмент запускається..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -25148,6 +25359,8 @@ msgid "Runs"
 msgstr "Запуски"
 
 #. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Runs · 14d"
@@ -25164,6 +25377,7 @@ msgid "Runs appear here once this workflow is triggered"
 msgstr "Запуски з’являться тут, щойно буде запущено цей робочий процес"
 
 #. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
 msgstr "Запусків на день"
@@ -26442,7 +26656,7 @@ msgid "Selected"
 msgstr "Вибрано"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Вибрані чати"
 
@@ -26602,6 +26816,7 @@ msgid "Sending email"
 msgstr "Надсилання електронного листа"
 
 #. js-lingui-id: G+UdVg
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Не вдалося надіслати"
@@ -26835,6 +27050,7 @@ msgstr "Налаштовуємо вашу <0>базу даних</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -26848,6 +27064,7 @@ msgstr "Налаштовуємо вашу <0>базу даних</0>..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -27034,6 +27251,11 @@ msgstr "Чи повинна зміна мітки також змінювати 
 msgid "Show {0}"
 msgstr "Показати {0}"
 
+#. js-lingui-id: TsjNI1
+#: src/modules/chat/components/ChatMessageImageGridTile.tsx
+msgid "Show {hiddenImageCount} more images"
+msgstr "Показати ще {hiddenImageCount} зображень"
+
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
@@ -27094,7 +27316,7 @@ msgid "Show hidden objects"
 msgstr "Показати приховані об'єкти"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Показати вхідні"
 
@@ -27357,10 +27579,20 @@ msgstr "Пропустити"
 msgid "Skip anyway"
 msgstr "Все одно пропустити"
 
+#. js-lingui-id: 5jWe/6
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
+msgstr ""
+
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Пропустити створення поля «Ім’я» "
+
+#. js-lingui-id: pmVASU
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip internal meetings"
+msgstr ""
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -27451,10 +27683,10 @@ msgid "snippet"
 msgstr "фрагмент"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Відкласти"
@@ -27470,7 +27702,7 @@ msgid "Snooze ended"
 msgstr "Відкладення завершено"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Відкладення завершено {eventTime}"
 
@@ -27487,13 +27719,13 @@ msgstr "Відкласти до {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Відкладено"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Відкладено до {eventTime}"
 
@@ -27560,6 +27792,11 @@ msgstr "Щось пішло не так під час створення ваш�
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "Сталася помилка під час отримання розмов цього запису."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr "Щось пішло не так під час отримання повідомлень цього запису."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -27729,7 +27966,7 @@ msgid "Split multiple values"
 msgstr "Розділити кілька значень"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Розділений перегляд"
 
@@ -28745,6 +28982,8 @@ msgstr "Умови надання послуг"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Тест"
@@ -28769,6 +29008,11 @@ msgstr "Протестуйте цей крок, щоб переглянути й
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Test your function"
 msgstr "Тестуйте функцію"
+
+#. js-lingui-id: 4WDbC6
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
+msgstr "Тестування викликає {toolName} на {mcpServerLabel} з поточними аргументами. Цей інструмент не позначено як доступний лише для читання, тому він може створювати, змінювати або видаляти дані."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28968,6 +29212,11 @@ msgstr "З'єднання для експорту втрачено. Спробу
 msgid "The export was interrupted. Please try again."
 msgstr "Експорт було перервано. Спробуйте ще раз."
 
+#. js-lingui-id: KXe+rm
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The fields below are now available as variables in the next steps."
+msgstr "Наведені нижче поля тепер доступні як змінні в наступних кроках."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -29114,6 +29363,23 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Спільна електронна адреса, яку ви хочете використовувати."
+
+#. js-lingui-id: V27DQk
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
+msgid "The tool arguments must resolve to an object"
+msgstr "Аргументи інструмента мають обчислюватися до об’єкта"
+
+#. js-lingui-id: vglXPW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+msgid "The tool call failed"
+msgstr "Не вдалося викликати інструмент"
+
+#. js-lingui-id: xOR8cR
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The tool ran but returned no fields, so the expected output was left unchanged."
+msgstr "Інструмент було запущено, але він не повернув полів, тому очікуваний вивід залишився без змін."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29365,6 +29631,11 @@ msgstr "Цей агент має спільну роль з іншими уча�
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Цей агент має спільну роль з іншими учасниками або агентами. Змініть його інструменти в Налаштування > Ролі."
 
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr "Ця програма називає себе {appName}, але Twenty не зміг це підтвердити. Продовжуйте, лише якщо ви розпочали це підключення з {appName}."
+
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
@@ -29476,7 +29747,7 @@ msgstr "Це з'єднання не існує або недоступне дл�
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Ця розмова більше недоступна."
 
@@ -29496,7 +29767,7 @@ msgid "This device"
 msgstr "Цей пристрій"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "Сьогодні ввечері"
 
@@ -29993,7 +30264,7 @@ msgid "Today"
 msgstr "Сьогодні"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Сьогодні, {time}"
 
@@ -30076,13 +30347,18 @@ msgstr "токени"
 msgid "Tokens"
 msgstr "Токени"
 
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr "Токени · 14d"
+
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Tomato"
 msgstr "Томатний"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Завтра"
@@ -30300,7 +30576,7 @@ msgid "Translations"
 msgstr "Переклади"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Сортування"
 
@@ -30476,6 +30752,7 @@ msgid "True/False"
 msgstr "Так/Ні"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30487,7 +30764,7 @@ msgstr "Спробувати ще раз"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Спробуйте ще раз за мить"
@@ -30749,7 +31026,7 @@ msgid "Unanswered"
 msgstr "Без відповіді"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Не призначено"
 
@@ -30962,7 +31239,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Невідоме поле \"{fieldName}\" у \"{relationFieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Невідомий файл"
 
@@ -30979,7 +31256,7 @@ msgstr "Невідома помилка синтаксичного аналіз�
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Невідомий відправник"
 
@@ -31157,7 +31434,7 @@ msgid "Unsubscribed"
 msgstr "Відписано"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Відписано {eventTime}. Нові повідомлення не надходитимуть до ваших вхідних, якщо вас не згадають."
 
@@ -31182,8 +31459,8 @@ msgid "Until {snoozedUntilDay}"
 msgstr "До {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -31905,6 +32182,7 @@ msgstr "Корисно для проміжних/зв’язувальних т�
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -31998,11 +32276,6 @@ msgstr "Використовується значення за замовчув�
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default value. Set a custom value to override."
 msgstr "Використовується значення за замовчуванням. Встановіть користувацьке значення, щоб перевизначити."
-
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Використання кредитів робочого простору протягом {daysUntilReset, plural, one {# дня} few {# днів} many {# днів} other {# дня}}."
 
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -32312,7 +32585,7 @@ msgid "View only — You can read this conversation."
 msgstr "Лише перегляд — Ви можете читати цю розмову."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Переглянути оригінальне повідомлення"
 
@@ -32443,12 +32716,12 @@ msgid "Wait for Event"
 msgstr "Очікувати подію"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Зачекайте, доки вкладення завершать завантаження."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "Очікування"
@@ -32479,7 +32752,7 @@ msgid "Waiting for your approval"
 msgstr "Очікування вашого схвалення"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Активувати зараз"
 
@@ -32589,6 +32862,11 @@ msgstr "Нам не вдалося підтвердити ваш спосіб о
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
 msgstr "Не вдалося завантажити розмови"
+
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr "Нам не вдалося завантажити повідомлення"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32774,6 +33052,21 @@ msgstr "Тиждень"
 msgid "Weekly"
 msgstr "Щотижня"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Досягнуто тижневого ліміту особистого використання ШІ. Попросіть адміністратора ввімкнути кредити робочого простору."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Досягнуто тижневого ліміту особистого використання ШІ. Увімкніть кредити робочого простору, щоб продовжити."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Досягнуто тижневого ліміту особистого використання ШІ. Тепер використовуються кредити робочого простору."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32815,10 +33108,10 @@ msgstr "Чим я можу вам допомогти?"
 msgid "What can you do?"
 msgstr "Що ви можете робити?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "Що обмежує цей робочий простір. Значення за замовчуванням для екземпляра задаються змінними конфігурації, і лише оператор може замінити одне з них."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "Що обмежує цей робочий простір. Значення за замовчуванням надходять зі змінних конфігурації та плану робочого простору, і лише оператор може замінити одне з них."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33026,7 +33319,7 @@ msgid "Wink"
 msgstr "Підморгування"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "Оскільки немає іншого каналу, до якого можна перемістити його чати, можна видалити лише порожній канал. Це неможливо скасувати."
 
@@ -33215,6 +33508,7 @@ msgstr "Початок робочого часу"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -33575,7 +33869,9 @@ msgstr "Учора"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

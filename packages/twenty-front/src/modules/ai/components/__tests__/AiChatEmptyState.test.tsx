@@ -3,9 +3,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {
@@ -29,7 +29,7 @@ describe('AiChatEmptyState', () => {
     resetJotaiStore();
     jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
     jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
@@ -42,7 +42,7 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is awaiting its first chunk', () => {
     jotaiStore.set(
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
       true,
@@ -57,7 +57,7 @@ describe('AiChatEmptyState', () => {
 
   it('should render nothing when the current thread is streaming', () => {
     jotaiStore.set(
-      agentChatIsStreamingFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatIsStreamingFamilyState.atomFamily({ threadId: THREAD_ID }),
       true,
     );
 

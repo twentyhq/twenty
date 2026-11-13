@@ -277,6 +277,11 @@ msgstr "在活动中跟踪的链接"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "营销邮件一次只能发送给一位收件人，因此每个人都会获得自己的取消订阅链接。"
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "消息需要文本或至少一个附件。"
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "嵌套关系小部件必须使用表格布局。"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "访问日历时发生网络错误。"
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "此工作区中已有导出正在运行。请等待其完成。"
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "外部服务响应时间过长。"
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2717,6 +2732,11 @@ msgstr "无法修改谓词以将其角色从 {existingRoleIdentifier} 更改为 
 msgid "Cannot remove the last admin from the workspace."
 msgstr "无法从工作区移除最后一位管理员。"
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2959,6 +2979,11 @@ msgstr "与联系人相关的聊天"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "与机会相关的聊天"
+
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "选择一个活动标签页和与其布局模式相匹配的小组件位置。"
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3454,6 +3479,11 @@ msgstr "此应用程序中已存在名为 {0} 的连接提供商"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "类型为 'custom' 的连接提供商必须引用 authorize 和 callback 逻辑函数"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "类型为 'oauth-discovery' 的连接提供程序需要 HTTP 或 HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5075,6 +5105,11 @@ msgstr "数据充实"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "请输入一个长度介于 1 到 {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} 个字符之间的名称，以及支持的助手外观选项。"
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5343,6 +5378,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "外部录音 ID"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5385,11 +5425,6 @@ msgstr "创建记录失败。"
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "无法删除文件 {fileId}"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "删除作业失败。请稍后再试。"
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5482,6 +5517,11 @@ msgstr "未找到功能配置。"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "二月"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6162,6 +6202,11 @@ msgstr "当 engineComponentKey 为 TRIGGER_WORKFLOW_VERSION 时，不得设置 f
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "前端组件构建器请求超过了 6 MiB 限制。请减少应用依赖项或生成的 SDK 大小。"
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "未找到前端组件。"
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8466,6 +8511,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "标记为未读"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "在此应用程序中未找到将会话标记为已读的逻辑函数 \"{markThreadAsReadLogicFunctionUniversalIdentifier}\""
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8657,6 +8707,11 @@ msgstr "消息"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "消息"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "无法保存消息附件。请重试。"
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9502,6 +9557,11 @@ msgstr "未指定有效收件人"
 msgid "No verified sending domain matches this from address."
 msgstr "没有已验证的发信域名与此发件地址匹配。"
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9749,6 +9809,11 @@ msgstr "OAuth 访问被拒绝。"
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth 连接提供商缺少其 oauth 配置块"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "OAuth 发现连接提供程序需要其登录所用资源的 URL"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9988,6 +10053,11 @@ msgstr "只有已计划或正在发送的营销活动可以取消。"
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "只有服务器管理员才能管理该成员的恢复代码。"
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10030,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "只有拥有此智能体的应用程序才能更改其触发器"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "只有创建此工作流的人员可以更改其可见范围"
 
@@ -13806,7 +13876,7 @@ msgstr "数据库事件触发器的条件必须为文本"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "智能体触发器的条件无效"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14059,6 +14129,11 @@ msgstr "未找到用于识别已连接账户的逻辑函数。"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "未找到启动连接的逻辑函数。"
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "未在此消息提供程序的应用程序中找到其用于将会话标记为已读的逻辑函数。"
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14793,6 +14868,11 @@ msgstr "此功能在不超过 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} 个席位时免
 msgid "This feature is not enabled."
 msgstr "未启用此功能。"
 
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14865,6 +14945,11 @@ msgstr "此文件上传已完成最终处理。"
 msgid "This form no longer waits for an answer."
 msgstr "此表单不再等待回答。"
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "此页面布局中无法使用此前端组件。"
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14924,6 +15009,21 @@ msgstr "此日志表无效。"
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "不支持此 MCP 方法。"
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "此 MCP 服务器属于另一个应用程序，因此此工作流无法使用它。"
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "此 MCP 服务器未激活。请先激活它，再测试其工具。"
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "此 MCP 服务器不适用于此工作流。"
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15215,6 +15315,16 @@ msgstr "此 SVG 太大，无法处理。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "不支持此时间线活动操作"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "此工具不再由其 MCP 服务器提供。"
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "此工具可能会更改数据。请先确认测试，再运行。"
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17008,6 +17118,11 @@ msgstr "我们无法完成连接。请重试。"
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "我们无法识别您授权的账户。请重试。"
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "我们无法将此对话标记为已读。"
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17017,6 +17132,11 @@ msgstr "我们无法发送您的消息。请重试。"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "我们无法启动连接。请重试。"
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17226,6 +17346,11 @@ msgstr "谁接收访问权限"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "授予访问权限的原因"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "需要配置微件。"
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

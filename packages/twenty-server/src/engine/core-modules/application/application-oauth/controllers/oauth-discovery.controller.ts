@@ -3,6 +3,7 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 
+import { OAUTH_PROTECTED_RESOURCE_PATHS } from 'src/engine/core-modules/application/application-oauth/constants/oauth-protected-resource-paths.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -69,7 +70,10 @@ export class OAuthDiscoveryController {
   getProtectedResourceMetadataRoot(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
-    return this.buildProtectedResourceMetadata(base, base);
+    return this.buildProtectedResourceMetadata(
+      base,
+      `${base}${OAUTH_PROTECTED_RESOURCE_PATHS.ROOT}`,
+    );
   }
 
   @Get('oauth-protected-resource/mcp')
@@ -77,7 +81,10 @@ export class OAuthDiscoveryController {
   getProtectedResourceMetadataMcp(@Req() request: Request) {
     const base = getRequestBaseUrl(request);
 
-    return this.buildProtectedResourceMetadata(base, `${base}/mcp`);
+    return this.buildProtectedResourceMetadata(
+      base,
+      `${base}${OAUTH_PROTECTED_RESOURCE_PATHS.MCP}`,
+    );
   }
 
   private buildProtectedResourceMetadata(base: string, resource: string) {

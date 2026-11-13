@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -15,7 +15,12 @@ import {
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
+  getFilterValueValidationIssue,
   isDefined,
+  isFilterValueExpectedAsArray,
+  isRecordFilterOperandExpectingValue,
+  isRecordFilterValueValid,
+  isWorkspaceMemberFieldCompatibleWithRlsPredicate,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
@@ -25,7 +30,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
-import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
+import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -125,8 +130,9 @@ const buildPredicateRecordFilter = ({
     | CompositeFieldSubFieldName
     | undefined;
   const operand = mapRLSOperandToRecordFilterOperand(predicate.operand);
+  const filterType = getFilterTypeFromFieldType(fieldMetadata.type);
   const allowedOperands = getFilterOperandsForFilterableFieldType({
-    filterType: getFilterTypeFromFieldType(fieldMetadata.type),
+    filterType,
     subFieldName,
   });
 
@@ -142,19 +148,20 @@ const buildPredicateRecordFilter = ({
   }
 
   let predicateValue = predicate.value;
+  const workspaceMemberFieldMetadata = isDefined(
+    predicate.workspaceMemberFieldMetadataId,
+  )
+    ? findFieldMetadataOrThrow({
+        fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
+        predicateId: predicate.id,
+        flatFieldMetadataMaps,
+        errorMessage: 'Workspace member field metadata not found',
+      })
+    : undefined;
 
-  if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
+  if (isDefined(workspaceMemberFieldMetadata)) {
     predicateValue = keepTargetFieldOptions({
-      value: resolveMemberFieldValuesPredicateValue({
-        memberFieldValues,
-        predicate,
-        workspaceMemberFieldMetadata: findFieldMetadataOrThrow({
-          fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
-          predicateId: predicate.id,
-          flatFieldMetadataMaps,
-          errorMessage: 'Workspace member field metadata not found',
-        }),
-      }),
+      value: memberFieldValues[buildMemberFieldKey(predicate)] ?? null,
       targetFieldMetadata: fieldMetadata,
     });
 
@@ -167,28 +174,77 @@ const buildPredicateRecordFilter = ({
     }
   }
 
-  const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
-    recordFilters: [
-      {
-        fieldMetadataId:
-          predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
-        relationTargetFieldMetadataId: isDefined(
-          predicate.relationFieldMetadataId,
-        )
-          ? predicate.fieldMetadataId
-          : undefined,
-        value: convertViewFilterValueToString(predicateValue),
+  const buildValueRecordFilter = (
+    value: RowLevelPermissionPredicateValue,
+  ): RecordGqlOperationFilter | undefined => {
+    const recordFilter = computeRecordGqlOperationFilterFromFlatMaps({
+      recordFilters: [
+        {
+          fieldMetadataId:
+            predicate.relationFieldMetadataId ?? predicate.fieldMetadataId,
+          relationTargetFieldMetadataId: isDefined(
+            predicate.relationFieldMetadataId,
+          )
+            ? predicate.fieldMetadataId
+            : undefined,
+          value: convertViewFilterValueToString(value),
+          operand,
+          subFieldName,
+        },
+      ],
+      recordFilterGroups: [],
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      filterValueDependencies: { currentWorkspaceMemberId },
+    });
+
+    return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+  };
+
+  if (!isDefined(workspaceMemberFieldMetadata)) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (!isRecordFilterOperandExpectingValue(operand)) {
+    return buildValueRecordFilter(predicateValue);
+  }
+
+  if (
+    !isWorkspaceMemberFieldCompatibleWithRlsPredicate({
+      fieldType: fieldMetadata.type,
+      subFieldName,
+      workspaceMemberFieldType: workspaceMemberFieldMetadata.type,
+      workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+    })
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
+  if (isFilterValueExpectedAsArray({ filterType, operand, subFieldName })) {
+    return buildValueRecordFilter(
+      isString(predicateValue) ? [predicateValue] : predicateValue,
+    );
+  }
+
+  // A member value the filter would drop or misread must not widen the rule
+  if (
+    !isRecordFilterValueValid({
+      operand,
+      value: convertViewFilterValueToString(predicateValue),
+    }) ||
+    isDefined(
+      getFilterValueValidationIssue({
+        fieldType: fieldMetadata.type,
         operand,
         subFieldName,
-      },
-    ],
-    recordFilterGroups: [],
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-    filterValueDependencies: { currentWorkspaceMemberId },
-  });
+        value: predicateValue,
+      }),
+    )
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
 
-  return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
+  return buildValueRecordFilter(predicateValue);
 };
 
 const combineRecordFilters = (

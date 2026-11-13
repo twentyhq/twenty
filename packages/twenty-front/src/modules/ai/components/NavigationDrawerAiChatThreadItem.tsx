@@ -5,19 +5,19 @@ import { useId } from 'react';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
+import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
 type NavigationDrawerAiChatThreadItemProps = {
-  thread: AgentChatThreadListItem;
+  thread: InboxThreadListItemData;
   isActive: boolean;
-  onClick: (thread: AgentChatThreadListItem) => void;
+  onClick: (thread: InboxThreadListItemData) => void;
 };
 
 export const NavigationDrawerAiChatThreadItem = ({
@@ -37,8 +37,8 @@ export const NavigationDrawerAiChatThreadItem = ({
   } = useAiChatThreadRename(thread);
 
   const isDeleted = Boolean(thread.deletedAt);
-  const isShownAsUnread = useIsAgentChatThreadShownAsUnread(thread);
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const isShownAsUnread = useIsAiChatThreadShownAsUnread(thread);
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`New chat`,
   });

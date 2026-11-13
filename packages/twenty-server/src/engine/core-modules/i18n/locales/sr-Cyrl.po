@@ -277,6 +277,11 @@ msgstr "Веза праћена у кампањи"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Маркетиншка е-порука може се послати само једном примаоцу истовремено, тако да свака особа добија сопствену везу за одјаву."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Порука мора да садржи текст или бар један прилог."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "Виџет угнежђене релације мора да корис�
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "Дошло је до мрежне грешке при приступу календару."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "Извоз је већ у току у овом радном просто
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Спољној услузи је требало предуго да одговори."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2717,6 +2732,11 @@ msgstr "Није могуће изменити предикат да би се �
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Није могуће уклонити последњег администратора из радног простора."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2959,6 +2979,11 @@ msgstr "Ћаскања везана за контакт"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Ћаскања везана за прилику"
+
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Изаберите активну картицу и позицију виџета која одговара његовом режиму распореда."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3454,6 +3479,11 @@ msgstr "Провајдер конекције са називом {0} већ п�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Провајдер конекције типа 'custom' мора да упућује на логичку функцију authorize и callback"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "Добављач везе типа 'oauth-discovery' захтева HTTP или HTTPS oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5075,6 +5105,11 @@ msgstr "Обогати"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Унесите име од 1 до {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} знакова и подржане опције изгледа помоћника."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5343,6 +5378,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Спољни ID снимања"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5385,11 +5425,6 @@ msgstr "Није успело креирање записа."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "Није успело брисање датотеке {fileId}"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Није успело брисање задатака. Покушајте поново касније."
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5482,6 +5517,11 @@ msgstr "Конфигурација функционалности није пр�
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "Фебруар"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6162,6 +6202,11 @@ msgstr "frontComponentId не сме бити постављен када је e
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Захтев за израду frontend компоненте премашује ограничење од 6 MiB. Смањите зависности апликације или величину генерисаног SDK-а."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Фронтенд компонента није пронађена."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8466,6 +8511,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Означи као непрочитано"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Функција логике за означавање нити као прочитане \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" није пронађена у овој апликацији"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8657,6 +8707,11 @@ msgstr "Порука"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Порука"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Прилози поруке нису могли бити сачувани. Покушајте поново."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9502,6 +9557,11 @@ msgstr "Нису наведени важећи примаоци"
 msgid "No verified sending domain matches this from address."
 msgstr "Ниједан верификован домен за слање не одговара овој адреси пошиљаоца."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9749,6 +9809,11 @@ msgstr "OAuth приступ је одбијен."
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth провајдеру конекције недостаје његов oauth config блок"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "Добављач везе за OAuth откривање захтева URL ресурса на који се пријављује"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9988,6 +10053,11 @@ msgstr "Само заказана кампања или кампања у ток
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Само администратор сервера може управљати кодовима за опоравак овог члана."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10030,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Само апликација која поседује овог агента може променити његове окидаче"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Само особа која је креирала овај ток рада може да промени ко га види"
 
@@ -13806,7 +13876,7 @@ msgstr "Услов окидача догађаја базе података м�
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Услов агенстког окидача је неважећи"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14059,6 +14129,11 @@ msgstr "Логичка функција која идентификује пов
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "Логичка функција која покреће конекцију није пронађена."
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Функција логике коју овај добављач размене порука користи за означавање нити као прочитаних није пронађена у његовој апликацији."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14793,6 +14868,11 @@ msgstr "Ова функција је бесплатна за највише {MAX
 msgid "This feature is not enabled."
 msgstr "Ова функција није омогућена."
 
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14865,6 +14945,11 @@ msgstr "Ово отпремање датотеке је већ финализо�
 msgid "This form no longer waits for an answer."
 msgstr "Овај образац више не чека одговор."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Ова фронтенд компонента није доступна у овом распореду странице."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14924,6 +15009,21 @@ msgstr "Ова табела евиденције није важећа."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Ова MCP метода није подржана."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Овај MCP сервер припада другој апликацији, па овај радни ток не може да га користи."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Овај MCP сервер је неактиван. Активирајте га пре тестирања његових алата."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Овај MCP сервер није доступан овом радном току."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15215,6 +15315,16 @@ msgstr "Овај SVG је превелик за обраду."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Ова радња активности временске линије није подржана"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Овај алат његов MCP сервер више не нуди."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Овај алат може да измени податке. Потврдите тест пре него што га покренете."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17008,6 +17118,11 @@ msgstr "Нисмо могли да довршимо конекцију. Поку
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Нисмо могли да идентификујемо налог који сте одобрили. Покушајте поново."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Нисмо могли да означимо овај разговор као прочитан."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17017,6 +17132,11 @@ msgstr "Нисмо могли да пошаљемо вашу поруку. По�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Нисмо могли да покренемо конекцију. Покушајте поново."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17226,6 +17346,11 @@ msgstr "Ко прима приступ"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Зашто је приступ одобрен"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Конфигурација виџета је обавезна."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

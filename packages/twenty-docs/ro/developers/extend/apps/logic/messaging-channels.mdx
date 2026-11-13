@@ -277,13 +277,56 @@ export const linkedinSendMessageHandler = async ({
 
 Sarcina utilă conține `messagingProviderName`, `threadExternalId` al conversației, așa cum a fost ingerat, `text`, `idempotencyKey` și `recipients`: participanții la cel mai recent mesaj al firului de discuție, în afară de identificatorul propriu al canalului, astfel încât o persoană care a participat doar la un schimb anterior de mesaje nu primește un mesaj. Preferați conversația proprie a furnizorului în locul `recipients` atunci când API-ul său trimite către un ID de conversație. returnează ID-ul furnizorului pentru mesajul trimis ca `externalId`.
 
-`conversationStyle` al încărcăturii utile corespunde celui al furnizorului (`'chat'` atunci când acesta nu declară niciunul). Cu `'email'` (de exemplu, o aplicație care sincronizează Outlook sau Gmail), membrii răspund în schimb cu editorul de e-mail, iar încărcătura utilă include și un bloc `email`: `subject`, corpul cu text îmbogățit compilat în `html`, destinatarii `cc` și `bcc` și `inReplyToExternalId`, `externalId` al mesajului la care se răspunde atunci când Twenty îl cunoaște. `recipients` sunt apoi adresele `To` selectate de membru, iar `text` este versiunea în text simplu a corpului. Atașamentele nu sunt încă trimise. Necesită `"engines": { "twenty": ">=2.58.0" }`.
+`conversationStyle` al încărcăturii utile corespunde celui al furnizorului (`'chat'` atunci când acesta nu declară niciunul). Cu `'email'` (de exemplu, o aplicație care sincronizează Outlook sau Gmail), membrii răspund în schimb cu editorul de e-mail, iar încărcătura utilă include și un bloc `email`: `subject`, corpul cu text îmbogățit compilat în `html`, destinatarii `cc` și `bcc` și `inReplyToExternalId`, `externalId` al mesajului la care se răspunde atunci când Twenty îl cunoaște. `recipients` sunt apoi adresele `To` selectate de membru, iar `text` este versiunea în text simplu a corpului. Necesită `"engines": { "twenty": ">=2.58.0" }`.
 
-Twenty înregistrează apoi răspunsul în firul de discuție ca mesaj trimis de la canal, cu aceiași destinatari, astfel încât acesta apare imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
+Când spațiul de lucru are atașamentele de mesaje activate, un membru poate atașa fișiere la un răspuns, iar răspunsul poate avea apoi un câmp `text` gol. Mutația acceptă apoi și `attachments`, cel mult 20, fiecare cu `id` al unui fișier încărcat ca atașament de e-mail și cu `name` al acestuia. `attachments` din payload le enumeră și este un array gol pentru un răspuns care conține doar text. Fiecare are un `filename`, un `contentType`, un `size` în octeți și un `downloadUrl`: un link semnat pe care funcția ta îl accesează pentru a obține fișierul, astfel încât octeții să nu circule niciodată în payload. Verifică `size` în raport cu limita furnizorului tău înainte de descărcare și generează o eroare atunci când furnizorul nu poate livra un fișier, în loc să trimiți doar textul, astfel încât membrul să vadă că răspunsul eșuează:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+`attachments` necesită `"engines": { "twenty": ">=2.59.0" }`.
+
+Twenty înregistrează apoi răspunsul în fir ca mesaj trimis de la canal, cu aceiași destinatari și atașamentele sale, astfel încât să fie afișat imediat. Când webhook-ul dvs. livrează ulterior același mesaj, ingerarea acestuia cu acel `externalId` nu modifică nimic.
 
 Funcția rulează în cadrul cererii `sendAppChannelMessage`. Dacă generează o excepție sau nu returnează niciun `externalId`, mutația eșuează și nu se înregistrează nimic.
 
 După ce funcția dvs. returnează, Twenty păstrează livrarea timp de 24 de ore pentru membru, canal, firul de discuție și `idempotencyKey`. Dacă înregistrarea răspunsului eșuează apoi, mutația eșuează, iar reîncercarea cu aceeași cheie înregistrează răspunsul livrat fără a apela din nou funcția dvs.; o reîncercare a unui răspuns deja înregistrat îl returnează. O reîncercare în timp ce primul apel încă trimite așteaptă finalizarea acestuia. O cheie nouă reprezintă un răspuns nou. Funcția dvs. poate fi totuși apelată de două ori pentru un răspuns dacă clientul reîncearcă cu o cheie nouă sau după cele 24 de ore ori dacă funcția dvs. eșuează după ce furnizorul a acceptat mesajul, așadar transmiteți `idempotencyKey` către furnizor atunci când API-ul acestuia acceptă trimiteri idempotente. Un canal cu `isSyncEnabled: false` refuză răspunsurile fără a apela funcția dvs. Un canal fără furnizor de mesagerie sau al cărui furnizor nu are `sendMessageLogicFunction` ori nu mai există nu poate trimite mesaje; conversațiile sale rămân neschimbate. Necesită `"engines": { "twenty": ">=2.52.0" }`.
+
+## Marcarea firelor de discuție ca citite
+
+Twenty nu păstrează nicio stare de citire pentru mesajele aplicației, dar îi poate indica furnizorului dvs. când un membru citește o conversație în Twenty, astfel încât furnizorul să o marcheze ca citită în sursă. Declarați o funcție `markThreadAsReadLogicFunction` pe furnizorul de mesagerie:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-mark-thread-as-read-handler.ts
+import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinMarkThreadAsReadHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+}: MarkAppThreadAsReadPayload) => {
+  await markLinkedinConversationAsRead({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+  });
+};
+```
+
+Când proprietarul contului canalului deschide unul dintre firele sale de discuție, Twenty apelează mutația `markAppChannelThreadAsRead`, care rulează funcția dvs. cu `messagingProviderName`, `connectedAccountId`, `messageChannelId` și `threadExternalId` al conversației. Valoarea sa returnată este ignorată. Membrii cu care este partajat doar contul nu îl declanșează niciodată, iar apelurile pentru același membru și același fir sunt omise timp de 30 de secunde, astfel încât redeschiderea unei conversații nu vă apelează din nou furnizorul. Apelul este efectuat cu cele mai bune eforturi: firul se deschide indiferent de ce face funcția dvs. Un furnizor fără `markThreadAsReadLogicFunction` nu este apelat niciodată. Necesită `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Listarea și actualizarea canalelor
 

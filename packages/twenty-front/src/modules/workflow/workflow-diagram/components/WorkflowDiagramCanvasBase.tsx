@@ -304,7 +304,7 @@ export const WorkflowDiagramCanvasBase = ({
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,
   ) => {
     setWorkflowDiagram((diagram) => {
-      if (isDefined(diagram) === false) {
+      if (!isDefined(diagram)) {
         throw new Error(
           doNotTranslate(
             'It must be impossible for the edges to be updated if the diagram is not defined yet. Be sure the diagram is rendered only when defined.',

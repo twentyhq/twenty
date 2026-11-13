@@ -33,12 +33,12 @@ export class GetViewQueryParametersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId, actorContext },
+    context: { workspaceId, userWorkspaceId, actorMetadata },
   }: ToolExecuteArgs<
     typeof getViewQueryParamsInputSchema
   >): Promise<ToolOutput> {
     const currentWorkspaceMemberId =
-      actorContext?.workspaceMemberId ?? undefined;
+      actorMetadata?.workspaceMemberId ?? undefined;
 
     const queryParameters =
       await this.viewQueryParamsService.resolveViewToQueryParams({

@@ -277,6 +277,11 @@ msgstr "קישור שנמצא במעקב בקמפיין"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "אפשר לשלוח אימייל שיווקי לנמען אחד בלבד בכל פעם, כך שכל אדם מקבל קישור הסרה משלו."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "הודעה זקוקה לטקסט או לקובץ מצורף אחד לפחות."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "ווידג׳ט קשר מקונן חייב להשתמש בפריסת טב
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "אירעה שגיאת רשת בעת הגישה ללוח השנה."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "ייצוא כבר פועל בסביבת עבודה זו. נא להמתי
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "לשירות חיצוני לקח זמן רב מדי להגיב."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2717,6 +2732,11 @@ msgstr "לא ניתן לשנות תנאי כדי לשנות את התפקיד ש
 msgid "Cannot remove the last admin from the workspace."
 msgstr "לא ניתן להסיר את המנהל האחרון מסביבת העבודה."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2959,6 +2979,11 @@ msgstr "שיחות שקשורות לאיש קשר"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "שיחות שקשורות להזדמנות"
+
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "בחרו כרטיסייה פעילה ומיקום לווידג'ט התואם למצב הפריסה שלה."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3454,6 +3479,11 @@ msgstr "ספק חיבור בשם {0} כבר קיים עבור יישום זה"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "ספק חיבור מסוג 'custom' חייב להפנות לפונקציית לוגיקה של authorize ושל callback"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "ספק חיבור מסוג 'oauth-discovery' זקוק ל-oauthDiscoveryConfig.resourceUrl מסוג HTTP או HTTPS"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5075,6 +5105,11 @@ msgstr "העשרה"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "הזן שם באורך של בין 1 ל-{AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} תווים ואפשרויות מראה נתמכות של העוזר."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5343,6 +5378,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "מזהה הקלטה חיצוני"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5385,11 +5425,6 @@ msgstr "יצירת הרשומה נכשלה."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "לא הצליח למחוק קובץ {fileId}"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "נכשל המחיקה של המשימות. אנא נסה שוב מאוחר יותר."
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5482,6 +5517,11 @@ msgstr "תצורת תכונה לא נמצאה."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "פברואר"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6162,6 +6202,11 @@ msgstr "אין להגדיר frontComponentId כאשר engineComponentKey הוא 
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "בקשת בונה רכיבי ה-Frontend חורגת ממגבלת 6 MiB. צמצם את יחסי התלות של האפליקציה או את גודל ה-SDK שנוצר."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "רכיב Frontend לא נמצא."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8466,6 +8511,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "סמן כלא נקרא"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "פונקציית הלוגיקה לסימון שרשור כנקרא \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" לא נמצאה ביישום זה"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8657,6 +8707,11 @@ msgstr "הודעה"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "הודעה"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "לא ניתן היה לשמור את קבצי ההודעות המצורפים. נסו שוב."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9502,6 +9557,11 @@ msgstr "לא צוינו נמענים תקינים"
 msgid "No verified sending domain matches this from address."
 msgstr "אין דומיין שליחה מאומת התואם לכתובת השולח הזו."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9749,6 +9809,11 @@ msgstr "הגישה באמצעות OAuth נדחתה."
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "לספק חיבור OAuth חסר בלוק ה-oauth config שלו"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "ספק חיבור לגילוי OAuth זקוק לכתובת ה-URL של המשאב שאליו הוא מתחבר"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9988,6 +10053,11 @@ msgstr "ניתן לבטל רק קמפיין מתוזמן או קמפיין שנ�
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "רק מנהל שרת יכול לנהל קודי שחזור עבור חבר זה."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10030,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "רק היישום שבבעלותו סוכן זה יכול לשנות את המפעילים שלו"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "רק האדם שיצר זרימת עבודה זו יכול לשנות מי רואה אותה"
 
@@ -10269,7 +10339,7 @@ msgstr "ערך אפשרות חורג מ-63 תווים."
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
-msgstr "פורמט ערך האפשרות אינו נתמך"
+msgstr ""
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
@@ -10280,7 +10350,7 @@ msgstr "נדרש ערך אפשרות."
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr "ערך האפשרות חייב להיות מחרוזת של לפחות תו אחד"
+msgstr ""
 
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
@@ -13806,7 +13876,7 @@ msgstr "התנאי של מפעיל אירועי מסד נתונים חייב ל�
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "התנאי של גורם מפעיל אינו תקין"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14059,6 +14129,11 @@ msgstr "פונקציית הלוגיקה שמזהה את החשבון המחוב�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "פונקציית הלוגיקה שמתחילה את החיבור לא נמצאה."
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "פונקציית הלוגיקה שבה ספק הודעות זה מסמן שרשורים כנקראו לא נמצאה ביישום שלו."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14793,6 +14868,11 @@ msgstr "תכונה זו ניתנת ללא עלות עבור עד {MAX_SEATS_WITH
 msgid "This feature is not enabled."
 msgstr "תכונה זו אינה מופעלת."
 
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14865,6 +14945,11 @@ msgstr "העלאת קובץ זו כבר הושלמה."
 msgid "This form no longer waits for an answer."
 msgstr "טופס זה אינו ממתין עוד לתשובה."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "רכיב Frontend זה אינו זמין בפריסת דף זו."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14924,6 +15009,21 @@ msgstr "טבלת יומן זו אינה חוקית."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "שיטת MCP זו אינה נתמכת."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "שרת MCP זה שייך ליישום אחר, ולכן זרימת העבודה הזו אינה יכולה להשתמש בו."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "שרת MCP זה אינו פעיל. יש להפעיל אותו לפני בדיקת הכלים שלו."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "שרת MCP זה אינו זמין לזרימת העבודה הזו."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15215,6 +15315,16 @@ msgstr "קובץ SVG זה גדול מדי לעיבוד."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "פעולה זו של פעילות ציר הזמן אינה נתמכת"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "כלי זה אינו מוצע עוד על ידי שרת ה-MCP שלו."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "כלי זה עשוי לשנות נתונים. יש לאשר את הבדיקה לפני הפעלתה."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -16558,7 +16668,7 @@ msgstr "הערך \"{stringifiedValue}\" אינו מוביל לשום רשומה 
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr " תַאִים לִהְיוֹת בְּאוֹתִיּוֹת רִשׁוֹנוֹת   ובפורמט snake_case \"{sanitizedValue}\""
+msgstr ""
 
 #. js-lingui-id: OG7PgU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -17008,6 +17118,11 @@ msgstr "לא ניתן היה להשלים את החיבור. אנא נסה שו�
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "לא הצלחנו לזהות את החשבון שאישרת. נסה שוב."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "לא הצלחנו לסמן את השיחה הזו כנקראה."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17017,6 +17132,11 @@ msgstr "לא ניתן היה לשלוח את ההודעה שלך. אנא נסה 
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "לא ניתן היה להתחיל את החיבור. אנא נסה שוב."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17226,6 +17346,11 @@ msgstr "מי מקבל את הגישה"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "מדוע הוענקה הגישה"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "נדרשת תצורת וידג'ט."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

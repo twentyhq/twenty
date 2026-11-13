@@ -61,6 +61,7 @@ print("Complete!")`,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Running...')).toBeVisible();
+    expect(canvas.queryByText(/Processing data/)).toBeNull();
   },
 };
 
@@ -75,7 +76,11 @@ export const Success: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Completed')).toBeVisible();
-    expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
+    expect(canvas.queryByText(/Total Revenue/)).toBeNull();
+
+    await userEvent.click(canvas.getByText('Output'));
+
+    expect(await canvas.findByText(/Total Revenue/)).toBeVisible();
   },
 };
 

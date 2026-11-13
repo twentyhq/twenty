@@ -155,6 +155,7 @@ describe('RLS rules through a relation (integration)', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
     });
+    await waitForAllJobsToFinish();
   };
 
   const assignPersonRuleThroughCompanyName = async () => {
@@ -466,6 +467,8 @@ describe('RLS rules through a relation (integration)', () => {
     };
 
     await assignPersonRuleThroughCompanyName();
+    // Assigning the rule recomputes people in the background, which would refill the column cleared below
+    await waitForAllJobsToFinish();
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = $1`,
       [person.id],

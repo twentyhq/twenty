@@ -1,8 +1,8 @@
-import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
+import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useChatThreads } from '@/ai/hooks/useChatThreads';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -16,12 +16,16 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useChatThreads(agentChatRecentThreadsSelector);
+  const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
 
   // Earlier pages can hold only chats filtered out of this list, so an empty
   // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
-    return <AgentChatThreadsFetchMoreTrigger />;
+    return (
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
+      />
+    );
   }
 
   return (
@@ -33,7 +37,9 @@ export const MobileHomeAiChatSection = () => {
         currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
-      <AgentChatThreadsFetchMoreTrigger />
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
+      />
     </>
   );
 };

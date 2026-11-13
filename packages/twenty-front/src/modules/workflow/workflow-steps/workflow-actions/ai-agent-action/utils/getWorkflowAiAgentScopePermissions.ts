@@ -44,13 +44,13 @@ export const getWorkflowAiAgentScopePermissions = ({
 
   const deniedPermissionLabels = objectPermissions.flatMap(
     ({ objectMetadataItem, ...objectPermission }) =>
-      CRUD_PERMISSIONS.filter(({ key }) => objectPermission[key] === false).map(
-        ({ label }) => {
-          const permissionLabel = label(objectMetadataItem.labelPlural);
+      CRUD_PERMISSIONS.filter(
+        ({ key }) => isDefined(objectPermission[key]) && !objectPermission[key],
+      ).map(({ label }) => {
+        const permissionLabel = label(objectMetadataItem.labelPlural);
 
-          return t`${permissionLabel} (denied)`;
-        },
-      ),
+        return t`${permissionLabel} (denied)`;
+      }),
   );
 
   const fieldPermissionLabels = [

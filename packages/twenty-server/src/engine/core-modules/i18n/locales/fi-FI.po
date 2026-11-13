@@ -277,6 +277,11 @@ msgstr "Kampanjassa seurattu linkki"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Markkinointisähköposti voidaan lähettää vain yhdelle vastaanottajalle kerrallaan, joten jokainen henkilö saa oman tilauksen peruutuslinkkinsä."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Viestissä on oltava tekstiä tai vähintään yksi liite."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "Sisäkkäisen relaatiowidgetin on käytettävä taulukkoasettelua."
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "Kalenteria käytettäessä tapahtui verkkovirhe."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "Tässä työtilassa on jo käynnissä vienti. Odota, että se valmistuu.
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Ulkoisella palvelulla kesti liian kauan vastata."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2717,6 +2732,11 @@ msgstr "Ei voi muokata predikaattia sen roolin muuttamiseksi roolista {existingR
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Viimeistä ylläpitäjää ei voi poistaa työtilasta."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2959,6 +2979,11 @@ msgstr "Yhteyshenkilöön liittyvät keskustelut"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Mahdollisuuteen liittyvät keskustelut"
+
+#. js-lingui-id: ZgijCO
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Choose an active tab and a widget position matching its layout mode."
+msgstr "Valitse aktiivinen välilehti ja sen asettelutilaa vastaava pienoisohjelman sijainti."
 
 #. js-lingui-id: 8kN7d7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3454,6 +3479,11 @@ msgstr "Yhteydentarjoaja nimeltä {0} on jo olemassa tässä sovelluksessa"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'custom' must reference an authorize and a callback logic function"
 msgstr "Tyypin 'custom' yhteydentarjoajan on viitattava authorize- ja callback-logiikkafunktioon"
+
+#. js-lingui-id: 4l+vBP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
+msgstr "Yhteyden tarjoaja, რომლის tyyppi on 'oauth-discovery', tarvitsee HTTP- tai HTTPS-osoitteen oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5075,6 +5105,11 @@ msgstr "Rikasta"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Anna nimi, რომლის pituus on 1–{AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} merkkiä, ja tuetut avustajan ulkoasuasetukset."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5343,6 +5378,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Ulkoisen tallenteen ID"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5385,11 +5425,6 @@ msgstr "Tietueen luominen epäonnistui."
 #: src/engine/core-modules/file/files-field/services/files-field.service.ts
 msgid "Failed to delete file {fileId}"
 msgstr "Tiedostoa {fileId} ei voitu poistaa"
-
-#. js-lingui-id: pUligB
-#: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
-msgid "Failed to delete jobs. Please try again later."
-msgstr "Työtehtävien poistaminen epäonnistui. Yritä uudelleen myöhemmin."
 
 #. js-lingui-id: MBdUff
 #: src/engine/core-modules/record-crud/exceptions/record-crud.exception.ts
@@ -5482,6 +5517,11 @@ msgstr "Ominaisuuden määritystä ei löytynyt."
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "helmikuu"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6162,6 +6202,11 @@ msgstr "frontComponentId:tä ei saa määrittää, kun engineComponentKey on TRI
 #: src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service.ts
 msgid "Frontend component builder request exceeds the 6 MiB limit. Reduce the app dependencies or generated SDK size."
 msgstr "Käyttöliittymäkomponenttien muodostajan pyyntö ylittää 6 MiB:n rajan. Pienennä sovelluksen riippuvuuksia tai luodun SDK:n kokoa."
+
+#. js-lingui-id: SOTpsW
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "Frontend component not found."
+msgstr "Frontend-komponenttia ei löytynyt."
 
 #. js-lingui-id: mbshN9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -8466,6 +8511,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Merkitse lukemattomaksi"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "Säikeen luetuksi merkitsemisen logiikkafunktiota \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" ei löytynyt tästä sovelluksesta"
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8657,6 +8707,11 @@ msgstr "Viesti"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Viesti"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Viestin liitteitä ei voitu tallentaa. Yritä uudelleen."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9502,6 +9557,11 @@ msgstr "Kelvollisia vastaanottajia ei ole määritetty"
 msgid "No verified sending domain matches this from address."
 msgstr "Yksikään varmennettu lähetysverkkotunnus ei täsmää tähän lähettäjäosoitteeseen."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9749,6 +9809,11 @@ msgstr "OAuth-käyttö estettiin."
 msgid "OAuth connection provider is missing its oauth config block"
 msgstr "OAuth-yhteydentarjoajalta puuttuu oauthConfig-lohko"
 
+#. js-lingui-id: c5inG4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
+msgstr "OAuth-hakemistoyhteyden tarjoaja tarvitsee sen resurssin URL-osoitteen, johon se kirjautuu"
+
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
@@ -9988,6 +10053,11 @@ msgstr "Vain ajastettu tai lähetettävä kampanja voidaan peruuttaa."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Vain palvelinylläpitäjä voi hallita tämän jäsenen palautuskoodeja."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10030,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Vain tämän agentin omistava sovellus voi muuttaa sen laukaisimia"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Vain tämän työnkulun luonut henkilö voi muuttaa sitä, kuka näkee sen"
 
@@ -13806,7 +13876,7 @@ msgstr "Tietokantatapahtuman käynnistimen ehdon on oltava tekstiä"
 #. js-lingui-id: kxzWhP
 #: src/engine/metadata-modules/ai/ai-agent-trigger/utils/add-agent-trigger-condition-bindings-or-throw.util.ts
 msgid "The condition of an agent trigger is invalid"
-msgstr ""
+msgstr "Agenttiliipaisimen ehto on virheellinen"
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -14059,6 +14129,11 @@ msgstr "Yhdistetyn tilin tunnistavaa logiikkafunktiota ei löytynyt."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function that starts the connection was not found."
 msgstr "Yhteyden aloittavaa logiikkafunktiota ei löytynyt."
+
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "Logiikkafunktiota, jolla tämä viestintäpalveluntarjoaja merkitsee säikeet luetuiksi, ei löytynyt sen sovelluksesta."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14793,6 +14868,11 @@ msgstr "Tämä ominaisuus on maksuton enintään {MAX_SEATS_WITHOUT_ENTERPRISE_K
 msgid "This feature is not enabled."
 msgstr "Tämä ominaisuus ei ole käytössä."
 
+#. js-lingui-id: R4bSSU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14865,6 +14945,11 @@ msgstr "Tämän tiedoston lataus on jo viimeistelty."
 msgid "This form no longer waits for an answer."
 msgstr "Tämä lomake ei enää odota vastausta."
 
+#. js-lingui-id: phhLXX
+#: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
+msgid "This frontend component is not available on this page layout."
+msgstr "Tämä frontend-komponentti ei ole käytettävissä tässä sivuasettelussa."
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -14924,6 +15009,21 @@ msgstr "Tämä lokitaulukko ei ole kelvollinen."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Tätä MCP-metodia ei tueta."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Tämä MCP-palvelin kuuluu toiselle sovellukselle, joten tämä työnkulku ei voi käyttää sitä."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Tämä MCP-palvelin ei ole aktiivinen. Aktivoi se ennen sen työkalujen testaamista."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Tämä MCP-palvelin ei ole tämän työnkulun käytettävissä."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15215,6 +15315,16 @@ msgstr "Tämä SVG on liian suuri käsiteltäväksi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Tätä aikajanatoiminnon toimintoa ei tueta"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Tämä työkalu ei ole enää sen MCP-palvelimen tarjoama."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Tämä työkalu voi muuttaa tietoja. Vahvista testi ennen sen suorittamista."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -17008,6 +17118,11 @@ msgstr "Yhteyttä ei voitu viimeistellä. Yritä uudelleen."
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Emme voineet tunnistaa tiliä, jonka valtuutit. Yritä uudelleen."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "Emme voineet merkitä tätä keskustelua luetuksi."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17017,6 +17132,11 @@ msgstr "Viestiäsi ei voitu lähettää. Yritä uudelleen."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Yhteyttä ei voitu aloittaa. Yritä uudelleen."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17226,6 +17346,11 @@ msgstr "Kuka saa käyttöoikeuden"
 msgctxt "fieldMetadata.description"
 msgid "Why the access was granted"
 msgstr "Miksi käyttöoikeus myönnettiin"
+
+#. js-lingui-id: ciRAJR
+#: src/engine/metadata-modules/page-layout/tools/add-page-layout-widget.tool.ts
+msgid "Widget configuration is required."
+msgstr "Widgetin määritys vaaditaan."
 
 #. js-lingui-id: OHlJ1X
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util.ts

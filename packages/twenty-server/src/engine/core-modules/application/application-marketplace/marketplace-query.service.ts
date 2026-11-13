@@ -14,6 +14,11 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
+import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
+import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
@@ -37,14 +42,17 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   async findManyMarketplaceApps({
     universalIdentifiers,
     isListed,
+    shouldIncludeBuiltInApplications = false,
   }: {
     universalIdentifiers?: string[];
     isListed?: boolean;
+    shouldIncludeBuiltInApplications?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -52,7 +60,7 @@ export class MarketplaceQueryService {
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
 
-    const apps = isNonEmptyArray(universalIdentifiers)
+    const catalogApps = isNonEmptyArray(universalIdentifiers)
       ? universalIdentifiers
           .map(
             (universalIdentifier) =>
@@ -61,6 +69,10 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
+    const apps = shouldIncludeBuiltInApplications
+      ? [...this.findBuiltInApps(universalIdentifiers), ...catalogApps]
+      : catalogApps;
+
     if (!isDefined(isListed)) {
       return apps;
     }
@@ -68,9 +80,39 @@ export class MarketplaceQueryService {
     return apps.filter((app) => app.isListed === isListed);
   }
 
-  async findMarketplaceAppDetail(
-    universalIdentifier: string,
-  ): Promise<MarketplaceAppDetailDTO> {
+  private findBuiltInApps(
+    universalIdentifiers?: string[],
+  ): MarketplaceAppDTO[] {
+    const frontBaseUrl = this.domainServerConfigService.getBaseUrl();
+    const builtInApplications = isNonEmptyArray(universalIdentifiers)
+      ? universalIdentifiers
+          .map(findMarketplaceBuiltInApplication)
+          .filter(isDefined)
+      : MARKETPLACE_BUILT_IN_APPLICATIONS;
+
+    return builtInApplications.map((builtInApplication) =>
+      toMarketplaceBuiltInAppDTO({ builtInApplication, frontBaseUrl }),
+    );
+  }
+
+  async findMarketplaceAppDetail({
+    universalIdentifier,
+    shouldIncludeBuiltInApplications = false,
+  }: {
+    universalIdentifier: string;
+    shouldIncludeBuiltInApplications?: boolean;
+  }): Promise<MarketplaceAppDetailDTO> {
+    const builtInApplication = shouldIncludeBuiltInApplications
+      ? findMarketplaceBuiltInApplication(universalIdentifier)
+      : undefined;
+
+    if (isDefined(builtInApplication)) {
+      return toMarketplaceBuiltInAppDetailDTO({
+        builtInApplication,
+        frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
+      });
+    }
+
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 

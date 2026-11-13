@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -9,10 +11,24 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { ExactlyOneOf } from 'src/engine/metadata-modules/view-field-group/dtos/validators/exactly-one-of.validator';
+
+@InputType('SendAppChannelMessageAttachmentInput')
+export class SendAppChannelMessageAttachmentInput {
+  @Field(() => UUIDScalarType)
+  @IsUUID()
+  id: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  name: string;
+}
 
 @InputType('SendAppChannelMessageEmailInput')
 export class SendAppChannelMessageEmailInput {
@@ -60,7 +76,6 @@ export class SendAppChannelMessageInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(MAX_APP_MESSAGE_TEXT_LENGTH)
   text?: string;
 
@@ -73,4 +88,12 @@ export class SendAppChannelMessageInput {
   @Field(() => UUIDScalarType)
   @IsUUID()
   idempotencyKey: string;
+
+  @Field(() => [SendAppChannelMessageAttachmentInput], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE)
+  @ValidateNested({ each: true })
+  @Type(() => SendAppChannelMessageAttachmentInput)
+  attachments?: SendAppChannelMessageAttachmentInput[];
 }

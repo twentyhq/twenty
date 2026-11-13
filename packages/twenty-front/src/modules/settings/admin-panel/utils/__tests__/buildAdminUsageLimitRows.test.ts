@@ -34,6 +34,7 @@ const buildLimit = (
   periodUnit: 'lifetime',
   limitValue: 50,
   burstValue: null,
+  endsAt: null,
   ...overrides,
 });
 
@@ -75,6 +76,17 @@ describe('buildAdminUsageLimitRows', () => {
     expect(row.defaultValue).toBe(100);
   });
 
+  it('carries the end date of the override', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [buildDefault({ overriddenByUsageLimitId: 'limit-1' })],
+        limits: [buildLimit({ endsAt: '2026-12-31T00:00:00.000Z' })],
+      }),
+    );
+
+    expect(row.endsAt).toBe('2026-12-31T00:00:00.000Z');
+  });
+
   it('shows the instance value on a default nothing replaced', () => {
     const [row] = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
@@ -83,6 +95,17 @@ describe('buildAdminUsageLimitRows', () => {
     expect(row.isOverridden).toBe(false);
     expect(row.usageLimitId).toBeNull();
     expect(row.limitValue).toBe(100);
+  });
+
+  it('keeps a default without a value empty instead of showing 0', () => {
+    const [row] = buildAdminUsageLimitRows(
+      buildWorkspaceUsageLimits({
+        defaults: [buildDefault({ limitValue: null })],
+      }),
+    );
+
+    expect(row.defaultValue).toBeNull();
+    expect(row.limitValue).toBeNull();
   });
 
   it('leaves a default writable when the server named no row for it', () => {

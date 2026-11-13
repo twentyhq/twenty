@@ -186,6 +186,7 @@ msgstr "(selectată: {selectedIconKey})"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "[empty string]"
 msgstr "[șir gol]"
 
@@ -227,13 +228,13 @@ msgstr "{0, plural, one {{years} an} few {{years} ani} other {{years} ani}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {# chat selectat} few {# chat-uri selectate} other {# de chat-uri selectate}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# chat} few {# chat-uri} other {# de chat-uri}}"
 
@@ -468,7 +469,7 @@ msgstr "{0} reîncercări"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -667,6 +668,11 @@ msgstr "{cardCount, plural, one {Aprobi # acțiune?} few {Aprobi # acțiuni?} ot
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "{channelName} este deconectat."
+
+#. js-lingui-id: 3gdGx+
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
+msgid "{connectionProviderDisplayName} connected"
+msgstr ""
 
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -1117,10 +1123,10 @@ msgstr "{roleTargetName} va fi atribuit rolului \"{newRoleName}\"."
 msgid "{runCount, plural, one {# turn} other {# turns}}"
 msgstr "{runCount, plural, one {# rundă} few {# runde} other {# de runde}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — valoarea implicită a instanței este {defaultText}. Salvarea se aplică doar acestui spațiu de lucru."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — valoarea implicită pentru acest spațiu de lucru este {defaultText}. Salvarea se aplică numai acestui spațiu de lucru."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1168,7 +1174,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} înregistrări selectate · {skippedCount} înregistrări omise"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} selectate"
 
@@ -1178,7 +1184,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} opțiuni"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}: {text}"
 
@@ -1652,6 +1658,11 @@ msgstr "Se deschide un formular pentru persoana care lansează fluxul de lucru �
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Se deschide un formular pentru persoana care lansează fluxul de lucru și este completat pe loc. Cu acest declanșator, este afișat doar în rularea fluxului de lucru. Pentru a cere cuiva un răspuns sau o aprobare în inboxul său, folosește în schimb un pas Trimitere în inbox."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "Un mesaj poate avea până la {maxAttachmentCount} fișiere"
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
@@ -1873,6 +1884,7 @@ msgstr "Setările contului"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "Accounts"
 msgstr "Conturi"
 
@@ -2110,7 +2122,7 @@ msgid "Add a recipient before sending"
 msgstr "Adaugă un destinatar înainte de trimitere"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Adăugați un destinatar sau un canal înainte de a trimite."
 
@@ -2235,7 +2247,7 @@ msgid "Add CC"
 msgstr "Adaugă CC"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Adăugați canal"
 
@@ -2636,7 +2648,7 @@ msgid "Add to Favorite"
 msgstr "Adaugă la favorite"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Adaugă la favorite"
 
@@ -2876,6 +2888,7 @@ msgstr "Administratori"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Avansat"
 
@@ -2940,7 +2953,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3292,7 +3305,7 @@ msgid "All {objectLabelPlural}"
 msgstr "Toate {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "Toate acțiunile"
 
@@ -3322,8 +3335,8 @@ msgid "All applications"
 msgstr "Toate aplicațiile"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "Toate canalele"
 
@@ -3331,6 +3344,11 @@ msgstr "Toate canalele"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Toate companiile"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "Toate conversațiile"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3701,6 +3719,7 @@ msgstr "A apărut o eroare la încărcarea imaginii."
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
 #: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
+#: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3833,6 +3852,7 @@ msgstr "Apeluri API"
 #: src/modules/settings/billing/constants/UsageLimitSpenderGroups.ts
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 #: src/modules/workflow/workflow-trigger/constants/WebhookTriggerAuthenticationOptions.ts
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 msgid "API key"
 msgstr "Cheie API"
 
@@ -3967,6 +3987,11 @@ msgstr "Jurnale de aplicație"
 msgid "App Operation"
 msgstr "Operațiune a aplicației"
 
+#. js-lingui-id: 7f2JWJ
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
+msgid "App owner workspace"
+msgstr ""
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -4063,6 +4088,7 @@ msgstr "variabilă de aplicație"
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
@@ -4442,7 +4468,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Atribuit"
 
@@ -4457,7 +4483,7 @@ msgid "Assigned to"
 msgstr "Asignat către"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Atribuite mie"
 
@@ -4477,8 +4503,8 @@ msgid "Assignment"
 msgstr "Asignare"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Asistent"
 
@@ -4862,6 +4888,7 @@ msgid "Average"
 msgstr "Medie"
 
 #. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
 msgstr "Durată medie"
@@ -4912,7 +4939,7 @@ msgid "Back to customization"
 msgstr "Înapoi la personalizare"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Înapoi la inbox"
 
@@ -5802,7 +5829,7 @@ msgstr "Anulat la"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Anulat"
 
@@ -5951,7 +5978,7 @@ msgid "Cell controls"
 msgstr "Comenzi celulă"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Schimbă"
 
@@ -6052,13 +6079,13 @@ msgid "Channel"
 msgstr "Canal"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Numele canalului"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Opțiuni canal"
 
@@ -6068,8 +6095,8 @@ msgid "channel role"
 msgstr "rol de canal"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Canale"
@@ -6092,7 +6119,7 @@ msgid "Chat actions"
 msgstr "Acțiuni de chat"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Canalele de chat în care acest rol citește și răspunde"
 
@@ -6119,7 +6146,7 @@ msgid "Chat Sessions"
 msgstr "Sesiuni de chat"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Chat oprit: nu mai sunt credite disponibile."
 
@@ -6348,7 +6375,7 @@ msgid "Choose icon"
 msgstr "Alege pictograma"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Alege pictograma și culoarea"
@@ -6535,6 +6562,7 @@ msgid "Clear"
 msgstr "Șterge"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -6552,8 +6580,8 @@ msgid "Clear search, go back, or close"
 msgstr "Șterge căutarea, întoarce-te sau închide"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Șterge selecția"
@@ -6689,7 +6717,7 @@ msgstr "Clipboardul necesită o conexiune securizată (HTTPS). Accesați aceast�
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Închide"
@@ -6849,6 +6877,7 @@ msgstr "restrângere"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Collapse"
 msgstr "Restrângere"
 
@@ -6999,6 +7028,11 @@ msgstr "Comenzi copiate în clipboard"
 msgid "Commas and dot"
 msgstr "Virgule și punct"
 
+#. js-lingui-id: NBdIgR
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Comment"
+msgstr ""
+
 #. js-lingui-id: hZotg6
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountsNewEmailGroupChannel.tsx
@@ -7049,9 +7083,15 @@ msgid "Compare plans"
 msgstr "Comparați planurile"
 
 #. js-lingui-id: amPBVF
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Compensation"
 msgstr "Compensație"
+
+#. js-lingui-id: 63EmVV
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Compensation for the October outage"
+msgstr ""
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -7073,7 +7113,7 @@ msgstr "completat"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7130,7 +7170,7 @@ msgstr "Condiție"
 #. js-lingui-id: jZ2sd2
 #: src/modules/object-core/agents/components/CoreAgentTriggerConditionInput.tsx
 msgid "Condition (Optional)"
-msgstr ""
+msgstr "Condiție (Opțional)"
 
 #. js-lingui-id: PLbVix
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -7372,6 +7412,11 @@ msgstr "Confirmați upgrade-ul"
 msgid "Confirming your payment"
 msgstr "Se confirmă plata"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr "Conectează-te"
+
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
@@ -7381,6 +7426,11 @@ msgstr "Conectați {appName} la {workspaceName}"
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to your account"
 msgstr "Conectați {appName} la contul dvs."
+
+#. js-lingui-id: ZdoGKt
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Connect {connectionProviderDisplayName}"
+msgstr ""
 
 #. js-lingui-id: bFJIPh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7518,7 +7568,7 @@ msgid "Connection successfully updated"
 msgstr "Conexiunea a fost actualizată cu succes"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Conexiunea cu asistentul s-a pierdut. Reîncarcă pentru a vedea răspunsul."
 
@@ -7682,8 +7732,8 @@ msgstr "Controlează tipurile de entități cărora acest rol poate fi atribuit"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7700,7 +7750,7 @@ msgid "Conversation key"
 msgstr "Cheie conversație"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Listă de conversații"
 
@@ -7715,7 +7765,7 @@ msgid "Conversations"
 msgstr "Conversații"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Conversațiile din acest canal vor apărea aici."
 
@@ -7725,7 +7775,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Conversațiile asociate acestei înregistrări vor apărea aici."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Conversațiile pe care le poți deschide vor apărea aici."
 
@@ -8001,7 +8051,7 @@ msgid "Could not load related records"
 msgstr "Nu s-au putut încărca înregistrările asociate"
 
 #. js-lingui-id: 3167/q
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 msgid "Could not load run insights"
 msgstr "Nu s-au putut încărca informațiile despre rulare"
 
@@ -8676,6 +8726,7 @@ msgstr "credite"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8684,6 +8735,11 @@ msgstr "credite"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Credite"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr "Credite · 14 zile"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8719,6 +8775,11 @@ msgstr "credite disponibile în perioada de probă"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Credite acordate peste alocarea planului. Pot fi cheltuite până la epuizare."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr "Credite pe zi"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9679,7 +9740,7 @@ msgid "Delete"
 msgstr "Șterge"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "Șterge {channelName}?"
 
@@ -9813,9 +9874,9 @@ msgid "Delete app"
 msgstr "Șterge aplicația"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Șterge canalul"
 
@@ -10313,7 +10374,12 @@ msgstr "Identitatea perechii de mesaje directe"
 #. js-lingui-id: 23aX1b
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "Direct messages"
-msgstr ""
+msgstr "Mesaje directe"
+
+#. js-lingui-id: Rz4s9r
+#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+msgid "Direct messages don't support attachments."
+msgstr "Mesajele directe nu acceptă atașamente."
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10570,12 +10636,12 @@ msgid "Don't import events marked as private"
 msgstr "Nu importați evenimentele marcate ca private"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Finalizat"
@@ -11180,7 +11246,7 @@ msgid "else if"
 msgstr "altfel dacă"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -11480,6 +11546,7 @@ msgstr "Gol"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Array"
 msgstr "Array Gol"
 
@@ -11498,6 +11565,7 @@ msgstr "Array Gol"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Empty Object"
 msgstr "Obiect Gol"
 
@@ -11608,8 +11676,14 @@ msgstr "URL endpoint"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "Ends"
 msgstr "Se termină"
+
+#. js-lingui-id: jV/TnE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "Ends (optional)"
+msgstr ""
 
 #. js-lingui-id: fPOajI
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -11892,7 +11966,7 @@ msgid "Enter phone number"
 msgstr "Introduceți numărul de telefon"
 
 #. js-lingui-id: xCiJkz
-#: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestTestVariableInput.tsx
+#: src/modules/workflow/workflow-steps/components/WorkflowStepTestVariableInput.tsx
 msgid "Enter test value"
 msgstr "Introduceți valoarea de test"
 
@@ -12317,7 +12391,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "la fiecare {stepNumStr} luni, între {startMonth} și {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Fiecare canal, inclusiv cele create ulterior"
 
@@ -12546,6 +12620,7 @@ msgstr "Ieși din fluxul de import"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Expand"
 msgstr "Extinde"
 
@@ -12781,8 +12856,8 @@ msgstr "Față"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -13048,7 +13123,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Nu s-au putut asocia înregistrările asociate acestui eveniment"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Nu s-au putut încărca detaliile agentului."
 
@@ -13386,7 +13461,7 @@ msgid "Fast"
 msgstr "Rapid"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favorite"
@@ -13743,10 +13818,15 @@ msgid "Filter by record ID"
 msgstr "Filtrați după ID-ul înregistrării"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filtrați chat-urile"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr "Filtrează conversațiile"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14063,8 +14143,9 @@ msgstr "Formate"
 
 #. js-lingui-id: CjVkbV
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 msgid "Former member"
 msgstr "Fost membru"
 
@@ -15083,7 +15164,7 @@ msgid "Hide hidden groups"
 msgstr "Ascundeți grupurile ascunse"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Ascundeți căsuța de primire"
 
@@ -15325,7 +15406,7 @@ msgid "Icon"
 msgstr "Pictogramă"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Pictogramă și culoare"
 
@@ -15636,7 +15717,7 @@ msgid "Importing Data ..."
 msgstr "Importând datele ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "În {channelName}"
 
@@ -16047,6 +16128,11 @@ msgstr "Inteligență"
 msgid "Interface"
 msgstr "Interfață"
 
+#. js-lingui-id: m/FXoF
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Internal import setting column"
+msgstr ""
+
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Internet accounts per user"
@@ -16442,7 +16528,7 @@ msgid "Iterator"
 msgstr "Iterator"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Conversațiile sale sunt mutate în {destinationChannelName}. Această acțiune nu poate fi anulată."
 
@@ -16929,6 +17015,7 @@ msgid "Last refreshed"
 msgstr "Ultima reîmprospătare"
 
 #. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last run"
 msgstr "Ultima rulare"
@@ -16963,7 +17050,7 @@ msgid "Last Updated: {0}"
 msgstr "Ultima actualizare: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "Mai târziu astăzi"
 
@@ -17646,7 +17733,7 @@ msgid "Loading retention configuration..."
 msgstr "Se încarcă configurația de reținere..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Se încarcă rolurile"
 
@@ -18130,7 +18217,7 @@ msgid "Margin"
 msgstr "Margine"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Marchează toate ca realizate"
 
@@ -18150,7 +18237,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marcat ca finalizat {eventTime}"
 
@@ -18276,6 +18363,11 @@ msgstr "Servere MCP"
 msgid "MCP servers unavailable"
 msgstr "Servere MCP indisponibile"
 
+#. js-lingui-id: iwK6Ak
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "MCP tool step"
+msgstr "Pas de instrument MCP"
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
@@ -18394,7 +18486,7 @@ msgid "Mentioned you"
 msgstr "Te-a menționat"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Mențiuni"
 
@@ -18936,8 +19028,8 @@ msgid "Move Down"
 msgstr "Mutați în jos"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Mută conversațiile sale în"
 
@@ -18968,9 +19060,9 @@ msgid "Move to another tab"
 msgstr "Mutați într-o altă filă"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Mută în canal"
 
@@ -19114,7 +19206,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19257,8 +19349,8 @@ msgid "Needs a Select field"
 msgstr "Necesită un câmp de tip Select"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Necesită introducere"
 
@@ -19271,6 +19363,7 @@ msgstr "Eroare de rețea"
 
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
@@ -19360,14 +19453,14 @@ msgid "New calendar event"
 msgstr "Eveniment de calendar nou"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "Canal nou"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Chat nou"
@@ -19391,7 +19484,7 @@ msgstr "Pachet nou de credite"
 #. js-lingui-id: ctNfZE
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "New direct message"
-msgstr ""
+msgstr "Mesaj direct nou"
 
 #. js-lingui-id: 3RwJHq
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
@@ -19597,9 +19690,14 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Următoarea taxă {totalRenewDate}. Valoarea facturii poate varia dacă adăugați membri sau credite între perioade"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Următorul chat"
+
+#. js-lingui-id: SKW82h
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Next file"
+msgstr "Fișierul următor"
 
 #. js-lingui-id: F/RdYr
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19659,7 +19757,7 @@ msgid "Next Step"
 msgstr "Pasul următor"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "Săptămâna viitoare"
 
@@ -19774,7 +19872,7 @@ msgstr "Niciun model de IA din acest spațiu de lucru nu îndeplinește aceste s
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Nu este configurat niciun furnizor IA pentru această instanță."
@@ -19877,7 +19975,7 @@ msgid "No calling code"
 msgstr "Fără cod de apelare"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "Niciun canal"
 
@@ -19917,9 +20015,14 @@ msgstr "Nu există variabile de configurare care să corespundă filtrelor dvs. 
 msgid "No content"
 msgstr "Fără conținut"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "Nicio conversație nu utilizează acest canal."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Nicio conversație"
 
@@ -20033,6 +20136,11 @@ msgstr "Nu s-au găsit conversații prin e-mail"
 #: src/modules/ai/components/AiChatMessageReactionPickerContent.tsx
 msgid "No emoji found"
 msgstr "Nu a fost găsit niciun emoji"
+
+#. js-lingui-id: pZNOT9
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+msgid "No end date"
+msgstr ""
 
 #. js-lingui-id: Qkn7jU
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
@@ -20190,6 +20298,11 @@ msgstr "Nu au fost înregistrate jurnale pentru acest pas."
 msgid "No matching activity"
 msgstr "Nicio activitate corespunzătoare"
 
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "Nicio conversație corespunzătoare"
+
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
 msgid "No matching people or roles"
@@ -20289,6 +20402,11 @@ msgstr "Nicio ieșire"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 msgid "No output available"
 msgstr "Nu este disponibilă nicio ieșire"
+
+#. js-lingui-id: LF3XrW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No output returned"
+msgstr "Nu s-a returnat niciun rezultat"
 
 #. js-lingui-id: 20ONq7
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
@@ -20447,7 +20565,7 @@ msgid "No role assigned to this member"
 msgstr "Niciun rol atribuit acestui membru"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "Fără roluri"
 
@@ -20526,6 +20644,16 @@ msgstr "Fără subiect"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionMorphRelationFieldView.tsx
 msgid "No targets available"
 msgstr "Nicio țintă disponibilă"
+
+#. js-lingui-id: n75Kxz
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "No test result yet"
+msgstr "Încă nu există niciun rezultat al testului"
+
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "Fără conținut text"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -20738,6 +20866,8 @@ msgstr "Setări nod"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -20849,7 +20979,7 @@ msgid "Not now"
 msgstr "Nu acum"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Nu îți este accesibil"
 
@@ -20915,6 +21045,11 @@ msgstr "Neînceput"
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Neacordat"
+
+#. js-lingui-id: 5xvHen
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Not yet"
+msgstr "Încă nu"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -21199,6 +21334,11 @@ msgstr "În afara cărărilor bătătorite"
 msgid "Official app"
 msgstr "Aplicație oficială"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr "Deconectat"
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -21326,10 +21466,20 @@ msgstr "Un abonament oferă o singură cheie Organizație, care alimentează o i
 msgid "One-to-one conversations between people"
 msgstr "Conversații unu-la-unu între persoane"
 
+#. js-lingui-id: oXOSPE
+#: src/modules/ai/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr "Conectat"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Numai aplicațiile publicate în npm pot fi revendicate în acest mod."
+
+#. js-lingui-id: Bo34mz
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Only continue if you started this connection from {appName}."
+msgstr "Continuați doar dacă ați inițiat această conexiune din {appName}."
 
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
@@ -21430,8 +21580,8 @@ msgstr "Numai dvs. veți putea vedea e-mailurile și evenimentele dvs."
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21477,9 +21627,9 @@ msgid "Open chat"
 msgstr "Deschide conversația"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Deschide conversațiile în"
 
@@ -21864,9 +22014,10 @@ msgstr "Mesajul original nu este disponibil"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+#: src/modules/settings/admin-panel/constants/BillingArrangementReasonLabels.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -21985,6 +22136,11 @@ msgstr "Ieșire"
 msgid "Output cost"
 msgstr "Cost de ieșire"
 
+#. js-lingui-id: SkbJO4
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Output saved"
+msgstr "Ieșire salvată"
+
 #. js-lingui-id: iFE7ti
 #: src/modules/ai/components/TerminalOutput.tsx
 msgid "Output stream"
@@ -22008,6 +22164,7 @@ msgid "Override Draft"
 msgstr "Suprascrie Schița"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -22238,6 +22395,11 @@ msgstr "Restanță"
 msgid "Past Due"
 msgstr "Restanță"
 
+#. js-lingui-id: ENlZ6C
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
+msgid "Paste a key from your {connectionProviderDisplayName} settings. It is stored encrypted."
+msgstr ""
+
 #. js-lingui-id: q5g2KW
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 msgid "Paste expected call response here to use its keys later in the workflow"
@@ -22269,7 +22431,7 @@ msgid "Path"
 msgstr "Cale"
 
 #. js-lingui-id: IgrLD/
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/log-console/components/LogConsoleResults.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
@@ -22496,11 +22658,6 @@ msgstr "Utilizare personală a IA"
 msgid "Personal usage"
 msgstr "Utilizare personală"
 
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Limita de utilizare personală se resetează în {daysUntilReset, plural, one {# zi} few {# zile} other {# de zile}}."
-
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormPhonesFieldInput.tsx
@@ -22694,7 +22851,7 @@ msgid "Plans"
 msgstr "Planuri"
 
 #. js-lingui-id: T91vKp
-#: src/modules/activities/emails/components/ChatThreadMessageVoiceNote.tsx
+#: src/modules/chat/components/ChatMessageVoiceNote.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "Play"
 msgstr "Redare"
@@ -22934,9 +23091,14 @@ msgid "Previous approval"
 msgstr "Aprobarea anterioară"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Conversația anterioară"
+
+#. js-lingui-id: QY5Szd
+#: src/modules/ui/field/display/components/FilePreviewDialog.tsx
+msgid "Previous file"
+msgstr "Fișierul anterior"
 
 #. js-lingui-id: +Qcc/o
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -23448,6 +23610,16 @@ msgstr "Citiți și scrieți {target}"
 msgid "Read and write data model configuration"
 msgstr "Citiți și scrieți configurația modelului de date"
 
+#. js-lingui-id: RXivwU
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerCount} of {recipientCount}"
+msgstr "Citit de {readerCount} din {recipientCount}"
+
+#. js-lingui-id: bgP1Ip
+#: src/modules/ai/components/AiChatMessageReceipt.tsx
+msgid "Read by {readerNames}"
+msgstr "Citit de {readerNames}"
+
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
@@ -23471,6 +23643,11 @@ msgstr "Citește emailurile"
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read system prompts"
 msgstr "Citește prompturile de sistem"
+
+#. js-lingui-id: h1Az4D
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade."
+msgstr ""
 
 #. js-lingui-id: l668+W
 #: src/modules/getting-started/components/step-preview/GettingStartedFollowUpPreview.tsx
@@ -23522,6 +23699,7 @@ msgstr "Permisiuni de citire/editare/ștergere"
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -23577,7 +23755,8 @@ msgid "Recent failed runs"
 msgstr "Rulări eșuate recente"
 
 #. js-lingui-id: dF8kMd
-#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Recent runs"
 msgstr "Rulări recente"
@@ -23774,7 +23953,7 @@ msgid "Record label"
 msgstr "Etichetă înregistrare"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Pagină de înregistrare"
@@ -24006,6 +24185,11 @@ msgstr "Înregistrați servere MCP externe în setările Dezvoltatori și expune
 msgid "Registered as a development instance. This instance will not be billed."
 msgstr "Înregistrat ca instanță de dezvoltare. Această instanță nu va fi facturată."
 
+#. js-lingui-id: 5k0oOn
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "Registered with Twenty as the official {appName}"
+msgstr "Înregistrată în Twenty drept {appName} oficială"
+
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -24159,7 +24343,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Eliminați {0} elemente din meniul de navigare?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Elimină {displayName}"
 
@@ -24240,7 +24424,7 @@ msgid "Remove from blocklist"
 msgstr "Elimină din lista de blocare"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24392,13 +24576,13 @@ msgstr "Elimină widgetul"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Redenumește"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Redenumiți chatul"
 
@@ -24428,7 +24612,7 @@ msgid "Renews on"
 msgstr "Se reînnoiește la"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Redeschide"
 
@@ -24469,12 +24653,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Linkurile de instalare Replit necesită un URL MCP HTTPS."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Răspunde"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Răspuns către"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -24750,6 +24940,7 @@ msgstr "Restricționat"
 #. js-lingui-id: RD6AE9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Result"
 msgstr "Rezultat"
 
@@ -24960,7 +25151,7 @@ msgid "Role updated successfully"
 msgstr "Rolul a fost actualizat cu succes"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -24973,8 +25164,8 @@ msgid "Roles"
 msgstr "Roluri"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Roluri în acest canal"
 
@@ -25080,6 +25271,11 @@ msgstr "Regulă activată."
 msgid "Rule updated."
 msgstr "Regulă actualizată."
 
+#. js-lingui-id: 1GQ5z+
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Run a test to see what the tool returns and use its fields in the next steps."
+msgstr "Rulați un test pentru a vedea ce returnează instrumentul și pentru a utiliza câmpurile acestuia în pașii următori."
+
 #. js-lingui-id: UX0N2y
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
@@ -25105,9 +25301,19 @@ msgstr "Rulează cod pentru a analiza fișiere și date"
 msgid "Run Function"
 msgstr "Execută Funcția"
 
+#. js-lingui-id: scFhaW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run this tool for real?"
+msgstr "Rulați acest instrument pe bune?"
+
+#. js-lingui-id: dLtKV9
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Run tool"
+msgstr "Rulați instrumentul"
+
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "Se execută"
@@ -25126,6 +25332,11 @@ msgstr "Se rulează codul"
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 msgid "Running function"
 msgstr "Se rulează funcția"
+
+#. js-lingui-id: cHCb42
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "Running the tool..."
+msgstr "Se rulează instrumentul..."
 
 #. js-lingui-id: LTC198
 #: src/modules/ai/components/AiChatToolCallApprovalStatusRenderer.tsx
@@ -25148,6 +25359,8 @@ msgid "Runs"
 msgstr "Rulări"
 
 #. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Runs · 14d"
@@ -25164,6 +25377,7 @@ msgid "Runs appear here once this workflow is triggered"
 msgstr "Rulările apar aici după ce acest workflow este declanșat"
 
 #. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
 msgstr "Rulări pe zi"
@@ -26442,7 +26656,7 @@ msgid "Selected"
 msgstr "Selectat"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Conversații selectate"
 
@@ -26602,6 +26816,7 @@ msgid "Sending email"
 msgstr "Se trimite e-mailul"
 
 #. js-lingui-id: G+UdVg
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Trimiterea a eșuat"
@@ -26835,6 +27050,7 @@ msgstr "Se configurează <0>baza ta de date</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -26848,6 +27064,7 @@ msgstr "Se configurează <0>baza ta de date</0>..."
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/utils/__tests__/getSettingsMenuItemDisplayTitle.test.ts
 #: src/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle.ts
@@ -27034,6 +27251,11 @@ msgstr "Ar trebui ca modificarea etichetei să schimbe și numele API?"
 msgid "Show {0}"
 msgstr "Afișează {0}"
 
+#. js-lingui-id: TsjNI1
+#: src/modules/chat/components/ChatMessageImageGridTile.tsx
+msgid "Show {hiddenImageCount} more images"
+msgstr "Afișează încă {hiddenImageCount} imagini"
+
 #. js-lingui-id: gmYDKt
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowSendChatMessageToolArguments.tsx
 msgid "Show {hiddenOptionalCount} optional arguments"
@@ -27094,7 +27316,7 @@ msgid "Show hidden objects"
 msgstr "Afișează obiectele ascunse"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Afișați căsuța de primire"
 
@@ -27357,10 +27579,20 @@ msgstr "Omite"
 msgid "Skip anyway"
 msgstr "Omite oricum"
 
+#. js-lingui-id: 5jWe/6
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip calendar events with no participant outside the workspace domain, unless internal import is turned on."
+msgstr ""
+
 #. js-lingui-id: TyudBs
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Skip creating a Name field "
 msgstr "Omite crearea unui câmp Nume "
+
+#. js-lingui-id: pmVASU
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Skip internal meetings"
+msgstr ""
 
 #. js-lingui-id: PlF+NA
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -27451,10 +27683,10 @@ msgid "snippet"
 msgstr "fragment"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Amână"
@@ -27470,7 +27702,7 @@ msgid "Snooze ended"
 msgstr "Amânarea s-a încheiat"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Amânarea s-a încheiat {eventTime}"
 
@@ -27487,13 +27719,13 @@ msgstr "Amână până la {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Amânat"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Amânat până la {eventTime}"
 
@@ -27560,6 +27792,11 @@ msgstr "Ceva nu a mers bine la crearea spațiului dvs. de lucru. Vă rugăm să 
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "A apărut o eroare la preluarea conversațiilor acestei înregistrări."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr "Ceva nu a mers bine la preluarea mesajelor acestei înregistrări."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -27729,7 +27966,7 @@ msgid "Split multiple values"
 msgstr "Separare valori multiple"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Vizualizare împărțită"
 
@@ -28745,6 +28982,8 @@ msgstr "Termeni și Condiții"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/logic-function-action/components/WorkflowEditActionLogicFunction.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Test"
@@ -28769,6 +29008,11 @@ msgstr "Testează acest pas pentru a vedea rezultatele sale"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Test your function"
 msgstr "Testează funcția ta"
+
+#. js-lingui-id: 4WDbC6
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
+msgid "Testing calls {toolName} on {mcpServerLabel} with the current arguments. This tool is not marked as read-only, so it may create, change or delete data."
+msgstr "Testarea apelează {toolName} pe {mcpServerLabel} cu argumentele curente. Acest instrument nu este marcat ca fiind doar pentru citire, deci poate crea, modifica sau șterge date."
 
 #. js-lingui-id: F0lHkW
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -28968,6 +29212,11 @@ msgstr "Conexiunea de export s-a pierdut. Încercați din nou."
 msgid "The export was interrupted. Please try again."
 msgstr "Exportul a fost întrerupt. Încercați din nou."
 
+#. js-lingui-id: KXe+rm
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The fields below are now available as variables in the next steps."
+msgstr "Câmpurile de mai jos sunt acum disponibile ca variabile în pașii următori."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -29114,6 +29363,23 @@ msgstr ""
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "The shared email you want to use."
 msgstr "Adresa de e-mail partajată pe care doriți să o utilizați."
+
+#. js-lingui-id: V27DQk
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
+msgid "The tool arguments must resolve to an object"
+msgstr "Argumentele instrumentului trebuie să se rezolve într-un obiect"
+
+#. js-lingui-id: vglXPW
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/hooks/useTestMcpTool.ts
+msgid "The tool call failed"
+msgstr "Apelul instrumentului a eșuat"
+
+#. js-lingui-id: xOR8cR
+#: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
+msgid "The tool ran but returned no fields, so the expected output was left unchanged."
+msgstr "Instrumentul a rulat, dar nu a returnat niciun câmp, astfel încât ieșirea așteptată a rămas neschimbată."
 
 #. js-lingui-id: pO74P8
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29363,6 +29629,11 @@ msgstr "Acest agent își partajează rolul cu alți membri sau agenți. Modific
 msgid "This agent shares its role with other members or agents. Change its tools in Settings > Roles."
 msgstr "Acest agent își partajează rolul cu alți membri sau agenți. Modifică-i instrumentele în Setări > Roluri."
 
+#. js-lingui-id: Debhph
+#: src/modules/applications/components/AuthorizeClientIdentityNotice.tsx
+msgid "This app calls itself {appName}, but Twenty could not confirm it is. Only continue if you started this connection from {appName}."
+msgstr "Această aplicație se numește {appName}, însă Twenty nu a putut confirma acest lucru. Continuați doar dacă ați inițiat această conexiune din {appName}."
+
 #. js-lingui-id: 3jroCi
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationMonitoring.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationMonitoring.tsx
@@ -29474,7 +29745,7 @@ msgstr "Această conexiune nu există sau nu este disponibilă pentru această a
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "Această conversație nu mai este disponibilă."
 
@@ -29494,7 +29765,7 @@ msgid "This device"
 msgstr "Acest dispozitiv"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "În această seară"
 
@@ -29991,7 +30262,7 @@ msgid "Today"
 msgstr "Azi"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "Astăzi, {time}"
 
@@ -30074,13 +30345,18 @@ msgstr "jetoane"
 msgid "Tokens"
 msgstr "Jetoane"
 
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr "Tokenuri · 14 zile"
+
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Tomato"
 msgstr "Tomată"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Mâine"
@@ -30298,7 +30574,7 @@ msgid "Translations"
 msgstr "Traduceri"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Triere"
 
@@ -30474,6 +30750,7 @@ msgid "True/False"
 msgstr "Adevărat/Fals"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30485,7 +30762,7 @@ msgstr "Încercați din nou"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Încearcă din nou într-un moment"
@@ -30747,7 +31024,7 @@ msgid "Unanswered"
 msgstr "Fără răspuns"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Neatribuit"
 
@@ -30960,7 +31237,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Câmp necunoscut „{fieldName}” în „{relationFieldName}”"
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Fișier necunoscut"
 
@@ -30977,7 +31254,7 @@ msgstr "Eroare de analizare necunoscută"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Expeditor necunoscut"
 
@@ -31155,7 +31432,7 @@ msgid "Unsubscribed"
 msgstr "Dezabonat"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Dezabonat {eventTime}. Mesajele noi nu vor ajunge în căsuța ta de primire decât dacă ești menționat."
 
@@ -31180,8 +31457,8 @@ msgid "Until {snoozedUntilDay}"
 msgstr "Până la {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -31903,6 +32180,7 @@ msgstr "Util pentru tabele pivot/de legătură"
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -31996,11 +32274,6 @@ msgstr "Folosind valoarea implicită a aplicației. Configurați prin variabile 
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default value. Set a custom value to override."
 msgstr "Folosind valoarea implicită. Setați o valoare personalizată pentru a suprascrie."
-
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Se folosesc creditele spațiului de lucru timp de {daysUntilReset, plural, one {# zi} few {# zile} other {# de zile}}."
 
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -32310,7 +32583,7 @@ msgid "View only — You can read this conversation."
 msgstr "Doar vizualizare — poți citi această conversație."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Vizualizează mesajul original"
 
@@ -32441,12 +32714,12 @@ msgid "Wait for Event"
 msgstr "Așteptați evenimentul"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Așteptați ca încărcarea atașamentelor să se finalizeze."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "În așteptare"
@@ -32477,7 +32750,7 @@ msgid "Waiting for your approval"
 msgstr "Se așteaptă aprobarea ta"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Reia acum"
 
@@ -32587,6 +32860,11 @@ msgstr "Nu am putut confirma metoda dvs. de plată. Vă rugăm să reîncercați
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
 msgstr "Nu am putut încărca conversațiile"
+
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr "Nu am putut încărca mesajele"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32772,6 +33050,21 @@ msgstr "Săptămână"
 msgid "Weekly"
 msgstr "Săptămânal"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Limita săptămânală de utilizare personală a AI a fost atinsă. Solicitați unui administrator să activeze creditele spațiului de lucru."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Limita săptămânală de utilizare personală a AI a fost atinsă. Activați creditele spațiului de lucru pentru a continua."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Limita săptămânală de utilizare personală a AI a fost atinsă. Acum se utilizează creditele spațiului de lucru."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32813,10 +33106,10 @@ msgstr "Cu ce vă pot ajuta?"
 msgid "What can you do?"
 msgstr "Ce poți face?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "Ce limitează acest spațiu de lucru. Valorile implicite ale instanței provin din variabilele de configurare și doar un operator poate înlocui una dintre acestea."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "Ce limite se aplică acestui spațiu de lucru. Valorile implicite provin din variabilele de configurare și din planul spațiului de lucru și doar un operator poate înlocui una dintre ele."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33024,7 +33317,7 @@ msgid "Wink"
 msgstr "Face cu ochiul"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "Dacă nu există alt canal în care să fie mutate conversațiile sale, numai un canal gol poate fi șters. Această acțiune nu poate fi anulată."
 
@@ -33213,6 +33506,7 @@ msgstr "Începutul programului de lucru"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
+#: src/pages/settings/applications/SettingsApplicationConnectWithApiKey.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -33573,7 +33867,9 @@ msgstr "Ieri"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

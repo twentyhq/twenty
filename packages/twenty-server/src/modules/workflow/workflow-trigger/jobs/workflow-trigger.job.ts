@@ -125,14 +125,13 @@ export class WorkflowTriggerJob {
         data.workspaceId,
         data.workflowId,
       );
-    const coreWorkflowVersionId = isDefined(data.workspaceWorkflowVersionId)
-      ? (
-          await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
-            data.workspaceId,
-            data.workspaceWorkflowVersionId,
-          )
-        )?.id
-      : coreWorkflow?.lastPublishedCoreWorkflowVersionId;
+    const coreWorkflowVersionId =
+      await this.workflowVersionCoreSyncService.resolveDispatchedCoreVersionId({
+        workspaceId: data.workspaceId,
+        workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
+        lastPublishedCoreWorkflowVersionId:
+          coreWorkflow?.lastPublishedCoreWorkflowVersionId,
+      });
 
     if (!isDefined(coreWorkflowVersionId)) {
       this.captureDroppedDispatch(

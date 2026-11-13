@@ -27,10 +27,10 @@ jest.mock(
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 
-let mockIsAiChatInboxEnabled = true;
+let mockIsInboxEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: () => mockIsInboxEnabled,
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
@@ -97,7 +97,7 @@ const waitForOpenThreadsSummary = () =>
 describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsAiChatInboxEnabled = true;
+    mockIsInboxEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -206,7 +206,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   });
 
   it('does not mark unread chats while the inbox feature flag is off', async () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
     renderModeSwitcher({ hasUnreadOpenThread: true });
     await waitForOpenThreadsSummary();
 
