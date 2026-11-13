@@ -6,7 +6,6 @@ import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-co
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { buildMcpServerSignInConnectionProviderName } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-connection-provider-name.util';
 
-// The server's OAuth settings are discovered at connect time.
 export const buildMcpServerSignInFlatConnectionProvider = ({
   mcpServer,
   flatApplication,

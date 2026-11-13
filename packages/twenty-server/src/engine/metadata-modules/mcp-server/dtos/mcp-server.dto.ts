@@ -23,7 +23,6 @@ export class McpServerDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   connectionProviderId: string | null;
 
-  // Who signs in to the server's own sign-in provider; null when it has none
   @Field(() => ConnectionProviderScopeEnum, { nullable: true })
   signInScope: ConnectionProviderScope | null;
 

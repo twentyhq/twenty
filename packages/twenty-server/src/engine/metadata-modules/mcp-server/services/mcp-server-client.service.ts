@@ -100,7 +100,7 @@ export class McpServerClientService {
   }): Promise<TResult> {
     const { workspaceId } = target;
     const connectedAccount =
-      await this.mcpServerConnectedAccountService.findConnectedAccountOrThrow(
+      await this.mcpServerConnectedAccountService.findConnectedAccountOrThrowIfSignInRequired(
         target,
       );
     const accessToken = isDefined(connectedAccount)

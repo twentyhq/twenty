@@ -74,7 +74,7 @@ export class McpServerConnectedAccountService {
     );
   }
 
-  async findConnectedAccountOrThrow(
+  async findConnectedAccountOrThrowIfSignInRequired(
     target: ConnectedAccountLookup,
   ): Promise<ConnectedAccountEntity | null> {
     const { connectionProviderId, workspaceId } = target;

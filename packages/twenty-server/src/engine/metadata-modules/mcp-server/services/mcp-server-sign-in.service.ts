@@ -16,6 +16,17 @@ import { McpServerMigrationService } from 'src/engine/metadata-modules/mcp-serve
 import { buildMcpServerSignInFlatConnectionProvider } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-flat-connection-provider.util';
 import { findMcpServerSignInFlatConnectionProvider } from 'src/engine/metadata-modules/mcp-server/utils/find-mcp-server-sign-in-flat-connection-provider.util';
 
+type SignInFlatMcpServer = Pick<
+  FlatMcpServer,
+  | 'name'
+  | 'label'
+  | 'url'
+  | 'workspaceId'
+  | 'applicationId'
+  | 'applicationUniversalIdentifier'
+  | 'connectionProviderId'
+>;
+
 type ConnectionProviderUpdate = Partial<
   Pick<
     FlatMcpServer,
@@ -39,7 +50,7 @@ export class McpServerSignInService {
     signInScope,
     workspaceId,
   }: {
-    existingFlatMcpServer: FlatMcpServer;
+    existingFlatMcpServer: SignInFlatMcpServer;
     flatConnectionProviderMaps: FlatEntityMaps<FlatConnectionProvider>;
     nextUrl: string | undefined;
     connectionProviderId: string | null | undefined;
@@ -208,7 +219,7 @@ export class McpServerSignInService {
     isUrlChanged,
     scope,
   }: {
-    flatMcpServer: FlatMcpServer;
+    flatMcpServer: SignInFlatMcpServer;
     isUrlChanged: boolean;
     scope: ConnectionProviderScope;
   }): Promise<FlatConnectionProvider | null> {
@@ -218,17 +229,19 @@ export class McpServerSignInService {
     };
 
     // Only a new URL can stop asking for sign-in; a scope change keeps the server's current answer.
-    return isUrlChanged
-      ? this.buildSignInFlatConnectionProviderIfRequired({
-          mcpServer: flatMcpServer,
-          flatApplication,
-          scope,
-        })
-      : buildMcpServerSignInFlatConnectionProvider({
-          mcpServer: flatMcpServer,
-          flatApplication,
-          scope,
-        });
+    if (isUrlChanged) {
+      return this.buildSignInFlatConnectionProviderIfRequired({
+        mcpServer: flatMcpServer,
+        flatApplication,
+        scope,
+      });
+    }
+
+    return buildMcpServerSignInFlatConnectionProvider({
+      mcpServer: flatMcpServer,
+      flatApplication,
+      scope,
+    });
   }
 
   async buildSignInFlatConnectionProviderIfRequired({

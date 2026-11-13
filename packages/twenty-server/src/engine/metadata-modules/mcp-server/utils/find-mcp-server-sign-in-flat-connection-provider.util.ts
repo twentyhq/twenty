@@ -10,7 +10,10 @@ export const findMcpServerSignInFlatConnectionProvider = ({
   flatMcpServer,
   flatConnectionProviderMaps,
 }: {
-  flatMcpServer: FlatMcpServer;
+  flatMcpServer: Pick<
+    FlatMcpServer,
+    'url' | 'applicationId' | 'connectionProviderId'
+  >;
   flatConnectionProviderMaps: FlatEntityMaps<FlatConnectionProvider>;
 }): FlatConnectionProvider | null => {
   if (!isDefined(flatMcpServer.connectionProviderId)) {
