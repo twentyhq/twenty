@@ -1,6 +1,5 @@
 import { Command, Option } from 'nest-commander';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
 
 import {
   ProvisionedWorkspaceCommandRunner,
@@ -10,16 +9,12 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WORKSPACE_TABLE_REBUILD_DEFAULT_MINIMUM_USED_COLUMN_SLOT_COUNT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-table-rebuild-default-minimum-used-column-slot-count.constant';
-import { WORKSPACE_TABLE_REBUILD_LOCK_TIMEOUT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/workspace-table-rebuild-lock-timeout.constant';
 import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { WorkspaceTableRebuildService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-table-rebuild.service';
 import { type WorkspaceTableColumnSlotUsage } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-table-column-slot-usage.type';
-import { findWorkspaceTableColumnSlotUsages } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/find-workspace-table-column-slot-usages.util';
-import { getEscapedQualifiedTableName } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-escaped-qualified-table-name.util';
-import { readWorkspaceTableRebuildPlanOrThrow } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/read-workspace-table-rebuild-plan-or-throw.util';
-import { rebuildWorkspaceTable } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/rebuild-workspace-table.util';
 
 type RebuildWorkspaceTableCommandOptions =
   ProvisionedWorkspaceCommandOptions & {
@@ -35,6 +30,7 @@ type RebuildWorkspaceTableCommandOptions =
 export class RebuildWorkspaceTableCommand extends ProvisionedWorkspaceCommandRunner<RebuildWorkspaceTableCommandOptions> {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceTableRebuildService: WorkspaceTableRebuildService,
   ) {
     super(workspaceIteratorService);
   }
@@ -88,10 +84,11 @@ export class RebuildWorkspaceTableCommand extends ProvisionedWorkspaceCommandRun
     await queryRunner.connect();
 
     try {
-      const columnSlotUsages = await findWorkspaceTableColumnSlotUsages({
-        queryRunner,
-        schemaName,
-      });
+      const columnSlotUsages =
+        await this.workspaceTableRebuildService.findColumnSlotUsages({
+          queryRunner,
+          schemaName,
+        });
 
       const columnSlotUsagesToRebuild = this.selectColumnSlotUsagesOrThrow({
         columnSlotUsages,
@@ -110,7 +107,7 @@ export class RebuildWorkspaceTableCommand extends ProvisionedWorkspaceCommandRun
           continue;
         }
 
-        await this.rebuildTableInTransaction({
+        await this.workspaceTableRebuildService.rebuildTable({
           queryRunner,
           schemaName,
           tableName,
@@ -169,53 +166,5 @@ export class RebuildWorkspaceTableCommand extends ProvisionedWorkspaceCommandRun
     return columnSlotUsagesWithDroppedColumns.filter(({ tableName }) =>
       requestedTableNames.has(tableName),
     );
-  }
-
-  private async rebuildTableInTransaction({
-    queryRunner,
-    schemaName,
-    tableName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableName: string;
-  }): Promise<void> {
-    const escapedQualifiedTableName = getEscapedQualifiedTableName({
-      schemaName,
-      tableName,
-    });
-
-    await queryRunner.startTransaction();
-
-    try {
-      await queryRunner.query(
-        `SET LOCAL lock_timeout = '${WORKSPACE_TABLE_REBUILD_LOCK_TIMEOUT}'`,
-      );
-      await queryRunner.query(
-        `LOCK TABLE ${escapedQualifiedTableName} IN ACCESS EXCLUSIVE MODE`,
-      );
-
-      const workspaceTableRebuildPlan =
-        await readWorkspaceTableRebuildPlanOrThrow({
-          queryRunner,
-          schemaName,
-          tableName,
-        });
-
-      await rebuildWorkspaceTable({
-        queryRunner,
-        schemaName,
-        tableName,
-        workspaceTableRebuildPlan,
-      });
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-
-      throw error;
-    }
-
-    await queryRunner.query(`ANALYZE ${escapedQualifiedTableName}`);
   }
 }

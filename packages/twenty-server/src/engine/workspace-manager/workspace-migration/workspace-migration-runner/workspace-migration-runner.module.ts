@@ -20,6 +20,7 @@ import { DeferredWorkspaceOperationRecoveryService } from 'src/engine/workspace-
 import { DeferredWorkspaceOperationGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-gauge.service';
 import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { InFlightDeferredWorkspaceOperationsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-operations.service';
+import { WorkspaceTableRebuildService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-table-rebuild.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -44,6 +45,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceOperationGaugeService,
     FlatCacheInvalidateCommand,
     RebuildWorkspaceTableCommand,
+    WorkspaceTableRebuildService,
     RetryFailedDeferredWorkspaceOperationsCommand,
     DeferredWorkspaceOperationRecoveryCronCommand,
   ],
