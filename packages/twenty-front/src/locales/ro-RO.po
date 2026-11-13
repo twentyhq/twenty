@@ -1653,6 +1653,11 @@ msgstr "Se deschide un formular pentru persoana care lansează fluxul de lucru �
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Se deschide un formular pentru persoana care lansează fluxul de lucru și este completat pe loc. Cu acest declanșator, este afișat doar în rularea fluxului de lucru. Pentru a cere cuiva un răspuns sau o aprobare în inboxul său, folosește în schimb un pas Trimitere în inbox."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"

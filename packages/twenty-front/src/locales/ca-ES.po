@@ -1653,6 +1653,11 @@ msgstr "S'obre un formulari per a la persona que inicia el flux de treball i s'e
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "S'obre un formulari per a la persona que inicia el flux de treball i s'emplena al moment. Amb aquest activador, només es mostra durant l'execució del flux de treball. Per demanar a algú una resposta o una aprovació a la seva bústia d'entrada, utilitza un pas Envia a la bústia d'entrada."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"

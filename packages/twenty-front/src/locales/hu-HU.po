@@ -1653,6 +1653,11 @@ msgstr "Űrlap nyílik meg a munkafolyamatot elindító személy számára, amel
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Egy űrlap nyílik meg a munkafolyamatot elindító személy számára, amelyet helyben tölthet ki. Ezzel az indítóval csak a munkafolyamat futtatásakor jelenik meg. Ha valakitől választ vagy jóváhagyást szeretne kérni a beérkező üzenetei között, használjon inkább egy Küldés a beérkezett üzenetek közé lépést."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
