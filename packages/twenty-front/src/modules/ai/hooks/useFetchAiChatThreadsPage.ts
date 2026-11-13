@@ -12,8 +12,8 @@ import {
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { INBOX_THREAD_LIST_FILTER } from '@/ai/constants/InboxThreadListFilter';
-import { INBOX_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/InboxThreadListRecordGqlFields';
+import { INBOX_THREAD_LIST_FILTER } from '@/inbox/constants/InboxThreadListFilter';
+import { INBOX_THREAD_LIST_RECORD_GQL_FIELDS } from '@/inbox/constants/InboxThreadListRecordGqlFields';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAiChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

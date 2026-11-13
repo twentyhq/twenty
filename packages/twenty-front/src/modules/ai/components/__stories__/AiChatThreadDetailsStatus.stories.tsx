@@ -9,8 +9,8 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
-import { setInboxSelectedChannelView } from '@/ai/testing/setInboxSelectedChannelView';
-import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
+import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';

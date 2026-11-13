@@ -1,6 +1,6 @@
 import { type ReactNode, Suspense } from 'react';
 
-import { InboxChannelsEffect } from '@/ai/components/InboxChannelsEffect';
+import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
 import { AiChatRuntimeEffects } from '@/ai/components/AiChatRuntimeEffects';
 import { AiChatThreadInitializationEffect } from '@/ai/components/AiChatThreadInitializationEffect';
 import { AiChatThreadParticipantOperationsEffect } from '@/ai/components/AiChatThreadParticipantOperationsEffect';

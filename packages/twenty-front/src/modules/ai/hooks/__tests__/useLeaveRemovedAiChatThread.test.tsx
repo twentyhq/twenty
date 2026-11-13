@@ -8,7 +8,7 @@ import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipa
 import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import {
   jotaiStore,

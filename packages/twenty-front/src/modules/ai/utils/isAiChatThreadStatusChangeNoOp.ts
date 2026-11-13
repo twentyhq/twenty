@@ -1,4 +1,4 @@
-import { type InboxThreadTriageStatus } from '@/ai/types/InboxThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
 
 export const isAiChatThreadStatusChangeNoOp = ({
   currentStatus,
