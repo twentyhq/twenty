@@ -13,6 +13,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useStore } from 'jotai';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type RecordGqlFields } from 'twenty-shared/types';
 import { useCallback } from 'react';
 import {
@@ -20,6 +21,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { arrayToChunks } from '~/utils/array/arrayToChunks';
 
 const SCOPED_RELATIONS_REFRESH_GQL_FIELDS: RecordGqlFields = { id: true };
 
@@ -76,24 +78,35 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
         return;
       }
 
-      const { data } =
-        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-          query: findManyRecordsQuery,
-          fetchPolicy: 'network-only',
-          variables: {
-            filter: { id: { in: parentRecordIds } },
-            limit: parentRecordIds.length,
-            ...getRecordGqlRelationAliasVariables(relationAliases),
+      const relationAliasVariables =
+        getRecordGqlRelationAliasVariables(relationAliases);
+
+      await Promise.all(
+        arrayToChunks(parentRecordIds, QUERY_MAX_RECORDS).map(
+          async (parentRecordIdsChunk) => {
+            const { data } =
+              await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+                query: findManyRecordsQuery,
+                fetchPolicy: 'network-only',
+                variables: {
+                  filter: { id: { in: parentRecordIdsChunk } },
+                  limit: parentRecordIdsChunk.length,
+                  ...relationAliasVariables,
+                },
+              });
+
+            const recordConnection = data?.[objectMetadataItem.namePlural];
+
+            if (isDefined(recordConnection)) {
+              upsertRecordsInStore({
+                partialRecords: getRecordsFromRecordConnection({
+                  recordConnection,
+                }),
+              });
+            }
           },
-        });
-
-      const recordConnection = data?.[objectMetadataItem.namePlural];
-
-      if (isDefined(recordConnection)) {
-        upsertRecordsInStore({
-          partialRecords: getRecordsFromRecordConnection({ recordConnection }),
-        });
-      }
+        ),
+      );
     },
     [
       relationAliases,

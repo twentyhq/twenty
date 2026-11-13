@@ -68,10 +68,12 @@ export const getScopedRelationAffectedParentRecordIds = ({
 
     const parentRecord = getParentRecord(parentRecordId);
 
-    return aliases.some((alias) =>
-      ((parentRecord?.[alias] as ObjectRecord[] | undefined) ?? []).some(
-        (relatedRecord) => changedRecordIds.has(relatedRecord.id),
-      ),
-    );
+    return aliases.some((alias) => {
+      const relatedRecords: ObjectRecord[] = parentRecord?.[alias] ?? [];
+
+      return relatedRecords.some((relatedRecord) =>
+        changedRecordIds.has(relatedRecord.id),
+      );
+    });
   });
 };
