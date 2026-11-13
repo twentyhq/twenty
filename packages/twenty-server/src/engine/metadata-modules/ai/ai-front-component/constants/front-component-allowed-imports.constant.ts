@@ -3,6 +3,7 @@ import { FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/met
 
 export const FRONT_COMPONENT_ALLOWED_IMPORTS = [
   FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER,
+  'twenty-sdk/front-component',
   'react',
   'react-dom',
   'react/jsx-runtime',

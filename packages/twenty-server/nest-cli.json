@@ -88,6 +88,10 @@
       {
         "include": "engine/metadata-modules/ai/ai-front-component/constants/generated/ui-documentation.json",
         "outDir": "dist/assets"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/generated/front-component-context-module.json",
+        "outDir": "dist"
       }
     ]
   },
