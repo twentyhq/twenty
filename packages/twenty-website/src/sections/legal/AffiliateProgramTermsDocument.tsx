@@ -34,8 +34,8 @@ export function AffiliateProgramTermsDocument() {
       <ol>
         <li>
           You apply through the form on{' '}
-          <LocalizedLink href="/affiliate-partners">
-            twenty.com/affiliate-partners
+          <LocalizedLink href="/partners/creators">
+            twenty.com/partners/creators
           </LocalizedLink>
           . You must be at least 18, or a registered business. Twenty employees,
           contractors and members of their household can&rsquo;t join.

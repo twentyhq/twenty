@@ -15,7 +15,7 @@ import {
 import { AffiliateProgramTermsDocument, LegalDocument } from '@/sections/legal';
 import { Menu } from '@/sections/menu';
 
-export const generateMetadata = buildRouteMetadata('affiliatePartnersTerms');
+export const generateMetadata = buildRouteMetadata('partnersTerms');
 
 export default async function AffiliateProgramTermsPage({
   params,
@@ -35,11 +35,8 @@ export default async function AffiliateProgramTermsPage({
         data={buildBreadcrumbListJsonLd(
           [
             { name: 'Home', path: '/' },
-            { name: 'Affiliate program', path: '/affiliate-partners' },
-            {
-              name: 'Affiliate Program Terms',
-              path: '/affiliate-partners/terms',
-            },
+            { name: 'Partners', path: '/partners' },
+            { name: 'Partner program terms', path: '/partners/terms' },
           ],
           locale,
         )}

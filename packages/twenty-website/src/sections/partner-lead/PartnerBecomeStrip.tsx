@@ -68,7 +68,7 @@ export function PartnerBecomeStrip() {
               msg`Agencies and freelancers who implement Twenty can join as integrators.`,
             )}
           </Body>
-          <LearnMoreLink href="/partners/become">
+          <LearnMoreLink href="/partners/integrators">
             {i18n._(msg`Learn more about the integrator program`)}
           </LearnMoreLink>
         </BecomeCopy>
