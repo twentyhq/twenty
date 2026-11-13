@@ -5,8 +5,8 @@ import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-m
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 
-// A caller that only declares field operations, such as an upgrade command written before option rows,
-// still gets the option rows its fields imply.
+// A caller that only declares field operations, such as an upgrade command written before option rows
+// or an app sync that left the options unchanged, still gets the option rows its fields imply.
 export const addMissingFieldMetadataOptionOperationsToOperationRecord = ({
   allFlatEntityOperationRecordByMetadataName,
   existingFlatFieldMetadataOptionMaps,
@@ -39,6 +39,7 @@ export const addMissingFieldMetadataOptionOperationsToOperationRecord = ({
       ).filter(isDefined),
       existingFlatFieldMetadataOptionMaps,
       applicationUniversalIdentifier,
+      shouldLeaveOtherApplicationOptions: true,
     });
 
   const hasNoOptionOperation = Object.values(
