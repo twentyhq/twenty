@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { isProxySignInUrl } from '@/transport/is-proxy-sign-in-url';
 
+const API_ORIGIN = 'https://twenty.example.com';
+
 describe('isProxySignInUrl', () => {
   it.each([
     'https://team.cloudflareaccess.com/cdn-cgi/access/login/twenty.example.com',
@@ -11,7 +13,9 @@ describe('isProxySignInUrl', () => {
     'https://login.microsoftonline.com/tenant/oauth2/v2.0/authorize',
     'https://sso.example.com/realms/corp/protocol/openid-connect/auth',
   ])('recognizes %s', (url) => {
-    expect(isProxySignInUrl(new URL(url))).toBe(true);
+    expect(
+      isProxySignInUrl({ url: new URL(url), requestOrigin: API_ORIGIN }),
+    ).toBe(true);
   });
 
   it.each([
@@ -19,6 +23,25 @@ describe('isProxySignInUrl', () => {
     'https://www.example.com/rest/companies',
     'https://example.com/authors/login-history-report',
   ])('does not flag %s', (url) => {
-    expect(isProxySignInUrl(new URL(url))).toBe(false);
+    expect(
+      isProxySignInUrl({ url: new URL(url), requestOrigin: API_ORIGIN }),
+    ).toBe(false);
+  });
+
+  it('ignores the host of a same-origin redirect', () => {
+    const requestOrigin = 'https://sso.acme.com';
+
+    expect(
+      isProxySignInUrl({
+        url: new URL(`${requestOrigin}/rest/companies`),
+        requestOrigin,
+      }),
+    ).toBe(false);
+    expect(
+      isProxySignInUrl({
+        url: new URL(`${requestOrigin}/oauth2/start`),
+        requestOrigin,
+      }),
+    ).toBe(true);
   });
 });

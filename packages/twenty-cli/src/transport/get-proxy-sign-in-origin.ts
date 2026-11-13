@@ -22,7 +22,10 @@ export const getProxySignInOrigin = ({
   const redirectUrl = URL.parse(location, requestUrl.href);
 
   // Same-origin counts too: oauth2-proxy redirects to /oauth2/start on the proxied host.
-  if (!isDefined(redirectUrl) || !isProxySignInUrl(redirectUrl)) {
+  if (
+    !isDefined(redirectUrl) ||
+    !isProxySignInUrl({ url: redirectUrl, requestOrigin: requestUrl.origin })
+  ) {
     return undefined;
   }
 
