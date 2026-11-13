@@ -20,6 +20,7 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
+import { getFieldNameFromRelationRecordKey } from 'src/engine/api/common/utils/relation-record-key.util';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
@@ -178,8 +179,11 @@ export class ProcessNestedRelationsHelper {
       parentObjectMetadataItem,
     );
 
+    const sourceRelationFieldName =
+      getFieldNameFromRelationRecordKey(sourceFieldName);
+
     const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
+      flatEntityId: fieldMaps.fieldIdByName[sourceRelationFieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
@@ -202,7 +206,7 @@ export class ProcessNestedRelationsHelper {
 
     if (!sourceFieldMetadata.settings) {
       throw new GraphqlQueryRunnerException(
-        `Relation settings not found for field ${sourceFieldName}`,
+        `Relation settings not found for field ${sourceRelationFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
@@ -214,7 +218,7 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName,
+        sourceFieldName: sourceRelationFieldName,
         fieldMaps,
       });
 
@@ -237,7 +241,7 @@ export class ProcessNestedRelationsHelper {
         sourceFieldName,
         relatedRecordJoinColumnName: 'id',
         parentRecordJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
-          name: sourceFieldName,
+          name: sourceRelationFieldName,
         }),
         relationType,
         selectedFields,
@@ -268,7 +272,7 @@ export class ProcessNestedRelationsHelper {
     });
 
     const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: sourceFieldName,
+      name: sourceRelationFieldName,
     });
 
     const relationIds = getUniqueRelationIds({
@@ -282,7 +286,7 @@ export class ProcessNestedRelationsHelper {
       !isDefined(targetRelationName)
     ) {
       throw new GraphqlQueryRunnerException(
-        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
+        `Could not resolve target relation for one-to-many field ${sourceRelationFieldName}`,
         GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
@@ -497,6 +501,12 @@ export class ProcessNestedRelationsHelper {
     if (aggregateForRelation) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
+      this.applyNestedRelationFilterToBuilder({
+        queryBuilder: aggregateQueryBuilder,
+        targetObjectNameSingular,
+        resolvedQueryArgs,
+      });
+
       ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
         selectedAggregatedFields: aggregateForRelation,
         queryBuilder: aggregateQueryBuilder,
@@ -505,7 +515,7 @@ export class ProcessNestedRelationsHelper {
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
         .addSelect(column, column.replace(/["']/g, ''))
-        .where(`${column} IN (:...ids)`, { ids })
+        .andWhere(`${column} IN (:...ids)`, { ids })
         .groupBy(column)
         .getRawMany();
 
@@ -559,6 +569,14 @@ export class ProcessNestedRelationsHelper {
       .setFindOptions(findOptionsWithJoinColumn)
       .where(`id IN (:...recordIdsToHydrate)`, { recordIdsToHydrate });
 
+    // The id query may have kept soft-deleted records the filter asked for
+    if (isDefined(resolvedQueryArgs?.filter)) {
+      resolvedQueryArgs.queryParser.applyDeletedAtToBuilder(
+        hydrationQueryBuilder,
+        resolvedQueryArgs.filter,
+      );
+    }
+
     if (isDefined(resolvedQueryArgs?.orderBy)) {
       resolvedQueryArgs.queryParser.applyOrderToBuilder(
         hydrationQueryBuilder,
@@ -597,17 +615,11 @@ export class ProcessNestedRelationsHelper {
       .createQueryBuilder(targetObjectNameSingular)
       .select(`"${targetObjectNameSingular}"."id"`, 'id');
 
-    if (isDefined(resolvedQueryArgs?.filter)) {
-      resolvedQueryArgs.queryParser.applyFilterToBuilder(
-        perParentRecordIdsQueryBuilder,
-        targetObjectNameSingular,
-        resolvedQueryArgs.filter,
-      );
-      resolvedQueryArgs.queryParser.applyDeletedAtToBuilder(
-        perParentRecordIdsQueryBuilder,
-        resolvedQueryArgs.filter,
-      );
-    }
+    this.applyNestedRelationFilterToBuilder({
+      queryBuilder: perParentRecordIdsQueryBuilder,
+      targetObjectNameSingular,
+      resolvedQueryArgs,
+    });
 
     perParentRecordIdsQueryBuilder.andWhere(
       `${column} = "lateralParents"."parentId"`,
@@ -639,6 +651,30 @@ export class ProcessNestedRelationsHelper {
     }>(lateralSql, perParentRecordIdsQueryBuilder.getParameters());
 
     return limitedRecords.map((limitedRecord) => limitedRecord.id);
+  }
+
+  private applyNestedRelationFilterToBuilder({
+    queryBuilder,
+    targetObjectNameSingular,
+    resolvedQueryArgs,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    targetObjectNameSingular: string;
+    resolvedQueryArgs?: ResolvedNestedRelationQueryArgs;
+  }): void {
+    if (!isDefined(resolvedQueryArgs?.filter)) {
+      return;
+    }
+
+    resolvedQueryArgs.queryParser.applyFilterToBuilder(
+      queryBuilder,
+      targetObjectNameSingular,
+      resolvedQueryArgs.filter,
+    );
+    resolvedQueryArgs.queryParser.applyDeletedAtToBuilder(
+      queryBuilder,
+      resolvedQueryArgs.filter,
+    );
   }
 
   private assignRelationResults({
