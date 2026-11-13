@@ -1,4 +1,3 @@
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,8 +43,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
     return null;
   }
 
-  const { periodEnd, daysUntilReset, isFallingBackToWorkspaceCredits } =
-    userCreditsUsage;
+  const { periodEnd, isFallingBackToWorkspaceCredits } = userCreditsUsage;
 
   if (
     agentChatUserCreditsBannerDismissal?.workspaceMemberId ===
@@ -74,7 +72,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
       <AiChatInlineBanner
         status="info"
         action={dismissAction}
-      >{t`Personal AI limit reached. Now using workspace credits.`}</AiChatInlineBanner>
+      >{t`Weekly personal AI limit reached. Now using workspace credits.`}</AiChatInlineBanner>
     );
   }
 
@@ -87,15 +85,13 @@ export const AiChatUserCreditsExhaustedBanner = () => {
             onClick={() => navigateSettings(SettingsPath.Billing)}
           >{t`Settings`}</InlineBanner.Action>
         }
-      >
-        {t`Personal AI limit reached. Resets in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`}
-      </AiChatInlineBanner>
+      >{t`Weekly personal AI limit reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
     );
   }
 
   return (
     <AiChatInlineBanner
       action={dismissAction}
-    >{t`Personal AI limit reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
+    >{t`Weekly personal AI limit reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
   );
 };

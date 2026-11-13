@@ -28,10 +28,11 @@ i18n.activate(SOURCE_LOCALE);
 const PERIOD_END = new Date(Date.now() + 3 * 86400000).toISOString();
 
 const FALLBACK_NOTICE =
-  'Personal AI limit reached. Now using workspace credits.';
-const ADMIN_STOP_NOTICE = 'Personal AI limit reached. Resets in 3 days.';
+  'Weekly personal AI limit reached. Now using workspace credits.';
+const ADMIN_STOP_NOTICE =
+  'Weekly personal AI limit reached. Enable workspace credits to continue.';
 const MEMBER_STOP_NOTICE =
-  'Personal AI limit reached. Ask an admin to enable workspace credits.';
+  'Weekly personal AI limit reached. Ask an admin to enable workspace credits.';
 
 const renderBanner = ({
   userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
