@@ -16,7 +16,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { ConnectionProviderScopeEnum } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
+import { ConnectionProviderScopeEnum } from 'src/engine/core-modules/application/connection-provider/dtos/connection-provider-scope.enum';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
