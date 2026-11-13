@@ -89,8 +89,7 @@ export class FlatFieldMetadataOptionValidatorService {
     return finalOptionsByField.get(fieldMetadataUniversalIdentifier) ?? [];
   }
 
-  // Options another application ships with its field can only be overridden or deactivated, like its
-  // fields. The owner of the option, or of its field, is the only one to remove or re-value it.
+  // Only the owner of an option, or of its field, may remove or re-value it; others deactivate it.
   private isCallerAllowedToRemoveOrRevalue({
     universalFlatFieldMetadataOption,
     flatFieldMetadataMaps,
@@ -114,10 +113,15 @@ export class FlatFieldMetadataOptionValidatorService {
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    const isFieldBeingDeleted = !isDefined(flatFieldMetadata);
+
+    if (isFieldBeingDeleted) {
+      return true;
+    }
+
     return (
-      !isDefined(flatFieldMetadata) ||
       flatFieldMetadata.applicationUniversalIdentifier ===
-        buildOptions.applicationUniversalIdentifier
+      buildOptions.applicationUniversalIdentifier
     );
   }
 
