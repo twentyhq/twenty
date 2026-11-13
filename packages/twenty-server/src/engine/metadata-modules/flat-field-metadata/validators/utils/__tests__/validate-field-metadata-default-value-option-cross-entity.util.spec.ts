@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { validateFieldMetadataDefaultValueOptionCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 const FIELD_UNIVERSAL_IDENTIFIER = 'status-field';
 const OPEN_OPTION_UNIVERSAL_IDENTIFIER = 'open-option';
@@ -31,7 +32,7 @@ const validate = ({
   update,
   isPausedActiveBefore,
 }: {
-  update: Record<string, unknown>;
+  update: Partial<UniversalFlatFieldMetadata>;
   isPausedActiveBefore: boolean;
 }) =>
   validateFieldMetadataDefaultValueOptionCrossEntity({

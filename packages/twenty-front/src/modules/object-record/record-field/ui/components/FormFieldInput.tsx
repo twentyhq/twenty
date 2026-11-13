@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { FormAddressFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAddressFieldInput';
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
@@ -130,7 +131,7 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={filterSelectableFieldOptions({
         options: field.metadata.options,
-        selectedValues: [defaultValue],
+        selectedValues: isString(defaultValue) ? [defaultValue] : [],
       })}
       readonly={readonly}
       isNullable={field.metadata.isNullable}
@@ -216,7 +217,9 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={filterSelectableFieldOptions({
         options: field.metadata.options,
-        selectedValues: Array.isArray(defaultValue) ? defaultValue : [],
+        selectedValues: Array.isArray(defaultValue)
+          ? defaultValue.filter(isString)
+          : [],
       })}
       readonly={readonly}
       placeholder={placeholder}

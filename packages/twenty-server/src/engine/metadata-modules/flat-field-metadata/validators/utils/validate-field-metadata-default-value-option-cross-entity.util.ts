@@ -14,6 +14,9 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
+const unquoteDefaultValue = (defaultValue: string): string =>
+  defaultValue.replace(QUOTED_STRING_REGEX, '$1');
+
 const groupInactiveOptionValuesByFieldMetadataUniversalIdentifier = ({
   flatFieldMetadataOptionMaps,
   isWorkspaceCaller,
@@ -207,12 +210,11 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       ? universalFlatFieldMetadata.defaultValue
       : [universalFlatFieldMetadata.defaultValue];
 
-    const defaultValuesWithoutOption = defaultValues
-      .filter(isString)
-      .filter(
-        (defaultValue) =>
-          !optionValues.has(defaultValue.replace(QUOTED_STRING_REGEX, '$1')),
-      );
+    const stringDefaultValues = defaultValues.filter(isString);
+
+    const defaultValuesWithoutOption = stringDefaultValues.filter(
+      (defaultValue) => !optionValues.has(unquoteDefaultValue(defaultValue)),
+    );
 
     const inactiveOptionValues =
       inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
@@ -229,9 +231,8 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       fieldMetadataUniversalIdentifiersWithDefaultValueUpdate.has(
         fieldMetadataUniversalIdentifier,
       );
-    const hasInactiveDefaultOption = defaultValues
-      .filter(isString)
-      .map((defaultValue) => defaultValue.replace(QUOTED_STRING_REGEX, '$1'))
+    const hasInactiveDefaultOption = stringDefaultValues
+      .map(unquoteDefaultValue)
       .some(
         (defaultOptionValue) =>
           inactiveOptionValues?.has(defaultOptionValue) === true &&

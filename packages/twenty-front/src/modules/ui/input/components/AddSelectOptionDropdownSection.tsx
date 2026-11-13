@@ -25,7 +25,7 @@ export const AddSelectOptionDropdownSection = ({
     !isDefined(onAddSelectOption) ||
     !isNonEmptyString(optionName) ||
     isNonEmptyArray(filteredOptions) ||
-    isExistingOptionName?.(optionName) === true
+    isExistingOptionName?.(optionName)
   ) {
     return null;
   }

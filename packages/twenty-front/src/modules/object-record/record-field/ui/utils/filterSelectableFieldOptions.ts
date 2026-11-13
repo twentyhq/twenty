@@ -8,7 +8,7 @@ export const filterSelectableFieldOptions = <
   selectedValues,
 }: {
   options: TOption[];
-  selectedValues: readonly unknown[];
+  selectedValues: readonly string[];
 }): TOption[] =>
   options.filter(
     (option) =>
