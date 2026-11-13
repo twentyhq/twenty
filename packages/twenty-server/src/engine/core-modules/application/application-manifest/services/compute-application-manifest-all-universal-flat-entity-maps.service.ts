@@ -621,8 +621,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       const inactiveOptionValues = findInactiveFieldMetadataOptionValues({
         fieldMetadataUniversalIdentifier:
           viewManifest.mainGroupByFieldMetadataUniversalIdentifier,
-        flatFieldMetadataOptionMaps:
+        existingFlatFieldMetadataOptionMaps:
           existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+        incomingFlatFieldMetadataOptionMaps:
+          allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
       });
 
       for (const viewGroupManifest of viewManifest.groups ?? []) {
