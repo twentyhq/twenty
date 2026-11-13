@@ -88,7 +88,10 @@ export class AdminPanelUsageLimitResolver {
       grantedByUserId: actor.id,
     });
 
-    return fromUsageLimitEntityToDto(usageLimit);
+    return {
+      ...fromUsageLimitEntityToDto(usageLimit),
+      endsAt: endsAt ?? null,
+    };
   }
 
   @Mutation(() => Boolean)

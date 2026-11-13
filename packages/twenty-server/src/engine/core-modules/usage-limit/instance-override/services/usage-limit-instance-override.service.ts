@@ -15,7 +15,6 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 
 @Injectable()
 export class UsageLimitInstanceOverrideService {
@@ -84,11 +83,6 @@ export class UsageLimitInstanceOverrideService {
             stripeCreditNoteId: null,
             creditGrantId: null,
             usageLimitId: usageLimit.id,
-            usageLimitSnapshot: {
-              ...buildUsageLimitScope(usageLimit),
-              limitValue: usageLimit.limitValue,
-              burstValue: usageLimit.burstValue,
-            },
             startsAt,
             endsAt,
           },
@@ -128,5 +122,27 @@ export class UsageLimitInstanceOverrideService {
           entityManager,
         }),
     });
+  }
+
+  async findEndDatesByUsageLimitId(
+    workspaceId: string,
+  ): Promise<Map<string, Date>> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return new Map();
+    }
+
+    const limitOverrides =
+      await this.billingArrangementService.findArrangementsByTypes({
+        workspaceId,
+        types: [BillingArrangementType.LIMIT_OVERRIDE],
+      });
+
+    return new Map(
+      limitOverrides.flatMap(({ usageLimitId, endsAt, revokedAt }) =>
+        isDefined(usageLimitId) && isDefined(endsAt) && !isDefined(revokedAt)
+          ? [[usageLimitId, endsAt]]
+          : [],
+      ),
+    );
   }
 }

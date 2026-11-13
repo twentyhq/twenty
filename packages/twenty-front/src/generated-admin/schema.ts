@@ -145,6 +145,7 @@ export type AdminPanelUsageLimit = {
   __typename?: 'AdminPanelUsageLimit';
   burstValue?: Maybe<Scalars['BigInt']['output']>;
   createdAt: Scalars['DateTime']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   limitKind: Scalars['String']['output'];
   limitValue: Scalars['BigInt']['output'];

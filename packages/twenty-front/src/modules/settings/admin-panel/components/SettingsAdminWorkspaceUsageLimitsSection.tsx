@@ -26,6 +26,7 @@ import { SettingsTableListSection } from '@/settings/components/SettingsTableLis
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { type WorkspaceUsageLimitsQuery } from '~/generated-admin/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 type SettingsAdminWorkspaceUsageLimitsSectionProps = {
   workspaceId: string;
@@ -33,7 +34,7 @@ type SettingsAdminWorkspaceUsageLimitsSectionProps = {
 
 const EDIT_LIMIT_DIALOG_ID = 'settings-admin-usage-limit-edit';
 
-const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
+const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 110px 100px 36px';
 
 const getStatus = (
   row: AdminUsageLimitRow,
@@ -126,6 +127,17 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
           {
             label: t`Per`,
             Cell: ({ item }) => <>{getAdminUsageLimitPeriodLabel(item)}</>,
+          },
+          {
+            label: t`Ends`,
+            Cell: ({ item }) => (
+              <>
+                {item.isOverridden &&
+                  (isDefined(item.endsAt)
+                    ? beautifyExactDate(item.endsAt)
+                    : t`Never`)}
+              </>
+            ),
           },
           {
             label: t`Source`,
