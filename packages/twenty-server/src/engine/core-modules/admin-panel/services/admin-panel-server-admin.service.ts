@@ -99,6 +99,9 @@ export class AdminPanelServerAdminService {
       return this.toServerAdminDTO(targetUser);
     }
 
+    const isChangingFullAdmin =
+      nextCanAccessFullAdminPanel !== targetUser.canAccessFullAdminPanel;
+
     const isRevokingFullAdmin =
       targetUser.canAccessFullAdminPanel === true &&
       nextCanAccessFullAdminPanel === false;
@@ -131,7 +134,7 @@ export class AdminPanelServerAdminService {
         await manager.save(UserEntity, targetUser);
       });
 
-    if (isRevokingFullAdmin) {
+    if (isChangingFullAdmin) {
       await this.serverAdminLockService.runExclusively(saveTargetUser);
     } else {
       await saveTargetUser();

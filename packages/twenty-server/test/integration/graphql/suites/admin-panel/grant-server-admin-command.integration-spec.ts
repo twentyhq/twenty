@@ -7,6 +7,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type GrantServerAdminCommand } from 'src/engine/core-modules/admin-panel/commands/grant-server-admin.command';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
@@ -31,7 +32,7 @@ describe('server-admin:grant command', () => {
     );
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await getCoreRepository<UserEntity>(UserEntity).update(
       { id: USER_DATA_SEED_IDS.SCOTT },
       { canAccessFullAdminPanel: false, canImpersonate: false },
@@ -74,6 +75,24 @@ describe('server-admin:grant command', () => {
         ({ id }: { id: string }) => id,
       ),
     ).toContain(USER_DATA_SEED_IDS.SCOTT);
+  });
+
+  it('should refuse to grant while a user is being removed', async () => {
+    await getAppProviderByClassName<ServerAdminLockService>(
+      'ServerAdminLockService',
+    ).runShared(async () => {
+      await expect(
+        command.run([], { email: SCOTT_EMAIL }),
+      ).rejects.toMatchObject({
+        message: 'Another server administrator change is in progress',
+      });
+    });
+
+    const scott = await getCoreRepository<UserEntity>(UserEntity).findOneOrFail(
+      { where: { id: USER_DATA_SEED_IDS.SCOTT } },
+    );
+
+    expect(scott.canAccessFullAdminPanel).toBe(false);
   });
 
   it('should fail when no active user has the email', async () => {

@@ -345,12 +345,20 @@ export class UserService {
     user,
     removeUser,
   }: {
-    user: Pick<UserEntity, 'id' | 'canAccessFullAdminPanel'>;
+    user: Pick<UserEntity, 'id'>;
     removeUser: () => Promise<void>;
   }) {
-    if (!user.canAccessFullAdminPanel) {
+    const isRemoved = await this.serverAdminLockService.runShared(async () => {
+      if (await this.isServerAdmin(user.id)) {
+        return false;
+      }
+
       await removeUser();
 
+      return true;
+    });
+
+    if (isRemoved) {
       return;
     }
 
@@ -360,12 +368,22 @@ export class UserService {
     });
   }
 
+  private isServerAdmin(userId: string) {
+    return this.userRepository.exists({
+      where: { id: userId, canAccessFullAdminPanel: true },
+    });
+  }
+
   private async assertIsNotLastServerAdminOrThrow(userId: string) {
-    const hasOtherServerAdmin = await this.userRepository.exists({
-      where: { id: Not(userId), canAccessFullAdminPanel: true },
+    const serverAdmins = await this.userRepository.find({
+      select: { id: true },
+      where: { canAccessFullAdminPanel: true },
     });
 
-    if (hasOtherServerAdmin) {
+    const isLastServerAdmin =
+      serverAdmins.length === 1 && serverAdmins[0].id === userId;
+
+    if (!isLastServerAdmin) {
       return;
     }
 

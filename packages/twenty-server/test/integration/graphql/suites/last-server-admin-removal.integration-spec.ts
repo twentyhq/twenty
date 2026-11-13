@@ -22,7 +22,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 const TOTP_STEP_MS = 30_000;
 
-type ServerAdmin = {
+type Member = {
   id: string;
   workspaceMemberId: string;
   accessToken: string;
@@ -58,7 +58,7 @@ const setCanAccessFullAdminPanel = async (
   );
 };
 
-const signUpServerAdmin = async (): Promise<ServerAdmin> => {
+const signUpMember = async (): Promise<Member> => {
   const accessToken = await signUpInWorkspaceAndGetAccessToken(
     `last-server-admin-${randomUUID()}@example.com`,
   );
@@ -70,9 +70,15 @@ const signUpServerAdmin = async (): Promise<ServerAdmin> => {
 
   const { id, workspaceMember } = response.body.data.currentUser;
 
-  await setCanAccessFullAdminPanel([id], true);
-
   return { id, workspaceMemberId: workspaceMember.id, accessToken };
+};
+
+const signUpServerAdmin = async (): Promise<Member> => {
+  const serverAdmin = await signUpMember();
+
+  await setCanAccessFullAdminPanel([serverAdmin.id], true);
+
+  return serverAdmin;
 };
 
 const enableTwoFactorAuthentication = async (accessToken: string) => {
@@ -95,12 +101,55 @@ const enableTwoFactorAuthentication = async (accessToken: string) => {
   return secret;
 };
 
-const runWhileServerAdminsAreLocked = (callback: () => Promise<void>) =>
-  getAppProviderByClassName<ServerAdminLockService>(
-    'ServerAdminLockService',
-  ).runExclusively(callback);
+const updateServerAdminAccess = ({
+  userId,
+  canAccessFullAdminPanel,
+  secret,
+  accessToken,
+}: {
+  userId: string;
+  canAccessFullAdminPanel: boolean;
+  secret: string;
+  accessToken: string;
+}) =>
+  makeAdminPanelApiRequest(
+    {
+      query: gql`
+        mutation UpdateServerAdminAccess(
+          $userId: UUID!
+          $canAccessFullAdminPanel: Boolean
+          $otp: String
+        ) {
+          updateServerAdminAccess(
+            userId: $userId
+            canAccessFullAdminPanel: $canAccessFullAdminPanel
+            otp: $otp
+          ) {
+            id
+          }
+        }
+      `,
+      variables: {
+        userId,
+        canAccessFullAdminPanel,
+        otp: authenticator
+          .clone({ epoch: Date.now() + TOTP_STEP_MS })
+          .generate(secret),
+      },
+    },
+    accessToken,
+  );
 
-const expectServerAdminToBeUntouched = async (serverAdmin: ServerAdmin) => {
+const getServerAdminLockService = () =>
+  getAppProviderByClassName<ServerAdminLockService>('ServerAdminLockService');
+
+const runWhileServerAdminsChange = (callback: () => Promise<void>) =>
+  getServerAdminLockService().runExclusively(callback);
+
+const runWhileAUserIsRemoved = (callback: () => Promise<void>) =>
+  getServerAdminLockService().runShared(callback);
+
+const expectServerAdminToBeUntouched = async (serverAdmin: Member) => {
   const user = await getCoreRepository<UserEntity>(UserEntity).findOne({
     where: { id: serverAdmin.id },
   });
@@ -119,7 +168,7 @@ const expectServerAdminToBeUntouched = async (serverAdmin: ServerAdmin) => {
 
 describe('Removing the last server admin', () => {
   let otherServerAdminIds: string[];
-  let serverAdmin: ServerAdmin;
+  let serverAdmin: Member;
 
   beforeAll(async () => {
     const otherServerAdmins = await getCoreRepository<UserEntity>(
@@ -138,6 +187,7 @@ describe('Removing the last server admin', () => {
 
   afterEach(async () => {
     await setCanAccessFullAdminPanel(otherServerAdminIds, true);
+    await setCanAccessFullAdminPanel([USER_DATA_SEED_IDS.SCOTT], false);
 
     const isServerAdminStillActive = await getCoreRepository<UserEntity>(
       UserEntity,
@@ -188,9 +238,9 @@ describe('Removing the last server admin', () => {
     });
   });
 
-  describe('while another server admin change is in progress', () => {
+  describe('while server admins are being changed', () => {
     it('should refuse to remove a server admin before touching their member', async () => {
-      await runWhileServerAdminsAreLocked(async () => {
+      await runWhileServerAdminsChange(async () => {
         const { data, errors } = await deleteUserFromWorkspace({
           input: { workspaceMemberIdToDelete: serverAdmin.workspaceMemberId },
           expectToFail: true,
@@ -204,34 +254,47 @@ describe('Removing the last server admin', () => {
       await expectServerAdminToBeUntouched(serverAdmin);
     });
 
+    it('should refuse to remove a member before touching them', async () => {
+      const member = await signUpMember();
+
+      await runWhileServerAdminsChange(async () => {
+        const { data, errors } = await deleteUserFromWorkspace({
+          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
+          expectToFail: true,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        expect(data).toBeNull();
+        expect(errors[0].extensions.code).toBe(ErrorCode.CONFLICT);
+      });
+
+      const response = await makeMetadataApiRequest(
+        currentUserOperation,
+        member.accessToken,
+      );
+
+      expect(response.body.data.currentUser.workspaceMember.id).toBe(
+        member.workspaceMemberId,
+      );
+
+      await deleteUser({
+        accessToken: member.accessToken,
+        expectToFail: false,
+      });
+    });
+
     it('should refuse to revoke admin panel access from another server admin', async () => {
       const secret = await enableTwoFactorAuthentication(
         serverAdmin.accessToken,
       );
 
-      await runWhileServerAdminsAreLocked(async () => {
-        const response = await makeAdminPanelApiRequest(
-          {
-            query: gql`
-              mutation UpdateServerAdminAccess($userId: UUID!, $otp: String) {
-                updateServerAdminAccess(
-                  userId: $userId
-                  canAccessFullAdminPanel: false
-                  otp: $otp
-                ) {
-                  id
-                }
-              }
-            `,
-            variables: {
-              userId: USER_DATA_SEED_IDS.JANE,
-              otp: authenticator
-                .clone({ epoch: Date.now() + TOTP_STEP_MS })
-                .generate(secret),
-            },
-          },
-          serverAdmin.accessToken,
-        );
+      await runWhileServerAdminsChange(async () => {
+        const response = await updateServerAdminAccess({
+          userId: USER_DATA_SEED_IDS.JANE,
+          canAccessFullAdminPanel: false,
+          secret,
+          accessToken: serverAdmin.accessToken,
+        });
 
         expect(response.body.errors[0].extensions.code).toBe(
           ErrorCode.CONFLICT,
@@ -243,6 +306,53 @@ describe('Removing the last server admin', () => {
       ).findOneOrFail({ where: { id: USER_DATA_SEED_IDS.JANE } });
 
       expect(jane.canAccessFullAdminPanel).toBe(true);
+    });
+  });
+
+  describe('while a user is being removed', () => {
+    it('should refuse to promote a user to server admin', async () => {
+      const secret = await enableTwoFactorAuthentication(
+        serverAdmin.accessToken,
+      );
+
+      await runWhileAUserIsRemoved(async () => {
+        const response = await updateServerAdminAccess({
+          userId: USER_DATA_SEED_IDS.SCOTT,
+          canAccessFullAdminPanel: true,
+          secret,
+          accessToken: serverAdmin.accessToken,
+        });
+
+        expect(response.body.errors[0].extensions.code).toBe(
+          ErrorCode.CONFLICT,
+        );
+      });
+
+      const scott = await getCoreRepository<UserEntity>(
+        UserEntity,
+      ).findOneOrFail({ where: { id: USER_DATA_SEED_IDS.SCOTT } });
+
+      expect(scott.canAccessFullAdminPanel).toBe(false);
+    });
+
+    it('should still remove another member', async () => {
+      const member = await signUpMember();
+
+      await runWhileAUserIsRemoved(async () => {
+        const { errors } = await deleteUserFromWorkspace({
+          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
+          expectToFail: false,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        });
+
+        expect(errors).toBeUndefined();
+      });
+
+      const removedMember = await getCoreRepository<UserEntity>(
+        UserEntity,
+      ).findOne({ where: { id: member.id }, withDeleted: true });
+
+      expect(removedMember?.deletedAt).not.toBeNull();
     });
   });
 

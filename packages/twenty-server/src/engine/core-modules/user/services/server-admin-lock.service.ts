@@ -13,10 +13,22 @@ export class ServerAdminLockService {
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
-  async runExclusively<T>(callback: () => Promise<T>): Promise<T> {
+  runExclusively<T>(callback: () => Promise<T>): Promise<T> {
+    return this.runWithLock(callback, { isShared: false });
+  }
+
+  runShared<T>(callback: () => Promise<T>): Promise<T> {
+    return this.runWithLock(callback, { isShared: true });
+  }
+
+  private async runWithLock<T>(
+    callback: () => Promise<T>,
+    { isShared }: { isShared: boolean },
+  ): Promise<T> {
     const lockResult = await this.postgresAdvisoryLockService.tryWithLock(
       SERVER_ADMINS_LOCK_NAME,
       callback,
+      { isShared },
     );
 
     if (!lockResult.acquired) {
