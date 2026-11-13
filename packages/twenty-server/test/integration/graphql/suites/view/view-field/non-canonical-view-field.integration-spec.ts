@@ -7,13 +7,13 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { isDefined } from 'twenty-shared/utils';
 
-const CUSTOM_VIEW_FIELD_GQL_FIELDS = `
+const VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS = `
   id
   fieldMetadataId
-  isCustom
+  isCanonical
 `;
 
-describe('Custom view fields', () => {
+describe('Non-canonical view fields', () => {
   let testSetup: ViewFieldTestSetup;
   let labelIdentifierFieldMetadataId: string;
 
@@ -45,45 +45,45 @@ describe('Custom view fields', () => {
     await cleanupViewFieldTest(testSetup.testObjectMetadataId);
   });
 
-  it('adds several custom columns next to the data model column of a field', async () => {
+  it('adds several non-canonical columns next to the canonical column of a field', async () => {
     const {
-      data: { createViewField: dataModelViewField },
+      data: { createViewField: canonicalViewField },
     } = await createOneViewField({
       expectToFail: false,
-      gqlFields: CUSTOM_VIEW_FIELD_GQL_FIELDS,
+      gqlFields: VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS,
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
       },
     });
 
-    expect(dataModelViewField.isCustom).toBe(false);
+    expect(canonicalViewField.isCanonical).toBe(true);
 
     for (const position of [1, 2]) {
       const {
-        data: { createViewField: customViewField },
+        data: { createViewField: nonCanonicalViewField },
       } = await createOneViewField({
         expectToFail: false,
-        gqlFields: CUSTOM_VIEW_FIELD_GQL_FIELDS,
+        gqlFields: VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS,
         input: {
           fieldMetadataId: testSetup.testFieldMetadataId,
           viewId: testSetup.testViewId,
-          isCustom: true,
+          isCanonical: false,
           position,
         },
       });
 
-      expect(customViewField).toMatchObject({
+      expect(nonCanonicalViewField).toMatchObject({
         fieldMetadataId: testSetup.testFieldMetadataId,
-        isCustom: true,
+        isCanonical: false,
       });
     }
   });
 
-  it('still rejects a second data model column for the same field', async () => {
+  it('still rejects a second canonical column for the same field', async () => {
     const response = await createOneViewField({
       expectToFail: true,
-      gqlFields: CUSTOM_VIEW_FIELD_GQL_FIELDS,
+      gqlFields: VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS,
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
@@ -95,20 +95,20 @@ describe('Custom view fields', () => {
     );
   });
 
-  it('rejects a custom column on the label identifier field', async () => {
+  it('rejects a non-canonical column on the label identifier field', async () => {
     const response = await createOneViewField({
       expectToFail: true,
-      gqlFields: CUSTOM_VIEW_FIELD_GQL_FIELDS,
+      gqlFields: VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS,
       input: {
         fieldMetadataId: labelIdentifierFieldMetadataId,
         viewId: testSetup.testViewId,
-        isCustom: true,
+        isCanonical: false,
         position: 10,
       },
     });
 
     expect(JSON.stringify(response.errors)).toContain(
-      'A custom view field cannot use the label identifier field',
+      'A non-canonical view field cannot use the label identifier field',
     );
   });
 });

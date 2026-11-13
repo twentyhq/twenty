@@ -24,7 +24,7 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     isVisible: viewFieldManifest.isVisible ?? true,
     isActive: true,
     isSystemSideEffect: false,
-    isCustom: viewFieldManifest.isCustom ?? false,
+    isCanonical: viewFieldManifest.isCanonical ?? true,
     size: viewFieldManifest.size ?? 0,
     position: viewFieldManifest.position,
     aggregateOperation: viewFieldManifest.aggregateOperation ?? null,

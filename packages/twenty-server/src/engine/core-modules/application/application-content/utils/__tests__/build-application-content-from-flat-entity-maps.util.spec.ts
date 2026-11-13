@@ -93,7 +93,7 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   aggregateOperation: null,
   isActive: true,
   isSystemSideEffect: false,
-  isCustom: false,
+  isCanonical: true,
   overrides: null,
   createdAt: TIMESTAMP,
   updatedAt: TIMESTAMP,

@@ -33,8 +33,8 @@ export class CreateViewFieldInput {
 
   @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true, defaultValue: false })
-  isCustom?: boolean;
+  @Field({ nullable: true, defaultValue: true })
+  isCanonical?: boolean;
 
   @IsOptional()
   @IsNumber()

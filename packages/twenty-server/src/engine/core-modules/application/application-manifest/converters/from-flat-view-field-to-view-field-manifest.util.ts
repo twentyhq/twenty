@@ -14,7 +14,7 @@ export const fromFlatViewFieldToViewFieldManifest = ({
   position: flatViewField.position,
   isVisible: flatViewField.isVisible,
   size: flatViewField.size,
-  ...(flatViewField.isCustom ? { isCustom: true } : {}),
+  ...(flatViewField.isCanonical ? {} : { isCanonical: false }),
   ...(isDefined(flatViewField.aggregateOperation)
     ? { aggregateOperation: flatViewField.aggregateOperation }
     : {}),

@@ -22,7 +22,7 @@ const VIEW_FIELD_MANIFEST: Required<ViewFieldManifest> = {
   position: 3,
   aggregateOperation: AggregateOperations.SUM,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
-  isCustom: true,
+  isCanonical: false,
 };
 
 const MINIMAL_VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -70,7 +70,7 @@ describe('fromFlatViewFieldToViewFieldManifest', () => {
       aggregateOperation: AggregateOperations.SUM,
       isActive: true,
       isSystemSideEffect: false,
-      isCustom: false,
+      isCanonical: true,
       universalOverrides: null,
       createdAt: NOW,
       updatedAt: NOW,

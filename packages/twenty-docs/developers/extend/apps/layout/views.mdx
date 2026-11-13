@@ -39,7 +39,7 @@ export default defineView({
 - `objectUniversalIdentifier` specifies which object this view applies to. It can be a custom object you defined or a standard Twenty object.
 - The object's main list view is server-owned: `key` is deprecated and ignored, so a manifest view can never claim it. Ship a `VIEW` navigation item if you want your view one click away in the sidebar.
 - `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
-- Set `isCustom: true` on a field to add an extra column for a field the view already shows. Several custom columns can show the same field; they are not allowed on the object's label identifier field or in record-page field widgets.
+- Set `isCanonical: false` on a field to add an extra column for a field the view already shows. A view has at most one canonical column per field but any number of non-canonical ones; they are not allowed on the object's label identifier field or in record-page field widgets.
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 

@@ -157,7 +157,7 @@ export class FieldRecordPageViewFieldOnCreateSideEffectHandlerService extends Me
       aggregateOperation: null,
       isActive: true,
       isSystemSideEffect: true,
-      isCustom: false,
+      isCanonical: true,
       universalOverrides: null,
       createdAt,
       updatedAt: createdAt,

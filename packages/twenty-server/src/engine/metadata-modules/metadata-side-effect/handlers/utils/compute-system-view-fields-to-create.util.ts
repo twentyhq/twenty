@@ -54,7 +54,7 @@ export const computeSystemViewFieldsToCreate = ({
     aggregateOperation: null,
     isActive: true,
     isSystemSideEffect: true,
-    isCustom: false,
+    isCanonical: true,
     universalOverrides: null,
     applicationUniversalIdentifier,
   }));

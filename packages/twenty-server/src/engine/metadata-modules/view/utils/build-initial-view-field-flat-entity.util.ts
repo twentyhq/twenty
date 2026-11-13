@@ -42,7 +42,7 @@ export const buildInitialViewFieldFlatEntity = ({
   aggregateOperation,
   isActive,
   isSystemSideEffect: false,
-  isCustom: false,
+  isCanonical: true,
   universalOverrides: null,
   applicationUniversalIdentifier,
 });

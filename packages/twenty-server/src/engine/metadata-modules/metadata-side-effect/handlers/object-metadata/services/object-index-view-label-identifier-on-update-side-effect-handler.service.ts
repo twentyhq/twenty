@@ -104,7 +104,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
 
     const labelIdentifierFlatViewField = indexFlatViewFields.find(
       (flatViewField) =>
-        !flatViewField.isCustom &&
+        flatViewField.isCanonical &&
         flatViewField.fieldMetadataUniversalIdentifier ===
           newLabelIdentifierFieldMetadataUniversalIdentifier,
     );

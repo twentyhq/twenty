@@ -228,10 +228,10 @@ export class FlatViewFieldValidatorService {
         flatEntityMaps: optimisticFlatViewFieldMaps,
       });
     const equivalentExistingFlatViewFieldExists =
-      !flatViewFieldToValidate.isCustom &&
+      flatViewFieldToValidate.isCanonical &&
       otherFlatViewFields.some(
         (flatViewField) =>
-          !flatViewField.isCustom &&
+          flatViewField.isCanonical &&
           flatViewField.viewUniversalIdentifier ===
             flatViewFieldToValidate.viewUniversalIdentifier &&
           flatViewField.fieldMetadataUniversalIdentifier ===
@@ -261,12 +261,12 @@ export class FlatViewFieldValidatorService {
       return validationResult;
     }
 
-    if (flatViewFieldToValidate.isCustom) {
+    if (!flatViewFieldToValidate.isCanonical) {
       if (flatView.type === ViewType.FIELDS_WIDGET) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Custom view fields are not supported in fields widget views`,
-          userFriendlyMessage: msg`Custom columns are not supported here`,
+          message: t`Non-canonical view fields are not supported in fields widget views`,
+          userFriendlyMessage: msg`Extra columns are not supported here`,
         });
       }
 
@@ -276,15 +276,15 @@ export class FlatViewFieldValidatorService {
       ) {
         validationResult.errors.push({
           code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`A custom view field cannot use the label identifier field`,
-          userFriendlyMessage: msg`A custom column cannot show the record name`,
+          message: t`A non-canonical view field cannot use the label identifier field`,
+          userFriendlyMessage: msg`An extra column cannot show the record name`,
         });
       }
     }
 
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
-      !flatViewFieldToValidate.isCustom &&
+      flatViewFieldToValidate.isCanonical &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatViewFieldToValidate.fieldMetadataUniversalIdentifier
     ) {

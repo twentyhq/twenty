@@ -313,7 +313,7 @@ export class DemoteAndBackfillApplicationIndexViewCommand extends ProvisionedWor
             aggregateOperation: null,
             isActive: true,
             isSystemSideEffect: true,
-            isCustom: false,
+            isCanonical: true,
             universalOverrides: null,
             createdAt,
             updatedAt: createdAt,
