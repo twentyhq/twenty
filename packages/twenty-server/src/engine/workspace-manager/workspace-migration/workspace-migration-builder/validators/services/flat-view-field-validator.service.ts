@@ -262,25 +262,27 @@ export class FlatViewFieldValidatorService {
       return validationResult;
     }
 
-    if (!flatViewFieldToValidate.isCanonical) {
-      if (flatView.type === ViewType.FIELDS_WIDGET) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`Non-canonical view fields are not supported in fields widget views`,
-          userFriendlyMessage: msg`Extra columns are not supported here`,
-        });
-      }
+    if (
+      !flatViewFieldToValidate.isCanonical &&
+      flatView.type === ViewType.FIELDS_WIDGET
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Non-canonical view fields are not supported in fields widget views`,
+        userFriendlyMessage: msg`Extra columns are not supported here`,
+      });
+    }
 
-      if (
-        flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
+    if (
+      !flatViewFieldToValidate.isCanonical &&
+      flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatViewFieldToValidate.fieldMetadataUniversalIdentifier
-      ) {
-        validationResult.errors.push({
-          code: ViewExceptionCode.INVALID_VIEW_DATA,
-          message: t`A non-canonical view field cannot use the label identifier field`,
-          userFriendlyMessage: msg`An extra column cannot show the record name`,
-        });
-      }
+    ) {
+      validationResult.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`A non-canonical view field cannot use the label identifier field`,
+        userFriendlyMessage: msg`An extra column cannot show the record name`,
+      });
     }
 
     if (
