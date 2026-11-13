@@ -88,7 +88,7 @@ jobs:
     needs: sync-catalog
     if: needs.sync-catalog.outputs.changed == 'true'
     permissions: {}
-    uses: ./.github/workflows/i18n-open-pull-request.yaml
+    uses: ./.github/workflows/open-pull-request.yaml
     with:
       branch: chore/ai-catalog-sync
       title: 'chore: sync AI model catalog'
