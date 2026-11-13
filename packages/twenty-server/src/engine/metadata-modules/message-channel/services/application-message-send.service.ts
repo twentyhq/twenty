@@ -99,6 +99,18 @@ type AppMessageDelivery = Conversation & {
   attachments?: SendAppChannelMessageAttachmentInput[];
 };
 
+type DeliveryArguments = {
+  workspaceId: string;
+  messageChannel: MessageChannelEntity;
+  connectionProviderId: string;
+  connectedAccountId: string;
+  messageThreadId: string;
+  idempotencyKey: string;
+  reply: ValidatedAppReply;
+  attachments: SendAppChannelMessageAttachmentInput[];
+  deliveryKey: string;
+};
+
 @Injectable()
 export class ApplicationMessageSendService {
   constructor(
@@ -357,29 +369,19 @@ export class ApplicationMessageSendService {
     reply,
     attachments,
     deliveryKey,
-  }: {
-    workspaceId: string;
-    messageChannel: MessageChannelEntity;
-    connectionProviderId: string;
-    connectedAccountId: string;
-    messageThreadId: string;
-    idempotencyKey: string;
-    reply: ValidatedAppReply;
-    attachments: SendAppChannelMessageAttachmentInput[];
-    deliveryKey: string;
-  }): Promise<AppMessageDelivery> {
+  }: DeliveryArguments): Promise<AppMessageDelivery> {
     const attachmentsToSend =
       await this.applicationMessageSendAttachmentsService.buildAttachmentsToSendOrThrow(
         { attachments, workspaceId },
       );
 
-    await this.claimAttachmentsOrThrow({
-      attachments,
-      workspaceId,
-      deliveryKey,
-    });
-
     try {
+      await this.claimAttachmentsOrThrow({
+        attachments,
+        workspaceId,
+        deliveryKey,
+      });
+
       return await this.sendClaimedDelivery({
         workspaceId,
         messageChannel,
@@ -414,16 +416,7 @@ export class ApplicationMessageSendService {
     attachments,
     deliveryKey,
     attachmentsToSend,
-  }: {
-    workspaceId: string;
-    messageChannel: MessageChannelEntity;
-    connectionProviderId: string;
-    connectedAccountId: string;
-    messageThreadId: string;
-    idempotencyKey: string;
-    reply: ValidatedAppReply;
-    attachments: SendAppChannelMessageAttachmentInput[];
-    deliveryKey: string;
+  }: DeliveryArguments & {
     attachmentsToSend: SendAppMessageAttachment[];
   }): Promise<AppMessageDelivery> {
     const sender =

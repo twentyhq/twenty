@@ -171,6 +171,25 @@ describe('ApplicationMessageSendService', () => {
     });
   });
 
+  it('should release the uploads it claimed when another message holds one of its uploads', async () => {
+    cache.set(
+      'app-message-attachment-claim:workspace-1:upload-2',
+      'another-delivery',
+    );
+
+    await expect(
+      service.send({
+        ...SEND_ARGS,
+        attachments: [...ATTACHMENTS, { id: 'upload-2', name: 'photo.png' }],
+      }),
+    ).rejects.toThrow(MessageChannelException);
+
+    expect(cache.has('app-message-attachment-claim:workspace-1:upload-1')).toBe(
+      false,
+    );
+    expect(sendOrThrow).not.toHaveBeenCalled();
+  });
+
   it('should return the saved reply on retry without needing the deleted uploads', async () => {
     await service.send(SEND_ARGS);
 
