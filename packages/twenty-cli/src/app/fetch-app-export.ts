@@ -18,11 +18,13 @@ const NOT_EXPORTABLE_SUB_CODES = new Set([
   'STANDARD_APPLICATION_NOT_EXPORTABLE',
 ]);
 
-const isValidationErrorEntry = (
-  entry: unknown,
-  status: unknown,
-): entry is Record<string, unknown> =>
-  isPlainObject(entry) &&
+const isValidationErrorEntry = ({
+  entry,
+  status,
+}: {
+  entry: Record<string, unknown>;
+  status: unknown;
+}): boolean =>
   (entry.code === 'GRAPHQL_VALIDATION_FAILED' ||
     (isNull(entry.code) && status === 400)) &&
   isNull(entry.path);
@@ -47,7 +49,8 @@ const isExportValidationError = ({
   const entry: unknown = errors[0];
 
   return (
-    isValidationErrorEntry(entry, error.details?.status) &&
+    isPlainObject(entry) &&
+    isValidationErrorEntry({ entry, status: error.details?.status }) &&
     isString(entry.message) &&
     entry.message.startsWith(messagePrefix)
   );
@@ -133,7 +136,10 @@ export const fetchAppExport = async ({
           !isArray(errors) ||
           !isNonEmptyArray(errors) ||
           !errors.every((entry: unknown) => {
-            if (!isValidationErrorEntry(entry, error.details?.status)) {
+            if (
+              !isPlainObject(entry) ||
+              !isValidationErrorEntry({ entry, status: error.details?.status })
+            ) {
               return false;
             }
             const message = entry.message;
