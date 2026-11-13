@@ -65,9 +65,7 @@ describe('ApplicationUninstallRunnerService', () => {
         {
           provide: CacheLockService,
           useValue: {
-            withLock: jest.fn((callback: () => Promise<unknown>) =>
-              callback(),
-            ),
+            withLock: jest.fn((callback: () => Promise<unknown>) => callback()),
           },
         },
         { provide: EventLogEmitterService, useValue: eventLogEmitterService },

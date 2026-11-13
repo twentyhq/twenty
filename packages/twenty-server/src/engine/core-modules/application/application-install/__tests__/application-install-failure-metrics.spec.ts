@@ -44,7 +44,10 @@ describe('ApplicationInstallService failure metrics', () => {
           useValue: appRegistrationRepository,
         },
         { provide: ApplicationService, useValue: {} },
-        { provide: ApplicationLookupService, useValue: applicationLookupService },
+        {
+          provide: ApplicationLookupService,
+          useValue: applicationLookupService,
+        },
         {
           provide: ApplicationPackageFetcherService,
           useValue: {
@@ -77,9 +80,7 @@ describe('ApplicationInstallService failure metrics', () => {
         {
           provide: CacheLockService,
           useValue: {
-            withLock: jest.fn((callback: () => Promise<unknown>) =>
-              callback(),
-            ),
+            withLock: jest.fn((callback: () => Promise<unknown>) => callback()),
           },
         },
         {
