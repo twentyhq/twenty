@@ -14,6 +14,7 @@ import { MarketplacePublicResolver } from 'src/engine/core-modules/application/a
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { MarketplaceResolver } from 'src/engine/core-modules/application/application-marketplace/marketplace.resolver';
 import { MarketplaceService } from 'src/engine/core-modules/application/application-marketplace/marketplace.service';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.command';
 
@@ -25,6 +26,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     ApplicationRegistrationModule,
     ApplicationRegistrationVersionModule,
     CoreEntityCacheModule,
+    DomainServerConfigModule,
     PermissionsModule,
   ],
   providers: [

@@ -99,6 +99,7 @@ export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constant
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
+export { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from './constants/MarketplaceAppMcpServerUrlPlaceholder';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';

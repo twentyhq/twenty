@@ -4864,6 +4864,7 @@ msgid "Average"
 msgstr "Medie"
 
 #. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
 msgstr "Durată medie"
@@ -5804,7 +5805,7 @@ msgstr "Anulat la"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Anulat"
 
@@ -7076,7 +7077,7 @@ msgstr "completat"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7374,6 +7375,11 @@ msgstr "Confirmați upgrade-ul"
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Confirming your payment"
 msgstr "Se confirmă plata"
+
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr ""
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8004,7 +8010,7 @@ msgid "Could not load related records"
 msgstr "Nu s-au putut încărca înregistrările asociate"
 
 #. js-lingui-id: 3167/q
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 msgid "Could not load run insights"
 msgstr "Nu s-au putut încărca informațiile despre rulare"
 
@@ -8679,6 +8685,7 @@ msgstr "credite"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8687,6 +8694,11 @@ msgstr "credite"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Credite"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr ""
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8722,6 +8734,11 @@ msgstr "credite disponibile în perioada de probă"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Credite acordate peste alocarea planului. Pot fi cheltuite până la epuizare."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr ""
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10583,7 +10600,7 @@ msgstr "Nu importați evenimentele marcate ca private"
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 #: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Finalizat"
@@ -12792,8 +12809,8 @@ msgstr "Față"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -16940,6 +16957,7 @@ msgid "Last refreshed"
 msgstr "Ultima reîmprospătare"
 
 #. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last run"
 msgstr "Ultima rulare"
@@ -21915,7 +21933,7 @@ msgstr "Mesajul original nu este disponibil"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -22064,6 +22082,7 @@ msgid "Override Draft"
 msgstr "Suprascrie Schița"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -23648,7 +23667,8 @@ msgid "Recent failed runs"
 msgstr "Rulări eșuate recente"
 
 #. js-lingui-id: dF8kMd
-#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Recent runs"
 msgstr "Rulări recente"
@@ -25199,7 +25219,7 @@ msgstr "Rulați instrumentul"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "Se execută"
@@ -25245,6 +25265,8 @@ msgid "Runs"
 msgstr "Rulări"
 
 #. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Runs · 14d"
@@ -25261,6 +25283,7 @@ msgid "Runs appear here once this workflow is triggered"
 msgstr "Rulările apar aici după ce acest workflow este declanșat"
 
 #. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
 msgstr "Rulări pe zi"
@@ -26700,6 +26723,7 @@ msgstr "Se trimite e-mailul"
 
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Trimiterea a eșuat"
 
@@ -27663,6 +27687,11 @@ msgstr "Ceva nu a mers bine la crearea spațiului dvs. de lucru. Vă rugăm să 
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "A apărut o eroare la preluarea conversațiilor acestei înregistrări."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr ""
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30211,6 +30240,11 @@ msgstr "jetoane"
 msgid "Tokens"
 msgstr "Jetoane"
 
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr ""
+
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Tomato"
@@ -30611,6 +30645,7 @@ msgid "True/False"
 msgstr "Adevărat/Fals"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30622,7 +30657,7 @@ msgstr "Încercați din nou"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Încearcă din nou într-un moment"
@@ -32583,7 +32618,7 @@ msgid "Wait for the attachments to finish uploading."
 msgstr "Așteptați ca încărcarea atașamentelor să se finalizeze."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "În așteptare"
@@ -32724,6 +32759,11 @@ msgstr "Nu am putut confirma metoda dvs. de plată. Vă rugăm să reîncercați
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
 msgstr "Nu am putut încărca conversațiile"
+
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr ""
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx

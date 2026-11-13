@@ -73,6 +73,21 @@ Commands select a workspace in this order:
 
 `auth login --name <name>` saves a connection but keeps an existing default. Add `--use`, or run `twenty remote use <name>`, to change the default.
 
+### Behind an authenticating proxy
+
+If an identity-aware proxy such as Cloudflare Access, Google IAP, Pomerium or oauth2-proxy sits in front of the server, commands fail with `PROXY_AUTH_REQUIRED`. Give the CLI the proxy's credentials as headers. Use a command that prints fresh ones, or fixed values for a service token:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Both are saved on the connection. The command prints one `Name: value` line per header. The CLI runs it again when the proxy rejects the headers, and `PROXY_HEADERS_FAILED` reports a command that fails. In CI, set `TWENTY_PROXY_HEADERS` (one `Name: value` per line) or `TWENTY_PROXY_HEADER_COMMAND` instead. Proxy headers are only sent to the connection's API URL and cannot replace `Authorization`. See the [CLI reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) for every option.
+
 ## Exploring your data
 
 ```bash filename="Terminal"
@@ -119,7 +134,7 @@ Other app commands:
 | `app plan`                    | Preview the metadata changes an apply would make           |
 | `app apply`                   | Build, upload and sync the app                             |
 | `app generate-client`         | Regenerate the typed API client without syncing            |
-| `app pull`                    | Restore metadata, translations, dependencies and supported component source    |
+| `app pull`                    | Restore metadata, translations, dependencies, public assets and supported component source    |
 | `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
 | `app publish`                 | Publish the app to npm or to a private Twenty registry     |
 | `app install`                 | Install an already registered app package in the workspace |

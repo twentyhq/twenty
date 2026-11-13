@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
@@ -27,16 +28,28 @@ export class ViewFieldResolver {
   async getViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO[]> {
-    return this.viewFieldService.findByViewId(workspace.id, viewId);
+    return this.viewFieldService.findByViewId({
+      workspaceId: workspace.id,
+      viewId,
+      userWorkspaceId,
+    });
   }
 
   @Query(() => ViewFieldDTO, { nullable: true })
   async getViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ViewFieldDTO | null> {
-    return this.viewFieldService.findById(id, workspace.id);
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+  ): Promise<ViewFieldDTO> {
+    return this.viewFieldService.findByIdOrThrow({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewFieldDTO)

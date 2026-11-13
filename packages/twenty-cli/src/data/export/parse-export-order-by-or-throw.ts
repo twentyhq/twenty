@@ -6,10 +6,12 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 
 type OrderBy = { [key: string]: OrderByDirection | OrderBy };
 
+const ORDER_BY_DIRECTIONS = Object.values(OrderByDirection);
+
 export const parseExportOrderByOrThrow = (expression: string): OrderBy[] => {
   const orderBy = expression.split(',').map((item) => {
     const match = /^([^\[\]]+)(?:\[([^\[\]]+)\])?$/.exec(item);
-    const direction = Object.values(OrderByDirection).find(
+    const direction = ORDER_BY_DIRECTIONS.find(
       (allowed) => allowed === (match?.[2] ?? OrderByDirection.AscNullsFirst),
     );
     if (!isDefined(match) || !isDefined(direction)) {
