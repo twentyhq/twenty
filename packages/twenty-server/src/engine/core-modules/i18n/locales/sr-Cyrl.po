@@ -277,6 +277,11 @@ msgstr "Веза праћена у кампањи"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Маркетиншка е-порука може се послати само једном примаоцу истовремено, тако да свака особа добија сопствену везу за одјаву."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr ""
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -8481,6 +8486,11 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "Означи као непрочитано"
 
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr ""
+
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -8672,6 +8682,11 @@ msgstr "Порука"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Порука"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr ""
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14080,6 +14095,11 @@ msgstr "Логичка функција која идентификује пов
 msgid "The logic function that starts the connection was not found."
 msgstr "Логичка функција која покреће конекцију није пронађена."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr ""
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -17062,6 +17082,11 @@ msgstr "Нисмо могли да довршимо конекцију. Поку
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "Нисмо могли да идентификујемо налог који сте одобрили. Покушајте поново."
+
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr ""
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
