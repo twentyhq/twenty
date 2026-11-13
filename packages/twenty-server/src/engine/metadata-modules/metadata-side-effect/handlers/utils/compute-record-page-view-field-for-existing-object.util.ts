@@ -146,6 +146,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
     position,
     aggregateOperation: null,
     settings: null,
+    relationTargetFieldMetadataUniversalIdentifier: null,
     isActive: true,
     isSystemSideEffect: true,
     isCanonical: true,

@@ -25,6 +25,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   updateViewFieldInput: rawUpdateViewFieldInput,
   flatViewFieldMaps,
   flatViewFieldGroupMaps,
+  flatFieldMetadataMaps,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -34,7 +35,7 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
   workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
-  'flatViewFieldGroupMaps'
+  'flatViewFieldGroupMaps' | 'flatFieldMetadataMaps'
 >): UniversalFlatViewField => {
   const { id: viewFieldToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -100,6 +101,21 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
 
     flatViewFieldToUpdate.viewFieldGroupUniversalIdentifier =
       viewFieldGroupUniversalIdentifier;
+  }
+
+  if (updatedEditableProperties.relationTargetFieldMetadataId !== undefined) {
+    const { relationTargetFieldMetadataUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewField',
+        foreignKeyValues: {
+          relationTargetFieldMetadataId:
+            mergedRecord.relationTargetFieldMetadataId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewFieldToUpdate.relationTargetFieldMetadataUniversalIdentifier =
+      relationTargetFieldMetadataUniversalIdentifier;
   }
 
   if (isDefined(overrides)) {
