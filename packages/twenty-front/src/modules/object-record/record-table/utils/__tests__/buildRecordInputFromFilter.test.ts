@@ -310,7 +310,7 @@ describe('buildRecordInputFromFilter', () => {
     expect(result).toEqual({ revenue: 42 });
   });
 
-  it('should skip filters on fields not present in objectMetadataItem.updatableFields', () => {
+  it('should preserve required defaults when uneditableFields is not provided (e.g. RLS predicates)', () => {
     const result = buildRecordInputFromFilter({
       currentRecordFilters: [
         createFilter({
@@ -319,22 +319,15 @@ describe('buildRecordInputFromFilter', () => {
           operand: ViewFilterOperand.CONTAINS,
           value: 'Acme',
         }),
-        createFilter({
-          id: 'filter-id-2',
-          fieldMetadataId: FIELD_ID_NUMBER,
-          type: FieldMetadataType.NUMBER,
-          operand: ViewFilterOperand.IS,
-          value: '42',
-        }),
       ],
       objectMetadataItem: {
         ...mockObjectMetadataItem,
-        updatableFields: [{ id: FIELD_ID_NUMBER }],
-      },
+        updatableFields: [],
+      } as typeof mockObjectMetadataItem,
       timeZone: 'UTC',
     });
 
-    expect(result).toEqual({ revenue: 42 });
+    expect(result).toEqual({ companyName: 'Acme' });
   });
 
   it('should skip filters inside an OR record filter group while keeping AND group filters', () => {

@@ -54,7 +54,6 @@ export const buildRecordInputFromFilter = ({
     fields: (Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'options'> & {
       relation?: Pick<FieldMetadataItemRelation, 'type'> | null;
     })[];
-    updatableFields?: Pick<FieldMetadataItem, 'id'>[];
   };
   uneditableFields?: string[];
   currentWorkspaceMember?: CurrentWorkspaceMember;
@@ -63,9 +62,6 @@ export const buildRecordInputFromFilter = ({
 }): Partial<ObjectRecord> => {
   const recordInput: Partial<ObjectRecord> = {};
   const uneditableFieldIdSet = new Set(uneditableFields ?? []);
-  const updatableFieldIdSet = isDefined(objectMetadataItem.updatableFields)
-    ? new Set(objectMetadataItem.updatableFields.map((field) => field.id))
-    : undefined;
   const recordFilterGroupsById = new Map(
     (currentRecordFilterGroups ?? []).map((group) => [group.id, group]),
   );
@@ -79,11 +75,7 @@ export const buildRecordInputFromFilter = ({
       return;
     }
 
-    if (
-      uneditableFieldIdSet.has(filter.fieldMetadataId) ||
-      (isDefined(updatableFieldIdSet) &&
-        !updatableFieldIdSet.has(filter.fieldMetadataId))
-    ) {
+    if (uneditableFieldIdSet.has(filter.fieldMetadataId)) {
       return;
     }
 
