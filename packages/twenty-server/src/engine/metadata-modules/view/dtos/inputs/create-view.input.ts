@@ -137,6 +137,11 @@ export class CreateViewInput {
   mainGroupByFieldMetadataId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  scopedViewFieldId?: string;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,

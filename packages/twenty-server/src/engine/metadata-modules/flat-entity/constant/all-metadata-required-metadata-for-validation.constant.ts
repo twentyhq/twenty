@@ -26,6 +26,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   view: {
     fieldMetadata: true,
     objectMetadata: true,
+    viewField: true,
   },
   viewField: {
     view: true,

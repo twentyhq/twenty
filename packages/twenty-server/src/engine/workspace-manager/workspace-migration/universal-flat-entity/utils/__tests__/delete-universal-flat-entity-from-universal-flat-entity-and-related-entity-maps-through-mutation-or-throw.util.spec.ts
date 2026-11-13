@@ -155,6 +155,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
+      scopedViewFieldUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
     };
 
@@ -184,6 +185,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
 
     const universalFlatEntityAndRelatedMapsToMutate: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'> =
       {
+        flatViewFieldMaps: createEmptyUniversalFlatEntityMaps(),
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         flatViewMaps,

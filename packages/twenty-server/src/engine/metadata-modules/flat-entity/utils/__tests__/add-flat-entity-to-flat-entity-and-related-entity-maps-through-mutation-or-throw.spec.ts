@@ -63,6 +63,7 @@ describe('addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow', 
 
     const flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<'view'> =
       {
+        flatViewFieldMaps: createEmptyFlatEntityMaps(),
         flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
           flatEntity: mockFieldMetadata,
           flatEntityMaps: createEmptyFlatEntityMaps(),

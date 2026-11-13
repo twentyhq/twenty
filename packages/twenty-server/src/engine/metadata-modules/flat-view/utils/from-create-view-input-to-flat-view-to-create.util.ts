@@ -25,12 +25,14 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   flatApplication,
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
+  flatViewFieldMaps,
 }: {
   createViewInput: CreateViewInput;
   createdByUserWorkspaceId?: string;
   flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+  flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
 }): {
   flatViewToCreate: UniversalFlatView & { id: string };
   flatViewGroupsToCreate: UniversalFlatViewGroup[];
@@ -52,6 +54,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     calendarEndFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
+    scopedViewFieldUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'view',
     foreignKeyValues: {
@@ -61,8 +64,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       kanbanAggregateOperationFieldMetadataId:
         createViewInput.kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId: createViewInput.mainGroupByFieldMetadataId,
+      scopedViewFieldId: createViewInput.scopedViewFieldId,
     },
-    flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
+    flatEntityMaps: {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatViewFieldMaps,
+    },
   });
 
   const mainGroupByFieldMetadataId =
@@ -90,6 +98,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     kanbanAggregateOperation: createViewInput.kanbanAggregateOperation ?? null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
+    scopedViewFieldUniversalIdentifier,
     key: createViewInput.key ?? null,
     openRecordIn: createViewInput.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     position: createViewInput.position ?? 0,

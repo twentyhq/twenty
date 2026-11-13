@@ -159,6 +159,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
+      scopedViewFieldUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
     };
 
@@ -180,6 +181,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
 
     const universalFlatEntityAndRelatedMapsToMutate: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'> =
       {
+        flatViewFieldMaps: createEmptyUniversalFlatEntityMaps(),
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
         flatViewMaps:
@@ -270,11 +272,13 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
+      scopedViewFieldUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
     };
 
     const universalFlatEntityAndRelatedMapsToMutate: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'view'> =
       {
+        flatViewFieldMaps: createEmptyUniversalFlatEntityMaps(),
         flatFieldMetadataMaps: createEmptyUniversalFlatEntityMaps(),
         flatObjectMetadataMaps: createEmptyUniversalFlatEntityMaps(),
         flatViewMaps:

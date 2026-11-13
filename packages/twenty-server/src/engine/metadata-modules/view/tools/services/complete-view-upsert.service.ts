@@ -163,6 +163,7 @@ export class CompleteViewUpsertService {
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
+          flatViewFieldMaps,
         });
 
     const { viewId, viewUniversalIdentifier } = rootOperations;
@@ -260,6 +261,7 @@ export class CompleteViewUpsertService {
     flatApplication,
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
+    flatViewFieldMaps,
   }: {
     objectMetadataId?: string;
     name?: string;
@@ -276,6 +278,7 @@ export class CompleteViewUpsertService {
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
+    flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
   }): ViewUpsertRootOperations {
     if (!isDefined(objectMetadataId)) {
       throw new ViewException(
@@ -303,6 +306,7 @@ export class CompleteViewUpsertService {
         flatApplication,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+        flatViewFieldMaps,
       });
 
     return {
