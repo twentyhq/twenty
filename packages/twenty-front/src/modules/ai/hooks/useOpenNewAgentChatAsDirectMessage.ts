@@ -5,29 +5,29 @@ import { useCallback } from 'react';
 import { assertIsDefinedOrThrow, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { useLoadInboxThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OpenDirectMessageDocument } from '~/generated-metadata/graphql';
 
-export const useOpenNewAgentChatAsDirectMessage = () => {
+export const useOpenNewInboxAsDirectMessage = () => {
   const store = useStore();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { loadAgentChatThread } = useLoadAgentChatThread();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+  const { loadInboxThread } = useLoadInboxThread();
+  const { projectInboxThreadToUrl } = useProjectInboxThreadToUrl({
     shouldPreserveClosedInbox: true,
   });
 
-  const openNewAgentChatAsDirectMessage = useCallback(
+  const openNewInboxAsDirectMessage = useCallback(
     async ({
       newChatThreadId,
       workspaceMemberId,
@@ -38,8 +38,8 @@ export const useOpenNewAgentChatAsDirectMessage = () => {
       serializedDraft: string;
     }) => {
       if (
-        isNonEmptyArray(store.get(agentChatSelectedFilesState.atom)) ||
-        isNonEmptyArray(store.get(agentChatUploadedFilesState.atom))
+        isNonEmptyArray(store.get(inboxSelectedFilesState.atom)) ||
+        isNonEmptyArray(store.get(inboxUploadedFilesState.atom))
       ) {
         enqueueToast({
           status: 'error',
@@ -49,10 +49,9 @@ export const useOpenNewAgentChatAsDirectMessage = () => {
         return;
       }
 
-      const isSendingMessageAtom =
-        agentChatIsSendingMessageFamilyState.atomFamily({
-          threadId: newChatThreadId,
-        });
+      const isSendingMessageAtom = inboxIsSendingMessageFamilyState.atomFamily({
+        threadId: newChatThreadId,
+      });
 
       store.set(isSendingMessageAtom, true);
 
@@ -63,31 +62,31 @@ export const useOpenNewAgentChatAsDirectMessage = () => {
         });
         const directMessageThreadId = data?.openDirectMessage;
         assertIsDefinedOrThrow(directMessageThreadId);
-        const directMessageThread = await loadAgentChatThread(
+        const directMessageThread = await loadInboxThread(
           directMessageThreadId,
         );
         assertIsDefinedOrThrow(directMessageThread);
 
         if (
-          store.get(agentChatDraftsByThreadIdState.atom)[newChatThreadId] ===
+          store.get(inboxDraftsByThreadIdState.atom)[newChatThreadId] ===
           serializedDraft
         ) {
-          store.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+          store.set(inboxDraftsByThreadIdState.atom, (drafts) => ({
             ...drafts,
             [newChatThreadId]: '',
           }));
           store.set(
-            agentChatNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
-            AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+            inboxNewThreadRecipientsFamilyState.atomFamily(newChatThreadId),
+            INBOX_NEW_THREAD_DEFAULT_RECIPIENTS,
           );
         }
 
         if (
-          (store.get(currentAiChatThreadState.atom) ??
-            store.get(newAiChatThreadIdState.atom)) === newChatThreadId
+          (store.get(currentInboxThreadState.atom) ??
+            store.get(newInboxThreadIdState.atom)) === newChatThreadId
         ) {
-          store.set(currentAiChatThreadState.atom, directMessageThreadId);
-          projectAiChatThreadToUrl(directMessageThreadId);
+          store.set(currentInboxThreadState.atom, directMessageThreadId);
+          projectInboxThreadToUrl(directMessageThreadId);
         }
 
         return directMessageThreadId;
@@ -100,11 +99,11 @@ export const useOpenNewAgentChatAsDirectMessage = () => {
     [
       apolloClient,
       enqueueToast,
-      loadAgentChatThread,
-      projectAiChatThreadToUrl,
+      loadInboxThread,
+      projectInboxThreadToUrl,
       store,
     ],
   );
 
-  return { openNewAgentChatAsDirectMessage };
+  return { openNewInboxAsDirectMessage };
 };

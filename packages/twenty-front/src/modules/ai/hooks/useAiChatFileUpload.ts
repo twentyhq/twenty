@@ -1,7 +1,7 @@
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -10,27 +10,23 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
-export const useAiChatFileUpload = () => {
+export const useInboxFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const setAgentChatSelectedFiles = useSetAtomState(
-    agentChatSelectedFilesState,
-  );
-  const setAgentChatUploadedFiles = useSetAtomState(
-    agentChatUploadedFilesState,
-  );
+  const setInboxSelectedFiles = useSetAtomState(inboxSelectedFilesState);
+  const setInboxUploadedFiles = useSetAtomState(inboxUploadedFilesState);
   const store = useStore();
 
-  const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
+  const sendFile = async (file: File): Promise<InboxFileUIPart | null> => {
     const abortController = new AbortController();
     const unsubscribeFromSelectedFiles = store.sub(
-      agentChatSelectedFilesState.atom,
+      inboxSelectedFilesState.atom,
       () => {
-        if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+        if (!store.get(inboxSelectedFilesState.atom).includes(file)) {
           abortController.abort();
         }
       },
@@ -42,7 +38,7 @@ export const useAiChatFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+      if (!store.get(inboxSelectedFilesState.atom).includes(file)) {
         return null;
       }
 
@@ -66,18 +62,16 @@ export const useAiChatFileUpload = () => {
       return null;
     } finally {
       unsubscribeFromSelectedFiles();
-      setAgentChatSelectedFiles((previousSelectedFiles) =>
+      setInboxSelectedFiles((previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
 
   const uploadFiles = async (files: File[]) => {
-    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
+    const currentInboxThread = store.get(currentInboxThreadState.atom);
     const currentThread = store.get(
-      agentChatThreadRecordFamilySelector.selectorFamily(
-        currentAiChatThread ?? '',
-      ),
+      inboxThreadRecordFamilySelector.selectorFamily(currentInboxThread ?? ''),
     );
 
     if (
@@ -87,7 +81,7 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
-    setAgentChatSelectedFiles((previousSelectedFiles) => [
+    setInboxSelectedFiles((previousSelectedFiles) => [
       ...previousSelectedFiles,
       ...files,
     ]);
@@ -97,7 +91,7 @@ export const useAiChatFileUpload = () => {
     );
 
     if (isNonEmptyArray(successfulUploads)) {
-      setAgentChatUploadedFiles((previousUploadedFiles) => [
+      setInboxUploadedFiles((previousUploadedFiles) => [
         ...previousUploadedFiles,
         ...successfulUploads,
       ]);

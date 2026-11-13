@@ -2,14 +2,14 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
@@ -34,7 +34,7 @@ export const useAnswerAgentChatToolCall = () => {
       toolCallId,
       response,
       optimisticToolOutput,
-      threadId = store.get(agentChatDisplayedThreadState.atom),
+      threadId = store.get(inboxDisplayedThreadState.atom),
     }: {
       toolCallId: string;
       response: Record<string, unknown>;
@@ -45,7 +45,7 @@ export const useAnswerAgentChatToolCall = () => {
         return false;
       }
 
-      const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+      const messagesAtom = inboxMessagesFamilyState.atomFamily({
         threadId,
       });
       const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
@@ -88,7 +88,7 @@ export const useAnswerAgentChatToolCall = () => {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
-        dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
 
         return true;
       } catch (error) {
@@ -103,7 +103,7 @@ export const useAnswerAgentChatToolCall = () => {
         if (
           isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
         ) {
-          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
             updateToolPartOutput({

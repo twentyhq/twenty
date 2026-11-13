@@ -1,35 +1,33 @@
 import { useStore } from 'jotai';
 
-import { useSnoozeAgentChatThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
-import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { useSnoozeInboxThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
+import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-export const useSnoozeAiChatThreads = () => {
+export const useSnoozeInboxThreads = () => {
   const store = useStore();
-  const isSnoozeAiChatForChannelState = useAtomComponentStateCallbackState(
-    isSnoozeAiChatForChannelComponentState,
+  const isSnoozeInboxForChannelState = useAtomComponentStateCallbackState(
+    isSnoozeInboxForChannelComponentState,
   );
-  const { updateAgentChatThreadInboxState } =
-    useUpdateAgentChatThreadInboxState();
-  const { snoozeAgentChatThreadsInChannel } =
-    useSnoozeAgentChatThreadsInChannel();
+  const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
+  const { snoozeInboxThreadsInChannel } = useSnoozeInboxThreadsInChannel();
 
-  const snoozeAiChatThreads = ({
+  const snoozeInboxThreads = ({
     threadIds,
     snoozedUntil,
   }: {
     threadIds: string[];
     snoozedUntil: Date;
   }) =>
-    store.get(isSnoozeAiChatForChannelState)
-      ? snoozeAgentChatThreadsInChannel({ threadIds, snoozedUntil })
+    store.get(isSnoozeInboxForChannelState)
+      ? snoozeInboxThreadsInChannel({ threadIds, snoozedUntil })
       : updateAgentChatThreadInboxState({
           threadIds,
           action: AgentChatInboxAction.SNOOZE,
           snoozedUntil,
         });
 
-  return { snoozeAiChatThreads };
+  return { snoozeInboxThreads };
 };

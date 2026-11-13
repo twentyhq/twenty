@@ -4,22 +4,22 @@ import { useLingui } from '@lingui/react/macro';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
-import { NavigationDrawerAiChatChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
-import { NavigationDrawerAiChatFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { InboxSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { NavigationDrawerInboxChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
+import { NavigationDrawerInboxFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
+import { NavigationDrawerInboxThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { NavigationDrawerInboxTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
 import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
-import { AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { agentChatDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
-import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
+import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { inboxDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
+import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -45,9 +45,9 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const INBOX_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
-export const NavigationDrawerAiChatContent = () => {
+export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
@@ -59,85 +59,78 @@ export const NavigationDrawerAiChatContent = () => {
   );
   const isDirectMessagesSectionShown =
     isAiChatInboxEnabled && isDirectMessageEnabled;
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick(
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const { handleThreadClick } = useInboxThreadClick(
     isAiChatInboxEnabled
       ? { shouldOpenInFullPage: true }
       : { resetNavigationStack: true },
   );
 
-  const { threads, isLoading } = useAgentChatThreadList(
-    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+  const { threads, isLoading } = useInboxThreadList(
+    INBOX_RECENT_THREAD_LIST_SOURCE,
   );
-  const agentChatFavoriteThreads = useAtomStateValue(
-    agentChatFavoriteThreadsSelector,
+  const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
+  const inboxFavoriteChannels = useAtomStateValue(
+    inboxFavoriteChannelsSelector,
   );
-  const agentChatFavoriteChannels = useAtomStateValue(
-    agentChatFavoriteChannelsSelector,
-  );
-  const agentChatDirectMessageSidebarItems = useAtomStateValue(
-    agentChatDirectMessageSidebarItemsSelector,
+  const inboxDirectMessageSidebarItems = useAtomStateValue(
+    inboxDirectMessageSidebarItemsSelector,
   );
 
   if (isLoading && threads.length === 0) {
     return (
-      <StyledContainer>
-        {isExpanded && <AiChatSkeletonLoader />}
-      </StyledContainer>
+      <StyledContainer>{isExpanded && <InboxSkeletonLoader />}</StyledContainer>
     );
   }
 
-  const agentChatFavoriteThreadIds = new Set(
-    agentChatFavoriteThreads.map(({ id }) => id),
+  const inboxFavoriteThreadIds = new Set(
+    inboxFavoriteThreads.map(({ id }) => id),
   );
   const threadsOutsideOtherSections = threads.filter(
     ({ id, conversationType }) =>
-      !agentChatFavoriteThreadIds.has(id) &&
+      !inboxFavoriteThreadIds.has(id) &&
       !(
         isDirectMessagesSectionShown &&
         conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
       ),
   );
   const recentThreads = isAiChatInboxEnabled
-    ? threadsOutsideOtherSections.slice(
-        0,
-        AI_CHAT_INBOX_RECENT_THREADS_MAX_COUNT,
-      )
+    ? threadsOutsideOtherSections.slice(0, INBOX_RECENT_THREADS_MAX_COUNT)
     : threadsOutsideOtherSections;
 
   return (
     <StyledContainer>
       <StyledThreadList>
         <StyledSectionsContainer>
-          {isAiChatInboxEnabled && <NavigationDrawerAiChatTriageSection />}
-          <NavigationDrawerAiChatFavoritesSection
-            channels={isAiChatInboxEnabled ? agentChatFavoriteChannels : []}
-            threads={agentChatFavoriteThreads}
-            currentThreadId={currentAiChatThread}
+          {isAiChatInboxEnabled && <NavigationDrawerInboxTriageSection />}
+          <NavigationDrawerInboxFavoritesSection
+            channels={isAiChatInboxEnabled ? inboxFavoriteChannels : []}
+            threads={inboxFavoriteThreads}
+            currentThreadId={currentInboxThread}
             onThreadClick={handleThreadClick}
           />
-          {isAiChatInboxEnabled && <NavigationDrawerAiChatChannelsSection />}
+          {isAiChatInboxEnabled && <NavigationDrawerInboxChannelsSection />}
           {isDirectMessagesSectionShown && (
             <NavigationDrawerDirectMessagesSection
-              directMessages={agentChatDirectMessageSidebarItems}
-              currentThreadId={currentAiChatThread}
+              directMessages={inboxDirectMessageSidebarItems}
+              currentThreadId={currentInboxThread}
               onSelect={(threadId) => handleThreadClick({ id: threadId })}
               memberPicker={<OpenDirectMessageButton />}
             />
           )}
           {recentThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
-              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
+            <NavigationDrawerInboxThreadSection
+              sectionId={INBOX_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
-              currentThreadId={currentAiChatThread}
+              currentThreadId={currentInboxThread}
               onThreadClick={handleThreadClick}
             />
           )}
         </StyledSectionsContainer>
         {!isAiChatInboxEnabled && (
-          <AgentChatThreadListFetchMoreTrigger
-            source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+          <InboxThreadListFetchMoreTrigger
+            source={INBOX_RECENT_THREAD_LIST_SOURCE}
           />
         )}
       </StyledThreadList>

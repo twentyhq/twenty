@@ -1,4 +1,4 @@
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -15,11 +15,9 @@ export const useHasReachedAiChatCreditsCap = () => {
   );
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
   const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+    threadId: inboxDisplayedThread,
   });
 
   if (hasReachedCurrentBillingPeriodCap) {

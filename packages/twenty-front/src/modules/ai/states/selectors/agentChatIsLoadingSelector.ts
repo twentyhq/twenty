@@ -1,10 +1,9 @@
-import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
-import { agentChatRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
+import { inboxMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { inboxRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const agentChatIsLoadingSelector = createAtomSelector<boolean>({
-  key: 'agentChatIsLoadingSelector',
+export const inboxIsLoadingSelector = createAtomSelector<boolean>({
+  key: 'inboxIsLoadingSelector',
   get: ({ get }) =>
-    get(agentChatMessagesLoadingState) ||
-    get(agentChatRecentThreadsLoadingSelector),
+    get(inboxMessagesLoadingState) || get(inboxRecentThreadsLoadingSelector),
 });

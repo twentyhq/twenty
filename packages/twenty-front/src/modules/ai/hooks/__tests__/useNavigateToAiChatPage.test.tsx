@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 
-import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
+import { useNavigateToInboxThreadPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import {
   type AppNavigator,
   AppNavigatorContext,
@@ -33,7 +33,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </I18nProvider>
 );
 
-describe('useNavigateToAiChatPage', () => {
+describe('useNavigateToInboxThreadPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, false);
@@ -79,12 +79,12 @@ describe('useNavigateToAiChatPage', () => {
   });
 
   it('should open a new chat and remember where to collapse back to', () => {
-    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+    const { result } = renderHook(() => useNavigateToInboxThreadPage(), {
       wrapper: Wrapper,
     });
 
     act(() => {
-      result.current.navigateToAiChatPage();
+      result.current.navigateToInboxThreadPage();
     });
 
     expect(closeSidePanelMenuMock).toHaveBeenCalled();
@@ -98,12 +98,12 @@ describe('useNavigateToAiChatPage', () => {
   it('should keep the current view and query in the return location', () => {
     window.history.pushState({}, '', '/objects/people?viewId=42');
 
-    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+    const { result } = renderHook(() => useNavigateToInboxThreadPage(), {
       wrapper: Wrapper,
     });
 
     act(() => {
-      result.current.navigateToAiChatPage();
+      result.current.navigateToInboxThreadPage();
     });
 
     expect(navigateMock).toHaveBeenCalledWith(
@@ -114,12 +114,12 @@ describe('useNavigateToAiChatPage', () => {
   });
 
   it('should open an existing thread', () => {
-    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+    const { result } = renderHook(() => useNavigateToInboxThreadPage(), {
       wrapper: Wrapper,
     });
 
     act(() => {
-      result.current.navigateToAiChatPage({
+      result.current.navigateToInboxThreadPage({
         threadId: '20202020-0000-4000-8000-000000000001',
       });
     });
@@ -132,12 +132,14 @@ describe('useNavigateToAiChatPage', () => {
   });
 
   it('should ignore a draft thread that has no thread id yet', () => {
-    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+    const { result } = renderHook(() => useNavigateToInboxThreadPage(), {
       wrapper: Wrapper,
     });
 
     act(() => {
-      result.current.navigateToAiChatPage({ threadId: 'new-thread-draft' });
+      result.current.navigateToInboxThreadPage({
+        threadId: 'new-thread-draft',
+      });
     });
 
     expect(navigateMock).toHaveBeenCalledWith(
@@ -150,12 +152,12 @@ describe('useNavigateToAiChatPage', () => {
   it('should not navigate while already on the AI chat page', () => {
     window.history.pushState({}, '', '/chat');
 
-    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+    const { result } = renderHook(() => useNavigateToInboxThreadPage(), {
       wrapper: Wrapper,
     });
 
     act(() => {
-      result.current.navigateToAiChatPage();
+      result.current.navigateToInboxThreadPage();
     });
 
     expect(navigateMock).not.toHaveBeenCalled();

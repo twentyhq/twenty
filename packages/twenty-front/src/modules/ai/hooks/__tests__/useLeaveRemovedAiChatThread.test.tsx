@@ -2,28 +2,28 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useLeaveRemovedInboxThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const projectAiChatThreadToUrl = jest.fn();
-const loadAgentChatThread = jest.fn();
+const projectInboxThreadToUrl = jest.fn();
+const loadInboxThread = jest.fn();
 
 jest.mock('@/ai/hooks/useProjectAiChatThreadToUrl', () => ({
-  useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
+  useProjectInboxThreadToUrl: () => ({ projectInboxThreadToUrl }),
 }));
 
 jest.mock('@/ai/hooks/useLoadAgentChatThread', () => ({
-  useLoadAgentChatThread: () => ({ loadAgentChatThread }),
+  useLoadInboxThread: () => ({ loadInboxThread }),
 }));
 
 const REMOVED_CHAT_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -31,7 +31,7 @@ const OLDER_CHAT_ID = '20202020-0000-4000-8000-0000000000bb';
 const RECENT_CHAT_ID = '20202020-0000-4000-8000-0000000000cc';
 const NEW_CHAT_ID = '20202020-0000-4000-8000-0000000000dd';
 
-const buildChat = (id: string, updatedAt: string): AgentChatThreadRecord => ({
+const buildChat = (id: string, updatedAt: string): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -58,29 +58,29 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const leave = async () => {
-  const { result } = renderHook(() => useLeaveRemovedAiChatThread(), {
+  const { result } = renderHook(() => useLeaveRemovedInboxThread(), {
     wrapper: Wrapper,
   });
 
-  await act(() => result.current.leaveRemovedAiChatThread());
+  await act(() => result.current.leaveRemovedInboxThread());
 };
 
-describe('useLeaveRemovedAiChatThread', () => {
+describe('useLeaveRemovedInboxThread', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    loadAgentChatThread.mockResolvedValue(null);
-    jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_ID);
-    jotaiStore.set(currentAiChatThreadState.atom, REMOVED_CHAT_ID);
+    loadInboxThread.mockResolvedValue(null);
+    jotaiStore.set(newInboxThreadIdState.atom, NEW_CHAT_ID);
+    jotaiStore.set(currentInboxThreadState.atom, REMOVED_CHAT_ID);
   });
 
   it('moves to the most recent chat with its draft when the current one is gone', async () => {
-    setAgentChatThreadList(jotaiStore, [
+    setInboxThreadList(jotaiStore, [
       buildChat(OLDER_CHAT_ID, '2026-09-01T00:00:00.000Z'),
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
     jotaiStore.set(
-      agentChatThreadParticipantsState.atom,
+      inboxThreadParticipantsState.atom,
       Object.fromEntries(
         [OLDER_CHAT_ID, RECENT_CHAT_ID].map((threadId) => [
           threadId,
@@ -88,59 +88,59 @@ describe('useLeaveRemovedAiChatThread', () => {
         ]),
       ),
     );
-    jotaiStore.set(agentChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(inboxDraftsByThreadIdState.atom, {
       [RECENT_CHAT_ID]: 'Pending question',
     });
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(RECENT_CHAT_ID);
-    expect(jotaiStore.get(agentChatInputIsEmptySelector.atom)).toBe(false);
-    expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
+    expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(RECENT_CHAT_ID);
+    expect(jotaiStore.get(inboxInputIsEmptySelector.atom)).toBe(false);
+    expect(projectInboxThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
   });
 
   it('opens a new chat when no chat is left', async () => {
-    setAgentChatThreadList(jotaiStore, []);
+    setInboxThreadList(jotaiStore, []);
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(NEW_CHAT_ID);
+    expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(NEW_CHAT_ID);
   });
 
   it('stays on the new chat, which has no thread until its first message', async () => {
-    setAgentChatThreadList(jotaiStore, []);
-    jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_ID);
+    setInboxThreadList(jotaiStore, []);
+    jotaiStore.set(currentInboxThreadState.atom, NEW_CHAT_ID);
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(NEW_CHAT_ID);
-    expect(loadAgentChatThread).not.toHaveBeenCalled();
+    expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(NEW_CHAT_ID);
+    expect(loadInboxThread).not.toHaveBeenCalled();
   });
 
   it('stays on a chat that is still listed', async () => {
-    setAgentChatThreadList(jotaiStore, [
+    setInboxThreadList(jotaiStore, [
       buildChat(REMOVED_CHAT_ID, '2026-09-01T00:00:00.000Z'),
     ]);
 
     await leave();
 
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(REMOVED_CHAT_ID);
-    expect(loadAgentChatThread).not.toHaveBeenCalled();
-    expect(projectAiChatThreadToUrl).not.toHaveBeenCalled();
+    expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(REMOVED_CHAT_ID);
+    expect(loadInboxThread).not.toHaveBeenCalled();
+    expect(projectInboxThreadToUrl).not.toHaveBeenCalled();
   });
 
   it('stays on an older chat that exists past the loaded pages', async () => {
-    setAgentChatThreadList(jotaiStore, [
+    setInboxThreadList(jotaiStore, [
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
-    loadAgentChatThread.mockResolvedValue(
+    loadInboxThread.mockResolvedValue(
       buildChat(REMOVED_CHAT_ID, '2025-01-01T00:00:00.000Z'),
     );
 
     await leave();
 
-    expect(loadAgentChatThread).toHaveBeenCalledWith(REMOVED_CHAT_ID);
-    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(REMOVED_CHAT_ID);
-    expect(projectAiChatThreadToUrl).not.toHaveBeenCalled();
+    expect(loadInboxThread).toHaveBeenCalledWith(REMOVED_CHAT_ID);
+    expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(REMOVED_CHAT_ID);
+    expect(projectInboxThreadToUrl).not.toHaveBeenCalled();
   });
 });

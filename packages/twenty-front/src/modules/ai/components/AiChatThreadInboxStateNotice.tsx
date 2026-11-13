@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBellOff, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { useFormatInboxThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -22,14 +22,14 @@ const StyledNotice = styled.div`
 `;
 
 // Ends the conversation with where the chat stands in the member's inbox
-export const AiChatThreadInboxStateNotice = () => {
+export const InboxThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { formatInboxThreadDateTime } = useFormatInboxThreadDate();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
   const { event } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
-    currentAiChatThread ?? '',
+    inboxThreadMemberStateFamilySelector,
+    currentInboxThread ?? '',
   );
 
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -40,7 +40,7 @@ export const AiChatThreadInboxStateNotice = () => {
     return null;
   }
 
-  const eventTime = formatAgentChatThreadDateTime(new Date(event.at));
+  const eventTime = formatInboxThreadDateTime(new Date(event.at));
   const notice = {
     SNOOZED: { Icon: IconZzz, text: t`Snoozed until ${eventTime}` },
     SNOOZE_ENDED: { Icon: IconZzz, text: t`Snooze ended ${eventTime}` },

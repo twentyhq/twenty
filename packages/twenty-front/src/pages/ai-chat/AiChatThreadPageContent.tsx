@@ -1,26 +1,26 @@
 import { type ReactNode } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { AiChatDirectMessageTitle } from '@/ai/components/AiChatDirectMessageTitle';
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { InboxDirectMessageTitle } from '@/ai/components/AiChatDirectMessageTitle';
+import { InboxThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
-type AiChatThreadPageContentProps = {
+type InboxThreadPageContentProps = {
   threadId: string;
   headerActions?: ReactNode;
   headerTitlePrefix?: ReactNode;
 };
 
 // A chat is its record page, full page, in the inbox or in the side panel
-export const AiChatThreadPageContent = ({
+export const InboxThreadPageContent = ({
   threadId,
   headerActions,
   headerTitlePrefix,
-}: AiChatThreadPageContentProps) => {
+}: InboxThreadPageContentProps) => {
   const isDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
+    inboxThreadIsDirectMessageFamilySelector,
     threadId,
   );
 
@@ -33,11 +33,11 @@ export const AiChatThreadPageContent = ({
       headerActions={headerActions}
       headerTitle={
         isDirectMessage ? (
-          <AiChatDirectMessageTitle threadId={threadId} />
+          <InboxDirectMessageTitle threadId={threadId} />
         ) : undefined
       }
       headerTitlePrefix={headerTitlePrefix}
-      headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
+      headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
       headerTitleMode="record-title"
       isRecordIdentifierBarHidden
     />

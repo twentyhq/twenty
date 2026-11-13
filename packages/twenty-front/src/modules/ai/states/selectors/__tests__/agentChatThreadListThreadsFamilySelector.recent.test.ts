@@ -1,10 +1,10 @@
 import { createStore } from 'jotai';
 
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
@@ -14,7 +14,7 @@ const buildThread = ({
 }: {
   id: string;
   channelId: string | null;
-}): AgentChatThreadRecord => ({
+}): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -25,16 +25,16 @@ const buildThread = ({
   lastActivityAt: LAST_ACTIVITY_AT,
 });
 
-describe('agentChatThreadListThreadsFamilySelector for recent chats', () => {
+describe('inboxThreadListThreadsFamilySelector for recent chats', () => {
   it('lists own chats and followed channel chats, not channel chats only read', () => {
     const store = createStore();
 
-    setAgentChatThreadList(store, [
+    setInboxThreadList(store, [
       buildThread({ id: 'own', channelId: null }),
       buildThread({ id: 'followed-channel-chat', channelId: 'channel' }),
       buildThread({ id: 'read-channel-chat', channelId: 'channel' }),
     ]);
-    store.set(agentChatThreadParticipantsState.atom, {
+    store.set(inboxThreadParticipantsState.atom, {
       'followed-channel-chat': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'participant',
@@ -52,8 +52,8 @@ describe('agentChatThreadListThreadsFamilySelector for recent chats', () => {
     expect(
       store
         .get(
-          agentChatThreadListThreadsFamilySelector.selectorFamily(
-            AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+          inboxThreadListThreadsFamilySelector.selectorFamily(
+            INBOX_RECENT_THREAD_LIST_SOURCE,
           ),
         )
         .map(({ id }) => id),

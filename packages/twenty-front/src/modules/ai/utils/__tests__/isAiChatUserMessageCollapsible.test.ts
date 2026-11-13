@@ -1,11 +1,11 @@
-import { isAiChatUserMessageCollapsible } from '@/ai/utils/isAiChatUserMessageCollapsible';
+import { isInboxUserMessageCollapsible } from '@/ai/utils/isAiChatUserMessageCollapsible';
 
 const LINE_HEIGHT_IN_PX = 24;
 
-describe('isAiChatUserMessageCollapsible', () => {
+describe('isInboxUserMessageCollapsible', () => {
   it('keeps a message of up to 12 lines open', () => {
     expect(
-      isAiChatUserMessageCollapsible({
+      isInboxUserMessageCollapsible({
         contentHeightInPx: 12 * LINE_HEIGHT_IN_PX,
         lineHeightInPx: LINE_HEIGHT_IN_PX,
       }),
@@ -14,7 +14,7 @@ describe('isAiChatUserMessageCollapsible', () => {
 
   it('collapses a message taller than 12 lines', () => {
     expect(
-      isAiChatUserMessageCollapsible({
+      isInboxUserMessageCollapsible({
         contentHeightInPx: 13 * LINE_HEIGHT_IN_PX,
         lineHeightInPx: LINE_HEIGHT_IN_PX,
       }),
@@ -23,13 +23,13 @@ describe('isAiChatUserMessageCollapsible', () => {
 
   it('rounds the extra height of block margins to the nearest line', () => {
     expect(
-      isAiChatUserMessageCollapsible({
+      isInboxUserMessageCollapsible({
         contentHeightInPx: 12.4 * LINE_HEIGHT_IN_PX,
         lineHeightInPx: LINE_HEIGHT_IN_PX,
       }),
     ).toBe(false);
     expect(
-      isAiChatUserMessageCollapsible({
+      isInboxUserMessageCollapsible({
         contentHeightInPx: 12.6 * LINE_HEIGHT_IN_PX,
         lineHeightInPx: LINE_HEIGHT_IN_PX,
       }),
@@ -38,7 +38,7 @@ describe('isAiChatUserMessageCollapsible', () => {
 
   it('keeps the message open when the line height is unknown', () => {
     expect(
-      isAiChatUserMessageCollapsible({
+      isInboxUserMessageCollapsible({
         contentHeightInPx: 800,
         lineHeightInPx: Number.NaN,
       }),

@@ -1,78 +1,78 @@
 import { useCallback } from 'react';
 
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { inboxThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
 
-type AgentChatThreadUpdate = Partial<AgentChatThreadRecord> & {
+type InboxThreadUpdate = Partial<InboxThreadRecord> & {
   id: string;
 };
 
-export const useApplyAgentChatThreadUpdate = () => {
+export const useApplyInboxThreadUpdate = () => {
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   // A list page requested before this update must not overwrite it
-  const applyAgentChatThreadUpdate = useCallback(
-    (update: AgentChatThreadUpdate) => {
+  const applyInboxThreadUpdate = useCallback(
+    (update: InboxThreadUpdate) => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
       store.set(
-        agentChatThreadRecordUpdateCountState.atom,
+        inboxThreadRecordUpdateCountState.atom,
         (updateCount) => updateCount + 1,
       );
     },
     [store, upsertRecordsInStore],
   );
 
-  const prependAgentChatThreadToList = useCallback(
+  const prependInboxThreadToList = useCallback(
     (threadId: string) => {
-      const recentThreadListAtom = agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      const recentThreadListAtom = inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       );
-      const agentChatThreadList = store.get(recentThreadListAtom);
+      const inboxThreadList = store.get(recentThreadListAtom);
 
       if (
-        agentChatThreadList === null ||
-        agentChatThreadList.threadIds.includes(threadId)
+        inboxThreadList === null ||
+        inboxThreadList.threadIds.includes(threadId)
       ) {
         return;
       }
 
       store.set(recentThreadListAtom, {
-        ...agentChatThreadList,
-        threadIds: [threadId, ...agentChatThreadList.threadIds],
+        ...inboxThreadList,
+        threadIds: [threadId, ...inboxThreadList.threadIds],
       });
     },
     [store],
   );
 
-  const addAgentChatThread = useCallback(
-    (thread: AgentChatThreadUpdate) => {
-      applyAgentChatThreadUpdate(thread);
-      prependAgentChatThreadToList(thread.id);
+  const addInboxThread = useCallback(
+    (thread: InboxThreadUpdate) => {
+      applyInboxThreadUpdate(thread);
+      prependInboxThreadToList(thread.id);
     },
-    [applyAgentChatThreadUpdate, prependAgentChatThreadToList],
+    [applyInboxThreadUpdate, prependInboxThreadToList],
   );
 
-  const addLoadedAgentChatThread = useCallback(
-    (thread: AgentChatThreadUpdate) => {
+  const addLoadedInboxThread = useCallback(
+    (thread: InboxThreadUpdate) => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
       });
-      prependAgentChatThreadToList(thread.id);
+      prependInboxThreadToList(thread.id);
     },
-    [prependAgentChatThreadToList, upsertRecordsInStore],
+    [prependInboxThreadToList, upsertRecordsInStore],
   );
 
   return {
-    applyAgentChatThreadUpdate,
-    addAgentChatThread,
-    addLoadedAgentChatThread,
+    applyInboxThreadUpdate,
+    addInboxThread,
+    addLoadedInboxThread,
   };
 };

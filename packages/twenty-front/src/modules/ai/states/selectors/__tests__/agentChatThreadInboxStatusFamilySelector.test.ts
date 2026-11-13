@@ -1,9 +1,9 @@
 import { createStore } from 'jotai';
 
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
 
 const THREAD_ID = 'unread';
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -11,7 +11,7 @@ const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 const buildStore = () => {
   const store = createStore();
 
-  setAgentChatThreadList(store, [
+  setInboxThreadList(store, [
     {
       __typename: 'AgentChatThread',
       id: THREAD_ID,
@@ -42,14 +42,14 @@ const UNREAD_PARTICIPANT = {
 };
 
 const isUnread = (store: ReturnType<typeof createStore>) =>
-  store.get(agentChatThreadInboxStatusFamilySelector.selectorFamily(THREAD_ID))
+  store.get(inboxThreadMemberStateFamilySelector.selectorFamily(THREAD_ID))
     .isUnread;
 
-describe('agentChatThreadInboxStatusFamilySelector', () => {
+describe('inboxThreadMemberStateFamilySelector', () => {
   it('reads a stored thread against the member state', () => {
     const store = buildStore();
 
-    store.set(agentChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(inboxThreadParticipantsState.atom, UNREAD_PARTICIPANT);
 
     expect(isUnread(store)).toBe(true);
   });
@@ -57,7 +57,7 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
   it('never reads as unread for a member who does not participate', () => {
     const store = buildStore();
 
-    store.set(agentChatThreadParticipantsState.atom, {});
+    store.set(inboxThreadParticipantsState.atom, {});
 
     expect(isUnread(store)).toBe(false);
   });
@@ -69,8 +69,8 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
   it('never reads the thread on screen as unread, unless the member kept it unread', () => {
     const store = buildStore();
 
-    store.set(agentChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
-    store.set(agentChatThreadVisitState.atom, {
+    store.set(inboxThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(inboxThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,
@@ -79,7 +79,7 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
 
     expect(isUnread(store)).toBe(false);
 
-    store.set(agentChatThreadVisitState.atom, {
+    store.set(inboxThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,

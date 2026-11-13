@@ -1,4 +1,4 @@
-import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { scrollToInboxMessage } from '@/ai/utils/scrollToAgentChatMessage';
 
 const renderMessageRow = () => {
   const messageRow = document.createElement('div');
@@ -18,7 +18,7 @@ const setPrefersReducedMotion = (matches: boolean) => {
   });
 };
 
-describe('scrollToAgentChatMessage', () => {
+describe('scrollToInboxMessage', () => {
   const originalMatchMedia = window.matchMedia;
 
   beforeEach(() => {
@@ -38,7 +38,7 @@ describe('scrollToAgentChatMessage', () => {
     setPrefersReducedMotion(false);
     const messageRow = renderMessageRow();
 
-    scrollToAgentChatMessage('original');
+    scrollToInboxMessage('original');
 
     expect(messageRow.scrollIntoView).toHaveBeenCalledWith({
       behavior: 'smooth',
@@ -58,7 +58,7 @@ describe('scrollToAgentChatMessage', () => {
     setPrefersReducedMotion(true);
     const messageRow = renderMessageRow();
 
-    scrollToAgentChatMessage('original');
+    scrollToInboxMessage('original');
     jest.runAllTimers();
 
     expect(messageRow.scrollIntoView).toHaveBeenCalledWith({

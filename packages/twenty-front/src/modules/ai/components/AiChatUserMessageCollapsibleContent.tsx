@@ -13,8 +13,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapsedLineCount';
-import { isAiChatUserMessageCollapsible } from '@/ai/utils/isAiChatUserMessageCollapsible';
+import { INBOX_USER_MESSAGE_COLLAPSED_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapsedLineCount';
+import { isInboxUserMessageCollapsible } from '@/ai/utils/isAiChatUserMessageCollapsible';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 
@@ -24,7 +24,7 @@ const StyledContent = styled.div<{ isCollapsed: boolean }>`
       ? 'linear-gradient(to bottom, black calc(100% - 2lh), transparent)'
       : 'none'};
   max-height: ${({ isCollapsed }) =>
-    isCollapsed ? `${AI_CHAT_USER_MESSAGE_COLLAPSED_LINE_COUNT}lh` : 'none'};
+    isCollapsed ? `${INBOX_USER_MESSAGE_COLLAPSED_LINE_COUNT}lh` : 'none'};
   overflow: ${({ isCollapsed }) => (isCollapsed ? 'hidden' : 'visible')};
 `;
 
@@ -35,13 +35,13 @@ const StyledToggleContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-type AiChatUserMessageCollapsibleContentProps = {
+type InboxUserMessageCollapsibleContentProps = {
   children: ReactNode;
 };
 
-export const AiChatUserMessageCollapsibleContent = ({
+export const InboxUserMessageCollapsibleContent = ({
   children,
-}: AiChatUserMessageCollapsibleContentProps) => {
+}: InboxUserMessageCollapsibleContentProps) => {
   const { t } = useLingui();
   const contentId = useId();
   const [isCollapsible, setIsCollapsible] = useState(false);
@@ -61,7 +61,7 @@ export const AiChatUserMessageCollapsibleContent = ({
 
       const updateIsCollapsible = () => {
         setIsCollapsible(
-          isAiChatUserMessageCollapsible({
+          isInboxUserMessageCollapsible({
             contentHeightInPx: contentElement.getBoundingClientRect().height,
             lineHeightInPx: parseFloat(
               getComputedStyle(contentElement).lineHeight,

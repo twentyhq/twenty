@@ -1,26 +1,26 @@
 import { useStore } from 'jotai';
 
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingAiChatInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useSwitchInboxThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { closingInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
-export const useSelectAiChatThread = () => {
+export const useSelectInboxThread = () => {
   const store = useStore();
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { switchThreadWithDraft } = useSwitchInboxThreadWithDraft();
+  const { projectInboxThreadToUrl } = useProjectInboxThreadToUrl();
 
-  const selectAiChatThread = (toThreadId: string) => {
-    store.set(closingAiChatInboxThreadIdState.atom, null);
+  const selectInboxThread = (toThreadId: string) => {
+    store.set(closingInboxThreadIdState.atom, null);
 
-    if (store.get(currentAiChatThreadState.atom) !== toThreadId) {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    if (store.get(currentInboxThreadState.atom) !== toThreadId) {
+      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
     }
 
     switchThreadWithDraft(toThreadId);
-    projectAiChatThreadToUrl(toThreadId);
+    projectInboxThreadToUrl(toThreadId);
   };
 
-  return { selectAiChatThread };
+  return { selectInboxThread };
 };

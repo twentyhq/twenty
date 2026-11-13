@@ -1,17 +1,17 @@
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getInboxThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const getAgentChatThreadSubtitleContent = ({
+export const getInboxThreadSubtitleContent = ({
   thread,
   draftPreviewText,
   workspaceMembers,
   currentWorkspaceMemberId,
   assistantDisplayName,
 }: {
-  thread: AgentChatThreadRecord;
+  thread: InboxThreadRecord;
   draftPreviewText: string | null | undefined;
   workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
   currentWorkspaceMemberId: string | undefined;
@@ -22,7 +22,7 @@ export const getAgentChatThreadSubtitleContent = ({
   const hasDraft = isNonEmptyString(draftPreviewText);
   const previewText = hasDraft
     ? draftPreviewText
-    : getAgentChatThreadPreviewText({
+    : getInboxThreadPreviewText({
         thread,
         workspaceMembers,
         currentWorkspaceMemberId,

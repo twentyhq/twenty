@@ -3,39 +3,39 @@ import { useLayoutEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
-import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useLoadInboxThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useSwitchInboxThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentInboxThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AiChatPageThreadUrlSyncEffect = () => {
+export const InboxThreadPageThreadUrlSyncEffect = () => {
   const store = useStore();
   const { threadId } = useParams();
   const [newRouteThreadId] = useState(() =>
-    store.get(newAiChatThreadIdState.atom),
+    store.get(newInboxThreadIdState.atom),
   );
-  const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
+  const isNewThreadRoute = threadId === INBOX_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId = isNewThreadRoute ? newRouteThreadId : threadId;
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const currentAiChatThreadData = useAtomStateValue(
-    currentAiChatThreadDataSelector,
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const currentInboxThreadData = useAtomStateValue(
+    currentInboxThreadDataSelector,
   );
-  const areAgentChatThreadsLoaded = isDefined(
+  const areInboxThreadsLoaded = isDefined(
     useAtomFamilyStateValue(
-      agentChatThreadListFamilyState,
-      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState,
+      getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
     ),
   );
-  const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-  const { loadAgentChatThread } = useLoadAgentChatThread();
+  const { switchThreadWithDraft } = useSwitchInboxThreadWithDraft();
+  const { loadInboxThread } = useLoadInboxThread();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
@@ -45,7 +45,7 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       return;
     }
 
-    if (selectedThreadId !== currentAiChatThread) {
+    if (selectedThreadId !== currentInboxThread) {
       switchThreadWithDraft(selectedThreadId);
       return;
     }
@@ -54,10 +54,10 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       return;
     }
 
-    if (areAgentChatThreadsLoaded && !isDefined(currentAiChatThreadData)) {
+    if (areInboxThreadsLoaded && !isDefined(currentInboxThreadData)) {
       let isCurrentThread = true;
 
-      void loadAgentChatThread(selectedThreadId).then((chatThread) => {
+      void loadInboxThread(selectedThreadId).then((chatThread) => {
         if (!isCurrentThread || chatThread !== null) {
           return;
         }
@@ -72,10 +72,10 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   }, [
     selectedThreadId,
     isNewThreadRoute,
-    currentAiChatThread,
-    currentAiChatThreadData,
-    areAgentChatThreadsLoaded,
-    loadAgentChatThread,
+    currentInboxThread,
+    currentInboxThreadData,
+    areInboxThreadsLoaded,
+    loadInboxThread,
     switchThreadWithDraft,
     switchToNewChat,
   ]);

@@ -4,33 +4,32 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconMoodSmile } from 'twenty-ui/icon';
 
-import { AiChatMessageReactionPickerContent } from '@/ai/components/AiChatMessageReactionPickerContent';
-import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { InboxMessageReactionPickerContent } from '@/ai/components/AiChatMessageReactionPickerContent';
+import { useToggleInboxMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
-const AI_CHAT_MESSAGE_REACTION_PICKER_WIDTH_PX = 296;
-const AI_CHAT_QUICK_REACTIONS_WIDTH_PX = 249;
+const INBOX_MESSAGE_REACTION_PICKER_WIDTH_PX = 296;
+const INBOX_QUICK_REACTIONS_WIDTH_PX = 249;
 
-type AiChatMessageReactionPickerProps = {
+type InboxMessageReactionPickerProps = {
   messageId: string;
 };
 
-export const AiChatMessageReactionPicker = ({
+export const InboxMessageReactionPicker = ({
   messageId,
-}: AiChatMessageReactionPickerProps) => {
+}: InboxMessageReactionPickerProps) => {
   const { t } = useLingui();
   const instanceId = useId();
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const dropdownId = `ai-chat-message-reaction-picker-${instanceId}`;
   const { closeDropdown } = useCloseDropdown();
-  const { toggleAgentChatMessageReaction } =
-    useToggleAgentChatMessageReaction();
+  const { toggleInboxMessageReaction } = useToggleInboxMessageReaction();
 
   const react = (emoji: string) => {
     closeDropdown(dropdownId);
-    void toggleAgentChatMessageReaction({ messageId, emoji });
+    void toggleInboxMessageReaction({ messageId, emoji });
   };
 
   return (
@@ -49,15 +48,15 @@ export const AiChatMessageReactionPicker = ({
       <DropdownContent
         width={
           isEmojiPickerOpen
-            ? AI_CHAT_MESSAGE_REACTION_PICKER_WIDTH_PX
-            : AI_CHAT_QUICK_REACTIONS_WIDTH_PX
+            ? INBOX_MESSAGE_REACTION_PICKER_WIDTH_PX
+            : INBOX_QUICK_REACTIONS_WIDTH_PX
         }
         side="bottom"
         align="start"
         sideOffset={4}
         aria-label={t`Add reaction`}
       >
-        <AiChatMessageReactionPickerContent
+        <InboxMessageReactionPickerContent
           isEmojiPickerOpen={isEmojiPickerOpen}
           onEmojiSelect={react}
           onShowMore={() => setIsEmojiPickerOpen(true)}

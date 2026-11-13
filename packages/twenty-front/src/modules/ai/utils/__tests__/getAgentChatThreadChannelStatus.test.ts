@@ -1,10 +1,10 @@
-import { getAgentChatThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
+import { getInboxThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
-describe('getAgentChatThreadChannelStatus', () => {
+describe('getInboxThreadChannelStatus', () => {
   it('should be open when the channel never filed the chat', () => {
     expect(
-      getAgentChatThreadChannelStatus({
+      getInboxThreadChannelStatus({
         lastActivityAt: '2026-01-02T00:00:00.000Z',
         channelArchivedAt: null,
         channelSnoozedUntil: null,
@@ -14,7 +14,7 @@ describe('getAgentChatThreadChannelStatus', () => {
 
   it('should be done when filed without a wake-up time', () => {
     expect(
-      getAgentChatThreadChannelStatus({
+      getInboxThreadChannelStatus({
         lastActivityAt: '2026-01-01T00:00:00.000Z',
         channelArchivedAt: '2026-01-02T00:00:00.000Z',
         channelSnoozedUntil: null,
@@ -24,7 +24,7 @@ describe('getAgentChatThreadChannelStatus', () => {
 
   it('should be snoozed when filed with a wake-up time', () => {
     expect(
-      getAgentChatThreadChannelStatus({
+      getInboxThreadChannelStatus({
         lastActivityAt: '2026-01-01T00:00:00.000Z',
         channelArchivedAt: '2026-01-02T00:00:00.000Z',
         channelSnoozedUntil: '2026-01-05T00:00:00.000Z',
@@ -34,7 +34,7 @@ describe('getAgentChatThreadChannelStatus', () => {
 
   it('should reopen on activity after it was filed', () => {
     expect(
-      getAgentChatThreadChannelStatus({
+      getInboxThreadChannelStatus({
         lastActivityAt: '2026-01-03T00:00:00.000Z',
         channelArchivedAt: '2026-01-02T00:00:00.000Z',
         channelSnoozedUntil: '2026-01-05T00:00:00.000Z',

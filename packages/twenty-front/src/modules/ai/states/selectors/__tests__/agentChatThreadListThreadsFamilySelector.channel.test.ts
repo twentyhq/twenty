@@ -1,11 +1,11 @@
 import { createStore } from 'jotai';
 
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
@@ -26,7 +26,7 @@ const buildThread = ({
 }: {
   id: string;
   lastActivityAt: string;
-}): AgentChatThreadRecord => ({
+}): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -40,12 +40,12 @@ const buildThread = ({
   lastActivityAt,
 });
 
-const CHANNEL_SOURCE: AgentChatThreadListSource = {
+const CHANNEL_SOURCE: InboxThreadListSource = {
   type: 'channel',
   channelView: CHANNEL_VIEW,
 };
 
-describe('agentChatThreadListThreadsFamilySelector for a channel view', () => {
+describe('inboxThreadListThreadsFamilySelector for a channel view', () => {
   it('keeps the chats of the channel pages loaded so far when the main list is refreshed', () => {
     const store = createStore();
     const recentThread = buildThread({
@@ -59,10 +59,10 @@ describe('agentChatThreadListThreadsFamilySelector for a channel view', () => {
 
     store.set(recordStoreFamilyState.atomFamily('older'), olderThread);
     // A refresh replaced the main list with its first page
-    setAgentChatThreadList(store, [recentThread]);
+    setInboxThreadList(store, [recentThread]);
     store.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(CHANNEL_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(CHANNEL_SOURCE),
       ),
       {
         threadIds: ['recent', 'older'],
@@ -75,9 +75,7 @@ describe('agentChatThreadListThreadsFamilySelector for a channel view', () => {
     expect(
       store
         .get(
-          agentChatThreadListThreadsFamilySelector.selectorFamily(
-            CHANNEL_SOURCE,
-          ),
+          inboxThreadListThreadsFamilySelector.selectorFamily(CHANNEL_SOURCE),
         )
         .map(({ id }) => id),
     ).toEqual(['recent', 'older']);

@@ -7,7 +7,7 @@ import {
   EngineComponentKey,
 } from '~/generated-metadata/graphql';
 
-export const AiChatThreadCommandMenuItems = () => {
+export const InboxThreadCommandMenuItems = () => {
   const { commandMenuItems } = useContext(CommandMenuContext);
 
   // A row is not the chat page, so it does not start a new chat

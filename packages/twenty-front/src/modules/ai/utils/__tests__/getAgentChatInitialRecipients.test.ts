@@ -1,4 +1,4 @@
-import { getAgentChatInitialRecipients } from '@/ai/utils/getAgentChatInitialRecipients';
+import { getInboxInitialRecipients } from '@/ai/utils/getAgentChatInitialRecipients';
 
 const workspaceMembers = [
   {
@@ -13,10 +13,10 @@ const workspaceMembers = [
   },
 ];
 
-describe('getAgentChatInitialRecipients', () => {
+describe('getInboxInitialRecipients', () => {
   it('resolves selected members once without inventing missing recipients', () => {
     expect(
-      getAgentChatInitialRecipients({
+      getInboxInitialRecipients({
         recipientWorkspaceMemberIds: ['jane', 'missing', 'jane'],
         workspaceMembers,
       }),

@@ -1,35 +1,31 @@
-import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxMessage } from '@/ai/components/AiChatMessage';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
+import { inboxLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const AiChatLastMessageWithStreamingState = () => {
-  const agentChatLastMessageId = useAtomStateValue(
-    agentChatLastMessageIdSelector,
-  );
+export const InboxLastMessageWithStreamingState = () => {
+  const inboxLastMessageId = useAtomStateValue(inboxLastMessageIdSelector);
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
   const agentChatIsStreaming = useAtomFamilyStateValue(
     agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
+    { threadId: inboxDisplayedThread },
   );
   const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+    threadId: inboxDisplayedThread,
   });
 
-  if (!isDefined(agentChatLastMessageId)) {
+  if (!isDefined(inboxLastMessageId)) {
     return null;
   }
 
   return (
-    <AiChatMessage
-      messageId={agentChatLastMessageId}
+    <InboxMessage
+      messageId={inboxLastMessageId}
       isLastMessageStreaming={agentChatIsStreaming}
       error={agentChatError ?? undefined}
     />

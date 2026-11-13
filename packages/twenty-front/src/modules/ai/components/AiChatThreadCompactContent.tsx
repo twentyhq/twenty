@@ -35,17 +35,17 @@ const StyledPreview = styled.div`
   white-space: nowrap;
 `;
 
-type AiChatThreadCompactContentProps = {
+type InboxThreadCompactContentProps = {
   title: ReactNode;
   subtitle: ReactNode;
   isStreaming: boolean;
 };
 
-export const AiChatThreadCompactContent = ({
+export const InboxThreadCompactContent = ({
   title,
   subtitle,
   isStreaming,
-}: AiChatThreadCompactContentProps) => (
+}: InboxThreadCompactContentProps) => (
   <StyledContent>
     <StyledTitle>{title}</StyledTitle>
     {isDefined(subtitle) && (

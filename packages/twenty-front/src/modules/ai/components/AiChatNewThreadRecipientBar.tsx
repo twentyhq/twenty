@@ -6,19 +6,19 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
-import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
+import { InboxNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -32,47 +32,48 @@ import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorks
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export const AiChatNewThreadRecipientBar = () => {
+export const InboxNewThreadRecipientBar = () => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const theme = useTheme();
   const dropdownInstanceId = useId();
   const recipientRowRef = useRef<HTMLDivElement>(null);
   const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewInboxSlot = useIsOnNewInboxSlot();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const agentChatIsSendingMessage = useAtomFamilyStateValue(
-    agentChatIsSendingMessageFamilyState,
-    { threadId: newAiChatThreadId },
+  const newInboxThreadId = useAtomStateValue(newInboxThreadIdState);
+  const inboxIsSendingMessage = useAtomFamilyStateValue(
+    inboxIsSendingMessageFamilyState,
+    { threadId: newInboxThreadId },
   );
   const [recipients, setRecipients] = useAtomFamilyState(
-    agentChatNewThreadRecipientsFamilyState,
-    newAiChatThreadId,
+    inboxNewThreadRecipientsFamilyState,
+    newInboxThreadId,
   );
-  const [agentChatNewThreadChannelId, setAgentChatNewThreadChannelId] =
-    useAtomState(agentChatNewThreadChannelIdState);
+  const [inboxNewThreadChannelId, setInboxNewThreadChannelId] = useAtomState(
+    inboxNewThreadChannelIdState,
+  );
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
-    ({ id }) => id === agentChatNewThreadChannelId,
+  const channel = useAtomStateValue(inboxChannelsState)?.find(
+    ({ id }) => id === inboxNewThreadChannelId,
   );
   const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
     recipients.recipientWorkspaceMemberIds.includes(id),
   );
 
-  const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
+  const isCreatingChat = isOnNewInboxSlot || !isDefined(currentInboxThread);
 
   if (
     !isAiChatInboxEnabled ||
     !isCreatingChat ||
     isWorkspaceSetupChat ||
-    agentChatIsSendingMessage
+    inboxIsSendingMessage
   ) {
     return null;
   }
@@ -133,11 +134,11 @@ export const AiChatNewThreadRecipientBar = () => {
         <ChatRecipientChip
           label={channel.name}
           avatar={
-            <AgentChatChannelIcon channel={channel} size={theme.icon.size.sm} />
+            <InboxChannelIcon channel={channel} size={theme.icon.size.sm} />
           }
           onRemove={() => {
             focusAddRecipientsButton();
-            setAgentChatNewThreadChannelId(null);
+            setInboxNewThreadChannelId(null);
           }}
         />
       )}
@@ -162,7 +163,7 @@ export const AiChatNewThreadRecipientBar = () => {
           width={GenericDropdownContentWidth.ExtraLarge}
           aria-label={t`Select recipients`}
         >
-          <AiChatNewThreadRecipientPicker />
+          <InboxNewThreadRecipientPicker />
         </DropdownContent>
       </DropdownRoot>
     </FormFieldRow>

@@ -1,1 +1,1 @@
-export const AGENT_CHAT_EMOJIBASE_URL = '/emojibase';
+export const INBOX_EMOJIBASE_URL = '/emojibase';

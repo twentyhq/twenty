@@ -2,10 +2,10 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
-import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useToggleInboxMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { inboxLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const THREAD_ID = 'thread-id';
@@ -31,9 +31,9 @@ const renderToggleReaction = () => {
   store.set(currentWorkspaceMemberState.atom, {
     id: WORKSPACE_MEMBER_ID,
   } as never);
-  store.set(currentAiChatThreadState.atom, THREAD_ID);
+  store.set(currentInboxThreadState.atom, THREAD_ID);
 
-  const { result } = renderHook(() => useToggleAgentChatMessageReaction(), {
+  const { result } = renderHook(() => useToggleInboxMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Provider store={store}>{children}</Provider>
     ),
@@ -41,7 +41,7 @@ const renderToggleReaction = () => {
 
   const getReactions = () =>
     store.get(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      inboxMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
     );
@@ -49,7 +49,7 @@ const renderToggleReaction = () => {
   return { result, getReactions, store };
 };
 
-describe('useToggleAgentChatMessageReaction', () => {
+describe('useToggleInboxMessageReaction', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -70,11 +70,11 @@ describe('useToggleAgentChatMessageReaction', () => {
     let thumbsUpToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      thumbsUpToggle = result.current.toggleAgentChatMessageReaction({
+      thumbsUpToggle = result.current.toggleInboxMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
-      await result.current.toggleAgentChatMessageReaction({
+      await result.current.toggleInboxMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '🎉',
       });
@@ -128,11 +128,11 @@ describe('useToggleAgentChatMessageReaction', () => {
     let removeToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      addToggle = result.current.toggleAgentChatMessageReaction({
+      addToggle = result.current.toggleInboxMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
-      removeToggle = result.current.toggleAgentChatMessageReaction({
+      removeToggle = result.current.toggleInboxMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
@@ -177,7 +177,7 @@ describe('useToggleAgentChatMessageReaction', () => {
     let addToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      addToggle = result.current.toggleAgentChatMessageReaction({
+      addToggle = result.current.toggleInboxMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
@@ -185,13 +185,13 @@ describe('useToggleAgentChatMessageReaction', () => {
 
     await act(async () => {
       store.set(
-        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+        inboxLiveReactionRevisionsFamilyState.atomFamily({
           threadId: THREAD_ID,
         }),
         { [MESSAGE_ID]: 1 },
       );
       store.set(
-        agentChatMessageReactionsFamilyState.atomFamily({
+        inboxMessageReactionsFamilyState.atomFamily({
           messageId: MESSAGE_ID,
         }),
         confirmedReactions,

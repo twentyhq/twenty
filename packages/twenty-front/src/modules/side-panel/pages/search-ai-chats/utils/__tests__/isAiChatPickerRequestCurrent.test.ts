@@ -1,6 +1,6 @@
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
+import { isInboxPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
 import { type SidePanelNavigationStackItem } from '@/side-panel/states/sidePanelNavigationStackState';
 
 const PICKER_PAGE: SidePanelNavigationStackItem = {
@@ -18,9 +18,9 @@ const CURRENT_REQUEST = {
   currentWorkspaceId: 'workspace',
 };
 
-describe('isAiChatPickerRequestCurrent', () => {
+describe('isInboxPickerRequestCurrent', () => {
   it('accepts a request while its picker and workspace are unchanged', () => {
-    expect(isAiChatPickerRequestCurrent(CURRENT_REQUEST)).toBe(true);
+    expect(isInboxPickerRequestCurrent(CURRENT_REQUEST)).toBe(true);
   });
 
   it.each([
@@ -36,7 +36,7 @@ describe('isAiChatPickerRequestCurrent', () => {
     },
   ])('rejects a request after its picker is $reason', ({ changedState }) => {
     expect(
-      isAiChatPickerRequestCurrent({ ...CURRENT_REQUEST, ...changedState }),
+      isInboxPickerRequestCurrent({ ...CURRENT_REQUEST, ...changedState }),
     ).toBe(false);
   });
 });

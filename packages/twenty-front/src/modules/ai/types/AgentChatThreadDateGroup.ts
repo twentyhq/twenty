@@ -1,7 +1,7 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export type AgentChatThreadDateGroup = {
+export type InboxThreadDateGroup = {
   id: string;
   title: string;
-  threads: AgentChatThreadRecord[];
+  threads: InboxThreadRecord[];
 };

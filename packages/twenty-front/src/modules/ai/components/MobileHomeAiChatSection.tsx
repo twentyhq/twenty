@@ -1,46 +1,44 @@
-import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { NavigationDrawerInboxThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
-const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
+const MOBILE_HOME_INBOX_SECTION_ID = 'MobileHomeAiChat';
 
-export const MobileHomeAiChatSection = () => {
+export const MobileHomeInboxSection = () => {
   const { t } = useLingui();
 
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const { handleThreadClick } = useInboxThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useAgentChatThreadList(
-    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
-  );
+  const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
 
   // Earlier pages can hold only chats filtered out of this list, so an empty
   // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
     return (
-      <AgentChatThreadListFetchMoreTrigger
-        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
       />
     );
   }
 
   return (
     <>
-      <NavigationDrawerAiChatThreadSection
-        sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
+      <NavigationDrawerInboxThreadSection
+        sectionId={MOBILE_HOME_INBOX_SECTION_ID}
         title={t`Conversations`}
         threads={threads}
-        currentThreadId={currentAiChatThread}
+        currentThreadId={currentInboxThread}
         onThreadClick={handleThreadClick}
       />
-      <AgentChatThreadListFetchMoreTrigger
-        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
       />
     </>
   );

@@ -33,7 +33,7 @@ describe('useActiveNavigationDrawerMode', () => {
   it('is the settings mode on a settings page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/settings/profile',
-      activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      activeTab: NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
     });
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.SETTINGS);
@@ -44,7 +44,7 @@ describe('useActiveNavigationDrawerMode', () => {
       pathname: '/chat/20202020-0687-4c41-b707-ed1bfca972a7',
     });
 
-    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.INBOX_HISTORY);
   });
 
   it('is the AI mode on the inbox page', () => {
@@ -52,16 +52,16 @@ describe('useActiveNavigationDrawerMode', () => {
       pathname: '/inbox',
     });
 
-    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.INBOX_HISTORY);
   });
 
   it('is the AI mode when the chat history is open on another page', () => {
     const { result } = renderActiveNavigationDrawerMode({
       pathname: '/objects/people',
-      activeTab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      activeTab: NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
     });
 
-    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.INBOX_HISTORY);
   });
 
   it('is the navigation menu mode anywhere else', () => {

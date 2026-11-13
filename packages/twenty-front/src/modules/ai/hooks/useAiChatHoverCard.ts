@@ -15,17 +15,17 @@ import {
 } from '@floating-ui/react';
 import { useState } from 'react';
 
-type UseAiChatHoverCardParams = {
+type UseInboxHoverCardParams = {
   placement: Placement;
   role: 'tooltip' | 'dialog';
   onOpen?: () => void;
 };
 
-export const useAiChatHoverCard = ({
+export const useInboxHoverCard = ({
   placement,
   role,
   onOpen,
-}: UseAiChatHoverCardParams) => {
+}: UseInboxHoverCardParams) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { refs, floatingStyles, context } = useFloating({

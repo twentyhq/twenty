@@ -6,25 +6,25 @@ import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
 
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
-import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
+import { InboxRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
-import { getAgentChatRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
+import { getInboxRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 
-type AiChatRecordApprovalDeckProps = {
+type InboxRecordApprovalDeckProps = {
   recordApprovals: AgentChatPendingRecordApproval[];
   answeringToolCallIds: string[];
   onAnsweringToolCallIdsChange: (toolCallIds: string[]) => void;
 };
 
-export const AiChatRecordApprovalDeck = ({
+export const InboxRecordApprovalDeck = ({
   recordApprovals,
   answeringToolCallIds,
   onAnsweringToolCallIdsChange,
-}: AiChatRecordApprovalDeckProps) => {
+}: InboxRecordApprovalDeckProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -35,7 +35,7 @@ export const AiChatRecordApprovalDeck = ({
   const [skippedToolCallIds, setSkippedToolCallIds] = useState<string[]>([]);
 
   const groupIds = [
-    ...new Set(recordApprovals.map(getAgentChatRecordApprovalGroupId)),
+    ...new Set(recordApprovals.map(getInboxRecordApprovalGroupId)),
   ];
   const isAnswering = recordApprovals.some(({ toolCallId }) =>
     answeringToolCallIds.includes(toolCallId),
@@ -44,7 +44,7 @@ export const AiChatRecordApprovalDeck = ({
   const getGroupRecordApprovals = (groupId: string) =>
     recordApprovals.filter(
       (recordApproval) =>
-        getAgentChatRecordApprovalGroupId(recordApproval) === groupId,
+        getInboxRecordApprovalGroupId(recordApproval) === groupId,
     );
 
   const answerRecordApprovals = async ({
@@ -63,7 +63,7 @@ export const AiChatRecordApprovalDeck = ({
     );
 
     // answers go to the conversation the batch started in, even if the person opens another one
-    const threadId = store.get(agentChatDisplayedThreadState.atom);
+    const threadId = store.get(inboxDisplayedThreadState.atom);
 
     for (const { toolCallId, proposal } of recordApprovalsToAnswer) {
       const isApproved = !isDenied && !skippedToolCallIds.includes(toolCallId);
@@ -137,7 +137,7 @@ export const AiChatRecordApprovalDeck = ({
         ? ('running' as const)
         : ('pending' as const),
       content: (
-        <AiChatRecordApprovalReview
+        <InboxRecordApprovalReview
           objectNameSingular={objectNameSingular}
           operation={operation}
           label={title}

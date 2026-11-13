@@ -3,9 +3,9 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 // Rows the server sent, kept so they are not lost before the first page of
 // threads brings the member's rows
-export const agentChatThreadStreamedParticipantsState = createAtomState<
+export const inboxThreadStreamedParticipantsState = createAtomState<
   Record<string, AgentChatThreadParticipantFieldsFragment>
 >({
-  key: 'ai/agentChatThreadStreamedParticipantsState',
+  key: 'ai/inboxThreadStreamedParticipantsState',
   defaultValue: {},
 });

@@ -4,7 +4,7 @@ import { motion, useIsPresent, useReducedMotion } from 'framer-motion';
 import { type ReactNode } from 'react';
 import { ANIMATION } from 'twenty-ui/theme';
 
-import { AiChatInboxConversationCloseEffect } from '@/ai/components/AiChatInboxConversationCloseEffect';
+import { InboxConversationCloseEffect } from '@/ai/components/AiChatInboxConversationCloseEffect';
 
 const StyledPane = styled(motion.div)`
   bottom: 0;
@@ -23,15 +23,15 @@ const StyledPane = styled(motion.div)`
   }
 `;
 
-type AiChatInboxConversationPaneProps = {
+type InboxConversationPaneProps = {
   children: ReactNode;
   isSplitView: boolean;
 };
 
-export const AiChatInboxConversationPane = ({
+export const InboxConversationPane = ({
   children,
   isSplitView,
-}: AiChatInboxConversationPaneProps) => {
+}: InboxConversationPaneProps) => {
   const { t } = useLingui();
   const isPresent = useIsPresent();
   const shouldReduceMotion = useReducedMotion();
@@ -52,7 +52,7 @@ export const AiChatInboxConversationPane = ({
         ease: 'easeInOut',
       }}
     >
-      <AiChatInboxConversationCloseEffect isPresent={isPresent} />
+      <InboxConversationCloseEffect isPresent={isPresent} />
       {children}
     </StyledPane>
   );

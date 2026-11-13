@@ -1,13 +1,13 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 import { type AiChatUsageMetadata } from 'twenty-shared/ai';
 
-export type AgentChatLastMessageUsage = Omit<
+export type InboxLastMessageUsage = Omit<
   AiChatUsageMetadata,
   'conversationSize'
 >;
 
 export type AgentChatUsageState = {
-  lastMessage: AgentChatLastMessageUsage | null;
+  lastMessage: InboxLastMessageUsage | null;
   cachedInputTokens: number;
   conversationSize: number;
   contextWindowTokens: number;

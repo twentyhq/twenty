@@ -13,13 +13,13 @@ import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRec
 import { type SearchRecord } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type AiChatAddMenuRecordsPageProps = {
+type InboxAddMenuRecordsPageProps = {
   editor: Editor | null;
 };
 
-export const AiChatAddMenuRecordsPage = ({
+export const InboxAddMenuRecordsPage = ({
   editor,
-}: AiChatAddMenuRecordsPageProps) => {
+}: InboxAddMenuRecordsPageProps) => {
   const { t } = useLingui();
   const [search, setSearch] = useState('');
   const trimmedSearch = search.trim();

@@ -1,4 +1,4 @@
-import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
+import { mergeInboxThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 
 const READ_PARTICIPANT = {
   __typename: 'AgentChatThreadParticipant' as const,
@@ -13,7 +13,7 @@ const READ_PARTICIPANT = {
   updatedAt: '2026-10-01T10:00:00.000Z',
 };
 
-describe('mergeAgentChatThreadParticipants', () => {
+describe('mergeInboxThreadParticipants', () => {
   it('takes a newer copy and leaves the other threads alone', () => {
     const otherParticipant = { ...READ_PARTICIPANT, threadId: 'other' };
     const unreadParticipant = {
@@ -23,7 +23,7 @@ describe('mergeAgentChatThreadParticipants', () => {
     };
 
     expect(
-      mergeAgentChatThreadParticipants(
+      mergeInboxThreadParticipants(
         { thread: READ_PARTICIPANT, other: otherParticipant },
         [unreadParticipant],
       ),
@@ -34,7 +34,7 @@ describe('mergeAgentChatThreadParticipants', () => {
     const changedParticipant = { ...READ_PARTICIPANT, lastReadAt: null };
 
     expect(
-      mergeAgentChatThreadParticipants({ thread: READ_PARTICIPANT }, [
+      mergeInboxThreadParticipants({ thread: READ_PARTICIPANT }, [
         changedParticipant,
       ]),
     ).toEqual({ thread: changedParticipant });
@@ -42,7 +42,7 @@ describe('mergeAgentChatThreadParticipants', () => {
 
   it('keeps what it has over an older copy', () => {
     expect(
-      mergeAgentChatThreadParticipants({ thread: READ_PARTICIPANT }, [
+      mergeInboxThreadParticipants({ thread: READ_PARTICIPANT }, [
         {
           ...READ_PARTICIPANT,
           lastReadAt: null,

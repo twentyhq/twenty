@@ -23,8 +23,8 @@ import { SidePanelRecordUpdateFormPage } from '@/side-panel/pages/record-update-
 import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/components/SidePanelSendCampaignPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
-import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
+import { SidePanelSnoozeInboxThreadPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { SidePanelAssignInboxThreadPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
 import { SidePanelDashboardIframeSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings';
@@ -40,7 +40,7 @@ import { SidePanelMergeWithRecordPage } from '@/side-panel/pages/merge-with-reco
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
 import { SidePanelSearchRecordsPage } from '@/side-panel/pages/search/components/SidePanelSearchRecordsPage';
-import { SidePanelSearchAiChatsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
+import { SidePanelSearchInboxsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
 import { SidePanelWorkflowCreateStep } from '@/side-panel/pages/workflow/step/create/components/SidePanelWorkflowCreateStep';
 import { SidePanelWorkflowEditStep } from '@/side-panel/pages/workflow/step/edit/components/SidePanelWorkflowEditStep';
 import { SidePanelWorkflowStepSettings } from '@/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettings';
@@ -71,7 +71,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
   [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
   [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
-  [SidePanelPages.SearchAiChats, <SidePanelSearchAiChatsPage />],
+  [SidePanelPages.SearchAiChats, <SidePanelSearchInboxsPage />],
   [SidePanelPages.AskAI, <SidePanelAskAiPage />],
   [
     SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
@@ -130,6 +130,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
-  [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
-  [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
+  [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeInboxThreadPage />],
+  [SidePanelPages.AssignAiChat, <SidePanelAssignInboxThreadPage />],
 ]);

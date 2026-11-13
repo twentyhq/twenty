@@ -4,17 +4,17 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
+import { InboxTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
 
-const meta: Meta<typeof AiChatTypingIndicator> = {
+const meta: Meta<typeof InboxTypingIndicator> = {
   title: 'Modules/AI/AiChatTypingIndicator',
-  component: AiChatTypingIndicator,
+  component: InboxTypingIndicator,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 400 } },
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatTypingIndicator>;
+type Story = StoryObj<typeof InboxTypingIndicator>;
 
 export const OneParticipant: Story = {
   args: { participants: [{ id: 'sarah', name: 'Sarah' }] },
@@ -40,7 +40,7 @@ const TypingEndsFixture = () => {
 
   return (
     <>
-      <AiChatTypingIndicator participants={participants} />
+      <InboxTypingIndicator participants={participants} />
       <Button onClick={() => setParticipants([])}>Stop typing</Button>
     </>
   );

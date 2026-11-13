@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export type AgentChatThreadVisit = {
+export type InboxThreadVisit = {
   threadId: string;
   // Where the member left off when the thread opened, taken before it is
   // marked read, so the unread line stays put while they read
@@ -14,8 +14,7 @@ export type AgentChatThreadVisit = {
 };
 
 // The thread on screen in a visible tab
-export const agentChatThreadVisitState =
-  createAtomState<AgentChatThreadVisit | null>({
-    key: 'ai/agentChatThreadVisitState',
-    defaultValue: null,
-  });
+export const inboxThreadVisitState = createAtomState<InboxThreadVisit | null>({
+  key: 'ai/inboxThreadVisitState',
+  defaultValue: null,
+});

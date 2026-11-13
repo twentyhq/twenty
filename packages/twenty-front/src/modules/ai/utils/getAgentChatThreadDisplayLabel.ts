@@ -2,19 +2,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type AgentChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
-import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
+import { type InboxThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
-export const getAgentChatThreadDisplayLabel = ({
+export const getInboxThreadDisplayLabel = ({
   thread,
   currentWorkspaceMemberId,
   workspaceMembers,
   fallbackLabel,
   formerMemberLabel,
 }: {
-  thread: AgentChatThreadDisplayIdentity | null | undefined;
+  thread: InboxThreadDisplayIdentity | null | undefined;
   currentWorkspaceMemberId: string | undefined;
   workspaceMembers: readonly Pick<
     PartialWorkspaceMember,
@@ -31,11 +31,10 @@ export const getAgentChatThreadDisplayLabel = ({
     return isNonEmptyString(title) ? title : fallbackLabel;
   }
 
-  const peerWorkspaceMemberIds =
-    getAgentChatDirectMessagePeerWorkspaceMemberIds({
-      thread,
-      currentWorkspaceMemberId,
-    });
+  const peerWorkspaceMemberIds = getInboxDirectMessagePeerWorkspaceMemberIds({
+    thread,
+    currentWorkspaceMemberId,
+  });
 
   if (!isNonEmptyArray(peerWorkspaceMemberIds)) {
     return formerMemberLabel;

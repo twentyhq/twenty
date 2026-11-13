@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 const MAX_VISIBLE_ACCESS_MEMBERS = 3;
 
-type AiChatThreadShareButtonProps = {
+type InboxThreadShareButtonProps = {
   accessMembers?: {
     id: string;
     name: string;
@@ -22,7 +22,7 @@ type AiChatThreadShareButtonProps = {
   shortcut?: string[];
 };
 
-export const AiChatThreadShareButton = ({
+export const InboxThreadShareButton = ({
   accessMembers = [],
   onClick,
   label,
@@ -30,7 +30,7 @@ export const AiChatThreadShareButton = ({
   disabled = false,
   loading = false,
   shortcut,
-}: AiChatThreadShareButtonProps) => {
+}: InboxThreadShareButtonProps) => {
   const { t } = useLingui();
   const getStartIcon = () => {
     if (!isNonEmptyArray(accessMembers)) {

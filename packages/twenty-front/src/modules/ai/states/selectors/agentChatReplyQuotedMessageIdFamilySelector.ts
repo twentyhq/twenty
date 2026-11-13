@@ -1,36 +1,38 @@
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
-import { findAgentChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
-import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
+import { inboxMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
+import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { findInboxQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
+import { parseInboxMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatReplyQuotedMessageIdFamilySelector =
-  createAtomFamilySelector<Nullable<string>, { replyMessageId: string }>({
-    key: 'agentChatReplyQuotedMessageIdFamilySelector',
-    get:
-      ({ replyMessageId }) =>
-      ({ get }) => {
-        const messages = get(agentChatDisplayedThreadMessagesSelector);
-        const replyText =
-          messages
-            .find(({ id }) => id === replyMessageId)
-            ?.parts.find((part) => part.type === 'text')?.text ?? '';
-        const quote = parseAgentChatMessageQuote(replyText);
+export const inboxReplyQuotedMessageIdFamilySelector = createAtomFamilySelector<
+  Nullable<string>,
+  { replyMessageId: string }
+>({
+  key: 'inboxReplyQuotedMessageIdFamilySelector',
+  get:
+    ({ replyMessageId }) =>
+    ({ get }) => {
+      const messages = get(inboxDisplayedThreadMessagesSelector);
+      const replyText =
+        messages
+          .find(({ id }) => id === replyMessageId)
+          ?.parts.find((part) => part.type === 'text')?.text ?? '';
+      const quote = parseInboxMessageQuote(replyText);
 
-        if (!isDefined(quote)) {
-          return null;
-        }
+      if (!isDefined(quote)) {
+        return null;
+      }
 
-        return (
-          findAgentChatQuotedMessage({
-            messages,
-            replyMessageId,
-            quote,
-            authorLookup: get(agentChatMessageAuthorLookupSelector),
-          })?.id ?? null
-        );
-      },
-  });
+      return (
+        findInboxQuotedMessage({
+          messages,
+          replyMessageId,
+          quote,
+          authorLookup: get(inboxMessageAuthorLookupSelector),
+        })?.id ?? null
+      );
+    },
+});

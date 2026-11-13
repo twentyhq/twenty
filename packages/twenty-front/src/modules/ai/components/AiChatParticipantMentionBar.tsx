@@ -7,7 +7,7 @@ import { LightButton } from 'twenty-ui/components/input';
 import { IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useAiChatPendingParticipantMentions } from '@/ai/hooks/useAiChatPendingParticipantMentions';
+import { useInboxPendingParticipantMentions } from '@/ai/hooks/useAiChatPendingParticipantMentions';
 
 const StyledBar = styled.div`
   align-items: center;
@@ -31,16 +31,16 @@ const StyledMessage = styled.span`
   white-space: nowrap;
 `;
 
-type AiChatParticipantMentionBarProps = {
+type InboxParticipantMentionBarProps = {
   editor: Editor | null;
 };
 
-export const AiChatParticipantMentionBar = ({
+export const InboxParticipantMentionBar = ({
   editor,
-}: AiChatParticipantMentionBarProps) => {
+}: InboxParticipantMentionBarProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const pendingParticipantMentions = useAiChatPendingParticipantMentions();
+  const pendingParticipantMentions = useInboxPendingParticipantMentions();
 
   if (pendingParticipantMentions.length === 0) {
     return null;

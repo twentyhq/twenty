@@ -6,25 +6,25 @@ import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
+import { SnoozeInboxUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
-const snoozeAgentChatThreadsInChannel = jest.fn();
+const snoozeInboxThreadsInChannel = jest.fn();
 const onSnoozed = jest.fn();
 
 jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
-  useUpdateAgentChatThreadInboxState: () => ({
+  useUpdateInboxThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));
 
 jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
-  useSnoozeAgentChatThreadsInChannel: () => ({
-    snoozeAgentChatThreadsInChannel,
+  useSnoozeInboxThreadsInChannel: () => ({
+    snoozeInboxThreadsInChannel,
   }),
 }));
 
@@ -70,7 +70,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-describe('SnoozeAiChatUntilDatePicker', () => {
+describe('SnoozeInboxUntilDatePicker', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
@@ -84,7 +84,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('snoozes the chat until tomorrow morning by default', () => {
     render(
-      <SnoozeAiChatUntilDatePicker
+      <SnoozeInboxUntilDatePicker
         threadIds={['thread-1']}
         onSnoozed={onSnoozed}
       />,
@@ -103,7 +103,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('does not snooze until a time that has passed', () => {
     render(
-      <SnoozeAiChatUntilDatePicker
+      <SnoozeInboxUntilDatePicker
         threadIds={['thread-1']}
         onSnoozed={onSnoozed}
       />,
@@ -124,7 +124,7 @@ describe('SnoozeAiChatUntilDatePicker', () => {
 
   it('does not snooze once the picked time has passed, and says so', () => {
     render(
-      <SnoozeAiChatUntilDatePicker
+      <SnoozeInboxUntilDatePicker
         threadIds={['thread-1']}
         onSnoozed={onSnoozed}
       />,

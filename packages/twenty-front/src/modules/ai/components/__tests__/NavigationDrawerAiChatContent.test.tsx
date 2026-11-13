@@ -6,10 +6,10 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { NavigationDrawerInboxContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -25,7 +25,7 @@ import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
+const buildThread = (id: string, title: string): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -36,21 +36,21 @@ const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
 
 const DIRECT_MESSAGE_PEER_ID = 'peer-member';
 
-const buildDirectMessageThread = (id: string): AgentChatThreadRecord => ({
+const buildDirectMessageThread = (id: string): InboxThreadRecord => ({
   ...buildThread(id, 'Direct message'),
   conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
   directMessageFirstWorkspaceMemberId: mockedWorkspaceMemberData.id,
   directMessageSecondWorkspaceMemberId: DIRECT_MESSAGE_PEER_ID,
 });
 
-const mockFavoriteThreadsAtom = atom<AgentChatThreadListItem[]>([]);
+const mockFavoriteThreadsAtom = atom<InboxThreadListItemData[]>([]);
 const mockFavoriteChannelsAtom = atom<AgentChatChannel[]>([]);
-let mockThreads: AgentChatThreadRecord[] = [];
+let mockThreads: InboxThreadRecord[] = [];
 
 jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
-  agentChatFavoriteThreadsSelector: {
+  inboxFavoriteThreadsSelector: {
     type: 'Selector',
-    key: 'agentChatFavoriteThreadsSelector',
+    key: 'inboxFavoriteThreadsSelector',
     get atom() {
       return mockFavoriteThreadsAtom;
     },
@@ -58,9 +58,9 @@ jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
 }));
 
 jest.mock('@/ai/states/selectors/agentChatFavoriteChannelsSelector', () => ({
-  agentChatFavoriteChannelsSelector: {
+  inboxFavoriteChannelsSelector: {
     type: 'Selector',
-    key: 'agentChatFavoriteChannelsSelector',
+    key: 'inboxFavoriteChannelsSelector',
     get atom() {
       return mockFavoriteChannelsAtom;
     },
@@ -72,7 +72,7 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatChannelItem', () => ({
-  NavigationDrawerAiChatChannelItem: ({
+  NavigationDrawerInboxChannelItem: ({
     channel,
   }: {
     channel: AgentChatChannel;
@@ -92,10 +92,10 @@ jest.mock('@/ai/components/OpenDirectMessageButton', () => ({
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadItem', () => ({
-  NavigationDrawerAiChatThreadItem: ({
+  NavigationDrawerInboxThreadItem: ({
     thread,
   }: {
-    thread: AgentChatThreadListItem;
+    thread: InboxThreadListItemData;
   }) => <div>{thread.title}</div>,
 }));
 
@@ -113,11 +113,11 @@ jest.mock(
 );
 
 jest.mock('@/ai/hooks/useAgentChatThreadList', () => ({
-  useAgentChatThreadList: () => ({ threads: mockThreads, isLoading: false }),
+  useInboxThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
-  useAiChatThreadClick: () => ({ handleThreadClick: jest.fn() }),
+  useInboxThreadClick: () => ({ handleThreadClick: jest.fn() }),
 }));
 
 jest.mock(
@@ -128,10 +128,10 @@ jest.mock(
 );
 
 jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
-  NavigationDrawerAiChatTriageSection: () => <nav aria-label="Triage" />,
+  NavigationDrawerInboxTriageSection: () => <nav aria-label="Triage" />,
 }));
 
-let mockIsAiChatInboxEnabled = true;
+let mockIsInboxEnabled = true;
 let mockIsDirectMessageEnabled = true;
 const mockDirectMessageFeatureFlagKey =
   FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED;
@@ -140,24 +140,24 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: (featureFlagKey: string) =>
     featureFlagKey === mockDirectMessageFeatureFlagKey
       ? mockIsDirectMessageEnabled
-      : mockIsAiChatInboxEnabled,
+      : mockIsInboxEnabled,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatChannelsSection', () => ({
-  NavigationDrawerAiChatChannelsSection: () => null,
+  NavigationDrawerInboxChannelsSection: () => null,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
-  AgentChatThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
+  InboxThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadSection', () => ({
-  NavigationDrawerAiChatThreadSection: ({
+  NavigationDrawerInboxThreadSection: ({
     title,
     threads,
   }: {
     title: string;
-    threads: AgentChatThreadListItem[];
+    threads: InboxThreadListItemData[];
   }) => (
     <section aria-label={title}>
       {threads.map((thread) => (
@@ -171,15 +171,15 @@ const renderContent = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <NavigationDrawerAiChatContent />
+        <NavigationDrawerInboxContent />
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatContent', () => {
+describe('NavigationDrawerInboxContent', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockIsAiChatInboxEnabled = true;
+    mockIsInboxEnabled = true;
     mockIsDirectMessageEnabled = true;
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
@@ -232,7 +232,7 @@ describe('NavigationDrawerAiChatContent', () => {
   });
 
   it('leaves favorite channels out while the inbox feature flag is off', () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
     jotaiStore.set(mockFavoriteChannelsAtom, [
       {
         __typename: 'AgentChatChannel',
@@ -265,7 +265,7 @@ describe('NavigationDrawerAiChatContent', () => {
   });
 
   it('hides the triage section while the inbox feature flag is off', () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
 
     const { queryByRole } = renderContent();
 
@@ -293,7 +293,7 @@ describe('NavigationDrawerAiChatContent', () => {
   });
 
   it('does not cap Recent while the inbox feature flag is off', () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
     mockThreads = Array.from({ length: 7 }, (_, index) =>
       buildThread(`chat-${index}`, `Chat ${index}`),
     );
@@ -311,7 +311,7 @@ describe('NavigationDrawerAiChatContent', () => {
       buildThread('chat-1', 'Pipeline review'),
       buildDirectMessageThread('direct-message'),
     ];
-    setAgentChatThreadList(jotaiStore, mockThreads);
+    setInboxThreadList(jotaiStore, mockThreads);
     jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     jotaiStore.set(currentWorkspaceMembersState.atom, [
       mockedWorkspaceMemberData,

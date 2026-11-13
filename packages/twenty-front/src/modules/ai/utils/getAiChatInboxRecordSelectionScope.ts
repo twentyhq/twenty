@@ -1,23 +1,23 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 
-type AiChatInboxRecordSelectionScope = {
+type InboxRecordSelectionScope = {
   routeSelectionKey: string | undefined;
   generation: number;
 };
 
-export const getAiChatInboxRecordSelectionScope = ({
+export const getInboxRecordSelectionScope = ({
   threadId,
   locationKey,
   previousScope,
 }: {
   threadId: string | undefined;
   locationKey: string;
-  previousScope?: AiChatInboxRecordSelectionScope;
-}): AiChatInboxRecordSelectionScope => {
+  previousScope?: InboxRecordSelectionScope;
+}): InboxRecordSelectionScope => {
   const routeSelectionKey =
-    threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT ? locationKey : threadId;
+    threadId === INBOX_NEW_THREAD_PATH_SEGMENT ? locationKey : threadId;
 
   if (
     isDefined(previousScope) &&

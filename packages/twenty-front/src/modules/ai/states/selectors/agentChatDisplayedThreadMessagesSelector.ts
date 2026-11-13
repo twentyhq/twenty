@@ -1,14 +1,14 @@
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-export const agentChatDisplayedThreadMessagesSelector = createAtomSelector<
+export const inboxDisplayedThreadMessagesSelector = createAtomSelector<
   ExtendedUIMessage[]
 >({
-  key: 'agentChatDisplayedThreadMessagesSelector',
+  key: 'inboxDisplayedThreadMessagesSelector',
   get: ({ get }) =>
-    get(agentChatMessagesFamilyState, {
-      threadId: get(agentChatDisplayedThreadState),
+    get(inboxMessagesFamilyState, {
+      threadId: get(inboxDisplayedThreadState),
     }),
 });

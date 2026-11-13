@@ -1,6 +1,6 @@
 import { type AiChatSchedulingAvailability } from '@/ai/types/AiChatSchedulingAvailability';
 
-export const AI_CHAT_TIME_PICKER_FIXTURE = {
+export const INBOX_TIME_PICKER_FIXTURE = {
   date: '2026-10-07',
   viewedMonth: '2026-10',
   timeZone: 'Europe/Paris',

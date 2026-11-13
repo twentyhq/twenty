@@ -4,18 +4,18 @@ import { useId, useState } from 'react';
 import { IconCalendar, IconClock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useFormatInboxThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import {
-  type AgentChatThreadSnoozeOption,
-  getAgentChatThreadSnoozeOptions,
+  type InboxThreadSnoozeOption,
+  getInboxThreadSnoozeOptions,
 } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useSnoozeAiChatThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
-import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
-import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { useSnoozeInboxThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
+import { SnoozeInboxUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
+import { snoozeInboxThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -30,31 +30,31 @@ const StyledSeparatorContainer = styled.div`
   padding: ${themeCssVariables.spacing[1]} 0;
 `;
 
-export const SidePanelSnoozeAiChatPage = () => {
+export const SidePanelSnoozeInboxThreadPage = () => {
   const { t } = useLingui();
-  const snoozeAiChatThreadIds = useAtomComponentStateValue(
-    snoozeAiChatThreadIdsComponentState,
+  const snoozeInboxThreadIds = useAtomComponentStateValue(
+    snoozeInboxThreadIdsComponentState,
   );
-  const { snoozeAiChatThreads } = useSnoozeAiChatThreads();
-  const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
+  const { snoozeInboxThreads } = useSnoozeInboxThreads();
+  const { formatInboxThreadDateTime } = useFormatInboxThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openDropdown } = useOpenDropdown();
   const { userTimezone } = useUserTimezone();
   const [optionsComputedAt, setOptionsComputedAt] = useState(() => new Date());
   const untilDateDropdownId = useId();
 
-  if (snoozeAiChatThreadIds.length === 0) {
+  if (snoozeInboxThreadIds.length === 0) {
     return null;
   }
 
-  const snoozeOptions = getAgentChatThreadSnoozeOptions({
+  const snoozeOptions = getInboxThreadSnoozeOptions({
     now: optionsComputedAt,
     timeZone: userTimezone,
   });
 
   // An option can pass while the page stays open, so the list is refreshed
   // instead of snoozing into the past
-  const handleSnooze = (option: AgentChatThreadSnoozeOption) => {
+  const handleSnooze = (option: InboxThreadSnoozeOption) => {
     const now = new Date();
 
     if (option.date <= now) {
@@ -63,8 +63,8 @@ export const SidePanelSnoozeAiChatPage = () => {
     }
 
     void closeSidePanelMenu();
-    void snoozeAiChatThreads({
-      threadIds: snoozeAiChatThreadIds,
+    void snoozeInboxThreads({
+      threadIds: snoozeInboxThreadIds,
       snoozedUntil: option.date,
     });
   };
@@ -86,7 +86,7 @@ export const SidePanelSnoozeAiChatPage = () => {
             id={option.key}
             Icon={IconClock}
             label={t(option.label)}
-            description={formatAgentChatThreadDateTime(option.date)}
+            description={formatInboxThreadDateTime(option.date)}
             contextualTextPosition="right"
             onClick={() => handleSnooze(option)}
           />
@@ -115,8 +115,8 @@ export const SidePanelSnoozeAiChatPage = () => {
             width="auto"
             collisionPadding={{ left: 0, right: 0 }}
           >
-            <SnoozeAiChatUntilDatePicker
-              threadIds={snoozeAiChatThreadIds}
+            <SnoozeInboxUntilDatePicker
+              threadIds={snoozeInboxThreadIds}
               onSnoozed={closeSidePanelMenu}
             />
           </DropdownContent>

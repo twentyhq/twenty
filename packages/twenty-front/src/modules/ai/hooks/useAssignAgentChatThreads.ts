@@ -3,19 +3,19 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AssignAgentChatThreadDocument } from '~/generated-metadata/graphql';
 
-export const useAssignAgentChatThreads = () => {
+export const useAssignInboxThreads = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
+  const { applyInboxThreadUpdate } = useApplyInboxThreadUpdate();
 
   // The assignee shows right away, and is put back if the server refuses it
-  const assignAgentChatThreads = useCallback(
+  const assignInboxThreads = useCallback(
     async ({
       threadIds,
       assigneeWorkspaceMemberId,
@@ -26,11 +26,10 @@ export const useAssignAgentChatThreads = () => {
       await Promise.all(
         threadIds.map(async (threadId) => {
           const previousAssigneeId =
-            store.get(
-              agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-            )?.assigneeId ?? null;
+            store.get(inboxThreadRecordFamilySelector.selectorFamily(threadId))
+              ?.assigneeId ?? null;
 
-          applyAgentChatThreadUpdate({
+          applyInboxThreadUpdate({
             id: threadId,
             assigneeId: assigneeWorkspaceMemberId,
           });
@@ -41,7 +40,7 @@ export const useAssignAgentChatThreads = () => {
               variables: { threadId, assigneeWorkspaceMemberId },
             });
           } catch (error) {
-            applyAgentChatThreadUpdate({
+            applyInboxThreadUpdate({
               id: threadId,
               assigneeId: previousAssigneeId,
             });
@@ -50,8 +49,8 @@ export const useAssignAgentChatThreads = () => {
         }),
       );
     },
-    [apolloClient, applyAgentChatThreadUpdate, enqueueToast, store],
+    [apolloClient, applyInboxThreadUpdate, enqueueToast, store],
   );
 
-  return { assignAgentChatThreads };
+  return { assignInboxThreads };
 };

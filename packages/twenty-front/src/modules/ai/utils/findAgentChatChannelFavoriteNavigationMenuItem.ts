@@ -2,7 +2,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-export const findAgentChatChannelFavoriteNavigationMenuItem = ({
+export const findInboxChannelFavoriteNavigationMenuItem = ({
   navigationMenuItems,
   channelId,
 }: {

@@ -1,13 +1,13 @@
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
-import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
+import { INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { inboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // A phone has room for the list or a chat, never both
-export const useIsAiChatInboxSplitView = () => {
+export const useIsInboxSplitView = () => {
   const isMobile = useIsMobile();
-  const aiChatInboxLayout = useAtomStateValue(aiChatInboxLayoutState);
+  const inboxLayout = useAtomStateValue(inboxLayoutState);
 
-  return !isMobile && aiChatInboxLayout === AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW;
+  return !isMobile && inboxLayout === INBOX_LAYOUT.SPLIT_VIEW;
 };

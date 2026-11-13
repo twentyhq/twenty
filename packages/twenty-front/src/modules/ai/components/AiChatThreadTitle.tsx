@@ -4,9 +4,9 @@ import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useIsInboxThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
+import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledTitle = styled.div`
   flex: 1;
@@ -14,14 +14,14 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
-type AiChatThreadTitleProps = {
-  thread: AgentChatThreadRecord;
+type InboxThreadTitleProps = {
+  thread: InboxThreadRecord;
 };
 
-export const AiChatThreadTitle = ({ thread }: AiChatThreadTitleProps) => {
+export const InboxThreadTitle = ({ thread }: InboxThreadTitleProps) => {
   const { t } = useLingui();
-  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const isUnread = useIsInboxThreadShownAsUnread(thread);
+  const displayLabel = useInboxThreadDisplayLabel({
     thread,
     fallbackLabel: t`Untitled`,
   });

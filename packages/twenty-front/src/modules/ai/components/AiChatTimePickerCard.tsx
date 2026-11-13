@@ -96,7 +96,7 @@ const StyledActions = styled.div`
   margin-left: auto;
 `;
 
-type AiChatTimePickerCardProps = {
+type InboxTimePickerCardProps = {
   title: string;
   hint: string;
   date: string | null;
@@ -120,7 +120,7 @@ type AiChatTimePickerCardProps = {
   isSending?: boolean;
 };
 
-export const AiChatTimePickerCard = ({
+export const InboxTimePickerCard = ({
   title,
   hint,
   date,
@@ -142,7 +142,7 @@ export const AiChatTimePickerCard = ({
   reviewFields,
   disabled = false,
   isSending = false,
-}: AiChatTimePickerCardProps) => {
+}: InboxTimePickerCardProps) => {
   const { t } = useLingui();
   const resolvedTimeZone =
     getValidTimeZoneOrUndefined(timeZone) ?? detectTimeZone();

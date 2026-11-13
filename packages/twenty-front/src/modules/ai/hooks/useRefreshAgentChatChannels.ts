@@ -3,21 +3,20 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
-import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { isAgentChatSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
+import { useRefreshInboxChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
+import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { isInboxSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
 import { GetAgentChatChannelsDocument } from '~/generated-metadata/graphql';
 
 // A failed load keeps what was shown, as the next change loads again
-export const useRefreshAgentChatChannels = () => {
+export const useRefreshInboxChannels = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { refreshAgentChatChannelSummaries } =
-    useRefreshAgentChatChannelSummaries();
+  const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
-  const refreshAgentChatChannels = useCallback(async () => {
+  const refreshInboxChannels = useCallback(async () => {
     const [channelsResult] = await Promise.all([
       apolloClient
         .query({
@@ -25,7 +24,7 @@ export const useRefreshAgentChatChannels = () => {
           fetchPolicy: 'network-only',
         })
         .catch(() => undefined),
-      refreshAgentChatChannelSummaries(),
+      refreshInboxChannelSummaries(),
     ]);
 
     const channels = channelsResult?.data?.agentChatChannels;
@@ -34,20 +33,20 @@ export const useRefreshAgentChatChannels = () => {
       return;
     }
 
-    store.set(agentChatChannelsState.atom, channels);
+    store.set(inboxChannelsState.atom, channels);
 
     if (
-      !isAgentChatSelectedThreadListSourceAccessible({
-        source: store.get(agentChatSelectedThreadListSourceState.atom),
+      !isInboxSelectedThreadListSourceAccessible({
+        source: store.get(inboxSelectedThreadListSourceState.atom),
         channels,
       })
     ) {
       store.set(
-        agentChatSelectedThreadListSourceState.atom,
-        AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
+        inboxSelectedThreadListSourceState.atom,
+        INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
       );
     }
-  }, [apolloClient, refreshAgentChatChannelSummaries, store]);
+  }, [apolloClient, refreshInboxChannelSummaries, store]);
 
-  return { refreshAgentChatChannels };
+  return { refreshInboxChannels };
 };

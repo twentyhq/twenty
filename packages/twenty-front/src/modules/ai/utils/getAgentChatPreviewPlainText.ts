@@ -6,7 +6,7 @@ import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { getPlainTextFromMarkdown } from '~/utils/string/getPlainTextFromMarkdown';
 
 // The server cuts the text short, which can leave half a reference at the end
-export const getAgentChatPreviewPlainText = ({
+export const getInboxPreviewPlainText = ({
   markdown,
   assistantDisplayName,
 }: {

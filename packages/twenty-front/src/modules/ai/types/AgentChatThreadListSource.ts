@@ -1,8 +1,8 @@
 import { type AgentChatThreadPresetFilter } from 'twenty-shared/ai';
 
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 
-export type AgentChatThreadListSource =
+export type InboxThreadListSource =
   | { type: 'recent' }
   | { type: 'presetFilter'; presetFilter: AgentChatThreadPresetFilter }
-  | { type: 'channel'; channelView: AgentChatChannelView };
+  | { type: 'channel'; channelView: InboxChannelView };

@@ -27,10 +27,10 @@ jest.mock(
 jest.mock('@/navigation/hooks/useNavigationDrawerModes');
 jest.mock('@/navigation/hooks/useSwitchNavigationDrawerMode');
 
-let mockIsAiChatInboxEnabled = true;
+let mockIsInboxEnabled = true;
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsAiChatInboxEnabled,
+  useIsFeatureEnabled: () => mockIsInboxEnabled,
 }));
 
 jest.mock('twenty-ui/utilities', () => ({
@@ -97,7 +97,7 @@ const waitForOpenThreadsSummary = () =>
 describe('MainNavigationDrawerModeSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsAiChatInboxEnabled = true;
+    mockIsInboxEnabled = true;
 
     jest.mocked(useNavigationDrawerModes).mockReturnValue([
       {
@@ -108,7 +108,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
       {
         Icon: IconComment,
         label: 'AI',
-        mode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        mode: NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
       },
       {
         Icon: IconSettings,
@@ -134,7 +134,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
 
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockSwitchNavigationDrawerMode).toHaveBeenCalledWith(
-      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
     );
   });
 
@@ -152,8 +152,8 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   it.each([
     [true, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
     [false, 'Settings', NAVIGATION_DRAWER_TABS.SETTINGS],
-    [true, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
-    [false, 'AI', NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY],
+    [true, 'AI', NAVIGATION_DRAWER_TABS.INBOX_HISTORY],
+    [false, 'AI', NAVIGATION_DRAWER_TABS.INBOX_HISTORY],
   ] as const)(
     'disables navigation while editing layout with expanded=%s and mode=%s and restores it afterward',
     async (isExpanded, label, mode) => {
@@ -206,7 +206,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   });
 
   it('does not mark unread chats while the inbox feature flag is off', async () => {
-    mockIsAiChatInboxEnabled = false;
+    mockIsInboxEnabled = false;
     renderModeSwitcher({ hasUnreadOpenThread: true });
     await waitForOpenThreadsSummary();
 
@@ -216,7 +216,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   it('does not mark the inbox while it is open', async () => {
     jest
       .mocked(useActiveNavigationDrawerMode)
-      .mockReturnValue(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+      .mockReturnValue(NAVIGATION_DRAWER_TABS.INBOX_HISTORY);
     renderModeSwitcher({ hasUnreadOpenThread: true });
     await waitForOpenThreadsSummary();
 

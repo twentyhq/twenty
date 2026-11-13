@@ -1,6 +1,6 @@
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export type AgentChatMessageAuthor<
+export type InboxMessageAuthor<
   TWorkspaceMember extends Pick<
     PartialWorkspaceMember,
     'id' | 'name' | 'userEmail'

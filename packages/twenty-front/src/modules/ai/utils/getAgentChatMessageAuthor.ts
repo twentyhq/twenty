@@ -3,14 +3,14 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { type AgentChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
+import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type InboxMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
 import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { getInboxSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const getAgentChatMessageAuthor = <
+export const getInboxMessageAuthor = <
   TWorkspaceMember extends Pick<
     PartialWorkspaceMember,
     'id' | 'name' | 'userEmail'
@@ -21,9 +21,9 @@ export const getAgentChatMessageAuthor = <
   agentName,
 }: {
   message: Pick<ExtendedUIMessage, 'id' | 'role' | 'metadata'>;
-  authorLookup: AgentChatMessageAuthorLookup<TWorkspaceMember>;
+  authorLookup: InboxMessageAuthorLookup<TWorkspaceMember>;
   agentName?: string;
-}): AgentChatMessageAuthor<TWorkspaceMember> => {
+}): InboxMessageAuthor<TWorkspaceMember> => {
   const applicationId = message.metadata?.senderApplicationId;
   const senderWorkspaceMemberId = message.metadata?.senderWorkspaceMemberId;
   const agentId = message.metadata?.agentId;
@@ -61,7 +61,7 @@ export const getAgentChatMessageAuthor = <
       type: 'member',
       senderWorkspaceMemberId,
       sender,
-      name: getAgentChatSenderLabel({
+      name: getInboxSenderLabel({
         sender,
         isCurrentWorkspaceMember: false,
       }),

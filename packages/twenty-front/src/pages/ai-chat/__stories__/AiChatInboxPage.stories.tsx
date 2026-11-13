@@ -25,20 +25,20 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 as uuidv4 } from 'uuid';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { AI_CHAT_INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
-import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { aiChatInboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingAiChatInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
-import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
+import { INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
+import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useSelectInboxThread } from '@/ai/hooks/useSelectAiChatThread';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { closingInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
+import { initializeNewInboxStory } from '@/ai/testing/initializeNewAiChatStory';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -48,7 +48,7 @@ import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPage
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { AiChatInboxPage } from '~/pages/ai-chat/AiChatInboxPage';
+import { InboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -65,9 +65,9 @@ const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
 const CHAT_TARGET_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000dd';
 const CHAT_FIELD_NAMES = ['id', 'title', 'createdAt', 'updatedAt', 'deletedAt'];
 const NEW_CHAT_PATH = getAppPath(AppPath.AiChatInbox, {
-  threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
+  threadId: INBOX_NEW_THREAD_PATH_SEGMENT,
 });
-const THREADS: AgentChatThreadRecord[] = [
+const THREADS: InboxThreadRecord[] = [
   {
     __typename: 'AgentChatThread',
     id: FIRST_THREAD_ID,
@@ -105,7 +105,7 @@ const StyledNavigationControls = styled.div`
 const InboxRouteNavigation = () => {
   const navigate = useNavigate();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { selectAiChatThread } = useSelectAiChatThread();
+  const { selectInboxThread } = useSelectInboxThread();
 
   return (
     <StyledNavigationControls>
@@ -135,7 +135,7 @@ const InboxRouteNavigation = () => {
       <Button onClick={() => navigate(-1)}>Back through history</Button>
       <Button onClick={() => navigate(1)}>Forward through history</Button>
       <Button onClick={() => openAskAiPage()}>Open Ask AI</Button>
-      <Button onClick={() => selectAiChatThread(FIRST_THREAD_ID)}>
+      <Button onClick={() => selectInboxThread(FIRST_THREAD_ID)}>
         Select first chat for Ask AI
       </Button>
     </StyledNavigationControls>
@@ -249,12 +249,12 @@ const getThreadRow = ({
 };
 
 const archiveThread = (threadId: string) => {
-  const participants = jotaiStore.get(agentChatThreadParticipantsState.atom);
+  const participants = jotaiStore.get(inboxThreadParticipantsState.atom);
   const participant = participants?.[threadId];
 
   assertIsDefinedOrThrow(participant);
 
-  jotaiStore.set(agentChatThreadParticipantsState.atom, {
+  jotaiStore.set(inboxThreadParticipantsState.atom, {
     ...participants,
     [threadId]: {
       ...participant,
@@ -266,7 +266,7 @@ const archiveThread = (threadId: string) => {
 
 const meta = {
   title: 'Pages/AiChat/AiChatInboxPage',
-  component: AiChatInboxPage,
+  component: InboxPage,
   decorators: [
     InboxRouteDecorator,
     ComponentDecorator,
@@ -275,18 +275,15 @@ const meta = {
     ToastDecorator,
   ],
   beforeEach: () => {
-    initializeNewAiChatStory({ isInboxEnabled: true });
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
-    );
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    initializeNewInboxStory({ isInboxEnabled: true });
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.RECORD_PAGE);
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     });
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       ),
       {
         threadIds: THREADS.map(({ id }) => id),
@@ -296,7 +293,7 @@ const meta = {
       },
     );
     jotaiStore.set(
-      agentChatThreadParticipantsState.atom,
+      inboxThreadParticipantsState.atom,
       Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
@@ -368,7 +365,7 @@ const meta = {
       ],
     },
   },
-} satisfies Meta<typeof AiChatInboxPage>;
+} satisfies Meta<typeof InboxPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -450,10 +447,7 @@ export const SavedChatNavigationClearsSelection: Story = {
 
     await canvas.findByText(FIRST_THREAD_TITLE);
     loadChatRecordMetadata();
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
-    );
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
     await user.click(
       within(
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
@@ -513,10 +507,7 @@ export const SavedChatNavigationClearsSelection: Story = {
 
 export const CloseConversationPane: Story = {
   beforeEach: () => {
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
-    );
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -543,7 +534,7 @@ export const CloseConversationPane: Story = {
     await canvas.findByRole('button', { name: 'Chat details' });
     await waitFor(() =>
       expect(list.getBoundingClientRect().width).toBeCloseTo(
-        AI_CHAT_INBOX_LIST_PANE_WIDTH,
+        INBOX_LIST_PANE_WIDTH,
         0,
       ),
     );
@@ -561,7 +552,7 @@ export const CloseConversationPane: Story = {
 
     if (!shouldReduceMotion && !MotionGlobalConfig.skipAnimations) {
       await expect(conversation).toBeInTheDocument();
-      await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      await expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
         FIRST_THREAD_ID,
       );
       await expect(conversation).toHaveAttribute('aria-hidden', 'true');
@@ -576,13 +567,13 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(conversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
+      expect(jotaiStore.get(currentInboxThreadState.atom)).toBeNull();
     });
     await expect(
       getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
     ).toBe(firstThreadRow);
-    await expect(jotaiStore.get(aiChatInboxLayoutState.atom)).toBe(
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
+    await expect(jotaiStore.get(inboxLayoutState.atom)).toBe(
+      INBOX_LAYOUT.SPLIT_VIEW,
     );
     await expect(
       canvas.getByRole('button', { name: 'Command Menu' }),
@@ -604,7 +595,7 @@ export const CloseConversationPane: Story = {
     await waitFor(() => {
       expect(reopenedConversation).not.toBeInTheDocument();
       expect(list.getBoundingClientRect().width).toBeCloseTo(fullListWidth, 0);
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
+      expect(jotaiStore.get(currentInboxThreadState.atom)).toBeNull();
     });
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
   },
@@ -612,10 +603,7 @@ export const CloseConversationPane: Story = {
 
 export const AskAiAfterClosingConversation: Story = {
   beforeEach: () => {
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
-    );
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -638,17 +626,15 @@ export const AskAiAfterClosingConversation: Story = {
     await expect(
       jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
     ).toBe(SidePanelPages.AskAI);
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBeNull();
-    await expect(
-      jotaiStore.get(closingAiChatInboxThreadIdState.atom),
-    ).toBeNull();
+    await expect(jotaiStore.get(currentInboxThreadState.atom)).toBeNull();
+    await expect(jotaiStore.get(closingInboxThreadIdState.atom)).toBeNull();
 
     await user.click(
       canvas.getByRole('button', { name: 'Select first chat for Ask AI' }),
     );
     await user.click(canvas.getByRole('button', { name: 'Open Ask AI' }));
     await waitFor(() => expect(conversation).not.toBeInTheDocument());
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+    await expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
       FIRST_THREAD_ID,
     );
   },
@@ -656,10 +642,7 @@ export const AskAiAfterClosingConversation: Story = {
 
 export const ClosedConversationHistory: Story = {
   beforeEach: () => {
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
-    );
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -705,10 +688,7 @@ export const ClosedConversationHistory: Story = {
 
 export const TriageAfterReopeningConversation: Story = {
   beforeEach: () => {
-    jotaiStore.set(
-      aiChatInboxLayoutState.atom,
-      AI_CHAT_INBOX_LAYOUT.SPLIT_VIEW,
-    );
+    jotaiStore.set(inboxLayoutState.atom, INBOX_LAYOUT.SPLIT_VIEW);
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

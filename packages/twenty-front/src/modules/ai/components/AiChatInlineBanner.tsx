@@ -3,16 +3,16 @@ import {
   InlineBanner,
 } from 'twenty-ui/components/feedback';
 
-type AiChatInlineBannerProps = Pick<
+type InboxInlineBannerProps = Pick<
   InlineBannerProps,
   'children' | 'action' | 'status'
 >;
 
-export const AiChatInlineBanner = ({
+export const InboxInlineBanner = ({
   children,
   action,
   status = 'error',
-}: AiChatInlineBannerProps) => (
+}: InboxInlineBannerProps) => (
   <InlineBanner embedded status={status} action={action}>
     {children}
   </InlineBanner>

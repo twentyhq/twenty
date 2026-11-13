@@ -1,4 +1,4 @@
-export type AiChatPickerOpenError = {
+export type InboxPickerOpenError = {
   threadId: string;
   isThreadUnavailable: boolean;
 };

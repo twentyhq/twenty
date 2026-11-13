@@ -2,9 +2,9 @@ import { act, renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 
 const navigateAppMock = jest.fn();
 
@@ -14,7 +14,7 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 
 const THREAD_A = '11111111-1111-4111-8111-111111111111';
 
-describe('useProjectAiChatThreadToUrl', () => {
+describe('useProjectInboxThreadToUrl', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     window.history.pushState(null, '', '/');
@@ -23,10 +23,10 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('should write the selected thread into the chat url', () => {
     window.history.pushState(null, '', '/chat');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
@@ -40,11 +40,11 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('should clear the url param for the new chat', () => {
     window.history.pushState(null, '', `/chat/${THREAD_A}`);
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(
-        getDefaultStore().get(newAiChatThreadIdState.atom),
+      result.current.projectInboxThreadToUrl(
+        getDefaultStore().get(newInboxThreadIdState.atom),
       );
     });
 
@@ -59,17 +59,17 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('keeps the inbox route when selecting a draft', () => {
     window.history.pushState(null, '', `/inbox/${THREAD_A}`);
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(
-        getDefaultStore().get(newAiChatThreadIdState.atom),
+      result.current.projectInboxThreadToUrl(
+        getDefaultStore().get(newInboxThreadIdState.atom),
       );
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
       AppPath.AiChatInbox,
-      { threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT },
+      { threadId: INBOX_NEW_THREAD_PATH_SEGMENT },
       undefined,
       { replace: true, state: null },
     );
@@ -79,15 +79,15 @@ describe('useProjectAiChatThreadToUrl', () => {
     window.history.pushState(
       { usr: { returnLocation: '/objects/people' } },
       '',
-      `/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`,
+      `/inbox/${INBOX_NEW_THREAD_PATH_SEGMENT}`,
     );
 
     const { result } = renderHook(() =>
-      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
+      useProjectInboxThreadToUrl({ shouldPreserveClosedInbox: true }),
     );
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
@@ -105,10 +105,10 @@ describe('useProjectAiChatThreadToUrl', () => {
       '/chat',
     );
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
@@ -122,7 +122,7 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('should read the entry state as it is when called, not when rendered', () => {
     window.history.pushState(null, '', '/chat');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     window.history.pushState(
       { usr: { returnLocation: '/objects/companies' } },
@@ -131,7 +131,7 @@ describe('useProjectAiChatThreadToUrl', () => {
     );
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
@@ -145,10 +145,10 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('should leave the url alone outside the chat page', () => {
     window.history.pushState(null, '', '/objects/companies');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).not.toHaveBeenCalled();
@@ -158,13 +158,13 @@ describe('useProjectAiChatThreadToUrl', () => {
     window.history.pushState(null, '', `/inbox/${THREAD_A}`);
 
     const { result } = renderHook(() =>
-      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
+      useProjectInboxThreadToUrl({ shouldPreserveClosedInbox: true }),
     );
 
     window.history.pushState(null, '', '/inbox');
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).not.toHaveBeenCalled();
@@ -173,10 +173,10 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('opens an explicitly selected chat from the closed inbox in a new history entry', () => {
     window.history.pushState(null, '', '/inbox');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(THREAD_A);
+      result.current.projectInboxThreadToUrl(THREAD_A);
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
@@ -190,17 +190,17 @@ describe('useProjectAiChatThreadToUrl', () => {
   it('opens a new chat from the closed inbox in a new history entry', () => {
     window.history.pushState(null, '', '/inbox');
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() => useProjectInboxThreadToUrl());
 
     act(() => {
-      result.current.projectAiChatThreadToUrl(
-        getDefaultStore().get(newAiChatThreadIdState.atom),
+      result.current.projectInboxThreadToUrl(
+        getDefaultStore().get(newInboxThreadIdState.atom),
       );
     });
 
     expect(navigateAppMock).toHaveBeenCalledWith(
       AppPath.AiChatInbox,
-      { threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT },
+      { threadId: INBOX_NEW_THREAD_PATH_SEGMENT },
       undefined,
       { replace: false, state: null },
     );

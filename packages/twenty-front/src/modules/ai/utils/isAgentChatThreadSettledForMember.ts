@@ -1,16 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
-export const isAgentChatThreadSettledForMember = ({
+export const isInboxThreadSettledForMember = ({
   thread,
   participant,
   workspaceMemberId,
 }: {
   thread: Pick<
-    AgentChatThreadRecord,
+    InboxThreadRecord,
     | 'deletedAt'
     | 'lastActivityAt'
     | 'lastMessageSenderWorkspaceMemberId'

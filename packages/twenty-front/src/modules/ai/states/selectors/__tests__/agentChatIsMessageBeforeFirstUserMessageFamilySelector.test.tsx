@@ -2,9 +2,9 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -24,12 +24,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('agentChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
+describe('inboxIsMessageBeforeFirstUserMessageFamilySelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       MESSAGES,
     );
   });
@@ -43,7 +43,7 @@ describe('agentChatIsMessageBeforeFirstUserMessageFamilySelector', () => {
     const { result } = renderHook(
       () =>
         useAtomFamilySelectorValue(
-          agentChatIsMessageBeforeFirstUserMessageFamilySelector,
+          inboxIsMessageBeforeFirstUserMessageFamilySelector,
           { messageId },
         ),
       { wrapper: Wrapper },

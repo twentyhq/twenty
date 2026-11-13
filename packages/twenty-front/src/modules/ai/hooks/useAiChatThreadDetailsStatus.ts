@@ -1,63 +1,63 @@
-import { AI_CHAT_THREAD_INBOX_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadInboxActionByTriageStatus';
-import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
-import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
-import { getAiChatThreadChannelIdOutsideInbox } from '@/ai/utils/getAiChatThreadChannelIdOutsideInbox';
-import { getAiChatThreadDetailsStatusAccess } from '@/ai/utils/getAiChatThreadDetailsStatusAccess';
-import { getAiChatThreadStatusScope } from '@/ai/utils/getAiChatThreadStatusScope';
-import { isAiChatThreadStatusChangeNoOp } from '@/ai/utils/isAiChatThreadStatusChangeNoOp';
+import { INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/AiChatThreadInboxActionByTriageStatus';
+import { useInboxThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
+import { useExecuteInboxThreadStatusAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { getInboxThreadChannelIdOutsideInbox } from '@/ai/utils/getAiChatThreadChannelIdOutsideInbox';
+import { getInboxThreadDetailsStatusAccess } from '@/ai/utils/getAiChatThreadDetailsStatusAccess';
+import { getInboxThreadStatusScope } from '@/ai/utils/getAiChatThreadStatusScope';
+import { isInboxThreadStatusChangeNoOp } from '@/ai/utils/isAiChatThreadStatusChangeNoOp';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useAiChatThreadDetailsStatus = (threadId: string) => {
+export const useInboxThreadDetailsStatus = (threadId: string) => {
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    inboxThreadRecordFamilySelector,
     threadId,
   );
   const permissions = useAtomFamilySelectorValue(
-    agentChatThreadPermissionsFamilySelector,
+    inboxThreadPermissionsFamilySelector,
     threadId,
   );
-  const agentChatChannels = useAtomStateValue(agentChatChannelsState);
+  const inboxChannels = useAtomStateValue(inboxChannelsState);
   const {
     status: triageStatus,
     isInChannel,
     channelId,
-  } = useAiChatThreadTriage({
+  } = useInboxThreadTriage({
     threadId,
-    channelIdOutsideInbox: getAiChatThreadChannelIdOutsideInbox({
+    channelIdOutsideInbox: getInboxThreadChannelIdOutsideInbox({
       threadChannelId: thread?.channelId,
-      channels: agentChatChannels,
+      channels: inboxChannels,
     }),
   });
-  const scope = getAiChatThreadStatusScope({
+  const scope = getInboxThreadStatusScope({
     isInChannel,
-    channel: agentChatChannels?.find(({ id }) => id === channelId),
+    channel: inboxChannels?.find(({ id }) => id === channelId),
   });
-  const { status, canChangeStatus } = getAiChatThreadDetailsStatusAccess({
+  const { status, canChangeStatus } = getInboxThreadDetailsStatusAccess({
     thread,
     permissions,
     triageStatus,
     scope,
     isInChannel,
   });
-  const { executeAgentChatThreadInboxAction, isPending } =
-    useExecuteAgentChatThreadInboxAction();
+  const { executeInboxThreadStatusAction, isPending } =
+    useExecuteInboxThreadStatusAction();
 
-  const changeStatus = (nextStatus: AiChatThreadTriageStatus) => {
+  const changeStatus = (nextStatus: InboxThreadTriageStatus) => {
     if (
       !canChangeStatus ||
-      isAiChatThreadStatusChangeNoOp({ currentStatus: status, nextStatus })
+      isInboxThreadStatusChangeNoOp({ currentStatus: status, nextStatus })
     ) {
       return;
     }
 
-    void executeAgentChatThreadInboxAction({
+    void executeInboxThreadStatusAction({
       threadIds: [threadId],
-      action: AI_CHAT_THREAD_INBOX_ACTION_BY_TRIAGE_STATUS[nextStatus],
+      action: INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS[nextStatus],
       isInChannel,
     });
   };

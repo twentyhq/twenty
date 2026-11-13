@@ -1,17 +1,17 @@
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const agentChatSelectedChannelViewSelector =
-  createAtomSelector<AgentChatChannelView | null>({
-    key: 'agentChatSelectedChannelViewSelector',
+export const inboxSelectedChannelViewSelector =
+  createAtomSelector<InboxChannelView | null>({
+    key: 'inboxSelectedChannelViewSelector',
     get: ({ get }) => {
-      const agentChatSelectedThreadListSource = get(
-        agentChatSelectedThreadListSourceState,
+      const inboxSelectedThreadListSource = get(
+        inboxSelectedThreadListSourceState,
       );
 
-      return agentChatSelectedThreadListSource.type === 'channel'
-        ? agentChatSelectedThreadListSource.channelView
+      return inboxSelectedThreadListSource.type === 'channel'
+        ? inboxSelectedThreadListSource.channelView
         : null;
     },
   });

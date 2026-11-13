@@ -1,13 +1,13 @@
-import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
+import { InboxMessage } from '@/ai/components/AiChatMessage';
+import { inboxNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AiChatNonLastMessageIdsList = () => {
-  const agentChatNonLastMessageIds = useAtomStateValue(
-    agentChatNonLastMessageIdsSelector,
+export const InboxNonLastMessageIdsList = () => {
+  const inboxNonLastMessageIds = useAtomStateValue(
+    inboxNonLastMessageIdsSelector,
   );
 
-  return agentChatNonLastMessageIds.map((messageId) => (
-    <AiChatMessage key={messageId} messageId={messageId} />
+  return inboxNonLastMessageIds.map((messageId) => (
+    <InboxMessage key={messageId} messageId={messageId} />
   ));
 };

@@ -17,19 +17,19 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
-import { AiChatThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
-import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
-import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
-import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
-import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
+import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { InboxThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { InboxThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
+import { InboxThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
+import { InboxThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
+import { INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { useInboxThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
-import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
-import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
+import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { inboxThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useOpenAssignInboxInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -65,45 +65,45 @@ const StyledDetails = styled.dl`
   padding: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatThreadDetailsDropdownProps = {
+type InboxThreadDetailsDropdownProps = {
   threadId: string;
-  labels?: ComponentProps<typeof AiChatThreadLabelsField>;
+  labels?: ComponentProps<typeof InboxThreadLabelsField>;
 };
 
-export const AiChatThreadDetailsDropdown = ({
+export const InboxThreadDetailsDropdown = ({
   threadId,
   labels,
-}: AiChatThreadDetailsDropdownProps) => {
+}: InboxThreadDetailsDropdownProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
     `ai-chat-thread-details-${threadId}`,
   );
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    inboxThreadRecordFamilySelector,
     threadId,
   );
   const permissions = useAtomFamilySelectorValue(
-    agentChatThreadPermissionsFamilySelector,
+    inboxThreadPermissionsFamilySelector,
     threadId,
   );
   const canChangeAssignee =
     (permissions?.canUpdate ?? false) && !isDefined(thread?.deletedAt);
-  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
+  const { openAssignInboxInSidePanel } = useOpenAssignInboxInSidePanel();
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const assignee = currentWorkspaceMembers.find(
     (workspaceMember) => workspaceMember.id === thread?.assigneeId,
   );
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+  const channel = useAtomStateValue(inboxChannelsState)?.find(
     ({ id }) => id === thread?.channelId,
   );
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { closeDropdown } = useCloseDropdown();
-  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const isInboxArtifactSurface = useIsInboxArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
   const detailsTriggerRef = useRef<HTMLButtonElement>(null);
@@ -115,7 +115,7 @@ export const AiChatThreadDetailsDropdown = ({
     canEditRecordTargets,
     openRecordPicker,
     handleRecordPickerChange,
-  } = useAiChatThreadRecordTargets({
+  } = useInboxThreadRecordTargets({
     threadId,
     recordPickerInstanceId: recordPickerDropdownId,
   });
@@ -166,13 +166,13 @@ export const AiChatThreadDetailsDropdown = ({
           aria-label={t`Chat details`}
         >
           <StyledDetails>
-            <AiChatThreadDetailsStatus
+            <InboxThreadDetailsStatus
               threadId={threadId}
               dropdownId={dropdownId}
             />
             {areRecordTargetsAvailable && (
               <DetailsRow
-                labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+                labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
                 startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
                 label={t`Linked to`}
                 action={
@@ -196,7 +196,7 @@ export const AiChatThreadDetailsDropdown = ({
                       record={record}
                       // Linked records open like the records the chat mentions
                       onClick={
-                        isAiChatArtifactSurface
+                        isInboxArtifactSurface
                           ? () => {
                               closeDropdown(dropdownId);
                               openRecordTarget({
@@ -214,12 +214,12 @@ export const AiChatThreadDetailsDropdown = ({
               </DetailsRow>
             )}
             <DetailsRow
-              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
               startIcon={<IconHash size={themeCssVariables.icon.size.md} />}
               label={t`Channel`}
               action={
                 isDefined(thread) && (
-                  <AiChatThreadChannelPicker
+                  <InboxThreadChannelPicker
                     thread={thread}
                     dropdownId={`${dropdownId}-channel-picker`}
                   />
@@ -228,7 +228,7 @@ export const AiChatThreadDetailsDropdown = ({
             >
               {isDefined(channel) ? (
                 <StyledChannel>
-                  <AgentChatChannelIcon
+                  <InboxChannelIcon
                     channel={channel}
                     size={theme.icon.size.sm}
                   />
@@ -239,7 +239,7 @@ export const AiChatThreadDetailsDropdown = ({
               )}
             </DetailsRow>
             <DetailsRow
-              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
               startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
               label={t`Assignee`}
               action={
@@ -250,7 +250,7 @@ export const AiChatThreadDetailsDropdown = ({
                     emphasis="subtle"
                     onClick={() => {
                       closeDropdown(dropdownId);
-                      openAssignAiChatInSidePanel([threadId]);
+                      openAssignInboxInSidePanel([threadId]);
                     }}
                   >
                     <IconPencil />
@@ -270,14 +270,14 @@ export const AiChatThreadDetailsDropdown = ({
               )}
             </DetailsRow>
             {isDefined(labels) && (
-              <AiChatThreadLabelsField
+              <InboxThreadLabelsField
                 labels={labels.labels}
                 selectedLabelIds={labels.selectedLabelIds}
                 isSaving={labels.isSaving}
                 onLabelsChange={labels.onLabelsChange}
               />
             )}
-            <AiChatThreadDetailsFollowing threadId={threadId} />
+            <InboxThreadDetailsFollowing threadId={threadId} />
           </StyledDetails>
         </DropdownContent>
       </DropdownRoot>

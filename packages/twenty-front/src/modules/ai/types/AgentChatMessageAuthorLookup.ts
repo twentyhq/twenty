@@ -1,7 +1,7 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export type AgentChatMessageAuthorLookup<
+export type InboxMessageAuthorLookup<
   TWorkspaceMember extends Pick<
     PartialWorkspaceMember,
     'id' | 'name' | 'userEmail'

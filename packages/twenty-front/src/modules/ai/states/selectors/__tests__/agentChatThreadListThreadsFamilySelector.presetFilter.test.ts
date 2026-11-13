@@ -4,9 +4,9 @@ import {
   type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -166,7 +166,7 @@ const THREADS: {
 const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
   const store = createStore();
 
-  setAgentChatThreadList(
+  setInboxThreadList(
     store,
     THREADS.map(
       ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) => ({
@@ -182,7 +182,7 @@ const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
     ),
   );
   store.set(
-    agentChatThreadParticipantsState.atom,
+    inboxThreadParticipantsState.atom,
     Object.fromEntries(
       THREADS.filter(({ participant }) => participant !== undefined).map(
         ({ id, participant }) => [id, { id, threadId: id, ...participant! }],
@@ -191,7 +191,7 @@ const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
   );
   return store
     .get(
-      agentChatThreadListThreadsFamilySelector.selectorFamily({
+      inboxThreadListThreadsFamilySelector.selectorFamily({
         type: 'presetFilter',
         presetFilter,
       }),
@@ -199,7 +199,7 @@ const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
     .map(({ id }) => id);
 };
 
-describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
+describe('inboxThreadListThreadsFamilySelector for a preset filter', () => {
   it.each([
     [
       AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,

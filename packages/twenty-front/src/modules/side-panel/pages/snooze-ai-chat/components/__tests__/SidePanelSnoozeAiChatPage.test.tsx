@@ -5,9 +5,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
-import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { SidePanelSnoozeInboxThreadPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { snoozeInboxThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
   jotaiStore,
@@ -15,18 +15,18 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
-const snoozeAgentChatThreadsInChannel = jest.fn();
+const snoozeInboxThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
-  useUpdateAgentChatThreadInboxState: () => ({
+  useUpdateInboxThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));
 
 jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
-  useSnoozeAgentChatThreadsInChannel: () => ({
-    snoozeAgentChatThreadsInChannel,
+  useSnoozeInboxThreadsInChannel: () => ({
+    snoozeInboxThreadsInChannel,
   }),
 }));
 
@@ -48,14 +48,14 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-describe('SidePanelSnoozeAiChatPage', () => {
+describe('SidePanelSnoozeInboxThreadPage', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(
-      snoozeAiChatThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
+      snoozeInboxThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
       ['thread-1', 'thread-2'],
     );
   });
@@ -65,7 +65,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
   });
 
   it('snoozes the chats until the picked time', () => {
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
 
     fireEvent.click(screen.getByText('This evening'));
 
@@ -79,31 +79,31 @@ describe('SidePanelSnoozeAiChatPage', () => {
 
   it('snoozes the chats for their channel from a channel view', () => {
     jotaiStore.set(
-      isSnoozeAiChatForChannelComponentState.atomFamily({
+      isSnoozeInboxForChannelComponentState.atomFamily({
         instanceId: PAGE_ID,
       }),
       true,
     );
 
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
 
     fireEvent.click(screen.getByText('This evening'));
 
     expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
-    expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
+    expect(snoozeInboxThreadsInChannel).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
   });
 
   it('shows when each option ends', () => {
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
 
     expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
   });
 
   it('refreshes the options instead of snoozing into the past', () => {
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
 
     act(() => {
       jest.setSystemTime(new Date(2026, 9, 1, 18, 1));

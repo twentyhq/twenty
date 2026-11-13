@@ -6,7 +6,7 @@ import { Badge } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
+import { useInboxOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -140,7 +140,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const { switchNavigationDrawerMode } = useSwitchNavigationDrawerMode();
   const shouldReduceMotion = useReducedMotion();
-  const { unreadOpenThreadCount } = useAgentChatOpenThreadsSummary();
+  const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -172,7 +172,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         // Inside the inbox, its Open item already shows what is unread
         const isUnread =
           isAiChatInboxEnabled &&
-          mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
+          mode === NAVIGATION_DRAWER_TABS.INBOX_HISTORY &&
           unreadOpenThreadCount > 0 &&
           !isActive;
         const isDisabled =

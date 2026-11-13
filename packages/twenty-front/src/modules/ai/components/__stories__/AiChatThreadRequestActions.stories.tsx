@@ -3,21 +3,21 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
+import { InboxThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
 
 const onChoose = fn();
 const onReview = fn();
 const onReply = fn();
 
-const meta: Meta<typeof AiChatThreadRequestActions> = {
+const meta: Meta<typeof InboxThreadRequestActions> = {
   title: 'Modules/AI/AiChatThreadRequestActions',
-  component: AiChatThreadRequestActions,
+  component: InboxThreadRequestActions,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 560 } },
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatThreadRequestActions>;
+type Story = StoryObj<typeof InboxThreadRequestActions>;
 
 export const Choices: Story = {
   args: {

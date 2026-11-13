@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatIsAssistantReplyPendingFamilySelector =
+export const inboxIsAssistantReplyPendingFamilySelector =
   createAtomFamilySelector<boolean, string | null>({
-    key: 'agentChatIsAssistantReplyPendingFamilySelector',
+    key: 'inboxIsAssistantReplyPendingFamilySelector',
     get:
       (threadId) =>
       ({ get }) => {
@@ -16,7 +16,7 @@ export const agentChatIsAssistantReplyPendingFamilySelector =
 
         return (
           get(agentChatIsAwaitingFirstChunkFamilyState, { threadId }) &&
-          !get(agentChatIsSendingMessageFamilyState, { threadId })
+          !get(inboxIsSendingMessageFamilyState, { threadId })
         );
       },
   });

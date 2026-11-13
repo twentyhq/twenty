@@ -3,7 +3,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
+import { InboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 
 const StyledBreadcrumb = styled(UndecoratedLink)`
@@ -16,10 +16,10 @@ const StyledBreadcrumb = styled(UndecoratedLink)`
   white-space: nowrap;
 `;
 
-export const AiChatInboxBreadcrumb = () => {
+export const InboxBreadcrumb = () => {
   return (
     <StyledBreadcrumb to={getAppPath(AppPath.AiChatInbox, { threadId: null })}>
-      <AiChatInboxViewHeading />
+      <InboxViewHeading />
       <span aria-hidden>/</span>
     </StyledBreadcrumb>
   );

@@ -13,7 +13,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
-import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -46,7 +46,7 @@ export const useChatReferenceTarget = (
 ): ChatReferenceTarget | null => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const isInboxArtifactSurface = useIsInboxArtifactSurface();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
@@ -244,7 +244,7 @@ export const useChatReferenceTarget = (
     ...destination,
     to,
     onClick:
-      isAiChatArtifactSurface && isNonEmptyString(to)
+      isInboxArtifactSurface && isNonEmptyString(to)
         ? getOpenArtifact(to)
         : undefined,
   };

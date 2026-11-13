@@ -2,11 +2,11 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatInboxBulkActions } from '@/ai/components/AiChatInboxBulkActions';
+import { InboxBulkActions } from '@/ai/components/AiChatInboxBulkActions';
 
-const meta: Meta<typeof AiChatInboxBulkActions> = {
+const meta: Meta<typeof InboxBulkActions> = {
   title: 'Modules/AI/AiChatInboxBulkActions',
-  component: AiChatInboxBulkActions,
+  component: InboxBulkActions,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 560 } },
   args: {
@@ -18,7 +18,7 @@ const meta: Meta<typeof AiChatInboxBulkActions> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatInboxBulkActions>;
+type Story = StoryObj<typeof InboxBulkActions>;
 
 export const Selection: Story = {
   args: { onMarkAllDone: fn() },

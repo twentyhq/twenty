@@ -10,7 +10,7 @@ import {
   agentChatUsageFamilyState,
   type AgentChatUsageState,
 } from '@/ai/states/agentChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
@@ -59,7 +59,7 @@ const UsageStory = ({
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
-    storyStore.set(currentAiChatThreadState.atom, 'story-thread');
+    storyStore.set(currentInboxThreadState.atom, 'story-thread');
     storyStore.set(currentWorkspaceState.atom, {
       ...mockCurrentWorkspace,
       billingCustomer: { id: 'billing-customer', userCreditsFallback },

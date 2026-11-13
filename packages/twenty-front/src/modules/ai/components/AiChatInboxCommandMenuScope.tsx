@@ -1,36 +1,36 @@
 import { type ReactNode } from 'react';
 
-import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
-import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { InboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
+import { InboxThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
+import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { CommandMenuDropdownAtCursor } from '@/command-menu-item/components/CommandMenuDropdownAtCursor';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 
-type AiChatInboxCommandMenuScopeProps = {
+type InboxCommandMenuScopeProps = {
   children: ReactNode;
 };
 
-export const AiChatInboxCommandMenuScope = ({
+export const InboxCommandMenuScope = ({
   children,
-}: AiChatInboxCommandMenuScopeProps) => (
+}: InboxCommandMenuScopeProps) => (
   <ContextStoreComponentInstanceContext.Provider
-    value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
+    value={{ instanceId: INBOX_INSTANCE_ID }}
   >
     <CommandMenuComponentInstanceContext.Provider
-      value={{ instanceId: AI_CHAT_INBOX_INSTANCE_ID }}
+      value={{ instanceId: INBOX_INSTANCE_ID }}
     >
-      <AiChatInboxSelectionToContextStoreEffect
-        contextStoreInstanceId={AI_CHAT_INBOX_INSTANCE_ID}
+      <InboxSelectionToContextStoreEffect
+        contextStoreInstanceId={INBOX_INSTANCE_ID}
       />
       <CommandMenuContextProvider
         displayType="dropdownItem"
         containerType={CommandMenuItemContainerType.IndexPageDropdown}
       >
         <CommandMenuDropdownAtCursor>
-          <AiChatThreadCommandMenuItems />
+          <InboxThreadCommandMenuItems />
         </CommandMenuDropdownAtCursor>
       </CommandMenuContextProvider>
       {children}

@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AiChatThreadRequest } from '@/ai/types/AiChatThreadRequest';
+import { type InboxThreadRequest } from '@/ai/types/AiChatThreadRequest';
 
 const StyledActions = styled.div`
   display: flex;
@@ -12,17 +12,17 @@ const StyledActions = styled.div`
   min-width: 0;
 `;
 
-type AiChatThreadRequestActionsProps = {
-  request: AiChatThreadRequest;
+type InboxThreadRequestActionsProps = {
+  request: InboxThreadRequest;
   disabled?: boolean;
   isLoading?: boolean;
 };
 
-export const AiChatThreadRequestActions = ({
+export const InboxThreadRequestActions = ({
   request,
   disabled = false,
   isLoading = false,
-}: AiChatThreadRequestActionsProps) => {
+}: InboxThreadRequestActionsProps) => {
   const { t } = useLingui();
 
   return (

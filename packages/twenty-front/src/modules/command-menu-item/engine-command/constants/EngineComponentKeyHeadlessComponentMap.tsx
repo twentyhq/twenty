@@ -1,6 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { NewAiChatCommand } from '@/command-menu-item/engine-command/global/components/NewAiChatCommand';
+import { NewInboxCommand } from '@/command-menu-item/engine-command/global/components/NewAiChatCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
@@ -37,7 +37,7 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
-import { AgentChatThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/AgentChatThreadInboxCommand';
+import { InboxThreadInboxCommand } from '@/command-menu-item/engine-command/record/components/AgentChatThreadInboxCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
@@ -271,31 +271,31 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <HeadlessFrontComponentRendererEngineCommand />
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
-  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatCommand />,
+  [EngineComponentKey.NEW_AI_CHAT]: <NewInboxCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
   [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.READ} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.READ} />
   ),
   [EngineComponentKey.MARK_AI_CHAT_AS_UNREAD]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.UNREAD} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.UNREAD} />
   ),
   [EngineComponentKey.MARK_AI_CHAT_AS_DONE]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.ARCHIVE} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.ARCHIVE} />
   ),
   [EngineComponentKey.REOPEN_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.MOVE_TO_INBOX} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.MOVE_TO_INBOX} />
   ),
   [EngineComponentKey.SNOOZE_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.SNOOZE} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.SNOOZE} />
   ),
   [EngineComponentKey.SUBSCRIBE_TO_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.SUBSCRIBE} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.SUBSCRIBE} />
   ),
   [EngineComponentKey.UNSUBSCRIBE_FROM_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action={AgentChatInboxAction.UNSUBSCRIBE} />
+    <InboxThreadInboxCommand action={AgentChatInboxAction.UNSUBSCRIBE} />
   ),
   [EngineComponentKey.ASSIGN_AI_CHAT]: (
-    <AgentChatThreadInboxCommand action="assign" />
+    <InboxThreadInboxCommand action="assign" />
   ),
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,

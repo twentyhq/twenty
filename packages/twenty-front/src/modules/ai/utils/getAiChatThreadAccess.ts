@@ -2,16 +2,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 
-type GetAiChatThreadAccessParams = {
-  isOnNewAiChatSlot: boolean;
+type GetInboxThreadAccessParams = {
+  isOnNewInboxSlot: boolean;
   permissions: RecordPermissionsDto | undefined;
 };
 
-export const getAiChatThreadAccess = ({
-  isOnNewAiChatSlot,
+export const getInboxThreadAccess = ({
+  isOnNewInboxSlot,
   permissions,
-}: GetAiChatThreadAccessParams) => {
-  if (isOnNewAiChatSlot) {
+}: GetInboxThreadAccessParams) => {
+  if (isOnNewInboxSlot) {
     return 'writer';
   }
   if (!isDefined(permissions?.canUpdate)) {

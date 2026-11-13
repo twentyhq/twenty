@@ -4,22 +4,22 @@ import { useCallback } from 'react';
 import { computeAgentChatThreadPresetFilterGqlFilter } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/ai/constants/AgentChatChannelThreadListPageSize';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useCaptureAgentChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
-import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { agentChatThreadListLoadCountFamilyState } from '@/ai/states/agentChatThreadListLoadCountFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { mergeLoadedAgentChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
-import { mergeAgentChatThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
+import { INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/ai/constants/AgentChatChannelThreadListPageSize';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useAddInboxThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useCaptureInboxSession } from '@/ai/hooks/useCaptureAgentChatSession';
+import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { inboxThreadListLoadCountFamilyState } from '@/ai/states/agentChatThreadListLoadCountFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { mergeLoadedInboxThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { mergeInboxThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import {
@@ -28,33 +28,31 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-type AgentChatThreadRecordsPage = {
-  threads: AgentChatThreadRecord[];
+type InboxThreadRecordsPage = {
+  threads: InboxThreadRecord[];
   participants: AgentChatThreadParticipantFieldsFragment[];
 };
 
-type AgentChatThreadListPage = AgentChatThreadRecordsPage & {
+type InboxThreadListPage = InboxThreadRecordsPage & {
   threadIds: string[];
   hasNextPage: boolean;
   endCursor: string | null;
 };
 
-export const useLoadAgentChatThreadList = () => {
+export const useLoadInboxThreadList = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
-  const { addAgentChatThreadParticipants } =
-    useAddAgentChatThreadParticipants();
+  const { fetchInboxThreadsPage } = useFetchInboxThreadsPage();
+  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
+  const { addInboxThreadParticipants } = useAddInboxThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { captureAgentChatSession } = useCaptureAgentChatSession();
+  const { captureInboxSession } = useCaptureInboxSession();
 
   const fetchThreadsByIds = useCallback(
     async (
       threadIds: string[],
-    ): Promise<AgentChatThreadRecordsPage | undefined> => {
-      const threads: AgentChatThreadRecord[] = [];
+    ): Promise<InboxThreadRecordsPage | undefined> => {
+      const threads: InboxThreadRecord[] = [];
       const participants: AgentChatThreadParticipantFieldsFragment[] = [];
 
       if (!isNonEmptyArray(threadIds)) {
@@ -64,7 +62,7 @@ export const useLoadAgentChatThreadList = () => {
       let lastCursor: string | null = null;
 
       do {
-        const page = await fetchAgentChatThreadsPage({
+        const page = await fetchInboxThreadsPage({
           lastCursor,
           threadIdFilter: { id: { in: threadIds } },
         });
@@ -80,7 +78,7 @@ export const useLoadAgentChatThreadList = () => {
 
       return { threads, participants };
     },
-    [fetchAgentChatThreadsPage],
+    [fetchInboxThreadsPage],
   );
 
   const fetchListPage = useCallback(
@@ -89,10 +87,10 @@ export const useLoadAgentChatThreadList = () => {
       lastCursor,
       workspaceMemberId,
     }: {
-      source: AgentChatThreadListSource;
+      source: InboxThreadListSource;
       lastCursor: string | null;
       workspaceMemberId: string | undefined;
-    }): Promise<AgentChatThreadListPage | undefined> => {
+    }): Promise<InboxThreadListPage | undefined> => {
       if (source.type === 'channel') {
         const { channelView } = source;
         const idsPage = (
@@ -104,7 +102,7 @@ export const useLoadAgentChatThreadList = () => {
                 status: channelView.channelStatus,
                 assignment: channelView.assignment,
                 filter: channelView.filter,
-                first: AGENT_CHAT_CHANNEL_THREAD_LIST_PAGE_SIZE,
+                first: INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE,
                 after: lastCursor,
               },
               fetchPolicy: 'network-only',
@@ -122,10 +120,8 @@ export const useLoadAgentChatThreadList = () => {
 
         const recentThreadIds = new Set(
           store.get(
-            agentChatThreadListFamilyState.atomFamily(
-              getAgentChatThreadListSourceKey(
-                AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
-              ),
+            inboxThreadListFamilyState.atomFamily(
+              getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
             ),
           )?.threadIds ?? [],
         );
@@ -147,7 +143,7 @@ export const useLoadAgentChatThreadList = () => {
         };
       }
 
-      const page = await fetchAgentChatThreadsPage({
+      const page = await fetchInboxThreadsPage({
         lastCursor,
         threadIdFilter:
           source.type === 'presetFilter' && isDefined(workspaceMemberId)
@@ -169,21 +165,21 @@ export const useLoadAgentChatThreadList = () => {
 
       return { ...page, threadIds: page.threads.map(({ id }) => id) };
     },
-    [apolloClient, fetchAgentChatThreadsPage, fetchThreadsByIds, store],
+    [apolloClient, fetchInboxThreadsPage, fetchThreadsByIds, store],
   );
 
-  const loadAgentChatThreadList = useCallback(
+  const loadInboxThreadList = useCallback(
     async ({
       source,
       mode,
     }: {
-      source: AgentChatThreadListSource;
+      source: InboxThreadListSource;
       mode: 'refresh' | 'fetch-more';
-    }): Promise<AgentChatThreadRecord[] | undefined> => {
-      const sourceKey = getAgentChatThreadListSourceKey(source);
-      const listAtom = agentChatThreadListFamilyState.atomFamily(sourceKey);
+    }): Promise<InboxThreadRecord[] | undefined> => {
+      const sourceKey = getInboxThreadListSourceKey(source);
+      const listAtom = inboxThreadListFamilyState.atomFamily(sourceKey);
       const loadCountAtom =
-        agentChatThreadListLoadCountFamilyState.atomFamily(sourceKey);
+        inboxThreadListLoadCountFamilyState.atomFamily(sourceKey);
       const listBeforeRequest = store.get(listAtom);
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
       const isFetchMore = mode === 'fetch-more';
@@ -195,7 +191,7 @@ export const useLoadAgentChatThreadList = () => {
         return undefined;
       }
 
-      const { isSameSession } = captureAgentChatSession();
+      const { isSameSession } = captureInboxSession();
       const loadCount = store.get(loadCountAtom) + (isFetchMore ? 0 : 1);
 
       store.set(loadCountAtom, loadCount);
@@ -214,7 +210,7 @@ export const useLoadAgentChatThreadList = () => {
         source.type === 'recent' && !isFetchMore
           ? await fetchThreadsByIds(
               store
-                .get(agentChatFavoriteThreadsSelector.atom)
+                .get(inboxFavoriteThreadsSelector.atom)
                 .filter(
                   ({ id, conversationType }) =>
                     !isDefined(conversationType) &&
@@ -228,9 +224,9 @@ export const useLoadAgentChatThreadList = () => {
         return undefined;
       }
 
-      const selectedThreadId = store.get(currentAiChatThreadState.atom);
+      const selectedThreadId = store.get(currentInboxThreadState.atom);
 
-      await refreshAgentChatThreadPermissions([
+      await refreshInboxThreadPermissions([
         ...page.threadIds,
         ...unlistedFavoritesPage.threads.map(({ id }) => id),
         ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
@@ -251,17 +247,15 @@ export const useLoadAgentChatThreadList = () => {
       upsertRecordsInStore({
         partialRecords: [...page.threads, ...unlistedFavoritesPage.threads].map(
           (loadedThread) =>
-            mergeLoadedAgentChatThread({
+            mergeLoadedInboxThread({
               loadedThread,
               storedThread: store.get(
-                agentChatThreadRecordFamilySelector.selectorFamily(
-                  loadedThread.id,
-                ),
+                inboxThreadRecordFamilySelector.selectorFamily(loadedThread.id),
               ),
             }),
         ),
       });
-      addAgentChatThreadParticipants([
+      addInboxThreadParticipants([
         ...page.participants,
         ...unlistedFavoritesPage.participants,
       ]);
@@ -270,14 +264,12 @@ export const useLoadAgentChatThreadList = () => {
       const lastPageThread = isDefined(lastPageThreadId)
         ? (page.threads.find(({ id }) => id === lastPageThreadId) ??
           store.get(
-            agentChatThreadRecordFamilySelector.selectorFamily(
-              lastPageThreadId,
-            ),
+            inboxThreadRecordFamilySelector.selectorFamily(lastPageThreadId),
           ))
         : undefined;
 
       store.set(listAtom, {
-        threadIds: mergeAgentChatThreadListIds({
+        threadIds: mergeInboxThreadListIds({
           mode,
           threadIdsBeforeRequest: listBeforeRequest?.threadIds ?? [],
           currentThreadIds: currentList?.threadIds ?? [],
@@ -293,15 +285,15 @@ export const useLoadAgentChatThreadList = () => {
       return page.threads;
     },
     [
-      addAgentChatThreadParticipants,
-      captureAgentChatSession,
+      addInboxThreadParticipants,
+      captureInboxSession,
       fetchListPage,
       fetchThreadsByIds,
-      refreshAgentChatThreadPermissions,
+      refreshInboxThreadPermissions,
       store,
       upsertRecordsInStore,
     ],
   );
 
-  return { loadAgentChatThreadList };
+  return { loadInboxThreadList };
 };

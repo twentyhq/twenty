@@ -1,9 +1,8 @@
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 
-export const getAgentChatChannelViewKey = ({
+export const getInboxChannelViewKey = ({
   channelId,
   channelStatus,
   assignment,
   filter,
-}: AgentChatChannelView) =>
-  `${channelId}:${channelStatus}:${assignment}:${filter}`;
+}: InboxChannelView) => `${channelId}:${channelStatus}:${assignment}:${filter}`;

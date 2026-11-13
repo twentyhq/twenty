@@ -17,15 +17,15 @@ const StyledRows = styled.div`
   gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-type SidePanelAiChatPickerSkeletonProps = {
+type SidePanelInboxPickerSkeletonProps = {
   label: string;
   rowCount?: number;
 };
 
-export const SidePanelAiChatPickerSkeleton = ({
+export const SidePanelInboxPickerSkeleton = ({
   label,
   rowCount = CHAT_PICKER_SKELETON_LABEL_WIDTHS.length,
-}: SidePanelAiChatPickerSkeletonProps) => (
+}: SidePanelInboxPickerSkeletonProps) => (
   <StyledRows role="status" aria-label={label} aria-busy="true">
     {CHAT_PICKER_SKELETON_LABEL_WIDTHS.slice(0, rowCount).map(
       (width, index) => (

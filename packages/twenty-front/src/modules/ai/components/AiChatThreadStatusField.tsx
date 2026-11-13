@@ -13,31 +13,31 @@ import {
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { type InboxThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
+import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 
 const StyledScope = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-type AiChatThreadStatusFieldProps = {
-  status: AiChatThreadTriageStatus;
-  scope: AiChatThreadStatusScope;
+type InboxThreadStatusFieldProps = {
+  status: InboxThreadTriageStatus;
+  scope: InboxThreadStatusScope;
   isSaving?: boolean;
   onStatusChange?: (change: {
-    status: AiChatThreadTriageStatus;
-    scope: AiChatThreadStatusScope;
+    status: InboxThreadTriageStatus;
+    scope: InboxThreadStatusScope;
   }) => void;
 };
 
-export const AiChatThreadStatusField = ({
+export const InboxThreadStatusField = ({
   status,
   scope,
   isSaving = false,
   onStatusChange,
-}: AiChatThreadStatusFieldProps) => {
+}: InboxThreadStatusFieldProps) => {
   const { t } = useLingui();
   const scopeLabel =
     scope.type === 'personal' ? t`Your inbox` : scope.channelName;
@@ -50,7 +50,7 @@ export const AiChatThreadStatusField = ({
 
   return (
     <DetailsRow
-      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+      labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconCircleDashed size={themeCssVariables.icon.size.md} />}
       label={t`Status`}
       action={

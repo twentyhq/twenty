@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
+import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 
-export const useHasAiChatPageContentInset = () => {
-  const aiChatSurface = useContext(AiChatSurfaceContext);
+export const useHasInboxThreadPageContentInset = () => {
+  const inboxSurface = useContext(InboxSurfaceContext);
   const isMobile = useIsMobile();
 
-  return aiChatSurface === AI_CHAT_SURFACE.PAGE && !isMobile;
+  return inboxSurface === INBOX_SURFACE.PAGE && !isMobile;
 };

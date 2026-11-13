@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
-import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 
 const answerAgentChatToolCall = jest.fn();
@@ -16,7 +16,7 @@ jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
 
 // the table needs workspace metadata, so a stub stands in for it
 jest.mock('@/ai/components/AiChatRecordApprovalReview', () => ({
-  AiChatRecordApprovalReview: ({
+  InboxRecordApprovalReview: ({
     onSelectedToolCallIdsChange,
   }: {
     onSelectedToolCallIdsChange: (toolCallIds: string[]) => void;
@@ -49,7 +49,7 @@ const Deck = () => {
   );
 
   return (
-    <AiChatRecordApprovalDeck
+    <InboxRecordApprovalDeck
       recordApprovals={RECORD_CREATIONS}
       answeringToolCallIds={answeringToolCallIds}
       onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
@@ -72,7 +72,7 @@ const getAnswers = () =>
     response.decision,
   ]);
 
-describe('AiChatRecordApprovalDeck', () => {
+describe('InboxRecordApprovalDeck', () => {
   beforeEach(() => {
     answerAgentChatToolCall.mockReset().mockResolvedValue(true);
   });
@@ -127,9 +127,9 @@ describe('AiChatRecordApprovalDeck', () => {
   it('keeps answering in its conversation when the person opens another one', async () => {
     const user = userEvent.setup();
     const store = createStore();
-    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
+    store.set(inboxDisplayedThreadState.atom, 'thread-1');
     answerAgentChatToolCall.mockImplementation(async () => {
-      store.set(agentChatDisplayedThreadState.atom, 'thread-2');
+      store.set(inboxDisplayedThreadState.atom, 'thread-2');
 
       return true;
     });

@@ -1,4 +1,4 @@
-import { AiChatApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
+import { InboxApiKeyNotConfiguredMessage } from '@/ai/components/AiChatApiKeyNotConfiguredMessage';
 import { AiChatErrorMessage } from '@/ai/components/AiChatErrorMessage';
 import { AiChatQuotaLimitExhaustedMessage } from '@/ai/components/AiChatQuotaLimitExhaustedMessage';
 import { AiChatUserCreditsExhaustedMessage } from '@/ai/components/AiChatUserCreditsExhaustedMessage';
@@ -19,13 +19,13 @@ export const AiChatErrorRenderer = ({ error }: AiChatErrorRendererProps) => {
   const { retryChatMessage } = useRetryChatMessage();
   const canRetry = useCanRetryCurrentAiChatTurn();
 
-  // Rendered by AiChatNoMoreBillingCreditsBanner, which stays mounted for this error.
+  // Rendered by InboxNoMoreBillingCreditsBanner, which stays mounted for this error.
   if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }
 
   if (isGraphqlErrorOfType(error, AiChatErrorCode.API_KEY_NOT_CONFIGURED)) {
-    return <AiChatApiKeyNotConfiguredMessage />;
+    return <InboxApiKeyNotConfiguredMessage />;
   }
 
   if (

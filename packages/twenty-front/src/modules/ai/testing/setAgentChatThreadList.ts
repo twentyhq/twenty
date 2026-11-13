@@ -1,14 +1,14 @@
 import { type createStore } from 'jotai';
 
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
-export const setAgentChatThreadList = (
+export const setInboxThreadList = (
   store: ReturnType<typeof createStore>,
-  threads: AgentChatThreadRecord[],
+  threads: InboxThreadRecord[],
   { hasNextPage = false }: { hasNextPage?: boolean } = {},
 ) => {
   for (const thread of threads) {
@@ -16,8 +16,8 @@ export const setAgentChatThreadList = (
   }
 
   store.set(
-    agentChatThreadListFamilyState.atomFamily(
-      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+    inboxThreadListFamilyState.atomFamily(
+      getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
     ),
     {
       threadIds: threads.map(({ id }) => id),

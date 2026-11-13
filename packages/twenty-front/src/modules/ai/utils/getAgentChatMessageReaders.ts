@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
+import { type InboxThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
 
-export const getAgentChatMessageReaders = ({
+export const getInboxMessageReaders = ({
   readPositions,
   createdAt,
   senderWorkspaceMemberId,
 }: {
-  readPositions: AgentChatThreadReadPosition[];
+  readPositions: InboxThreadReadPosition[];
   createdAt: Date | string;
   senderWorkspaceMemberId: string | undefined;
 }) => {
@@ -15,7 +15,7 @@ export const getAgentChatMessageReaders = ({
   const recipientReadPositions = readPositions.filter(
     ({ workspaceMemberId }) => workspaceMemberId !== senderWorkspaceMemberId,
   );
-  const hasRead = ({ lastReadAt }: AgentChatThreadReadPosition) =>
+  const hasRead = ({ lastReadAt }: InboxThreadReadPosition) =>
     isDefined(lastReadAt) && new Date(lastReadAt).getTime() >= createdAtMs;
 
   return {

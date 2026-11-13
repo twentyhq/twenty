@@ -6,19 +6,19 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
-import { AgentChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
+import { InboxThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
-import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
-import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { InboxEditorSection } from '@/ai/components/AiChatEditorSection';
+import { InboxNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
+import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
-import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
+import { InboxTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { InboxTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -30,16 +30,16 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
     isDraggingFile ? themeCssVariables.spacing[3] : '0'};
 `;
 
-export const AiChatTab = () => {
+export const InboxTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    inboxThreadIsDirectMessageFamilySelector,
+    currentInboxThread,
   );
 
-  const { uploadFiles } = useAiChatFileUpload();
+  const { uploadFiles } = useInboxFileUpload();
 
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
     if (
@@ -67,7 +67,7 @@ export const AiChatTab = () => {
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AgentChatHasBeenOpenedEffect />
-      <AgentChatThreadMarkAsReadEffect />
+      <InboxThreadMarkAsReadEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
         <DropZone
@@ -77,11 +77,11 @@ export const AiChatTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          <AiChatNewThreadRecipientBar />
-          <AiChatTabMessageList />
-          <AiChatTypingParticipants />
+          <InboxNewThreadRecipientBar />
+          <InboxTabMessageList />
+          <InboxTypingParticipants />
           <AiChatQueuedMessages />
-          <AiChatEditorSection key={currentAiChatThread} />
+          <InboxEditorSection key={currentInboxThread} />
         </>
       )}
     </StyledContainer>

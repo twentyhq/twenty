@@ -5,12 +5,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -63,7 +63,7 @@ const CHAT_OBJECT_METADATA_ITEM = {
 type ThreadScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 
 jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
-  useAiChatThreadRename: () => ({
+  useInboxThreadRename: () => ({
     isRenaming: false,
     draftTitle: '',
     setDraftTitle: jest.fn(),
@@ -74,8 +74,8 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
 }));
 
 jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
-  useExecuteAgentChatThreadInboxAction: () => ({
-    executeAgentChatThreadInboxAction: jest.fn(),
+  useExecuteInboxThreadStatusAction: () => ({
+    executeInboxThreadStatusAction: jest.fn(),
     isPending: false,
   }),
 }));
@@ -97,7 +97,7 @@ const renderThread = async ({
   pathname?: string;
   onDetach?: () => void;
 } = {}) => {
-  const thread: AgentChatThreadRecord = {
+  const thread: InboxThreadRecord = {
     __typename: 'AgentChatThread',
     id: THREAD_ID,
     title: THREAD_TITLE,
@@ -140,10 +140,10 @@ const renderThread = async ({
       store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
       store.set(currentWorkspaceMembersState.atom, [mockedWorkspaceMemberData]);
       store.set(
-        agentChatChannelsState.atom,
+        inboxChannelsState.atom,
         isDefined(channelStatus) ? [SALES_CHANNEL] : [],
       );
-      setAgentChatSelectedChannelView(
+      setInboxSelectedChannelView(
         store,
         isDefined(channelStatus)
           ? {
@@ -154,7 +154,7 @@ const renderThread = async ({
             }
           : null,
       );
-      setAgentChatThreadPermissions({
+      setInboxThreadPermissions({
         store,
         threadId: THREAD_ID,
         permissions: {
@@ -165,7 +165,7 @@ const renderThread = async ({
         },
       });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), thread);
-      store.set(agentChatThreadParticipantsState.atom, {
+      store.set(inboxThreadParticipantsState.atom, {
         [THREAD_ID]: {
           __typename: 'AgentChatThreadParticipant',
           id: '20202020-0000-4000-8000-0000000000bb',
@@ -186,7 +186,7 @@ const renderThread = async ({
     <Wrapper>
       <MemoryRouter initialEntries={[pathname]}>
         <I18nProvider i18n={i18n}>
-          <AiChatThreadListItem
+          <InboxThreadListItem
             thread={thread}
             isSelected={false}
             onClick={jest.fn()}
@@ -200,7 +200,7 @@ const renderThread = async ({
   await screen.findByRole('group', { name: THREAD_TITLE });
 };
 
-describe('AiChatThreadListItem action availability', () => {
+describe('InboxThreadListItem action availability', () => {
   beforeAll(() => {
     i18n.load({ [SOURCE_LOCALE]: messages });
     i18n.activate(SOURCE_LOCALE);

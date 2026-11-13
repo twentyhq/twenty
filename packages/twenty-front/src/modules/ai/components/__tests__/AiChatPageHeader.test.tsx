@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
+import { InboxThreadPageHeader } from '@/ai/components/AiChatPageHeader';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -14,11 +14,11 @@ jest.mock('@/ui/layout/page/components/PageCardHeader', () => ({
   PageCardHeader: ({ title }: { title: ReactNode }) => <div>{title}</div>,
 }));
 
-describe('AiChatPageHeader', () => {
+describe('InboxThreadPageHeader', () => {
   it('titles the page of a chat that has no record yet', () => {
     render(
       <I18nProvider i18n={i18n}>
-        <AiChatPageHeader />
+        <InboxThreadPageHeader />
       </I18nProvider>,
     );
 

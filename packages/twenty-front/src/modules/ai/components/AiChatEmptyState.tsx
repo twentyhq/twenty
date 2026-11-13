@@ -1,29 +1,29 @@
 import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
 import { AiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/AiChatSuggestedPrompts';
-import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
+import { useShouldShowInboxEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
 
-const StyledEmptyState = styled(StyledAiChatContentContainer)`
+const StyledEmptyState = styled(StyledInboxContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
   justify-content: flex-end;
 `;
 
-type AiChatEmptyStateProps = {
+type InboxEmptyStateProps = {
   isCentered?: boolean;
 };
 
-export const AiChatEmptyState = ({
+export const InboxEmptyState = ({
   isCentered = false,
-}: AiChatEmptyStateProps) => {
-  const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
+}: InboxEmptyStateProps) => {
+  const shouldShowInboxEmptyState = useShouldShowInboxEmptyState();
 
   MarkdownRenderer.preload();
 
-  if (!shouldShowAiChatEmptyState) {
+  if (!shouldShowInboxEmptyState) {
     return null;
   }
 

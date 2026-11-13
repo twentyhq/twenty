@@ -1,4 +1,4 @@
-export type AgentChatParticipantMention = {
+export type InboxParticipantMention = {
   workspaceMemberId: string;
   label: string;
 };

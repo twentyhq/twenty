@@ -8,24 +8,24 @@ import { Editor } from '@tiptap/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { InboxEditorSection } from '@/ai/components/AiChatEditorSection';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const NEW_CHAT_THREAD_ID = '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8d';
 
-const useAiChatEditor = jest.fn();
+const useInboxEditor = jest.fn();
 jest.mock('@/ai/hooks/useAiChatEditor', () => ({
-  useAiChatEditor: () => useAiChatEditor(),
+  useInboxEditor: () => useInboxEditor(),
 }));
 jest.mock('@/ai/hooks/useHasReachedAiChatUsageLimit', () => ({
   useHasReachedAiChatUsageLimit: () => false,
 }));
 jest.mock('@/ai/components/AiChatStandaloneError', () => ({
-  AiChatStandaloneError: () => null,
+  InboxStandaloneError: () => null,
 }));
 jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,
@@ -33,13 +33,13 @@ jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
-const renderEditorSection = (currentAiChatThread: string) => {
+const renderEditorSection = (currentInboxThread: string) => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems,
     onInitializeJotaiStore: (store) => {
-      store.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-      store.set(currentAiChatThreadState.atom, currentAiChatThread);
-      store.set(agentChatDisplayedThreadState.atom, currentAiChatThread);
+      store.set(newInboxThreadIdState.atom, NEW_CHAT_THREAD_ID);
+      store.set(currentInboxThreadState.atom, currentInboxThread);
+      store.set(inboxDisplayedThreadState.atom, currentInboxThread);
     },
   });
 
@@ -47,19 +47,19 @@ const renderEditorSection = (currentAiChatThread: string) => {
     <MetadataAndApolloWrapper>
       <I18nProvider i18n={i18n}>
         <MemoryRouter>
-          <AiChatEditorSection />
+          <InboxEditorSection />
         </MemoryRouter>
       </I18nProvider>
     </MetadataAndApolloWrapper>,
   );
 };
 
-describe('AiChatEditorSection', () => {
+describe('InboxEditorSection', () => {
   let editor: Editor;
 
   beforeEach(() => {
     editor = new Editor({ extensions: [Document, Paragraph, Text] });
-    useAiChatEditor.mockReturnValue({ editor });
+    useInboxEditor.mockReturnValue({ editor });
   });
 
   afterEach(() => {

@@ -3,8 +3,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -44,7 +44,7 @@ describe('useReturnFromExpandedAiChat', () => {
   });
 
   it('should navigate to the return location carried by the history entry when collapsing', () => {
-    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
+    jotaiStore.set(shouldContinueInboxInSidePanelState.atom, true);
     locationState = { returnLocation: '/objects/people' };
 
     const { result } = renderHook(
@@ -58,9 +58,7 @@ describe('useReturnFromExpandedAiChat', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
-      true,
-    );
+    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(true);
   });
 
   it('should navigate home when the history entry has no return location', () => {
@@ -96,8 +94,8 @@ describe('useReturnFromExpandedAiChat', () => {
   });
 
   it('should cancel the side panel continuation when closing', () => {
-    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldContinueInboxInSidePanelState.atom, true);
+    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, true);
 
     const { result } = renderHook(
       () => useReturnFromExpandedAiChat({ reopenSidePanel: false }),
@@ -108,10 +106,10 @@ describe('useReturnFromExpandedAiChat', () => {
       result.current();
     });
 
-    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(
       false,
     );
-    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
       false,
     );
     expect(closeSidePanelMenuMock).toHaveBeenCalled();

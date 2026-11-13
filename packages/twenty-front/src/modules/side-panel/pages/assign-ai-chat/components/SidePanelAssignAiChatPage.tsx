@@ -7,15 +7,15 @@ import { IconCheck, IconUserOff } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useAssignAgentChatThreads } from '@/ai/hooks/useAssignAgentChatThreads';
-import { agentChatThreadsSharedAssigneeIdFamilySelector } from '@/ai/states/selectors/agentChatThreadsSharedAssigneeIdFamilySelector';
+import { useAssignInboxThreads } from '@/ai/hooks/useAssignAgentChatThreads';
+import { inboxThreadsSharedAssigneeIdFamilySelector } from '@/ai/states/selectors/agentChatThreadsSharedAssigneeIdFamilySelector';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
-import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
+import { assignInboxThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { getAssignInboxMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -30,29 +30,29 @@ const StyledSearchContainer = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-export const SidePanelAssignAiChatPage = () => {
+export const SidePanelAssignInboxThreadPage = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const assignAiChatThreadIds = useAtomComponentStateValue(
-    assignAiChatThreadIdsComponentState,
+  const assignInboxThreadIds = useAtomComponentStateValue(
+    assignInboxThreadIdsComponentState,
   );
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { sharedAssigneeId, hasAssignee } = useAtomFamilySelectorValue(
-    agentChatThreadsSharedAssigneeIdFamilySelector,
-    { threadIds: assignAiChatThreadIds },
+    inboxThreadsSharedAssigneeIdFamilySelector,
+    { threadIds: assignInboxThreadIds },
   );
-  const { assignAgentChatThreads } = useAssignAgentChatThreads();
+  const { assignInboxThreads } = useAssignInboxThreads();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const [search, setSearch] = useState('');
 
-  if (assignAiChatThreadIds.length === 0) {
+  if (assignInboxThreadIds.length === 0) {
     return null;
   }
 
-  const members = getAssignAiChatMemberOptions({
+  const members = getAssignInboxMemberOptions({
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     search,
@@ -62,8 +62,8 @@ export const SidePanelAssignAiChatPage = () => {
 
   const handleAssign = (assigneeWorkspaceMemberId: string | null) => {
     void closeSidePanelMenu();
-    void assignAgentChatThreads({
-      threadIds: assignAiChatThreadIds,
+    void assignInboxThreads({
+      threadIds: assignInboxThreadIds,
       assigneeWorkspaceMemberId,
     });
   };

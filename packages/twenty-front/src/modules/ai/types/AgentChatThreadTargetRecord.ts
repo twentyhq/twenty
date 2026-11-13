@@ -1,7 +1,7 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export type AgentChatThreadTargetRecord = ObjectRecord & {
+export type InboxThreadTargetRecord = ObjectRecord & {
   threadId: string;
-  thread?: AgentChatThreadRecord | null;
+  thread?: InboxThreadRecord | null;
 };

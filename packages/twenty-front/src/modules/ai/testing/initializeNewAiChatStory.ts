@@ -1,13 +1,13 @@
-import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -23,22 +23,22 @@ import {
 const NEW_CHAT_THREAD_ID = '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c8d';
 const MODEL_ID = 'new-chat-story-model';
 
-export const initializeNewAiChatStory = ({
+export const initializeNewInboxStory = ({
   isInboxEnabled,
 }: {
   isInboxEnabled: boolean;
 }) => {
-  jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(agentChatNewThreadChannelIdState.atom, null);
+  jotaiStore.set(newInboxThreadIdState.atom, NEW_CHAT_THREAD_ID);
+  jotaiStore.set(inboxNewThreadChannelIdState.atom, null);
   jotaiStore.set(
-    agentChatIsSendingMessageFamilyState.atomFamily({
+    inboxIsSendingMessageFamilyState.atomFamily({
       threadId: NEW_CHAT_THREAD_ID,
     }),
     false,
   );
   jotaiStore.set(
-    agentChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
-    AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+    inboxNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID),
+    INBOX_NEW_THREAD_DEFAULT_RECIPIENTS,
   );
   jotaiStore.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
   jotaiStore.set(currentWorkspaceMembersState.atom, [
@@ -50,11 +50,11 @@ export const initializeNewAiChatStory = ({
       userEmail: 'jane@example.com',
     },
   ]);
-  jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(agentChatDisplayedThreadState.atom, NEW_CHAT_THREAD_ID);
+  jotaiStore.set(currentInboxThreadState.atom, NEW_CHAT_THREAD_ID);
+  jotaiStore.set(inboxDisplayedThreadState.atom, NEW_CHAT_THREAD_ID);
   jotaiStore.set(
-    agentChatThreadListFamilyState.atomFamily(
-      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+    inboxThreadListFamilyState.atomFamily(
+      getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
     ),
     {
       threadIds: [],

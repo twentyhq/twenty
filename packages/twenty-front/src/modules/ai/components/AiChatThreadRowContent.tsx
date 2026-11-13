@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadCompactContent } from '@/ai/components/AiChatThreadCompactContent';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { InboxThreadCompactContent } from '@/ai/components/AiChatThreadCompactContent';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 
 const StyledHeading = styled.div`
   align-items: center;
@@ -19,24 +19,24 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
-type AiChatThreadRowContentProps = {
-  variant: AiChatThreadListVariant;
+type InboxThreadRowContentProps = {
+  variant: InboxThreadListVariant;
   title: ReactNode;
   subtitle: ReactNode;
   activityTime: ReactNode;
   isStreaming: boolean;
 };
 
-export const AiChatThreadRowContent = ({
+export const InboxThreadRowContent = ({
   variant,
   title,
   subtitle,
   activityTime,
   isStreaming,
-}: AiChatThreadRowContentProps) => {
+}: InboxThreadRowContentProps) => {
   if (variant === 'compact') {
     return (
-      <AiChatThreadCompactContent
+      <InboxThreadCompactContent
         title={title}
         subtitle={subtitle}
         isStreaming={isStreaming}

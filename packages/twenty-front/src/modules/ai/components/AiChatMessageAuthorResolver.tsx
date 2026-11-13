@@ -1,17 +1,17 @@
 import { type ReactNode } from 'react';
 
 import { AiChatAgentAuthorResolver } from '@/ai/components/AiChatAgentAuthorResolver';
-import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
 
-type AiChatMessageAuthorResolverProps = {
-  author: AgentChatMessageAuthor;
-  children: (author: AgentChatMessageAuthor) => ReactNode;
+type InboxMessageAuthorResolverProps = {
+  author: InboxMessageAuthor;
+  children: (author: InboxMessageAuthor) => ReactNode;
 };
 
-export const AiChatMessageAuthorResolver = ({
+export const InboxMessageAuthorResolver = ({
   author,
   children,
-}: AiChatMessageAuthorResolverProps) =>
+}: InboxMessageAuthorResolverProps) =>
   author.type === 'agent' ? (
     <AiChatAgentAuthorResolver agentId={author.agentId}>
       {children}

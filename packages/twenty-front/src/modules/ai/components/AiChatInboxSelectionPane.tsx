@@ -5,8 +5,8 @@ import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatInboxSelectionPile } from '@/ai/components/AiChatInboxSelectionPile';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxSelectionPile } from '@/ai/components/AiChatInboxSelectionPile';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -27,13 +27,13 @@ const StyledButtons = styled.div`
   justify-content: center;
 `;
 
-type AiChatInboxSelectionPaneProps = {
-  selectedThreads: AgentChatThreadRecord[];
+type InboxSelectionPaneProps = {
+  selectedThreads: InboxThreadRecord[];
 };
 
-export const AiChatInboxSelectionPane = ({
+export const InboxSelectionPane = ({
   selectedThreads,
-}: AiChatInboxSelectionPaneProps) => {
+}: InboxSelectionPaneProps) => {
   const { t } = useLingui();
   const { resetRecordSelection } = useResetRecordSelection();
   const { openSidePanelMenu } = useSidePanelMenu();
@@ -57,7 +57,7 @@ export const AiChatInboxSelectionPane = ({
       }
     >
       <StyledSelection>
-        <AiChatInboxSelectionPile threads={selectedThreads} />
+        <InboxSelectionPile threads={selectedThreads} />
         <EmptyState.Content>
           <EmptyState.Title>
             {plural(selectedThreads.length, {

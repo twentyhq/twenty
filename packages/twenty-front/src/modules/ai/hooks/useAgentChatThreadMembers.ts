@@ -1,15 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useAgentChatThreadMembers = (
+export const useInboxThreadMembers = (
   thread:
-    | Pick<
-        AgentChatThreadRecord,
-        'workspaceMemberId' | 'writerWorkspaceMemberIds'
-      >
+    | Pick<InboxThreadRecord, 'workspaceMemberId' | 'writerWorkspaceMemberIds'>
     | null
     | undefined,
 ) => {

@@ -5,7 +5,7 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isAiModePath } from '~/utils/isAiModePath';
 
-export const NewAiChatCommand = () => {
+export const NewInboxCommand = () => {
   const { pathname } = useLocation();
   const shouldOpenInFullPage = isAiModePath(pathname);
   const { closeSidePanelMenu } = useSidePanelMenu();

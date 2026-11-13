@@ -6,8 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { useSnoozeAiChatThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
+import { useFormatInboxThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useSnoozeInboxThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 
@@ -19,18 +19,18 @@ const StyledContainer = styled.div`
   width: fit-content;
 `;
 
-type SnoozeAiChatUntilDatePickerProps = {
+type SnoozeInboxUntilDatePickerProps = {
   threadIds: string[];
   onSnoozed: () => void;
 };
 
-export const SnoozeAiChatUntilDatePicker = ({
+export const SnoozeInboxUntilDatePicker = ({
   threadIds,
   onSnoozed,
-}: SnoozeAiChatUntilDatePickerProps) => {
+}: SnoozeInboxUntilDatePickerProps) => {
   const { t } = useLingui();
-  const { snoozeAiChatThreads } = useSnoozeAiChatThreads();
-  const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
+  const { snoozeInboxThreads } = useSnoozeInboxThreads();
+  const { formatInboxThreadDateTime } = useFormatInboxThreadDate();
   const { userTimezone } = useUserTimezone();
   const dateTimePickerInstanceId = useId();
   // Starts on tomorrow morning, like the Tomorrow option
@@ -49,7 +49,7 @@ export const SnoozeAiChatUntilDatePicker = ({
 
   const snoozedUntilDate = new Date(snoozedUntil.epochMilliseconds);
   const isInFuture = snoozedUntil.epochMilliseconds > checkedAt;
-  const snoozedUntilLabel = formatAgentChatThreadDateTime(snoozedUntilDate);
+  const snoozedUntilLabel = formatInboxThreadDateTime(snoozedUntilDate);
 
   const handleChange = (date: Temporal.ZonedDateTime | null) => {
     if (isDefined(date)) {
@@ -67,7 +67,7 @@ export const SnoozeAiChatUntilDatePicker = ({
     }
 
     onSnoozed();
-    void snoozeAiChatThreads({ threadIds, snoozedUntil: snoozedUntilDate });
+    void snoozeInboxThreads({ threadIds, snoozedUntil: snoozedUntilDate });
   };
 
   return (

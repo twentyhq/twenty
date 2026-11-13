@@ -6,7 +6,7 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { IconArrowBackUp } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { type AiChatQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
+import { type InboxQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
 
 const StyledReply = styled.div`
   align-items: center;
@@ -33,15 +33,15 @@ const StyledExcerpt = styled.span`
   min-width: 0;
 `;
 
-type AiChatQuotedMessagePreviewProps = {
-  source: AiChatQuotedMessageSource;
+type InboxQuotedMessagePreviewProps = {
+  source: InboxQuotedMessageSource;
   label?: string;
 };
 
-export const AiChatQuotedMessagePreview = ({
+export const InboxQuotedMessagePreview = ({
   source,
   label,
-}: AiChatQuotedMessagePreviewProps) => {
+}: InboxQuotedMessagePreviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
 

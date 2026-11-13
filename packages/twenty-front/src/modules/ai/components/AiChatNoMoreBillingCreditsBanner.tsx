@@ -1,6 +1,6 @@
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
-import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
+import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { useInboxEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
 import { useCreditUpgradeAction } from '@/settings/billing/hooks/useCreditUpgradeAction';
@@ -15,11 +15,10 @@ import {
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
-const AI_CHAT_END_TRIAL_PERIOD_MODAL_ID = 'ai-chat-end-trial-period-modal';
-const AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID =
-  'ai-chat-upgrade-credit-plan-modal';
+const INBOX_END_TRIAL_PERIOD_MODAL_ID = 'ai-chat-end-trial-period-modal';
+const INBOX_UPGRADE_CREDIT_PLAN_MODAL_ID = 'ai-chat-upgrade-credit-plan-modal';
 
-export const AiChatNoMoreBillingCreditsBanner = () => {
+export const InboxNoMoreBillingCreditsBanner = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -37,7 +36,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
     finalRedirectPath,
     isEndTrialLoading,
     hasPaymentMethod,
-  } = useAiChatEndTrialPeriod();
+  } = useInboxEndTrialPeriod();
 
   const {
     nextPrice,
@@ -50,7 +49,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
 
   if (!hasPermissionToManageBilling) {
     return (
-      <AiChatInlineBanner>{t`AI usage limit reached. Ask an admin to upgrade the plan.`}</AiChatInlineBanner>
+      <InboxInlineBanner>{t`AI usage limit reached. Ask an admin to upgrade the plan.`}</InboxInlineBanner>
     );
   }
 
@@ -63,14 +62,14 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
       : undefined;
 
   const handleButtonClick = isTrialing
-    ? () => openDialog(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
+    ? () => openDialog(INBOX_END_TRIAL_PERIOD_MODAL_ID)
     : isDefined(nextPrice)
-      ? () => openDialog(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
+      ? () => openDialog(INBOX_UPGRADE_CREDIT_PLAN_MODAL_ID)
       : undefined;
 
   return (
     <>
-      <AiChatInlineBanner
+      <InboxInlineBanner
         action={
           isDefined(buttonTitle) && isDefined(handleButtonClick) ? (
             <InlineBanner.Action
@@ -88,17 +87,17 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
         {isTrialing || isDefined(nextPrice)
           ? t`You’ve reached your AI usage limit.`
           : t`AI usage limit reached. Contact support to upgrade.`}
-      </AiChatInlineBanner>
+      </InboxInlineBanner>
       {isTrialing &&
         (hasPaymentMethod === false ? (
           <AddCreditCardModal
-            modalInstanceId={AI_CHAT_END_TRIAL_PERIOD_MODAL_ID}
+            modalInstanceId={INBOX_END_TRIAL_PERIOD_MODAL_ID}
             finalRedirectPath={finalRedirectPath}
             onPaymentMethodAdded={startSubscriptionAfterPaymentMethodFromAiChat}
           />
         ) : (
           <StartSubscriptionConfirmationModal
-            modalInstanceId={AI_CHAT_END_TRIAL_PERIOD_MODAL_ID}
+            modalInstanceId={INBOX_END_TRIAL_PERIOD_MODAL_ID}
             hasPaymentMethod={hasPaymentMethod}
             onConfirmClick={endTrialPeriodFromAiChat}
             loading={isEndTrialLoading}
@@ -106,7 +105,7 @@ export const AiChatNoMoreBillingCreditsBanner = () => {
         ))}
       {!isTrialing && (
         <ConfirmationDialog
-          dialogId={AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID}
+          dialogId={INBOX_UPGRADE_CREDIT_PLAN_MODAL_ID}
           title={t`Get more credits`}
           subtitle={t`Upgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`}
           onConfirmClick={upgradeCreditPlan}

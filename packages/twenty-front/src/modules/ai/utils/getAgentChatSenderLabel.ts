@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
-export const getAgentChatSenderLabel = ({
+export const getInboxSenderLabel = ({
   sender,
   isCurrentWorkspaceMember,
 }: {

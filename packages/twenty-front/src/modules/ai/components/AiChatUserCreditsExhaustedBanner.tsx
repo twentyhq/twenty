@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconSettings } from 'twenty-ui/icon';
 
-import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
@@ -69,29 +69,29 @@ export const AiChatUserCreditsExhaustedBanner = () => {
 
   if (isFallingBackToWorkspaceCredits) {
     return (
-      <AiChatInlineBanner
+      <InboxInlineBanner
         status="info"
         action={dismissAction}
-      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</AiChatInlineBanner>
+      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</InboxInlineBanner>
     );
   }
 
   if (hasPermissionToManageBilling) {
     return (
-      <AiChatInlineBanner
+      <InboxInlineBanner
         action={
           <InlineBanner.Action
             startIcon={<IconSettings />}
             onClick={() => navigateSettings(SettingsPath.Billing)}
           >{t`Settings`}</InlineBanner.Action>
         }
-      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
+      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</InboxInlineBanner>
     );
   }
 
   return (
-    <AiChatInlineBanner
+    <InboxInlineBanner
       action={dismissAction}
-    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
+    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</InboxInlineBanner>
   );
 };

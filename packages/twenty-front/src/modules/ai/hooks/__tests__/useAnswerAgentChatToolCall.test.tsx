@@ -4,11 +4,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { isToolUIPart } from 'ai';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -27,7 +27,7 @@ jest.mock('@/ai/hooks/useAgentChatModelId', () => ({
 }));
 
 const key = { threadId: 'thread-id' };
-const messagesAtom = agentChatMessagesFamilyState.atomFamily(key);
+const messagesAtom = inboxMessagesFamilyState.atomFamily(key);
 const isAwaitingFirstChunkAtom =
   agentChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
 
@@ -67,7 +67,7 @@ describe('useAnswerAgentChatToolCall', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(inboxDisplayedThreadState.atom, 'thread-id');
     jotaiStore.set(messagesAtom, [
       {
         id: 'assistant-1',
@@ -126,10 +126,7 @@ describe('useAnswerAgentChatToolCall', () => {
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {
     const refetchListener = jest.fn();
-    window.addEventListener(
-      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refetchListener,
-    );
+    window.addEventListener(INBOX_REFETCH_MESSAGES_EVENT_NAME, refetchListener);
     mutate.mockRejectedValue(
       new CombinedGraphQLErrors({
         data: null,
@@ -147,7 +144,7 @@ describe('useAnswerAgentChatToolCall', () => {
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
 
     window.removeEventListener(
-      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      INBOX_REFETCH_MESSAGES_EVENT_NAME,
       refetchListener,
     );
   });

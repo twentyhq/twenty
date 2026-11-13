@@ -1,27 +1,27 @@
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSwitchAgentChatThreadWithDraft = () => {
-  const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
-    currentAiChatThreadState,
+export const useSwitchInboxThreadWithDraft = () => {
+  const [currentInboxThread, setCurrentInboxThread] = useAtomState(
+    currentInboxThreadState,
   );
   const store = useStore();
 
   const switchThreadWithDraft = useCallback(
     (toThreadId: string) => {
-      const isSameThread = toThreadId === currentAiChatThread;
+      const isSameThread = toThreadId === currentInboxThread;
 
-      setCurrentAiChatThread(toThreadId);
+      setCurrentInboxThread(toThreadId);
 
       if (!isSameThread) {
         const thread = store.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(toThreadId),
+          inboxThreadRecordFamilySelector.selectorFamily(toThreadId),
         );
 
         store.set(
@@ -30,7 +30,7 @@ export const useSwitchAgentChatThreadWithDraft = () => {
         );
       }
     },
-    [currentAiChatThread, setCurrentAiChatThread, store],
+    [currentInboxThread, setCurrentInboxThread, store],
   );
 
   return { switchThreadWithDraft };

@@ -12,30 +12,30 @@ import { IconChevronLeft, IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { AiChatInboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
-import { AiChatInboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
-import { AiChatInboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
-import { AiChatInboxListHeader } from '@/ai/components/AiChatInboxListHeader';
-import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
-import { AiChatInboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
-import { AiChatInboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
-import { AiChatInboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
-import { AiChatInboxThreadList } from '@/ai/components/AiChatInboxThreadList';
-import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
-import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
-import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
-import { useIsAiChatInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
-import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
-import { AgentChatThreadListLoadEffect } from '@/ai/components/AgentChatThreadListLoadEffect';
-import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxBreadcrumb } from '@/ai/components/AiChatInboxBreadcrumb';
+import { InboxCommandMenuScope } from '@/ai/components/AiChatInboxCommandMenuScope';
+import { InboxConversationPane } from '@/ai/components/AiChatInboxConversationPane';
+import { InboxListHeader } from '@/ai/components/AiChatInboxListHeader';
+import { InboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
+import { InboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
+import { InboxSelectionPane } from '@/ai/components/AiChatInboxSelectionPane';
+import { InboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
+import { InboxPageThreadList } from '@/ai/components/AiChatInboxThreadList';
+import { InboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
+import { INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
+import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { useInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
+import { useIsInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
+import { useIsInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { InboxThreadListLoadEffect } from '@/ai/components/AgentChatThreadListLoadEffect';
+import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordSelectionDragSelect } from '@/object-record/record-selection/components/RecordSelectionDragSelect';
@@ -56,12 +56,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { InboxNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
+import { InboxThreadPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
+import { InboxThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledInbox = styled.div`
-  --inbox-list-pane-width: ${AI_CHAT_INBOX_LIST_PANE_WIDTH}px;
+  --inbox-list-pane-width: ${INBOX_LIST_PANE_WIDTH}px;
 
   display: flex;
   flex: 1;
@@ -107,37 +107,36 @@ const StyledThreadList = styled.div`
   overflow: auto;
 `;
 
-const AiChatInboxPageContent = () => {
+const InboxPageContent = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
-  const isSplitView = useIsAiChatInboxSplitView();
+  const isSplitView = useIsInboxSplitView();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
   const navigate = useNavigateApp();
   const { threadId } = useParams();
-  const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
+  const isNewThreadRoute = threadId === INBOX_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const agentChatSelectedChannelView = useAtomStateValue(
-    agentChatSelectedChannelViewSelector,
+  const inboxSelectedChannelView = useAtomStateValue(
+    inboxSelectedChannelViewSelector,
   );
   const isChannelHiddenForDirectMessage =
-    useIsAiChatInboxShowingDirectMessage() &&
-    isDefined(agentChatSelectedChannelView);
+    useIsInboxShowingDirectMessage() && isDefined(inboxSelectedChannelView);
   const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
-  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const agentChatSelectedThreadListSource = useAtomStateValue(
-    agentChatSelectedThreadListSourceState,
+  const newInboxThreadId = useAtomStateValue(newInboxThreadIdState);
+  const inboxSelectedThreadListSource = useAtomStateValue(
+    inboxSelectedThreadListSourceState,
   );
-  const { threads, isLoading } = useAgentChatThreadList(
-    agentChatSelectedThreadListSource,
+  const { threads, isLoading } = useInboxThreadList(
+    inboxSelectedThreadListSource,
   );
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+  const { loadInboxThreadList } = useLoadInboxThreadList();
   const fetchMoreShownThreads = () =>
-    void loadAgentChatThreadList({
-      source: agentChatSelectedThreadListSource,
+    void loadInboxThreadList({
+      source: inboxSelectedThreadListSource,
       mode: 'fetch-more',
     });
 
@@ -154,7 +153,7 @@ const AiChatInboxPageContent = () => {
     navigate(AppPath.AiChatInbox, { threadId: nextThreadId });
 
   const handleThreadClick = (
-    { id }: AgentChatThreadRecord,
+    { id }: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => {
     // A phone has no modifier keys, so once a selection is started a tap
@@ -201,7 +200,7 @@ const AiChatInboxPageContent = () => {
   });
 
   const handleThreadCheckboxClick = (
-    { id }: AgentChatThreadRecord,
+    { id }: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) =>
     toggleRecordSelection({ recordId: id, shouldSelectRange: event.shiftKey });
@@ -266,7 +265,7 @@ const AiChatInboxPageContent = () => {
 
   const desktopThreadHeaderActions = isDefined(selectedThreadId) && (
     <>
-      <AiChatInboxThreadPagination
+      <InboxThreadPagination
         threads={threads}
         threadId={selectedThreadId}
         onThreadSelect={selectThread}
@@ -277,12 +276,10 @@ const AiChatInboxPageContent = () => {
 
   return (
     <StyledInbox>
-      <AgentChatThreadListLoadEffect
-        source={agentChatSelectedThreadListSource}
-      />
-      <AiChatInboxNewThreadChannelEffect key={newAiChatThreadId} />
+      <InboxThreadListLoadEffect source={inboxSelectedThreadListSource} />
+      <InboxNewThreadChannelEffect key={newInboxThreadId} />
       <RecordSelectionRecordIdsEffect records={threads} />
-      <AiChatInboxSelectionEffect
+      <InboxSelectionEffect
         key={selectedThreadId}
         selectedThreadId={selectedThreadId}
         threads={threads}
@@ -290,11 +287,11 @@ const AiChatInboxPageContent = () => {
       {/* The selection takes the place of the chat on screen, so the command
       menu acts on it */}
       {isSelectionShown && !isThreadShown && (
-        <AiChatInboxSelectionToContextStoreEffect
+        <InboxSelectionToContextStoreEffect
           contextStoreInstanceId={MAIN_CONTEXT_STORE_INSTANCE_ID}
         />
       )}
-      <AiChatInboxCommandMenuScope>
+      <InboxCommandMenuScope>
         {isListShown && (
           <StyledListPane
             $isFullWidth={isListFullWidth}
@@ -304,7 +301,7 @@ const AiChatInboxPageContent = () => {
             <PageCardLayout
               showInformationBanner={isListFullWidth}
               header={
-                <AiChatInboxListHeader
+                <InboxListHeader
                   selectedThreadCount={selectedRecordIds.length}
                   isSecondaryPaneShown={isSecondaryPaneShown}
                 />
@@ -321,14 +318,14 @@ const AiChatInboxPageContent = () => {
                         <EmptyState.Content>
                           <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
                           <EmptyState.Description>
-                            {isDefined(agentChatSelectedChannelView)
+                            {isDefined(inboxSelectedChannelView)
                               ? t`Conversations in this channel will appear here.`
                               : t`Conversations you can open will appear here.`}
                           </EmptyState.Description>
                         </EmptyState.Content>
                       </EmptyState.Root>
                     ) : (
-                      <AiChatInboxThreadList
+                      <InboxPageThreadList
                         threads={threads}
                         selectedThreadIds={openThreadIds}
                         checkedThreadIds={selectedRecordIds}
@@ -336,11 +333,11 @@ const AiChatInboxPageContent = () => {
                         onThreadCheckboxClick={handleThreadCheckboxClick}
                       />
                     )}
-                    <AgentChatThreadListFetchMoreTrigger
-                      key={getAgentChatThreadListSourceKey(
-                        agentChatSelectedThreadListSource,
+                    <InboxThreadListFetchMoreTrigger
+                      key={getInboxThreadListSourceKey(
+                        inboxSelectedThreadListSource,
                       )}
-                      source={agentChatSelectedThreadListSource}
+                      source={inboxSelectedThreadListSource}
                     />
                   </StyledThreadList>
                   {!isMobile && (
@@ -354,21 +351,21 @@ const AiChatInboxPageContent = () => {
           </StyledListPane>
         )}
         {isSelectionPaneShown && (
-          <AiChatInboxSelectionPane
+          <InboxSelectionPane
             selectedThreads={threads.filter(({ id }) =>
               selectedRecordIds.includes(id),
             )}
           />
         )}
-      </AiChatInboxCommandMenuScope>
+      </InboxCommandMenuScope>
       {shouldRenderConversationPane && (
         <AnimatePresence initial={false}>
           {(isNewThreadShown || isThreadShown) && (
-            <AiChatInboxConversationPane isSplitView={isSplitLayout}>
+            <InboxConversationPane isSplitView={isSplitLayout}>
               {isNewThreadShown && (
                 <>
-                  <AiChatPageEffects />
-                  <AiChatNewThreadPageContent
+                  <InboxThreadPageEffects />
+                  <InboxNewThreadPageContent
                     showInformationBanner={!isSplitView}
                     headerActions={isMobile ? backToInboxButton : undefined}
                   />
@@ -376,15 +373,13 @@ const AiChatInboxPageContent = () => {
               )}
               {isThreadShown && (
                 <>
-                  <AiChatPageEffects />
-                  <AiChatThreadPageContent
+                  <InboxThreadPageEffects />
+                  <InboxThreadPageContent
                     threadId={selectedThreadId}
                     headerTitlePrefix={
                       !isSplitView &&
                       !isMobile &&
-                      !isChannelHiddenForDirectMessage && (
-                        <AiChatInboxBreadcrumb />
-                      )
+                      !isChannelHiddenForDirectMessage && <InboxBreadcrumb />
                     }
                     headerActions={
                       isMobile ? backToInboxButton : desktopThreadHeaderActions
@@ -392,7 +387,7 @@ const AiChatInboxPageContent = () => {
                   />
                 </>
               )}
-            </AiChatInboxConversationPane>
+            </InboxConversationPane>
           )}
         </AnimatePresence>
       )}
@@ -400,9 +395,9 @@ const AiChatInboxPageContent = () => {
   );
 };
 
-export const AiChatInboxPage = () => {
+export const InboxPage = () => {
   // A new instance per visit, so a selection does not outlive the inbox
-  const recordSelectionInstanceId = useAiChatInboxRecordSelectionInstanceId();
+  const recordSelectionInstanceId = useInboxRecordSelectionInstanceId();
   const { threadId } = useParams();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -421,7 +416,7 @@ export const AiChatInboxPage = () => {
     <RecordSelectionComponentInstanceContext.Provider
       value={{ instanceId: recordSelectionInstanceId }}
     >
-      <AiChatInboxPageContent />
+      <InboxPageContent />
     </RecordSelectionComponentInstanceContext.Provider>
   );
 };

@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
@@ -18,8 +18,8 @@ const renderHooks = () =>
   renderHook(
     () => ({
       setSelectedTier: useSetAtomState(agentChatUserSelectedModelTierState),
-      setShouldOpenAiChatAfterOnboarding: useSetAtomState(
-        shouldOpenAiChatAfterOnboardingState,
+      setShouldOpenInboxAfterOnboarding: useSetAtomState(
+        shouldOpenInboxAfterOnboardingState,
       ),
       ...useAgentChatModelId(),
     }),
@@ -63,7 +63,7 @@ describe('useAgentChatModelId', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.setShouldOpenAiChatAfterOnboarding(true);
+      result.current.setShouldOpenInboxAfterOnboarding(true);
     });
 
     expect(result.current.modelIdForRequest).toBe('default-fast-model');

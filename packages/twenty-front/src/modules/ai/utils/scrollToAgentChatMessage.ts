@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const SCROLL_SETTLE_DELAY_MS = 150;
 const HIGHLIGHT_DURATION_MS = 1500;
 
-const highlightAgentChatMessage = (messageElement: Element) => {
+const highlightInboxMessage = (messageElement: Element) => {
   messageElement.animate(
     [
       { backgroundColor: themeCssVariables.background.transparent.blue },
@@ -15,7 +15,7 @@ const highlightAgentChatMessage = (messageElement: Element) => {
   );
 };
 
-export const scrollToAgentChatMessage = (messageId: string) => {
+export const scrollToInboxMessage = (messageId: string) => {
   const messageElement = document.querySelector(
     `[data-agent-chat-message-id="${messageId}"]`,
   );
@@ -45,7 +45,7 @@ export const scrollToAgentChatMessage = (messageId: string) => {
     clearTimeout(settleTimeout);
     settleTimeout = setTimeout(() => {
       document.removeEventListener('scroll', highlightOnceScrollSettles, true);
-      highlightAgentChatMessage(messageElement);
+      highlightInboxMessage(messageElement);
     }, SCROLL_SETTLE_DELAY_MS);
   };
 

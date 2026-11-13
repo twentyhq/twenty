@@ -7,10 +7,10 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
-import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { AGENT_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { InboxMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
+import { InboxMessageReactions } from '@/ai/components/AiChatMessageReactions';
+import { INBOX_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
+import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -32,7 +32,7 @@ const ReactionStateEffect = () => {
 
   useEffect(() => {
     const previousMember = store.get(currentWorkspaceMemberState.atom);
-    const reactionsAtom = agentChatMessageReactionsFamilyState.atomFamily({
+    const reactionsAtom = inboxMessageReactionsFamilyState.atomFamily({
       messageId: MESSAGE_ID,
     });
 
@@ -48,15 +48,15 @@ const ReactionStateEffect = () => {
   return null;
 };
 
-const meta: Meta<typeof AiChatMessageReactionPicker> = {
+const meta: Meta<typeof InboxMessageReactionPicker> = {
   title: 'Modules/AI/AiChatMessageReactionPicker',
-  component: AiChatMessageReactionPicker,
+  component: InboxMessageReactionPicker,
   decorators: [
     (Story) => (
       <>
         <ReactionStateEffect />
         <StyledReactions>
-          <AiChatMessageReactions messageId={MESSAGE_ID} />
+          <InboxMessageReactions messageId={MESSAGE_ID} />
           <Story />
         </StyledReactions>
       </>
@@ -74,9 +74,7 @@ const meta: Meta<typeof AiChatMessageReactionPicker> = {
     container: { width: 400, height: 380 },
     msw: {
       handlers: [
-        http.all(`${AGENT_CHAT_EMOJIBASE_URL}/en/:filename`, () =>
-          passthrough(),
-        ),
+        http.all(`${INBOX_EMOJIBASE_URL}/en/:filename`, () => passthrough()),
         graphql.mutation('AddAgentChatMessageReaction', ({ variables }) => {
           addReaction(variables);
 
@@ -107,7 +105,7 @@ const meta: Meta<typeof AiChatMessageReactionPicker> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatMessageReactionPicker>;
+type Story = StoryObj<typeof InboxMessageReactionPicker>;
 
 export const ToggleQuickReaction: Story = {
   play: async ({ canvasElement }) => {

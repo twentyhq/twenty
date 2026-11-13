@@ -2,13 +2,13 @@ import { useStore } from 'jotai';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { type AgentChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -28,10 +28,8 @@ export const useOpenAskAiPageWithPreprompt = () => {
     agentChatUserSelectedModelTierState,
   );
   const { chatTier } = useWorkspaceAiModelTiers();
-  const { uploadFiles } = useAiChatFileUpload();
-  const setAgentChatUploadedFiles = useSetAtomState(
-    agentChatUploadedFilesState,
-  );
+  const { uploadFiles } = useInboxFileUpload();
+  const setInboxUploadedFiles = useSetAtomState(inboxUploadedFilesState);
 
   const openAskAiPageWithPreprompt = async ({
     serializedDocument,
@@ -44,7 +42,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     model?: AgentChatModelPreselection;
     files?: File[];
   }): Promise<string | null> => {
-    const newAiChatThreadId = switchToNewChat();
+    const newInboxThreadId = switchToNewChat();
 
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
@@ -56,15 +54,15 @@ export const useOpenAskAiPageWithPreprompt = () => {
     if (!isNonEmptyArray(files)) {
       stageAiChatPreprompt({ serializedDocument, mode });
 
-      return newAiChatThreadId;
+      return newInboxThreadId;
     }
 
-    const threadId = store.get(currentAiChatThreadState.atom);
+    const threadId = store.get(currentInboxThreadState.atom);
 
     const uploadedFiles = await uploadFiles(files);
 
-    if (store.get(currentAiChatThreadState.atom) !== threadId) {
-      setAgentChatUploadedFiles((previousUploadedFiles) =>
+    if (store.get(currentInboxThreadState.atom) !== threadId) {
+      setInboxUploadedFiles((previousUploadedFiles) =>
         previousUploadedFiles.filter(
           (uploadedFile) => !uploadedFiles.includes(uploadedFile),
         ),
@@ -78,7 +76,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',
     });
 
-    return newAiChatThreadId;
+    return newInboxThreadId;
   };
 
   return { openAskAiPageWithPreprompt };

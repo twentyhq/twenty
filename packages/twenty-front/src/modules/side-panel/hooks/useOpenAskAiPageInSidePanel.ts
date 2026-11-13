@@ -1,5 +1,5 @@
 import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import { resetClosingAiChatInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
+import { resetClosingInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -13,7 +13,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
   const store = useStore();
@@ -32,11 +32,11 @@ export const useOpenAskAiPageInSidePanel = () => {
     }: {
       resetNavigationStack?: boolean;
     } = {}) => {
-      if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
+      if (isWorkspaceSuspended || isCurrentPathInboxThreadPage()) {
         return;
       }
 
-      resetClosingAiChatInboxThread(store);
+      resetClosingInboxThread(store);
 
       const shouldReset =
         resetNavigationStack !== undefined

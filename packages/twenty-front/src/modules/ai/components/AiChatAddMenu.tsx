@@ -11,31 +11,31 @@ import {
   IconPlus,
 } from 'twenty-ui/icon';
 
-import { AiChatAddMenuRecordsPage } from '@/ai/components/AiChatAddMenuRecordsPage';
-import { AiChatAddMenuSkillsPage } from '@/ai/components/AiChatAddMenuSkillsPage';
-import { AgentChatFileInput } from '@/ai/components/internal/AgentChatFileInput';
-import { AI_CHAT_ADD_MENU_PAGE } from '@/ai/constants/AiChatAddMenuPage';
+import { InboxAddMenuRecordsPage } from '@/ai/components/AiChatAddMenuRecordsPage';
+import { InboxAddMenuSkillsPage } from '@/ai/components/AiChatAddMenuSkillsPage';
+import { InboxFileInput } from '@/ai/components/internal/AgentChatFileInput';
+import { INBOX_ADD_MENU_PAGE } from '@/ai/constants/AiChatAddMenuPage';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
-const AI_CHAT_ADD_MENU_WIDTH_PX = 280;
+const INBOX_ADD_MENU_WIDTH_PX = 280;
 
-type AiChatAddMenuProps = {
+type InboxAddMenuProps = {
   editor: Editor | null;
 };
 
-export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
+export const InboxAddMenu = ({ editor }: InboxAddMenuProps) => {
   const { t } = useLingui();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const instanceId = useId();
 
   return (
     <>
-      <AgentChatFileInput ref={fileInputRef} />
+      <InboxFileInput ref={fileInputRef} />
       <DropdownRoot
         dropdownId={`ai-chat-add-menu-${instanceId}`}
         type="menu"
-        defaultPage={AI_CHAT_ADD_MENU_PAGE.ROOT}
+        defaultPage={INBOX_ADD_MENU_PAGE.ROOT}
       >
         <Dropdown.Trigger
           render={
@@ -49,7 +49,7 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
           }
         />
         <DropdownContent
-          width={AI_CHAT_ADD_MENU_WIDTH_PX}
+          width={INBOX_ADD_MENU_WIDTH_PX}
           side="top"
           align="start"
           sideOffset={8}
@@ -60,7 +60,7 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
           }
           aria-label={t`Add files, records or skills`}
         >
-          <Dropdown.Page id={AI_CHAT_ADD_MENU_PAGE.ROOT} type="menu">
+          <Dropdown.Page id={INBOX_ADD_MENU_PAGE.ROOT} type="menu">
             <Dropdown.Section>
               <Dropdown.ActionItem
                 startIcon={<IconPaperclip />}
@@ -74,24 +74,24 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
               <Dropdown.ActionItem
                 startIcon={<IconAddressBook />}
                 shortcut={['@']}
-                page={AI_CHAT_ADD_MENU_PAGE.RECORDS}
+                page={INBOX_ADD_MENU_PAGE.RECORDS}
               >
                 {t`Records`}
               </Dropdown.ActionItem>
               <Dropdown.ActionItem
                 startIcon={<IconBook />}
                 shortcut={['/']}
-                page={AI_CHAT_ADD_MENU_PAGE.SKILLS}
+                page={INBOX_ADD_MENU_PAGE.SKILLS}
               >
                 {t`Skills`}
               </Dropdown.ActionItem>
             </Dropdown.Section>
           </Dropdown.Page>
-          <Dropdown.Page id={AI_CHAT_ADD_MENU_PAGE.RECORDS} type="picker">
-            <AiChatAddMenuRecordsPage editor={editor} />
+          <Dropdown.Page id={INBOX_ADD_MENU_PAGE.RECORDS} type="picker">
+            <InboxAddMenuRecordsPage editor={editor} />
           </Dropdown.Page>
-          <Dropdown.Page id={AI_CHAT_ADD_MENU_PAGE.SKILLS} type="picker">
-            <AiChatAddMenuSkillsPage editor={editor} />
+          <Dropdown.Page id={INBOX_ADD_MENU_PAGE.SKILLS} type="picker">
+            <InboxAddMenuSkillsPage editor={editor} />
           </Dropdown.Page>
         </DropdownContent>
       </DropdownRoot>

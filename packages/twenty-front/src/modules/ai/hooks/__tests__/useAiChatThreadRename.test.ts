@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { useInboxThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
@@ -39,7 +39,7 @@ const buildThread = (
     ...overrides,
   }) as AgentChatThread;
 
-describe('useAiChatThreadRename', () => {
+describe('useInboxThreadRename', () => {
   const updateOneRecord = jest.fn();
 
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('useAiChatThreadRename', () => {
 
   it('starts in non-renaming state with the current thread title as draft', () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     expect(result.current.isRenaming).toBe(false);
@@ -59,7 +59,7 @@ describe('useAiChatThreadRename', () => {
 
   it('falls back to empty string when the thread title is null', () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: null })),
+      useInboxThreadRename(buildThread({ title: null })),
     );
 
     expect(result.current.draftTitle).toBe('');
@@ -67,7 +67,7 @@ describe('useAiChatThreadRename', () => {
 
   it('enters renaming mode and re-seeds draft from current title on startRename', () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     act(() => {
@@ -83,7 +83,7 @@ describe('useAiChatThreadRename', () => {
 
   it('exits renaming mode and resets the draft on cancelRename', () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     act(() => {
@@ -100,7 +100,7 @@ describe('useAiChatThreadRename', () => {
 
   it('skips renaming when committed title is empty after trim', async () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     await act(async () => {
@@ -113,7 +113,7 @@ describe('useAiChatThreadRename', () => {
 
   it('skips renaming when committed title equals the current title', async () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     await act(async () => {
@@ -125,7 +125,7 @@ describe('useAiChatThreadRename', () => {
 
   it('trims surrounding whitespace before comparing to the current title', async () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ title: 'Existing title' })),
+      useInboxThreadRename(buildThread({ title: 'Existing title' })),
     );
 
     await act(async () => {
@@ -137,9 +137,7 @@ describe('useAiChatThreadRename', () => {
 
   it('renames with the trimmed title when it differs from the current one', async () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(
-        buildThread({ id: 'thread-7', title: 'Old title' }),
-      ),
+      useInboxThreadRename(buildThread({ id: 'thread-7', title: 'Old title' })),
     );
 
     await act(async () => {
@@ -154,7 +152,7 @@ describe('useAiChatThreadRename', () => {
     updateOneRecord.mockRejectedValueOnce(new Error('Forbidden'));
 
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ id: 'thread-fail', title: 'Old' })),
+      useInboxThreadRename(buildThread({ id: 'thread-fail', title: 'Old' })),
     );
 
     act(() => {
@@ -171,7 +169,7 @@ describe('useAiChatThreadRename', () => {
 
   it('treats a null current title as empty when comparing against committed input', async () => {
     const { result } = renderHook(() =>
-      useAiChatThreadRename(buildThread({ id: 'thread-9', title: null })),
+      useInboxThreadRename(buildThread({ id: 'thread-9', title: null })),
     );
 
     await act(async () => {

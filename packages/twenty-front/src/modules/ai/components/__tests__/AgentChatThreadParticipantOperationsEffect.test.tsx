@@ -3,10 +3,10 @@ import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
+import { InboxThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
+import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { mergeInboxThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -52,7 +52,7 @@ const renderEffect = (
 ) => {
   const store = createStore();
 
-  store.set(agentChatThreadParticipantsState.atom, participants);
+  store.set(inboxThreadParticipantsState.atom, participants);
   store.set(currentWorkspaceMemberState.atom, {
     id: 'workspace-member-id',
   } as never);
@@ -60,7 +60,7 @@ const renderEffect = (
   render(
     <JotaiProvider store={store}>
       <MockedProvider>
-        <AgentChatThreadParticipantOperationsEffect />
+        <InboxThreadParticipantOperationsEffect />
       </MockedProvider>
     </JotaiProvider>,
   );
@@ -107,13 +107,13 @@ const receiveParticipantUpdate = (
     }),
   );
 
-describe('AgentChatThreadParticipantOperationsEffect', () => {
+describe('InboxThreadParticipantOperationsEffect', () => {
   it('adds a row the member created elsewhere', () => {
     const { store } = renderEffect({});
 
     receiveCreatedParticipant(READ_PARTICIPANT);
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -128,7 +128,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate({ ...READ_PARTICIPANT, ...change });
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: { ...READ_PARTICIPANT, ...change },
     });
   });
@@ -150,9 +150,10 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate({ ...snoozedParticipant, ...change });
 
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
-    ).toEqual({ ...snoozedParticipant, ...change });
+    expect(store.get(inboxThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
+      ...snoozedParticipant,
+      ...change,
+    });
   });
 
   it('keeps a change for a page already on its way, with its new version', () => {
@@ -177,9 +178,9 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
 
     // A page that read the archived row (T1) merges this change (T2) over it
     expect(
-      mergeAgentChatThreadParticipants(
+      mergeInboxThreadParticipants(
         { [THREAD_ID]: loadedArchivedParticipant },
-        Object.values(store.get(agentChatThreadStreamedParticipantsState.atom)),
+        Object.values(store.get(inboxThreadStreamedParticipantsState.atom)),
       )[THREAD_ID],
     ).toEqual({
       ...READ_PARTICIPANT,
@@ -197,7 +198,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -207,7 +208,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
 
     receiveParticipantUpdate(READ_PARTICIPANT);
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -222,7 +223,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:05:00.000Z',
     });
 
-    expect(store.get(agentChatThreadStreamedParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadStreamedParticipantsState.atom)).toEqual({
       [THREAD_ID]: {
         ...READ_PARTICIPANT,
         lastReadAt: null,
@@ -240,7 +241,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });
@@ -250,8 +251,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
 
     receiveCreatedParticipant(READ_PARTICIPANT);
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toBeNull();
-    expect(store.get(agentChatThreadStreamedParticipantsState.atom)).toEqual({
+    expect(store.get(inboxThreadParticipantsState.atom)).toBeNull();
+    expect(store.get(inboxThreadStreamedParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
   });

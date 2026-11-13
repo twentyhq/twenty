@@ -10,7 +10,7 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock('@/ai/components/AgentChatMessagesFetchEffect', () => ({
-  AgentChatMessagesFetchEffect: () => null,
+  InboxMessagesFetchEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
   AgentChatStreamSubscriptionEffect: () => (

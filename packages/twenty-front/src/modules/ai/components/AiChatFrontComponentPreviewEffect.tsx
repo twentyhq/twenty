@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { type useAiChatFrontComponentPreview } from '@/ai/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<
@@ -28,15 +28,12 @@ export const AiChatFrontComponentPreviewEffect = ({
     };
 
     void refreshPreview();
-    window.addEventListener(
-      AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refreshPreview,
-    );
+    window.addEventListener(INBOX_REFETCH_MESSAGES_EVENT_NAME, refreshPreview);
 
     return () => {
       controller?.abort();
       window.removeEventListener(
-        AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+        INBOX_REFETCH_MESSAGES_EVENT_NAME,
         refreshPreview,
       );
     };

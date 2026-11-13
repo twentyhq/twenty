@@ -1,4 +1,4 @@
-import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatInboxTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import {
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -36,9 +36,9 @@ const StyledSectionTitle = styled.span`
 export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
   const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
-    threadId: currentAiChatThread,
+    threadId: currentInboxThread,
   });
   if (!isDefined(agentChatUsage)) {
     return null;
@@ -55,19 +55,19 @@ export const AiChatContextUsageDetails = () => {
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
             <MetricRow
               startIcon={<IconArrowUp size={theme.icon.size.sm} />}
-              value={formatAiChatTokens(lastMessage.inputTokens)}
+              value={formatInboxTokens(lastMessage.inputTokens)}
             >
               {t`Input tokens`}
             </MetricRow>
             <MetricRow
               startIcon={<IconHistory size={theme.icon.size.sm} />}
-              value={formatAiChatTokens(lastMessage.cachedInputTokens)}
+              value={formatInboxTokens(lastMessage.cachedInputTokens)}
             >
               {t`Cached input`}
             </MetricRow>
             <MetricRow
               startIcon={<IconArrowDown size={theme.icon.size.sm} />}
-              value={formatAiChatTokens(lastMessage.outputTokens)}
+              value={formatInboxTokens(lastMessage.outputTokens)}
             >
               {t`Output tokens`}
             </MetricRow>
@@ -88,19 +88,19 @@ export const AiChatContextUsageDetails = () => {
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
         <MetricRow
           startIcon={<IconArrowUp size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(agentChatUsage.inputTokens)}
+          value={formatInboxTokens(agentChatUsage.inputTokens)}
         >
           {t`Input tokens`}
         </MetricRow>
         <MetricRow
           startIcon={<IconHistory size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
+          value={formatInboxTokens(agentChatUsage.cachedInputTokens)}
         >
           {t`Cached input`}
         </MetricRow>
         <MetricRow
           startIcon={<IconArrowDown size={theme.icon.size.sm} />}
-          value={formatAiChatTokens(agentChatUsage.outputTokens)}
+          value={formatInboxTokens(agentChatUsage.outputTokens)}
         >
           {t`Output tokens`}
         </MetricRow>

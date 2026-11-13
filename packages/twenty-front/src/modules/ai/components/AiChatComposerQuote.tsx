@@ -1,49 +1,49 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
-import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
-import { useAgentChatMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
-import { useIsOwnAgentChatMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { InboxComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
+import { InboxMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
+import { useInboxMessageAuthor } from '@/ai/hooks/useAgentChatMessageAuthor';
+import { useIsOwnInboxMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
+import { getInboxMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const AiChatComposerQuote = () => {
+export const InboxComposerQuote = () => {
   const { t } = useLingui();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const [inboxQuotedMessageId, setInboxQuotedMessageId] = useAtomFamilyState(
+    inboxQuotedMessageIdFamilyState,
+    {
+      threadId: currentInboxThread,
+    },
   );
-  const [agentChatQuotedMessageId, setAgentChatQuotedMessageId] =
-    useAtomFamilyState(agentChatQuotedMessageIdFamilyState, {
-      threadId: currentAiChatThread,
-    });
   const quotedMessage = useAtomFamilySelectorValue(
-    agentChatThreadMessageFamilySelector,
-    { threadId: agentChatDisplayedThread, messageId: agentChatQuotedMessageId },
+    inboxThreadMessageFamilySelector,
+    { threadId: inboxDisplayedThread, messageId: inboxQuotedMessageId },
   );
-  const quotedMessageAuthor = useAgentChatMessageAuthor(quotedMessage);
-  const isOwnQuotedMessage = useIsOwnAgentChatMessage(quotedMessage);
+  const quotedMessageAuthor = useInboxMessageAuthor(quotedMessage);
+  const isOwnQuotedMessage = useIsOwnInboxMessage(quotedMessage);
 
   // the displayed thread lags a switch until its messages load
   if (
-    !isDefined(agentChatQuotedMessageId) ||
-    agentChatDisplayedThread !== currentAiChatThread
+    !isDefined(inboxQuotedMessageId) ||
+    inboxDisplayedThread !== currentInboxThread
   ) {
     return null;
   }
 
-  const removeQuote = () => setAgentChatQuotedMessageId(null);
+  const removeQuote = () => setInboxQuotedMessageId(null);
 
   if (!isDefined(quotedMessage) || !isDefined(quotedMessageAuthor)) {
     return (
-      <AiChatComposerQuotePreview
+      <InboxComposerQuotePreview
         source={{ status: 'unavailable' }}
         onRemove={removeQuote}
       />
@@ -51,17 +51,17 @@ export const AiChatComposerQuote = () => {
   }
 
   return (
-    <AiChatMessageAuthorResolver author={quotedMessageAuthor}>
+    <InboxMessageAuthorResolver author={quotedMessageAuthor}>
       {(author) => (
-        <AiChatComposerQuotePreview
+        <InboxComposerQuotePreview
           source={{
             status: 'available',
             authorName: isOwnQuotedMessage ? t`You` : author.name,
-            excerpt: getAgentChatMessageQuoteExcerpt(quotedMessage),
+            excerpt: getInboxMessageQuoteExcerpt(quotedMessage),
           }}
           onRemove={removeQuote}
         />
       )}
-    </AiChatMessageAuthorResolver>
+    </InboxMessageAuthorResolver>
   );
 };

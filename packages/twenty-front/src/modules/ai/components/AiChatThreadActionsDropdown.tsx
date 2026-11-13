@@ -7,11 +7,11 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
-import { AiChatThreadRowTriage } from '@/ai/components/AiChatThreadRowTriage';
-import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
-import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { InboxThreadRowTriage } from '@/ai/components/AiChatThreadRowTriage';
+import { InboxThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
+import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useTargetInboxThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
+import { inboxThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -22,13 +22,13 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-type AiChatThreadActionsDropdownProps = {
+type InboxThreadActionsDropdownProps = {
   thread: {
     id: string;
     title?: string | null;
-    conversationType?: AgentChatThreadRecord['conversationType'];
+    conversationType?: InboxThreadRecord['conversationType'];
     deletedAt?: string | null;
     lastActivityAt?: string | null;
   };
@@ -39,20 +39,19 @@ type AiChatThreadActionsDropdownProps = {
   shouldShowMore?: boolean;
 };
 
-export const AiChatThreadActionsDropdown = ({
+export const InboxThreadActionsDropdown = ({
   thread,
   instanceId,
   onRenameRequested,
   onDetach,
   shouldShowTriageActions = false,
   shouldShowMore = true,
-}: AiChatThreadActionsDropdownProps) => {
+}: InboxThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { targetAiChatThreadsInContextStore } =
-    useTargetAiChatThreadsInContextStore();
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
+  const { targetInboxThreadsInContextStore } =
+    useTargetInboxThreadsInContextStore();
+  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -61,7 +60,7 @@ export const AiChatThreadActionsDropdown = ({
     },
   );
   const permissions = useAtomFamilySelectorValue(
-    agentChatThreadPermissionsFamilySelector,
+    inboxThreadPermissionsFamilySelector,
     thread.id,
   );
   if (!isDefined(chatObjectMetadataItem)) {
@@ -90,7 +89,7 @@ export const AiChatThreadActionsDropdown = ({
     <ContextStoreComponentInstanceContext.Provider value={{ instanceId }}>
       <CommandMenuComponentInstanceContext.Provider value={{ instanceId }}>
         {shouldShowTriageActions && !isDeleted && (
-          <AiChatThreadRowTriage threadId={thread.id} />
+          <InboxThreadRowTriage threadId={thread.id} />
         )}
         {shouldShowMore && (
           <DropdownRoot
@@ -98,7 +97,7 @@ export const AiChatThreadActionsDropdown = ({
             type="menu"
             onOpenChange={(isOpen) => {
               if (isOpen) {
-                targetAiChatThreadsInContextStore({
+                targetInboxThreadsInContextStore({
                   contextStoreInstanceId: instanceId,
                   threadIds: [thread.id],
                 });
@@ -115,7 +114,7 @@ export const AiChatThreadActionsDropdown = ({
                     },
                   ],
                 });
-                void refreshAgentChatThreadPermissions([thread.id]);
+                void refreshInboxThreadPermissions([thread.id]);
               }
             }}
           >
@@ -148,7 +147,7 @@ export const AiChatThreadActionsDropdown = ({
                   displayType="dropdownItem"
                   containerType={CommandMenuItemContainerType.IndexPageDropdown}
                 >
-                  <AiChatThreadCommandMenuItems />
+                  <InboxThreadCommandMenuItems />
                 </CommandMenuContextProvider>
               </Dropdown.Section>
             </DropdownContent>

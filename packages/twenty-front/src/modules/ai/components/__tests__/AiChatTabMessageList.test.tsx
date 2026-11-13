@@ -1,9 +1,9 @@
 import { render } from '@testing-library/react';
 
-import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { type AiChatSurface } from '@/ai/types/AiChatSurface';
+import { InboxTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
+import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { type InboxSurface } from '@/ai/types/AiChatSurface';
 
 const mockUseAtomStateValue = jest.fn();
 const mockUseIsWorkspaceSetupChat = jest.fn(() => false);
@@ -38,34 +38,34 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
-  AiChatNonLastMessageIdsList: () => null,
+  InboxNonLastMessageIdsList: () => null,
 }));
 jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
-  AiChatLastMessageWithStreamingState: () => null,
+  InboxLastMessageWithStreamingState: () => null,
 }));
 jest.mock('@/ai/components/AiChatPendingResponseIndicator', () => ({
   AiChatPendingResponseIndicator: () => null,
 }));
 jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
-  AiChatThreadInboxStateNotice: () => null,
+  InboxThreadStatusNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
 }));
 jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
-  AiChatScrollToBottomButton: () => null,
+  InboxScrollToBottomButton: () => null,
 }));
 jest.mock(
   '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => ({
-    AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
+    InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
 jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
   AgentChatStreamingAutoScrollEffect: () => null,
 }));
 
-describe('AiChatTabMessageList', () => {
+describe('InboxTabMessageList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseIsWorkspaceSetupChat.mockReturnValue(false);
@@ -74,7 +74,7 @@ describe('AiChatTabMessageList', () => {
   it('should render nothing with no messages and no preamble', () => {
     mockUseAtomStateValue.mockReturnValue(false);
 
-    const { container } = render(<AiChatTabMessageList />);
+    const { container } = render(<InboxTabMessageList />);
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -84,7 +84,7 @@ describe('AiChatTabMessageList', () => {
 
     mockUseIsWorkspaceSetupChat.mockReturnValue(true);
 
-    const { getByTestId, queryByTestId } = render(<AiChatTabMessageList />);
+    const { getByTestId, queryByTestId } = render(<InboxTabMessageList />);
 
     expect(getByTestId('preamble')).toBeInTheDocument();
     expect(queryByTestId('scroll-wrapper')).not.toBeInTheDocument();
@@ -95,7 +95,7 @@ describe('AiChatTabMessageList', () => {
 
     mockUseIsWorkspaceSetupChat.mockReturnValue(true);
 
-    const { getByTestId } = render(<AiChatTabMessageList />);
+    const { getByTestId } = render(<InboxTabMessageList />);
 
     expect(getByTestId('scroll-wrapper')).toContainElement(
       getByTestId('preamble'),
@@ -105,17 +105,17 @@ describe('AiChatTabMessageList', () => {
   it('should give each surface its own scroll wrapper instance id', () => {
     mockUseAtomStateValue.mockReturnValue(true);
 
-    const renderForSurface = (surface: AiChatSurface) =>
+    const renderForSurface = (surface: InboxSurface) =>
       render(
-        <AiChatSurfaceContext.Provider value={surface}>
-          <AiChatTabMessageList />
-        </AiChatSurfaceContext.Provider>,
+        <InboxSurfaceContext.Provider value={surface}>
+          <InboxTabMessageList />
+        </InboxSurfaceContext.Provider>,
       )
         .container.querySelector('[data-testid="scroll-wrapper"]')
         ?.getAttribute('data-component-instance-id');
 
-    const pageInstanceId = renderForSurface(AI_CHAT_SURFACE.PAGE);
-    const sidePanelInstanceId = renderForSurface(AI_CHAT_SURFACE.SIDE_PANEL);
+    const pageInstanceId = renderForSurface(INBOX_SURFACE.PAGE);
+    const sidePanelInstanceId = renderForSurface(INBOX_SURFACE.SIDE_PANEL);
 
     expect(pageInstanceId).not.toBe(sidePanelInstanceId);
   });

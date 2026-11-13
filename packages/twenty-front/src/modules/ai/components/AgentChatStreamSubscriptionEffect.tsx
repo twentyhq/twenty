@@ -1,67 +1,62 @@
 import { useEffect } from 'react';
 
 import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { useAgentChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { useInboxSubscription } from '@/ai/hooks/useAgentChatSubscription';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AgentChatStreamSubscriptionEffect = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const isOnNewInboxSlot = useIsOnNewInboxSlot();
 
   useAgentChat();
 
-  useAgentChatSubscription(isOnNewAiChatSlot ? null : currentAiChatThread);
+  useInboxSubscription(isOnNewInboxSlot ? null : currentInboxThread);
 
-  const agentChatFetchedMessages = useAtomFamilyStateValue(
-    agentChatFetchedMessagesFamilyState,
-    { threadId: currentAiChatThread },
+  const inboxFetchedMessages = useAtomFamilyStateValue(
+    inboxFetchedMessagesFamilyState,
+    { threadId: currentInboxThread },
   );
 
-  const setAgentChatMessages = useSetAtomFamilyState(
-    agentChatMessagesFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const setInboxMessages = useSetAtomFamilyState(inboxMessagesFamilyState, {
+    threadId: currentInboxThread,
+  });
 
   const agentChatIsStreaming = useAtomFamilyStateValue(
     agentChatIsStreamingFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId: currentInboxThread },
   );
 
   const agentChatIsAwaitingPersistedRefetch = useAtomFamilyStateValue(
     agentChatIsAwaitingPersistedRefetchFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId: currentInboxThread },
   );
 
   const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
     agentChatIsAwaitingFirstChunkFamilyState,
-    { threadId: currentAiChatThread },
+    { threadId: currentInboxThread },
   );
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
 
-  const setAgentChatDisplayedThread = useSetAtomState(
-    agentChatDisplayedThreadState,
-  );
+  const setInboxDisplayedThread = useSetAtomState(inboxDisplayedThreadState);
 
   useEffect(() => {
     if (agentChatIsStreaming) {
       return;
     }
 
-    const isThreadSwitch = currentAiChatThread !== agentChatDisplayedThread;
+    const isThreadSwitch = currentInboxThread !== inboxDisplayedThread;
 
     if (
       !isThreadSwitch &&
@@ -71,25 +66,25 @@ export const AgentChatStreamSubscriptionEffect = () => {
     }
 
     if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
-      setAgentChatDisplayedThread(currentAiChatThread);
+      setInboxDisplayedThread(currentInboxThread);
 
       return;
     }
 
-    setAgentChatMessages(agentChatFetchedMessages);
+    setInboxMessages(inboxFetchedMessages);
 
     if (isThreadSwitch) {
-      setAgentChatDisplayedThread(currentAiChatThread);
+      setInboxDisplayedThread(currentInboxThread);
     }
   }, [
-    agentChatFetchedMessages,
+    inboxFetchedMessages,
     agentChatIsStreaming,
     agentChatIsAwaitingPersistedRefetch,
     agentChatIsAwaitingFirstChunk,
-    setAgentChatMessages,
-    currentAiChatThread,
-    agentChatDisplayedThread,
-    setAgentChatDisplayedThread,
+    setInboxMessages,
+    currentInboxThread,
+    inboxDisplayedThread,
+    setInboxDisplayedThread,
   ]);
 
   return null;

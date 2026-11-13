@@ -1,23 +1,23 @@
 import { isUndefined } from '@sniptt/guards';
 import uniqBy from 'lodash.uniqby';
 
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type InboxParticipantMention } from '@/ai/types/AgentChatParticipantMention';
 
-export const getAgentChatParticipantAdditionStatus = ({
+export const getInboxParticipantAdditionStatus = ({
   initialRecipients,
   participantMentions,
   addedWorkspaceMemberIds,
   writerWorkspaceMemberIds,
 }: {
-  initialRecipients: AgentChatParticipantMention[];
-  participantMentions: AgentChatParticipantMention[];
+  initialRecipients: InboxParticipantMention[];
+  participantMentions: InboxParticipantMention[];
   addedWorkspaceMemberIds: string[];
   writerWorkspaceMemberIds?: string[] | null;
 }) => {
   const addedWorkspaceMemberIdsSet = new Set(addedWorkspaceMemberIds);
   const isParticipantNotAdded = ({
     workspaceMemberId,
-  }: AgentChatParticipantMention) =>
+  }: InboxParticipantMention) =>
     !addedWorkspaceMemberIdsSet.has(workspaceMemberId);
   const hasUnverifiedInitialRecipients =
     isUndefined(writerWorkspaceMemberIds) &&

@@ -7,13 +7,13 @@ import { Input } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
+import { InboxThreadRow } from '@/ai/components/AiChatThreadRow';
 
 const onDetach = fn();
 
 const meta = {
   title: 'Modules/AI/AiChatThreadCompactRow',
-  component: AiChatThreadRow,
+  component: InboxThreadRow,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 368 } },
   args: {
@@ -31,7 +31,7 @@ const meta = {
     onClick: fn(),
     onContextMenu: fn(),
   },
-} satisfies Meta<typeof AiChatThreadRow>;
+} satisfies Meta<typeof InboxThreadRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

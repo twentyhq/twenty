@@ -1,9 +1,9 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadSubtitleContent } from '@/ai/utils/getAgentChatThreadSubtitleContent';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getInboxThreadSubtitleContent } from '@/ai/utils/getAgentChatThreadSubtitleContent';
 
 const buildThread = (
-  thread: Partial<AgentChatThreadRecord> = {},
-): AgentChatThreadRecord => ({
+  thread: Partial<InboxThreadRecord> = {},
+): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id: 'thread',
   title: 'Renewal prep',
@@ -17,10 +17,10 @@ const getContent = ({
   thread = buildThread(),
   draftPreviewText,
 }: {
-  thread?: AgentChatThreadRecord;
+  thread?: InboxThreadRecord;
   draftPreviewText?: string;
 }) =>
-  getAgentChatThreadSubtitleContent({
+  getInboxThreadSubtitleContent({
     thread,
     draftPreviewText,
     workspaceMembers: [],
@@ -28,7 +28,7 @@ const getContent = ({
     assistantDisplayName: 'Scout',
   });
 
-describe('getAgentChatThreadSubtitleContent', () => {
+describe('getInboxThreadSubtitleContent', () => {
   it('has no content without a message, draft or pending question', () => {
     expect(getContent({})).toEqual({
       isAwaitingAnswer: false,

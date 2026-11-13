@@ -1,5 +1,5 @@
-import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
+import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
@@ -7,43 +7,43 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
+import { InboxComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
-import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
-import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
+import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { InboxEmptyState } from '@/ai/components/AiChatEmptyState';
+import { InboxParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
+import { InboxNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
-import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
+import { InboxStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
-import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
-import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
-import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
-import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { InboxAddMenu } from '@/ai/components/AiChatAddMenu';
+import { InboxDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
+import { InboxDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
+import { InboxDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
+import { InboxComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
-import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { InboxEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
-import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
+import { useInboxEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
-import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
-import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
-import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
+import { INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasInboxThreadPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
+import { useIsInboxComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { inboxHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 
-const StyledInputArea = styled(StyledAiChatContentContainer)<{
+const StyledInputArea = styled(StyledInboxContentContainer)<{
   isMobile: boolean;
   isCentered?: boolean;
   hasPageContentInset: boolean;
@@ -66,7 +66,7 @@ const StyledInputArea = styled(StyledAiChatContentContainer)<{
   }};
   padding-inline: ${({ isCentered, hasPageContentInset }) =>
     hasPageContentInset && !isCentered
-      ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
+      ? INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING
       : themeCssVariables.spacing[4]};
 `;
 
@@ -140,73 +140,73 @@ const StyledComposerBottomSpacer = styled.div`
   }
 `;
 
-const EditableAiChatEditorSection = () => {
+const EditableInboxEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
-  const isComposerCentered = useIsAiChatComposerCentered();
-  const hasPageContentInset = useHasAiChatPageContentInset();
+  const isComposerCentered = useIsInboxComposerCentered();
+  const hasPageContentInset = useHasInboxThreadPageContentInset();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
   const shouldShowUsageLimitBanner =
     !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const canSendInboxMessage = useCanSendInboxMessage();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
-    currentAiChatThread,
+    inboxThreadIsDirectMessageFamilySelector,
+    currentInboxThread,
   );
 
-  const { editor } = useAiChatEditor();
+  const { editor } = useInboxEditor();
 
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
   const composer = (
     <StyledInputBox isMobile={isMobile}>
-      <AiChatComposerQuote />
+      <InboxComposerQuote />
       <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
       {!isDirectMessage && (
-        <AiChatDictationHint interimText={dictationInterimText} />
+        <InboxDictationHint interimText={dictationInterimText} />
       )}
-      <AiChatComposerActionsRow
+      <InboxComposerActionsRow
         leftActions={
           !isDirectMessage && (
             <>
-              <AiChatAddMenu editor={editor} />
-              <AiChatDictationButton />
+              <InboxAddMenu editor={editor} />
+              <InboxDictationButton />
               <AiChatContextUsageButton />
             </>
           )
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
         isModelPickerHidden={isDirectMessage}
-        sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
+        sendButton={<SendMessageButton isDisabled={!canSendInboxMessage} />}
       />
     </StyledInputBox>
   );
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const inboxHasMessage = useAtomStateValue(inboxHasMessageSelector);
 
   return (
     <>
-      <AiChatEditorFocusEffect editor={editor} />
+      <InboxEditorFocusEffect editor={editor} />
       <AiChatSentMessageHandOffEffect
         editor={editor}
         isComposerCentered={isComposerCentered}
       />
       {!isDirectMessage && (
-        <AiChatDictationEffect
+        <InboxDictationEffect
           onInterimText={setDictationInterimText}
           onFinalText={insertDictatedText}
         />
       )}
-      {!agentChatHasMessage && (
+      {!inboxHasMessage && (
         <StyledMessageListPlaceholder>
-          {!isComposerCentered && !isDirectMessage && <AiChatEmptyState />}
-          <AiChatStandaloneError />
+          {!isComposerCentered && !isDirectMessage && <InboxEmptyState />}
+          <InboxStandaloneError />
         </StyledMessageListPlaceholder>
       )}
 
@@ -216,20 +216,20 @@ const EditableAiChatEditorSection = () => {
         hasPageContentInset={hasPageContentInset}
       >
         {isComposerCentered && !isDirectMessage && (
-          <AiChatEmptyState isCentered />
+          <InboxEmptyState isCentered />
         )}
         {!isDirectMessage && <AgentChatContextPreview />}
         {hasNoEnabledModels && !isDirectMessage && (
-          <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
+          <InboxInlineBanner>{t`No AI provider is configured on this instance.`}</InboxInlineBanner>
         )}
         {hasReachedAiChatCreditsCap && !isDirectMessage && (
-          <AiChatNoMoreBillingCreditsBanner />
+          <InboxNoMoreBillingCreditsBanner />
         )}
         {shouldShowUsageLimitBanner && !isDirectMessage && (
           <AiChatUsageLimitReachedBanner />
         )}
         {!isDirectMessage && <AiChatUserCreditsExhaustedBanner />}
-        {!isDirectMessage && <AiChatParticipantMentionBar editor={editor} />}
+        {!isDirectMessage && <InboxParticipantMentionBar editor={editor} />}
         <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
       <StyledComposerBottomSpacer
@@ -239,11 +239,11 @@ const EditableAiChatEditorSection = () => {
   );
 };
 
-export const AiChatEditorSection = () => {
+export const InboxEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
-  const access = useCurrentAiChatThreadAccess();
-  const hasPageContentInset = useHasAiChatPageContentInset();
+  const access = useCurrentInboxThreadAccess();
+  const hasPageContentInset = useHasInboxThreadPageContentInset();
   if (access !== 'writer') {
     return (
       <StyledInputArea
@@ -257,9 +257,9 @@ export const AiChatEditorSection = () => {
               ? t`This conversation is no longer available.`
               : t`View only — You can read this conversation.`}
         </div>
-        <AiChatStandaloneError />
+        <InboxStandaloneError />
       </StyledInputArea>
     );
   }
-  return <EditableAiChatEditorSection />;
+  return <EditableInboxEditorSection />;
 };

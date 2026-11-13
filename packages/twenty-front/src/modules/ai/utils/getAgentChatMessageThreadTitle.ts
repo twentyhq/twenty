@@ -12,5 +12,5 @@ const isThreadTitleDataPart = (
   part: ExtendedUIMessagePart,
 ): part is ThreadTitleDataPart => part.type === 'data-thread-title';
 
-export const getAgentChatMessageThreadTitle = (message: ExtendedUIMessage) =>
+export const getInboxMessageThreadTitle = (message: ExtendedUIMessage) =>
   message.parts.find(isThreadTitleDataPart)?.data.title;

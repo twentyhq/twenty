@@ -1,11 +1,11 @@
-import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { getInboxContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 
-describe('getAiChatContextStoreInstanceId', () => {
+describe('getInboxContextStoreInstanceId', () => {
   it('should follow the side panel when the chat takes the whole page', () => {
     expect(
-      getAiChatContextStoreInstanceId({
-        isOnAiChatPage: true,
+      getInboxContextStoreInstanceId({
+        isOnInboxThreadPage: true,
         isSidePanelOpened: true,
         currentSidePanelPageId: 'side-panel-page-1',
       }),
@@ -14,8 +14,8 @@ describe('getAiChatContextStoreInstanceId', () => {
 
   it('should follow the main page when the chat sits in the side panel', () => {
     expect(
-      getAiChatContextStoreInstanceId({
-        isOnAiChatPage: false,
+      getInboxContextStoreInstanceId({
+        isOnInboxThreadPage: false,
         isSidePanelOpened: true,
         currentSidePanelPageId: 'side-panel-page-1',
       }),
@@ -24,8 +24,8 @@ describe('getAiChatContextStoreInstanceId', () => {
 
   it('should follow the main page when the chat page has no side panel open', () => {
     expect(
-      getAiChatContextStoreInstanceId({
-        isOnAiChatPage: true,
+      getInboxContextStoreInstanceId({
+        isOnInboxThreadPage: true,
         isSidePanelOpened: false,
         currentSidePanelPageId: undefined,
       }),

@@ -1,21 +1,18 @@
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 export const filterNewParticipantMentions = ({
   participantMentions,
   thread,
   currentWorkspaceMemberId,
 }: {
-  participantMentions: AgentChatParticipantMention[];
+  participantMentions: InboxParticipantMention[];
   thread:
-    | Pick<
-        AgentChatThreadRecord,
-        'workspaceMemberId' | 'writerWorkspaceMemberIds'
-      >
+    | Pick<InboxThreadRecord, 'workspaceMemberId' | 'writerWorkspaceMemberIds'>
     | null
     | undefined;
   currentWorkspaceMemberId: string | undefined;
-}): AgentChatParticipantMention[] => {
+}): InboxParticipantMention[] => {
   const existingParticipantIds = [
     currentWorkspaceMemberId,
     thread?.workspaceMemberId,

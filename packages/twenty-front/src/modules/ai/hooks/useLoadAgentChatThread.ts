@@ -2,28 +2,26 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useAddInboxThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { mergeLoadedAgentChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeLoadedInboxThread } from '@/ai/utils/mergeLoadedAgentChatThread';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
-export const useLoadAgentChatThread = () => {
+export const useLoadInboxThread = () => {
   const store = useStore();
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
-  const { addLoadedAgentChatThread } = useApplyAgentChatThreadUpdate();
-  const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
-  const { addAgentChatThreadParticipants } =
-    useAddAgentChatThreadParticipants();
+  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
+  const { addLoadedInboxThread } = useApplyInboxThreadUpdate();
+  const { fetchInboxThreadsPage } = useFetchInboxThreadsPage();
+  const { addInboxThreadParticipants } = useAddInboxThreadParticipants();
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
-  const loadAgentChatThread = useCallback(
+  const loadInboxThread = useCallback(
     async (threadId: string) => {
-      const page = await fetchAgentChatThreadsPage({
+      const page = await fetchInboxThreadsPage({
         lastCursor: null,
         threadIdFilter: { id: { eq: threadId } },
       });
@@ -38,17 +36,17 @@ export const useLoadAgentChatThread = () => {
         return null;
       }
 
-      await refreshAgentChatThreadPermissions([thread.id]);
+      await refreshInboxThreadPermissions([thread.id]);
 
-      const loadedThread = mergeLoadedAgentChatThread({
+      const loadedThread = mergeLoadedInboxThread({
         loadedThread: thread,
         storedThread: store.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(thread.id),
+          inboxThreadRecordFamilySelector.selectorFamily(thread.id),
         ),
       });
 
-      addLoadedAgentChatThread(loadedThread);
-      addAgentChatThreadParticipants(page.participants);
+      addLoadedInboxThread(loadedThread);
+      addInboxThreadParticipants(page.participants);
 
       const usageAtom = agentChatUsageFamilyState.atomFamily({
         threadId: thread.id,
@@ -61,13 +59,13 @@ export const useLoadAgentChatThread = () => {
       return loadedThread;
     },
     [
-      addLoadedAgentChatThread,
-      addAgentChatThreadParticipants,
-      fetchAgentChatThreadsPage,
-      refreshAgentChatThreadPermissions,
+      addLoadedInboxThread,
+      addInboxThreadParticipants,
+      fetchInboxThreadsPage,
+      refreshInboxThreadPermissions,
       store,
     ],
   );
 
-  return { loadAgentChatThread };
+  return { loadInboxThread };
 };

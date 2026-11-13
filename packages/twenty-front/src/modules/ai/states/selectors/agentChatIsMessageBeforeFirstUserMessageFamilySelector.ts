@@ -1,14 +1,14 @@
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatIsMessageBeforeFirstUserMessageFamilySelector =
+export const inboxIsMessageBeforeFirstUserMessageFamilySelector =
   createAtomFamilySelector<boolean, { messageId: string }>({
-    key: 'agentChatIsMessageBeforeFirstUserMessageFamilySelector',
+    key: 'inboxIsMessageBeforeFirstUserMessageFamilySelector',
     get:
       ({ messageId }) =>
       ({ get }) => {
-        const messages = get(agentChatDisplayedThreadMessagesSelector);
+        const messages = get(inboxDisplayedThreadMessagesSelector);
 
         for (const message of messages) {
           if (message.id === messageId) {

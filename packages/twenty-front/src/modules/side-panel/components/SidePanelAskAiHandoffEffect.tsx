@@ -2,11 +2,11 @@ import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxThreadPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type SidePanelAskAiHandoffEffectProps = {
@@ -21,23 +21,23 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
+    if (isInboxThreadPath(pathname)) {
       return;
     }
 
     // The inbox shows its own chat, which keeps the handoff pending; only the
     // onboarding chat ends there
-    if (isAiChatInboxPath(pathname)) {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    if (isInboxPath(pathname)) {
+      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
       return;
     }
 
-    if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
+    if (!store.get(shouldContinueInboxInSidePanelState.atom)) {
       return;
     }
 
-    store.set(shouldContinueAiChatInSidePanelState.atom, false);
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    store.set(shouldContinueInboxInSidePanelState.atom, false);
+    store.set(shouldOpenInboxAfterOnboardingState.atom, false);
 
     if (isSettingsPath(pathname)) {
       return;

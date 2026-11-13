@@ -1,26 +1,26 @@
-import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
+import { NavigationDrawerInboxThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
+import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
 
-export type NavigationDrawerAiChatThreadSectionProps = {
+export type NavigationDrawerInboxThreadSectionProps = {
   sectionId: string;
   title: string;
-  threads: AgentChatThreadListItem[];
+  threads: InboxThreadListItemData[];
   currentThreadId: string | null;
-  onThreadClick: (thread: AgentChatThreadListItem) => void;
+  onThreadClick: (thread: InboxThreadListItemData) => void;
 };
 
-export const NavigationDrawerAiChatThreadSection = ({
+export const NavigationDrawerInboxThreadSection = ({
   sectionId,
   title,
   threads,
   currentThreadId,
   onThreadClick,
-}: NavigationDrawerAiChatThreadSectionProps) => {
+}: NavigationDrawerInboxThreadSectionProps) => {
   return (
     <CollapsibleNavigationDrawerSection sectionId={sectionId} label={title}>
       {threads.map((thread) => (
-        <NavigationDrawerAiChatThreadItem
+        <NavigationDrawerInboxThreadItem
           key={thread.id}
           thread={thread}
           isActive={currentThreadId === thread.id}

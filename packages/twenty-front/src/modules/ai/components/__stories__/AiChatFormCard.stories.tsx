@@ -5,8 +5,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 
 import { styled } from '@linaria/react';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -22,8 +22,8 @@ const StoreSeederEffect = () => {
   const store = useStore();
 
   useEffect(() => {
-    store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
+    store.set(currentInboxThreadState.atom, 'thread-1');
+    store.set(inboxDisplayedThreadState.atom, 'thread-1');
   }, [store]);
 
   return null;

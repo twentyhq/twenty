@@ -4,26 +4,26 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AiChatComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
-import { type AiChatQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
+import { InboxComposerQuotePreview } from '@/ai/components/AiChatComposerQuotePreview';
+import { type InboxQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
-const quotedSource: AiChatQuotedMessageSource = {
+const quotedSource: InboxQuotedMessageSource = {
   status: 'available',
   authorName: 'Marco Rossi',
   excerpt: 'On it. Their procurement asked for a security review too.',
 };
 
-const meta: Meta<typeof AiChatComposerQuotePreview> = {
+const meta: Meta<typeof InboxComposerQuotePreview> = {
   title: 'Modules/AI/AiChatComposerQuotePreview',
-  component: AiChatComposerQuotePreview,
+  component: InboxComposerQuotePreview,
   decorators: [ComponentDecorator, RootDecorator],
   parameters: { container: { width: 400 } },
   args: { source: quotedSource, onRemove: fn() },
 };
 
 export default meta;
-type Story = StoryObj<typeof AiChatComposerQuotePreview>;
+type Story = StoryObj<typeof InboxComposerQuotePreview>;
 
 export const SelectedQuote: Story = {};
 
@@ -35,7 +35,7 @@ const RemoveQuoteFixture = ({ onRemove }: { onRemove: () => void }) => {
   }
 
   return (
-    <AiChatComposerQuotePreview
+    <InboxComposerQuotePreview
       source={quotedSource}
       onRemove={() => {
         setHasQuote(false);

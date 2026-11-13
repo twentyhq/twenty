@@ -1,34 +1,34 @@
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatThreadListGroup } from '@/ai/components/AiChatThreadListGroup';
-import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { InboxThreadListGroup } from '@/ai/components/AiChatThreadListGroup';
+import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
-type AiChatThreadListProps = {
-  threads: AgentChatThreadRecord[];
-  variant?: AiChatThreadListVariant;
+type InboxThreadListProps = {
+  threads: InboxThreadRecord[];
+  variant?: InboxThreadListVariant;
   selectedThreadIds?: string[];
   checkedThreadIds?: string[];
   onThreadClick: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onThreadCheckboxClick?: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onThreadContextMenu?: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onDetachThread?: (threadId: string) => void;
 };
 
-export const AiChatThreadList = ({
+export const InboxThreadList = ({
   threads,
   variant = 'default',
   selectedThreadIds = [],
@@ -37,13 +37,13 @@ export const AiChatThreadList = ({
   onThreadCheckboxClick,
   onThreadContextMenu,
   onDetachThread,
-}: AiChatThreadListProps) => {
+}: InboxThreadListProps) => {
   const { calendarStartDay } = useDateTimeFormat();
   const selectedThreadIdSet = new Set(selectedThreadIds);
   const checkedThreadIdSet = new Set(checkedThreadIds);
 
-  const renderThread = (thread: AgentChatThreadRecord) => (
-    <AiChatThreadListItem
+  const renderThread = (thread: InboxThreadRecord) => (
+    <InboxThreadListItem
       key={thread.id}
       thread={thread}
       variant={variant}
@@ -62,13 +62,13 @@ export const AiChatThreadList = ({
     <>
       {groupThreadsByDate({ threads, variant, calendarStartDay }).map(
         (dateGroup) => (
-          <AiChatThreadListGroup
+          <InboxThreadListGroup
             key={dateGroup.id}
             title={dateGroup.title}
             variant={variant}
           >
             {dateGroup.threads.map(renderThread)}
-          </AiChatThreadListGroup>
+          </InboxThreadListGroup>
         ),
       )}
     </>

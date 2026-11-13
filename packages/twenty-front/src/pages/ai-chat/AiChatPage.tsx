@@ -2,37 +2,37 @@ import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
+import { InboxCloseButton } from '@/ai/components/AiChatCloseButton';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { getDisplayedInboxThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
-import { AiChatPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
-import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { InboxNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
+import { InboxThreadPageEffects } from '~/pages/ai-chat/AiChatPageEffects';
+import { InboxThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
-export const AiChatPage = () => {
+export const InboxThreadPage = () => {
   const { threadId } = useParams();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const isOnNewInboxSlot = useIsOnNewInboxSlot();
   const isMobile = useIsMobile();
-  const displayedThreadId = getDisplayedAiChatThreadId({
+  const displayedThreadId = getDisplayedInboxThreadId({
     urlThreadId: threadId,
-    currentAiChatThread,
-    isOnNewAiChatSlot,
+    currentInboxThread,
+    isOnNewInboxSlot,
   });
 
   return (
     <>
-      <AiChatPageEffects />
+      <InboxThreadPageEffects />
       {isDefined(displayedThreadId) ? (
-        <AiChatThreadPageContent
+        <InboxThreadPageContent
           threadId={displayedThreadId}
-          headerActions={isMobile && <AiChatCloseButton />}
+          headerActions={isMobile && <InboxCloseButton />}
         />
       ) : (
         // A new chat has no record until its first message is sent
-        <AiChatNewThreadPageContent />
+        <InboxNewThreadPageContent />
       )}
     </>
   );

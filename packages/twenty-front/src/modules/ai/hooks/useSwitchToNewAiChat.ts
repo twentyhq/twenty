@@ -1,12 +1,12 @@
 import { useStore } from 'jotai';
 
-import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { useNavigateToInboxThreadPage } from '@/ai/hooks/useNavigateToAiChatPage';
+import { useSelectInboxThread } from '@/ai/hooks/useSelectAiChatThread';
+import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
+import { isInboxPath } from '~/utils/isAiChatInboxPath';
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;
@@ -15,26 +15,26 @@ type UseSwitchToNewAiChatParams = {
 export const useSwitchToNewAiChat = ({
   shouldOpenInFullPage = false,
 }: UseSwitchToNewAiChatParams = {}) => {
-  const { selectAiChatThread } = useSelectAiChatThread();
+  const { selectInboxThread } = useSelectInboxThread();
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
-  const { navigateToAiChatPage } = useNavigateToAiChatPage();
+  const { navigateToInboxThreadPage } = useNavigateToInboxThreadPage();
 
   const switchToNewChat = () => {
-    const isOnInboxPage = isAiChatInboxPath(window.location.pathname);
+    const isOnInboxPage = isInboxPath(window.location.pathname);
 
     if (!isOnInboxPage) {
-      store.set(agentChatNewThreadChannelIdState.atom, null);
+      store.set(inboxNewThreadChannelIdState.atom, null);
     }
 
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+    const newInboxThreadId = store.get(newInboxThreadIdState.atom);
 
-    selectAiChatThread(newAiChatThreadId);
+    selectInboxThread(newInboxThreadId);
 
     const shouldNavigateToChatPage = shouldOpenInFullPage && !isOnInboxPage;
 
     if (shouldNavigateToChatPage) {
-      navigateToAiChatPage();
+      navigateToInboxThreadPage();
     }
 
     if (!shouldOpenInFullPage && !isOnInboxPage) {
@@ -43,7 +43,7 @@ export const useSwitchToNewAiChat = ({
 
     store.set(shouldFocusChatEditorState.atom, true);
 
-    return newAiChatThreadId;
+    return newInboxThreadId;
   };
 
   return { switchToNewChat };

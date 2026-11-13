@@ -1,8 +1,8 @@
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { InboxThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -20,13 +20,13 @@ const StyledContainer = styled.div`
 
 export const SidePanelAskAiInfo = () => {
   const { t } = useLingui();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const isOnNewInboxSlot = useIsOnNewInboxSlot();
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
-    currentAiChatThread ?? '',
+    inboxThreadRecordFamilySelector,
+    currentInboxThread ?? '',
   );
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const displayLabel = useInboxThreadDisplayLabel({
     thread,
     fallbackLabel: t`Ask AI`,
   });
@@ -34,8 +34,8 @@ export const SidePanelAskAiInfo = () => {
   return (
     <StyledContainer>
       <HeaderIdentifier title={displayLabel} />
-      {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
-        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+      {isDefined(currentInboxThread) && !isOnNewInboxSlot && (
+        <InboxThreadDetailsDropdown threadId={currentInboxThread} />
       )}
     </StyledContainer>
   );

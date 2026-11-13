@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { useTheme } from 'twenty-ui/theme';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledChannelIcon = styled.div`
@@ -15,25 +15,25 @@ const StyledChannelIcon = styled.div`
   flex-shrink: 0;
 `;
 
-type AiChatThreadChannelIconProps = {
-  thread: AgentChatThreadRecord;
+type InboxThreadChannelIconProps = {
+  thread: InboxThreadRecord;
 };
 
-export const AiChatThreadChannelIcon = ({
+export const InboxThreadChannelIcon = ({
   thread,
-}: AiChatThreadChannelIconProps) => {
+}: InboxThreadChannelIconProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const channel = useAtomStateValue(agentChatChannelsState)?.find(
+  const channel = useAtomStateValue(inboxChannelsState)?.find(
     ({ id }) => id === thread.channelId,
   );
-  const agentChatSelectedChannelView = useAtomStateValue(
-    agentChatSelectedChannelViewSelector,
+  const inboxSelectedChannelView = useAtomStateValue(
+    inboxSelectedChannelViewSelector,
   );
 
   if (
     !isDefined(channel) ||
-    agentChatSelectedChannelView?.channelId === channel.id
+    inboxSelectedChannelView?.channelId === channel.id
   ) {
     return null;
   }
@@ -42,7 +42,7 @@ export const AiChatThreadChannelIcon = ({
 
   return (
     <StyledChannelIcon title={channelName}>
-      <AgentChatChannelIcon channel={channel} size={theme.icon.size.sm} />
+      <InboxChannelIcon channel={channel} size={theme.icon.size.sm} />
       <VisuallyHidden>{t`In ${channelName}`}</VisuallyHidden>
     </StyledChannelIcon>
   );

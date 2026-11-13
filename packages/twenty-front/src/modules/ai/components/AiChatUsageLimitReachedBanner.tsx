@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useManageUsageLimitsButton } from '@/settings/billing/hooks/useManageUsageLimitsButton';
 
 export const AiChatUsageLimitReachedBanner = () => {
@@ -10,10 +10,10 @@ export const AiChatUsageLimitReachedBanner = () => {
   const manageLimitsButton = useManageUsageLimitsButton();
 
   return (
-    <AiChatInlineBanner action={manageLimitsButton}>
+    <InboxInlineBanner action={manageLimitsButton}>
       {isDefined(manageLimitsButton)
         ? t`AI usage limit reached for this period.`
         : t`AI usage limit reached. Ask an admin to raise the limit.`}
-    </AiChatInlineBanner>
+    </InboxInlineBanner>
   );
 };

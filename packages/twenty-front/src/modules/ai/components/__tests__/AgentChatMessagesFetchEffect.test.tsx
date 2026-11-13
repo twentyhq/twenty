@@ -2,11 +2,11 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { render, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
-import { AgentChatMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
-import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
-import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { InboxMessagesFetchEffect } from '@/ai/components/AgentChatMessagesFetchEffect';
+import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { inboxLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
 import { GetChatMessagesDocument } from '~/generated-metadata/graphql';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -51,7 +51,7 @@ const CHAT_MESSAGES_MOCK = {
   },
 };
 
-describe('AgentChatMessagesFetchEffect', () => {
+describe('InboxMessagesFetchEffect', () => {
   it('keeps reactions received live over the ones a fetch read', async () => {
     const store = createStore();
     const liveReactions = [
@@ -69,15 +69,15 @@ describe('AgentChatMessagesFetchEffect', () => {
       },
     ];
 
-    store.set(currentAiChatThreadState.atom, THREAD_ID);
+    store.set(currentInboxThreadState.atom, THREAD_ID);
     store.set(
-      agentChatLiveReactionRevisionsFamilyState.atomFamily({
+      inboxLiveReactionRevisionsFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
       { [LIVE_MESSAGE_ID]: 2 },
     );
     store.set(
-      agentChatMessageReactionsFamilyState.atomFamily({
+      inboxMessageReactionsFamilyState.atomFamily({
         messageId: LIVE_MESSAGE_ID,
       }),
       liveReactions,
@@ -86,7 +86,7 @@ describe('AgentChatMessagesFetchEffect', () => {
     render(
       <JotaiProvider store={store}>
         <MockedProvider mocks={[CHAT_MESSAGES_MOCK]}>
-          <AgentChatMessagesFetchEffect />
+          <InboxMessagesFetchEffect />
         </MockedProvider>
       </JotaiProvider>,
     );
@@ -94,7 +94,7 @@ describe('AgentChatMessagesFetchEffect', () => {
     await waitFor(() =>
       expect(
         store.get(
-          agentChatFetchedMessagesFamilyState.atomFamily({
+          inboxFetchedMessagesFamilyState.atomFamily({
             threadId: THREAD_ID,
           }),
         ),
@@ -103,14 +103,14 @@ describe('AgentChatMessagesFetchEffect', () => {
 
     expect(
       store.get(
-        agentChatMessageReactionsFamilyState.atomFamily({
+        inboxMessageReactionsFamilyState.atomFamily({
           messageId: LIVE_MESSAGE_ID,
         }),
       ),
     ).toEqual(liveReactions);
     expect(
       store.get(
-        agentChatMessageReactionsFamilyState.atomFamily({
+        inboxMessageReactionsFamilyState.atomFamily({
           messageId: FETCHED_MESSAGE_ID,
         }),
       ),

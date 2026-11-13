@@ -1,18 +1,18 @@
 import { type createStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 
-export const setAgentChatSelectedChannelView = (
+export const setInboxSelectedChannelView = (
   store: ReturnType<typeof createStore>,
-  channelView: AgentChatChannelView | null,
+  channelView: InboxChannelView | null,
 ) => {
   store.set(
-    agentChatSelectedThreadListSourceState.atom,
+    inboxSelectedThreadListSourceState.atom,
     isDefined(channelView)
       ? { type: 'channel', channelView }
-      : AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
+      : INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
   );
 };

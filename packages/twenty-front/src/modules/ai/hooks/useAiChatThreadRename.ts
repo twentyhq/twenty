@@ -5,7 +5,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
-export const useAiChatThreadRename = (thread: {
+export const useInboxThreadRename = (thread: {
   id: string;
   title?: string | null;
 }) => {

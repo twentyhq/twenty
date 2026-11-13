@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const shouldContinueAiChatInSidePanelState = createAtomState<boolean>({
-  key: 'shouldContinueAiChatInSidePanelState',
+export const shouldContinueInboxInSidePanelState = createAtomState<boolean>({
+  key: 'shouldContinueInboxInSidePanelState',
   defaultValue: false,
 });

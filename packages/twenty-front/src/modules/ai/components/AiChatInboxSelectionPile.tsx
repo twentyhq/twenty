@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
-import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
-import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
-import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
-import { AI_CHAT_INBOX_SELECTION_PILE_MAX_CARDS } from '@/ai/constants/AiChatInboxSelectionPileMaxCards';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
+import { InboxThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { InboxThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
+import { InboxThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { INBOX_SELECTION_PILE_MAX_CARDS } from '@/ai/constants/AiChatInboxSelectionPileMaxCards';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledPile = styled.div`
   display: flex;
@@ -57,28 +57,26 @@ const StyledHeading = styled.div`
   min-width: 0;
 `;
 
-type AiChatInboxSelectionPileProps = {
-  threads: AgentChatThreadRecord[];
+type InboxSelectionPileProps = {
+  threads: InboxThreadRecord[];
 };
 
-export const AiChatInboxSelectionPile = ({
-  threads,
-}: AiChatInboxSelectionPileProps) => {
-  const pileThreads = threads.slice(0, AI_CHAT_INBOX_SELECTION_PILE_MAX_CARDS);
+export const InboxSelectionPile = ({ threads }: InboxSelectionPileProps) => {
+  const pileThreads = threads.slice(0, INBOX_SELECTION_PILE_MAX_CARDS);
 
   return (
     <StyledPile aria-hidden>
       {pileThreads.map((thread, index) => (
         <StyledCard key={thread.id} $depth={pileThreads.length - 1 - index}>
           <StyledLeading>
-            <AiChatThreadAvatar thread={thread} />
+            <InboxThreadAvatar thread={thread} />
           </StyledLeading>
           <StyledContent>
             <StyledHeading>
-              <AiChatThreadTitle thread={thread} />
-              <AiChatThreadActivityTime thread={thread} />
+              <InboxThreadTitle thread={thread} />
+              <InboxThreadActivityTime thread={thread} />
             </StyledHeading>
-            <AiChatThreadSubtitle thread={thread} />
+            <InboxThreadSubtitle thread={thread} />
           </StyledContent>
         </StyledCard>
       ))}

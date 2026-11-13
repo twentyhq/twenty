@@ -5,20 +5,20 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
-import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
-import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
-import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
-import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
-import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
-import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
+import { InboxThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { InboxThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
+import { InboxThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { InboxThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
+import { InboxThreadRow } from '@/ai/components/AiChatThreadRow';
+import { InboxThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
+import { InboxThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { useInboxThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
+import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { useInboxThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { useInboxThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -31,27 +31,27 @@ const StyledActivityTime = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-type AiChatThreadListItemProps = {
-  thread: AgentChatThreadRecord;
-  variant?: AiChatThreadListVariant;
+type InboxThreadListItemProps = {
+  thread: InboxThreadRecord;
+  variant?: InboxThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onCheckboxClick?: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onContextMenu?: (
-    thread: AgentChatThreadRecord,
+    thread: InboxThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onDetach?: () => void;
 };
 
-export const AiChatThreadListItem = ({
+export const InboxThreadListItem = ({
   thread,
   variant = 'default',
   isSelected,
@@ -60,9 +60,9 @@ export const AiChatThreadListItem = ({
   onCheckboxClick,
   onContextMenu,
   onDetach,
-}: AiChatThreadListItemProps) => {
+}: InboxThreadListItemProps) => {
   const { t } = useLingui();
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const displayLabel = useInboxThreadDisplayLabel({
     thread,
     fallbackLabel: t`Untitled`,
   });
@@ -73,7 +73,7 @@ export const AiChatThreadListItem = ({
     startRename,
     cancelRename,
     commitRename,
-  } = useAiChatThreadRename(thread);
+  } = useInboxThreadRename(thread);
 
   const actionsInstanceId = useId();
   const itemMenuDropdownId =
@@ -82,7 +82,7 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-  const { status: triageStatus } = useAiChatThreadTriage({
+  const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
   const agentChatIsStreaming = useAtomFamilyStateValue(
@@ -90,7 +90,7 @@ export const AiChatThreadListItem = ({
     { threadId: thread.id },
   );
   const { hasContent: hasSubtitleContent } =
-    useAgentChatThreadSubtitleContent(thread);
+    useInboxThreadSubtitleContent(thread);
   const isCompact = variant === 'compact';
   const shouldShowMore =
     isDefined(onDetach) ||
@@ -99,7 +99,7 @@ export const AiChatThreadListItem = ({
     triageStatus === 'open';
 
   return (
-    <AiChatThreadRow
+    <InboxThreadRow
       variant={variant}
       id={thread.id}
       label={displayLabel}
@@ -120,7 +120,7 @@ export const AiChatThreadListItem = ({
           : undefined
       }
       avatar={
-        <AiChatThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
+        <InboxThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
       }
       title={
         isRenaming ? (
@@ -150,27 +150,24 @@ export const AiChatThreadListItem = ({
             aria-label={t`Rename chat`}
           />
         ) : (
-          <AiChatThreadTitle thread={thread} />
+          <InboxThreadTitle thread={thread} />
         )
       }
       activityTime={
         !isRenaming && (
           <StyledActivityTime>
-            <AiChatThreadChannelIcon thread={thread} />
-            <AiChatThreadActivityTime thread={thread} variant={variant} />
+            <InboxThreadChannelIcon thread={thread} />
+            <InboxThreadActivityTime thread={thread} variant={variant} />
           </StyledActivityTime>
         )
       }
       subtitle={
         !isCompact || hasSubtitleContent ? (
-          <AiChatThreadSubtitle
-            thread={thread}
-            size={isCompact ? 'md' : 'sm'}
-          />
+          <InboxThreadSubtitle thread={thread} size={isCompact ? 'md' : 'sm'} />
         ) : undefined
       }
       actions={
-        <AiChatThreadActionsDropdown
+        <InboxThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}

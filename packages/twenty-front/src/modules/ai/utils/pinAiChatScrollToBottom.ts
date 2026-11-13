@@ -1,12 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_SCROLL_PIN_INTERRUPTING_EVENT_NAMES } from '@/ai/constants/AiChatScrollPinInterruptingEventNames';
-import { AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMaxDurationInMs';
-import { AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMinDurationInMs';
-import { AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinQuietDurationInMs';
-import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
+import { INBOX_SCROLL_PIN_INTERRUPTING_EVENT_NAMES } from '@/ai/constants/AiChatScrollPinInterruptingEventNames';
+import { INBOX_SCROLL_PIN_MAX_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMaxDurationInMs';
+import { INBOX_SCROLL_PIN_MIN_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMinDurationInMs';
+import { INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinQuietDurationInMs';
+import { scrollInboxToBottom } from '@/ai/utils/scrollAiChatToBottom';
 
-type PinAiChatScrollToBottomParams = {
+type PinInboxScrollToBottomParams = {
   scrollWrapperElement: Pick<
     HTMLElement,
     | 'scrollHeight'
@@ -19,10 +19,10 @@ type PinAiChatScrollToBottomParams = {
   onPinningStopped?: () => void;
 };
 
-export const pinAiChatScrollToBottom = ({
+export const pinInboxScrollToBottom = ({
   scrollWrapperElement,
   onPinningStopped,
-}: PinAiChatScrollToBottomParams) => {
+}: PinInboxScrollToBottomParams) => {
   const startedAtInMs = performance.now();
 
   let lastScrollHeightInPx = -1;
@@ -45,7 +45,7 @@ export const pinAiChatScrollToBottom = ({
 
     clearTimeout(watchdogTimeoutId);
 
-    AI_CHAT_SCROLL_PIN_INTERRUPTING_EVENT_NAMES.forEach((eventName) =>
+    INBOX_SCROLL_PIN_INTERRUPTING_EVENT_NAMES.forEach((eventName) =>
       scrollWrapperElement.removeEventListener(eventName, stop),
     );
 
@@ -53,7 +53,7 @@ export const pinAiChatScrollToBottom = ({
   };
 
   const pinCurrentFrame = () => {
-    scrollAiChatToBottom(scrollWrapperElement);
+    scrollInboxToBottom(scrollWrapperElement);
 
     const nowInMs = performance.now();
     const scrollHeightInPx = scrollWrapperElement.scrollHeight;
@@ -72,11 +72,11 @@ export const pinAiChatScrollToBottom = ({
     }
 
     const isQuiet =
-      nowInMs - lastChangeAtInMs >= AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS;
+      nowInMs - lastChangeAtInMs >= INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS;
 
     if (
       isQuiet &&
-      nowInMs - startedAtInMs >= AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS
+      nowInMs - startedAtInMs >= INBOX_SCROLL_PIN_MIN_DURATION_IN_MS
     ) {
       stop();
       return;
@@ -87,10 +87,10 @@ export const pinAiChatScrollToBottom = ({
 
   const watchdogTimeoutId = setTimeout(
     stop,
-    AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS,
+    INBOX_SCROLL_PIN_MAX_DURATION_IN_MS,
   );
 
-  AI_CHAT_SCROLL_PIN_INTERRUPTING_EVENT_NAMES.forEach((eventName) =>
+  INBOX_SCROLL_PIN_INTERRUPTING_EVENT_NAMES.forEach((eventName) =>
     scrollWrapperElement.addEventListener(eventName, stop, { passive: true }),
   );
 

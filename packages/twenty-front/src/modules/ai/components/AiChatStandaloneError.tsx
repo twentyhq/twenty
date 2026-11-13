@@ -1,37 +1,35 @@
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { inboxIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-const StyledErrorContainer = styled(StyledAiChatContentContainer)`
+const StyledErrorContainer = styled(StyledInboxContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-export const AiChatStandaloneError = () => {
-  const agentChatIsLoading = useAtomStateValue(agentChatIsLoadingSelector);
+export const InboxStandaloneError = () => {
+  const inboxIsLoading = useAtomStateValue(inboxIsLoadingSelector);
 
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
   const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+    threadId: inboxDisplayedThread,
   });
 
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const inboxHasMessage = useAtomStateValue(inboxHasMessageSelector);
 
   const shouldRender =
-    !agentChatHasMessage && isDefined(agentChatError) && !agentChatIsLoading;
+    !inboxHasMessage && isDefined(agentChatError) && !inboxIsLoading;
 
   if (!shouldRender) {
     return null;

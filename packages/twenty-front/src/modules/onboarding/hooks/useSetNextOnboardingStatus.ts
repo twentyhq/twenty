@@ -4,9 +4,9 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
@@ -23,8 +23,8 @@ export const useSetNextOnboardingStatus = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
+  const isOnboardingInboxEnabled = useAtomStateValue(
+    isOnboardingInboxEnabledState,
   );
 
   return useCallback(
@@ -68,8 +68,8 @@ export const useSetNextOnboardingStatus = () => {
         })
       ) {
         store.set(
-          shouldOpenAiChatAfterOnboardingState.atom,
-          isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,
+          shouldOpenInboxAfterOnboardingState.atom,
+          isOnboardingInboxEnabled && currentUser?.isWorkspaceCreator === true,
         );
       }
     },
@@ -77,7 +77,7 @@ export const useSetNextOnboardingStatus = () => {
       currentUser,
       currentWorkspace,
       isBillingEnabled,
-      isOnboardingAiChatEnabled,
+      isOnboardingInboxEnabled,
       store,
     ],
   );

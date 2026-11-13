@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { SidePanelAiChatPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
+import { SidePanelInboxPickerSkeleton } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSkeleton';
 
 const CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT = 3;
 
@@ -11,21 +11,21 @@ const StyledFooter = styled.div`
   padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
-type SidePanelAiChatPickerLoadMoreFooterProps = {
+type SidePanelInboxPickerLoadMoreFooterProps = {
   isLoadingMore: boolean;
   children: ReactNode;
 };
 
-export const SidePanelAiChatPickerLoadMoreFooter = ({
+export const SidePanelInboxPickerLoadMoreFooter = ({
   isLoadingMore,
   children,
-}: SidePanelAiChatPickerLoadMoreFooterProps) => {
+}: SidePanelInboxPickerLoadMoreFooterProps) => {
   const { t } = useLingui();
 
   return (
     <StyledFooter onMouseDown={(event) => event.preventDefault()}>
       {isLoadingMore ? (
-        <SidePanelAiChatPickerSkeleton
+        <SidePanelInboxPickerSkeleton
           label={t`Loading more chats...`}
           rowCount={CHAT_PICKER_PAGINATION_SKELETON_ROW_COUNT}
         />

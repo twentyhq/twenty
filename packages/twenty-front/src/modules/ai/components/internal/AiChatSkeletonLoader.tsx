@@ -1,17 +1,17 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const StyledSkeletonContainer = styled(StyledAiChatContentContainer)`
+const StyledSkeletonContainer = styled(StyledInboxContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-export const AiChatSkeletonLoader = () => {
+export const InboxSkeletonLoader = () => {
   return (
     <StyledSkeletonContainer>
       <SkeletonLine

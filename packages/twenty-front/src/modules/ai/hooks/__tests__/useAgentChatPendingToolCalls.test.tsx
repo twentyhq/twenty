@@ -4,9 +4,9 @@ import { type ReactNode } from 'react';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -34,8 +34,8 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('useAgentChatPendingToolCalls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, 'thread-id');
-    jotaiStore.set(agentChatMessagesFamilyState.atomFamily(key), [
+    jotaiStore.set(inboxDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(inboxMessagesFamilyState.atomFamily(key), [
       {
         id: 'assistant-1',
         role: 'assistant',

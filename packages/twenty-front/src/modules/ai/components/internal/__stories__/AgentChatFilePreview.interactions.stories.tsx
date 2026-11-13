@@ -3,16 +3,16 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { InboxFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 
 const FILE_NAME = 'Quarterly-account-archive-and-final-contract.pdf';
 
-const meta: Meta<typeof AgentChatFilePreview> = {
+const meta: Meta<typeof InboxFilePreview> = {
   title: 'Modules/AI/AgentChatFilePreview/Interactions',
-  component: AgentChatFilePreview,
+  component: InboxFilePreview,
   decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
   args: {
     file: {
@@ -27,7 +27,7 @@ const meta: Meta<typeof AgentChatFilePreview> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof AgentChatFilePreview>;
+type Story = StoryObj<typeof InboxFilePreview>;
 
 const PreviewStateProbe = () => {
   const filePreview = useAtomStateValue(filePreviewState);
@@ -44,7 +44,7 @@ export const TruncatedPreviewWithRemoval: Story = {
     <>
       <Button>Before preview</Button>
       <div style={{ width: 160 }}>
-        <AgentChatFilePreview {...args} />
+        <InboxFilePreview {...args} />
       </div>
       <PreviewStateProbe />
     </>

@@ -1,28 +1,28 @@
 import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 
-import { closingAiChatInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { resetClosingAiChatInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
+import { closingInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { resetClosingInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
 
-type AiChatInboxConversationCloseEffectProps = {
+type InboxConversationCloseEffectProps = {
   isPresent: boolean;
 };
 
-export const AiChatInboxConversationCloseEffect = ({
+export const InboxConversationCloseEffect = ({
   isPresent,
-}: AiChatInboxConversationCloseEffectProps) => {
+}: InboxConversationCloseEffectProps) => {
   const store = useStore();
 
   useLayoutEffect(() => {
     store.set(
-      closingAiChatInboxThreadIdState.atom,
-      isPresent ? null : store.get(currentAiChatThreadState.atom),
+      closingInboxThreadIdState.atom,
+      isPresent ? null : store.get(currentInboxThreadState.atom),
     );
   }, [isPresent, store]);
 
   useLayoutEffect(() => {
-    return () => resetClosingAiChatInboxThread(store);
+    return () => resetClosingInboxThread(store);
   }, [store]);
 
   return null;

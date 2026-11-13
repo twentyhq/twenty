@@ -4,7 +4,7 @@ import {
   type AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-export type AgentChatChannelView = {
+export type InboxChannelView = {
   channelId: string;
   channelStatus: AgentChatChannelThreadStatus;
   assignment: AgentChatChannelAssignmentFilter;

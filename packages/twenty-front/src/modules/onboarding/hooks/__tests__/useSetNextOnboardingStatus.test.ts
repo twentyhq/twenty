@@ -7,12 +7,12 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { ONBOARDING_INVITE_TEAM_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingInviteTeamPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -56,10 +56,7 @@ const renderHooks = (
     isWorkspaceCreator = true,
   }: RenderHooksOptions = {},
 ) => {
-  jotaiStore.set(
-    isOnboardingAiChatEnabledState.atom,
-    isOnboardingAiChatEnabled,
-  );
+  jotaiStore.set(isOnboardingInboxEnabledState.atom, isOnboardingAiChatEnabled);
 
   const { result } = renderHook(
     () => {
@@ -73,8 +70,8 @@ const renderHooks = (
         isBookCallOnboardingStepEnabledState,
       );
       const setNextOnboardingStatus = useSetNextOnboardingStatus();
-      const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-        shouldOpenAiChatAfterOnboardingState,
+      const shouldOpenInboxAfterOnboarding = useAtomStateValue(
+        shouldOpenInboxAfterOnboardingState,
       );
       return {
         currentUser,
@@ -84,7 +81,7 @@ const renderHooks = (
         setBilling,
         setIsBookCallOnboardingStepEnabled,
         setNextOnboardingStatus,
-        shouldOpenAiChatAfterOnboarding,
+        shouldOpenInboxAfterOnboarding,
       };
     },
     {
@@ -128,8 +125,8 @@ const renderHooks = (
     nextOnboardingStatus: result.current.currentUser?.onboardingStatus,
     previousOnboardingStatus:
       result.current.currentUser?.previousOnboardingStatus,
-    shouldOpenAiChatAfterOnboarding:
-      result.current.shouldOpenAiChatAfterOnboarding,
+    shouldOpenInboxAfterOnboarding:
+      result.current.shouldOpenInboxAfterOnboarding,
   };
 };
 
@@ -141,24 +138,24 @@ describe('useSetNextOnboardingStatus', () => {
   });
 
   it('should sync emails right after workspace activation', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.WORKSPACE_ACTIVATION);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should create profile after syncing emails', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.SYNC_EMAIL);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should invite the team right after profile creation', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.PROFILE_CREATION);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.INVITE_TEAM);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should skip the invite step after profile creation when the server did not flag it', () => {
@@ -174,61 +171,61 @@ describe('useSetNextOnboardingStatus', () => {
   });
 
   it('should complete after profile creation when more than 1 workspaceMember exist', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.PROFILE_CREATION, {
         withOneWorkspaceMember: false,
       });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should require a plan after profile creation when billing is enabled and the workspace has no subscription', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.PROFILE_CREATION, {
         withOneWorkspaceMember: false,
         isBillingEnabled: true,
         withSubscription: false,
       });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should complete after inviting the team when billing is disabled', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should complete after inviting the team when the workspace already has a subscription', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
         isBillingEnabled: true,
         withSubscription: true,
       });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should require a plan after inviting the team when billing is enabled and the workspace has no subscription', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
         isBillingEnabled: true,
         withSubscription: false,
       });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PLAN_REQUIRED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should book a call after inviting the team when the server flagged the step', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
         isBillingEnabled: true,
         isBookCallOnboardingStepEnabled: true,
         isBookCallOnboardingStepPending: true,
       });
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.BOOK_CALL);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should book a call after profile creation when more than 1 workspaceMember exist', () => {
@@ -296,38 +293,38 @@ describe('useSetNextOnboardingStatus', () => {
   });
 
   it('should not open the ai chat when the onboarding was already completed', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(OnboardingStatus.COMPLETED);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should not open the ai chat when the onboarding status is unknown', () => {
-    const { nextOnboardingStatus, shouldOpenAiChatAfterOnboarding } =
+    const { nextOnboardingStatus, shouldOpenInboxAfterOnboarding } =
       renderHooks(null);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.COMPLETED);
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should open the ai chat after onboarding when it is enabled', () => {
-    const { shouldOpenAiChatAfterOnboarding } = renderHooks(
+    const { shouldOpenInboxAfterOnboarding } = renderHooks(
       OnboardingStatus.INVITE_TEAM,
       {
         isOnboardingAiChatEnabled: true,
       },
     );
-    expect(shouldOpenAiChatAfterOnboarding).toBe(true);
+    expect(shouldOpenInboxAfterOnboarding).toBe(true);
   });
 
   it('should not open the ai chat after onboarding for an invitee', () => {
-    const { shouldOpenAiChatAfterOnboarding } = renderHooks(
+    const { shouldOpenInboxAfterOnboarding } = renderHooks(
       OnboardingStatus.INVITE_TEAM,
       {
         isOnboardingAiChatEnabled: true,
         isWorkspaceCreator: false,
       },
     );
-    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+    expect(shouldOpenInboxAfterOnboarding).toBe(false);
   });
 
   it('should make the left step the one to go back to when it was reversible', () => {

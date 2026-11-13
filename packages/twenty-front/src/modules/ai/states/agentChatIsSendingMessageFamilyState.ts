@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatIsSendingMessageFamilyState = createAtomFamilyState<
+export const inboxIsSendingMessageFamilyState = createAtomFamilyState<
   boolean,
   { threadId: string }
 >({
-  key: 'agentChatIsSendingMessageFamilyState',
+  key: 'inboxIsSendingMessageFamilyState',
   defaultValue: false,
 });

@@ -2,23 +2,23 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 
-import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useInboxThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 
-type AiChatThreadAvatarProps = {
-  thread: AgentChatThreadRecord;
+type InboxThreadAvatarProps = {
+  thread: InboxThreadRecord;
   size?: AvatarSize;
 };
 
-export const AiChatThreadAvatar = ({
+export const InboxThreadAvatar = ({
   thread,
   size = 'lg',
-}: AiChatThreadAvatarProps) => {
+}: InboxThreadAvatarProps) => {
   const { t } = useLingui();
-  const threadMembers = useAgentChatThreadMembers(thread);
+  const threadMembers = useInboxThreadMembers(thread);
 
   const [onlyMember, secondMember] = threadMembers;
 

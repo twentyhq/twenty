@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
-import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -108,7 +108,7 @@ export const useChatThreadsForRecord = ({
     fetchMoreRecords,
     hasNextPage,
     queryIdentifier,
-  } = useFindManyRecords<AgentChatThreadTargetRecord>({
+  } = useFindManyRecords<InboxThreadTargetRecord>({
     objectNameSingular: StandardObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,

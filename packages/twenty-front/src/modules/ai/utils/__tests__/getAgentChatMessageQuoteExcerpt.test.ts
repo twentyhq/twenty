@@ -1,31 +1,31 @@
-import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai/constants/AiChatQuoteExcerptMaxLength';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { INBOX_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai/constants/AiChatQuoteExcerptMaxLength';
+import { getInboxMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 
-describe('getAgentChatMessageQuoteExcerpt', () => {
+describe('getInboxMessageQuoteExcerpt', () => {
   it('keeps a short message as is', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getInboxMessageQuoteExcerpt({
         parts: [{ type: 'text', text: ' On it. ' }],
       }),
     ).toBe('On it.');
   });
 
   it('truncates a long message', () => {
-    const excerpt = getAgentChatMessageQuoteExcerpt({
+    const excerpt = getInboxMessageQuoteExcerpt({
       parts: [
         {
           type: 'text',
-          text: 'a'.repeat(AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH + 1),
+          text: 'a'.repeat(INBOX_QUOTE_EXCERPT_MAX_LENGTH + 1),
         },
       ],
     });
 
-    expect(excerpt).toBe(`${'a'.repeat(AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH)}…`);
+    expect(excerpt).toBe(`${'a'.repeat(INBOX_QUOTE_EXCERPT_MAX_LENGTH)}…`);
   });
 
   it('leaves out the quote a reply starts with', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getInboxMessageQuoteExcerpt({
         parts: [
           {
             type: 'text',
@@ -38,7 +38,7 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
   it('keeps a blockquote that is not a reply quote', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getInboxMessageQuoteExcerpt({
         parts: [
           {
             type: 'text',
@@ -51,7 +51,7 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
   it('keeps the text an assistant wrote around its tool calls', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getInboxMessageQuoteExcerpt({
         parts: [
           { type: 'reasoning', text: 'Looking for deals.' },
           { type: 'text', text: 'Let me check.' },

@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { upsertAgentChatMessage } from '@/ai/utils/upsertAgentChatMessage';
+import { upsertInboxMessage } from '@/ai/utils/upsertAgentChatMessage';
 
 const buildMessage = (id: string, text: string): ExtendedUIMessage => ({
   id,
@@ -8,12 +8,12 @@ const buildMessage = (id: string, text: string): ExtendedUIMessage => ({
   parts: [{ type: 'text', text }],
 });
 
-describe('upsertAgentChatMessage', () => {
+describe('upsertInboxMessage', () => {
   it('appends a message that is not in the list yet', () => {
     const first = buildMessage('first', 'Hello');
     const second = buildMessage('second', 'World');
 
-    expect(upsertAgentChatMessage([first], second)).toEqual([first, second]);
+    expect(upsertInboxMessage([first], second)).toEqual([first, second]);
   });
 
   it('replaces the message with the same id in place without mutating the list', () => {
@@ -24,7 +24,7 @@ describe('upsertAgentChatMessage', () => {
     ];
     const updatedStreamingMessage = buildMessage('streaming', 'World');
 
-    const result = upsertAgentChatMessage(messages, updatedStreamingMessage);
+    const result = upsertInboxMessage(messages, updatedStreamingMessage);
 
     expect(result).toEqual([messages[0], updatedStreamingMessage, messages[2]]);
     expect(result).not.toBe(messages);

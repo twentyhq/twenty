@@ -1,4 +1,4 @@
-import { getAgentChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
+import { getInboxThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 
 const RESOLVED_PARTICIPANT = {
   __typename: 'AgentChatThreadParticipant',
@@ -13,10 +13,10 @@ const RESOLVED_PARTICIPANT = {
   updatedAt: '2026-10-01T10:01:00.000Z',
 };
 
-describe('getAgentChatThreadParticipantFromRecord', () => {
+describe('getInboxThreadParticipantFromRecord', () => {
   it('keeps the inbox fields of a record event, with its resolved mention', () => {
     expect(
-      getAgentChatThreadParticipantFromRecord({
+      getInboxThreadParticipantFromRecord({
         ...RESOLVED_PARTICIPANT,
         workspaceMemberId: 'workspace-member',
       }),
@@ -25,7 +25,7 @@ describe('getAgentChatThreadParticipantFromRecord', () => {
 
   it('reads a record without a resolved mention as unresolved', () => {
     expect(
-      getAgentChatThreadParticipantFromRecord({
+      getInboxThreadParticipantFromRecord({
         id: 'participant',
         threadId: 'thread',
         lastMentionedAt: '2026-10-01T10:00:00.000Z',

@@ -11,10 +11,10 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 
-import { type AiChatThreadReason } from '@/ai/types/AiChatThreadReason';
+import { type InboxThreadReason } from '@/ai/types/AiChatThreadReason';
 
-export const AI_CHAT_THREAD_REASONS: Record<
-  AiChatThreadReason,
+export const INBOX_THREAD_REASONS: Record<
+  InboxThreadReason,
   { Icon: IconComponent; label: MessageDescriptor }
 > = {
   needsInput: { Icon: IconHandClick, label: msg`Needs input` },

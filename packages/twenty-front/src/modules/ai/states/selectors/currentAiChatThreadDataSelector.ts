@@ -1,16 +1,16 @@
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const currentAiChatThreadDataSelector = createAtomSelector<
-  AgentChatThreadRecord | undefined
+export const currentInboxThreadDataSelector = createAtomSelector<
+  InboxThreadRecord | undefined
 >({
-  key: 'currentAiChatThreadDataSelector',
+  key: 'currentInboxThreadDataSelector',
   get: ({ get }) => {
-    const currentThreadId = get(currentAiChatThreadState);
+    const currentThreadId = get(currentInboxThreadState);
 
-    return get(agentChatRecentThreadsSelector).find(
+    return get(inboxRecentThreadsSelector).find(
       (thread) => thread.id === currentThreadId,
     );
   },

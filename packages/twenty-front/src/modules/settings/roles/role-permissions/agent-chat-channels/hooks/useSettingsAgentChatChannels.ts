@@ -8,7 +8,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-export const useSettingsAgentChatChannels = () => {
+export const useSettingsInboxChannels = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );

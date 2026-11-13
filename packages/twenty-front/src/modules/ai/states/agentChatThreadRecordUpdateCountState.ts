@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatThreadRecordUpdateCountState = createAtomState<number>({
-  key: 'agentChatThreadRecordUpdateCountState',
+export const inboxThreadRecordUpdateCountState = createAtomState<number>({
+  key: 'inboxThreadRecordUpdateCountState',
   defaultValue: 0,
 });

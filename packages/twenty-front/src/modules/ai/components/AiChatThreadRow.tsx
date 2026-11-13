@@ -8,8 +8,8 @@ import { Checkbox } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadRowContent } from '@/ai/components/AiChatThreadRowContent';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { InboxThreadRowContent } from '@/ai/components/AiChatThreadRowContent';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 
 const StyledRow = styled.div<{ $isCompact: boolean }>`
   border-bottom: ${({ $isCompact }) =>
@@ -137,8 +137,8 @@ const StyledRequestActions = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
-type AiChatThreadRowProps = {
-  variant?: AiChatThreadListVariant;
+type InboxThreadRowProps = {
+  variant?: InboxThreadListVariant;
   id: string;
   label: string;
   avatar: ReactNode;
@@ -160,7 +160,7 @@ type AiChatThreadRowProps = {
 const stopPropagation = (event: MouseEvent<HTMLDivElement>) =>
   event.stopPropagation();
 
-export const AiChatThreadRow = ({
+export const InboxThreadRow = ({
   variant = 'default',
   id,
   label,
@@ -178,7 +178,7 @@ export const AiChatThreadRow = ({
   onClick,
   onCheckboxClick,
   onContextMenu,
-}: AiChatThreadRowProps) => {
+}: InboxThreadRowProps) => {
   const { t } = useLingui();
   const isCompact = variant === 'compact';
   const time = (
@@ -292,7 +292,7 @@ export const AiChatThreadRow = ({
       }
       actions={rowActions}
     >
-      <AiChatThreadRowContent
+      <InboxThreadRowContent
         variant={variant}
         title={title}
         subtitle={subtitle}

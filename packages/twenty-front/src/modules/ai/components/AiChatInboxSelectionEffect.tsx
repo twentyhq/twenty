@@ -2,38 +2,38 @@ import { useEffect, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
-type AiChatInboxSelectionEffectProps = {
+type InboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
-  threads: Pick<AgentChatThreadRecord, 'id'>[];
+  threads: Pick<InboxThreadRecord, 'id'>[];
 };
 
 // A chat leaves the list when it is done, snoozed or deleted; the one that
 // takes its place is selected, the way a mail inbox moves on. The list is
 // watched because generic record deletes, other tabs and reloads change it
 // before any chat code hears of it
-export const AiChatInboxSelectionEffect = ({
+export const InboxSelectionEffect = ({
   selectedThreadId,
   threads,
-}: AiChatInboxSelectionEffectProps) => {
+}: InboxSelectionEffectProps) => {
   const navigate = useNavigateApp();
-  const agentChatThreadListThreads = useAtomFamilySelectorValue(
-    agentChatThreadListThreadsFamilySelector,
-    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+  const inboxThreadListThreads = useAtomFamilySelectorValue(
+    inboxThreadListThreadsFamilySelector,
+    INBOX_RECENT_THREAD_LIST_SOURCE,
   );
   const { scope: selectedThreadScope } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
+    inboxThreadMemberStateFamilySelector,
     selectedThreadId ?? '',
   );
   const isSelectedThreadInInbox =
     selectedThreadScope === 'INBOX' &&
-    agentChatThreadListThreads.some(({ id }) => id === selectedThreadId);
+    inboxThreadListThreads.some(({ id }) => id === selectedThreadId);
   const [lastListedSelection, setLastListedSelection] = useState<{
     threadId: string;
     index: number;

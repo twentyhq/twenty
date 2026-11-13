@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
 import { type AgentChatThreadPresetFilter } from 'twenty-shared/ai';
 
-export const AGENT_CHAT_THREAD_PRESET_FILTER_LABELS: Record<
+export const INBOX_THREAD_PRESET_FILTER_LABELS: Record<
   AgentChatThreadPresetFilter,
   MessageDescriptor
 > = {

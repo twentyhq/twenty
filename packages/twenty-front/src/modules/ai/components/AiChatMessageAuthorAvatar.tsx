@@ -1,17 +1,17 @@
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
 import { AppChip } from '@/applications/components/AppChip';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type AiChatMessageAuthorAvatarProps = {
-  author: AgentChatMessageAuthor;
+type InboxMessageAuthorAvatarProps = {
+  author: InboxMessageAuthor;
 };
 
-export const AiChatMessageAuthorAvatar = ({
+export const InboxMessageAuthorAvatar = ({
   author,
-}: AiChatMessageAuthorAvatarProps) => {
+}: InboxMessageAuthorAvatarProps) => {
   switch (author.type) {
     case 'builtInAssistant':
       return <AiChatAssistantAvatar />;

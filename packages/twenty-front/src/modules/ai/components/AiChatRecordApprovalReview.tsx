@@ -9,7 +9,7 @@ import { AiChatApprovalRecordReview } from '@/ai/components/AiChatApprovalRecord
 import { AiChatToolCallApprovalFieldDisplay } from '@/ai/components/internal/AiChatToolCallApprovalFieldDisplay';
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai/components/internal/AiChatToolCallApprovalRecordStoreEffect';
-import { AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai/constants/AiChatRecordApprovalReviewColumnWidth';
+import { INBOX_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai/constants/AiChatRecordApprovalReviewColumnWidth';
 import { useToolCallApprovalFieldDefinitions } from '@/ai/hooks/useToolCallApprovalFieldDefinitions';
 import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -22,7 +22,7 @@ const StyledRawValue = styled.span`
   text-overflow: ellipsis;
 `;
 
-type AiChatRecordApprovalReviewProps = {
+type InboxRecordApprovalReviewProps = {
   objectNameSingular: string;
   operation: 'create' | 'update' | 'delete';
   label: string;
@@ -32,7 +32,7 @@ type AiChatRecordApprovalReviewProps = {
   disabled: boolean;
 };
 
-export const AiChatRecordApprovalReview = ({
+export const InboxRecordApprovalReview = ({
   objectNameSingular,
   operation,
   label,
@@ -40,7 +40,7 @@ export const AiChatRecordApprovalReview = ({
   selectedToolCallIds,
   onSelectedToolCallIdsChange,
   disabled,
-}: AiChatRecordApprovalReviewProps) => {
+}: InboxRecordApprovalReviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -77,7 +77,7 @@ export const AiChatRecordApprovalReview = ({
       icon: isDefined(iconName) ? (
         <Icon size={theme.icon.size.sm} />
       ) : undefined,
-      width: AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH,
+      width: INBOX_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH,
     };
   });
 

@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
-import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
-import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
-import { agentChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { InboxTypingIndicator } from '@/ai/components/AiChatTypingIndicator';
+import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasInboxThreadPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
+import { inboxTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -16,36 +16,36 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledContainer = styled(StyledAiChatContentContainer)<{
+const StyledContainer = styled(StyledInboxContentContainer)<{
   hasPageContentInset: boolean;
 }>`
   flex-shrink: 0;
   padding: 0
     ${({ hasPageContentInset }) =>
       hasPageContentInset
-        ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
+        ? INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING
         : themeCssVariables.spacing[4]}
     ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatTypingParticipants = () => {
-  const hasPageContentInset = useHasAiChatPageContentInset();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+export const InboxTypingParticipants = () => {
+  const hasPageContentInset = useHasInboxThreadPageContentInset();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const inboxHasMessage = useAtomStateValue(inboxHasMessageSelector);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatTypingWorkspaceMemberIds = useAtomFamilyStateValue(
-    agentChatTypingWorkspaceMemberIdsFamilyState,
-    { threadId: currentAiChatThread },
+  const inboxTypingWorkspaceMemberIds = useAtomFamilyStateValue(
+    inboxTypingWorkspaceMemberIdsFamilyState,
+    { threadId: currentInboxThread },
   );
 
   const participants = currentWorkspaceMembers
     .filter(
       ({ id }) =>
         id !== currentWorkspaceMember?.id &&
-        agentChatTypingWorkspaceMemberIds.includes(id),
+        inboxTypingWorkspaceMemberIds.includes(id),
     )
     .map((workspaceMember) => ({
       id: workspaceMember.id,
@@ -53,13 +53,13 @@ export const AiChatTypingParticipants = () => {
       avatarUrl: getAbsoluteImageUrl(workspaceMember.avatarUrl),
     }));
 
-  if (!agentChatHasMessage || !isNonEmptyArray(participants)) {
+  if (!inboxHasMessage || !isNonEmptyArray(participants)) {
     return null;
   }
 
   return (
     <StyledContainer hasPageContentInset={hasPageContentInset}>
-      <AiChatTypingIndicator participants={participants} />
+      <InboxTypingIndicator participants={participants} />
     </StyledContainer>
   );
 };

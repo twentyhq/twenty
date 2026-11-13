@@ -5,20 +5,20 @@ import { IconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFilter } from 'twenty-ui/icon';
 
-import { type AiChatInboxFilterOption } from '@/ai/types/AiChatInboxFilterOption';
+import { type InboxFilterOption } from '@/ai/types/AiChatInboxFilterOption';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
-type AiChatInboxFilterDropdownProps = {
-  options: AiChatInboxFilterOption[];
+type InboxFilterDropdownProps = {
+  options: InboxFilterOption[];
   isFiltered: boolean;
 };
 
-export const AiChatInboxFilterDropdown = ({
+export const InboxFilterDropdown = ({
   options,
   isFiltered,
-}: AiChatInboxFilterDropdownProps) => {
+}: InboxFilterDropdownProps) => {
   const { t } = useLingui();
   const instanceId = useId();
   const { formatNumber } = useNumberFormat();

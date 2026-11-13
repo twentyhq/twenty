@@ -1,8 +1,1 @@
-export const AGENT_CHAT_QUICK_REACTION_EMOJIS = [
-  '👍',
-  '👀',
-  '✅',
-  '🎉',
-  '🙏',
-  '😂',
-];
+export const INBOX_QUICK_REACTION_EMOJIS = ['👍', '👀', '✅', '🎉', '🙏', '😂'];

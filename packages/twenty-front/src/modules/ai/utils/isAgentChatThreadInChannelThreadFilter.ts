@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { AgentChatChannelThreadFilter } from '~/generated-metadata/graphql';
 
-export const isAgentChatThreadInChannelThreadFilter = ({
+export const isInboxThreadInChannelThreadFilter = ({
   thread,
   filter,
   isMentioned,
 }: {
-  thread: Pick<AgentChatThreadRecord, 'pendingQuestionMessageId'>;
+  thread: Pick<InboxThreadRecord, 'pendingQuestionMessageId'>;
   filter: AgentChatChannelThreadFilter;
   isMentioned: boolean;
 }): boolean => {

@@ -4,14 +4,14 @@ import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
-import { useRefreshAgentChatOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useLeaveRemovedInboxThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useRefreshInboxOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -19,7 +19,7 @@ import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/Obj
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-const AGENT_CHAT_THREADS_OPERATION_SIGNATURE = {
+const INBOX_THREADS_OPERATION_SIGNATURE = {
   objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   variables: {},
 };
@@ -28,7 +28,7 @@ const toThreadUpdate = ({
   recordId,
   updatedFields,
   updatedRecord,
-}: ObjectRecordOperationUpdateInput): Partial<AgentChatThreadRecord> & {
+}: ObjectRecordOperationUpdateInput): Partial<InboxThreadRecord> & {
   id: string;
 } => {
   const updatedAt = updatedRecord?.updatedAt;
@@ -36,11 +36,11 @@ const toThreadUpdate = ({
   return {
     id: recordId,
     ...(isString(updatedAt) ? { updatedAt } : {}),
-    ...(Object.assign({}, ...updatedFields) as Partial<AgentChatThreadRecord>),
+    ...(Object.assign({}, ...updatedFields) as Partial<InboxThreadRecord>),
   };
 };
 
-export const AgentChatThreadRecordOperationsEffect = () => {
+export const InboxThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -48,60 +48,59 @@ export const AgentChatThreadRecordOperationsEffect = () => {
       objectNameType: 'singular',
     },
   );
-  const { applyAgentChatThreadUpdate, addAgentChatThread } =
-    useApplyAgentChatThreadUpdate();
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
-  const refreshAgentChatThreads = useCallback(
+  const { applyInboxThreadUpdate, addInboxThread } =
+    useApplyInboxThreadUpdate();
+  const { loadInboxThreadList } = useLoadInboxThreadList();
+  const refreshInboxThreads = useCallback(
     () =>
-      loadAgentChatThreadList({
-        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+      loadInboxThreadList({
+        source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'refresh',
       }),
-    [loadAgentChatThreadList],
+    [loadInboxThreadList],
   );
-  const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
+  const { leaveRemovedInboxThread } = useLeaveRemovedInboxThread();
   const store = useStore();
-  const { refreshAgentChatOpenThreadsSummary } =
-    useRefreshAgentChatOpenThreadsSummary();
+  const { refreshInboxOpenThreadsSummary } =
+    useRefreshInboxOpenThreadsSummary();
   const isEnabled = isDefined(chatObjectMetadataItem);
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
-  const reloadAgentChatThreads = useCallback(async () => {
-    refreshAgentChatOpenThreadsSummary();
-    await refreshAgentChatThreads();
-    await leaveRemovedAiChatThread();
+  const reloadInboxThreads = useCallback(async () => {
+    refreshInboxOpenThreadsSummary();
+    await refreshInboxThreads();
+    await leaveRemovedInboxThread();
   }, [
-    leaveRemovedAiChatThread,
-    refreshAgentChatOpenThreadsSummary,
-    refreshAgentChatThreads,
+    leaveRemovedInboxThread,
+    refreshInboxOpenThreadsSummary,
+    refreshInboxThreads,
   ]);
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
-    operationSignature: AGENT_CHAT_THREADS_OPERATION_SIGNATURE,
+    operationSignature: INBOX_THREADS_OPERATION_SIGNATURE,
     skip: !isEnabled,
-    onSseReconnected: reloadAgentChatThreads,
+    onSseReconnected: reloadInboxThreads,
   });
 
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
       // Activity, assignment, questions and deletion all move the counts
-      refreshAgentChatOpenThreadsSummary();
+      refreshInboxOpenThreadsSummary();
 
       const applyUpdates = (
-        updates: (Partial<AgentChatThreadRecord> & { id: string })[],
+        updates: (Partial<InboxThreadRecord> & { id: string })[],
       ) => {
         for (const update of updates) {
-          applyAgentChatThreadUpdate(update);
+          applyInboxThreadUpdate(update);
         }
       };
 
       switch (operation.type) {
         case 'create-one': {
-          const createdThread =
-            operation.createdRecord as AgentChatThreadRecord;
+          const createdThread = operation.createdRecord as InboxThreadRecord;
 
-          addAgentChatThread(createdThread);
+          addInboxThread(createdThread);
           return;
         }
         case 'update-one':
@@ -116,10 +115,8 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           // An updated chat past the loaded pages moves to the top
           const listedThreadIds =
             store.get(
-              agentChatThreadListFamilyState.atomFamily(
-                getAgentChatThreadListSourceKey(
-                  AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
-                ),
+              inboxThreadListFamilyState.atomFamily(
+                getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
               ),
             )?.threadIds ?? [];
 
@@ -128,7 +125,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
               ({ recordId }) => !listedThreadIds.includes(recordId),
             )
           ) {
-            void refreshAgentChatThreads();
+            void refreshInboxThreads();
           }
           return;
         }
@@ -157,15 +154,15 @@ export const AgentChatThreadRecordOperationsEffect = () => {
         }
         default:
           // Destroy and bulk create events carry no ids
-          void reloadAgentChatThreads();
+          void reloadInboxThreads();
       }
     },
     [
-      addAgentChatThread,
-      applyAgentChatThreadUpdate,
-      refreshAgentChatOpenThreadsSummary,
-      refreshAgentChatThreads,
-      reloadAgentChatThreads,
+      addInboxThread,
+      applyInboxThreadUpdate,
+      refreshInboxOpenThreadsSummary,
+      refreshInboxThreads,
+      reloadInboxThreads,
       store,
     ],
   );

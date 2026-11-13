@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
-import { useRunAgentChatChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
+import { useRunInboxChannelMutation } from '@/ai/hooks/useRunAgentChatChannelMutation';
 import {
   UpdateAgentChatChannelDocument,
   type UpdateAgentChatChannelInput,
 } from '~/generated-metadata/graphql';
 
-export const useUpdateAgentChatChannel = () => {
-  const { runAgentChatChannelMutation } = useRunAgentChatChannelMutation();
+export const useUpdateInboxChannel = () => {
+  const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
   const updateAgentChatChannel = useCallback(
     ({
@@ -17,11 +17,11 @@ export const useUpdateAgentChatChannel = () => {
       channelId: string;
       input: UpdateAgentChatChannelInput;
     }) =>
-      runAgentChatChannelMutation({
+      runInboxChannelMutation({
         mutation: UpdateAgentChatChannelDocument,
         variables: { channelId, input },
       }),
-    [runAgentChatChannelMutation],
+    [runInboxChannelMutation],
   );
 
   return { updateAgentChatChannel };

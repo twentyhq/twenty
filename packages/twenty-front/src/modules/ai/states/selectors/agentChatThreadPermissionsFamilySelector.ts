@@ -6,21 +6,23 @@ import { recordPermissionsFamilySelector } from '@/object-record/record-sharing/
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 
-export const agentChatThreadPermissionsFamilySelector =
-  createAtomFamilySelector<RecordPermissionsDto | undefined, string>({
-    key: 'agentChatThreadPermissionsFamilySelector',
-    get:
-      (threadId) =>
-      ({ get }) => {
-        const objectMetadata = get(objectMetadataItemFamilySelector, {
-          objectName: StandardObjectNameSingular.AgentChatThread,
-          objectNameType: 'singular',
-        });
-        return isDefined(objectMetadata)
-          ? get(recordPermissionsFamilySelector, {
-              objectMetadataId: objectMetadata.id,
-              recordId: threadId,
-            })
-          : undefined;
-      },
-  });
+export const inboxThreadPermissionsFamilySelector = createAtomFamilySelector<
+  RecordPermissionsDto | undefined,
+  string
+>({
+  key: 'inboxThreadPermissionsFamilySelector',
+  get:
+    (threadId) =>
+    ({ get }) => {
+      const objectMetadata = get(objectMetadataItemFamilySelector, {
+        objectName: StandardObjectNameSingular.AgentChatThread,
+        objectNameType: 'singular',
+      });
+      return isDefined(objectMetadata)
+        ? get(recordPermissionsFamilySelector, {
+            objectMetadataId: objectMetadata.id,
+            recordId: threadId,
+          })
+        : undefined;
+    },
+});

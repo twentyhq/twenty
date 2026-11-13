@@ -35,15 +35,15 @@ jest.mock('@/settings/roles/role/hooks/useSaveDraftRoleToDB', () => ({
 jest.mock(
   '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty',
   () => ({
-    useIsRoleAgentChatChannelAccessDirty: () => false,
+    useIsRoleInboxChannelAccessDirty: () => false,
   }),
 );
 
 jest.mock(
   '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess',
   () => ({
-    useSaveRoleAgentChatChannelAccess: () => ({
-      saveRoleAgentChatChannelAccess: jest.fn(),
+    useSaveRoleInboxChannelAccess: () => ({
+      saveRoleInboxChannelAccess: jest.fn(),
     }),
   }),
 );
@@ -51,14 +51,14 @@ jest.mock(
 jest.mock(
   '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess',
   () => ({
-    useResetRoleAgentChatChannelAccess: () => ({
-      resetRoleAgentChatChannelAccess: jest.fn(),
+    useResetRoleInboxChannelAccess: () => ({
+      resetRoleInboxChannelAccess: jest.fn(),
     }),
   }),
 );
 
 jest.mock('@/ai/hooks/useRefreshAgentChatChannels', () => ({
-  useRefreshAgentChatChannels: () => ({ refreshAgentChatChannels: jest.fn() }),
+  useRefreshInboxChannels: () => ({ refreshInboxChannels: jest.fn() }),
 }));
 
 jest.mock('@/users/hooks/useLoadCurrentUser', () => ({

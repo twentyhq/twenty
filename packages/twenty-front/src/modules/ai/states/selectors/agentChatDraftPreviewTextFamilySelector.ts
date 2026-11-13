@@ -1,27 +1,27 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { aiChatAssistantProfileSelector } from '@/ai/states/selectors/aiChatAssistantProfileSelector';
-import { getAgentChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
+import { getInboxPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatDraftPreviewTextFamilySelector = createAtomFamilySelector<
+export const inboxDraftPreviewTextFamilySelector = createAtomFamilySelector<
   string | null,
   string
 >({
-  key: 'agentChatDraftPreviewTextFamilySelector',
+  key: 'inboxDraftPreviewTextFamilySelector',
   get:
     (threadId: string) =>
     ({ get }) => {
-      const serializedDraft = get(agentChatDraftsByThreadIdState)[threadId];
+      const serializedDraft = get(inboxDraftsByThreadIdState)[threadId];
 
       if (!isNonEmptyString(serializedDraft)) {
         return null;
       }
 
       const assistantProfile = get(aiChatAssistantProfileSelector);
-      const text = getAgentChatPreviewPlainText({
+      const text = getInboxPreviewPlainText({
         markdown: tipTapDocumentToMarkdown(serializedDraft),
         assistantDisplayName: assistantProfile.displayName,
       });

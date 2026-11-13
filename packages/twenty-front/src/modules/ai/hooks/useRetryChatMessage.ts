@@ -3,9 +3,9 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -23,7 +23,7 @@ export const useRetryChatMessage = () => {
   const { modelIdForRequest } = useAgentChatModelId();
 
   const retryChatMessage = useCallback(async () => {
-    const threadId = store.get(agentChatDisplayedThreadState.atom);
+    const threadId = store.get(inboxDisplayedThreadState.atom);
 
     if (!isDefined(threadId)) {
       return;
@@ -48,7 +48,7 @@ export const useRetryChatMessage = () => {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 
-      dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
     } catch (retryError) {
       store.set(isAwaitingFirstChunkAtom, false);
       store.set(

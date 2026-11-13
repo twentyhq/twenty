@@ -3,7 +3,7 @@ import { ContextStorePageType } from 'twenty-shared/types';
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 
-export const getAiChatBrowsingContextType = ({
+export const getInboxBrowsingContextType = ({
   pageType,
   viewType,
 }: {

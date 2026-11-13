@@ -4,7 +4,7 @@ import { MentionTag } from '@/mention/extensions/MentionTag';
 import { SkillSuggestion } from '@/skill-suggestion/extensions/SkillSuggestion';
 import { SkillTag } from '@/skill-suggestion/extensions/SkillTag';
 
-export const AI_CHAT_EDITOR_PROFILE = {
+export const INBOX_EDITOR_PROFILE = {
   chrome: 'document',
   variant: 'app',
   minHeight: 0,

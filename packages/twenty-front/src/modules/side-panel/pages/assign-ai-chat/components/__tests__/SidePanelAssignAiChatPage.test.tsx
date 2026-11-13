@@ -9,10 +9,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { SidePanelAssignInboxThreadPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
+import { assignInboxThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -22,11 +22,11 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const assignAgentChatThreads = jest.fn();
+const assignInboxThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useAssignAgentChatThreads', () => ({
-  useAssignAgentChatThreads: () => ({ assignAgentChatThreads }),
+  useAssignInboxThreads: () => ({ assignInboxThreads }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -48,7 +48,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const setThreads = (threads: { id: string; assigneeId: string | null }[]) => {
-  setAgentChatThreadList(
+  setInboxThreadList(
     jotaiStore,
     threads.map(
       ({ id, assigneeId }) =>
@@ -61,12 +61,12 @@ const setThreads = (threads: { id: string; assigneeId: string | null }[]) => {
     ),
   );
   jotaiStore.set(
-    assignAiChatThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
+    assignInboxThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
     threads.map(({ id }) => id),
   );
 };
 
-describe('SidePanelAssignAiChatPage', () => {
+describe('SidePanelAssignInboxThreadPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -93,7 +93,7 @@ describe('SidePanelAssignAiChatPage', () => {
       { id: 'thread-2', assigneeId: null },
     ]);
 
-    render(<SidePanelAssignAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelAssignInboxThreadPage />, { wrapper: Wrapper });
 
     const memberLabels = screen
       .getAllByText(/Austen|Schiler/)
@@ -105,7 +105,7 @@ describe('SidePanelAssignAiChatPage', () => {
     await userEvent.click(screen.getByText('Phil Schiler'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignInboxThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       assigneeWorkspaceMemberId: 'phil',
     });
@@ -114,7 +114,7 @@ describe('SidePanelAssignAiChatPage', () => {
   it('narrows the members to the search', async () => {
     setThreads([{ id: 'thread-1', assigneeId: null }]);
 
-    render(<SidePanelAssignAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelAssignInboxThreadPage />, { wrapper: Wrapper });
 
     await userEvent.type(
       screen.getByPlaceholderText('Search members'),
@@ -128,11 +128,11 @@ describe('SidePanelAssignAiChatPage', () => {
   it('offers to clear the assignee of an assigned chat', async () => {
     setThreads([{ id: 'thread-1', assigneeId: 'phil' }]);
 
-    render(<SidePanelAssignAiChatPage />, { wrapper: Wrapper });
+    render(<SidePanelAssignInboxThreadPage />, { wrapper: Wrapper });
 
     await userEvent.click(screen.getByText('No assignee'));
 
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignInboxThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1'],
       assigneeWorkspaceMemberId: null,
     });

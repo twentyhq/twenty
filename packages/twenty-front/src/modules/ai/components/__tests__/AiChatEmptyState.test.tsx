@@ -2,12 +2,12 @@ import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxEmptyState } from '@/ai/components/AiChatEmptyState';
+import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -23,17 +23,17 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('AiChatEmptyState', () => {
+describe('InboxEmptyState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(newInboxThreadIdState.atom, THREAD_ID);
+    jotaiStore.set(currentInboxThreadState.atom, THREAD_ID);
+    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
   });
 
   it('should render the suggested prompts when there is no message, no error and nothing loading', () => {
-    const { getByTestId } = render(<AiChatEmptyState />, {
+    const { getByTestId } = render(<InboxEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -48,7 +48,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState />, {
+    const { container } = render(<InboxEmptyState />, {
       wrapper: Wrapper,
     });
 
@@ -61,7 +61,7 @@ describe('AiChatEmptyState', () => {
       true,
     );
 
-    const { container } = render(<AiChatEmptyState />, {
+    const { container } = render(<InboxEmptyState />, {
       wrapper: Wrapper,
     });
 

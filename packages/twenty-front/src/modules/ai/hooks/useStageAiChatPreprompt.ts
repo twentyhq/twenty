@@ -1,23 +1,21 @@
 import { useStore } from 'jotai';
 
-import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
 import {
   type AgentChatPrepromptMode,
   agentChatPrepromptState,
 } from '@/ai/states/agentChatPrepromptState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 // Sending reads the draft, not the editor, so it's written before AgentChatPrepromptEffect picks it up.
 export const useStageAiChatPreprompt = () => {
   const store = useStore();
-  const setAgentChatDraftsByThreadId = useSetAtomState(
-    agentChatDraftsByThreadIdState,
-  );
+  const setInboxDraftsByThreadId = useSetAtomState(inboxDraftsByThreadIdState);
   const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
 
   const stageAiChatPreprompt = ({
@@ -27,22 +25,22 @@ export const useStageAiChatPreprompt = () => {
     serializedDocument: string;
     mode: AgentChatPrepromptMode;
   }) => {
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+    const newInboxThreadId = store.get(newInboxThreadIdState.atom);
     const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
+      store.get(currentInboxThreadState.atom) ?? newInboxThreadId;
     const isIdleNewChat =
-      threadId === newAiChatThreadId &&
-      !store.get(agentChatIsSendingMessageFamilyState.atomFamily({ threadId }));
+      threadId === newInboxThreadId &&
+      !store.get(inboxIsSendingMessageFamilyState.atomFamily({ threadId }));
 
-    setAgentChatDraftsByThreadId((previousDrafts) => ({
+    setInboxDraftsByThreadId((previousDrafts) => ({
       ...previousDrafts,
       [threadId]: serializedDocument,
     }));
 
     if (isIdleNewChat) {
       store.set(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-        AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+        inboxNewThreadRecipientsFamilyState.atomFamily(threadId),
+        INBOX_NEW_THREAD_DEFAULT_RECIPIENTS,
       );
     }
 

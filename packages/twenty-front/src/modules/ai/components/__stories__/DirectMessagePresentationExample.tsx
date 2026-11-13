@@ -6,7 +6,7 @@ import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
-import { agentChatOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
+import { inboxOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
 import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/ai/components/__stories__/directMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -43,7 +43,7 @@ export const DirectMessagePresentationExample = ({
     const initialStore = createStore();
     initialStore.set(isNavigationDrawerExpandedState.atom, true);
     initialStore.set(
-      agentChatOnlineWorkspaceMemberIdsState.atom,
+      inboxOnlineWorkspaceMemberIdsState.atom,
       onlineWorkspaceMemberIds ?? null,
     );
     return initialStore;

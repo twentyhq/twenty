@@ -1,4 +1,4 @@
-export const AI_CHAT_SCROLL_PIN_INTERRUPTING_EVENT_NAMES = [
+export const INBOX_SCROLL_PIN_INTERRUPTING_EVENT_NAMES = [
   'wheel',
   'pointerdown',
   'keydown',
