@@ -344,6 +344,7 @@ export {
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
+export { isClientIdMetadataDocumentUrl } from './utils/isClientIdMetadataDocumentUrl';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export { isOAuthClientApplication } from './utils/isOAuthClientApplication';

@@ -1,4 +1,4 @@
-import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
+import { isClientIdMetadataDocumentUrl } from '@/application/utils/isClientIdMetadataDocumentUrl';
 
 describe('isClientIdMetadataDocumentUrl', () => {
   it('accepts an https URL with a path', () => {

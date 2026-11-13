@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type ApplicationOAuthClient } from '@/application/applicationOAuthClientType';
+import { isClientIdMetadataDocumentUrl } from '@/application/utils/isClientIdMetadataDocumentUrl';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { getUrlSafely } from '@/utils/getUrlSafely';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -20,27 +21,13 @@ const getClientIdMetadataDocumentUrlErrors = (
     ];
   }
 
-  const errors: string[] = [];
-
-  if (url.protocol !== 'https:') {
-    errors.push(
-      `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must use https`,
-    );
+  if (!isClientIdMetadataDocumentUrl(clientIdMetadataDocumentUrl)) {
+    return [
+      `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must use https, have a path, and have no fragment or credentials`,
+    ];
   }
 
-  if (url.pathname === '/') {
-    errors.push(
-      `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must have a path`,
-    );
-  }
-
-  if (url.hash !== '' || url.username !== '' || url.password !== '') {
-    errors.push(
-      `OAuth client metadata document URL "${clientIdMetadataDocumentUrl}" must not have a fragment or credentials`,
-    );
-  }
-
-  return errors;
+  return [];
 };
 
 export const validateApplicationOAuthClient = (

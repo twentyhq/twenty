@@ -1,4 +1,4 @@
-import { getUrlSafely } from 'twenty-shared/utils';
+import { getUrlSafely } from '@/utils/getUrlSafely';
 
 export const isClientIdMetadataDocumentUrl = (clientId: string): boolean => {
   const url = getUrlSafely(clientId);
