@@ -15,9 +15,14 @@ import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
 import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
+import { type DeferredWorkspaceOperationPayload } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
+
+type ObjectCompute = DeferredWorkspaceOperationPayload<
+  typeof COMPUTE_OPERATION_NAME
+>['objectComputes'][number];
 
 @Injectable()
 export class AccessGroupPropagationPlanService {
@@ -78,7 +83,10 @@ export class AccessGroupPropagationPlanService {
       if (
         areRecordAccessGroupComputesAlreadyPlanned({
           waitingObjectMetadataIds: waitingComputePayloads.flatMap(
-            ({ objectMetadataIds }) => objectMetadataIds,
+            ({ objectComputes }) =>
+              objectComputes
+                .filter(({ isComputed }) => !isComputed)
+                .map(({ objectMetadataId }) => objectMetadataId),
           ),
           objectMetadataIds: plannedObjectMetadataIds,
         })
@@ -97,14 +105,15 @@ export class AccessGroupPropagationPlanService {
             {
               name: COMPUTE_OPERATION_NAME,
               payload: {
-                objectMetadataIds: plannedObjectMetadataIds,
-                plannedRecordCount: plannedObjectMetadataIds.reduce(
-                  (recordCount, objectMetadataId) =>
-                    recordCount +
-                    (recordCountByObjectMetadataId.get(objectMetadataId) ?? 0),
-                  0,
+                objectComputes: plannedObjectMetadataIds.map(
+                  (objectMetadataId) => ({
+                    objectMetadataId,
+                    plannedRecordCount:
+                      recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
+                    computedRecordCount: 0,
+                    isComputed: false,
+                  }),
                 ),
-                computedRecordCount: 0,
               },
             },
           ],
@@ -125,26 +134,33 @@ export class AccessGroupPropagationPlanService {
     workspaceId: string;
     recordCount: number;
   }): Promise<void> {
-    await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
-      {
-        workspaceId,
-        name: COMPUTE_OPERATION_NAME,
-        updatePayload: (payload) => ({
-          ...payload,
-          computedRecordCount: payload.computedRecordCount + recordCount,
-        }),
-      },
-    );
+    await this.updateNextObjectCompute({
+      workspaceId,
+      updateObjectCompute: (objectCompute) => ({
+        ...objectCompute,
+        computedRecordCount: objectCompute.computedRecordCount + recordCount,
+      }),
+    });
   }
 
-  async resetComputedRecordCount(workspaceId: string): Promise<void> {
-    await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
-      {
-        workspaceId,
-        name: COMPUTE_OPERATION_NAME,
-        updatePayload: (payload) => ({ ...payload, computedRecordCount: 0 }),
-      },
-    );
+  async startNextObjectCompute(workspaceId: string): Promise<void> {
+    await this.updateNextObjectCompute({
+      workspaceId,
+      updateObjectCompute: (objectCompute) => ({
+        ...objectCompute,
+        computedRecordCount: 0,
+      }),
+    });
+  }
+
+  async completeNextObjectCompute(workspaceId: string): Promise<void> {
+    await this.updateNextObjectCompute({
+      workspaceId,
+      updateObjectCompute: (objectCompute) => ({
+        ...objectCompute,
+        isComputed: true,
+      }),
+    });
   }
 
   async findProgress(
@@ -156,23 +172,61 @@ export class AccessGroupPropagationPlanService {
         name: COMPUTE_OPERATION_NAME,
         statuses: ['PENDING', 'IN_PROGRESS'],
       });
-    const sumRecordCounts = (
-      key: 'plannedRecordCount' | 'computedRecordCount',
-    ): number =>
-      computePayloads.reduce(
-        (recordCount, payload) => recordCount + payload[key],
-        0,
-      );
-    const computedRecordCount = sumRecordCounts('computedRecordCount');
-    const totalRecordCount = Math.max(
-      sumRecordCounts('plannedRecordCount'),
-      computedRecordCount,
-    );
+    const recordCounts = computePayloads
+      .flatMap(({ objectComputes }) => objectComputes)
+      .map(({ plannedRecordCount, computedRecordCount, isComputed }) => {
+        const totalRecordCount = Math.max(
+          plannedRecordCount,
+          computedRecordCount,
+        );
+
+        return {
+          totalRecordCount,
+          remainingRecordCount: isComputed
+            ? 0
+            : totalRecordCount - computedRecordCount,
+        };
+      });
 
     return {
-      totalRecordCount,
-      remainingRecordCount: totalRecordCount - computedRecordCount,
+      totalRecordCount: recordCounts.reduce(
+        (recordCount, { totalRecordCount }) => recordCount + totalRecordCount,
+        0,
+      ),
+      remainingRecordCount: recordCounts.reduce(
+        (recordCount, { remainingRecordCount }) =>
+          recordCount + remainingRecordCount,
+        0,
+      ),
       isInProgress: isNonEmptyArray(computePayloads),
     };
+  }
+
+  private async updateNextObjectCompute({
+    workspaceId,
+    updateObjectCompute,
+  }: {
+    workspaceId: string;
+    updateObjectCompute: (objectCompute: ObjectCompute) => ObjectCompute;
+  }): Promise<void> {
+    await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
+      {
+        workspaceId,
+        name: COMPUTE_OPERATION_NAME,
+        updatePayload: ({ objectComputes }) => {
+          const nextObjectComputeIndex = objectComputes.findIndex(
+            ({ isComputed }) => !isComputed,
+          );
+
+          return {
+            objectComputes: objectComputes.map((objectCompute, index) =>
+              index === nextObjectComputeIndex
+                ? updateObjectCompute(objectCompute)
+                : objectCompute,
+            ),
+          };
+        },
+      },
+    );
   }
 }

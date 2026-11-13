@@ -10,9 +10,12 @@ type DeferredWorkspaceOperationPayloadByName = {
     coreWorkflowVersionId?: string;
   };
   compute_recordAccessGroupIds: {
-    objectMetadataIds: string[];
-    plannedRecordCount: number;
-    computedRecordCount: number;
+    objectComputes: {
+      objectMetadataId: string;
+      plannedRecordCount: number;
+      computedRecordCount: number;
+      isComputed: boolean;
+    }[];
   };
 };
 
