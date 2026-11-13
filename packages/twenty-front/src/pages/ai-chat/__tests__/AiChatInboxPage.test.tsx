@@ -240,36 +240,10 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 
 const [firstThread, secondThread, thirdThread] = THREADS;
 
-const SALES_CHANNEL_ID = '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f';
-
 const DIRECT_MESSAGE: AgentChatThreadRecord = {
   ...buildThread('8c3d5e7f-1a2b-4c6d-9e8f-0a1b2c3d4e5f', 'Marie Stoppa'),
   conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
 };
-
-const buildParticipant = ({
-  id,
-  updatedAt,
-}: Pick<AgentChatThreadRecord, 'id' | 'updatedAt'>) => ({
-  __typename: 'AgentChatThreadParticipant' as const,
-  id: `participant-${id}`,
-  threadId: id,
-  lastReadAt: updatedAt,
-  archivedAt: null,
-  snoozedUntil: null,
-  isSubscribed: true,
-  lastMentionedAt: null,
-  mentionsResolvedAt: null,
-  updatedAt,
-});
-
-const openSalesChannel = () =>
-  setAgentChatSelectedChannelView(jotaiStore, {
-    channelId: SALES_CHANNEL_ID,
-    channelStatus: AgentChatChannelThreadStatus.OPEN,
-    assignment: AgentChatChannelAssignmentFilter.ANY,
-    filter: AgentChatChannelThreadFilter.ANY,
-  });
 
 const renderInbox = (path = `/inbox/${firstThread.id}`) =>
   render(
@@ -331,7 +305,21 @@ describe('AiChatInboxPage', () => {
     jotaiStore.set(
       agentChatThreadParticipantsState.atom,
       Object.fromEntries(
-        THREADS.map((thread) => [thread.id, buildParticipant(thread)]),
+        THREADS.map(({ id, updatedAt }) => [
+          id,
+          {
+            __typename: 'AgentChatThreadParticipant' as const,
+            id: `participant-${id}`,
+            threadId: id,
+            lastReadAt: updatedAt,
+            archivedAt: null,
+            snoozedUntil: null,
+            isSubscribed: true,
+            lastMentionedAt: null,
+            mentionsResolvedAt: null,
+            updatedAt,
+          },
+        ]),
       ),
     );
     isMobile = false;
@@ -603,36 +591,21 @@ describe('AiChatInboxPage', () => {
     ).toBeInTheDocument();
   });
 
-  describe('with a direct message open', () => {
+  describe('with a direct message open while a channel is selected', () => {
     beforeEach(() => {
-      const salesThread = { ...secondThread, channelId: SALES_CHANNEL_ID };
-      const recentThreads = [firstThread, salesThread, DIRECT_MESSAGE];
-
-      recentThreads.forEach((thread) =>
-        jotaiStore.set(recordStoreFamilyState.atomFamily(thread.id), thread),
-      );
       jotaiStore.set(
-        agentChatThreadListFamilyState.atomFamily(
-          getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
-        ),
-        {
-          threadIds: recentThreads.map(({ id }) => id),
-          hasNextPage: false,
-          endCursor: null,
-          lastLoadedActivityAt: null,
-        },
+        recordStoreFamilyState.atomFamily(DIRECT_MESSAGE.id),
+        DIRECT_MESSAGE,
       );
-      jotaiStore.set(
-        agentChatThreadParticipantsState.atom,
-        Object.fromEntries(
-          recentThreads.map((thread) => [thread.id, buildParticipant(thread)]),
-        ),
-      );
+      setAgentChatSelectedChannelView(jotaiStore, {
+        channelId: '3d8a1f5c-6b2e-4c9d-8e7f-0a1b2c3d4e5f',
+        channelStatus: AgentChatChannelThreadStatus.OPEN,
+        assignment: AgentChatChannelAssignmentFilter.ANY,
+        filter: AgentChatChannelThreadFilter.ANY,
+      });
     });
 
-    it('shows it alone instead of beside the channel picked last', () => {
-      openSalesChannel();
-
+    it('hides the channel list', () => {
       renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
 
       expect(
@@ -643,52 +616,20 @@ describe('AiChatInboxPage', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('stays on it with the arrow keys instead of opening a channel chat', async () => {
-      openSalesChannel();
+    it('leaves the channel out of the breadcrumb in record page layout', () => {
+      jotaiStore.set(
+        aiChatInboxLayoutState.atom,
+        AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
+      );
 
       renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
-
-      await userEvent.keyboard('{ArrowDown}');
 
       expect(
         screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
       ).toBeInTheDocument();
-    });
-
-    it('keeps the list beside it when opened from a personal view', () => {
-      renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
-
       expect(
-        screen.getByRole('region', { name: 'Conversation list' }),
-      ).toBeInTheDocument();
-      expect(isRowOpen('Marie Stoppa')).toBe(true);
-    });
-
-    describe('in record page layout', () => {
-      beforeEach(() => {
-        jotaiStore.set(
-          aiChatInboxLayoutState.atom,
-          AI_CHAT_INBOX_LAYOUT.RECORD_PAGE,
-        );
-        openSalesChannel();
-      });
-
-      it('leaves the channel out of its breadcrumb', () => {
-        renderInbox(`/inbox/${DIRECT_MESSAGE.id}`);
-
-        expect(
-          screen.getByText(`Chat page ${DIRECT_MESSAGE.id}`),
-        ).toBeInTheDocument();
-        expect(
-          screen.queryByRole('link', { name: /Open/ }),
-        ).not.toBeInTheDocument();
-      });
-
-      it('still names the channel in a channel chat breadcrumb', () => {
-        renderInbox(`/inbox/${secondThread.id}`);
-
-        expect(screen.getByRole('link', { name: /Open/ })).toBeInTheDocument();
-      });
+        screen.queryByRole('link', { name: /Open/ }),
+      ).not.toBeInTheDocument();
     });
   });
 

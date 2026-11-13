@@ -25,6 +25,7 @@ import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPa
 import { AI_CHAT_INBOX_LIST_PANE_WIDTH } from '@/ai/constants/AiChatInboxListPaneWidth';
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useAiChatInboxRecordSelectionInstanceId } from '@/ai/hooks/useAiChatInboxRecordSelectionInstanceId';
+import { useIsAiChatInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
 import { useIsAiChatInboxSplitView } from '@/ai/hooks/useIsAiChatInboxSplitView';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
@@ -34,7 +35,6 @@ import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadLis
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -52,7 +52,6 @@ import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -124,14 +123,9 @@ const AiChatInboxPageContent = () => {
   const agentChatSelectedChannelView = useAtomStateValue(
     agentChatSelectedChannelViewSelector,
   );
-  const isSelectedThreadDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
-    selectedThreadId ?? null,
-  );
-  // A direct message is in no channel, so it takes the page alone instead of
-  // showing beside the channel picked last
   const isChannelHiddenForDirectMessage =
-    isSelectedThreadDirectMessage && isDefined(agentChatSelectedChannelView);
+    useIsAiChatInboxShowingDirectMessage() &&
+    isDefined(agentChatSelectedChannelView);
   const isSplitLayout = isSplitView && !isChannelHiddenForDirectMessage;
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const agentChatSelectedThreadListSource = useAtomStateValue(
@@ -223,7 +217,7 @@ const AiChatInboxPageContent = () => {
   const isNewThreadShown = isNewThreadRoute && !isSelectionPaneShown;
   const isSecondaryPaneShown =
     isSelectionPaneShown || isThreadShown || isNewThreadShown;
-  const isListFullWidth = !isSplitLayout || !isSecondaryPaneShown;
+  const isListFullWidth = !isSplitView || !isSecondaryPaneShown;
   const isSidePanelShowingAiChat =
     isSidePanelOpened &&
     isSidePanelItemShowingAiChat(sidePanelNavigationStack.at(-1));
@@ -235,15 +229,13 @@ const AiChatInboxPageContent = () => {
     isDefined(selectedThreadId) && !isSelectionShown ? [selectedThreadId] : [];
 
   useGlobalHotkeys({
-    keys: isChannelHiddenForDirectMessage
-      ? []
-      : [
-          Key.ArrowUp,
-          Key.ArrowDown,
-          ...(isListShown
-            ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
-            : []),
-        ],
+    keys: [
+      Key.ArrowUp,
+      Key.ArrowDown,
+      ...(isListShown
+        ? [`${Key.Shift}+${Key.ArrowUp}`, `${Key.Shift}+${Key.ArrowDown}`]
+        : []),
+    ],
     callback: navigateWithArrowKey,
     containsModifier: false,
     dependencies: [navigateWithArrowKey],
