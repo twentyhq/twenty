@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { getTeamsWorkspaceGraphAccess } from 'src/features/chat/logic-functions/utils/get-teams-workspace-graph-access';
+import { TEAMS_GRAPH_DIRECTORY_SCOPE } from 'src/features/transcripts/constants/teams-oauth-config';
 
 const { listTeamsConnectionsMock, kvGetMock, fetchTeamsTenantIdMock } =
   vi.hoisted(() => ({
@@ -27,9 +28,10 @@ vi.mock(
 
 const WORKSPACE_CONNECTION = {
   id: 'connection-1',
-  visibility: 'workspace',
+  scope: 'WORKSPACE',
   accessToken: 'token',
   authFailedAt: null,
+  scopes: [TEAMS_GRAPH_DIRECTORY_SCOPE],
 };
 
 describe('getTeamsWorkspaceGraphAccess', () => {
@@ -42,7 +44,7 @@ describe('getTeamsWorkspaceGraphAccess', () => {
   it('returns the token and the stored tenant of the healthy workspace connection', async () => {
     listTeamsConnectionsMock.mockResolvedValue([
       { ...WORKSPACE_CONNECTION, id: 'failed', authFailedAt: '2026-01-01' },
-      { ...WORKSPACE_CONNECTION, visibility: 'personal' },
+      { ...WORKSPACE_CONNECTION, scope: 'USER' },
       WORKSPACE_CONNECTION,
     ]);
 
@@ -69,14 +71,48 @@ describe('getTeamsWorkspaceGraphAccess', () => {
     });
   });
 
+  it('skips an outdated connection without directory access for one that has it', async () => {
+    listTeamsConnectionsMock.mockResolvedValue([
+      {
+        ...WORKSPACE_CONNECTION,
+        id: 'outdated',
+        accessToken: 'outdated-token',
+        scopes: ['https://graph.microsoft.com/User.Read'],
+      },
+      { ...WORKSPACE_CONNECTION, id: 'current', accessToken: 'current-token' },
+    ]);
+
+    const result = await getTeamsWorkspaceGraphAccess();
+
+    expect(result).toEqual({
+      success: true,
+      accessToken: 'current-token',
+      tenantId: 'tenant-stored',
+    });
+  });
+
   it('fails when no healthy workspace connection exists', async () => {
     listTeamsConnectionsMock.mockResolvedValue([
-      { ...WORKSPACE_CONNECTION, visibility: 'personal' },
+      { ...WORKSPACE_CONNECTION, scope: 'USER' },
     ]);
 
     const result = await getTeamsWorkspaceGraphAccess();
 
     expect(result.success).toBe(false);
+  });
+
+  it('fails when a workspace connection exists but none grant directory access', async () => {
+    listTeamsConnectionsMock.mockResolvedValue([
+      {
+        ...WORKSPACE_CONNECTION,
+        scopes: ['https://graph.microsoft.com/User.Read'],
+      },
+    ]);
+
+    const result = await getTeamsWorkspaceGraphAccess();
+
+    expect(result.success).toBe(false);
+    expect(fetchTeamsTenantIdMock).not.toHaveBeenCalled();
   });
 
   it('returns a structured failure instead of throwing when the connection has no token', async () => {
