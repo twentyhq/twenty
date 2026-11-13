@@ -10,7 +10,7 @@ import { IconMail, IconTool } from 'twenty-ui/icon';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
 import { StyledAiChatAskStatusDetail } from '@/ai/components/StyledAiChatAskStatusDetail';
-import { useIsAiChatToolCallAskedInComposer } from '@/ai/hooks/useIsAgentChatToolCallAskedInComposer';
+import { useIsAiChatToolCallAskedInComposer } from '@/ai/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 
 export const AiChatToolCallApprovalStatusRenderer = ({

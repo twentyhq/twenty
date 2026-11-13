@@ -13,7 +13,7 @@ import {
 } from 'twenty-shared/ai';
 import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
-import { type AiChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
+import { type AiChatPendingToolCall } from '@/ai/types/AiChatPendingToolCall';
 
 // The server validated input against the tool schema, so only each card's needed shape is checked.
 export const parsePendingToolCall = (

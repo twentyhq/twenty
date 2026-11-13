@@ -4,9 +4,9 @@ import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
 const StyledTitle = styled.div`
   flex: 1;

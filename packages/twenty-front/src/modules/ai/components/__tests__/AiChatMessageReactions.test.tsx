@@ -6,7 +6,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -20,7 +20,7 @@ i18n.activate(SOURCE_LOCALE);
 
 const mockToggleAiChatMessageReaction = jest.fn();
 
-jest.mock('@/ai/hooks/useToggleAgentChatMessageReaction', () => ({
+jest.mock('@/ai/hooks/useToggleAiChatMessageReaction', () => ({
   useToggleAiChatMessageReaction: () => ({
     toggleAiChatMessageReaction: mockToggleAiChatMessageReaction,
   }),

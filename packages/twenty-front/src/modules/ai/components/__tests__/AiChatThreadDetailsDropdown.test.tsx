@@ -6,8 +6,8 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -63,7 +63,7 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
 
 const executeInboxThreadStatusAction = jest.fn();
 
-jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
+jest.mock('@/ai/hooks/useExecuteInboxThreadStatusAction', () => ({
   useExecuteInboxThreadStatusAction: () => ({
     executeInboxThreadStatusAction,
     isPending: false,

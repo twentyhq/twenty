@@ -1,6 +1,6 @@
 import { NavigationDrawerDirectMessageItem } from '@/ai/components/NavigationDrawerDirectMessageItem';
-import { INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesCollapsedMaxCount';
-import { INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesExpandedMaxCount';
+import { INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/ai/constants/InboxDirectMessagesCollapsedMaxCount';
+import { INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/ai/constants/InboxDirectMessagesExpandedMaxCount';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';

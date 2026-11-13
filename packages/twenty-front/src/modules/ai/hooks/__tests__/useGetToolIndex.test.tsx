@@ -1,7 +1,7 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 
-import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
+import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AiChatToolIndexInvalidationEffect';
 import { TOOL_INDEX_INVALIDATION_DEBOUNCE_TIME_IN_MS } from '@/ai/constants/ToolIndexInvalidationDebounceTimeInMs';
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';

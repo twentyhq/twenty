@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/InboxRecentThreadListSource';
+import { useInboxThreadList } from '@/ai/hooks/useInboxThreadList';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadInboxThreadList';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
 import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
 import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';

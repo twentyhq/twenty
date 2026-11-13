@@ -5,13 +5,13 @@ import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
-import { AiChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
-import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
-import { AiChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
+import { AiChatHasBeenOpenedEffect } from '@/ai/components/AiChatHasBeenOpenedEffect';
+import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AiChatThreadMarkAsReadEffect';
+import { AiChatStreamingPartsDiffSyncEffect } from '@/ai/components/AiChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/inboxThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

@@ -11,7 +11,7 @@ import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToo
 import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai/components/internal/AiChatToolCallApprovalRecordStoreEffect';
 import { AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai/constants/AiChatRecordApprovalReviewColumnWidth';
 import { useToolCallApprovalFieldDefinitions } from '@/ai/hooks/useToolCallApprovalFieldDefinitions';
-import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 
 const RECORD_COLUMN_ID = 'id';

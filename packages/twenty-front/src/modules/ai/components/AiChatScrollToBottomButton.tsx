@@ -1,4 +1,4 @@
-import { aiChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
+import { aiChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/aiChatIsScrolledToBottomComponentSelector';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { ScrollOverlayButton } from '@/ui/utilities/scroll/components/ScrollOverlayButton';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';

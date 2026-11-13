@@ -11,7 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
 import { AiChatThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
-import { InboxThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
+import { InboxThreadTriageButtons } from '@/ai/components/InboxThreadTriageButtons';
 
 const StyledSubtitle = styled.div`
   align-items: center;

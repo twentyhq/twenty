@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/inboxThreadMemberStateFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 

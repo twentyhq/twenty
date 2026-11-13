@@ -5,12 +5,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadListItem } from '@/ai/components/InboxThreadListItem';
+import { setInboxSelectedChannelView } from '@/ai/testing/setInboxSelectedChannelView';
+import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -73,7 +73,7 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
   }),
 }));
 
-jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
+jest.mock('@/ai/hooks/useExecuteInboxThreadStatusAction', () => ({
   useExecuteInboxThreadStatusAction: () => ({
     executeInboxThreadStatusAction: jest.fn(),
     isPending: false,

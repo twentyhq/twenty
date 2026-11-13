@@ -7,8 +7,8 @@ import { IconCheck, IconUserOff } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useAssignAiChatThreads } from '@/ai/hooks/useAssignAgentChatThreads';
-import { aiChatThreadsSharedAssigneeIdFamilySelector } from '@/ai/states/selectors/agentChatThreadsSharedAssigneeIdFamilySelector';
+import { useAssignAiChatThreads } from '@/ai/hooks/useAssignAiChatThreads';
+import { aiChatThreadsSharedAssigneeIdFamilySelector } from '@/ai/states/selectors/aiChatThreadsSharedAssigneeIdFamilySelector';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

@@ -1,8 +1,8 @@
-import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { InboxThreadListFetchMoreTrigger } from '@/ai/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/InboxRecentThreadListSource';
+import { useInboxThreadList } from '@/ai/hooks/useInboxThreadList';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';

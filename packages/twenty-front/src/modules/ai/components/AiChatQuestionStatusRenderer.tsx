@@ -10,7 +10,7 @@ import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
-import { useIsAiChatToolCallAskedInComposer } from '@/ai/hooks/useIsAgentChatToolCallAskedInComposer';
+import { useIsAiChatToolCallAskedInComposer } from '@/ai/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';

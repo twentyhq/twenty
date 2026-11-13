@@ -1,6 +1,6 @@
-import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
+import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';

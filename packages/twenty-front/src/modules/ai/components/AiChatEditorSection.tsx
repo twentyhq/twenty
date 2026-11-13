@@ -17,7 +17,7 @@ import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBi
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
-import { AiChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
+import { AiChatContextPreview } from '@/ai/components/internal/AiChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
@@ -34,12 +34,12 @@ import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContent
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/inboxThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 

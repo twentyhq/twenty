@@ -6,8 +6,8 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadList } from '@/ai/components/AiChatThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadList } from '@/ai/components/InboxThreadList';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
