@@ -77,6 +77,7 @@ export const fromCreateViewFieldInputToFlatViewFieldToCreate = ({
     settings: settings ?? null,
     isActive: true,
     isSystemSideEffect: false,
+    isCanonical: createViewFieldInput.isCanonical ?? true,
     universalOverrides: null,
     viewFieldGroupUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,

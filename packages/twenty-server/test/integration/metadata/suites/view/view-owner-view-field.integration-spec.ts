@@ -33,7 +33,10 @@ const testContext = {
   dealViewId: '',
 };
 
-const createDealViewField = async (fieldMetadataId: string) => {
+const createDealViewField = async (
+  fieldMetadataId: string,
+  isCanonical = false,
+) => {
   const {
     data: { createViewField },
   } = await createOneViewField({
@@ -42,6 +45,7 @@ const createDealViewField = async (fieldMetadataId: string) => {
       fieldMetadataId,
       viewId: testContext.dealViewId,
       position: 1,
+      isCanonical,
     },
   });
 
@@ -242,6 +246,7 @@ describe('View scoping a one-to-many view field', () => {
         fieldMetadataId: testContext.actionItemsFieldId,
         viewId: parentView.id,
         position: 1,
+        isCanonical: false,
       },
     });
 
@@ -299,6 +304,27 @@ describe('View scoping a one-to-many view field', () => {
       });
     },
   );
+
+  it('rejects scoping a canonical view field', async () => {
+    const viewFieldId = await createDealViewField(
+      testContext.actionItemsFieldId,
+      true,
+    );
+
+    const response = await createScopeView({
+      ownerViewFieldId: viewFieldId,
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'Only a non-canonical view field can be scoped',
+    );
+
+    await destroyOneViewField({
+      expectToFail: false,
+      input: { id: viewFieldId },
+    });
+  });
 
   it('rejects scoping a view field that does not list related records', async () => {
     const viewFieldId = await createDealViewField(testContext.nextStepFieldId);

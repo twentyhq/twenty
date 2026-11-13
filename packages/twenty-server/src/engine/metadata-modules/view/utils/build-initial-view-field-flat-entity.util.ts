@@ -43,6 +43,7 @@ export const buildInitialViewFieldFlatEntity = ({
   settings: null,
   isActive,
   isSystemSideEffect: false,
+  isCanonical: true,
   universalOverrides: null,
   applicationUniversalIdentifier,
 });

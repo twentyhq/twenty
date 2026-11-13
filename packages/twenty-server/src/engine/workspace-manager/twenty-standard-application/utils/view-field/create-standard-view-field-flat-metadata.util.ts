@@ -135,6 +135,7 @@ export const createStandardViewFieldFlatMetadata = <
     settings: null,
     isActive: true,
     isSystemSideEffect: parentView.isSystemSideEffect,
+    isCanonical: true,
     overrides: null,
     universalOverrides: null,
     createdAt: now,

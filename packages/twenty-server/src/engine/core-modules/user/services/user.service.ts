@@ -266,6 +266,10 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
+    await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+      userId,
+    ]);
+
     for (const userWorkspace of user.userWorkspaces) {
       await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
         userWorkspace,
@@ -309,12 +313,20 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
+    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+
+    if (isLastUserWorkspace) {
+      await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+        userId,
+      ]);
+    }
+
     await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
       userWorkspace,
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
+    if (isLastUserWorkspace) {
       await this.userRepository.softDelete(userId);
       await this.coreEntityCacheService.invalidate('user', userId);
     }

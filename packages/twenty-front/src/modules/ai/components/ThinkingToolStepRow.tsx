@@ -86,7 +86,7 @@ export const ThinkingToolStepRow = ({
     isActive,
     displayContext,
   });
-  const hasError = isDefined(part.errorText);
+  const hasError = part.state === 'output-error';
   const { message: recordsMessage, recordReferences } =
     getToolRecordOutput(part);
   const isExpandable = isDefined(part.output) || hasError;

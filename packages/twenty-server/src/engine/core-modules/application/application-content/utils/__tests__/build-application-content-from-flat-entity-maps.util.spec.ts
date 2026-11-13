@@ -96,6 +96,7 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   settings: null,
   isActive: true,
   isSystemSideEffect: false,
+  isCanonical: true,
   overrides: null,
   createdAt: TIMESTAMP,
   updatedAt: TIMESTAMP,
