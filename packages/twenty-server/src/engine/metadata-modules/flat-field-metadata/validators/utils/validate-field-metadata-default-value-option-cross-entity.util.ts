@@ -182,7 +182,6 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       continue;
     }
 
-    // Same rule as reads: a field without option rows keeps its options.
     const optionValues =
       optionValuesByFieldMetadataUniversalIdentifier.get(
         fieldMetadataUniversalIdentifier,
