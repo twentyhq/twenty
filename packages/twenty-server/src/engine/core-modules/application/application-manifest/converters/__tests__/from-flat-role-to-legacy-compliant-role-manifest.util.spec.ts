@@ -1,9 +1,10 @@
 import {
-  type ObjectPermissionManifest,
-  type RoleManifest,
+  type LegacyObjectPermissionManifest,
+  normalizeLegacyCompliantRoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
-import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
+import { fromFlatRoleToLegacyCompliantRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-legacy-compliant-role-manifest.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
@@ -15,7 +16,7 @@ const OBJECT_PERMISSION_UID = '44444444-4444-4444-8444-444444444444';
 const PERMISSION_FLAG_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-14T10:00:00.000Z';
 
-const ROLE_MANIFEST: RoleManifest = {
+const ROLE_MANIFEST: LegacyCompliantRoleManifest = {
   universalIdentifier: ROLE_UID,
   label: 'Support',
   description: 'Handles tickets',
@@ -32,23 +33,28 @@ const ROLE_MANIFEST: RoleManifest = {
   canBeAssignedToApiKeys: true,
 };
 
-const OBJECT_PERMISSION_MANIFEST: ObjectPermissionManifest = {
+const OBJECT_PERMISSION_MANIFEST: LegacyObjectPermissionManifest = {
   universalIdentifier: OBJECT_PERMISSION_UID,
   objectUniversalIdentifier: OBJECT_UID,
   canReadObjectRecords: true,
 };
 
-const forward = (roleManifest: RoleManifest) =>
+const forward = (roleManifest: LegacyCompliantRoleManifest) =>
   fromRoleManifestToUniversalFlatRole({
-    roleManifest,
+    roleManifest: normalizeLegacyCompliantRoleManifest({
+      role: roleManifest,
+      applicationUniversalIdentifier: APP_UID,
+    }),
     applicationUniversalIdentifier: APP_UID,
     now: NOW,
   });
 
-describe('fromFlatRoleToRoleManifest', () => {
+describe('fromFlatRoleToLegacyCompliantRoleManifest', () => {
   it('should reproduce the manifest after a forward then an inverse conversion', () => {
     expect(
-      fromFlatRoleToRoleManifest({ flatRole: forward(ROLE_MANIFEST) }),
+      fromFlatRoleToLegacyCompliantRoleManifest({
+        flatRole: forward(ROLE_MANIFEST),
+      }),
     ).toEqual(ROLE_MANIFEST);
   });
 
@@ -66,7 +72,7 @@ describe('fromFlatRoleToRoleManifest', () => {
       compareTwoFlatEntity({
         fromUniversalFlatEntity: flatRole,
         toUniversalFlatEntity: forward(
-          fromFlatRoleToRoleManifest({ flatRole }),
+          fromFlatRoleToLegacyCompliantRoleManifest({ flatRole }),
         ),
         metadataName: 'role',
       }),
@@ -81,7 +87,7 @@ describe('fromFlatRoleToRoleManifest', () => {
     } = ROLE_MANIFEST;
 
     expect(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: forward(manifestWithoutDescriptionAndIcon),
       }),
     ).toStrictEqual(manifestWithoutDescriptionAndIcon);
@@ -89,7 +95,7 @@ describe('fromFlatRoleToRoleManifest', () => {
 
   it('should nest its permissions and omit the empty collections', () => {
     expect(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: forward(ROLE_MANIFEST),
         children: {
           objectPermissions: [OBJECT_PERMISSION_MANIFEST],

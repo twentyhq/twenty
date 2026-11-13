@@ -1,14 +1,14 @@
-import { type RowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
+import { type LegacyRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
-export const fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest =
+export const fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest =
   ({
     flatRowLevelPermissionPredicateGroup,
   }: {
     flatRowLevelPermissionPredicateGroup: UniversalFlatRowLevelPermissionPredicateGroup;
-  }): RowLevelPermissionPredicateGroupManifest => ({
+  }): LegacyRowLevelPermissionPredicateGroupManifest => ({
     universalIdentifier:
       flatRowLevelPermissionPredicateGroup.universalIdentifier,
     objectUniversalIdentifier:

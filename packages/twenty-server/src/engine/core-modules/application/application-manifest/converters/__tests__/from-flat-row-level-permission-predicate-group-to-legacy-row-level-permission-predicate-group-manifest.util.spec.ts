@@ -1,7 +1,7 @@
-import { type RowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
+import { type LegacyRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 
-import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
+import { fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-legacy-row-level-permission-predicate-group-manifest.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
@@ -13,7 +13,7 @@ const PARENT_PREDICATE_GROUP_UID = '44444444-4444-4444-8444-444444444444';
 const PREDICATE_GROUP_UID = '55555555-5555-4555-8555-555555555555';
 const NOW = '2026-09-15T10:00:00.000Z';
 
-const PREDICATE_GROUP_MANIFEST: Required<RowLevelPermissionPredicateGroupManifest> =
+const PREDICATE_GROUP_MANIFEST: Required<LegacyRowLevelPermissionPredicateGroupManifest> =
   {
     universalIdentifier: PREDICATE_GROUP_UID,
     objectUniversalIdentifier: OBJECT_UID,
@@ -23,7 +23,7 @@ const PREDICATE_GROUP_MANIFEST: Required<RowLevelPermissionPredicateGroupManifes
   };
 
 const forward = (
-  rowLevelPermissionPredicateGroupManifest: RowLevelPermissionPredicateGroupManifest,
+  rowLevelPermissionPredicateGroupManifest: LegacyRowLevelPermissionPredicateGroupManifest,
 ) =>
   fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
     {
@@ -34,10 +34,10 @@ const forward = (
     },
   );
 
-describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest', () => {
+describe('fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest', () => {
   it('should reproduce the manifest after a forward then an inverse conversion', () => {
     expect(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+      fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
         {
           flatRowLevelPermissionPredicateGroup: forward(
             PREDICATE_GROUP_MANIFEST,
@@ -60,7 +60,7 @@ describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateG
       compareTwoFlatEntity({
         fromUniversalFlatEntity: flatRowLevelPermissionPredicateGroup,
         toUniversalFlatEntity: forward(
-          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+          fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
             { flatRowLevelPermissionPredicateGroup },
           ),
         ),
@@ -78,7 +78,7 @@ describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateG
     } = PREDICATE_GROUP_MANIFEST;
 
     expect(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+      fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
         {
           flatRowLevelPermissionPredicateGroup: forward(
             manifestWithoutOptionalProperties,

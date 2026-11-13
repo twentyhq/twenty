@@ -1,11 +1,11 @@
 import {
-  type RowLevelPermissionPredicateGroupManifest,
-  type RowLevelPermissionPredicateManifest,
+  type LegacyRowLevelPermissionPredicateGroupManifest,
+  type LegacyRowLevelPermissionPredicateManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
-import { fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-row-level-permission-predicate-manifest.util';
+import { fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-legacy-row-level-permission-predicate-group-manifest.util';
+import { fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-legacy-row-level-permission-predicate-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
   type ChildMetadataName,
@@ -45,7 +45,7 @@ const appendByRole = <TManifest>({
   manifestsByRoleUniversalIdentifier.set(roleUniversalIdentifier, manifests);
 };
 
-export const reconstructRowLevelPermissionPredicatesManifest = ({
+export const reconstructLegacyRowLevelPermissionPredicatesManifest = ({
   applicationAllFlatEntityMaps,
   allFlatEntityMaps,
   exportedObjectUniversalIdentifiers,
@@ -60,11 +60,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 }): {
   predicateGroupsByRoleUniversalIdentifier: Map<
     string,
-    RowLevelPermissionPredicateGroupManifest[]
+    LegacyRowLevelPermissionPredicateGroupManifest[]
   >;
   predicatesByRoleUniversalIdentifier: Map<
     string,
-    RowLevelPermissionPredicateManifest[]
+    LegacyRowLevelPermissionPredicateManifest[]
   >;
   coverage: ApplicationExportCoverageEntry[];
 } => {
@@ -163,11 +163,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 
   const predicateGroupsByRoleUniversalIdentifier = new Map<
     string,
-    RowLevelPermissionPredicateGroupManifest[]
+    LegacyRowLevelPermissionPredicateGroupManifest[]
   >();
   const predicatesByRoleUniversalIdentifier = new Map<
     string,
-    RowLevelPermissionPredicateManifest[]
+    LegacyRowLevelPermissionPredicateManifest[]
   >();
 
   for (const flatRowLevelPermissionPredicateGroup of sortFlatEntitiesByUniversalIdentifier(
@@ -201,7 +201,7 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
         manifest:
-          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+          fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
             { flatRowLevelPermissionPredicateGroup },
           ),
       });
@@ -246,7 +246,7 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicate.roleUniversalIdentifier,
         manifest:
-          fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
+          fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
             { flatRowLevelPermissionPredicate },
           ),
       });

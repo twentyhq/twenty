@@ -1,15 +1,16 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type FieldPermissionManifest,
-  type ObjectPermissionManifest,
+  type LegacyFieldPermissionManifest,
+  type LegacyObjectPermissionManifest,
   type PermissionFlagManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
-import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
-import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
+import { fromFlatFieldPermissionToLegacyFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-legacy-field-permission-manifest.util';
+import { fromFlatObjectPermissionToLegacyObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-legacy-object-permission-manifest.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
-import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
+import { fromFlatRoleToLegacyCompliantRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-legacy-compliant-role-manifest.util';
+import { addRowLevelPermissionRuleGrantsToLegacyObjectPermission } from 'src/engine/core-modules/application/application-manifest/utils/add-row-level-permission-rule-grants-to-legacy-object-permission.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
   type ChildMetadataName,
@@ -19,7 +20,7 @@ import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { createChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
 import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
-import { reconstructRowLevelPermissionPredicatesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-row-level-permission-predicates-manifest.util';
+import { reconstructLegacyRowLevelPermissionPredicatesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-legacy-row-level-permission-predicates-manifest.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
@@ -32,8 +33,8 @@ type FlatRoleChild =
   | UniversalFlatRolePermissionFlag;
 
 type RoleChildren = {
-  objectPermissions: ObjectPermissionManifest[];
-  fieldPermissions: FieldPermissionManifest[];
+  objectPermissions: LegacyObjectPermissionManifest[];
+  fieldPermissions: LegacyFieldPermissionManifest[];
   permissionFlagUniversalIdentifiers: string[];
 };
 
@@ -49,7 +50,7 @@ export const reconstructRolesManifest = ({
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
 }): {
   permissionFlags: PermissionFlagManifest[];
-  roles: RoleManifest[];
+  roles: LegacyCompliantRoleManifest[];
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const coverage: ApplicationExportCoverageEntry[] = [];
@@ -135,6 +136,10 @@ export const reconstructRolesManifest = ({
         resolvableFieldUniversalIdentifiers,
     });
 
+  const flatRowLevelPermissionRules = sortFlatEntitiesByUniversalIdentifier(
+    applicationAllFlatEntityMaps.flatRowLevelPermissionRuleMaps,
+  );
+
   for (const flatObjectPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatObjectPermissionMaps,
   )) {
@@ -152,8 +157,12 @@ export const reconstructRolesManifest = ({
       childrenOf(
         flatObjectPermission.roleUniversalIdentifier,
       )?.objectPermissions.push(
-        fromFlatObjectPermissionToObjectPermissionManifest({
-          flatObjectPermission,
+        fromFlatObjectPermissionToLegacyObjectPermissionManifest({
+          flatObjectPermission:
+            addRowLevelPermissionRuleGrantsToLegacyObjectPermission({
+              flatObjectPermission,
+              flatRowLevelPermissionRules,
+            }),
         }),
       );
     }
@@ -191,7 +200,7 @@ export const reconstructRolesManifest = ({
       childrenOf(
         flatFieldPermission.roleUniversalIdentifier,
       )?.fieldPermissions.push(
-        fromFlatFieldPermissionToFieldPermissionManifest({
+        fromFlatFieldPermissionToLegacyFieldPermissionManifest({
           flatFieldPermission,
         }),
       );
@@ -229,7 +238,7 @@ export const reconstructRolesManifest = ({
     predicateGroupsByRoleUniversalIdentifier,
     predicatesByRoleUniversalIdentifier,
     coverage: rowLevelPermissionCoverage,
-  } = reconstructRowLevelPermissionPredicatesManifest({
+  } = reconstructLegacyRowLevelPermissionPredicatesManifest({
     applicationAllFlatEntityMaps,
     allFlatEntityMaps,
     exportedObjectUniversalIdentifiers,
@@ -249,7 +258,7 @@ export const reconstructRolesManifest = ({
 
     const children = childrenOf(flatRole.universalIdentifier);
 
-    return fromFlatRoleToRoleManifest({
+    return fromFlatRoleToLegacyCompliantRoleManifest({
       flatRole,
       children: {
         objectPermissions: children?.objectPermissions,
