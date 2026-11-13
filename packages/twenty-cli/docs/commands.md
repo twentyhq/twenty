@@ -214,6 +214,68 @@ Proxies must support HTTP CONNECT. For a corporate certificate authority, set
 `NODE_EXTRA_CA_CERTS` before starting the CLI. TLS certificate verification
 stays enabled.
 
+## Authenticating proxies
+
+When an identity-aware proxy such as Cloudflare Access, Google IAP, Pomerium or
+oauth2-proxy sits in front of the server, the CLI's requests reach the proxy's
+sign-in page instead of Twenty and fail with `PROXY_AUTH_REQUIRED` (exit 3).
+Give the CLI the proxy's credentials as HTTP headers, either fixed values or a
+command that prints fresh ones:
+
+```bash
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Both options are saved on the remote as `proxyHeaders` and `proxyHeaderCommand`
+and apply to every later command that uses it. Passing an option replaces the
+saved value; an empty value removes it. Logout keeps them;
+`twenty remote remove` deletes them. When `--replace` points a remote at another
+URL, saved proxy settings are not carried over unless you pass them again.
+
+The command runs through your shell when a request first needs it, at most once
+per CLI invocation, and must print one `Name: value` line per header within 60
+seconds. If the proxy rejects the headers (a redirect to its sign-in page, or a
+401/403 that is not a Twenty JSON response), the CLI runs the command again and
+retries the request once; the proxy rejected it before Twenty received it.
+Command headers take precedence over fixed headers of the same name.
+
+For CI and other environments without a saved remote, set `TWENTY_PROXY_HEADERS`
+(one `Name: value` per line) and `TWENTY_PROXY_HEADER_COMMAND`. They also apply
+to saved remotes: environment headers override saved headers of the same name,
+and the environment command replaces the saved one. Neither is passed to app
+workers.
+
+```bash
+export TWENTY_PROXY_HEADERS="CF-Access-Client-Id: $CLIENT_ID
+CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Proxy headers are only sent to the host of the selected connection's API URL,
+including app uploads that the server receives itself, and never to other hosts
+such as pre-signed storage URLs. They cannot replace headers the CLI sets
+itself, including `Authorization`; proxies that need their own bearer token,
+such as Google IAP, accept it in `Proxy-Authorization`. Proxy settings are only
+read from `~/.twenty/config.json`, the environment and command options, never
+from an app project. Errors never include header values or the command's output,
+only the end of its standard error.
+
+Recipes:
+
+| Proxy                            | Setting                                                                                                                                                                    |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cloudflare Access, as a user     | `--proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=<url>)"'` after `cloudflared access login <url>`                                           |
+| Cloudflare Access, service token | `--proxy-header "CF-Access-Client-Id: …" --proxy-header "CF-Access-Client-Secret: …"`                                                                                      |
+| Google IAP                       | A `--proxy-header-command` that prints `Proxy-Authorization: Bearer <token>` with an OIDC token for the IAP client ID, for example from `gcloud auth print-identity-token` |
+| Pomerium, oauth2-proxy           | The bearer or session header your deployment accepts, from its own CLI or a service account                                                                                |
+
+Without changing CLI settings, a local tunnel such as `cloudflared access tcp`
+also works: point the remote at the tunnel's `localhost` address.
+
 ## Diagnose your setup
 
 ```bash
@@ -242,9 +304,11 @@ reported as unknown.
 
 By default it sends one read-only request to the selected workspace's metadata
 endpoint to check access. This does not prove access to every object or app
-operation. `--offline` disables network requests. Doctor never imports app or
-SDK code, builds an app, installs packages, repairs files, or refreshes
-credentials.
+operation. `--offline` disables network requests. The network check runs a
+configured proxy header command; `--offline` does not.
+
+Doctor never imports app or SDK code, builds an app, installs packages, repairs
+files, or refreshes credentials.
 
 An expired OAuth access token skips the network check: it produces a warning
 when a refresh token is saved (renewal remains unverified), or a failure when
