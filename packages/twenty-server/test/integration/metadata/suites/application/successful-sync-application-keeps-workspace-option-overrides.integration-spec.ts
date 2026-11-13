@@ -341,8 +341,8 @@ describe('Sync application keeps the option edits a workspace made on its fields
           position: 3,
           isActive: false,
         },
-        // The app declares it at 3: positions can tie across applications
-        { value: 'PENDING', label: 'Pending', color: 'yellow', position: 3 },
+        // The app declares it at 3 too: tied positions are re-indexed in option id order.
+        { value: 'PENDING', label: 'Pending', color: 'yellow', position: 4 },
       ].map((option) => ({ ...option, id: undefined })),
     );
     expect(await findStatusEnumLabels()).toEqual([

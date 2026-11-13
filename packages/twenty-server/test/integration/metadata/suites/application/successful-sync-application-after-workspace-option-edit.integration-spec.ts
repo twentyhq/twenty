@@ -358,6 +358,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
         ]),
       );
     } finally {
+      await syncApplication({ manifest, expectToFail: false });
       await updateSelectFieldOptions([OPEN_OPTION, CLOSED_OPTION]);
     }
   }, 60000);
