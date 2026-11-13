@@ -1,6 +1,6 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
@@ -25,7 +25,7 @@ describe('groupThreadsByDate', () => {
   }: {
     id: string;
     updatedAt: Date;
-  }): AgentChatThreadRecord => ({
+  }): AiChatThreadRecord => ({
     __typename: 'AgentChatThread',
     id,
     title: 'Test Thread',
@@ -40,7 +40,7 @@ describe('groupThreadsByDate', () => {
       year: 'numeric',
     });
 
-    const threads: AgentChatThreadRecord[] = [
+    const threads: AiChatThreadRecord[] = [
       buildThread({ id: '1', updatedAt: today }),
       buildThread({ id: '2', updatedAt: yesterday }),
       buildThread({ id: '3', updatedAt: twoDaysAgo }),

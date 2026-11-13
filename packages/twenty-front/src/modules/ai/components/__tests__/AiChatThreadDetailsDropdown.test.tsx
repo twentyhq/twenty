@@ -6,8 +6,8 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -61,11 +61,11 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
   }),
 }));
 
-const executeAgentChatThreadInboxAction = jest.fn();
+const executeInboxThreadStatusAction = jest.fn();
 
-jest.mock('@/ai/hooks/useExecuteAgentChatThreadInboxAction', () => ({
-  useExecuteAgentChatThreadInboxAction: () => ({
-    executeAgentChatThreadInboxAction,
+jest.mock('@/inbox/hooks/useExecuteInboxThreadStatusAction', () => ({
+  useExecuteInboxThreadStatusAction: () => ({
+    executeInboxThreadStatusAction,
     isPending: false,
   }),
 }));
@@ -220,7 +220,7 @@ const renderDetails = async ({
         currentWorkspaceMemberState.atom,
         buildWorkspaceMember(FOLLOWER_ID, 'Follower'),
       );
-      setAgentChatThreadPermissions({
+      setAiChatThreadPermissions({
         store,
         threadId: THREAD_ID,
         permissions,
@@ -238,7 +238,7 @@ const renderDetails = async ({
         buildWorkspaceMember(OWNER_ID, 'Owner'),
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
-      store.set(agentChatThreadParticipantsState.atom, {
+      store.set(aiChatThreadParticipantsState.atom, {
         [THREAD_ID]: {
           __typename: 'AgentChatThreadParticipant',
           id: 'participant-1',
@@ -301,8 +301,8 @@ describe('AiChatThreadDetailsDropdown', () => {
 
     await user.click(screen.getByRole('button', { name: 'Unfollow for me' }));
 
-    expect(executeAgentChatThreadInboxAction).toHaveBeenCalledTimes(1);
-    expect(executeAgentChatThreadInboxAction).toHaveBeenCalledWith({
+    expect(executeInboxThreadStatusAction).toHaveBeenCalledTimes(1);
+    expect(executeInboxThreadStatusAction).toHaveBeenCalledWith({
       threadIds: [THREAD_ID],
       action: AgentChatInboxAction.UNSUBSCRIBE,
       isInChannel: false,

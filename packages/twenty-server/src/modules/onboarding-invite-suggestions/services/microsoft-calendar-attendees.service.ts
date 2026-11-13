@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isMicrosoftCalendarResourceAttendee } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/is-microsoft-calendar-resource-attendee.util';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { ONBOARDING_INVITE_SUGGESTIONS_LOOKAHEAD_DAYS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-lookahead-days.constant';
 import { ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-lookback-days.constant';
@@ -71,7 +72,7 @@ export class MicrosoftCalendarAttendeesService {
 
       for (const attendee of event.attendees ?? []) {
         const attendeeEmail = attendee.emailAddress?.address?.toLowerCase();
-        const isRoomOrResource = attendee.type === 'resource';
+        const isRoomOrResource = isMicrosoftCalendarResourceAttendee(attendee);
 
         if (
           !attendeeEmail ||
