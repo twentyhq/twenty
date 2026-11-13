@@ -157,6 +157,19 @@ export class ApplicationMessageSendAttachmentsService {
     return copiedAttachments;
   }
 
+  async deleteCopies({
+    copiedAttachments,
+    workspaceId,
+  }: {
+    copiedAttachments: AppMessageAttachmentInput[];
+    workspaceId: string;
+  }): Promise<void> {
+    await this.deleteCopiedFiles({
+      fileIds: copiedAttachments.map(({ fileId }) => fileId),
+      workspaceId,
+    });
+  }
+
   async deleteUnclaimedCopies({
     copiedAttachments,
     workspaceId,
@@ -174,30 +187,38 @@ export class ApplicationMessageSendAttachmentsService {
         select: { id: true, settings: true },
       });
 
-      const unclaimedCopies = files.filter(
-        (file) => file.settings?.isTemporaryFile,
-      );
-
-      const deletionResults = await Promise.allSettled(
-        unclaimedCopies.map((file) =>
-          this.filesFieldService.deleteFilesFieldFile({
-            fileId: file.id,
-            workspaceId,
-          }),
-        ),
-      );
-
-      deletionResults.forEach((deletionResult, index) => {
-        if (deletionResult.status === 'rejected') {
-          this.logger.warn(
-            `Failed to delete sent app message attachment copy ${unclaimedCopies[index].id} in workspace ${workspaceId}: ${deletionResult.reason}`,
-          );
-        }
+      await this.deleteCopiedFiles({
+        fileIds: files
+          .filter((file) => file.settings?.isTemporaryFile)
+          .map((file) => file.id),
+        workspaceId,
       });
     } catch (error) {
       this.logger.warn(
         `Failed to clean up sent app message attachment copies in workspace ${workspaceId}: ${error}`,
       );
     }
+  }
+
+  private async deleteCopiedFiles({
+    fileIds,
+    workspaceId,
+  }: {
+    fileIds: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const deletionResults = await Promise.allSettled(
+      fileIds.map((fileId) =>
+        this.filesFieldService.deleteFilesFieldFile({ fileId, workspaceId }),
+      ),
+    );
+
+    deletionResults.forEach((deletionResult, index) => {
+      if (deletionResult.status === 'rejected') {
+        this.logger.warn(
+          `Failed to delete sent app message attachment copy ${fileIds[index]} in workspace ${workspaceId}: ${deletionResult.reason}`,
+        );
+      }
+    });
   }
 }

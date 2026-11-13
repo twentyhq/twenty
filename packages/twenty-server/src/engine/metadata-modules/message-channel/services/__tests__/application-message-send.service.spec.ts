@@ -40,6 +40,7 @@ describe('ApplicationMessageSendService', () => {
   const buildAttachmentsToSendOrThrow = jest.fn();
   const copyIntoAttachmentFileFieldOrThrow = jest.fn();
   const deleteUnclaimedCopies = jest.fn();
+  const deleteCopies = jest.fn();
   const deleteFiles = jest.fn();
   let cache: Map<string, unknown>;
 
@@ -74,6 +75,7 @@ describe('ApplicationMessageSendService', () => {
       buildAttachmentsToSendOrThrow,
       copyIntoAttachmentFileFieldOrThrow,
       deleteUnclaimedCopies,
+      deleteCopies,
     } as unknown as ApplicationMessageSendAttachmentsService,
     { deleteFiles } as unknown as FileEmailAttachmentService,
     {
@@ -188,6 +190,19 @@ describe('ApplicationMessageSendService', () => {
       false,
     );
     expect(sendOrThrow).not.toHaveBeenCalled();
+  });
+
+  it('should delete every copy, claimed or not, when the ingestion fails', async () => {
+    ingest.mockRejectedValueOnce(new Error('Ingestion rolled back'));
+
+    await expect(service.send(SEND_ARGS)).rejects.toThrow(
+      'Ingestion rolled back',
+    );
+
+    expect(deleteCopies).toHaveBeenCalledWith({
+      copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
+      workspaceId: 'workspace-1',
+    });
   });
 
   it('should return the saved reply on retry without needing the deleted uploads', async () => {

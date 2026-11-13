@@ -40,6 +40,7 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { type AppMessageAttachmentInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import {
   type AppMessageReplyRecipient,
@@ -241,44 +242,49 @@ export class ApplicationMessageSendService {
         try {
           const {
             messages: [ingestedMessage],
-          } = await this.applicationMessageIngestionService.ingest({
-            applicationId,
+          } = await this.ingestOrDeleteCopies({
+            copiedAttachments,
             workspaceId,
-            requestUserWorkspaceId: userWorkspaceId,
-            messageChannelId,
-            messages: [
-              {
-                externalId: delivery.externalId,
-                threadExternalId: delivery.threadExternalId,
-                subject: delivery.subject ?? undefined,
-                text: delivery.text,
-                receivedAt: new Date(delivery.sentAt),
-                attachments: copiedAttachments,
-                participants: [
+            ingest: () =>
+              this.applicationMessageIngestionService.ingest({
+                applicationId,
+                workspaceId,
+                requestUserWorkspaceId: userWorkspaceId,
+                messageChannelId,
+                messages: [
                   {
-                    role: MessageParticipantRole.FROM,
-                    handle: messageChannel.handle,
-                    displayName: messageChannel.displayName ?? undefined,
-                    workspaceMemberId:
-                      flatWorkspaceMemberMaps.idByUserWorkspaceId[
-                        userWorkspaceId
-                      ],
+                    externalId: delivery.externalId,
+                    threadExternalId: delivery.threadExternalId,
+                    subject: delivery.subject ?? undefined,
+                    text: delivery.text,
+                    receivedAt: new Date(delivery.sentAt),
+                    attachments: copiedAttachments,
+                    participants: [
+                      {
+                        role: MessageParticipantRole.FROM,
+                        handle: messageChannel.handle,
+                        displayName: messageChannel.displayName ?? undefined,
+                        workspaceMemberId:
+                          flatWorkspaceMemberMaps.idByUserWorkspaceId[
+                            userWorkspaceId
+                          ],
+                      },
+                      ...delivery.recipients.map((recipient) => ({
+                        role: MessageParticipantRole.TO,
+                        ...recipient,
+                      })),
+                      ...(delivery.cc ?? []).map((recipient) => ({
+                        role: MessageParticipantRole.CC,
+                        ...recipient,
+                      })),
+                      ...(delivery.bcc ?? []).map((recipient) => ({
+                        role: MessageParticipantRole.BCC,
+                        ...recipient,
+                      })),
+                    ],
                   },
-                  ...delivery.recipients.map((recipient) => ({
-                    role: MessageParticipantRole.TO,
-                    ...recipient,
-                  })),
-                  ...(delivery.cc ?? []).map((recipient) => ({
-                    role: MessageParticipantRole.CC,
-                    ...recipient,
-                  })),
-                  ...(delivery.bcc ?? []).map((recipient) => ({
-                    role: MessageParticipantRole.BCC,
-                    ...recipient,
-                  })),
                 ],
-              },
-            ],
+              }),
           });
 
           const ingestedSentMessage = {
@@ -307,6 +313,27 @@ export class ApplicationMessageSendService {
       deliveryKey,
       APP_MESSAGE_DELIVERY_LOCK_OPTIONS,
     );
+  }
+
+  private async ingestOrDeleteCopies<TIngestResult>({
+    copiedAttachments,
+    workspaceId,
+    ingest,
+  }: {
+    copiedAttachments: AppMessageAttachmentInput[];
+    workspaceId: string;
+    ingest: () => Promise<TIngestResult>;
+  }): Promise<TIngestResult> {
+    try {
+      return await ingest();
+    } catch (error) {
+      await this.applicationMessageSendAttachmentsService.deleteCopies({
+        copiedAttachments,
+        workspaceId,
+      });
+
+      throw error;
+    }
   }
 
   private async claimAttachmentsOrThrow({
