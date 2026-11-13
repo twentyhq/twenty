@@ -125,11 +125,9 @@ export class UsageLimitService {
   async update({
     workspaceId,
     input,
-    isOperator,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
-    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
@@ -144,18 +142,25 @@ export class UsageLimitService {
 
     const authorizedScope = buildUsageLimitScope(usageLimit);
 
-    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+    assertUsageLimitInstanceOverrideIsAllowed({
+      usageLimit,
+      isOperator: false,
+    });
 
     assertUsageLimitDefaultOverrideIsAllowed({
       scope: authorizedScope,
-      isOperator,
+      isOperator: false,
     });
 
-    await this.validateInput({ workspaceId, input: input.payload, isOperator });
+    await this.validateInput({
+      workspaceId,
+      input: input.payload,
+      isOperator: false,
+    });
 
     const scope = buildUsageLimitScope(input.payload);
 
-    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator: false });
 
     await this.assertScopeIsFree({
       workspaceId,
@@ -174,7 +179,6 @@ export class UsageLimitService {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
-        isInstanceOverride: isOperator,
       },
     );
 
@@ -194,10 +198,7 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    if (
-      usageLimit.isInstanceOverride !== isOperator ||
-      !isEqual(authorizedScope, scope)
-    ) {
+    if (!isEqual(authorizedScope, scope)) {
       await this.dropCounter(usageLimit);
       await this.dropCounter(updatedUsageLimit);
     }
@@ -303,11 +304,7 @@ export class UsageLimitService {
     await this.dataSource.transaction(async (entityManager) => {
       const { affected } = await this.usageLimitRepository
         .withManager(entityManager)
-        .delete(workspaceId, {
-          id: usageLimitId,
-          ...buildUsageLimitScope(usageLimit),
-          isInstanceOverride: usageLimit.isInstanceOverride,
-        });
+        .delete(workspaceId, { id: usageLimitId });
 
       if (!isDefined(affected) || affected === 0) {
         throw new UsageLimitException(
