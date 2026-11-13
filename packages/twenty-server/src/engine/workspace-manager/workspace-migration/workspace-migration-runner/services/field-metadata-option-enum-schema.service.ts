@@ -13,7 +13,7 @@ import {
   type FieldMetadataOptionEnumChange,
   type FieldMetadataOptionEnumChangeTracker,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
-import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-from-options.util';
+import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-field-metadata-options-to-option-rows.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -30,7 +30,7 @@ export class FieldMetadataOptionEnumSchemaService {
     queryRunner,
     workspaceId,
   }: {
-    fieldMetadataUniversalIdentifier: string | undefined;
+    fieldMetadataUniversalIdentifier: string;
     fieldMetadataOptionEnumChangeTracker:
       | FieldMetadataOptionEnumChangeTracker
       | undefined;
@@ -42,7 +42,6 @@ export class FieldMetadataOptionEnumSchemaService {
     workspaceId: string;
   }): Promise<void> {
     if (
-      !isDefined(fieldMetadataUniversalIdentifier) ||
       !isDefined(fieldMetadataOptionEnumChangeTracker) ||
       fieldMetadataOptionEnumChangeTracker.hasFieldAction(
         fieldMetadataUniversalIdentifier,
@@ -125,7 +124,7 @@ export class FieldMetadataOptionEnumSchemaService {
         toValueByUniversalIdentifier.get(universalIdentifier) ??
         (toValues.has(value) ? value : undefined);
 
-      if (toValue !== undefined) {
+      if (isDefined(toValue)) {
         oldToNewEnumOptionMap[value] = toValue;
       }
     }

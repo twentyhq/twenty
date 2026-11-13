@@ -69,7 +69,6 @@ export class FieldMetadataService {
         'flatFieldMetadataMaps',
       ]);
 
-    // Options live in fieldMetadataOption rows, which the flat maps already resolved
     return fieldMetadataEntities.map((fieldMetadataEntity) =>
       Object.assign(fieldMetadataEntity, {
         options:

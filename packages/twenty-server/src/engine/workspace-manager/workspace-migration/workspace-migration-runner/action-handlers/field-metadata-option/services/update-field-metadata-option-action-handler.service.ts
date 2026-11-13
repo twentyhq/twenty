@@ -9,7 +9,6 @@ import {
   FlatUpdateFieldMetadataOptionAction,
   UniversalUpdateFieldMetadataOptionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/types/workspace-migration-field-metadata-option-action.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import {
   WorkspaceMigrationActionRunnerArgs,
@@ -73,10 +72,12 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   ): Promise<void> {
     await this.fieldMetadataOptionEnumSchemaService.applyEnumChangeOfOptionAction(
       {
-        fieldMetadataUniversalIdentifier: findFlatEntityByUniversalIdentifier({
-          universalIdentifier: context.action.universalIdentifier,
-          flatEntityMaps: context.allFlatEntityMaps.flatFieldMetadataOptionMaps,
-        })?.fieldMetadataUniversalIdentifier,
+        fieldMetadataUniversalIdentifier:
+          findFlatEntityByUniversalIdentifierOrThrow({
+            universalIdentifier: context.action.universalIdentifier,
+            flatEntityMaps:
+              context.allFlatEntityMaps.flatFieldMetadataOptionMaps,
+          }).fieldMetadataUniversalIdentifier,
         fieldMetadataOptionEnumChangeTracker:
           context.fieldMetadataOptionEnumChangeTracker,
         allFlatEntityMaps: context.allFlatEntityMaps,

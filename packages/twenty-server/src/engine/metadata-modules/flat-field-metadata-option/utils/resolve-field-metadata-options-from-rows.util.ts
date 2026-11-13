@@ -1,18 +1,15 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
-import { ENUM_FIELD_TYPES } from 'src/engine/metadata-modules/field-metadata/types/enum-field-metadata-type.type';
+import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 
 export type FieldMetadataOptionRowForOptions = Pick<
   FieldMetadataOptionEntity,
   'universalIdentifier' | 'value' | 'label' | 'color' | 'position'
 >;
 
-// A field without rows predates the option table or its backfill, so its stored options still stand.
-// With shouldRowsCoverStoredOptions, they also stand while a stored option has no row yet, which is
-// the state of a workspace the 2.59 alignment command has not reached.
+// Stored options stand for a field without rows and, with shouldRowsCoverStoredOptions, while one has no row.
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
@@ -23,9 +20,7 @@ export const resolveFieldMetadataOptionsFromRows = ({
   shouldRowsCoverStoredOptions?: boolean;
 }): FieldMetadataEntity['options'] => {
   if (
-    !(ENUM_FIELD_TYPES as readonly FieldMetadataType[]).includes(
-      fieldMetadataEntity.type,
-    ) ||
+    !isEnumFieldMetadataType(fieldMetadataEntity.type) ||
     !isNonEmptyArray(fieldMetadataOptionRows)
   ) {
     return fieldMetadataEntity.options;
@@ -54,5 +49,5 @@ export const resolveFieldMetadataOptionsFromRows = ({
       label,
       position,
       ...(isDefined(color) ? { color } : {}),
-    })) as FieldMetadataEntity['options'];
+    }));
 };

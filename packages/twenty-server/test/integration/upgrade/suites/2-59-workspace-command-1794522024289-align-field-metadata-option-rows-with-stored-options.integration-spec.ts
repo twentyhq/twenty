@@ -42,7 +42,10 @@ describe('2-59 workspace command - align field metadata option rows with stored 
 
     objectMetadataId = objectData.createOneObject.id;
 
-    const { data: fieldData } = await createOneFieldMetadata({
+    const { data: fieldData } = await createOneFieldMetadata<
+      FieldMetadataType.SELECT,
+      { id: string; options: StoredOption[] }
+    >({
       expectToFail: false,
       input: {
         objectMetadataId,
@@ -59,7 +62,7 @@ describe('2-59 workspace command - align field metadata option rows with stored 
     });
 
     fieldMetadataId = fieldData.createOneField.id;
-    options = fieldData.createOneField.options as StoredOption[];
+    options = fieldData.createOneField.options;
   });
 
   afterAll(async () => {

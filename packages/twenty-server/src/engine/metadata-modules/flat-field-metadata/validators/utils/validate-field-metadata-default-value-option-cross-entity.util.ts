@@ -13,8 +13,7 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
-// A default value and the options it points to can change through different entities of one migration,
-// so the check runs on the final state of both.
+// The default value and its options can change through different entities of one migration, so check the final state.
 export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
   fromFlatFieldMetadataOptionMaps,
   optimisticUniversalFlatMaps: {

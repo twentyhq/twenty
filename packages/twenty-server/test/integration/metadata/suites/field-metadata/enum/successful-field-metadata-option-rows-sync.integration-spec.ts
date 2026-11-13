@@ -228,7 +228,10 @@ describe('field metadata option rows follow field options', () => {
   });
 
   it('reads the options of a field from its rows', async () => {
-    const { data } = await createOneFieldMetadata({
+    const { data } = await createOneFieldMetadata<
+      FieldMetadataType.SELECT,
+      { id: string; options: StoredOption[] }
+    >({
       expectToFail: false,
       input: {
         objectMetadataId,
@@ -244,8 +247,7 @@ describe('field metadata option rows follow field options', () => {
       gqlFields: 'id options',
     });
     const fieldMetadataId: string = data.createOneField.id;
-    const [openOption, closedOption] = data.createOneField
-      .options as StoredOption[];
+    const [openOption, closedOption] = data.createOneField.options;
 
     await globalThis.testDataSource.query(
       `UPDATE core."fieldMetadataOption" SET label = 'Open in rows'
@@ -408,7 +410,10 @@ describe('field metadata option rows follow field options', () => {
   });
 
   it('keeps the options and records of a field with a missing row, and recreates the row on its next edit', async () => {
-    const { data } = await createOneFieldMetadata({
+    const { data } = await createOneFieldMetadata<
+      FieldMetadataType.SELECT,
+      { id: string; options: StoredOption[] }
+    >({
       expectToFail: false,
       input: {
         objectMetadataId,
@@ -424,7 +429,7 @@ describe('field metadata option rows follow field options', () => {
       gqlFields: 'id options',
     });
     const fieldMetadataId: string = data.createOneField.id;
-    const options = data.createOneField.options as StoredOption[];
+    const options = data.createOneField.options;
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."fieldMetadataOption"
