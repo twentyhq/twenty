@@ -10048,6 +10048,11 @@ msgstr "فقط کمپین زمان‌بندی‌شده یا در حال ارسا
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "فقط یک مدیر سرور می تواند کدهای بازیابی این عضو را مدیریت کند."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "فقط برنامه ای که مالک این عامل است می تواند ماشه های آن را تغییر دهد"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "فقط شخصی که این گردش کار را ایجاد کرده است می‌تواند تعیین کند چه کسانی آن را ببینند"
 

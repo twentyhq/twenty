@@ -10048,6 +10048,11 @@ msgstr "Solo una campagna programmata o in fase di invio può essere annullata."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Solo un amministratore del server può gestire i codici di recupero per questo membro."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Solo l'applicazione proprietaria di questo agente può modificarne i trigger"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Solo la persona che ha creato questo flusso di lavoro può modificare chi può vederlo"
 

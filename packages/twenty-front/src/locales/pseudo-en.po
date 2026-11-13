@@ -223,13 +223,13 @@ msgstr ""
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr ""
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr ""
 
@@ -464,7 +464,7 @@ msgstr ""
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/ai/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1164,7 +1164,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr ""
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr ""
 
@@ -1174,7 +1174,7 @@ msgid "{selectedOptionCount} options"
 msgstr ""
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr ""
 
@@ -2111,7 +2111,7 @@ msgid "Add a recipient before sending"
 msgstr ""
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr ""
 
@@ -2236,7 +2236,7 @@ msgid "Add CC"
 msgstr ""
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr ""
 
@@ -2637,7 +2637,7 @@ msgid "Add to Favorite"
 msgstr ""
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr ""
 
@@ -2942,7 +2942,7 @@ msgid "agent"
 msgstr ""
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3294,7 +3294,7 @@ msgid "All {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr ""
 
@@ -3324,8 +3324,8 @@ msgid "All applications"
 msgstr ""
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr ""
 
@@ -4454,7 +4454,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr ""
 
@@ -4469,7 +4469,7 @@ msgid "Assigned to"
 msgstr ""
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr ""
 
@@ -4490,7 +4490,7 @@ msgstr ""
 
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr ""
 
@@ -4925,7 +4925,7 @@ msgid "Back to customization"
 msgstr ""
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Back to inbox"
 msgstr ""
 
@@ -5964,7 +5964,7 @@ msgid "Cell controls"
 msgstr ""
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr ""
 
@@ -6065,13 +6065,13 @@ msgid "Channel"
 msgstr ""
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr ""
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr ""
 
@@ -6081,8 +6081,8 @@ msgid "channel role"
 msgstr ""
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr ""
@@ -6105,7 +6105,7 @@ msgid "Chat actions"
 msgstr ""
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr ""
 
@@ -6132,7 +6132,7 @@ msgid "Chat Sessions"
 msgstr ""
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr ""
 
@@ -6361,7 +6361,7 @@ msgid "Choose icon"
 msgstr ""
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr ""
@@ -6566,8 +6566,8 @@ msgid "Clear search, go back, or close"
 msgstr ""
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr ""
@@ -6703,7 +6703,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr ""
@@ -7549,7 +7549,7 @@ msgid "Connection successfully updated"
 msgstr ""
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr ""
 
@@ -7713,7 +7713,7 @@ msgstr ""
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
+#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7731,7 +7731,7 @@ msgid "Conversation key"
 msgstr ""
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversation list"
 msgstr ""
 
@@ -7746,7 +7746,7 @@ msgid "Conversations"
 msgstr ""
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr ""
 
@@ -7756,7 +7756,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr ""
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr ""
 
@@ -9721,7 +9721,7 @@ msgid "Delete"
 msgstr ""
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr ""
 
@@ -9855,9 +9855,9 @@ msgid "Delete app"
 msgstr ""
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr ""
 
@@ -10358,7 +10358,7 @@ msgid "Direct messages"
 msgstr ""
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr ""
 
@@ -10617,11 +10617,11 @@ msgid "Don't import events marked as private"
 msgstr ""
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12372,7 +12372,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr ""
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr ""
 
@@ -13406,7 +13406,7 @@ msgid "Fast"
 msgstr ""
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr ""
@@ -13763,8 +13763,8 @@ msgid "Filter by record ID"
 msgstr ""
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr ""
 
@@ -14087,10 +14087,10 @@ msgid "Formats"
 msgstr ""
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
+#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 msgid "Former member"
 msgstr ""
 
@@ -15109,7 +15109,7 @@ msgid "Hide hidden groups"
 msgstr ""
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr ""
 
@@ -15351,7 +15351,7 @@ msgid "Icon"
 msgstr ""
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr ""
 
@@ -15662,7 +15662,7 @@ msgid "Importing Data ..."
 msgstr ""
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/ai/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr ""
 
@@ -16468,7 +16468,7 @@ msgid "Iterator"
 msgstr ""
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr ""
 
@@ -16990,7 +16990,7 @@ msgid "Last Updated: {0}"
 msgstr ""
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr ""
 
@@ -17673,7 +17673,7 @@ msgid "Loading retention configuration..."
 msgstr ""
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr ""
 
@@ -18157,7 +18157,7 @@ msgid "Margin"
 msgstr ""
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr ""
 
@@ -18177,7 +18177,7 @@ msgid "Markdown"
 msgstr ""
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr ""
 
@@ -18426,7 +18426,7 @@ msgid "Mentioned you"
 msgstr ""
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr ""
 
@@ -18968,8 +18968,8 @@ msgid "Move Down"
 msgstr ""
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr ""
 
@@ -19000,9 +19000,9 @@ msgid "Move to another tab"
 msgstr ""
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr ""
 
@@ -19146,7 +19146,7 @@ msgstr ""
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19289,8 +19289,8 @@ msgid "Needs a Select field"
 msgstr ""
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr ""
 
@@ -19393,13 +19393,13 @@ msgid "New calendar event"
 msgstr ""
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr ""
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
@@ -19630,7 +19630,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr ""
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr ""
 
@@ -19697,7 +19697,7 @@ msgid "Next Step"
 msgstr ""
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr ""
 
@@ -19812,7 +19812,7 @@ msgstr ""
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr ""
@@ -19915,7 +19915,7 @@ msgid "No calling code"
 msgstr ""
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr ""
 
@@ -19962,7 +19962,7 @@ msgstr ""
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "No conversations"
 msgstr ""
 
@@ -20505,7 +20505,7 @@ msgid "No role assigned to this member"
 msgstr ""
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr ""
 
@@ -20919,7 +20919,7 @@ msgid "Not now"
 msgstr ""
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr ""
 
@@ -21520,8 +21520,8 @@ msgstr ""
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21567,9 +21567,9 @@ msgid "Open chat"
 msgstr ""
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr ""
 
@@ -23026,7 +23026,7 @@ msgid "Previous approval"
 msgstr ""
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr ""
 
@@ -23883,7 +23883,7 @@ msgid "Record label"
 msgstr ""
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr ""
@@ -24273,7 +24273,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr ""
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr ""
 
@@ -24354,7 +24354,7 @@ msgid "Remove from blocklist"
 msgstr ""
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24506,13 +24506,13 @@ msgstr ""
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr ""
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr ""
 
@@ -24542,7 +24542,7 @@ msgid "Renews on"
 msgstr ""
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr ""
 
@@ -25081,7 +25081,7 @@ msgid "Role updated successfully"
 msgstr ""
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25094,8 +25094,8 @@ msgid "Roles"
 msgstr ""
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr ""
 
@@ -26586,7 +26586,7 @@ msgid "Selected"
 msgstr ""
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr ""
 
@@ -27246,7 +27246,7 @@ msgid "Show hidden objects"
 msgstr ""
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr ""
 
@@ -27613,9 +27613,9 @@ msgid "snippet"
 msgstr ""
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
@@ -27632,7 +27632,7 @@ msgid "Snooze ended"
 msgstr ""
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr ""
 
@@ -27649,13 +27649,13 @@ msgstr ""
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr ""
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr ""
 
@@ -27896,7 +27896,7 @@ msgid "Split multiple values"
 msgstr ""
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr ""
 
@@ -29675,7 +29675,7 @@ msgstr ""
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr ""
 
@@ -29695,7 +29695,7 @@ msgid "This device"
 msgstr ""
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr ""
 
@@ -30192,7 +30192,7 @@ msgid "Today"
 msgstr ""
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr ""
 
@@ -30286,7 +30286,7 @@ msgid "Tomato"
 msgstr ""
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr ""
@@ -30504,7 +30504,7 @@ msgid "Translations"
 msgstr ""
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr ""
 
@@ -30954,7 +30954,7 @@ msgid "Unanswered"
 msgstr ""
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr ""
 
@@ -31167,7 +31167,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr ""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr ""
 
@@ -31184,7 +31184,7 @@ msgstr ""
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr ""
 
@@ -31362,7 +31362,7 @@ msgid "Unsubscribed"
 msgstr ""
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr ""
 
@@ -31387,8 +31387,8 @@ msgid "Until {snoozedUntilDay}"
 msgstr ""
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32643,7 +32643,7 @@ msgid "Wait for Event"
 msgstr ""
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr ""
 
@@ -32679,7 +32679,7 @@ msgid "Waiting for your approval"
 msgstr ""
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr ""
 
@@ -33246,7 +33246,7 @@ msgid "Wink"
 msgstr ""
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr ""
 
@@ -33797,7 +33797,7 @@ msgstr ""
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
 #: src/modules/ai/components/AiChatComposerQuote.tsx
 #: src/modules/ai/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

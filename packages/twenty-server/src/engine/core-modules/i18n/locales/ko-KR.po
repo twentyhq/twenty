@@ -10048,6 +10048,11 @@ msgstr "예약되었거나 전송 중인 캠페인만 취소할 수 있습니다
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "서버 관리자만 이 구성원의 복구 코드를 관리할 수 있습니다."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "이 에이전트를 소유한 애플리케이션만 트리거를 변경할 수 있습니다"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 수 있습니다"
 

@@ -10048,6 +10048,11 @@ msgstr "Doar o campanie programată sau în curs de trimitere poate fi anulată.
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Numai un administrator de server poate gestiona codurile de recuperare pentru acest membru."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Numai aplicația care deține acest agent îi poate modifica declanșatoarele"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Doar persoana care a creat acest flux de lucru poate schimba cine îl vede"
 

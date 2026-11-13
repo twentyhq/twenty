@@ -10048,6 +10048,11 @@ msgstr "Samo zakazana kampanja ili kampanja koja se šalje može biti otkazana."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Samo administrator servera može upravljati kodovima za oporavak ovog člana."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Samo aplikacija koja poseduje ovog agenta može promeniti njegove okidače"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Samo osoba koja je kreirala ovaj radni tok može da promeni ko ga vidi"
 

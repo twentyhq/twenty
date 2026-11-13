@@ -228,13 +228,13 @@ msgstr "{0, plural, one {{years}年} other {{years}年}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, other {# 件のチャットを選択}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, other {# 件のチャット}}"
 
@@ -469,7 +469,7 @@ msgstr "{0} 回リトライ"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/ai/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1169,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} 件のレコードを選択 · {skippedCount} 件のレコードをスキップ"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} 件を選択"
 
@@ -1179,7 +1179,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} 件のオプション"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}：{text}"
 
@@ -2116,7 +2116,7 @@ msgid "Add a recipient before sending"
 msgstr "送信前に受信者を追加してください"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "送信する前に、受信者またはチャンネルを追加してください。"
 
@@ -2241,7 +2241,7 @@ msgid "Add CC"
 msgstr "CC を追加"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "チャネルを追加"
 
@@ -2642,7 +2642,7 @@ msgid "Add to Favorite"
 msgstr "お気に入りに追加"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "お気に入りに追加"
 
@@ -2947,7 +2947,7 @@ msgid "agent"
 msgstr "エージェント"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3299,7 +3299,7 @@ msgid "All {objectLabelPlural}"
 msgstr "{objectLabelPlural}すべて"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "すべてのアクション"
 
@@ -3329,8 +3329,8 @@ msgid "All applications"
 msgstr "すべてのアプリケーション"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "すべてのチャネル"
 
@@ -4459,7 +4459,7 @@ msgid "Assignable to Workspace Members"
 msgstr "ワークスペースメンバーに割り当て可能"
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "割り当て済み"
 
@@ -4474,7 +4474,7 @@ msgid "Assigned to"
 msgstr "担当"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "私に担当されている"
 
@@ -4495,7 +4495,7 @@ msgstr "割り当て"
 
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "アシスタント"
 
@@ -4930,7 +4930,7 @@ msgid "Back to customization"
 msgstr "カスタマイズに戻る"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "受信トレイに戻る"
 
@@ -5969,7 +5969,7 @@ msgid "Cell controls"
 msgstr "セルのコントロール"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "変更"
 
@@ -6070,13 +6070,13 @@ msgid "Channel"
 msgstr "チャネル"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "チャネル名"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "チャネルオプション"
 
@@ -6086,8 +6086,8 @@ msgid "channel role"
 msgstr "チャネルロール"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "チャネル"
@@ -6110,7 +6110,7 @@ msgid "Chat actions"
 msgstr "チャットの操作"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "このロールが閲覧および返信するチャットチャネル"
 
@@ -6137,7 +6137,7 @@ msgid "Chat Sessions"
 msgstr "チャットセッション"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "チャットを停止しました: 利用可能なクレジットがありません。"
 
@@ -6366,7 +6366,7 @@ msgid "Choose icon"
 msgstr "アイコンを選択"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "アイコンと色を選択"
@@ -6571,8 +6571,8 @@ msgid "Clear search, go back, or close"
 msgstr "検索をクリア、戻る、または閉じる"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "選択を解除"
@@ -6708,7 +6708,7 @@ msgstr "クリップボードの使用にはセキュアな接続 (HTTPS) が必
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "閉じる"
@@ -7554,7 +7554,7 @@ msgid "Connection successfully updated"
 msgstr "接続が正常に更新されました"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "アシスタントとの接続が失われました。応答を表示するには再読み込みしてください。"
 
@@ -7718,7 +7718,7 @@ msgstr "この役割を割り当てることができるエンティティの種
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
+#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7736,7 +7736,7 @@ msgid "Conversation key"
 msgstr "会話キー"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversation list"
 msgstr "会話リスト"
 
@@ -7751,7 +7751,7 @@ msgid "Conversations"
 msgstr "会話"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "このチャネルの会話がここに表示されます。"
 
@@ -7761,7 +7761,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "このレコードにリンクされた会話がここに表示されます。"
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "開くことができる会話がここに表示されます。"
 
@@ -9726,7 +9726,7 @@ msgid "Delete"
 msgstr "削除"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "{channelName}を削除する?"
 
@@ -9860,9 +9860,9 @@ msgid "Delete app"
 msgstr "アプリを削除"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "チャネルを削除"
 
@@ -10363,7 +10363,7 @@ msgid "Direct messages"
 msgstr "ダイレクトメッセージ"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "ダイレクトメッセージでは添付ファイルはサポートされていません。"
 
@@ -10622,11 +10622,11 @@ msgid "Don't import events marked as private"
 msgstr "非公開としてマークされたイベントをインポートしない"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12377,7 +12377,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "{stepNumStr} か月ごと、{startMonth} から {endMonth} まで"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "後から作成されるものを含むすべてのチャンネル"
 
@@ -13447,7 +13447,7 @@ msgid "Fast"
 msgstr "高速"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "お気に入り"
@@ -13804,8 +13804,8 @@ msgid "Filter by record ID"
 msgstr "レコード ID で絞り込む"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "チャットを絞り込む"
 
@@ -14128,10 +14128,10 @@ msgid "Formats"
 msgstr "形式"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
+#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 msgid "Former member"
 msgstr "元メンバー"
 
@@ -15150,7 +15150,7 @@ msgid "Hide hidden groups"
 msgstr "隠されたグループを非表示"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "受信トレイを非表示"
 
@@ -15392,7 +15392,7 @@ msgid "Icon"
 msgstr "アイコン"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "アイコンと色"
 
@@ -15703,7 +15703,7 @@ msgid "Importing Data ..."
 msgstr "データをインポート中 ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/ai/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "{channelName} で"
 
@@ -16509,7 +16509,7 @@ msgid "Iterator"
 msgstr "イテレータ"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "チャットは {destinationChannelName} に移動します。この操作は元に戻せません。"
 
@@ -17031,7 +17031,7 @@ msgid "Last Updated: {0}"
 msgstr "最終更新: {0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "今日の後で"
 
@@ -17714,7 +17714,7 @@ msgid "Loading retention configuration..."
 msgstr "保持設定を読み込み中…"
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "役割を読み込み中"
 
@@ -18198,7 +18198,7 @@ msgid "Margin"
 msgstr "マージン"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "すべて完了としてマーク"
 
@@ -18218,7 +18218,7 @@ msgid "Markdown"
 msgstr "マークダウン"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "完了としてマーク {eventTime}"
 
@@ -18467,7 +18467,7 @@ msgid "Mentioned you"
 msgstr "あなたにメンションしました"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "メンション"
 
@@ -19009,8 +19009,8 @@ msgid "Move Down"
 msgstr "下へ移動"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "チャットの移動先"
 
@@ -19041,9 +19041,9 @@ msgid "Move to another tab"
 msgstr "別のタブに移動"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "チャンネルに移動"
 
@@ -19187,7 +19187,7 @@ msgstr "該当なし"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19330,8 +19330,8 @@ msgid "Needs a Select field"
 msgstr "選択フィールドが必要です"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "入力が必要"
 
@@ -19434,13 +19434,13 @@ msgid "New calendar event"
 msgstr "新しいカレンダーイベント"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "新しいチャンネル"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
@@ -19671,7 +19671,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "次回の請求日は {totalRenewDate} です。メンバーやクレジットを期間の途中で追加すると、請求額が変動する場合があります。"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "次のチャット"
 
@@ -19738,7 +19738,7 @@ msgid "Next Step"
 msgstr "次のステップ"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "来週"
 
@@ -19853,7 +19853,7 @@ msgstr "このワークスペースには、これらの設定を満たすAIモ�
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "このインスタンスには AI プロバイダーが設定されていません。"
@@ -19956,7 +19956,7 @@ msgid "No calling code"
 msgstr "国番号なし"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "チャンネルなし"
 
@@ -20003,7 +20003,7 @@ msgstr "このチャネルを使用している会話はありません。"
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "No conversations"
 msgstr "会話はありません"
 
@@ -20546,7 +20546,7 @@ msgid "No role assigned to this member"
 msgstr "このメンバーには役割が割り当てられていません"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "役割なし"
 
@@ -20960,7 +20960,7 @@ msgid "Not now"
 msgstr "今はしない"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "あなたには公開されていません"
 
@@ -21561,8 +21561,8 @@ msgstr "あなた以外はメールやイベントを見ることができませ
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21608,9 +21608,9 @@ msgid "Open chat"
 msgstr "チャットを開く"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "チャットを開く場所"
 
@@ -23067,7 +23067,7 @@ msgid "Previous approval"
 msgstr "前の承認"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "前のチャット"
 
@@ -23924,7 +23924,7 @@ msgid "Record label"
 msgstr "レコードラベル"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "レコードページ"
@@ -24314,7 +24314,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "{0} 件のナビゲーションメニュー項目を削除しますか？"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "{displayName} を削除"
 
@@ -24395,7 +24395,7 @@ msgid "Remove from blocklist"
 msgstr "ブロックリストから削除"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24547,13 +24547,13 @@ msgstr "ウィジェットを削除"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "名前を変更"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "チャット名を変更"
 
@@ -24583,7 +24583,7 @@ msgid "Renews on"
 msgstr "更新日"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "再開"
 
@@ -25122,7 +25122,7 @@ msgid "Role updated successfully"
 msgstr "ロールが正常に更新されました"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25135,8 +25135,8 @@ msgid "Roles"
 msgstr "役割"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "このチャンネルの役割"
 
@@ -26627,7 +26627,7 @@ msgid "Selected"
 msgstr "選択済み"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "選択したチャット"
 
@@ -27287,7 +27287,7 @@ msgid "Show hidden objects"
 msgstr "隠されたオブジェクトを表示"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "受信トレイを表示"
 
@@ -27654,9 +27654,9 @@ msgid "snippet"
 msgstr "スニペット"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
@@ -27673,7 +27673,7 @@ msgid "Snooze ended"
 msgstr "スヌーズが終了しました"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "スヌーズが終了しました {eventTime}"
 
@@ -27690,13 +27690,13 @@ msgstr "{snoozedUntilLabel} までスヌーズ"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "スヌーズ中"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "{eventTime} までスヌーズ中"
 
@@ -27937,7 +27937,7 @@ msgid "Split multiple values"
 msgstr "複数の値を分割"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "分割ビュー"
 
@@ -29716,7 +29716,7 @@ msgstr "この接続は存在しないか、このアプリケーションでは
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "この会話はもう利用できません。"
 
@@ -29736,7 +29736,7 @@ msgid "This device"
 msgstr "このデバイス"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "今晩"
 
@@ -30233,7 +30233,7 @@ msgid "Today"
 msgstr "今日"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "今日、{time}"
 
@@ -30327,7 +30327,7 @@ msgid "Tomato"
 msgstr "トマト"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "明日"
@@ -30545,7 +30545,7 @@ msgid "Translations"
 msgstr "翻訳"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "トリアージ"
 
@@ -30995,7 +30995,7 @@ msgid "Unanswered"
 msgstr "未回答"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "未割り当て"
 
@@ -31208,7 +31208,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "\"{relationFieldName}\"の不明なフィールド\"{fieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "不明なファイル"
 
@@ -31225,7 +31225,7 @@ msgstr "不明な解析エラー"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "不明な送信者"
 
@@ -31403,7 +31403,7 @@ msgid "Unsubscribed"
 msgstr "配信停止済み"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "{eventTime} に購読解除しました。メンションされない限り、新しいメッセージは受信トレイに表示されません。"
 
@@ -31428,8 +31428,8 @@ msgid "Until {snoozedUntilDay}"
 msgstr "{snoozedUntilDay} まで"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32684,7 +32684,7 @@ msgid "Wait for Event"
 msgstr "イベントを待機"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "添付ファイルのアップロードが完了するまでお待ちください。"
 
@@ -32720,7 +32720,7 @@ msgid "Waiting for your approval"
 msgstr "承認待ち"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "今すぐ再開"
 
@@ -33287,7 +33287,7 @@ msgid "Wink"
 msgstr "ウィンク"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "チャットの移動先となる別のチャンネルがない場合、空のチャンネルのみ削除できます。この操作は元に戻せません。"
 
@@ -33838,7 +33838,7 @@ msgstr "昨日"
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
 #: src/modules/ai/components/AiChatComposerQuote.tsx
 #: src/modules/ai/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

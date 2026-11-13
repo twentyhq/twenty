@@ -228,13 +228,13 @@ msgstr "{0, plural, other {{years} 年}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, other {已選取 # 個聊天}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, other {# 個聊天}}"
 
@@ -469,7 +469,7 @@ msgstr "{0} 次重試"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/AiChatInboxViewHeading.tsx
+#: src/modules/ai/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1169,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "已選取 {selectedCount} 筆記錄 · 已略過 {skippedCount} 筆記錄"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} 已選取"
 
@@ -1179,7 +1179,7 @@ msgid "{selectedOptionCount} options"
 msgstr "{selectedOptionCount} 個選項"
 
 #. js-lingui-id: tz1jJj
-#: src/modules/ai/utils/getAgentChatThreadPreviewText.ts
+#: src/modules/ai/utils/getAiChatThreadPreviewText.ts
 msgid "{senderLabel}: {text}"
 msgstr "{senderLabel}：{text}"
 
@@ -2116,7 +2116,7 @@ msgid "Add a recipient before sending"
 msgstr "傳送前請新增收件者"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "傳送前請新增收件者或頻道。"
 
@@ -2241,7 +2241,7 @@ msgid "Add CC"
 msgstr "新增副本"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "新增通道"
 
@@ -2642,7 +2642,7 @@ msgid "Add to Favorite"
 msgstr "添加到收藏夾"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "添加到收藏夾"
 
@@ -2947,7 +2947,7 @@ msgid "agent"
 msgstr "代理"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
+#: src/modules/ai/utils/getAiChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3299,7 +3299,7 @@ msgid "All {objectLabelPlural}"
 msgstr "全部 {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "所有動作"
 
@@ -3329,8 +3329,8 @@ msgid "All applications"
 msgstr "所有應用程式"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "所有頻道"
 
@@ -4459,7 +4459,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "已指派"
 
@@ -4474,7 +4474,7 @@ msgid "Assigned to"
 msgstr "分配給"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "指派給我"
 
@@ -4495,7 +4495,7 @@ msgstr "分配"
 
 #. js-lingui-id: d/bvvp
 #: src/modules/ai/hooks/useAiChatEditor.ts
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "助理"
 
@@ -4930,7 +4930,7 @@ msgid "Back to customization"
 msgstr "返回自訂"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "返回收件匣"
 
@@ -5969,7 +5969,7 @@ msgid "Cell controls"
 msgstr "儲存格控制項"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "更改"
 
@@ -6070,13 +6070,13 @@ msgid "Channel"
 msgstr "頻道"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "頻道名稱"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "頻道選項"
 
@@ -6086,8 +6086,8 @@ msgid "channel role"
 msgstr "頻道角色"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "通道"
@@ -6110,7 +6110,7 @@ msgid "Chat actions"
 msgstr "聊天操作"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "此角色可讀取及回覆的聊天頻道"
 
@@ -6137,7 +6137,7 @@ msgid "Chat Sessions"
 msgstr "聊天工作階段"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Chat stopped: no more available credits."
 msgstr "聊天已停止：沒有更多可用點數。"
 
@@ -6366,7 +6366,7 @@ msgid "Choose icon"
 msgstr "選擇圖示"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "選擇圖示和顏色"
@@ -6571,8 +6571,8 @@ msgid "Clear search, go back, or close"
 msgstr "清除搜尋、返回或關閉"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
-#: src/modules/ai/components/AiChatInboxSelectionPane.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "清除選取項目"
@@ -6708,7 +6708,7 @@ msgstr "剪貼簿需要安全連線 (HTTPS)。請透過 HTTPS 存取此應用程
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "關閉"
@@ -7554,7 +7554,7 @@ msgid "Connection successfully updated"
 msgstr "連接成功更新"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "與助理的連線已中斷。重新載入以查看回應。"
 
@@ -7718,7 +7718,7 @@ msgstr "控制此角色可指派於哪些實體類型"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/AiChatInboxConversationPane.tsx
+#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -7736,7 +7736,7 @@ msgid "Conversation key"
 msgstr "對話金鑰"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversation list"
 msgstr "對話清單"
 
@@ -7751,7 +7751,7 @@ msgid "Conversations"
 msgstr "對話"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "此頻道中的對話將顯示於此處。"
 
@@ -7761,7 +7761,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "與此記錄連結的對話將顯示於此處。"
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "您可以開啟的對話將顯示於此處。"
 
@@ -9726,7 +9726,7 @@ msgid "Delete"
 msgstr "刪除"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "刪除 {channelName}?"
 
@@ -9860,9 +9860,9 @@ msgid "Delete app"
 msgstr "刪除應用程式"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "刪除頻道"
 
@@ -10363,7 +10363,7 @@ msgid "Direct messages"
 msgstr "直接訊息"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewAgentChatAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "直接訊息不支援附件。"
 
@@ -10622,11 +10622,11 @@ msgid "Don't import events marked as private"
 msgstr "不要匯入標示為私人 的事件"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12377,7 +12377,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "每 {stepNumStr} 個月，從 {startMonth} 到 {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "所有頻道，包括之後建立的頻道"
 
@@ -13447,7 +13447,7 @@ msgid "Fast"
 msgstr "快速"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerAiChatFavoritesSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "收藏夾"
@@ -13804,8 +13804,8 @@ msgid "Filter by record ID"
 msgstr "依記錄 ID 篩選"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
-#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/ai/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "篩選聊天"
 
@@ -14128,10 +14128,10 @@ msgid "Formats"
 msgstr "格式"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
+#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
-#: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 msgid "Former member"
 msgstr "前成員"
 
@@ -15150,7 +15150,7 @@ msgid "Hide hidden groups"
 msgstr "隱藏隱藏的群組"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "隱藏收件匣"
 
@@ -15392,7 +15392,7 @@ msgid "Icon"
 msgstr "圖標"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "圖標和顏色"
 
@@ -15703,7 +15703,7 @@ msgid "Importing Data ..."
 msgstr "資料匯入中 ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/AiChatThreadChannelIcon.tsx
+#: src/modules/ai/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "在 {channelName}"
 
@@ -16509,7 +16509,7 @@ msgid "Iterator"
 msgstr "迭代器"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "其聊天將移至 {destinationChannelName}。此操作無法復原。"
 
@@ -17031,7 +17031,7 @@ msgid "Last Updated: {0}"
 msgstr "最後更新：{0}"
 
 #. js-lingui-id: p9uaTd
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
 msgstr "今天稍後"
 
@@ -17714,7 +17714,7 @@ msgid "Loading retention configuration..."
 msgstr "正在加載保留配置..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "正在載入角色"
 
@@ -18198,7 +18198,7 @@ msgid "Margin"
 msgstr "邊距"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "全部標記為完成"
 
@@ -18218,7 +18218,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "已標示為完成 {eventTime}"
 
@@ -18467,7 +18467,7 @@ msgid "Mentioned you"
 msgstr "提及您"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "提及"
 
@@ -19009,8 +19009,8 @@ msgid "Move Down"
 msgstr "下移"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "將其聊天移至"
 
@@ -19041,9 +19041,9 @@ msgid "Move to another tab"
 msgstr "移至其他分頁"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "移至頻道"
 
@@ -19187,7 +19187,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19330,8 +19330,8 @@ msgid "Needs a Select field"
 msgstr "需要一個選擇字段"
 
 #. js-lingui-id: k3/EHQ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
 #: src/modules/ai/constants/AiChatThreadReasons.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "需要輸入"
 
@@ -19434,13 +19434,13 @@ msgid "New calendar event"
 msgstr "新增日曆活動"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerAiChatChannelsSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "新頻道"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai/components/AiChatInboxListHeader.tsx
 #: src/modules/ai/components/AiChatPageHeader.tsx
+#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
@@ -19671,7 +19671,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "下一次收費日期：{totalRenewDate}。若在期間內新增成員或點數，發票金額可能會有所變動"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "下一個聊天"
 
@@ -19738,7 +19738,7 @@ msgid "Next Step"
 msgstr "下一步"
 
 #. js-lingui-id: IT903p
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Next week"
 msgstr "下週"
 
@@ -19853,7 +19853,7 @@ msgstr "此工作區沒有符合這些設定的 AI 模型。"
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "此執行個體未設定 AI 供應商。"
@@ -19956,7 +19956,7 @@ msgid "No calling code"
 msgstr "不含國碼"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/AiChatThreadChannelPicker.tsx
+#: src/modules/ai/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "沒有頻道"
 
@@ -20003,7 +20003,7 @@ msgstr "沒有對話使用此頻道。"
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/AiChatInboxPage.tsx
+#: src/pages/ai-chat/InboxPage.tsx
 msgid "No conversations"
 msgstr "沒有對話"
 
@@ -20546,7 +20546,7 @@ msgid "No role assigned to this member"
 msgstr "未為此成員指派任何角色"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "沒有角色"
 
@@ -20960,7 +20960,7 @@ msgid "Not now"
 msgstr "現在不要"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerAiChatChannelNavigation.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "未對您開放"
 
@@ -21561,8 +21561,8 @@ msgstr "只有您能看到自己的電子郵件與活動"
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21608,9 +21608,9 @@ msgid "Open chat"
 msgstr "開啟聊天"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
-#: src/modules/ai/components/AiChatInboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/ai/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "開啟聊天的方式"
 
@@ -23067,7 +23067,7 @@ msgid "Previous approval"
 msgstr "上一個核准項目"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/AiChatInboxThreadPagination.tsx
+#: src/modules/ai/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "上一個聊天"
 
@@ -23924,7 +23924,7 @@ msgid "Record label"
 msgstr "記錄標籤"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "記錄頁面"
@@ -24314,7 +24314,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "要移除 {0} 個導覽選單項目嗎？"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "移除 {displayName}"
 
@@ -24395,7 +24395,7 @@ msgid "Remove from blocklist"
 msgstr "從封鎖清單中移除"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24547,13 +24547,13 @@ msgstr "移除小工具"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelActionsDropdown.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "重新命名"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/AiChatThreadListItem.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "重新命名聊天"
 
@@ -24583,7 +24583,7 @@ msgid "Renews on"
 msgstr "續約日期"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "重新開啟"
 
@@ -25122,7 +25122,7 @@ msgid "Role updated successfully"
 msgstr "角色更新成功"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25135,8 +25135,8 @@ msgid "Roles"
 msgstr "角色"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "此頻道中的角色"
 
@@ -26627,7 +26627,7 @@ msgid "Selected"
 msgstr "已選取"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "已選取的聊天"
 
@@ -27287,7 +27287,7 @@ msgid "Show hidden objects"
 msgstr "顯示隱藏的物件"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/AiChatNewThreadInboxListToggle.tsx
+#: src/modules/ai/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "顯示收件匣"
 
@@ -27654,9 +27654,9 @@ msgid "snippet"
 msgstr "程式碼片段"
 
 #. js-lingui-id: 7+i6oV
-#: src/modules/ai/components/AiChatInboxBulkActions.tsx
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
@@ -27673,7 +27673,7 @@ msgid "Snooze ended"
 msgstr "暫停已結束"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "暫停已於 {eventTime} 結束"
 
@@ -27690,13 +27690,13 @@ msgstr "暫停至 {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxChannelNavigationItems.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "已暫停"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "已暫停至 {eventTime}"
 
@@ -27937,7 +27937,7 @@ msgid "Split multiple values"
 msgstr "分割多個值"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
+#: src/modules/ai/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "分割檢視"
 
@@ -29716,7 +29716,7 @@ msgstr "此連接不存在，或不適用於此應用程式。"
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai/components/AiChatEditorSection.tsx
-#: src/modules/ai/hooks/useAgentChatSubscription.ts
+#: src/modules/ai/hooks/useAiChatSubscription.ts
 msgid "This conversation is no longer available."
 msgstr "此對話已無法使用。"
 
@@ -29736,7 +29736,7 @@ msgid "This device"
 msgstr "此裝置"
 
 #. js-lingui-id: GyVWfy
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 msgid "This evening"
 msgstr "今晚"
 
@@ -30233,7 +30233,7 @@ msgid "Today"
 msgstr "今天"
 
 #. js-lingui-id: TNXmKt
-#: src/modules/ai/hooks/useFormatAgentChatThreadDate.ts
+#: src/modules/ai/hooks/useFormatAiChatThreadDate.ts
 msgid "Today, {time}"
 msgstr "今天，{time}"
 
@@ -30327,7 +30327,7 @@ msgid "Tomato"
 msgstr "番茄色"
 
 #. js-lingui-id: BRMXj0
-#: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/ai/utils/getAiChatThreadSnoozeOptions.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "明天"
@@ -30545,7 +30545,7 @@ msgid "Translations"
 msgstr "翻译"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerAiChatTriageSection.tsx
+#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "分類"
 
@@ -30995,7 +30995,7 @@ msgid "Unanswered"
 msgstr "未回答"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
+#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "未指派"
 
@@ -31208,7 +31208,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "\"{relationFieldName}\" 上的未知欄位 \"{fieldName}\""
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai/components/internal/AgentChatFilePreview.tsx
+#: src/modules/ai/components/internal/AiChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "未知檔案"
 
@@ -31225,7 +31225,7 @@ msgstr "未知的解析錯誤"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
+#: src/modules/ai/utils/getAiChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "未知寄件者"
 
@@ -31403,7 +31403,7 @@ msgid "Unsubscribed"
 msgstr "已退訂"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
+#: src/modules/ai/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "已於 {eventTime} 取消訂閱。除非有人提及您，否則新訊息不會出現在您的收件匣中。"
 
@@ -31428,8 +31428,8 @@ msgid "Until {snoozedUntilDay}"
 msgstr "至 {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
-#: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
+#: src/modules/ai/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32684,7 +32684,7 @@ msgid "Wait for Event"
 msgstr "等待事件"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai/hooks/useAgentChat.ts
+#: src/modules/ai/hooks/useAiChat.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "請等待附件完成上傳。"
 
@@ -32720,7 +32720,7 @@ msgid "Waiting for your approval"
 msgstr "正在等待您的核准"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/AiChatThreadTriageButtons.tsx
+#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "立即喚醒"
 
@@ -33287,7 +33287,7 @@ msgid "Wink"
 msgstr "眨眼"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerAiChatChannelItem.tsx
+#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "若沒有其他頻道可將其聊天移至，則只能刪除空白頻道。此操作無法復原。"
 
@@ -33838,7 +33838,7 @@ msgstr "昨天"
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
 #: src/modules/ai/components/AiChatComposerQuote.tsx
 #: src/modules/ai/components/AiChatMessageReplyQuote.tsx
-#: src/modules/ai/utils/getAgentChatSenderLabel.ts
+#: src/modules/ai/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"

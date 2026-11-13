@@ -10048,6 +10048,11 @@ msgstr "Faqat rejalashtirilgan yoki yuborilayotgan kampaniyani bekor qilish mumk
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Bu a’zo uchun tiklash kodlarini faqat server administratori boshqarishi mumkin."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10090,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Faqat ushbu agentga egalik qiluvchi ilova uning tetiklagichlarini o‘zgartira oladi"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bu ish jarayonini kim ko‘rishini faqat uni yaratgan shaxs o‘zgartira oladi"
 
