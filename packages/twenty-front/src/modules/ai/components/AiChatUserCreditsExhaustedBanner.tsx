@@ -72,7 +72,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
       <AiChatInlineBanner
         status="info"
         action={dismissAction}
-      >{t`Weekly personal AI limit reached. Now using workspace credits.`}</AiChatInlineBanner>
+      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</AiChatInlineBanner>
     );
   }
 
@@ -85,13 +85,13 @@ export const AiChatUserCreditsExhaustedBanner = () => {
             onClick={() => navigateSettings(SettingsPath.Billing)}
           >{t`Settings`}</InlineBanner.Action>
         }
-      >{t`Weekly personal AI limit reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
+      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
     );
   }
 
   return (
     <AiChatInlineBanner
       action={dismissAction}
-    >{t`Weekly personal AI limit reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
+    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
   );
 };
