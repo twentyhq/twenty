@@ -100,6 +100,7 @@ export class LineChartDataService {
       const primaryAxisGroupByField = getFieldMetadata(
         configuration.primaryAxisGroupByFieldMetadataId,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       );
 
       const aggregateField = getFieldMetadata(
@@ -117,6 +118,7 @@ export class LineChartDataService {
         secondaryAxisGroupByField = getFieldMetadata(
           configuration.secondaryAxisGroupByFieldMetadataId!,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         );
       }
 
@@ -210,7 +212,6 @@ export class LineChartDataService {
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
-          flatFieldMetadataOptionMaps,
           configuration,
           userTimezone,
           firstDayOfTheWeek,
@@ -225,7 +226,6 @@ export class LineChartDataService {
         filteredRawResults: resolvedResults,
         primaryAxisGroupByField,
         aggregateField,
-        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone,
         firstDayOfTheWeek,

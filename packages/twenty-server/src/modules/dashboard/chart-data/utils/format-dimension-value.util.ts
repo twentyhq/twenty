@@ -11,8 +11,6 @@ import {
   parseToPlainDateOrThrow,
 } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { GRAPH_DEFAULT_DATE_GRANULARITY } from 'src/modules/dashboard/chart-data/constants/graph-default-date-granularity.constant';
 import { formatDateByGranularity } from 'src/modules/dashboard/chart-data/utils/format-date-by-granularity';
@@ -20,7 +18,6 @@ import { formatDateByGranularity } from 'src/modules/dashboard/chart-data/utils/
 type FormatDimensionValueParams = {
   value: unknown;
   fieldMetadata: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity?: ObjectRecordGroupByDateGranularity;
   subFieldName?: string;
   userTimezone: string;
@@ -53,7 +50,6 @@ const normalizeMultiSelectValue = (value: unknown): unknown[] => {
 export const formatDimensionValue = ({
   value,
   fieldMetadata,
-  flatFieldMetadataOptionMaps,
   dateGranularity,
   subFieldName,
   userTimezone,
@@ -69,24 +65,21 @@ export const formatDimensionValue = ({
 
   switch (fieldMetadata.type) {
     case FieldMetadataType.SELECT: {
-      const selectedOption = resolveFlatFieldMetadataOptionsFromCachedMaps({
-        flatFieldMetadata: fieldMetadata,
-        flatFieldMetadataOptionMaps,
-      })?.find((option) => option.value === value);
+      const selectedOption = fieldMetadata.options?.find(
+        (option) => option.value === value,
+      );
 
       return selectedOption?.label ?? String(value);
     }
 
     case FieldMetadataType.MULTI_SELECT: {
       const values = normalizeMultiSelectValue(value);
-      const options = resolveFlatFieldMetadataOptionsFromCachedMaps({
-        flatFieldMetadata: fieldMetadata,
-        flatFieldMetadataOptionMaps,
-      });
 
       return values
         .map((value) => {
-          const option = options?.find((option) => option.value === value);
+          const option = fieldMetadata.options?.find(
+            (option) => option.value === value,
+          );
 
           return option?.label ?? String(value);
         })

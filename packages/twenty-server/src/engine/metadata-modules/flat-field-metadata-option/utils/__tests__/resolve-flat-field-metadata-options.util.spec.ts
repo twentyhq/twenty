@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
-import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 
 const OPEN_OPTION_ID = '20202020-0000-4000-8000-000000000101';
@@ -98,36 +97,5 @@ describe('resolveFlatFieldMetadataOptions', () => {
     ).toEqual([
       { id: OPEN_OPTION_ID, value: 'OPEN', label: 'Open', position: 0 },
     ]);
-  });
-});
-
-describe('resolveFlatFieldMetadataOptionsFromCachedMaps', () => {
-  it('resolves a field once per option maps', () => {
-    const flatFieldMetadata = {
-      type: FieldMetadataType.SELECT,
-      options: [storedOpenOption],
-      fieldMetadataOptionUniversalIdentifiers: [OPEN_OPTION_ID],
-    };
-
-    const firstOptions = resolveFlatFieldMetadataOptionsFromCachedMaps({
-      flatFieldMetadata,
-      flatFieldMetadataOptionMaps,
-    });
-
-    expect(firstOptions).toEqual([
-      { id: OPEN_OPTION_ID, value: 'OPEN', label: 'Open', position: 0 },
-    ]);
-    expect(
-      resolveFlatFieldMetadataOptionsFromCachedMaps({
-        flatFieldMetadata,
-        flatFieldMetadataOptionMaps,
-      }),
-    ).toBe(firstOptions);
-    expect(
-      resolveFlatFieldMetadataOptionsFromCachedMaps({
-        flatFieldMetadata,
-        flatFieldMetadataOptionMaps: { ...flatFieldMetadataOptionMaps },
-      }),
-    ).not.toBe(firstOptions);
   });
 });

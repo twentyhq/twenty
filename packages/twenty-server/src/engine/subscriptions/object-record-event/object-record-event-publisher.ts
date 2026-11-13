@@ -201,9 +201,7 @@ export class ObjectRecordEventPublisher {
         queries: streamData.queries,
         event: filteredEvent,
         objectMetadata: workspaceEventBatch.objectMetadata,
-        flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps:
-          permissionsContext.flatFieldMetadataOptionMaps,
+        permissionsContext,
       });
 
       if (matchedQueryIds.length === 0) {
@@ -425,14 +423,12 @@ export class ObjectRecordEventPublisher {
     queries,
     event,
     objectMetadata,
-    flatFieldMetadataMaps,
-    flatFieldMetadataOptionMaps,
+    permissionsContext,
   }: {
     queries: Record<string, RecordOrMetadataGqlOperationSignature>;
     event: ObjectRecordSubscriptionEvent;
     objectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+    permissionsContext: StreamPermissionsContext;
   }): string[] {
     const matchedQueryIds: string[] = [];
 
@@ -446,8 +442,7 @@ export class ObjectRecordEventPublisher {
           operationSignature,
           event,
           objectMetadata,
-          flatFieldMetadataMaps,
-          flatFieldMetadataOptionMaps,
+          permissionsContext,
         })
       ) {
         matchedQueryIds.push(queryId);
@@ -461,14 +456,12 @@ export class ObjectRecordEventPublisher {
     operationSignature,
     event,
     objectMetadata,
-    flatFieldMetadataMaps,
-    flatFieldMetadataOptionMaps,
+    permissionsContext,
   }: {
     operationSignature: RecordGqlOperationSignature;
     event: ObjectRecordSubscriptionEvent;
     objectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+    permissionsContext: StreamPermissionsContext;
   }): boolean {
     if (operationSignature.objectNameSingular !== event.objectNameSingular) {
       return false;
@@ -505,8 +498,9 @@ export class ObjectRecordEventPublisher {
         record,
         filter: queryFilter,
         flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps,
+        flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps:
+          permissionsContext.flatFieldMetadataOptionMaps,
         shouldIgnoreSoftDeleteDefaultFilter,
       }),
     );
@@ -515,20 +509,10 @@ export class ObjectRecordEventPublisher {
   private async fetchPermissionsContext(
     workspaceId: string,
   ): Promise<StreamPermissionsContext> {
-    const {
-      flatFieldMetadataMaps,
-      flatFieldMetadataOptionMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+    return this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatFieldMetadataMaps',
       'flatFieldMetadataOptionMaps',
       'flatObjectMetadataMaps',
     ]);
-
-    return {
-      flatFieldMetadataMaps,
-      flatFieldMetadataOptionMaps,
-      flatObjectMetadataMaps,
-    };
   }
 }

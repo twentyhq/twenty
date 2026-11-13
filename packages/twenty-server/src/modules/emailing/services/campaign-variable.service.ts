@@ -12,8 +12,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-maps.type';
@@ -29,7 +28,6 @@ export type PersonCampaignVariables = {
 
 type PersonVariableSchema = PersonCampaignVariables & {
   fieldsByName: Map<string, FlatFieldMetadata>;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
 };
 
 const COMPUTED_VARIABLE_NAMES = ['fullName', 'personId'];
@@ -90,8 +88,18 @@ export class CampaignVariableService {
         ...definitions.map((definition) => definition.name),
         ...COMPUTED_VARIABLE_NAMES,
       ]),
-      fieldsByName: new Map(fields.map((field) => [field.name, field])),
-      flatFieldMetadataOptionMaps: data.flatFieldMetadataOptionMaps,
+      fieldsByName: new Map(
+        fields.map((field) => [
+          field.name,
+          {
+            ...field,
+            options: resolveFlatFieldMetadataOptions({
+              flatFieldMetadata: field,
+              flatFieldMetadataOptionMaps: data.flatFieldMetadataOptionMaps,
+            }),
+          },
+        ]),
+      ),
     };
 
     writeLruEntry({
@@ -137,18 +145,17 @@ export class CampaignVariableService {
     workspaceId: string,
     person: PersonWorkspaceEntity | null,
   ): Promise<Record<string, string>> {
-    const { definitions, fieldsByName, flatFieldMetadataOptionMaps } =
+    const { definitions, fieldsByName } =
       await this.getPersonVariableSchema(workspaceId);
 
     const variables: Record<string, string> = {};
 
     for (const definition of definitions) {
-      variables[definition.name] = this.formatValue({
-        value: this.resolveValue(person, definition.name),
+      variables[definition.name] = this.formatValue(
+        this.resolveValue(person, definition.name),
         definition,
-        field: fieldsByName.get(definition.fieldName),
-        flatFieldMetadataOptionMaps,
-      });
+        fieldsByName.get(definition.fieldName),
+      );
     }
 
     variables.personId = this.stringify(this.resolveValue(person, 'id'));
@@ -203,17 +210,11 @@ export class CampaignVariableService {
       );
   }
 
-  private formatValue({
-    value,
-    definition,
-    field,
-    flatFieldMetadataOptionMaps,
-  }: {
-    value: unknown;
-    definition: CampaignVariableDefinition;
-    field: FlatFieldMetadata | undefined;
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-  }): string {
+  private formatValue(
+    value: unknown,
+    definition: CampaignVariableDefinition,
+    field: FlatFieldMetadata | undefined,
+  ): string {
     if (!isDefined(value) || value === '') {
       return '';
     }
@@ -229,13 +230,7 @@ export class CampaignVariableService {
       }
       case FieldMetadataType.SELECT:
       case FieldMetadataType.RATING: {
-        const options = isDefined(field)
-          ? resolveFlatFieldMetadataOptionsFromCachedMaps({
-              flatFieldMetadata: field,
-              flatFieldMetadataOptionMaps,
-            })
-          : null;
-        const option = options?.find(
+        const option = field?.options?.find(
           (fieldOption) => fieldOption.value === value,
         );
 

@@ -9,7 +9,6 @@ import {
   FlatUpdateFieldMetadataOptionAction,
   UniversalUpdateFieldMetadataOptionAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-metadata-option/types/workspace-migration-field-metadata-option-action.type';
-import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -20,12 +19,6 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   'update',
   'fieldMetadataOption',
 ) {
-  constructor(
-    private readonly fieldMetadataOptionEnumSchemaService: FieldMetadataOptionEnumSchemaService,
-  ) {
-    super();
-  }
-
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalUpdateFieldMetadataOptionAction>,
   ): Promise<FlatUpdateFieldMetadataOptionAction> {
@@ -65,25 +58,8 @@ export class UpdateFieldMetadataOptionActionHandlerService extends WorkspaceMigr
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerContext<
-      FlatUpdateFieldMetadataOptionAction,
-      UniversalUpdateFieldMetadataOptionAction
-    >,
+    _context: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldMetadataOptionAction>,
   ): Promise<void> {
-    await this.fieldMetadataOptionEnumSchemaService.applyEnumChangeOfOptionAction(
-      {
-        fieldMetadataUniversalIdentifier:
-          findFlatEntityByUniversalIdentifierOrThrow({
-            universalIdentifier: context.action.universalIdentifier,
-            flatEntityMaps:
-              context.allFlatEntityMaps.flatFieldMetadataOptionMaps,
-          }).fieldMetadataUniversalIdentifier,
-        fieldMetadataOptionEnumChangeTracker:
-          context.fieldMetadataOptionEnumChangeTracker,
-        allFlatEntityMaps: context.allFlatEntityMaps,
-        queryRunner: context.queryRunner,
-        workspaceId: context.workspaceId,
-      },
-    );
+    return;
   }
 }

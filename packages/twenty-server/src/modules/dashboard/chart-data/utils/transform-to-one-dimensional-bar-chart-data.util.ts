@@ -6,7 +6,6 @@ import {
   convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek,
 } from 'twenty-shared/utils';
 
-import { FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { BarChartGroupMode } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-group-mode.enum';
@@ -28,7 +27,6 @@ export const transformToOneDimensionalBarChartData = ({
   filteredRawResults,
   primaryAxisGroupByField,
   aggregateField,
-  flatFieldMetadataOptionMaps,
   configuration,
   userTimezone,
   firstDayOfTheWeek,
@@ -38,7 +36,6 @@ export const transformToOneDimensionalBarChartData = ({
   filteredRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   aggregateField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   configuration: BarChartConfigurationDTO;
   userTimezone: string;
   firstDayOfTheWeek: CalendarStartDay;
@@ -55,7 +52,6 @@ export const transformToOneDimensionalBarChartData = ({
     applyGapFilling({
       data: filteredRawResults,
       primaryAxisGroupByField,
-      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       omitNullValues: configuration.omitNullValues ?? false,
       isDescOrder,
@@ -63,10 +59,7 @@ export const transformToOneDimensionalBarChartData = ({
       splitMultiValueFields: configuration.splitMultiValueFields,
     });
 
-  const selectOptions = getSelectOptions({
-    fieldMetadata: primaryAxisGroupByField,
-    flatFieldMetadataOptionMaps,
-  });
+  const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
   const convertedFirstDayOfTheWeek =
     convertCalendarStartDayNonIsoNumberToFirstDayOfTheWeek(
@@ -87,7 +80,6 @@ export const transformToOneDimensionalBarChartData = ({
     processOneDimensionalResults({
       rawResults: gapFilledResults,
       primaryAxisGroupByField,
-      flatFieldMetadataOptionMaps,
       dateGranularity: configuration.primaryAxisDateGranularity,
       subFieldName: configuration.primaryAxisGroupBySubFieldName,
       userTimezone,

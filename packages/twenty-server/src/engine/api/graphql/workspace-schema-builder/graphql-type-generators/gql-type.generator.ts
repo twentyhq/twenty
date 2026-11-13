@@ -14,6 +14,7 @@ import {
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { type SchemaGenerationContext } from 'src/engine/api/graphql/workspace-schema-builder/types/schema-generation-context.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -93,11 +94,16 @@ export class GqlTypeGenerator {
         flatFieldMetadataMaps,
       );
 
-      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore({
+      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(
         flatObjectMetadata,
-        fields,
-        flatFieldMetadataOptionMaps,
-      });
+        fields.map((flatFieldMetadata) => ({
+          ...flatFieldMetadata,
+          options: resolveFlatFieldMetadataOptions({
+            flatFieldMetadata,
+            flatFieldMetadataOptionMaps,
+          }),
+        })),
+      );
       generators.objectMetadataGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,
         fields,

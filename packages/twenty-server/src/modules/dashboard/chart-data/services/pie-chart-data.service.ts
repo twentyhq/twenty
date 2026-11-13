@@ -103,6 +103,7 @@ export class PieChartDataService {
       const groupByField = getFieldMetadata(
         configuration.groupByFieldMetadataId,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       );
 
       const limit =
@@ -159,7 +160,6 @@ export class PieChartDataService {
       return transformToPieChartData({
         filteredRawResults: resolvedResults,
         groupByField,
-        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone: configuration.timezone ?? 'UTC',
         firstDayOfTheWeek:
