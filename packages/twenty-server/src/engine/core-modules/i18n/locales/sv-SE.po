@@ -327,7 +327,7 @@ msgstr "Ett nätverksfel inträffade vid åtkomst till kalendern."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Ett icke-kanoniskt vyfält kan inte använda etikettidentifierarfältet"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "En extern tjänst tog för lång tid på sig att svara."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "En extra kolumn kan inte visa postnamnet"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Det går inte att ta bort den sista administratören från arbetsytan."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Det går inte att ta bort den sista serveradministratören. Ge en annan användare serveradministratörsåtkomst i administratörspanelen först."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5108,7 +5108,7 @@ msgstr "Ange ett namn med mellan 1 och {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGT
 #. js-lingui-id: 2h1oP1
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Enter an API key."
-msgstr ""
+msgstr "Ange en API-nyckel."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5381,7 +5381,7 @@ msgstr "Externt inspelnings-ID"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Extra kolumner stöds inte här"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5521,7 +5521,7 @@ msgstr "Februari"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "Fältet \"{fieldName}\" kan inte jämföras med medlemsfältet \"{workspaceMemberFieldName}\" för arbetsytan eftersom deras typer inte är kompatibla"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9562,7 +9562,7 @@ msgstr "Ingen verifierad avsändardomän matchar denna avsändaradress."
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Icke-kanoniska vyfält stöds inte i widgetvyer"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10058,7 +10058,7 @@ msgstr "Endast en serveradministratör kan hantera återställningskoder för de
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Endast en arbetsytemedlem kan ändra vem som ser ett arbetsflöde"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10273,7 +10273,7 @@ msgstr "Affärsmöjlighetens skede"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
-msgstr ""
+msgstr "Alternativet \"{optionLabel}\" ingår i fältet och kan inte tas bort. Inaktivera det i stället."
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -12236,7 +12236,7 @@ msgstr "Regel för behörighet på radnivå med denna universella identifierare 
 #. js-lingui-id: JYBCym
 #: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
 msgid "Row level records permissions that hide or lock fields need at least one predicate group."
-msgstr ""
+msgstr "Behörigheter för poster på radnivå som döljer eller låser fält behöver minst en predikatgrupp."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13789,7 +13789,7 @@ msgstr "Agenten du letar efter kunde inte hittas. Den kan ha raderats eller så 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
-msgstr ""
+msgstr "API-värdet för alternativet \"{optionLabel}\" ingår i fältet och kan inte ändras."
 
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13975,7 +13975,7 @@ msgstr "Datumet då meddelandet mottogs"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "The default option cannot be deactivated"
-msgstr ""
+msgstr "Standardalternativet kan inte inaktiveras"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14894,7 +14894,7 @@ msgstr "Denna funktion är inte aktiverad."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Det här fältet kan inte jämföras med det här medlemsfältet för arbetsytan"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17159,7 +17159,7 @@ msgstr "Vi kunde inte starta anslutningen. Försök igen."
 #. js-lingui-id: 3Di+o2
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
-msgstr ""
+msgstr "Vi kunde inte verifiera den här nyckeln. Kontrollera den eller försök igen senare om tjänsten är nere."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

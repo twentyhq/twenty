@@ -327,7 +327,7 @@ msgstr "Đã xảy ra lỗi mạng khi truy cập lịch."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Trường chế độ xem không chuẩn không thể sử dụng trường mã định danh nhãn"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Một dịch vụ bên ngoài mất quá nhiều thời gian để phả
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Cột bổ sung không thể hiển thị tên bản ghi"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Không thể loại bỏ quản trị viên cuối cùng khỏi không g
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Không thể xóa quản trị viên máy chủ cuối cùng. Trước tiên, hãy cấp quyền truy cập quản trị viên máy chủ cho một người dùng khác trong Bảng quản trị."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5108,7 +5108,7 @@ msgstr "Nhập tên có từ 1 đến {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH
 #. js-lingui-id: 2h1oP1
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Enter an API key."
-msgstr ""
+msgstr "Nhập khóa API."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5381,7 +5381,7 @@ msgstr "ID ghi âm bên ngoài"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Các cột bổ sung không được hỗ trợ ở đây"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5521,7 +5521,7 @@ msgstr "Tháng Hai"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "Trường \"{fieldName}\" không thể được so sánh với trường thành viên không gian làm việc \"{workspaceMemberFieldName}\", các kiểu của chúng không tương thích"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9560,7 +9560,7 @@ msgstr "Không có tên miền gửi đã được xác minh nào khớp với �
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Các trường chế độ xem không chuẩn không được hỗ trợ trong chế độ xem tiện ích"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10056,7 +10056,7 @@ msgstr "Chỉ quản trị viên máy chủ mới có thể quản lý mã khôi
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Chỉ thành viên không gian làm việc mới có thể thay đổi người xem một quy trình làm việc"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10271,7 +10271,7 @@ msgstr "Giai đoạn cơ hội"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
-msgstr ""
+msgstr "Tùy chọn \"{optionLabel}\" đi kèm với trường và không thể bị xóa. Hãy vô hiệu hóa tùy chọn này thay thế."
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -12234,7 +12234,7 @@ msgstr "Quy tắc phân quyền cấp hàng với định danh phổ quát này 
 #. js-lingui-id: JYBCym
 #: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
 msgid "Row level records permissions that hide or lock fields need at least one predicate group."
-msgstr ""
+msgstr "Quyền đối với bản ghi cấp hàng ẩn hoặc khóa các trường cần có ít nhất một nhóm điều kiện."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13783,7 +13783,7 @@ msgstr "Không thể tìm thấy tác nhân bạn đang tìm kiếm. Nó có th�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
-msgstr ""
+msgstr "Giá trị API của tùy chọn \"{optionLabel}\" đi kèm với trường và không thể thay đổi."
 
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13969,7 +13969,7 @@ msgstr "Ngày nhận tin nhắn"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "The default option cannot be deactivated"
-msgstr ""
+msgstr "Không thể vô hiệu hóa tùy chọn mặc định"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14888,7 +14888,7 @@ msgstr "Tính năng này chưa được bật."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Trường này không thể được so sánh với trường thành viên không gian làm việc này"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17153,7 +17153,7 @@ msgstr "Chúng tôi không thể bắt đầu kết nối. Vui lòng thử lại
 #. js-lingui-id: 3Di+o2
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
-msgstr ""
+msgstr "Chúng tôi không thể xác minh khóa này. Hãy kiểm tra lại hoặc thử lại sau nếu dịch vụ đang ngừng hoạt động."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -327,7 +327,7 @@ msgstr "Une erreur réseau s'est produite lors de l'accès au calendrier."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Un champ de vue non canonique ne peut pas utiliser le champ identifiant de libellé"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Un service externe a mis trop de temps à répondre."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Une colonne supplémentaire ne peut pas afficher le nom de l'enregistrement"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Impossible de retirer le dernier administrateur de l'espace de travail."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Impossible de supprimer le dernier administrateur du serveur. Accordez d'abord l'accès administrateur du serveur à un autre utilisateur dans le panneau d'administration."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5108,7 +5108,7 @@ msgstr "Saisissez un nom comprenant entre 1 et {AI_CHAT_ASSISTANT_DISPLAY_NAME_M
 #. js-lingui-id: 2h1oP1
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Enter an API key."
-msgstr ""
+msgstr "Saisissez une clé API."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5381,7 +5381,7 @@ msgstr "ID d'enregistrement externe"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Les colonnes supplémentaires ne sont pas prises en charge ici"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5521,7 +5521,7 @@ msgstr "Février"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "Le champ \"{fieldName}\" ne peut pas être comparé au champ de membre de l'espace de travail \"{workspaceMemberFieldName}\", leurs types ne sont pas compatibles"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9560,7 +9560,7 @@ msgstr "Aucun domaine d’envoi vérifié ne correspond à cette adresse d’exp
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Les champs de vue non canoniques ne sont pas pris en charge dans les vues de widget"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10056,7 +10056,7 @@ msgstr "Seul un administrateur du serveur peut gérer les codes de récupératio
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Seul un membre de l’espace de travail peut modifier qui voit un workflow"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10271,7 +10271,7 @@ msgstr "Étape de l'opportunité"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
-msgstr ""
+msgstr "L’option \"{optionLabel}\" est fournie avec le champ et ne peut pas être supprimée. Désactivez-la à la place."
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -12234,7 +12234,7 @@ msgstr "Une règle d'autorisation au niveau des lignes avec cet identifiant univ
 #. js-lingui-id: JYBCym
 #: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
 msgid "Row level records permissions that hide or lock fields need at least one predicate group."
-msgstr ""
+msgstr "Les autorisations d'enregistrements au niveau des lignes qui masquent ou verrouillent des champs nécessitent au moins un groupe de prédicats."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13783,7 +13783,7 @@ msgstr "L'agent que vous recherchez n'a pas pu être trouvé. Il a peut-être é
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
-msgstr ""
+msgstr "La valeur API de l’option \"{optionLabel}\" est fournie avec le champ et ne peut pas être modifiée."
 
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13969,7 +13969,7 @@ msgstr "Date de réception du message"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "The default option cannot be deactivated"
-msgstr ""
+msgstr "L’option par défaut ne peut pas être désactivée"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14888,7 +14888,7 @@ msgstr "Cette fonctionnalité n'est pas activée."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Ce champ ne peut pas être comparé à ce champ de membre de l'espace de travail"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17153,7 +17153,7 @@ msgstr "Nous n’avons pas pu démarrer la connexion. Veuillez réessayer."
 #. js-lingui-id: 3Di+o2
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
-msgstr ""
+msgstr "Nous n’avons pas pu vérifier cette clé. Vérifiez-la ou réessayez plus tard si le service est indisponible."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

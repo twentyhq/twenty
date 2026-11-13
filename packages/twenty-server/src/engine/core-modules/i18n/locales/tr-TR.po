@@ -327,7 +327,7 @@ msgstr "Takvime erişilirken bir ağ hatası oluştu."
 #. js-lingui-id: EBFh6o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "A non-canonical view field cannot use the label identifier field"
-msgstr ""
+msgstr "Standart olmayan bir görünüm alanı etiket tanımlayıcı alanını kullanamaz"
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "Harici bir hizmetin yanıt vermesi çok uzun sürdü."
 #. js-lingui-id: CQVb7k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "An extra column cannot show the record name"
-msgstr ""
+msgstr "Ek bir sütun kayıt adını gösteremez"
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2735,7 +2735,7 @@ msgstr "Son yönetici çalışma alanından kaldırılamaz."
 #. js-lingui-id: sPYPrv
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
-msgstr ""
+msgstr "Son sunucu yöneticisi kaldırılamaz. Önce Yönetici Paneli'nden başka bir kullanıcıya sunucu yöneticisi erişimi verin."
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5108,7 +5108,7 @@ msgstr "1 ile {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter arasında bir
 #. js-lingui-id: 2h1oP1
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Enter an API key."
-msgstr ""
+msgstr "Bir API anahtarı girin."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5381,7 +5381,7 @@ msgstr "Harici Kayıt Kimliği"
 #. js-lingui-id: /P9IwO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Extra columns are not supported here"
-msgstr ""
+msgstr "Ek sütunlar burada desteklenmez"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5521,7 +5521,7 @@ msgstr "Şubat"
 #. js-lingui-id: OxV2Jx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
-msgstr ""
+msgstr "\"{fieldName}\" alanı, çalışma alanı üyesi alanı \"{workspaceMemberFieldName}\" ile karşılaştırılamaz; türleri uyumlu değil"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9560,7 +9560,7 @@ msgstr "Hiçbir doğrulanmış gönderim alan adı bu gönderen adresiyle eşle�
 #. js-lingui-id: HoTzOf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 msgid "Non-canonical view fields are not supported in widget views"
-msgstr ""
+msgstr "Standart olmayan görünüm alanları bileşen görünümlerinde desteklenmez"
 
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -10056,7 +10056,7 @@ msgstr "Bu üye için kurtarma kodlarını yalnızca bir sunucu yöneticisi yön
 #. js-lingui-id: NcQgJA
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
+msgstr "Yalnızca bir çalışma alanı üyesi, bir iş akışını kimlerin göreceğini değiştirebilir"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10271,7 +10271,7 @@ msgstr "Fırsat aşaması"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
-msgstr ""
+msgstr "\"{optionLabel}\" seçeneği alanla birlikte gelir ve kaldırılamaz. Bunun yerine devre dışı bırakın."
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -12234,7 +12234,7 @@ msgstr "Bu evrensel tanımlayıcıya sahip satır düzeyi izin kuralı zaten mev
 #. js-lingui-id: JYBCym
 #: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
 msgid "Row level records permissions that hide or lock fields need at least one predicate group."
-msgstr ""
+msgstr "Alanları gizleyen veya kilitleyen satır düzeyi kayıt izinleri en az bir koşul grubu gerektirir."
 
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -13783,7 +13783,7 @@ msgstr "Aradığınız ajan bulunamadı. Silinmiş olabilir ya da erişiminiz ol
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
-msgstr ""
+msgstr "\"{optionLabel}\" seçeneğinin API değeri alanla birlikte gelir ve değiştirilemez."
 
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -13969,7 +13969,7 @@ msgstr "Mesajın alındığı tarih"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "The default option cannot be deactivated"
-msgstr ""
+msgstr "Varsayılan seçenek devre dışı bırakılamaz"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -14888,7 +14888,7 @@ msgstr "Bu özellik etkin değil."
 #. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This field cannot be compared to this workspace member field"
-msgstr ""
+msgstr "Bu alan, bu çalışma alanı üyesi alanıyla karşılaştırılamaz"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17153,7 +17153,7 @@ msgstr "Bağlantıyı başlatamadık. Lütfen tekrar deneyin."
 #. js-lingui-id: 3Di+o2
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
-msgstr ""
+msgstr "Bu anahtarı doğrulayamadık. Kontrol edin veya hizmet çalışmıyorsa daha sonra tekrar deneyin."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
