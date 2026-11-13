@@ -226,6 +226,13 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'mainGroupByFieldMetadataUniversalIdentifier',
     },
+    scopedViewField: {
+      metadataName: 'viewField',
+      foreignKey: 'scopedViewFieldId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'scopedViewFieldUniversalIdentifier',
+    },
   },
   viewField: {
     fieldMetadata: {

@@ -50,6 +50,7 @@ export const buildBaseUniversalFlatView = ({
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     mainGroupByFieldMetadataUniversalIdentifier: null,
+    scopedViewFieldUniversalIdentifier: null,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position,
     universalIdentifier,

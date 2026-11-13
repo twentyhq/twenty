@@ -1,0 +1,2 @@
+export const ADD_VIEW_SCOPED_VIEW_FIELD_ID_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddViewScopedViewFieldIdFastInstanceCommand_1794550519751';

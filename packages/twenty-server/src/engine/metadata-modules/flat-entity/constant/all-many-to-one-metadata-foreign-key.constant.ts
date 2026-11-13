@@ -121,6 +121,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     mainGroupByFieldMetadata: {
       foreignKey: 'mainGroupByFieldMetadataId',
     },
+    scopedViewField: {
+      foreignKey: 'scopedViewFieldId',
+    },
   },
   viewField: {
     fieldMetadata: {

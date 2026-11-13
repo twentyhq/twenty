@@ -31,6 +31,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     allFlatEntityMaps,
     flatApplication,
     workspaceId,
+    preallocatedIdByUniversalIdentifierByMetadataName,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateViewAction>): Promise<FlatCreateViewAction> {
     const {
       calendarFieldMetadataId,
@@ -38,10 +39,12 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
       kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId,
       objectMetadataId,
+      scopedViewFieldId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
       universalForeignKeyValues: action.flatEntity,
+      preallocatedIdByUniversalIdentifierByMetadataName,
     });
 
     const overrides = isDefined(action.flatEntity.universalOverrides)
@@ -65,6 +68,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         kanbanAggregateOperationFieldMetadataId,
         mainGroupByFieldMetadataId,
         objectMetadataId,
+        scopedViewFieldId,
         overrides,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,

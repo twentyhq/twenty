@@ -4448,6 +4448,9 @@ export default {
             "position": [
                 8
             ],
+            "scopedViewFieldId": [
+                557
+            ],
             "shouldDisplayGroupsAsTabs": [
                 1
             ],
@@ -16424,6 +16427,9 @@ export default {
             ],
             "position": [
                 8
+            ],
+            "scopedViewFieldId": [
+                557
             ],
             "shouldDisplayGroupsAsTabs": [
                 1

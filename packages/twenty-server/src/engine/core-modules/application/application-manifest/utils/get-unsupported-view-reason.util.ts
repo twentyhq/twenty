@@ -59,5 +59,16 @@ export const getUnsupportedViewReason = ({
     return 'view referencing a field that does not exist';
   }
 
+  if (
+    isDefined(flatView.scopedViewFieldUniversalIdentifier) &&
+    !isDefined(
+      allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
+        flatView.scopedViewFieldUniversalIdentifier
+      ],
+    )
+  ) {
+    return 'view scoping a view field that does not exist';
+  }
+
   return undefined;
 };

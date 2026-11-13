@@ -131,6 +131,8 @@ export const createStandardViewFlatMetadata = <
     calendarEndFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
+    scopedViewFieldId: null,
+    scopedViewFieldUniversalIdentifier: null,
     objectMetadataUniversalIdentifier,
     id: standardObjectMetadataRelatedEntityIds[objectName].views[viewName].id,
     universalIdentifier: viewDefinition.universalIdentifier,

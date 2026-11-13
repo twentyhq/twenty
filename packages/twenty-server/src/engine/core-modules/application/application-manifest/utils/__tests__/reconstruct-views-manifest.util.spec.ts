@@ -191,6 +191,7 @@ const buildFlatView = ({
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
+  scopedViewFieldId: null,
   overrides: null,
   viewFieldIds: [],
   viewFieldGroupIds: [],

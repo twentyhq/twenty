@@ -62,6 +62,7 @@ const existingFlatView: FlatView = {
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
+  scopedViewFieldId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
   kanbanColumnWidth: null,
@@ -94,6 +95,7 @@ const existingFlatView: FlatView = {
   calendarFieldMetadataUniversalIdentifier: null,
   calendarEndFieldMetadataUniversalIdentifier: null,
   mainGroupByFieldMetadataUniversalIdentifier: null,
+  scopedViewFieldUniversalIdentifier: null,
   universalOverrides: null,
 };
 
@@ -115,6 +117,7 @@ const createViewWithGroupLoadLimit = (groupLoadLimit?: number) =>
     },
     flatApplication,
     flatFieldMetadataMaps,
+    flatViewFieldMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps,
   });
 
