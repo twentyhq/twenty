@@ -28,7 +28,7 @@ import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-
 import { type QuotaCounter } from 'src/engine/core-modules/usage-limit/types/quota-counter.type';
 import { type QuotaDebit } from 'src/engine/core-modules/usage-limit/types/quota-debit.type';
 import { type QuotaDebitResult } from 'src/engine/core-modules/usage-limit/types/quota-debit-result.type';
-import { type ConfiguredQuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/configured-quota-limit-default.type';
+import { type QuotaLimitDefaultWithNullableValue } from 'src/engine/core-modules/usage-limit/types/quota-limit-default-with-nullable-value.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildWorkspaceAllowanceCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-workspace-allowance-counter-key.util';
@@ -749,7 +749,7 @@ export class UsageLimitQuotaService {
   }: {
     workspaceId: string;
     resourceType: UsageResourceType;
-  }): Promise<ConfiguredQuotaLimitDefault[]> {
+  }): Promise<QuotaLimitDefaultWithNullableValue[]> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return [];
     }

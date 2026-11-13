@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConfiguredQuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/configured-quota-limit-default.type';
 import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/flat-quota-limit.type';
+import { type QuotaLimitDefaultWithNullableValue } from 'src/engine/core-modules/usage-limit/types/quota-limit-default-with-nullable-value.type';
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 
@@ -9,7 +9,7 @@ export const applyPerSpenderDefaultOverrides = ({
   quotaLimitDefaults,
   quotaLimits,
 }: {
-  quotaLimitDefaults: ConfiguredQuotaLimitDefault[];
+  quotaLimitDefaults: QuotaLimitDefaultWithNullableValue[];
   quotaLimits: FlatQuotaLimit[];
 }): {
   quotaLimitDefaults: QuotaLimitDefault[];

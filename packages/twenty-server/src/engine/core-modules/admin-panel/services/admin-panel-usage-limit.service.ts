@@ -43,8 +43,10 @@ export class AdminPanelUsageLimitService {
   ): Promise<Map<OptionalNumericConfigVariableKey, number | null>> {
     const limitValueConfigVariables = new Set(
       Object.values(UsageResourceType).flatMap((resourceType) =>
-        findUsageLimitDefaults({ resourceType }).map(
-          ({ limitValueConfigVariable }) => limitValueConfigVariable,
+        findUsageLimitDefaults({ resourceType }).flatMap((usageLimitDefault) =>
+          usageLimitDefault.limitKind === 'speed'
+            ? []
+            : [usageLimitDefault.limitValueConfigVariable],
         ),
       ),
     );
@@ -73,12 +75,8 @@ export class AdminPanelUsageLimitService {
     usageLimits: UsageLimitEntity[];
     defaultLimitValues: Map<OptionalNumericConfigVariableKey, number | null>;
   }): AdminPanelUsageLimitDefaultDTO[] {
-    const getConfigValue = <TKey extends OptionalNumericConfigVariableKey>(
-      key: TKey,
-    ) => this.twentyConfigService.get(key);
-
     return buildUsageLimitDefaultScopes({
-      getConfigValue,
+      getConfigValue: (key) => this.twentyConfigService.get(key),
       getDefaultLimitValue: (limitValueConfigVariable) =>
         defaultLimitValues.get(limitValueConfigVariable) ?? null,
     }).map((usageLimitDefault) => {
