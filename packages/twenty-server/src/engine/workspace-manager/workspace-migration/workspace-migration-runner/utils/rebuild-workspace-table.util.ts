@@ -6,7 +6,6 @@ import { WORKSPACE_TABLE_REBUILD_TEMPORARY_TABLE_NAME_SUFFIX } from 'src/engine/
 import { type WorkspaceTableRebuildPlan } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-table-rebuild-plan.type';
 import { getEscapedQualifiedTableName } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-escaped-qualified-table-name.util';
 
-// Must run inside a transaction that already holds an ACCESS EXCLUSIVE lock on the table.
 export const rebuildWorkspaceTable = async ({
   queryRunner,
   schemaName,
@@ -35,7 +34,6 @@ export const rebuildWorkspaceTable = async ({
     .map(escapeIdentifier)
     .join(', ');
 
-  // LIKE does not copy dropped columns, which is what frees their slots.
   await queryRunner.query(
     `CREATE TABLE ${escapedQualifiedTemporaryTableName} (
        LIKE ${escapedQualifiedTableName}
@@ -59,7 +57,6 @@ export const rebuildWorkspaceTable = async ({
     );
   }
 
-  // No CASCADE: anything this plan does not know how to restore aborts the rebuild.
   await queryRunner.query(`DROP TABLE ${escapedQualifiedTableName}`);
 
   await queryRunner.query(
