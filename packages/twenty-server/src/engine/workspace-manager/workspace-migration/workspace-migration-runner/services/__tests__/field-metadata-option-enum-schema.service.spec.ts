@@ -12,11 +12,15 @@ const OPEN_ID = '20202020-0000-4000-8000-000000000101';
 const CLOSED_ID = '20202020-0000-4000-8000-000000000102';
 const MIDDLE_ID = '20202020-0000-4000-8000-000000000103';
 
-const optionRow = (
-  universalIdentifier: string,
-  value: string,
-  position: number,
-) => ({ universalIdentifier, value, label: value, color: null, position });
+const optionRow = ({
+  universalIdentifier,
+  value,
+  position,
+}: {
+  universalIdentifier: string;
+  value: string;
+  position: number;
+}) => ({ universalIdentifier, value, label: value, color: null, position });
 
 describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
   const alterEnumValues = jest.fn();
@@ -77,12 +81,20 @@ describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
     const wasEnumChanged = await applyEnumChange({
       currentEnumValues: ['OPEN', 'CLOSED'],
       fromOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 0),
-        optionRow(CLOSED_ID, 'CLOSED', 1),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 1,
+        }),
       ],
       toOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 1),
-        optionRow(CLOSED_ID, 'CLOSED', 0),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 1 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 0,
+        }),
       ],
     });
 
@@ -99,13 +111,25 @@ describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
     await applyEnumChange({
       currentEnumValues: ['OPEN', 'CLOSED'],
       fromOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 0),
-        optionRow(CLOSED_ID, 'CLOSED', 2),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 2,
+        }),
       ],
       toOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 0),
-        optionRow(CLOSED_ID, 'CLOSED', 2),
-        optionRow(MIDDLE_ID, 'MIDDLE', 1),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 2,
+        }),
+        optionRow({
+          universalIdentifier: MIDDLE_ID,
+          value: 'MIDDLE',
+          position: 1,
+        }),
       ],
     });
 
@@ -118,12 +142,27 @@ describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
     const wasEnumChanged = await applyEnumChange({
       currentEnumValues: ['OPEN', 'CLOSED'],
       fromOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 0),
-        optionRow(CLOSED_ID, 'CLOSED', 1),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 1,
+        }),
       ],
       toOptionRows: [
-        { ...optionRow(OPEN_ID, 'OPEN', 0), label: 'Renamed' },
-        optionRow(CLOSED_ID, 'CLOSED', 1),
+        {
+          ...optionRow({
+            universalIdentifier: OPEN_ID,
+            value: 'OPEN',
+            position: 0,
+          }),
+          label: 'Renamed',
+        },
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 1,
+        }),
       ],
     });
 
@@ -135,10 +174,16 @@ describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
     await applyEnumChange({
       currentEnumValues: ['OPEN', 'CLOSED', 'LEGACY'],
       fromOptionRows: [
-        optionRow(OPEN_ID, 'OPEN', 0),
-        optionRow(CLOSED_ID, 'CLOSED', 1),
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+        optionRow({
+          universalIdentifier: CLOSED_ID,
+          value: 'CLOSED',
+          position: 1,
+        }),
       ],
-      toOptionRows: [optionRow(OPEN_ID, 'OPEN', 0)],
+      toOptionRows: [
+        optionRow({ universalIdentifier: OPEN_ID, value: 'OPEN', position: 0 }),
+      ],
     });
 
     expect(alterEnumValues).toHaveBeenCalledWith(
