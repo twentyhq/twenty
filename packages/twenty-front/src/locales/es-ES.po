@@ -1653,6 +1653,11 @@ msgstr "Se abre un formulario para la persona que inicia el flujo de trabajo y s
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Se abre un formulario para la persona que inicia el flujo de trabajo y se completa en el momento. Con este desencadenante, solo se muestra en la ejecución del flujo de trabajo. Para pedir a alguien una respuesta o una aprobación en su bandeja de entrada, usa en su lugar un paso Enviar a la bandeja de entrada."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"

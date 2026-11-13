@@ -1653,6 +1653,11 @@ msgstr "워크플로를 시작하는 사용자를 위한 양식이 열리며 그
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "워크플로우를 시작한 사람에게 양식이 열리며 그 자리에서 작성합니다. 이 트리거를 사용하면 워크플로우 실행에서만 표시됩니다. 받은 편지함에서 다른 사람에게 답변이나 승인을 요청하려면 대신 받은 편지함으로 보내기 단계를 사용하세요."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"

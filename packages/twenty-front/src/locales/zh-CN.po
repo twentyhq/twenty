@@ -1653,6 +1653,11 @@ msgstr "启动工作流的人员会打开一个表单，并当场填写。使用
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "启动工作流的人员会打开一个表单并当场填写。使用此触发器时，该表单仅显示在工作流运行中。若要在某人的收件箱中请求回答或审批，请改用“发送到收件箱”步骤。"
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"
