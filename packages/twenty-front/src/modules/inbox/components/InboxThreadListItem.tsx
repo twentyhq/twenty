@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
 import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
 import { InboxThreadChannelIcon } from '@/inbox/components/InboxThreadChannelIcon';
@@ -170,7 +170,7 @@ export const InboxThreadListItem = ({
         ) : undefined
       }
       actions={
-        <AiChatThreadActionsDropdown
+        <InboxThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}

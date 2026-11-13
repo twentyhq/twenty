@@ -12,7 +12,7 @@ import { isAiChatThreadStatusChangeNoOp } from '@/ai/utils/isAiChatThreadStatusC
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useAiChatThreadDetailsStatus = (threadId: string) => {
+export const useInboxThreadDetailsStatus = (threadId: string) => {
   const thread = useAtomFamilySelectorValue(
     aiChatThreadRecordFamilySelector,
     threadId,

@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
@@ -37,7 +37,7 @@ export const AiChatThreadPageContent = ({
         ) : undefined
       }
       headerTitlePrefix={headerTitlePrefix}
-      headerTitleAccessory={<AiChatThreadDetailsDropdown threadId={threadId} />}
+      headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
       headerTitleMode="record-title"
       isRecordIdentifierBarHidden
     />
