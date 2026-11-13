@@ -1,7 +1,7 @@
 import { type LegacyRowLevelPermissionPredicateManifest } from 'twenty-shared/application';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
-import { fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-row-level-permission-predicate-manifest.util';
+import { fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-legacy-row-level-permission-predicate-manifest.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
@@ -44,12 +44,14 @@ const forward = (
     },
   );
 
-describe('fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest', () => {
+describe('fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest', () => {
   it('should reproduce the manifest after a forward then an inverse conversion', () => {
     expect(
-      fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest({
-        flatRowLevelPermissionPredicate: forward(PREDICATE_MANIFEST),
-      }),
+      fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
+        {
+          flatRowLevelPermissionPredicate: forward(PREDICATE_MANIFEST),
+        },
+      ),
     ).toEqual(PREDICATE_MANIFEST);
   });
 
@@ -62,12 +64,14 @@ describe('fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManife
     ['an empty string', ''],
   ])('should keep a value that is %s', (_description, value) => {
     expect(
-      fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest({
-        flatRowLevelPermissionPredicate: forward({
-          ...PREDICATE_MANIFEST,
-          value,
-        }),
-      }).value,
+      fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
+        {
+          flatRowLevelPermissionPredicate: forward({
+            ...PREDICATE_MANIFEST,
+            value,
+          }),
+        },
+      ).value,
     ).toStrictEqual(value);
   });
 
@@ -87,7 +91,7 @@ describe('fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManife
       compareTwoFlatEntity({
         fromUniversalFlatEntity: flatRowLevelPermissionPredicate,
         toUniversalFlatEntity: forward(
-          fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
+          fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
             { flatRowLevelPermissionPredicate },
           ),
         ),
@@ -109,11 +113,13 @@ describe('fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManife
     } = PREDICATE_MANIFEST;
 
     expect(
-      fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest({
-        flatRowLevelPermissionPredicate: forward(
-          manifestWithoutOptionalProperties,
-        ),
-      }),
+      fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
+        {
+          flatRowLevelPermissionPredicate: forward(
+            manifestWithoutOptionalProperties,
+          ),
+        },
+      ),
     ).toStrictEqual(manifestWithoutOptionalProperties);
   });
 });

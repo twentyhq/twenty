@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 
-export const fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest =
+export const fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest =
   ({
     flatRowLevelPermissionPredicateGroup,
   }: {

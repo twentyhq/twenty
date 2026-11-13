@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
 
-export const fromFlatObjectPermissionToObjectPermissionManifest = ({
+export const fromFlatObjectPermissionToLegacyObjectPermissionManifest = ({
   flatObjectPermission,
 }: {
   flatObjectPermission: UniversalFlatObjectPermission;

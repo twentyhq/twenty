@@ -47,11 +47,11 @@ import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/applicatio
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
-import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
+import { fromFlatFieldPermissionToLegacyFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-legacy-field-permission-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
-import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
+import { fromFlatObjectPermissionToLegacyObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-legacy-object-permission-manifest.util';
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
@@ -61,9 +61,9 @@ import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
-import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
-import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
-import { fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-row-level-permission-predicate-manifest.util';
+import { fromFlatRoleToLegacyCompliantRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-legacy-compliant-role-manifest.util';
+import { fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-legacy-row-level-permission-predicate-group-manifest.util';
+import { fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-legacy-row-level-permission-predicate-manifest.util';
 import { fromFlatViewFieldGroupToViewFieldGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-group-to-view-field-group-manifest.util';
 import { fromFlatViewFieldToStandaloneViewFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-field-to-standalone-view-field-manifest.util';
 import { fromFlatViewFilterGroupToViewFilterGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-filter-group-to-view-filter-group-manifest.util';
@@ -713,7 +713,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'role',
     emittedProperties: Object.keys(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: fromRoleManifestToUniversalFlatRole({
           roleManifest: normalizeLegacyCompliantRoleManifest({
             role: ROLE_MANIFEST,
@@ -733,7 +733,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'objectPermission',
     emittedProperties: Object.keys(
-      fromFlatObjectPermissionToObjectPermissionManifest({
+      fromFlatObjectPermissionToLegacyObjectPermissionManifest({
         flatObjectPermission:
           fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
             objectRecordsPermissionsManifest: {
@@ -760,7 +760,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'fieldPermission',
     emittedProperties: Object.keys(
-      fromFlatFieldPermissionToFieldPermissionManifest({
+      fromFlatFieldPermissionToLegacyFieldPermissionManifest({
         flatFieldPermission: {
           universalIdentifier: FIELD_PERMISSION_UID,
           applicationUniversalIdentifier: APP_UID,
@@ -791,7 +791,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'rolePermissionFlag',
     emittedProperties: Object.keys(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: fromRoleManifestToUniversalFlatRole({
           roleManifest: normalizeLegacyCompliantRoleManifest({
             role: ROLE_MANIFEST,
@@ -814,7 +814,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'rowLevelPermissionPredicateGroup',
     emittedProperties: Object.keys(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+      fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
         {
           flatRowLevelPermissionPredicateGroup:
             fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup(
@@ -846,16 +846,18 @@ const EXPORTED_KINDS: ExportedKind[] = [
   {
     metadataName: 'rowLevelPermissionPredicate',
     emittedProperties: Object.keys(
-      fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest({
-        flatRowLevelPermissionPredicate:
-          fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
-            {
-              rowLevelPermissionPredicateManifest:
-                ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST,
-              ...ROLE_CHILD_CONVERSION_CONTEXT,
-            },
-          ),
-      }),
+      fromFlatRowLevelPermissionPredicateToLegacyRowLevelPermissionPredicateManifest(
+        {
+          flatRowLevelPermissionPredicate:
+            fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate(
+              {
+                rowLevelPermissionPredicateManifest:
+                  ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST,
+                ...ROLE_CHILD_CONVERSION_CONTEXT,
+              },
+            ),
+        },
+      ),
     ),
     renamedProperties: {
       fieldMetadataUniversalIdentifier: 'fieldUniversalIdentifier',

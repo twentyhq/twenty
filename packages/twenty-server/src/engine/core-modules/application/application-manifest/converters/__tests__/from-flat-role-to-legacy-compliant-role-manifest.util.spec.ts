@@ -4,7 +4,7 @@ import {
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
-import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
+import { fromFlatRoleToLegacyCompliantRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-legacy-compliant-role-manifest.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
@@ -49,10 +49,12 @@ const forward = (roleManifest: LegacyCompliantRoleManifest) =>
     now: NOW,
   });
 
-describe('fromFlatRoleToRoleManifest', () => {
+describe('fromFlatRoleToLegacyCompliantRoleManifest', () => {
   it('should reproduce the manifest after a forward then an inverse conversion', () => {
     expect(
-      fromFlatRoleToRoleManifest({ flatRole: forward(ROLE_MANIFEST) }),
+      fromFlatRoleToLegacyCompliantRoleManifest({
+        flatRole: forward(ROLE_MANIFEST),
+      }),
     ).toEqual(ROLE_MANIFEST);
   });
 
@@ -70,7 +72,7 @@ describe('fromFlatRoleToRoleManifest', () => {
       compareTwoFlatEntity({
         fromUniversalFlatEntity: flatRole,
         toUniversalFlatEntity: forward(
-          fromFlatRoleToRoleManifest({ flatRole }),
+          fromFlatRoleToLegacyCompliantRoleManifest({ flatRole }),
         ),
         metadataName: 'role',
       }),
@@ -85,7 +87,7 @@ describe('fromFlatRoleToRoleManifest', () => {
     } = ROLE_MANIFEST;
 
     expect(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: forward(manifestWithoutDescriptionAndIcon),
       }),
     ).toStrictEqual(manifestWithoutDescriptionAndIcon);
@@ -93,7 +95,7 @@ describe('fromFlatRoleToRoleManifest', () => {
 
   it('should nest its permissions and omit the empty collections', () => {
     expect(
-      fromFlatRoleToRoleManifest({
+      fromFlatRoleToLegacyCompliantRoleManifest({
         flatRole: forward(ROLE_MANIFEST),
         children: {
           objectPermissions: [OBJECT_PERMISSION_MANIFEST],

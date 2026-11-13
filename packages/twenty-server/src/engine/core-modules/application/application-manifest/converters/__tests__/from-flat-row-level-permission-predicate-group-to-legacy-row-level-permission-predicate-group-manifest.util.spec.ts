@@ -1,7 +1,7 @@
 import { type LegacyRowLevelPermissionPredicateGroupManifest } from 'twenty-shared/application';
 import { RowLevelPermissionPredicateGroupLogicalOperator } from 'twenty-shared/types';
 
-import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
+import { fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-legacy-row-level-permission-predicate-group-manifest.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
@@ -34,10 +34,10 @@ const forward = (
     },
   );
 
-describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest', () => {
+describe('fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest', () => {
   it('should reproduce the manifest after a forward then an inverse conversion', () => {
     expect(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+      fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
         {
           flatRowLevelPermissionPredicateGroup: forward(
             PREDICATE_GROUP_MANIFEST,
@@ -60,7 +60,7 @@ describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateG
       compareTwoFlatEntity({
         fromUniversalFlatEntity: flatRowLevelPermissionPredicateGroup,
         toUniversalFlatEntity: forward(
-          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+          fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
             { flatRowLevelPermissionPredicateGroup },
           ),
         ),
@@ -78,7 +78,7 @@ describe('fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateG
     } = PREDICATE_GROUP_MANIFEST;
 
     expect(
-      fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+      fromFlatRowLevelPermissionPredicateGroupToLegacyRowLevelPermissionPredicateGroupManifest(
         {
           flatRowLevelPermissionPredicateGroup: forward(
             manifestWithoutOptionalProperties,

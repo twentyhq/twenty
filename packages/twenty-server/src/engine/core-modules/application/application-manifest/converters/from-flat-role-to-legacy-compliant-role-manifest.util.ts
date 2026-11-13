@@ -32,7 +32,7 @@ const withoutEmptyCollections = ({
     : {}),
 });
 
-export const fromFlatRoleToRoleManifest = ({
+export const fromFlatRoleToLegacyCompliantRoleManifest = ({
   flatRole,
   children = {},
 }: {
