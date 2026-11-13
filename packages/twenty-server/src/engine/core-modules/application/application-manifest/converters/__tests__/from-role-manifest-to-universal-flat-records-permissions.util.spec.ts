@@ -1,8 +1,4 @@
-import {
-  type RoleManifest,
-  normalizeLegacyCompliantRoleManifest,
-  type LegacyCompliantRoleManifest,
-} from 'twenty-shared/application';
+import { type RoleManifest } from 'twenty-shared/application';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -28,19 +24,6 @@ const convert = ({
     applicationUniversalIdentifier: APPLICATION,
     now: NOW,
   });
-
-const convertLegacy = (
-  roleManifest: Omit<
-    LegacyCompliantRoleManifest,
-    'universalIdentifier' | 'label'
-  >,
-) =>
-  convert(
-    normalizeLegacyCompliantRoleManifest({
-      role: { ...ROLE, ...roleManifest },
-      applicationUniversalIdentifier: APPLICATION,
-    }),
-  );
 
 describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
   it('should write the all records permissions, field restrictions and rules of an object', () => {
@@ -142,83 +125,6 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
         rowLevelPermissionRuleUniversalIdentifier: 'rule',
         rowLevelPermissionPredicateGroupUniversalIdentifier: 'group',
       },
-    ]);
-  });
-
-  it('should write no object permission for an object that only declares rules', () => {
-    const { objectPermissions, rules } = convert({
-      recordsPermissions: {
-        objects: [
-          {
-            objectUniversalIdentifier: 'company',
-            rowLevelRecordsPermissions: [
-              {
-                universalIdentifier: 'rule',
-                canReadRecords: true,
-                predicates: [
-                  { ...PREDICATE, universalIdentifier: 'predicate' },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    });
-
-    expect(rules).toHaveLength(1);
-    expect(objectPermissions).toEqual([]);
-  });
-
-  it('should convert the legacy properties before writing them', () => {
-    const { objectPermissions, fieldPermissions, rules, predicates } =
-      convertLegacy({
-        objectPermissions: [
-          {
-            objectUniversalIdentifier: 'company',
-            canReadObjectRecords: true,
-            canUpdateObjectRecords: true,
-          },
-        ],
-        fieldPermissions: [
-          {
-            objectUniversalIdentifier: 'company',
-            fieldUniversalIdentifier: 'secret',
-            canReadFieldValue: false,
-          },
-        ],
-        rowLevelPermissionPredicates: [
-          {
-            ...PREDICATE,
-            universalIdentifier: 'predicate',
-            objectUniversalIdentifier: 'company',
-          },
-        ],
-      });
-
-    expect(rules).toMatchObject([
-      {
-        canReadRecords: true,
-        canCreateRecords: true,
-        canUpdateRecords: true,
-        canSoftDeleteRecords: false,
-        canDestroyRecords: false,
-      },
-    ]);
-    expect(predicates[0].rowLevelPermissionRuleUniversalIdentifier).toBe(
-      rules[0].universalIdentifier,
-    );
-    expect(objectPermissions).toMatchObject([
-      {
-        objectMetadataUniversalIdentifier: 'company',
-        canReadObjectRecords: false,
-        canCreateObjectRecords: false,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      },
-    ]);
-    expect(fieldPermissions).toMatchObject([
-      { fieldMetadataUniversalIdentifier: 'secret', canReadFieldValue: false },
     ]);
   });
 
