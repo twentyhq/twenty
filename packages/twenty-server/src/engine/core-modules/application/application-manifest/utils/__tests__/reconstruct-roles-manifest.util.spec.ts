@@ -541,26 +541,27 @@ describe('reconstructRolesManifest', () => {
       expect.objectContaining({
         universalIdentifier: SUPPORT_ROLE_UID,
         label: 'Support',
-        objectPermissions: [
-          {
-            universalIdentifier: PERSON_OBJECT_PERMISSION_UID,
-            objectUniversalIdentifier: PERSON_UID,
-            canReadObjectRecords: true,
-          },
-          {
-            universalIdentifier: PET_OBJECT_PERMISSION_UID,
-            objectUniversalIdentifier: PET_UID,
-            canReadObjectRecords: true,
-          },
-        ],
-        fieldPermissions: [
-          {
-            universalIdentifier: PET_NAME_FIELD_PERMISSION_UID,
-            objectUniversalIdentifier: PET_UID,
-            fieldUniversalIdentifier: PET_NAME_FIELD_UID,
-            canUpdateFieldValue: false,
-          },
-        ],
+        recordsPermissions: expect.objectContaining({
+          objects: [
+            {
+              universalIdentifier: PERSON_OBJECT_PERMISSION_UID,
+              objectUniversalIdentifier: PERSON_UID,
+              canReadAllRecords: true,
+            },
+            {
+              universalIdentifier: PET_OBJECT_PERMISSION_UID,
+              objectUniversalIdentifier: PET_UID,
+              canReadAllRecords: true,
+              uneditableFields: [PET_NAME_FIELD_UID],
+              fieldPermissionIdentifiers: [
+                {
+                  fieldUniversalIdentifier: PET_NAME_FIELD_UID,
+                  universalIdentifier: PET_NAME_FIELD_PERMISSION_UID,
+                },
+              ],
+            },
+          ],
+        }),
         permissionFlagUniversalIdentifiers: [
           EXPORT_PETS_FLAG_UID,
           WORKSPACE_FLAG_UID,

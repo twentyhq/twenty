@@ -6,6 +6,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
   normalizePageLayoutTabManifest,
+  getDeclaredLegacyRoleRecordsPermissionsKeys,
   normalizeLegacyCompliantRoleManifest,
   serializeApplicationVariableValue,
 } from 'twenty-shared/application';
@@ -369,6 +370,16 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     };
 
     for (const role of manifest.roles) {
+      const declaredLegacyKeys = getDeclaredLegacyRoleRecordsPermissionsKeys({
+        role,
+      });
+
+      if (isDefined(role.recordsPermissions) && declaredLegacyKeys.length > 0) {
+        throw new Error(
+          `Role "${role.universalIdentifier}" declares recordsPermissions together with the legacy properties ${declaredLegacyKeys.join(', ')}`,
+        );
+      }
+
       const roleManifest = normalizeLegacyCompliantRoleManifest({
         role,
         applicationUniversalIdentifier,

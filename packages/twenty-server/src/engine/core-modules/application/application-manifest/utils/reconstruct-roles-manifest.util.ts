@@ -1,21 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type LegacyFieldPermissionManifest,
-  type LegacyObjectPermissionManifest,
+  type FieldRestrictionsManifest,
+  type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
-import { fromFlatFieldPermissionToLegacyFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-legacy-field-permission-manifest.util';
-import { fromFlatObjectPermissionToLegacyObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-legacy-object-permission-manifest.util';
+import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
 import { fromFlatRoleToLegacyCompliantRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-legacy-compliant-role-manifest.util';
-import { addRowLevelPermissionRuleGrantsToLegacyObjectPermission } from 'src/engine/core-modules/application/application-manifest/utils/add-row-level-permission-rule-grants-to-legacy-object-permission.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
   type ChildMetadataName,
   type ParentStatus,
 } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
+import { buildObjectRecordsPermissionsManifests } from 'src/engine/core-modules/application/application-manifest/utils/build-object-records-permissions-manifests.util';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { createChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
@@ -33,8 +32,20 @@ type FlatRoleChild =
   | UniversalFlatRolePermissionFlag;
 
 type RoleChildren = {
-  objectPermissions: LegacyObjectPermissionManifest[];
-  fieldPermissions: LegacyFieldPermissionManifest[];
+  objectPermissions: Omit<
+    ObjectRecordsPermissionsManifest,
+    'rowLevelRecordsPermissions' | keyof FieldRestrictionsManifest
+  >[];
+  fieldRestrictions: {
+    objectUniversalIdentifier: string;
+    fieldUniversalIdentifier: string;
+    rowLevelPermissionRuleUniversalIdentifier: string | null;
+    canReadFieldValue: boolean | null;
+    canUpdateFieldValue: boolean | null;
+    universalIdentifier: string;
+    applicationUniversalIdentifier: string;
+    roleUniversalIdentifier: string;
+  }[];
   permissionFlagUniversalIdentifiers: string[];
 };
 
@@ -87,7 +98,7 @@ export const reconstructRolesManifest = ({
       universalIdentifier,
       {
         objectPermissions: [],
-        fieldPermissions: [],
+        fieldRestrictions: [],
         permissionFlagUniversalIdentifiers: [],
       },
     ]),
@@ -136,10 +147,6 @@ export const reconstructRolesManifest = ({
         resolvableFieldUniversalIdentifiers,
     });
 
-  const flatRowLevelPermissionRules = sortFlatEntitiesByUniversalIdentifier(
-    applicationAllFlatEntityMaps.flatRowLevelPermissionRuleMaps,
-  );
-
   for (const flatObjectPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatObjectPermissionMaps,
   )) {
@@ -157,12 +164,8 @@ export const reconstructRolesManifest = ({
       childrenOf(
         flatObjectPermission.roleUniversalIdentifier,
       )?.objectPermissions.push(
-        fromFlatObjectPermissionToLegacyObjectPermissionManifest({
-          flatObjectPermission:
-            addRowLevelPermissionRuleGrantsToLegacyObjectPermission({
-              flatObjectPermission,
-              flatRowLevelPermissionRules,
-            }),
+        fromFlatObjectPermissionToObjectRecordsPermissionsManifest({
+          flatObjectPermission,
         }),
       );
     }
@@ -171,11 +174,11 @@ export const reconstructRolesManifest = ({
   for (const flatFieldPermission of sortFlatEntitiesByUniversalIdentifier(
     applicationAllFlatEntityMaps.flatFieldPermissionMaps,
   )) {
-    // Manifests do not declare field permissions on a row level permission rule yet
     if (
       isDefined(
         flatFieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
-      )
+      ) &&
+      !isDefined(flatFieldPermission.rowLevelPermissionRuleUniversalIdentifier)
     ) {
       continue;
     }
@@ -199,11 +202,20 @@ export const reconstructRolesManifest = ({
     ) {
       childrenOf(
         flatFieldPermission.roleUniversalIdentifier,
-      )?.fieldPermissions.push(
-        fromFlatFieldPermissionToLegacyFieldPermissionManifest({
-          flatFieldPermission,
-        }),
-      );
+      )?.fieldRestrictions.push({
+        objectUniversalIdentifier:
+          flatFieldPermission.objectMetadataUniversalIdentifier,
+        fieldUniversalIdentifier:
+          flatFieldPermission.fieldMetadataUniversalIdentifier,
+        rowLevelPermissionRuleUniversalIdentifier:
+          flatFieldPermission.rowLevelPermissionRuleUniversalIdentifier,
+        canReadFieldValue: flatFieldPermission.canReadFieldValue ?? null,
+        canUpdateFieldValue: flatFieldPermission.canUpdateFieldValue ?? null,
+        universalIdentifier: flatFieldPermission.universalIdentifier,
+        applicationUniversalIdentifier:
+          flatFieldPermission.applicationUniversalIdentifier,
+        roleUniversalIdentifier: flatFieldPermission.roleUniversalIdentifier,
+      });
     }
   }
 
@@ -235,8 +247,7 @@ export const reconstructRolesManifest = ({
   }
 
   const {
-    predicateGroupsByRoleUniversalIdentifier,
-    predicatesByRoleUniversalIdentifier,
+    rowLevelPermissionsByRoleUniversalIdentifier,
     coverage: rowLevelPermissionCoverage,
   } = reconstructLegacyRowLevelPermissionPredicatesManifest({
     applicationAllFlatEntityMaps,
@@ -257,20 +268,21 @@ export const reconstructRolesManifest = ({
     );
 
     const children = childrenOf(flatRole.universalIdentifier);
+    const rowLevelPermissions =
+      rowLevelPermissionsByRoleUniversalIdentifier.get(
+        flatRole.universalIdentifier,
+      );
 
     return fromFlatRoleToLegacyCompliantRoleManifest({
       flatRole,
       children: {
-        objectPermissions: children?.objectPermissions,
-        fieldPermissions: children?.fieldPermissions,
-        rowLevelPermissionPredicateGroups:
-          predicateGroupsByRoleUniversalIdentifier.get(
-            flatRole.universalIdentifier,
-          ) ?? [],
-        rowLevelPermissionPredicates:
-          predicatesByRoleUniversalIdentifier.get(
-            flatRole.universalIdentifier,
-          ) ?? [],
+        objectsRecordsPermissions: buildObjectRecordsPermissionsManifests({
+          allRecordsPermissions: children?.objectPermissions ?? [],
+          rowLevelPermissionRules: rowLevelPermissions?.rules ?? [],
+          fieldRestrictions: children?.fieldRestrictions ?? [],
+        }),
+        rowLevelPermissionPredicateGroups: rowLevelPermissions?.predicateGroups,
+        rowLevelPermissionPredicates: rowLevelPermissions?.predicates,
         permissionFlagUniversalIdentifiers:
           children?.permissionFlagUniversalIdentifiers.sort(compareByCodePoint),
       },

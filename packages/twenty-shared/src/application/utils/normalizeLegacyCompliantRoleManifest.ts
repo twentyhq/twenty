@@ -102,7 +102,7 @@ export type LegacyRoleObjectDefaults = {
   disabledObjectPermissionActions?: DisableableObjectPermissionAction[] | null;
 };
 
-// TODO(@charlesBochet): remove with the legacy role properties once applications declare the normalized shape
+// TODO(@charlesBochet): remove with the legacy role properties once applications declare recordsPermissions
 export const normalizeLegacyCompliantRoleManifest = ({
   role,
   applicationUniversalIdentifier,
@@ -115,6 +115,7 @@ export const normalizeLegacyCompliantRoleManifest = ({
   >;
 }): RoleManifest => {
   const {
+    recordsPermissions = {},
     canReadAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
@@ -126,18 +127,25 @@ export const normalizeLegacyCompliantRoleManifest = ({
     ...roleWithoutRecordsPermissions
   } = role;
   const allRecordsPermissions = pickDefinedAllRecordsPermissions({
-    canReadAllRecords: canReadAllObjectRecords,
-    canUpdateAllRecords: canUpdateAllObjectRecords,
-    canSoftDeleteAllRecords: canSoftDeleteAllObjectRecords,
-    canDestroyAllRecords: canDestroyAllObjectRecords,
+    canReadAllRecords:
+      recordsPermissions.canReadAllRecords ?? canReadAllObjectRecords,
+    canCreateAllRecords: recordsPermissions.canCreateAllRecords,
+    canUpdateAllRecords:
+      recordsPermissions.canUpdateAllRecords ?? canUpdateAllObjectRecords,
+    canSoftDeleteAllRecords:
+      recordsPermissions.canSoftDeleteAllRecords ??
+      canSoftDeleteAllObjectRecords,
+    canDestroyAllRecords:
+      recordsPermissions.canDestroyAllRecords ?? canDestroyAllObjectRecords,
   });
 
   const objectByUniversalIdentifier = new Map<
     string,
     ObjectRecordsPermissionsManifest
   >(
-    objectPermissions
-      .map(
+    [
+      ...(recordsPermissions.objects ?? []),
+      ...objectPermissions.map(
         ({
           universalIdentifier,
           objectUniversalIdentifier,
@@ -155,8 +163,8 @@ export const normalizeLegacyCompliantRoleManifest = ({
             canDestroyAllRecords: canDestroyObjectRecords,
           }),
         }),
-      )
-      .map((object) => [object.objectUniversalIdentifier, object]),
+      ),
+    ].map((object) => [object.objectUniversalIdentifier, object]),
   );
   const findOrCreateObject = (
     objectUniversalIdentifier: string,

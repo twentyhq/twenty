@@ -26,6 +26,24 @@ const NO_ALL_RECORDS_PERMISSIONS = {
 };
 
 describe('normalizeLegacyCompliantRoleManifest', () => {
+  it('should leave a role already written with recordsPermissions as it is', () => {
+    const recordsPermissions = {
+      canReadAllRecords: true,
+      objects: [
+        {
+          objectUniversalIdentifier: 'company',
+          canUpdateAllRecords: true,
+          unreadableFields: ['secret'],
+        },
+      ],
+    };
+
+    expect(normalize({ recordsPermissions })).toStrictEqual({
+      ...ROLE,
+      recordsPermissions,
+    });
+  });
+
   it('should move the legacy grants on all objects, object permissions and field permissions into recordsPermissions', () => {
     expect(
       normalize({

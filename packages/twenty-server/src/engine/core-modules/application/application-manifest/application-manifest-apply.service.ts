@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getDeclaredLegacyRoleRecordsPermissionsKeys,
+  type Manifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
@@ -65,9 +68,19 @@ export class ApplicationManifestApplyService {
       shouldDeferActions,
     });
 
+    const requestedRole = manifest.roles.find(
+      (role) =>
+        role.universalIdentifier ===
+        manifest.application.defaultRoleUniversalIdentifier,
+    );
+
     await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: application.id,
+      isRequestedRoleDeclaredWithLegacyProperties:
+        isDefined(requestedRole) &&
+        getDeclaredLegacyRoleRecordsPermissionsKeys({ role: requestedRole })
+          .length > 0,
     });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
