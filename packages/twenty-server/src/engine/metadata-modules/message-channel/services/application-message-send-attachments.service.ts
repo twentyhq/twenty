@@ -22,6 +22,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 @Injectable()
 export class ApplicationMessageSendAttachmentsService {
@@ -167,9 +168,13 @@ export class ApplicationMessageSendAttachmentsService {
   async deleteUnreferencedCopies({
     copiedAttachments,
     workspaceId,
+    messageChannelId,
+    messageExternalId,
   }: {
     copiedAttachments: AppMessageAttachmentInput[];
     workspaceId: string;
+    messageChannelId: string;
+    messageExternalId: string;
   }): Promise<void> {
     if (copiedAttachments.length === 0) {
       return;
@@ -178,9 +183,10 @@ export class ApplicationMessageSendAttachmentsService {
     try {
       const copiedFileIds = copiedAttachments.map(({ fileId }) => fileId);
 
-      const referencedFileIds = await this.findFileIdsReferencedByAttachments({
-        fileIds: copiedFileIds,
+      const referencedFileIds = await this.findSentMessageAttachmentFileIds({
         workspaceId,
+        messageChannelId,
+        messageExternalId,
       });
 
       await this.deleteCopiedFiles({
@@ -197,26 +203,40 @@ export class ApplicationMessageSendAttachmentsService {
   }
 
   // a rolled back ingestion can leave a copy claimed but unreferenced, so only attachment rows prove a copy is in use
-  private async findFileIdsReferencedByAttachments({
-    fileIds,
+  private async findSentMessageAttachmentFileIds({
     workspaceId,
+    messageChannelId,
+    messageExternalId,
   }: {
-    fileIds: string[];
     workspaceId: string;
+    messageChannelId: string;
+    messageExternalId: string;
   }): Promise<Set<string>> {
     const attachments: Pick<AttachmentWorkspaceEntity, 'file'>[] =
       await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
+        async () => {
+          const association = await this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
+              'messageChannelMessageAssociation',
+            )
+            .findOne({
+              where: { messageChannelId, messageExternalId },
+              select: { messageId: true },
+            });
+
+          if (!isDefined(association)) {
+            return [];
+          }
+
+          return this.workspaceOrmManager
             .getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
               'attachment',
             )
-            .createQueryBuilder('attachment')
-            .where(
-              `EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("attachment"."file") = 'array' THEN "attachment"."file" ELSE '[]'::jsonb END) AS "attachedFile"("value") WHERE "attachedFile"."value" ->> 'fileId' = ANY(:fileIds))`,
-              { fileIds },
-            )
-            .getMany(),
+            .find({
+              where: { targetMessageId: association.messageId },
+              select: { file: true },
+            });
+        },
         buildSystemAuthContext(workspaceId),
         { lite: true },
       );

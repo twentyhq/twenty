@@ -185,6 +185,8 @@ describe('ApplicationMessageSendAttachmentsService', () => {
           { fileId: 'copy-2', label: 'photo.png' },
         ],
         workspaceId: 'workspace-1',
+        messageChannelId: 'channel-1',
+        messageExternalId: 'message-external-1',
       });
 
       expect(deleteFilesFieldFile).toHaveBeenCalledTimes(1);
@@ -211,6 +213,8 @@ describe('ApplicationMessageSendAttachmentsService', () => {
             { fileId: 'copy-2', label: 'photo.png' },
           ],
           workspaceId: 'workspace-1',
+          messageChannelId: 'channel-1',
+          messageExternalId: 'message-external-1',
         }),
       ).resolves.toBeUndefined();
 
@@ -231,6 +235,8 @@ describe('ApplicationMessageSendAttachmentsService', () => {
         service.deleteUnreferencedCopies({
           copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
           workspaceId: 'workspace-1',
+          messageChannelId: 'channel-1',
+          messageExternalId: 'message-external-1',
         }),
       ).resolves.toBeUndefined();
 

@@ -220,6 +220,8 @@ describe('ApplicationMessageSendService', () => {
     expect(deleteUnreferencedCopies).toHaveBeenCalledWith({
       copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
       workspaceId: 'workspace-1',
+      messageChannelId: 'channel-1',
+      messageExternalId: 'message-external-1',
     });
   });
 

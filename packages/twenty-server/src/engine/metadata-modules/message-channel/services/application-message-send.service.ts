@@ -308,7 +308,12 @@ export class ApplicationMessageSendService {
           return ingestedSentMessage;
         } finally {
           await this.applicationMessageSendAttachmentsService.deleteUnreferencedCopies(
-            { copiedAttachments, workspaceId },
+            {
+              copiedAttachments,
+              workspaceId,
+              messageChannelId,
+              messageExternalId: delivery.externalId,
+            },
           );
         }
       },
