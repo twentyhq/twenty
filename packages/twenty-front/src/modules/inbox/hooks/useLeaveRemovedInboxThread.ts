@@ -12,14 +12,14 @@ import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/i
 import { sortChatThreadsByLastActivityDesc } from '@/inbox/utils/sortChatThreadsByLastActivityDesc';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
-export const useLeaveRemovedAiChatThread = () => {
+export const useLeaveRemovedInboxThread = () => {
   const store = useStore();
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
     shouldPreserveClosedInbox: true,
   });
   const { loadAiChatThread } = useLoadAiChatThread();
 
-  const leaveRemovedAiChatThread = useCallback(async () => {
+  const leaveRemovedInboxThread = useCallback(async () => {
     const currentThreadId = store.get(currentAiChatThreadState.atom);
     const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threads = store.get(inboxRecentThreadsSelector.atom);
@@ -54,5 +54,5 @@ export const useLeaveRemovedAiChatThread = () => {
     projectAiChatThreadToUrl(nextThreadId);
   }, [store, projectAiChatThreadToUrl, loadAiChatThread]);
 
-  return { leaveRemovedAiChatThread };
+  return { leaveRemovedInboxThread };
 };

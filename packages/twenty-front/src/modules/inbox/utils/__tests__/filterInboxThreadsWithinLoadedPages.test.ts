@@ -1,5 +1,5 @@
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { filterAiChatThreadsWithinLoadedPages } from '@/ai/utils/filterAiChatThreadsWithinLoadedPages';
+import { filterInboxThreadsWithinLoadedPages } from '@/inbox/utils/filterInboxThreadsWithinLoadedPages';
 
 const buildThread = ({
   id,
@@ -34,7 +34,7 @@ describe('filterAiChatThreadsWithinLoadedPages', () => {
   it('keeps every chat once all pages are loaded', () => {
     expect(
       getIds(
-        filterAiChatThreadsWithinLoadedPages({
+        filterInboxThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: [],
@@ -49,7 +49,7 @@ describe('filterAiChatThreadsWithinLoadedPages', () => {
   it('hides chats past the last loaded page, but never a loaded one', () => {
     expect(
       getIds(
-        filterAiChatThreadsWithinLoadedPages({
+        filterInboxThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-older', 'loaded-no-activity'],
@@ -64,7 +64,7 @@ describe('filterAiChatThreadsWithinLoadedPages', () => {
   it('keeps chats with activity once the pages reach chats without any', () => {
     expect(
       getIds(
-        filterAiChatThreadsWithinLoadedPages({
+        filterInboxThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-no-activity'],

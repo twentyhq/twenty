@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type InboxLoadedThreadList } from '@/inbox/types/InboxLoadedThreadList';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
-export const filterAiChatThreadsWithinLoadedPages = ({
+export const filterInboxThreadsWithinLoadedPages = ({
   threads,
   pagedList,
 }: {

@@ -8,7 +8,7 @@ import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadL
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
-import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
 import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
 import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
@@ -47,7 +47,7 @@ const StyledSectionsContainer = styled.div`
 
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
-export const NavigationDrawerAiChatContent = () => {
+export const NavigationDrawerInboxContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
@@ -121,7 +121,7 @@ export const NavigationDrawerAiChatContent = () => {
             />
           )}
           {recentThreads.length > 0 && (
-            <NavigationDrawerAiChatThreadSection
+            <NavigationDrawerInboxThreadSection
               sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
