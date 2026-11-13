@@ -173,6 +173,7 @@ const SidePanelEditColumnForm = ({
     ]);
 
     if (!areSettingsSaved) {
+      upsertRecordField(recordField);
       return;
     }
 

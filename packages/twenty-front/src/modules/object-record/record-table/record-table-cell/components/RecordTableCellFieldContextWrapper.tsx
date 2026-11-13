@@ -1,10 +1,10 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
+import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ReactNode } from 'react';
 
@@ -30,7 +30,7 @@ export const RecordTableCellFieldContextWrapper = ({
   const instanceId = getRecordFieldInputInstanceId({
     recordId,
     fieldName: fieldMetadataItem.name,
-    prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+    prefix: getRecordTableCellInputIdPrefix(recordField.id),
   });
 
   const isLabelIdentifier =
