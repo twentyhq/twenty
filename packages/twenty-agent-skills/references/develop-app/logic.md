@@ -190,7 +190,7 @@ Beta: MCP servers are not live yet. Workspaces cannot use their tools until the 
 To let the workspace's AI call a remote MCP server (Streamable HTTP) without syncing its data into Twenty, declare `defineMcpServer` with a snake_case `name` (lowercase letters, digits and underscores, starting with a letter, at most 32 characters; it prefixes the server's tool names), a `label` and an HTTP(S) `url`:
 
 - To authenticate, set `connectionProvider: { universalIdentifier }` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server. For a server that supports OAuth discovery, point it at an `oauth-discovery` provider with the server's URL as `resourceUrl`.
-- The `url` cannot change in a later version while a connection provider is linked; declare a new server with a new `universalIdentifier` instead.
+- The `url` cannot change in a later version while the same connection provider stays linked; change it together with a different `connectionProvider`, or declare a new server with a new `universalIdentifier`.
 - Workspaces can deactivate a server and a later app version keeps that choice. Requires `"engines": { "twenty": ">=2.53.0" }`.
 
 ## Post-Install Hooks
