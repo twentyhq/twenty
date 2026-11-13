@@ -1,9 +1,11 @@
+import { Test } from '@nestjs/testing';
+
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type QueryRunner } from 'typeorm';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 
 const OPEN_ID = '20202020-0000-4000-8000-000000000101';
@@ -19,9 +21,8 @@ const optionRow = (
 describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
   const alterEnumValues = jest.fn();
   const query = jest.fn();
-  const service = new FieldMetadataOptionEnumSchemaService({
-    enumManager: { alterEnumValues },
-  } as unknown as WorkspaceSchemaManagerService);
+  const queryRunner: Pick<QueryRunner, 'query'> = { query };
+  let service: FieldMetadataOptionEnumSchemaService;
   const flatObjectMetadata = getFlatObjectMetadataMock({
     universalIdentifier: '20202020-0000-4000-8000-000000000201',
     nameSingular: 'ticket',
@@ -48,10 +49,24 @@ describe('FieldMetadataOptionEnumSchemaService.applyEnumChange', () => {
       enumChange: { fromOptionRows, toOptionRows },
       flatFieldMetadata,
       flatObjectMetadata,
-      queryRunner: { query } as unknown as QueryRunner,
+      queryRunner: queryRunner as QueryRunner,
       workspaceId: '20202020-0000-4000-8000-000000000203',
     });
   };
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        FieldMetadataOptionEnumSchemaService,
+        {
+          provide: WorkspaceSchemaManagerService,
+          useValue: { enumManager: { alterEnumValues } },
+        },
+      ],
+    }).compile();
+
+    service = module.get(FieldMetadataOptionEnumSchemaService);
+  });
 
   beforeEach(() => {
     alterEnumValues.mockReset();
