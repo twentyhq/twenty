@@ -101,6 +101,7 @@ export class DeferredWorkspaceOperationQueueService {
     const inProgressOperation =
       await this.deferredWorkspaceOperationRepository.findOne(workspaceId, {
         where: { name, status: 'IN_PROGRESS' },
+        order: { startedAt: 'DESC' },
       });
 
     if (!isDefined(inProgressOperation)) {
