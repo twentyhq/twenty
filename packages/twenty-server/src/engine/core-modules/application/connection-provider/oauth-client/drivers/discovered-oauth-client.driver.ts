@@ -307,9 +307,10 @@ export class DiscoveredOAuthClientDriver implements OAuthClientDriver {
     const { authorizationServerUrl, authorizationServerMetadata } =
       discoveryState;
     const clientMetadataUrl = this.getClientMetadataUrl();
-    const clientMetadata = buildOAuthDiscoveryClientMetadata(
-      this.twentyConfigService.get('SERVER_URL'),
-    );
+    const clientMetadata = buildOAuthDiscoveryClientMetadata({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      frontendUrl: this.twentyConfigService.get('FRONTEND_URL'),
+    });
 
     if (
       authorizationServerMetadata?.client_id_metadata_document_supported &&

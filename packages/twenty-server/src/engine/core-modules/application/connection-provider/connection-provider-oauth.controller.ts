@@ -65,7 +65,10 @@ export class ConnectionProviderOAuthController {
 
     return res.json({
       client_id: buildOAuthDiscoveryClientMetadataUrl(serverUrl),
-      ...buildOAuthDiscoveryClientMetadata(serverUrl),
+      ...buildOAuthDiscoveryClientMetadata({
+        serverUrl,
+        frontendUrl: this.twentyConfigService.get('FRONTEND_URL'),
+      }),
     });
   }
 
