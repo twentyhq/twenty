@@ -7375,6 +7375,11 @@ msgstr "Հաստատել բարձրացումը"
 msgid "Confirming your payment"
 msgstr "Հաստատվում է ձեր վճարումը"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr ""
+
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
