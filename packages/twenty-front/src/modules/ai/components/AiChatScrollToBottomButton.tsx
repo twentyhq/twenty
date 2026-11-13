@@ -1,5 +1,5 @@
-import { inboxIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
-import { scrollInboxToBottom } from '@/ai/utils/scrollAiChatToBottom';
+import { aiChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
+import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { ScrollOverlayButton } from '@/ui/utilities/scroll/components/ScrollOverlayButton';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -7,10 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconArrowDown } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 
-export const InboxScrollToBottomButton = () => {
+export const AiChatScrollToBottomButton = () => {
   const { t } = useLingui();
-  const inboxIsScrolledToBottom = useAtomComponentSelectorValue(
-    inboxIsScrolledToBottomComponentSelector,
+  const aiChatIsScrolledToBottom = useAtomComponentSelectorValue(
+    aiChatIsScrolledToBottomComponentSelector,
   );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
@@ -19,7 +19,7 @@ export const InboxScrollToBottomButton = () => {
     const { scrollWrapperElement } = getScrollWrapperElement();
 
     if (isDefined(scrollWrapperElement)) {
-      scrollInboxToBottom(scrollWrapperElement);
+      scrollAiChatToBottom(scrollWrapperElement);
     }
   };
 
@@ -27,7 +27,7 @@ export const InboxScrollToBottomButton = () => {
     <ScrollOverlayButton
       Icon={IconArrowDown}
       ariaLabel={t`Scroll to bottom`}
-      isVisible={!inboxIsScrolledToBottom}
+      isVisible={!aiChatIsScrolledToBottom}
       onClick={handleClick}
     />
   );

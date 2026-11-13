@@ -4,8 +4,8 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useMarkInboxThreadAsDoneInChannel } from '@/ai/hooks/useMarkAgentChatThreadAsDoneInChannel';
 import { useReopenInboxThreadInChannel } from '@/ai/hooks/useReopenAgentChatThreadInChannel';
 import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { useOpenAssignInboxInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
-import { useOpenSnoozeInboxInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
+import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 export const useExecuteInboxThreadStatusAction = () => {
@@ -14,8 +14,8 @@ export const useExecuteInboxThreadStatusAction = () => {
   const { markAgentChatThreadAsDoneInChannel } =
     useMarkInboxThreadAsDoneInChannel();
   const { reopenAgentChatThreadInChannel } = useReopenInboxThreadInChannel();
-  const { openSnoozeInboxInSidePanel } = useOpenSnoozeInboxInSidePanel();
-  const { openAssignInboxInSidePanel } = useOpenAssignInboxInSidePanel();
+  const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
   const updateInboxState = async ({
     threadIds,
@@ -55,12 +55,12 @@ export const useExecuteInboxThreadStatusAction = () => {
     }
 
     if (action === AgentChatInboxAction.SNOOZE) {
-      openSnoozeInboxInSidePanel({ threadIds, isInChannel });
+      openSnoozeAiChatInSidePanel({ threadIds, isInChannel });
       return;
     }
 
     if (action === 'assign') {
-      openAssignInboxInSidePanel(threadIds);
+      openAssignAiChatInSidePanel(threadIds);
       return;
     }
 

@@ -1,7 +1,7 @@
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-export type InboxThreadRecord = ObjectRecord & {
+export type AiChatThreadRecord = ObjectRecord & {
   title: string | null;
   conversationType?: AgentChatThreadConversationType;
   directMessageFirstWorkspaceMemberId?: string | null;

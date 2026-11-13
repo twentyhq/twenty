@@ -1,4 +1,4 @@
-export type InboxThreadReason =
+export type AiChatThreadReason =
   | 'needsInput'
   | 'mentioned'
   | 'assigned'

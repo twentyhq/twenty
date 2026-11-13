@@ -23,9 +23,9 @@ export const useActiveNavigationDrawerMode = (): NavigationDrawerActiveTab => {
 
   if (
     isAiModePath(pathname) ||
-    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.INBOX_HISTORY
+    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY
   ) {
-    return NAVIGATION_DRAWER_TABS.INBOX_HISTORY;
+    return NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
   }
 
   return NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;

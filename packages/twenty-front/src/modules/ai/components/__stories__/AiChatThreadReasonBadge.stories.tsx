@@ -1,14 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
+import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
 
 const meta = {
   title: 'Modules/AI/AiChatThreadReasonBadge',
-  component: InboxThreadReasonBadge,
+  component: AiChatThreadReasonBadge,
   decorators: [ComponentDecorator],
   args: { isUnread: true },
-} satisfies Meta<typeof InboxThreadReasonBadge>;
+} satisfies Meta<typeof AiChatThreadReasonBadge>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

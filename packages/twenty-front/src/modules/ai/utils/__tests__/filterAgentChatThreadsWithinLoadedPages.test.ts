@@ -1,5 +1,5 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { filterInboxThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { filterAiChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
 
 const buildThread = ({
   id,
@@ -7,7 +7,7 @@ const buildThread = ({
 }: {
   id: string;
   lastActivityAt: string | null;
-}): InboxThreadRecord => ({
+}): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -28,13 +28,13 @@ const THREADS = [
   buildThread({ id: 'loaded-no-activity', lastActivityAt: null }),
 ];
 
-const getIds = (threads: InboxThreadRecord[]) => threads.map(({ id }) => id);
+const getIds = (threads: AiChatThreadRecord[]) => threads.map(({ id }) => id);
 
-describe('filterInboxThreadsWithinLoadedPages', () => {
+describe('filterAiChatThreadsWithinLoadedPages', () => {
   it('keeps every chat once all pages are loaded', () => {
     expect(
       getIds(
-        filterInboxThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: [],
@@ -49,7 +49,7 @@ describe('filterInboxThreadsWithinLoadedPages', () => {
   it('hides chats past the last loaded page, but never a loaded one', () => {
     expect(
       getIds(
-        filterInboxThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-older', 'loaded-no-activity'],
@@ -64,7 +64,7 @@ describe('filterInboxThreadsWithinLoadedPages', () => {
   it('keeps chats with activity once the pages reach chats without any', () => {
     expect(
       getIds(
-        filterInboxThreadsWithinLoadedPages({
+        filterAiChatThreadsWithinLoadedPages({
           threads: THREADS,
           pagedList: {
             threadIds: ['loaded-no-activity'],

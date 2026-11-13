@@ -4,8 +4,8 @@ import { FormFieldRow } from 'twenty-ui/components/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxTimePickerExample } from '@/ai/components/__stories__/AiChatTimePickerExample';
-import { INBOX_TIME_PICKER_FIXTURE } from '@/ai/components/__stories__/aiChatTimePickerFixture';
+import { AiChatTimePickerExample } from '@/ai/components/__stories__/AiChatTimePickerExample';
+import { AI_CHAT_TIME_PICKER_FIXTURE } from '@/ai/components/__stories__/aiChatTimePickerFixture';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -13,7 +13,7 @@ import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const meta = {
   title: 'Modules/AI/AiChatTimePickerCard',
-  component: InboxTimePickerExample,
+  component: AiChatTimePickerExample,
   decorators: [ComponentDecorator, MemoryRouterDecorator, RootDecorator],
   parameters: { container: { width: 688 }, argos: { fitToContent: false } },
   play: async ({ canvasElement }) => {
@@ -27,7 +27,7 @@ const meta = {
     onSkip: fn(),
     onRetry: fn(),
   },
-} satisfies Meta<typeof InboxTimePickerExample>;
+} satisfies Meta<typeof AiChatTimePickerExample>;
 
 export default meta;
 
@@ -119,7 +119,7 @@ export const SystemTimeZone: Story = {
 
     await userEvent.click(canvas.getByRole('button', { name: 'Send invite' }));
     await expect(args.onSendInvite).toHaveBeenCalledWith({
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slotId: 'slot-1100',
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     });
@@ -159,9 +159,9 @@ export const SelectAndSend: Story = {
     await userEvent.click(sendInvite);
     await expect(args.onSendInvite).toHaveBeenCalledTimes(1);
     await expect(args.onSendInvite).toHaveBeenCalledWith({
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slotId: 'slot-1100',
-      timeZone: INBOX_TIME_PICKER_FIXTURE.timeZone,
+      timeZone: AI_CHAT_TIME_PICKER_FIXTURE.timeZone,
     });
   },
 };
@@ -230,8 +230,8 @@ export const AvailabilityChanged: Story = {
     initialSelectedSlotId: 'slot-1100',
     availabilityAfterRefresh: {
       status: 'ready',
-      date: INBOX_TIME_PICKER_FIXTURE.date,
-      slots: INBOX_TIME_PICKER_FIXTURE.availability.slots.filter(
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
+      slots: AI_CHAT_TIME_PICKER_FIXTURE.availability.slots.filter(
         ({ id }) => id !== 'slot-1100',
       ),
     },
@@ -268,9 +268,9 @@ export const AvailabilityChanged: Story = {
     await userEvent.click(sendInvite);
     await expect(args.onSendInvite).toHaveBeenCalledTimes(1);
     await expect(args.onSendInvite).toHaveBeenCalledWith({
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slotId: 'slot-1400',
-      timeZone: INBOX_TIME_PICKER_FIXTURE.timeZone,
+      timeZone: AI_CHAT_TIME_PICKER_FIXTURE.timeZone,
     });
   },
 };
@@ -279,7 +279,7 @@ export const AvailabilityError: Story = {
   args: {
     initialAvailability: {
       status: 'error',
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       message: 'Your calendar could not be reached.',
     },
   },
@@ -360,7 +360,7 @@ export const Loading: Story = {
   args: {
     initialAvailability: {
       status: 'loading',
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
     },
   },
 };
@@ -369,7 +369,7 @@ export const Empty: Story = {
   args: {
     initialAvailability: {
       status: 'ready',
-      date: INBOX_TIME_PICKER_FIXTURE.date,
+      date: AI_CHAT_TIME_PICKER_FIXTURE.date,
       slots: [],
     },
   },

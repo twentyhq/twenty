@@ -1,18 +1,18 @@
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 
 // /chat without an id shows the current chat (initially the latest); a new chat has no record yet.
-export const getDisplayedInboxThreadId = ({
+export const getDisplayedAiChatThreadId = ({
   urlThreadId,
-  currentInboxThread,
-  isOnNewInboxSlot,
+  currentAiChatThread,
+  isOnNewAiChatSlot,
 }: {
   urlThreadId: string | undefined;
-  currentInboxThread: string | null;
-  isOnNewInboxSlot: boolean;
+  currentAiChatThread: string | null;
+  isOnNewAiChatSlot: boolean;
 }): string | null => {
-  if (urlThreadId === INBOX_NEW_THREAD_PATH_SEGMENT) {
+  if (urlThreadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT) {
     return null;
   }
 
@@ -20,5 +20,5 @@ export const getDisplayedInboxThreadId = ({
     return urlThreadId;
   }
 
-  return isOnNewInboxSlot ? null : currentInboxThread;
+  return isOnNewAiChatSlot ? null : currentAiChatThread;
 };

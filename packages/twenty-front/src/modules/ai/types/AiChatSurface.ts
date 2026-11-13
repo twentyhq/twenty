@@ -1,3 +1,4 @@
-import { type INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
+import { type AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 
-export type InboxSurface = (typeof INBOX_SURFACE)[keyof typeof INBOX_SURFACE];
+export type AiChatSurface =
+  (typeof AI_CHAT_SURFACE)[keyof typeof AI_CHAT_SURFACE];

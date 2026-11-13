@@ -5,9 +5,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { SidePanelSnoozeInboxThreadPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
-import { snoozeInboxThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
   jotaiStore,
@@ -48,14 +48,14 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </JotaiProvider>
 );
 
-describe('SidePanelSnoozeInboxThreadPage', () => {
+describe('SidePanelSnoozeAiChatPage', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(
-      snoozeInboxThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
+      snoozeAiChatThreadIdsComponentState.atomFamily({ instanceId: PAGE_ID }),
       ['thread-1', 'thread-2'],
     );
   });
@@ -65,7 +65,7 @@ describe('SidePanelSnoozeInboxThreadPage', () => {
   });
 
   it('snoozes the chats until the picked time', () => {
-    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
     fireEvent.click(screen.getByText('This evening'));
 
@@ -85,7 +85,7 @@ describe('SidePanelSnoozeInboxThreadPage', () => {
       true,
     );
 
-    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
     fireEvent.click(screen.getByText('This evening'));
 
@@ -97,13 +97,13 @@ describe('SidePanelSnoozeInboxThreadPage', () => {
   });
 
   it('shows when each option ends', () => {
-    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
     expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
   });
 
   it('refreshes the options instead of snoozing into the past', () => {
-    render(<SidePanelSnoozeInboxThreadPage />, { wrapper: Wrapper });
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
     act(() => {
       jest.setSystemTime(new Date(2026, 9, 1, 18, 1));

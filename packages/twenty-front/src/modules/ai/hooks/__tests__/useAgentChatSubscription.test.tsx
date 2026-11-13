@@ -3,14 +3,14 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { useInboxSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
-import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { useAiChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { aiChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import {
@@ -21,8 +21,8 @@ import {
 const loadInboxThreadList = jest.fn();
 const mockRefreshPermissions = jest.fn();
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
-  useRefreshInboxThreadPermissions: () => ({
-    refreshInboxThreadPermissions: mockRefreshPermissions,
+  useRefreshAiChatThreadPermissions: () => ({
+    refreshAiChatThreadPermissions: mockRefreshPermissions,
   }),
 }));
 const subscribe = jest.fn();
@@ -37,10 +37,10 @@ jest.mock('@/ai/hooks/useRefreshAiChatUsage', () => ({
   useRefreshAiChatUsage: () => ({ refreshAiChatUsage }),
 }));
 const key = { threadId: 'thread' };
-const messagesAtom = inboxMessagesFamilyState.atomFamily(key);
-const fetchedAtom = inboxFetchedMessagesFamilyState.atomFamily(key);
-const queuedAtom = agentChatQueuedMessagesFamilyState.atomFamily(key);
-const errorAtom = agentChatErrorFamilyState.atomFamily(key);
+const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
+const fetchedAtom = aiChatFetchedMessagesFamilyState.atomFamily(key);
+const queuedAtom = aiChatQueuedMessagesFamilyState.atomFamily(key);
+const errorAtom = aiChatErrorFamilyState.atomFamily(key);
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
@@ -68,7 +68,7 @@ describe('Shared conversation access revocation', () => {
 
   it('refreshes only the subscribed thread on heartbeats, at most once every 30 seconds', () => {
     jest.useFakeTimers();
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
     const sink = subscribe.mock.calls[0][1];
@@ -101,7 +101,7 @@ describe('Shared conversation access revocation', () => {
   it.each(['next', 'error'])(
     'clears displayed, fetched, and queued content on a %s access error',
     async (channel) => {
-      const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+      const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
         wrapper: Wrapper,
       });
       const sink = subscribe.mock.calls[0][1];
@@ -121,8 +121,11 @@ describe('Shared conversation access revocation', () => {
 
   it('refetches the conversation when one of its tool calls is resolved', () => {
     const refetchListener = jest.fn();
-    window.addEventListener(INBOX_REFETCH_MESSAGES_EVENT_NAME, refetchListener);
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    window.addEventListener(
+      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
     act(() =>
@@ -138,13 +141,13 @@ describe('Shared conversation access revocation', () => {
     expect(refetchListener).toHaveBeenCalledTimes(1);
     unmount();
     window.removeEventListener(
-      INBOX_REFETCH_MESSAGES_EVENT_NAME,
+      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
       refetchListener,
     );
   });
 
   it('clears content and disconnects when the AI permission guard denies access', () => {
-    renderHook(() => useInboxSubscription('thread'), { wrapper: Wrapper });
+    renderHook(() => useAiChatSubscription('thread'), { wrapper: Wrapper });
     act(() =>
       subscribe.mock.calls[0][1].error([{ extensions: { code: 'FORBIDDEN' } }]),
     );
@@ -154,7 +157,7 @@ describe('Shared conversation access revocation', () => {
   });
 
   it('does not let buffered stream updates restore content after revocation', async () => {
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
     const sink = subscribe.mock.calls[0][1];
@@ -206,7 +209,7 @@ describe('Shared conversation access revocation', () => {
   it.each(['next', 'error'])(
     'preserves queued messages during session expiry on the %s channel',
     (channel) => {
-      renderHook(() => useInboxSubscription('thread'), {
+      renderHook(() => useAiChatSubscription('thread'), {
         wrapper: Wrapper,
       });
       const sink = subscribe.mock.calls[0][1];
@@ -227,7 +230,7 @@ describe('Shared conversation access revocation', () => {
       sink.next({ errors: denial });
       return disconnect;
     });
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
     expect(disconnect).toHaveBeenCalledTimes(1);
@@ -236,7 +239,7 @@ describe('Shared conversation access revocation', () => {
   });
 
   it('keeps existing messages on an ordinary connection error', () => {
-    renderHook(() => useInboxSubscription('thread'), { wrapper: Wrapper });
+    renderHook(() => useAiChatSubscription('thread'), { wrapper: Wrapper });
     act(() => subscribe.mock.calls[0][1].error(new Error('offline')));
     expect(jotaiStore.get(messagesAtom)).toHaveLength(1);
     expect(loadInboxThreadList).not.toHaveBeenCalled();
@@ -250,10 +253,7 @@ describe('Stream liveness', () => {
     resetJotaiStore();
     subscribe.mockReturnValue(disconnect);
     jotaiStore.set(sseClientState.atom, { subscribe } as never);
-    jotaiStore.set(
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(key),
-      true,
-    );
+    jotaiStore.set(aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key), true);
   });
 
   afterEach(() => {
@@ -270,7 +270,7 @@ describe('Stream liveness', () => {
       sink.next(keepalive);
       return disconnect;
     });
-    renderHook(() => useInboxSubscription('thread'), { wrapper: Wrapper });
+    renderHook(() => useAiChatSubscription('thread'), { wrapper: Wrapper });
 
     for (let index = 0; index < 15; index++) {
       act(() => jest.advanceTimersByTime(2_000));
@@ -296,7 +296,7 @@ describe('Message reactions', () => {
   });
 
   it('keeps the newest snapshot when snapshots arrive out of order', () => {
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
     const sendReactions = (
@@ -345,7 +345,7 @@ describe('Message reactions', () => {
 
     expect(
       jotaiStore.get(
-        inboxMessageReactionsFamilyState.atomFamily({
+        aiChatMessageReactionsFamilyState.atomFamily({
           messageId: 'message',
         }),
       ),
@@ -381,7 +381,7 @@ describe('User credits exhausted', () => {
   });
 
   it('refreshes the user credits of the member who sent the turn only', () => {
-    const { unmount } = renderHook(() => useInboxSubscription('thread'), {
+    const { unmount } = renderHook(() => useAiChatSubscription('thread'), {
       wrapper: Wrapper,
     });
 

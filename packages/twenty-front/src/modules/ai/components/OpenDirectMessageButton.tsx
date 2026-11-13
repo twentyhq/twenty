@@ -4,8 +4,8 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
-import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useLoadInboxThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useLoadAiChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -17,8 +17,8 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 export const OpenDirectMessageButton = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const { loadInboxThread } = useLoadInboxThread();
-  const { handleThreadClick } = useInboxThreadClick({
+  const { loadAiChatThread } = useLoadAiChatThread();
+  const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
   });
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -52,7 +52,7 @@ export const OpenDirectMessageButton = () => {
       });
       const threadId = data?.openDirectMessage;
       assertIsDefinedOrThrow(threadId);
-      const thread = await loadInboxThread(threadId);
+      const thread = await loadAiChatThread(threadId);
       assertIsDefinedOrThrow(thread);
       handleThreadClick(thread);
     } catch (error) {

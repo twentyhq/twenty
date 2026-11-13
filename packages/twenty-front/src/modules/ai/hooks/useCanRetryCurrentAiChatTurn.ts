@@ -1,16 +1,16 @@
-import { useIsCurrentInboxThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
-import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
+import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useCanRetryCurrentAiChatTurn = () => {
-  const isReadOnly = useIsCurrentInboxThreadReadOnly();
-  const inboxDisplayedThreadMessages = useAtomStateValue(
-    inboxDisplayedThreadMessagesSelector,
+  const isReadOnly = useIsCurrentAiChatThreadReadOnly();
+  const aiChatDisplayedThreadMessages = useAtomStateValue(
+    aiChatDisplayedThreadMessagesSelector,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const lastUserMessage = inboxDisplayedThreadMessages.findLast(
+  const lastUserMessage = aiChatDisplayedThreadMessages.findLast(
     (message) => message.role === 'user' && message.status !== 'queued',
   );
   const senderId = lastUserMessage?.metadata?.senderWorkspaceMemberId;

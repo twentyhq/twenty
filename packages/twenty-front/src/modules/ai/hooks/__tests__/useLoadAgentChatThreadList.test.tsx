@@ -4,18 +4,18 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { useLoadInboxThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useLoadAiChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { inboxRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -52,15 +52,15 @@ jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
   generateFindManyRecordsQuery: () => 'find-many-agent-chat-threads',
 }));
 
-const refreshInboxThreadPermissions = jest.fn();
+const refreshAiChatThreadPermissions = jest.fn();
 
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
-  useRefreshInboxThreadPermissions: () => ({
-    refreshInboxThreadPermissions,
+  useRefreshAiChatThreadPermissions: () => ({
+    refreshAiChatThreadPermissions,
   }),
 }));
 
-const buildThread = (id: string, title: string): InboxThreadRecord => ({
+const buildThread = (id: string, title: string): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -70,7 +70,7 @@ const buildThread = (id: string, title: string): InboxThreadRecord => ({
 });
 
 const buildPage = (
-  threads: InboxThreadRecord[],
+  threads: AiChatThreadRecord[],
   { hasNextPage = false, endCursor = 'end' } = {},
 ) => ({
   data: {
@@ -106,34 +106,34 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
-const useInboxThreadLoading = () => {
+const useAiChatThreadLoading = () => {
   const { loadInboxThreadList } = useLoadInboxThreadList();
 
   return {
     loadInboxThreadList,
-    refreshInboxThreads: () =>
+    refreshAiChatThreads: () =>
       loadInboxThreadList({
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'refresh',
       }),
-    fetchMoreInboxThreads: () =>
+    fetchMoreAiChatThreads: () =>
       loadInboxThreadList({
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'fetch-more',
       }),
-    ...useLoadInboxThread(),
+    ...useLoadAiChatThread(),
   };
 };
 
 const renderRefresh = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useInboxThreadLoading(), {
+  renderHook(() => useAiChatThreadLoading(), {
     wrapper: getWrapper(store),
   }).result;
 
 describe('useLoadInboxThreadList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    refreshInboxThreadPermissions.mockResolvedValue(undefined);
+    refreshAiChatThreadPermissions.mockResolvedValue(undefined);
   });
 
   it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
@@ -153,7 +153,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenCalledWith(
@@ -210,7 +210,7 @@ describe('useLoadInboxThreadList', () => {
       mentionsResolvedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
-    store.set(inboxThreadStreamedParticipantsState.atom, {
+    store.set(aiChatThreadStreamedParticipantsState.atom, {
       'thread-2': streamedParticipant,
     });
     queryMock.mockResolvedValue(
@@ -235,7 +235,7 @@ describe('useLoadInboxThreadList', () => {
               },
             ],
           },
-        } as InboxThreadRecord,
+        } as AiChatThreadRecord,
         {
           ...buildThread('thread-2', 'Second'),
           participants: {
@@ -249,16 +249,16 @@ describe('useLoadInboxThreadList', () => {
               },
             ],
           },
-        } as InboxThreadRecord,
+        } as AiChatThreadRecord,
       ]),
     );
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
+      await result.current.refreshAiChatThreads();
     });
 
-    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({
+    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
       'thread-1': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
@@ -318,7 +318,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenCalledTimes(2);
@@ -334,7 +334,7 @@ describe('useLoadInboxThreadList', () => {
     );
     expect(
       store.get(
-        inboxThreadRecordFamilySelector.selectorFamily('favorite-thread'),
+        aiChatThreadRecordFamilySelector.selectorFamily('favorite-thread'),
       ),
     ).toMatchObject(favoriteThread);
     expect(store.get(inboxFavoriteThreadsSelector.atom)).toMatchObject([
@@ -368,8 +368,8 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
-      await result.current.fetchMoreInboxThreads();
+      await result.current.refreshAiChatThreads();
+      await result.current.fetchMoreAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenLastCalledWith(
@@ -385,7 +385,7 @@ describe('useLoadInboxThreadList', () => {
     });
 
     await act(async () => {
-      expect(await result.current.fetchMoreInboxThreads()).toBeUndefined();
+      expect(await result.current.fetchMoreAiChatThreads()).toBeUndefined();
     });
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
@@ -404,7 +404,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual(['thread-1']);
@@ -416,7 +416,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshInboxThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
@@ -436,9 +436,9 @@ describe('useLoadInboxThreadList', () => {
       buildPage([buildThread('old-thread', 'Old chat')]),
     );
     await act(async () => {
-      expect(await result.current.loadInboxThread('old-thread')).toMatchObject({
-        id: 'old-thread',
-      });
+      expect(await result.current.loadAiChatThread('old-thread')).toMatchObject(
+        { id: 'old-thread' },
+      );
     });
     expect(queryMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -456,12 +456,12 @@ describe('useLoadInboxThreadList', () => {
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {
-      expect(await result.current.loadInboxThread('gone')).toBeNull();
+      expect(await result.current.loadAiChatThread('gone')).toBeNull();
     });
 
     queryMock.mockRejectedValueOnce(new Error('Network error'));
     await act(async () => {
-      expect(await result.current.loadInboxThread('unknown')).toBeUndefined();
+      expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
     });
   });
 
@@ -480,13 +480,11 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.loadInboxThread('old-thread');
+      await result.current.loadAiChatThread('old-thread');
     });
 
     expect(
-      store.get(
-        agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
-      ),
+      store.get(aiChatUsageFamilyState.atomFamily({ threadId: 'old-thread' })),
     ).toMatchObject({ inputTokens: 42 });
   });
 });

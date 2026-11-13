@@ -5,13 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-type InboxEditorFocusEffectProps = {
+type AiChatEditorFocusEffectProps = {
   editor: Editor | null;
 };
 
-export const InboxEditorFocusEffect = ({
+export const AiChatEditorFocusEffect = ({
   editor,
-}: InboxEditorFocusEffectProps) => {
+}: AiChatEditorFocusEffectProps) => {
   const [shouldFocusChatEditor, setShouldFocusChatEditor] = useAtomState(
     shouldFocusChatEditorState,
   );

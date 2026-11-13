@@ -3,19 +3,19 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AssignAgentChatThreadDocument } from '~/generated-metadata/graphql';
 
-export const useAssignInboxThreads = () => {
+export const useAssignAiChatThreads = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyInboxThreadUpdate } = useApplyInboxThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
 
   // The assignee shows right away, and is put back if the server refuses it
-  const assignInboxThreads = useCallback(
+  const assignAiChatThreads = useCallback(
     async ({
       threadIds,
       assigneeWorkspaceMemberId,
@@ -26,10 +26,10 @@ export const useAssignInboxThreads = () => {
       await Promise.all(
         threadIds.map(async (threadId) => {
           const previousAssigneeId =
-            store.get(inboxThreadRecordFamilySelector.selectorFamily(threadId))
+            store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
               ?.assigneeId ?? null;
 
-          applyInboxThreadUpdate({
+          applyAiChatThreadUpdate({
             id: threadId,
             assigneeId: assigneeWorkspaceMemberId,
           });
@@ -40,7 +40,7 @@ export const useAssignInboxThreads = () => {
               variables: { threadId, assigneeWorkspaceMemberId },
             });
           } catch (error) {
-            applyInboxThreadUpdate({
+            applyAiChatThreadUpdate({
               id: threadId,
               assigneeId: previousAssigneeId,
             });
@@ -49,8 +49,8 @@ export const useAssignInboxThreads = () => {
         }),
       );
     },
-    [apolloClient, applyInboxThreadUpdate, enqueueToast, store],
+    [apolloClient, applyAiChatThreadUpdate, enqueueToast, store],
   );
 
-  return { assignInboxThreads };
+  return { assignAiChatThreads };
 };

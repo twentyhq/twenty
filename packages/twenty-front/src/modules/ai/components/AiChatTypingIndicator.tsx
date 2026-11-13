@@ -21,7 +21,7 @@ const StyledAvatars = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-type InboxTypingIndicatorProps = {
+type AiChatTypingIndicatorProps = {
   participants: {
     id: string;
     name: string;
@@ -29,9 +29,9 @@ type InboxTypingIndicatorProps = {
   }[];
 };
 
-export const InboxTypingIndicator = ({
+export const AiChatTypingIndicator = ({
   participants,
-}: InboxTypingIndicatorProps) => {
+}: AiChatTypingIndicatorProps) => {
   const { t } = useLingui();
 
   if (!isNonEmptyArray(participants)) {

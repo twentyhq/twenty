@@ -3,37 +3,34 @@ import { Provider as JotaiProvider } from 'jotai';
 import { Temporal } from 'temporal-polyfill';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
-import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
+import { AiChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
+import { aiChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 jest.mock('@/ai/components/AgentChatMessagesFetchEffect', () => ({
-  InboxMessagesFetchEffect: () => null,
+  AiChatMessagesFetchEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
-  AgentChatStreamSubscriptionEffect: () => (
+  AiChatStreamSubscriptionEffect: () => (
     <div data-testid="stream-subscription" />
   ),
 }));
 jest.mock('@/ai/components/AgentChatPrepromptEffect', () => ({
-  AgentChatPrepromptEffect: () => null,
+  AiChatPrepromptEffect: () => null,
 }));
 
 const renderRuntimeEffects = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AgentChatRuntimeEffects />
+      <AiChatRuntimeEffects />
     </JotaiProvider>,
   );
 
-describe('AgentChatRuntimeEffects', () => {
+describe('AiChatRuntimeEffects', () => {
   beforeEach(() => {
-    jotaiStore.set(
-      agentChatUISessionStartTimeState.atom,
-      Temporal.Now.instant(),
-    );
+    jotaiStore.set(aiChatUISessionStartTimeState.atom, Temporal.Now.instant());
     jotaiStore.set(currentWorkspaceState.atom, null);
   });
 

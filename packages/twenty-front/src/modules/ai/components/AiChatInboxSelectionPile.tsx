@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
-import { InboxThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
-import { InboxThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
-import { InboxThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
+import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
+import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
 import { INBOX_SELECTION_PILE_MAX_CARDS } from '@/ai/constants/AiChatInboxSelectionPileMaxCards';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledPile = styled.div`
   display: flex;
@@ -58,7 +58,7 @@ const StyledHeading = styled.div`
 `;
 
 type InboxSelectionPileProps = {
-  threads: InboxThreadRecord[];
+  threads: AiChatThreadRecord[];
 };
 
 export const InboxSelectionPile = ({ threads }: InboxSelectionPileProps) => {
@@ -69,14 +69,14 @@ export const InboxSelectionPile = ({ threads }: InboxSelectionPileProps) => {
       {pileThreads.map((thread, index) => (
         <StyledCard key={thread.id} $depth={pileThreads.length - 1 - index}>
           <StyledLeading>
-            <InboxThreadAvatar thread={thread} />
+            <AiChatThreadAvatar thread={thread} />
           </StyledLeading>
           <StyledContent>
             <StyledHeading>
-              <InboxThreadTitle thread={thread} />
-              <InboxThreadActivityTime thread={thread} />
+              <AiChatThreadTitle thread={thread} />
+              <AiChatThreadActivityTime thread={thread} />
             </StyledHeading>
-            <InboxThreadSubtitle thread={thread} />
+            <AiChatThreadSubtitle thread={thread} />
           </StyledContent>
         </StyledCard>
       ))}

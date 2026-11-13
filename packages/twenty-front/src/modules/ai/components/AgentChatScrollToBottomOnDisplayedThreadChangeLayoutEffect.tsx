@@ -1,16 +1,16 @@
 import { useLayoutEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { pinInboxScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { pinAiChatScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
-export const InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+export const AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
@@ -25,13 +25,13 @@ export const InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect = () => {
       return;
     }
 
-    return pinInboxScrollToBottom({
+    return pinAiChatScrollToBottom({
       scrollWrapperElement,
       onPinningStopped: () =>
         setScrollWrapperScrollBottom(getScrollBottomInPx(scrollWrapperElement)),
     });
   }, [
-    inboxDisplayedThread,
+    aiChatDisplayedThread,
     getScrollWrapperElement,
     setScrollWrapperScrollBottom,
   ]);

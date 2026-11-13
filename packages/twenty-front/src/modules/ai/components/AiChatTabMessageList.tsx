@@ -1,20 +1,20 @@
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
-import { StyledInboxContentContainer } from '@/ai/components/StyledAiChatContentContainer';
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { AiChatErrorUnderMessageList } from '@/ai/components/AiChatErrorUnderMessageList';
-import { InboxLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
-import { InboxNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
+import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastMessageWithStreamingState';
+import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
-import { InboxScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
+import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
 import { InboxThreadStatusNotice } from '@/ai/components/AiChatThreadInboxStateNotice';
-import { InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
-import { inboxHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
-import { useHasInboxThreadPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
+import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
+import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
+import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { getInboxScrollWrapperInstanceId } from '@/ai/utils/getAiChatScrollWrapperInstanceId';
+import { getAiChatScrollWrapperInstanceId } from '@/ai/utils/getAiChatScrollWrapperInstanceId';
 import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
@@ -33,7 +33,7 @@ const StyledScrollWrapperContainer = styled.div`
 `;
 
 const StyledPreambleOutsideScrollContainer = styled(
-  StyledInboxContentContainer,
+  StyledAiChatContentContainer,
 )`
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@ const StyledPreambleOutsideScrollContainer = styled(
   padding: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledMessageListContent = styled(StyledInboxContentContainer)<{
+const StyledMessageListContent = styled(StyledAiChatContentContainer)<{
   hasPageContentInset: boolean;
 }>`
   display: flex;
@@ -49,21 +49,21 @@ const StyledMessageListContent = styled(StyledInboxContentContainer)<{
   gap: ${themeCssVariables.spacing[2]};
   padding: ${({ hasPageContentInset }) =>
     hasPageContentInset
-      ? `${themeCssVariables.spacing[4]} ${INBOX_THREAD_PAGE_CONTENT_INLINE_PADDING} 0`
+      ? `${themeCssVariables.spacing[4]} ${AI_CHAT_PAGE_CONTENT_INLINE_PADDING} 0`
       : themeCssVariables.spacing[4]};
 `;
 
-export const InboxTabMessageList = () => {
+export const AiChatTabMessageList = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const inboxSurface = useContext(InboxSurfaceContext);
-  const hasPageContentInset = useHasInboxThreadPageContentInset();
-  const inboxHasMessage = useAtomStateValue(inboxHasMessageSelector);
+  const aiChatSurface = useContext(AiChatSurfaceContext);
+  const hasPageContentInset = useHasAiChatPageContentInset();
+  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
 
-  const scrollWrapperInstanceId = getInboxScrollWrapperInstanceId(
-    inboxSurface ?? INBOX_SURFACE.SIDE_PANEL,
+  const scrollWrapperInstanceId = getAiChatScrollWrapperInstanceId(
+    aiChatSurface ?? AI_CHAT_SURFACE.SIDE_PANEL,
   );
 
-  if (!inboxHasMessage) {
+  if (!aiChatHasMessage) {
     if (!isWorkspaceSetupChat) {
       return null;
     }
@@ -93,16 +93,16 @@ export const InboxTabMessageList = () => {
           <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
             <StyledMessageListContent hasPageContentInset={hasPageContentInset}>
               {isWorkspaceSetupChat && <WorkspaceSetupChatPreamble />}
-              <InboxNonLastMessageIdsList />
-              <InboxLastMessageWithStreamingState />
+              <AiChatNonLastMessageIdsList />
+              <AiChatLastMessageWithStreamingState />
               <AiChatPendingResponseIndicator />
               <AiChatErrorUnderMessageList />
               <InboxThreadStatusNotice />
             </StyledMessageListContent>
-            <InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-            <AgentChatStreamingAutoScrollEffect />
+            <AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
+            <AiChatStreamingAutoScrollEffect />
           </ScrollWrapper>
-          <InboxScrollToBottomButton />
+          <AiChatScrollToBottomButton />
         </StyledScrollWrapperContainer>
       </Suspense>
     </ScrollWrapperComponentInstanceContext.Provider>

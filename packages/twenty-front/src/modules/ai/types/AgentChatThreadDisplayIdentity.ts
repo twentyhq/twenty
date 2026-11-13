@@ -1,7 +1,7 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export type InboxThreadDisplayIdentity = Pick<
-  InboxThreadRecord,
+export type AiChatThreadDisplayIdentity = Pick<
+  AiChatThreadRecord,
   | 'title'
   | 'conversationType'
   | 'directMessageFirstWorkspaceMemberId'

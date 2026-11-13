@@ -5,18 +5,18 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { useState } from 'react';
 
-import { InboxRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 
-const answerAgentChatToolCall = jest.fn();
+const answerAiChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
-  useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
+  useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 
 // the table needs workspace metadata, so a stub stands in for it
 jest.mock('@/ai/components/AiChatRecordApprovalReview', () => ({
-  InboxRecordApprovalReview: ({
+  AiChatRecordApprovalReview: ({
     onSelectedToolCallIdsChange,
   }: {
     onSelectedToolCallIdsChange: (toolCallIds: string[]) => void;
@@ -29,7 +29,7 @@ jest.mock('@/ai/components/AiChatRecordApprovalReview', () => ({
 
 const buildRecordCreation = (
   firstName: string,
-): AgentChatPendingRecordApproval => ({
+): AiChatPendingRecordApproval => ({
   toolCallId: firstName,
   proposal: {
     toolName: 'create_person',
@@ -49,7 +49,7 @@ const Deck = () => {
   );
 
   return (
-    <InboxRecordApprovalDeck
+    <AiChatRecordApprovalDeck
       recordApprovals={RECORD_CREATIONS}
       answeringToolCallIds={answeringToolCallIds}
       onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
@@ -67,14 +67,14 @@ const renderDeck = (store = createStore()) =>
   );
 
 const getAnswers = () =>
-  answerAgentChatToolCall.mock.calls.map(([{ toolCallId, response }]) => [
+  answerAiChatToolCall.mock.calls.map(([{ toolCallId, response }]) => [
     toolCallId,
     response.decision,
   ]);
 
-describe('InboxRecordApprovalDeck', () => {
+describe('AiChatRecordApprovalDeck', () => {
   beforeEach(() => {
-    answerAgentChatToolCall.mockReset().mockResolvedValue(true);
+    answerAiChatToolCall.mockReset().mockResolvedValue(true);
   });
 
   it('approves the selected records and rejects the skipped ones', async () => {
@@ -112,7 +112,7 @@ describe('InboxRecordApprovalDeck', () => {
 
   it('lets the person answer again when an answer fails', async () => {
     const user = userEvent.setup();
-    answerAgentChatToolCall.mockResolvedValue(false);
+    answerAiChatToolCall.mockResolvedValue(false);
 
     renderDeck();
 
@@ -121,15 +121,15 @@ describe('InboxRecordApprovalDeck', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Create 3' })).toBeEnabled(),
     );
-    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+    expect(answerAiChatToolCall).toHaveBeenCalledTimes(1);
   });
 
   it('keeps answering in its conversation when the person opens another one', async () => {
     const user = userEvent.setup();
     const store = createStore();
-    store.set(inboxDisplayedThreadState.atom, 'thread-1');
-    answerAgentChatToolCall.mockImplementation(async () => {
-      store.set(inboxDisplayedThreadState.atom, 'thread-2');
+    store.set(aiChatDisplayedThreadState.atom, 'thread-1');
+    answerAiChatToolCall.mockImplementation(async () => {
+      store.set(aiChatDisplayedThreadState.atom, 'thread-2');
 
       return true;
     });
@@ -138,11 +138,9 @@ describe('InboxRecordApprovalDeck', () => {
 
     await user.click(screen.getByRole('button', { name: 'Create 3' }));
 
-    await waitFor(() =>
-      expect(answerAgentChatToolCall).toHaveBeenCalledTimes(3),
-    );
+    await waitFor(() => expect(answerAiChatToolCall).toHaveBeenCalledTimes(3));
     expect(
-      answerAgentChatToolCall.mock.calls.map(([{ threadId }]) => threadId),
+      answerAiChatToolCall.mock.calls.map(([{ threadId }]) => threadId),
     ).toEqual(['thread-1', 'thread-1', 'thread-1']);
   });
 });

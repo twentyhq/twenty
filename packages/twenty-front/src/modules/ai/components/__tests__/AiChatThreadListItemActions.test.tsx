@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -63,7 +63,7 @@ const CHAT_OBJECT_METADATA_ITEM = {
 type ThreadScope = 'INBOX' | 'SNOOZED' | 'ARCHIVED';
 
 jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
-  useInboxThreadRename: () => ({
+  useAiChatThreadRename: () => ({
     isRenaming: false,
     draftTitle: '',
     setDraftTitle: jest.fn(),
@@ -97,7 +97,7 @@ const renderThread = async ({
   pathname?: string;
   onDetach?: () => void;
 } = {}) => {
-  const thread: InboxThreadRecord = {
+  const thread: AiChatThreadRecord = {
     __typename: 'AgentChatThread',
     id: THREAD_ID,
     title: THREAD_TITLE,
@@ -154,7 +154,7 @@ const renderThread = async ({
             }
           : null,
       );
-      setInboxThreadPermissions({
+      setAiChatThreadPermissions({
         store,
         threadId: THREAD_ID,
         permissions: {
@@ -165,7 +165,7 @@ const renderThread = async ({
         },
       });
       store.set(recordStoreFamilyState.atomFamily(THREAD_ID), thread);
-      store.set(inboxThreadParticipantsState.atom, {
+      store.set(aiChatThreadParticipantsState.atom, {
         [THREAD_ID]: {
           __typename: 'AgentChatThreadParticipant',
           id: '20202020-0000-4000-8000-0000000000bb',

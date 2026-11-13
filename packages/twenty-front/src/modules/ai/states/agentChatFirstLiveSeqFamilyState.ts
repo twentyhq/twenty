@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatFirstLiveSeqFamilyState = createAtomFamilyState<
+export const aiChatFirstLiveSeqFamilyState = createAtomFamilyState<
   number | null,
   { threadId: string | null }
 >({
-  key: 'agentChatFirstLiveSeqFamilyState',
+  key: 'aiChatFirstLiveSeqFamilyState',
   defaultValue: null,
 });

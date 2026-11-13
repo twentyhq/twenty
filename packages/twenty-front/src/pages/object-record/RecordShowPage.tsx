@@ -7,7 +7,7 @@ import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPa
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { InboxThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
+import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 import {
   type RecordShowPageParameters,
   RecordShowPageContent,
@@ -47,7 +47,7 @@ export const RecordShowPage = () => {
       );
     }
 
-    return <InboxThreadPageContent threadId={parameters.objectRecordId} />;
+    return <AiChatThreadPageContent threadId={parameters.objectRecordId} />;
   }
 
   if (

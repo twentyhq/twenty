@@ -3,12 +3,12 @@ import { type createStore } from 'jotai';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 export const setInboxThreadList = (
   store: ReturnType<typeof createStore>,
-  threads: InboxThreadRecord[],
+  threads: AiChatThreadRecord[],
   { hasNextPage = false }: { hasNextPage?: boolean } = {},
 ) => {
   for (const thread of threads) {

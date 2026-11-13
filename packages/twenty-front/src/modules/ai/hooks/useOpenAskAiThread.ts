@@ -1,5 +1,5 @@
-import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useSelectInboxThread } from '@/ai/hooks/useSelectAiChatThread';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
 import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
@@ -15,9 +15,9 @@ export const useOpenAskAiThread = () => {
     inboxThreadListThreadsFamilySelector,
     inboxSelectedThreadListSource,
   );
-  const { selectInboxThread } = useSelectInboxThread();
+  const { selectAiChatThread } = useSelectAiChatThread();
 
-  const { handleThreadClick } = useInboxThreadClick({
+  const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
@@ -33,7 +33,7 @@ export const useOpenAskAiThread = () => {
     }
 
     if (isValidUuid(threadId)) {
-      selectInboxThread(threadId);
+      selectAiChatThread(threadId);
     }
 
     openAskAiPage({ resetNavigationStack: true });

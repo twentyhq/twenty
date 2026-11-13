@@ -1,22 +1,22 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { SidePanelInboxPickerRecentChats } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats';
-import { SidePanelInboxPickerSearchResults } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults';
-import { useInboxThreadSearchTerm } from '@/side-panel/pages/search-ai-chats/hooks/useAiChatThreadSearchTerm';
-import { useIsInboxThreadSearchPending } from '@/side-panel/pages/search-ai-chats/hooks/useIsAiChatThreadSearchPending';
+import { SidePanelAiChatPickerRecentChats } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats';
+import { SidePanelAiChatPickerSearchResults } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerSearchResults';
+import { useAiChatThreadSearchTerm } from '@/side-panel/pages/search-ai-chats/hooks/useAiChatThreadSearchTerm';
+import { useIsAiChatThreadSearchPending } from '@/side-panel/pages/search-ai-chats/hooks/useIsAiChatThreadSearchPending';
 
-export const SidePanelSearchInboxsPage = () => {
-  const { searchTerm } = useInboxThreadSearchTerm();
-  const isSearchPending = useIsInboxThreadSearchPending(searchTerm);
+export const SidePanelSearchAiChatsPage = () => {
+  const { searchTerm } = useAiChatThreadSearchTerm();
+  const isSearchPending = useIsAiChatThreadSearchPending(searchTerm);
 
   if (!isNonEmptyString(searchTerm)) {
     return (
-      <SidePanelInboxPickerRecentChats isSearchPending={isSearchPending} />
+      <SidePanelAiChatPickerRecentChats isSearchPending={isSearchPending} />
     );
   }
 
   return (
-    <SidePanelInboxPickerSearchResults
+    <SidePanelAiChatPickerSearchResults
       key={searchTerm}
       searchTerm={searchTerm}
       isSearchPending={isSearchPending}

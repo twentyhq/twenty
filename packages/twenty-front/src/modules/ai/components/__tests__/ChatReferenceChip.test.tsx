@@ -10,7 +10,7 @@ import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferen
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import {
   FindManySkillsForSuggestionDocument,
@@ -197,7 +197,10 @@ const renderWithReferences = (
         twoFactorAuthenticationMethodSummary: [],
         objectRecordsPermissions: [],
       });
-      store.set(shouldOpenInboxAfterOnboardingState.atom, isWorkspaceSetupChat);
+      store.set(
+        shouldOpenAiChatAfterOnboardingState.atom,
+        isWorkspaceSetupChat,
+      );
     },
   });
 

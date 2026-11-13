@@ -1,4 +1,4 @@
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { buildAskAiThreadRedirectPath } from '@/ai/utils/buildAskAiThreadRedirectPath';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
@@ -7,9 +7,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 
-export const useInboxEndTrialPeriod = () => {
+export const useAiChatEndTrialPeriod = () => {
   const location = useLocation();
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { openAskAiThread } = useOpenAskAiThread();
 
   const { endTrialPeriod, isLoading } = useEndSubscriptionTrialPeriod();
@@ -20,7 +20,7 @@ export const useInboxEndTrialPeriod = () => {
   const finalRedirectPath = buildAskAiThreadRedirectPath({
     pathname: location.pathname,
     search: location.search,
-    threadId: currentInboxThread,
+    threadId: currentAiChatThread,
   });
 
   const endTrialPeriodFromAiChat = async () => {
@@ -32,8 +32,8 @@ export const useInboxEndTrialPeriod = () => {
       skipPaymentMethodRedirect: true,
     });
 
-    if (success && isNonEmptyString(currentInboxThread)) {
-      openAskAiThread(currentInboxThread);
+    if (success && isNonEmptyString(currentAiChatThread)) {
+      openAskAiThread(currentAiChatThread);
     }
   };
 

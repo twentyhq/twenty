@@ -1,44 +1,44 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { InboxMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
-import { InboxMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
-import { InboxMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
-import { inboxMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { getInboxMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { AiChatMessageAuthorAvatar } from '@/ai/components/AiChatMessageAuthorAvatar';
+import { AiChatMessageAuthorResolver } from '@/ai/components/AiChatMessageAuthorResolver';
+import { AiChatMessageReceipt } from '@/ai/components/AiChatMessageReceipt';
+import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { ChatMessageHeader } from '@/chat/components/ChatMessageHeader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type InboxMessageAuthorHeaderProps = {
+type AiChatMessageAuthorHeaderProps = {
   messageId: string;
   role: ExtendedUIMessage['role'];
   metadata: ExtendedUIMessage['metadata'];
   createdAt: Date | string;
 };
 
-export const InboxMessageAuthorHeader = ({
+export const AiChatMessageAuthorHeader = ({
   messageId,
   role,
   metadata,
   createdAt,
-}: InboxMessageAuthorHeaderProps) => {
-  const inboxMessageAuthorLookup = useAtomStateValue(
-    inboxMessageAuthorLookupSelector,
+}: AiChatMessageAuthorHeaderProps) => {
+  const aiChatMessageAuthorLookup = useAtomStateValue(
+    aiChatMessageAuthorLookupSelector,
   );
-  const author = getInboxMessageAuthor({
+  const author = getAiChatMessageAuthor({
     message: { id: messageId, role, metadata },
-    authorLookup: inboxMessageAuthorLookup,
+    authorLookup: aiChatMessageAuthorLookup,
   });
 
   return (
-    <InboxMessageAuthorResolver author={author}>
+    <AiChatMessageAuthorResolver author={author}>
       {(resolvedAuthor) => (
         <ChatMessageHeader
-          avatar={<InboxMessageAuthorAvatar author={resolvedAuthor} />}
+          avatar={<AiChatMessageAuthorAvatar author={resolvedAuthor} />}
           name={resolvedAuthor.name}
           createdAt={createdAt}
-          receipt={<InboxMessageReceipt messageId={messageId} />}
+          receipt={<AiChatMessageReceipt messageId={messageId} />}
         />
       )}
-    </InboxMessageAuthorResolver>
+    </AiChatMessageAuthorResolver>
   );
 };

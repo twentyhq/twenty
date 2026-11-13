@@ -1,6 +1,6 @@
 import { type FileUIPart } from 'ai';
 
-export type InboxFileUIPart = FileUIPart & {
+export type AiChatFileUIPart = FileUIPart & {
   fileId: string;
   filename: string;
 };

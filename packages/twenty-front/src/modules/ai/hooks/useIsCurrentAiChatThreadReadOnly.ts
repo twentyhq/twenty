@@ -1,4 +1,4 @@
-import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 
-export const useIsCurrentInboxThreadReadOnly = () =>
-  useCurrentInboxThreadAccess() !== 'writer';
+export const useIsCurrentAiChatThreadReadOnly = () =>
+  useCurrentAiChatThreadAccess() !== 'writer';

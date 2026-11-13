@@ -6,24 +6,24 @@ import { Button } from 'twenty-ui/primitives/input';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { SidePanelInboxPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
-import { SidePanelInboxPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
-import { inboxPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
+import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-type SidePanelInboxPickerRecentChatsProps = {
+type SidePanelAiChatPickerRecentChatsProps = {
   isSearchPending: boolean;
 };
 
-export const SidePanelInboxPickerRecentChats = ({
+export const SidePanelAiChatPickerRecentChats = ({
   isSearchPending,
-}: SidePanelInboxPickerRecentChatsProps) => {
+}: SidePanelAiChatPickerRecentChatsProps) => {
   const { t } = useLingui();
   const { threads, inboxThreadList, isLoading } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
-  const inboxPickerOpeningThreadId = useAtomComponentStateValue(
-    inboxPickerOpeningThreadIdComponentState,
+  const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
+    aiChatPickerOpeningThreadIdComponentState,
   );
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
@@ -43,7 +43,7 @@ export const SidePanelInboxPickerRecentChats = ({
   };
 
   return (
-    <SidePanelInboxPickerList
+    <SidePanelAiChatPickerList
       threads={threads}
       isLoading={isSearchPending || isLoading}
       loadingLabel={
@@ -52,18 +52,18 @@ export const SidePanelInboxPickerRecentChats = ({
       noResultsText={t`No chats yet`}
       footer={
         hasNextPage ? (
-          <SidePanelInboxPickerLoadMoreFooter
+          <SidePanelAiChatPickerLoadMoreFooter
             isLoadingMore={isLoadingMoreChats}
           >
             <Button
               fullWidth
               variant="ghost"
-              disabled={isDefined(inboxPickerOpeningThreadId)}
+              disabled={isDefined(aiChatPickerOpeningThreadId)}
               onClick={() => void handleLoadMore()}
             >
               {t`Load more chats`}
             </Button>
-          </SidePanelInboxPickerLoadMoreFooter>
+          </SidePanelAiChatPickerLoadMoreFooter>
         ) : undefined
       }
     />

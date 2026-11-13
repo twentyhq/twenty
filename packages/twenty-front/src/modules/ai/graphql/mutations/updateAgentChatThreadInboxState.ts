@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 
-import { INBOX_THREAD_PARTICIPANT_FRAGMENT } from '@/ai/graphql/fragments/agentChatThreadParticipantFragment';
+import { AI_CHAT_THREAD_PARTICIPANT_FRAGMENT } from '@/ai/graphql/fragments/agentChatThreadParticipantFragment';
 
 export const UPDATE_INBOX_THREAD_STATUS = gql`
-  ${INBOX_THREAD_PARTICIPANT_FRAGMENT}
+  ${AI_CHAT_THREAD_PARTICIPANT_FRAGMENT}
   mutation UpdateAgentChatThreadInboxState(
     $threadIds: [UUID!]!
     $action: AgentChatInboxAction!

@@ -4,8 +4,8 @@ import { EmojiPicker, LightIconButton } from 'twenty-ui/components/input';
 import { IconMoodPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { INBOX_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
-import { INBOX_QUICK_REACTION_EMOJIS } from '@/ai/constants/AgentChatQuickReactionEmojis';
+import { AI_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
+import { AI_CHAT_QUICK_REACTION_EMOJIS } from '@/ai/constants/AgentChatQuickReactionEmojis';
 
 const StyledQuickReactions = styled.div`
   align-items: center;
@@ -25,23 +25,23 @@ const StyledDivider = styled.div`
   width: 1px;
 `;
 
-type InboxMessageReactionPickerContentProps = {
+type AiChatMessageReactionPickerContentProps = {
   isEmojiPickerOpen: boolean;
   onEmojiSelect: (emoji: string) => void;
   onShowMore: () => void;
 };
 
-export const InboxMessageReactionPickerContent = ({
+export const AiChatMessageReactionPickerContent = ({
   isEmojiPickerOpen,
   onEmojiSelect,
   onShowMore,
-}: InboxMessageReactionPickerContentProps) => {
+}: AiChatMessageReactionPickerContentProps) => {
   const { t } = useLingui();
 
   if (isEmojiPickerOpen) {
     return (
       <EmojiPicker
-        emojibaseUrl={INBOX_EMOJIBASE_URL}
+        emojibaseUrl={AI_CHAT_EMOJIBASE_URL}
         searchLabel={t`Search emojis`}
         loadingLabel={t`Loading emojis`}
         emptyLabel={t`No emoji found`}
@@ -53,7 +53,7 @@ export const InboxMessageReactionPickerContent = ({
 
   return (
     <StyledQuickReactions>
-      {INBOX_QUICK_REACTION_EMOJIS.map((emoji) => (
+      {AI_CHAT_QUICK_REACTION_EMOJIS.map((emoji) => (
         <LightIconButton
           key={emoji}
           size="md"

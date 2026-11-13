@@ -18,13 +18,13 @@ import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -32,7 +32,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
-import { SidePanelSearchInboxsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
+import { SidePanelSearchAiChatsPage } from '@/side-panel/pages/search-ai-chats/components/SidePanelSearchAiChatsPage';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -214,7 +214,7 @@ const getSearchResponse = async ({
   });
 };
 
-const SearchInboxsStory = () => {
+const SearchAiChatsStory = () => {
   const [headerActionsPortal, setHeaderActionsPortal] =
     useState<HTMLElement | null>(null);
   const { pathname } = useLocation();
@@ -239,7 +239,7 @@ const SearchInboxsStory = () => {
             <Text>Command menu</Text>
           )}
           {currentPage?.page === SidePanelPages.SearchAiChats && (
-            <SidePanelSearchInboxsPage />
+            <SidePanelSearchAiChatsPage />
           )}
         </WorkspaceSurfaceHeaderPortalContext.Provider>
       </SidePanelPageComponentInstanceContext.Provider>
@@ -249,7 +249,7 @@ const SearchInboxsStory = () => {
 
 const meta = {
   title: 'Modules/SidePanel/SearchAiChatsPage',
-  component: SearchInboxsStory,
+  component: SearchAiChatsStory,
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={[RECORD_PATH]}>
@@ -374,7 +374,7 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(inboxThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,
@@ -413,8 +413,8 @@ const meta = {
         recordNode: mockedWorkspaceMemberRecords[0],
       }),
     );
-    jotaiStore.set(currentInboxThreadState.atom, CURRENT_THREAD_ID);
-    jotaiStore.set(inboxDraftsByThreadIdState.atom, {
+    jotaiStore.set(currentAiChatThreadState.atom, CURRENT_THREAD_ID);
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
     jotaiStore.set(sidePanelSearchState.atom, '');
@@ -441,7 +441,7 @@ const meta = {
       pendingSearchResultsNextPage?.release();
     };
   },
-} satisfies Meta<typeof SearchInboxsStory>;
+} satisfies Meta<typeof SearchAiChatsStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -624,7 +624,7 @@ export const OpenChatWithKeyboard: Story = {
       await canvas.findByText('Conversation opened in the side panel'),
     ).toBeVisible();
     await waitFor(() =>
-      expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
+      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
         SECOND_THREAD_ID,
       ),
     );
@@ -632,7 +632,7 @@ export const OpenChatWithKeyboard: Story = {
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);
     await expect(
-      jotaiStore.get(inboxDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
+      jotaiStore.get(aiChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
     ).toBe(PRESERVED_DRAFT);
   },
 };
@@ -681,7 +681,7 @@ export const LeaveWhileOpening: Story = {
     await waitFor(() =>
       expect(
         jotaiStore.get(
-          inboxThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
+          aiChatThreadRecordFamilySelector.selectorFamily(FIRST_THREAD_ID),
         ),
       ).toMatchObject({
         id: FIRST_THREAD_ID,
@@ -695,7 +695,7 @@ export const LeaveWhileOpening: Story = {
         }),
       }),
     );
-    await expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
       CURRENT_THREAD_ID,
     );
     await expect(
@@ -723,7 +723,7 @@ export const FailedOpen: Story = {
         'This chat could not be opened. Try selecting it again.',
       ),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
       CURRENT_THREAD_ID,
     );
     await expect(
@@ -772,7 +772,7 @@ export const UnavailableChat: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Quarterly planning notes' }),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentInboxThreadState.atom)).toBe(
+    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
       CURRENT_THREAD_ID,
     );
   },

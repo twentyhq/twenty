@@ -11,13 +11,13 @@ const StyledHint = styled.div`
   white-space: nowrap;
 `;
 
-type InboxDictationHintProps = {
+type AiChatDictationHintProps = {
   interimText: string;
 };
 
-export const InboxDictationHint = ({
+export const AiChatDictationHint = ({
   interimText,
-}: InboxDictationHintProps) => {
+}: AiChatDictationHintProps) => {
   if (!isNonEmptyString(interimText)) {
     return null;
   }

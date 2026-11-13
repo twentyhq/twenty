@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { inboxLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { setAgentMessageReaction } from '@/ai/utils/setAgentMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -23,13 +23,13 @@ type ReactionRequestQueue = {
 // Shared by every caller so one emoji's changes reach the server in the order they were made
 const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
 
-export const useToggleInboxMessageReaction = () => {
+export const useToggleAiChatMessageReaction = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
 
   // Live snapshots carry the server's state, so a refused change only takes back its own reaction
-  const toggleInboxMessageReaction = useCallback(
+  const toggleAiChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
 
@@ -37,7 +37,7 @@ export const useToggleInboxMessageReaction = () => {
         return;
       }
 
-      const reactionsAtom = inboxMessageReactionsFamilyState.atomFamily({
+      const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
         messageId,
       });
       const hasReacted = store
@@ -68,8 +68,8 @@ export const useToggleInboxMessageReaction = () => {
       };
 
       const liveRevisionsAtom =
-        inboxLiveReactionRevisionsFamilyState.atomFamily({
-          threadId: store.get(currentInboxThreadState.atom),
+        aiChatLiveReactionRevisionsFamilyState.atomFamily({
+          threadId: store.get(currentAiChatThreadState.atom),
         });
       const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];
 
@@ -108,5 +108,5 @@ export const useToggleInboxMessageReaction = () => {
     [apolloClient, enqueueToast, store],
   );
 
-  return { toggleInboxMessageReaction };
+  return { toggleAiChatMessageReaction };
 };

@@ -5,13 +5,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type InboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
-  threads: Pick<InboxThreadRecord, 'id'>[];
+  threads: Pick<AiChatThreadRecord, 'id'>[];
 };
 
 // A chat leaves the list when it is done, snoozed or deleted; the one that

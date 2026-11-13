@@ -4,11 +4,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { isToolUIPart } from 'ai';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -23,13 +23,13 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast }),
 }));
 jest.mock('@/ai/hooks/useAgentChatModelId', () => ({
-  useAgentChatModelId: () => ({ modelIdForRequest: 'model-id' }),
+  useAiChatModelId: () => ({ modelIdForRequest: 'model-id' }),
 }));
 
 const key = { threadId: 'thread-id' };
-const messagesAtom = inboxMessagesFamilyState.atomFamily(key);
+const messagesAtom = aiChatMessagesFamilyState.atomFamily(key);
 const isAwaitingFirstChunkAtom =
-  agentChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
+  aiChatIsAwaitingFirstChunkFamilyState.atomFamily(key);
 
 const PENDING_OUTPUT = { result: { questions: [], status: 'pending' } };
 const ANSWERED_OUTPUT = { result: { questions: [], status: 'answered' } };
@@ -44,16 +44,16 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-const renderAnswerAgentChatToolCall = () =>
-  renderHook(() => useAnswerAgentChatToolCall(), { wrapper: Wrapper }).result
-    .current.answerAgentChatToolCall;
+const renderAnswerAiChatToolCall = () =>
+  renderHook(() => useAnswerAiChatToolCall(), { wrapper: Wrapper }).result
+    .current.answerAiChatToolCall;
 
 const answer = async () => {
-  const answerAgentChatToolCall = renderAnswerAgentChatToolCall();
+  const answerAiChatToolCall = renderAnswerAiChatToolCall();
   let isAnswered = false;
 
   await act(async () => {
-    isAnswered = await answerAgentChatToolCall({
+    isAnswered = await answerAiChatToolCall({
       toolCallId: 'call-1',
       response: { answers: [] },
       optimisticToolOutput: ANSWERED_OUTPUT,
@@ -63,11 +63,11 @@ const answer = async () => {
   return isAnswered;
 };
 
-describe('useAnswerAgentChatToolCall', () => {
+describe('useAnswerAiChatToolCall', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(inboxDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread-id');
     jotaiStore.set(messagesAtom, [
       {
         id: 'assistant-1',
@@ -126,7 +126,10 @@ describe('useAnswerAgentChatToolCall', () => {
 
   it('refetches the conversation instead when the call was already answered elsewhere', async () => {
     const refetchListener = jest.fn();
-    window.addEventListener(INBOX_REFETCH_MESSAGES_EVENT_NAME, refetchListener);
+    window.addEventListener(
+      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+      refetchListener,
+    );
     mutate.mockRejectedValue(
       new CombinedGraphQLErrors({
         data: null,
@@ -144,7 +147,7 @@ describe('useAnswerAgentChatToolCall', () => {
     expect(readToolOutput()).toEqual(ANSWERED_OUTPUT);
 
     window.removeEventListener(
-      INBOX_REFETCH_MESSAGES_EVENT_NAME,
+      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
       refetchListener,
     );
   });

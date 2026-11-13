@@ -6,7 +6,7 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
-export const getInboxThreadSearchFilter = ({
+export const getAiChatThreadSearchFilter = ({
   searchTerm,
   workspaceMembers,
   currentWorkspaceMemberId,

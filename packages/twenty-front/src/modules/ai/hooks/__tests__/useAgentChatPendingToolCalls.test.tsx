@@ -3,10 +3,10 @@ import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { useAiChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -31,11 +31,11 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   <Provider store={jotaiStore}>{children}</Provider>
 );
 
-describe('useAgentChatPendingToolCalls', () => {
+describe('useAiChatPendingToolCalls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(inboxDisplayedThreadState.atom, 'thread-id');
-    jotaiStore.set(inboxMessagesFamilyState.atomFamily(key), [
+    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread-id');
+    jotaiStore.set(aiChatMessagesFamilyState.atomFamily(key), [
       {
         id: 'assistant-1',
         role: 'assistant',
@@ -50,7 +50,7 @@ describe('useAgentChatPendingToolCalls', () => {
   });
 
   it('waits on every call still pending, in the order they were made', () => {
-    const { result } = renderHook(() => useAgentChatPendingToolCalls(), {
+    const { result } = renderHook(() => useAiChatPendingToolCalls(), {
       wrapper,
     });
 
@@ -60,9 +60,9 @@ describe('useAgentChatPendingToolCalls', () => {
   });
 
   it('waits on nothing while the turn is still streaming', () => {
-    jotaiStore.set(agentChatIsStreamingFamilyState.atomFamily(key), true);
+    jotaiStore.set(aiChatIsStreamingFamilyState.atomFamily(key), true);
 
-    const { result } = renderHook(() => useAgentChatPendingToolCalls(), {
+    const { result } = renderHook(() => useAiChatPendingToolCalls(), {
       wrapper,
     });
 

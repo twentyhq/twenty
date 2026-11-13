@@ -9,9 +9,9 @@ import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { getToggledRecipientWorkspaceMemberIds } from '@/ai/utils/getToggledRecipientWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -24,19 +24,19 @@ import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorks
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export const InboxNewThreadRecipientPicker = () => {
+export const AiChatNewThreadRecipientPicker = () => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const [search, setSearch] = useState('');
   const trimmedSearch = search.trim();
-  const newInboxThreadId = useAtomStateValue(newInboxThreadIdState);
-  const inboxIsSendingMessage = useAtomFamilyStateValue(
-    inboxIsSendingMessageFamilyState,
-    { threadId: newInboxThreadId },
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const aiChatIsSendingMessage = useAtomFamilyStateValue(
+    aiChatIsSendingMessageFamilyState,
+    { threadId: newAiChatThreadId },
   );
   const [recipients, setRecipients] = useAtomFamilyState(
-    inboxNewThreadRecipientsFamilyState,
-    newInboxThreadId,
+    aiChatNewThreadRecipientsFamilyState,
+    newAiChatThreadId,
   );
   const [inboxNewThreadChannelId, setInboxNewThreadChannelId] = useAtomState(
     inboxNewThreadChannelIdState,
@@ -88,14 +88,14 @@ export const InboxNewThreadRecipientPicker = () => {
         placeholder={t`Add people or a channel`}
         value={search}
         onValueChange={setSearch}
-        disabled={inboxIsSendingMessage}
+        disabled={aiChatIsSendingMessage}
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
         {shouldShowAssistant && (
           <Dropdown.OptionItem
             selected={recipients.isAssistantParticipant}
-            disabled={inboxIsSendingMessage}
+            disabled={aiChatIsSendingMessage}
             startIcon={<AiChatAssistantAvatar />}
             onSelect={() =>
               setRecipients((current) => ({
@@ -113,7 +113,7 @@ export const InboxNewThreadRecipientPicker = () => {
           return (
             <Dropdown.OptionItem
               key={workspaceMember.id}
-              disabled={inboxIsSendingMessage}
+              disabled={aiChatIsSendingMessage}
               selected={recipients.recipientWorkspaceMemberIds.includes(
                 workspaceMember.id,
               )}
@@ -136,7 +136,7 @@ export const InboxNewThreadRecipientPicker = () => {
         {matchingChannels.map((channel) => (
           <Dropdown.OptionItem
             key={channel.id}
-            disabled={inboxIsSendingMessage}
+            disabled={aiChatIsSendingMessage}
             indicator="check"
             selected={channel.id === inboxNewThreadChannelId}
             startIcon={<InboxChannelIcon channel={channel} />}

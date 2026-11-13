@@ -172,7 +172,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
         // Inside the inbox, its Open item already shows what is unread
         const isUnread =
           isAiChatInboxEnabled &&
-          mode === NAVIGATION_DRAWER_TABS.INBOX_HISTORY &&
+          mode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY &&
           unreadOpenThreadCount > 0 &&
           !isActive;
         const isDisabled =

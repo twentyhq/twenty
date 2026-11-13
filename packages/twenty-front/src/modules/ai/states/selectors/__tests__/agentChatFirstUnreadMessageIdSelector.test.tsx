@@ -3,13 +3,13 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import {
-  type InboxThreadVisit,
-  inboxThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { inboxFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
+import { aiChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -46,28 +46,28 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const getFirstUnreadMessageId = (
-  visit: Omit<InboxThreadVisit, 'isKeptUnread'>,
+  visit: Omit<AiChatThreadVisit, 'isKeptUnread'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(inboxThreadVisitState.atom, {
+  jotaiStore.set(aiChatThreadVisitState.atom, {
     ...visit,
     isKeptUnread: false,
   });
   jotaiStore.set(
-    inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     messages,
   );
 
   return renderHook(
-    () => useAtomStateValue(inboxFirstUnreadMessageIdSelector),
+    () => useAtomStateValue(aiChatFirstUnreadMessageIdSelector),
     { wrapper: Wrapper },
   ).result.current;
 };
 
-describe('inboxFirstUnreadMessageIdSelector', () => {
+describe('aiChatFirstUnreadMessageIdSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: ME,
     } as never);

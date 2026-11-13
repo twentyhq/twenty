@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const inboxSelectedFilesState = createAtomState<File[]>({
-  key: 'ai/inboxSelectedFilesState',
+export const aiChatSelectedFilesState = createAtomState<File[]>({
+  key: 'ai/aiChatSelectedFilesState',
   defaultValue: [],
 });

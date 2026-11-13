@@ -1,6 +1,6 @@
 import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
-import { InboxCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
-import { InboxInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
+import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
+import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
@@ -61,7 +61,7 @@ const MessagePartRenderer = ({
         />
       );
     case 'data-compaction':
-      return <InboxCompactionIndicator />;
+      return <AiChatCompactionIndicator />;
     case 'data-code-execution':
       return (
         <CodeExecutionDisplay
@@ -213,7 +213,7 @@ export const AiChatAssistantMessageRenderer = ({
 
     return hasSucceededCompleteWorkspaceSetupToolPart ||
       hasOnlyHiddenReasoning ? null : (
-      <InboxInitialLoadingIndicator />
+      <AiChatInitialLoadingIndicator />
     );
   }
 

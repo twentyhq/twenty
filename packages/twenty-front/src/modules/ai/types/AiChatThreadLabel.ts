@@ -1,6 +1,6 @@
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 
-export type InboxThreadLabel = {
+export type AiChatThreadLabel = {
   id: string;
   label: string;
   color: TagColor;

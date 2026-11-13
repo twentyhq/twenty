@@ -1,4 +1,4 @@
-import { formatInboxTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -15,15 +15,15 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { AiChatUsageMetricRow } from '@/ai/components/internal/AiChatUsageMetricRow';
-import { useInboxHoverCard } from '@/ai/hooks/useAiChatHoverCard';
+import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { useAiChatUsage } from '@/ai/hooks/useAiChatUsage';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -51,38 +51,38 @@ export const AiChatContextUsageButton = () => {
     floatingStyles,
     getReferenceProps,
     getFloatingProps,
-  } = useInboxHoverCard({
+  } = useAiChatHoverCard({
     placement: 'top-start',
     role: 'dialog',
     onOpen: () => setShowDetails(false),
   });
 
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
-    threadId: currentInboxThread,
+  const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
+    threadId: currentAiChatThread,
   });
 
   const tiers = useAiModelTiers();
 
   const { chatTier } = useWorkspaceAiModelTiers();
 
-  const agentChatUserSelectedModelTier = useAtomStateValue(
-    agentChatUserSelectedModelTierState,
+  const aiChatUserSelectedModelTier = useAtomStateValue(
+    aiChatUserSelectedModelTierState,
   );
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
   const modelTier = isWorkspaceSetupChat
     ? 'fast'
-    : (agentChatUserSelectedModelTier ?? chatTier);
+    : (aiChatUserSelectedModelTier ?? chatTier);
 
   const contextWindow =
-    agentChatUsage?.contextWindowTokens ??
+    aiChatUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
 
-  const conversationSize = agentChatUsage?.conversationSize ?? 0;
+  const conversationSize = aiChatUsage?.conversationSize ?? 0;
 
   const percentage =
     contextWindow > 0
@@ -91,9 +91,9 @@ export const AiChatContextUsageButton = () => {
 
   const formattedPercentage = formatNumber(percentage, { decimals: 1 });
 
-  const formattedConversationSize = formatInboxTokens(conversationSize);
+  const formattedConversationSize = formatAiChatTokens(conversationSize);
 
-  const formattedContextWindow = formatInboxTokens(contextWindow);
+  const formattedContextWindow = formatAiChatTokens(contextWindow);
 
   const contextWindowRingColor = getUsageLimitRingColor({
     consumedPercentage: percentage,
@@ -192,7 +192,7 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
             {showDetails && <AiChatContextUsageDetails />}
-            {isDefined(agentChatUsage) && (
+            {isDefined(aiChatUsage) && (
               <>
                 <Separator />
                 <StyledFooter>

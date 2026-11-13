@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
 import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';
@@ -17,15 +17,15 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useToast } from 'twenty-ui/components/feedback';
 
-type InboxDictationEffectProps = {
+type AiChatDictationEffectProps = {
   onInterimText: (text: string) => void;
   onFinalText: (text: string) => void;
 };
 
-export const InboxDictationEffect = ({
+export const AiChatDictationEffect = ({
   onInterimText,
   onFinalText,
-}: InboxDictationEffectProps) => {
+}: AiChatDictationEffectProps) => {
   const isSupported = useDictationAvailability();
   const store = useStore();
 
@@ -109,7 +109,7 @@ export const InboxDictationEffect = ({
   }, [dictationEngine]);
 
   useListenToBrowserEvent({
-    eventName: INBOX_SEND_MESSAGE_EVENT_NAME,
+    eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
   });
 

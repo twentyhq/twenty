@@ -1,36 +1,36 @@
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useSwitchInboxThreadWithDraft = () => {
-  const [currentInboxThread, setCurrentInboxThread] = useAtomState(
-    currentInboxThreadState,
+export const useSwitchAiChatThreadWithDraft = () => {
+  const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
+    currentAiChatThreadState,
   );
   const store = useStore();
 
   const switchThreadWithDraft = useCallback(
     (toThreadId: string) => {
-      const isSameThread = toThreadId === currentInboxThread;
+      const isSameThread = toThreadId === currentAiChatThread;
 
-      setCurrentInboxThread(toThreadId);
+      setCurrentAiChatThread(toThreadId);
 
       if (!isSameThread) {
         const thread = store.get(
-          inboxThreadRecordFamilySelector.selectorFamily(toThreadId),
+          aiChatThreadRecordFamilySelector.selectorFamily(toThreadId),
         );
 
         store.set(
-          agentChatUsageFamilyState.atomFamily({ threadId: toThreadId }),
-          isDefined(thread) ? getAgentChatUsageFromThread(thread) : null,
+          aiChatUsageFamilyState.atomFamily({ threadId: toThreadId }),
+          isDefined(thread) ? getAiChatUsageFromThread(thread) : null,
         );
       }
     },
-    [currentInboxThread, setCurrentInboxThread, store],
+    [currentAiChatThread, setCurrentAiChatThread, store],
   );
 
   return { switchThreadWithDraft };

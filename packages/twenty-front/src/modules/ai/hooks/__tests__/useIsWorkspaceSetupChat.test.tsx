@@ -1,10 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -13,15 +13,15 @@ import {
 describe('useIsWorkspaceSetupChat', () => {
   beforeEach(() => resetJotaiStore());
 
-  it.each([INBOX_SURFACE.PAGE, INBOX_SURFACE.SIDE_PANEL, undefined])(
+  it.each([AI_CHAT_SURFACE.PAGE, AI_CHAT_SURFACE.SIDE_PANEL, undefined])(
     'only enables setup within a chat surface: %s',
     (surface) => {
-      jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, true);
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
       const wrapper = ({ children }: { children: ReactNode }) => (
         <Provider store={jotaiStore}>
-          <InboxSurfaceContext.Provider value={surface}>
+          <AiChatSurfaceContext.Provider value={surface}>
             {children}
-          </InboxSurfaceContext.Provider>
+          </AiChatSurfaceContext.Provider>
         </Provider>
       );
       const { result } = renderHook(() => useIsWorkspaceSetupChat(), {

@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { InboxMessageReactions } from '@/ai/components/AiChatMessageReactions';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -18,11 +18,11 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const mockToggleInboxMessageReaction = jest.fn();
+const mockToggleAiChatMessageReaction = jest.fn();
 
 jest.mock('@/ai/hooks/useToggleAgentChatMessageReaction', () => ({
-  useToggleInboxMessageReaction: () => ({
-    toggleInboxMessageReaction: mockToggleInboxMessageReaction,
+  useToggleAiChatMessageReaction: () => ({
+    toggleAiChatMessageReaction: mockToggleAiChatMessageReaction,
   }),
 }));
 
@@ -46,15 +46,15 @@ const renderReactions = () =>
   render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <InboxMessageReactions messageId={MESSAGE_ID} />
+        <AiChatMessageReactions messageId={MESSAGE_ID} />
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('InboxMessageReactions', () => {
+describe('AiChatMessageReactions', () => {
   beforeEach(() => {
     resetJotaiStore();
-    mockToggleInboxMessageReaction.mockClear();
+    mockToggleAiChatMessageReaction.mockClear();
 
     jotaiStore.set(
       currentWorkspaceMemberState.atom,
@@ -74,7 +74,7 @@ describe('InboxMessageReactions', () => {
 
   it('shows each emoji with who used it and marks your own', () => {
     jotaiStore.set(
-      inboxMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -105,7 +105,7 @@ describe('InboxMessageReactions', () => {
 
   it('toggles your reaction when you click an emoji', async () => {
     jotaiStore.set(
-      inboxMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -124,7 +124,7 @@ describe('InboxMessageReactions', () => {
       screen.getByRole('button', { name: '🎉 by Tom Martin' }),
     );
 
-    expect(mockToggleInboxMessageReaction).toHaveBeenCalledWith({
+    expect(mockToggleAiChatMessageReaction).toHaveBeenCalledWith({
       messageId: MESSAGE_ID,
       emoji: '🎉',
     });
@@ -132,7 +132,7 @@ describe('InboxMessageReactions', () => {
 
   it('names the assistant among those who used an emoji', () => {
     jotaiStore.set(
-      inboxMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [
@@ -154,7 +154,7 @@ describe('InboxMessageReactions', () => {
   });
   it('counts agents next to members and the assistant', () => {
     jotaiStore.set(
-      inboxMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
       [

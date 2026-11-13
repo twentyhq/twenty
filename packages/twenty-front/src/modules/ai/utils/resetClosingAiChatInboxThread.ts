@@ -2,8 +2,8 @@ import { type createStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { closingInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 
 export const resetClosingInboxThread = (
   store: ReturnType<typeof createStore>,
@@ -14,9 +14,9 @@ export const resetClosingInboxThread = (
 
   if (
     isDefined(closingThreadId) &&
-    store.get(currentInboxThreadState.atom) === closingThreadId
+    store.get(currentAiChatThreadState.atom) === closingThreadId
   ) {
-    store.set(shouldContinueInboxInSidePanelState.atom, false);
-    store.set(currentInboxThreadState.atom, null);
+    store.set(shouldContinueAiChatInSidePanelState.atom, false);
+    store.set(currentAiChatThreadState.atom, null);
   }
 };

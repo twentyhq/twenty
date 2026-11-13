@@ -4,10 +4,10 @@ import {
   getAgentChatThreadInboxStatus,
 } from 'twenty-shared/ai';
 
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -19,9 +19,9 @@ export const inboxThreadMemberStateFamilySelector = createAtomFamilySelector<
   get:
     (threadId) =>
     ({ get }) => {
-      const participants = get(inboxThreadParticipantsState);
-      const visit = get(inboxThreadVisitState);
-      const thread = get(inboxThreadRecordFamilySelector, threadId);
+      const participants = get(aiChatThreadParticipantsState);
+      const visit = get(aiChatThreadVisitState);
+      const thread = get(aiChatThreadRecordFamilySelector, threadId);
       const currentWorkspaceMemberId = get(currentWorkspaceMemberState)?.id;
       const status = getAgentChatThreadInboxStatus({
         lastActivityAt: thread?.lastActivityAt,

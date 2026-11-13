@@ -1,21 +1,21 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type InboxThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 
-export const getInboxThreadDetailsStatusAccess = ({
+export const getAiChatThreadDetailsStatusAccess = ({
   thread,
   permissions,
   triageStatus,
   scope,
   isInChannel,
 }: {
-  thread: Pick<InboxThreadRecord, 'deletedAt'> | null;
+  thread: Pick<AiChatThreadRecord, 'deletedAt'> | null;
   permissions: Pick<RecordPermissionsDto, 'canRead' | 'canUpdate'> | undefined;
   triageStatus: InboxThreadTriageStatus | undefined;
-  scope: InboxThreadStatusScope | undefined;
+  scope: AiChatThreadStatusScope | undefined;
   isInChannel: boolean;
 }) => {
   const isThreadAvailable =

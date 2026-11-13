@@ -5,19 +5,19 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { InboxThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
-import { InboxThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { AiChatThreadActivityTime } from '@/ai/components/AiChatThreadActivityTime';
+import { AiChatThreadAvatar } from '@/ai/components/AiChatThreadAvatar';
 import { InboxThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon';
-import { InboxThreadRow } from '@/ai/components/AiChatThreadRow';
-import { InboxThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
-import { InboxThreadTitle } from '@/ai/components/AiChatThreadTitle';
-import { useInboxThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { useInboxThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
+import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
+import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useInboxThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -32,20 +32,20 @@ const StyledActivityTime = styled.div`
 `;
 
 type InboxThreadListItemProps = {
-  thread: InboxThreadRecord;
+  thread: AiChatThreadRecord;
   variant?: InboxThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onCheckboxClick?: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onContextMenu?: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onDetach?: () => void;
@@ -62,7 +62,7 @@ export const InboxThreadListItem = ({
   onDetach,
 }: InboxThreadListItemProps) => {
   const { t } = useLingui();
-  const displayLabel = useInboxThreadDisplayLabel({
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`Untitled`,
   });
@@ -73,7 +73,7 @@ export const InboxThreadListItem = ({
     startRename,
     cancelRename,
     commitRename,
-  } = useInboxThreadRename(thread);
+  } = useAiChatThreadRename(thread);
 
   const actionsInstanceId = useId();
   const itemMenuDropdownId =
@@ -85,12 +85,12 @@ export const InboxThreadListItem = ({
   const { status: triageStatus } = useInboxThreadTriage({
     threadId: thread.id,
   });
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
     { threadId: thread.id },
   );
   const { hasContent: hasSubtitleContent } =
-    useInboxThreadSubtitleContent(thread);
+    useAiChatThreadSubtitleContent(thread);
   const isCompact = variant === 'compact';
   const shouldShowMore =
     isDefined(onDetach) ||
@@ -99,7 +99,7 @@ export const InboxThreadListItem = ({
     triageStatus === 'open';
 
   return (
-    <InboxThreadRow
+    <AiChatThreadRow
       variant={variant}
       id={thread.id}
       label={displayLabel}
@@ -107,7 +107,7 @@ export const InboxThreadListItem = ({
       isChecked={isChecked}
       isEditing={isRenaming}
       isActionMenuOpen={isDropdownOpen}
-      isStreaming={agentChatIsStreaming}
+      isStreaming={aiChatIsStreaming}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
@@ -120,7 +120,7 @@ export const InboxThreadListItem = ({
           : undefined
       }
       avatar={
-        <InboxThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
+        <AiChatThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
       }
       title={
         isRenaming ? (
@@ -150,24 +150,27 @@ export const InboxThreadListItem = ({
             aria-label={t`Rename chat`}
           />
         ) : (
-          <InboxThreadTitle thread={thread} />
+          <AiChatThreadTitle thread={thread} />
         )
       }
       activityTime={
         !isRenaming && (
           <StyledActivityTime>
             <InboxThreadChannelIcon thread={thread} />
-            <InboxThreadActivityTime thread={thread} variant={variant} />
+            <AiChatThreadActivityTime thread={thread} variant={variant} />
           </StyledActivityTime>
         )
       }
       subtitle={
         !isCompact || hasSubtitleContent ? (
-          <InboxThreadSubtitle thread={thread} size={isCompact ? 'md' : 'sm'} />
+          <AiChatThreadSubtitle
+            thread={thread}
+            size={isCompact ? 'md' : 'sm'}
+          />
         ) : undefined
       }
       actions={
-        <InboxThreadActionsDropdown
+        <AiChatThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}

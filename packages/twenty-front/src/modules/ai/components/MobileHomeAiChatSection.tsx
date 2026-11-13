@@ -1,19 +1,19 @@
 import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
-import { NavigationDrawerInboxThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
-const MOBILE_HOME_INBOX_SECTION_ID = 'MobileHomeAiChat';
+const MOBILE_HOME_AI_CHAT_SECTION_ID = 'MobileHomeAiChat';
 
-export const MobileHomeInboxSection = () => {
+export const MobileHomeAiChatSection = () => {
   const { t } = useLingui();
 
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
-  const { handleThreadClick } = useInboxThreadClick({
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
   const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
@@ -30,11 +30,11 @@ export const MobileHomeInboxSection = () => {
 
   return (
     <>
-      <NavigationDrawerInboxThreadSection
-        sectionId={MOBILE_HOME_INBOX_SECTION_ID}
+      <NavigationDrawerAiChatThreadSection
+        sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
         title={t`Conversations`}
         threads={threads}
-        currentThreadId={currentInboxThread}
+        currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
       <InboxThreadListFetchMoreTrigger

@@ -1,6 +1,7 @@
-import { type InboxNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
+import { type AiChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
 
-export const INBOX_NEW_THREAD_DEFAULT_RECIPIENTS: InboxNewThreadRecipients = {
-  isAssistantParticipant: true,
-  recipientWorkspaceMemberIds: [],
-};
+export const AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS: AiChatNewThreadRecipients =
+  {
+    isAssistantParticipant: true,
+    recipientWorkspaceMemberIds: [],
+  };

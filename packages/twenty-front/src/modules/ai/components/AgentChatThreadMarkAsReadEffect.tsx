@@ -4,16 +4,16 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
-import { inboxThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
+import { aiChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
-  type InboxThreadVisit,
-  inboxThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { isInboxThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { isAiChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,21 +21,21 @@ import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
-export const InboxThreadMarkAsReadEffect = () => {
+export const AiChatThreadMarkAsReadEffect = () => {
   const store = useStore();
   // The displayed thread rather than the selected one, which can still be
   // loading or fail to load
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
   const threadId =
-    isDefined(inboxDisplayedThread) && isValidUuid(inboxDisplayedThread)
-      ? inboxDisplayedThread
+    isDefined(aiChatDisplayedThread) && isValidUuid(aiChatDisplayedThread)
+      ? aiChatDisplayedThread
       : null;
   const lastActivityAt = useAtomFamilySelectorValue(
-    inboxThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     threadId ?? '',
   )?.lastActivityAt;
-  const inboxThreadParticipants = useAtomStateValue(
-    inboxThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
   const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
@@ -54,35 +54,37 @@ export const InboxThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(inboxThreadOpenViewCountState.atom, (count) => count + 1);
+    store.set(aiChatThreadOpenViewCountState.atom, (count) => count + 1);
 
     return () => {
-      store.set(inboxThreadOpenViewCountState.atom, (count) => count - 1);
+      store.set(aiChatThreadOpenViewCountState.atom, (count) => count - 1);
 
-      if (store.get(inboxThreadOpenViewCountState.atom) !== 0) {
+      if (store.get(aiChatThreadOpenViewCountState.atom) !== 0) {
         return;
       }
 
-      store.set(inboxThreadVisitState.atom, (visit) =>
+      store.set(aiChatThreadVisitState.atom, (visit) =>
         visit?.threadId === threadId ? null : visit,
       );
 
       // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
-        inboxThreadRecordFamilySelector.selectorFamily(threadId),
+        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
       );
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
       const reopenedThreadActivity = store.get(
-        inboxReopenedThreadActivityState.atom,
+        aiChatReopenedThreadActivityState.atom,
       );
 
       if (
         isDefined(thread) &&
         isDefined(workspaceMemberId) &&
         thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
-        isInboxThreadSettledForMember({
+        isAiChatThreadSettledForMember({
           thread,
-          participant: store.get(inboxThreadParticipantsState.atom)?.[threadId],
+          participant: store.get(aiChatThreadParticipantsState.atom)?.[
+            threadId
+          ],
           workspaceMemberId,
         })
       ) {
@@ -98,22 +100,22 @@ export const InboxThreadMarkAsReadEffect = () => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
-      !isDefined(inboxThreadParticipants) ||
+      !isDefined(aiChatThreadParticipants) ||
       !isDefined(lastActivityAt)
     ) {
       return;
     }
 
-    const participant = inboxThreadParticipants[threadId];
+    const participant = aiChatThreadParticipants[threadId];
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
     });
-    const storedVisit = store.get(inboxThreadVisitState.atom);
+    const storedVisit = store.get(aiChatThreadVisitState.atom);
 
     // Taken once per visit, before the read mark, so it sees where the member
     // left off
-    const newVisit: InboxThreadVisit = {
+    const newVisit: AiChatThreadVisit = {
       threadId,
       isUnread,
       lastReadAt: participant?.lastReadAt ?? null,
@@ -122,7 +124,7 @@ export const InboxThreadMarkAsReadEffect = () => {
     const visit = storedVisit?.threadId === threadId ? storedVisit : newVisit;
 
     if (visit !== storedVisit) {
-      store.set(inboxThreadVisitState.atom, visit);
+      store.set(aiChatThreadVisitState.atom, visit);
     }
 
     const isReadRequested =
@@ -139,7 +141,7 @@ export const InboxThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       ...visit,
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,
@@ -152,7 +154,7 @@ export const InboxThreadMarkAsReadEffect = () => {
   }, [
     isVisible,
     lastActivityAt,
-    inboxThreadParticipants,
+    aiChatThreadParticipants,
     updateAgentChatThreadInboxState,
     store,
     threadId,

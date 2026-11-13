@@ -1,6 +1,6 @@
 import { type SidePanelNavigationStackItem } from '@/side-panel/states/sidePanelNavigationStackState';
 
-export const isInboxPickerRequestCurrent = ({
+export const isAiChatPickerRequestCurrent = ({
   isSidePanelOpened,
   initialPage,
   currentPage,

@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-export type InboxThreadRequest =
+export type AiChatThreadRequest =
   | {
       type: 'choices';
       choices: { id: string; label: string; avatar?: ReactNode }[];

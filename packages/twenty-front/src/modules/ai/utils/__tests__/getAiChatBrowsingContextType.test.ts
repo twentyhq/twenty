@@ -1,12 +1,12 @@
 import { ContextStorePageType } from 'twenty-shared/types';
 
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { getInboxBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
+import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
 
-describe('getInboxBrowsingContextType', () => {
+describe('getAiChatBrowsingContextType', () => {
   it('should read a record page from the page type', () => {
     expect(
-      getInboxBrowsingContextType({
+      getAiChatBrowsingContextType({
         pageType: ContextStorePageType.Record,
         viewType: null,
       }),
@@ -17,7 +17,7 @@ describe('getInboxBrowsingContextType', () => {
     'should read a list view from the %s view type',
     (viewType) => {
       expect(
-        getInboxBrowsingContextType({
+        getAiChatBrowsingContextType({
           pageType: ContextStorePageType.Index,
           viewType,
         }),
@@ -27,7 +27,7 @@ describe('getInboxBrowsingContextType', () => {
 
   it('should not read a list view from a calendar view', () => {
     expect(
-      getInboxBrowsingContextType({
+      getAiChatBrowsingContextType({
         pageType: ContextStorePageType.Index,
         viewType: ContextStoreViewType.Calendar,
       }),
@@ -36,7 +36,7 @@ describe('getInboxBrowsingContextType', () => {
 
   it('should return nothing on a page that is neither a record nor a list', () => {
     expect(
-      getInboxBrowsingContextType({
+      getAiChatBrowsingContextType({
         pageType: ContextStorePageType.Settings,
         viewType: null,
       }),

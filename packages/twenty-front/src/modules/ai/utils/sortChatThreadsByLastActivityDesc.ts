@@ -1,12 +1,12 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getInboxThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 
 const getLastActivityMs = (
-  thread: Pick<InboxThreadRecord, 'lastActivityAt' | 'updatedAt'>,
-): number => new Date(getInboxThreadLastActivityAt(thread)).getTime();
+  thread: Pick<AiChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,
+): number => new Date(getAiChatThreadLastActivityAt(thread)).getTime();
 
 export const sortChatThreadsByLastActivityDesc = <
-  T extends Pick<InboxThreadRecord, 'lastActivityAt' | 'updatedAt'>,
+  T extends Pick<AiChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,
 >(
   threads: T[],
 ): T[] =>

@@ -5,9 +5,9 @@ import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-import { InboxThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -220,7 +220,7 @@ const renderDetails = async ({
         currentWorkspaceMemberState.atom,
         buildWorkspaceMember(FOLLOWER_ID, 'Follower'),
       );
-      setInboxThreadPermissions({
+      setAiChatThreadPermissions({
         store,
         threadId: THREAD_ID,
         permissions,
@@ -238,7 +238,7 @@ const renderDetails = async ({
         buildWorkspaceMember(OWNER_ID, 'Owner'),
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
-      store.set(inboxThreadParticipantsState.atom, {
+      store.set(aiChatThreadParticipantsState.atom, {
         [THREAD_ID]: {
           __typename: 'AgentChatThreadParticipant',
           id: 'participant-1',
@@ -265,7 +265,7 @@ const renderDetails = async ({
     </MetadataAndApolloMocksWrapper>
   );
 
-  render(<InboxThreadDetailsDropdown threadId={THREAD_ID} />, {
+  render(<AiChatThreadDetailsDropdown threadId={THREAD_ID} />, {
     wrapper: Wrapper,
   });
 
@@ -278,7 +278,7 @@ const renderDetails = async ({
   );
 };
 
-describe('InboxThreadDetailsDropdown', () => {
+describe('AiChatThreadDetailsDropdown', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockThread.current = buildThread();

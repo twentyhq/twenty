@@ -4,11 +4,11 @@ import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { InboxTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -36,7 +36,7 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   jotaiStore.set(
-    inboxTypingWorkspaceMemberIdsFamilyState.atomFamily({
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({
       threadId: THREAD_ID,
     }),
     typingWorkspaceMemberIds,
@@ -45,20 +45,20 @@ const renderTypingParticipants = (typingWorkspaceMemberIds: string[]) => {
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <InboxTypingParticipants />
+        <AiChatTypingParticipants />
       </I18nProvider>
     </JotaiProvider>,
   );
 };
 
-describe('InboxTypingParticipants', () => {
+describe('AiChatTypingParticipants', () => {
   beforeEach(() => {
     resetJotaiStore();
 
-    jotaiStore.set(currentInboxThreadState.atom, THREAD_ID);
-    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
         {
           id: 'message-id',

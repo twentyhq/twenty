@@ -7,41 +7,41 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { messages } from '~/locales/generated/en';
-import { InboxThreadPage } from '~/pages/ai-chat/AiChatPage';
+import { AiChatPage } from '~/pages/ai-chat/AiChatPage';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
 jest.mock('@/ai/components/AiChatTab', () => {
   const { useContext } = jest.requireActual('react');
-  const { InboxSurfaceContext } = jest.requireActual(
+  const { AiChatSurfaceContext } = jest.requireActual(
     '@/ai/contexts/AiChatSurfaceContext',
   );
   return {
-    InboxTab: () => (
-      <div data-testid="ai-chat-tab">{useContext(InboxSurfaceContext)}</div>
+    AiChatTab: () => (
+      <div data-testid="ai-chat-tab">{useContext(AiChatSurfaceContext)}</div>
     ),
   };
 });
 
 jest.mock('@/ai/components/AiChatPageHeader', () => ({
-  InboxThreadPageHeader: () => <div>Chat header</div>,
+  AiChatPageHeader: () => <div>Chat header</div>,
 }));
 
 jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
-  InboxThreadPageThreadUrlSyncEffect: () => null,
+  AiChatPageThreadUrlSyncEffect: () => null,
 }));
 
 jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
-  InboxThreadPageCloseSidePanelChatEffect: () => null,
+  AiChatPageCloseSidePanelChatEffect: () => null,
 }));
 
 let mockIsMobile = false;
@@ -52,7 +52,7 @@ jest.mock('twenty-ui/utilities', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatCloseButton', () => ({
-  InboxCloseButton: () => <button>Close chat</button>,
+  AiChatCloseButton: () => <button>Close chat</button>,
 }));
 
 jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
@@ -88,14 +88,14 @@ const renderAt = (path: string) =>
       <I18nProvider i18n={i18n}>
         <MemoryRouter initialEntries={[path]}>
           <Routes>
-            <Route path={AppPath.AiChat} element={<InboxThreadPage />} />
+            <Route path={AppPath.AiChat} element={<AiChatPage />} />
           </Routes>
         </MemoryRouter>
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('InboxThreadPage', () => {
+describe('AiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsMobile = false;
@@ -106,7 +106,7 @@ describe('InboxThreadPage', () => {
   it.each([true, false])(
     'renders a new chat on its own page with onboarding set to %s',
     (isOnboarding) => {
-      jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, isOnboarding);
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, isOnboarding);
       const { getByText, getByTestId, queryByText } = renderAt('/chat');
 
       expect(getByText('Chat header')).toBeInTheDocument();
@@ -116,7 +116,7 @@ describe('InboxThreadPage', () => {
   );
 
   it('renders the current chat as its record page when the URL has no chat', () => {
-    jotaiStore.set(currentInboxThreadState.atom, THREAD_ID);
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
 
     const { getByText } = renderAt('/chat');
 
@@ -152,11 +152,13 @@ describe('InboxThreadPage', () => {
   it('should mark the chat for side panel continuation while mounted', () => {
     const { unmount } = renderAt('/chat');
 
-    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(true);
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      true,
+    );
 
     unmount();
 
-    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
   });

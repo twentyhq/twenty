@@ -2,10 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
-import { inboxNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
+import { aiChatNonLastMessageIdsSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsSelector';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -25,10 +25,10 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('inboxLastMessageIdSelector', () => {
+describe('aiChatLastMessageIdSelector', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   });
 
   it.each([
@@ -49,14 +49,14 @@ describe('inboxLastMessageIdSelector', () => {
     '$description',
     ({ messages, expectedNonLastMessageIds, expectedLastMessageId }) => {
       jotaiStore.set(
-        inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
         messages,
       );
 
       const { result } = renderHook(
         () => ({
-          nonLastMessageIds: useAtomStateValue(inboxNonLastMessageIdsSelector),
-          lastMessageId: useAtomStateValue(inboxLastMessageIdSelector),
+          nonLastMessageIds: useAtomStateValue(aiChatNonLastMessageIdsSelector),
+          lastMessageId: useAtomStateValue(aiChatLastMessageIdSelector),
         }),
         { wrapper: Wrapper },
       );

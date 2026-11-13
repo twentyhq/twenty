@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const isOnboardingInboxEnabledState = createAtomState<boolean>({
-  key: 'isOnboardingInboxEnabledState',
+export const isOnboardingAiChatEnabledState = createAtomState<boolean>({
+  key: 'isOnboardingAiChatEnabledState',
   defaultValue: false,
 });

@@ -8,27 +8,27 @@ import { IconPencil, IconTag } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { type InboxThreadLabel } from '@/ai/types/AiChatThreadLabel';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { type AiChatThreadLabel } from '@/ai/types/AiChatThreadLabel';
 
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-type InboxThreadLabelsFieldProps = {
-  labels: InboxThreadLabel[];
+type AiChatThreadLabelsFieldProps = {
+  labels: AiChatThreadLabel[];
   selectedLabelIds: string[];
   isSaving?: boolean;
   onLabelsChange?: (labelIds: string[]) => void;
 };
 
-export const InboxThreadLabelsField = ({
+export const AiChatThreadLabelsField = ({
   labels,
   selectedLabelIds,
   isSaving = false,
   onLabelsChange,
-}: InboxThreadLabelsFieldProps) => {
+}: AiChatThreadLabelsFieldProps) => {
   const { t } = useLingui();
   const selectedLabels = labels.filter(({ id }) =>
     selectedLabelIds.includes(id),
@@ -36,7 +36,7 @@ export const InboxThreadLabelsField = ({
 
   return (
     <DetailsRow
-      labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconTag size={themeCssVariables.icon.size.md} />}
       label={t`Labels`}
       action={

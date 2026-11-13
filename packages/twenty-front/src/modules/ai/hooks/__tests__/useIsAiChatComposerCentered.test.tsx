@@ -2,16 +2,16 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { useIsInboxComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { type InboxSurface } from '@/ai/types/AiChatSurface';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -20,27 +20,27 @@ import {
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const renderForSurface = ({
-  surface = INBOX_SURFACE.PAGE,
+  surface = AI_CHAT_SURFACE.PAGE,
 }: {
-  surface?: InboxSurface;
+  surface?: AiChatSurface;
 } = {}) => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <JotaiProvider store={jotaiStore}>
-      <InboxSurfaceContext.Provider value={surface}>
+      <AiChatSurfaceContext.Provider value={surface}>
         {children}
-      </InboxSurfaceContext.Provider>
+      </AiChatSurfaceContext.Provider>
     </JotaiProvider>
   );
 
-  return renderHook(() => useIsInboxComposerCentered(), { wrapper: Wrapper });
+  return renderHook(() => useIsAiChatComposerCentered(), { wrapper: Wrapper });
 };
 
-describe('useIsInboxComposerCentered', () => {
+describe('useIsAiChatComposerCentered', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(newInboxThreadIdState.atom, THREAD_ID);
-    jotaiStore.set(currentInboxThreadState.atom, THREAD_ID);
-    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
+    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
+    jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   });
 
   it('should center the composer on an empty full page chat', () => {
@@ -50,21 +50,21 @@ describe('useIsInboxComposerCentered', () => {
   });
 
   it('centers a new draft even if the previous conversation was still loading', () => {
-    jotaiStore.set(inboxMessagesLoadingState.atom, true);
+    jotaiStore.set(aiChatMessagesLoadingState.atom, true);
     const { result } = renderForSurface();
 
     expect(result.current).toBe(true);
   });
 
   it('keeps an existing conversation bottom-aligned before, during and after fetching messages', () => {
-    jotaiStore.set(currentInboxThreadState.atom, 'existing-thread');
-    jotaiStore.set(inboxDisplayedThreadState.atom, 'existing-thread');
+    jotaiStore.set(currentAiChatThreadState.atom, 'existing-thread');
+    jotaiStore.set(aiChatDisplayedThreadState.atom, 'existing-thread');
     const { result } = renderForSurface();
 
     expect(result.current).toBe(false);
-    act(() => jotaiStore.set(inboxMessagesLoadingState.atom, true));
+    act(() => jotaiStore.set(aiChatMessagesLoadingState.atom, true));
     expect(result.current).toBe(false);
-    act(() => jotaiStore.set(inboxMessagesLoadingState.atom, false));
+    act(() => jotaiStore.set(aiChatMessagesLoadingState.atom, false));
     expect(result.current).toBe(false);
   });
 
@@ -75,7 +75,7 @@ describe('useIsInboxComposerCentered', () => {
 
     act(() =>
       jotaiStore.set(
-        inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+        aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
         [{ id: 'message-1', role: 'user', parts: [] }],
       ),
     );
@@ -84,14 +84,14 @@ describe('useIsInboxComposerCentered', () => {
   });
 
   it('does not center while the initial route has not selected a thread yet', () => {
-    jotaiStore.set(currentInboxThreadState.atom, null);
+    jotaiStore.set(currentAiChatThreadState.atom, null);
     const { result } = renderForSurface();
     expect(result.current).toBe(false);
   });
 
   it('should not center the composer in the side panel', () => {
     const { result } = renderForSurface({
-      surface: INBOX_SURFACE.SIDE_PANEL,
+      surface: AI_CHAT_SURFACE.SIDE_PANEL,
     });
 
     expect(result.current).toBe(false);
@@ -99,7 +99,7 @@ describe('useIsInboxComposerCentered', () => {
 
   it('should not center the composer once the thread has messages', () => {
     jotaiStore.set(
-      inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [{ id: 'message-1', role: 'user', parts: [] }],
     );
 
@@ -109,7 +109,7 @@ describe('useIsInboxComposerCentered', () => {
   });
 
   it('should not center the composer while the workspace setup preamble owns the intro', () => {
-    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderForSurface();
 
     expect(result.current).toBe(false);

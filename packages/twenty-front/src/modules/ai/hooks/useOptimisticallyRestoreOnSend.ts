@@ -2,17 +2,17 @@ import { useStore } from 'jotai';
 import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 
 // Mirrors what the server records when the member sends a message: the
 // thread leaves the trash, moves to the top of their inbox and is caught up,
 // so its unread line goes
 export const useOptimisticallyRestoreOnSend = () => {
-  const { applyInboxThreadUpdate } = useApplyInboxThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const store = useStore();
 
   const applyOptimisticRestore = ({
@@ -23,14 +23,14 @@ export const useOptimisticallyRestoreOnSend = () => {
     optimisticUpdatedAt: string;
   }): (() => void) => {
     const thread = store.get(
-      inboxThreadRecordFamilySelector.selectorFamily(threadId),
+      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
     );
-    const previousParticipant = store.get(inboxThreadParticipantsState.atom)?.[
+    const previousParticipant = store.get(aiChatThreadParticipantsState.atom)?.[
       threadId
     ];
-    const previousVisit = store.get(inboxThreadVisitState.atom);
+    const previousVisit = store.get(aiChatThreadVisitState.atom);
 
-    applyInboxThreadUpdate({
+    applyAiChatThreadUpdate({
       id: threadId,
       lastActivityAt: optimisticUpdatedAt,
       ...(isDefined(thread?.deletedAt) && {
@@ -38,7 +38,7 @@ export const useOptimisticallyRestoreOnSend = () => {
         updatedAt: optimisticUpdatedAt,
       }),
     });
-    store.set(inboxThreadParticipantsState.atom, (participants) =>
+    store.set(aiChatThreadParticipantsState.atom, (participants) =>
       isDefined(participants)
         ? {
             ...participants,
@@ -54,22 +54,22 @@ export const useOptimisticallyRestoreOnSend = () => {
               isSubscribed: true,
               updatedAt:
                 previousParticipant?.updatedAt ??
-                INBOX_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT,
+                AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT,
             },
           }
         : participants,
     );
-    store.set(inboxThreadVisitState.atom, (visit) =>
+    store.set(aiChatThreadVisitState.atom, (visit) =>
       visit?.threadId === threadId
         ? { ...visit, isUnread: false, isKeptUnread: false }
         : visit,
     );
     const optimisticParticipant = store.get(
-      inboxThreadParticipantsState.atom,
+      aiChatThreadParticipantsState.atom,
     )?.[threadId];
 
     return () => {
-      applyInboxThreadUpdate({
+      applyAiChatThreadUpdate({
         id: threadId,
         ...(isDefined(thread) && {
           lastActivityAt: thread.lastActivityAt,
@@ -77,7 +77,7 @@ export const useOptimisticallyRestoreOnSend = () => {
         }),
         ...(isDefined(thread?.deletedAt) && { deletedAt: thread.deletedAt }),
       });
-      store.set(inboxThreadParticipantsState.atom, (participants) => {
+      store.set(aiChatThreadParticipantsState.atom, (participants) => {
         if (
           !isDefined(participants) ||
           participants[threadId] !== optimisticParticipant
@@ -92,7 +92,7 @@ export const useOptimisticallyRestoreOnSend = () => {
           ? { ...otherParticipants, [threadId]: previousParticipant }
           : otherParticipants;
       });
-      store.set(inboxThreadVisitState.atom, (visit) =>
+      store.set(aiChatThreadVisitState.atom, (visit) =>
         visit?.threadId === threadId ? previousVisit : visit,
       );
     };

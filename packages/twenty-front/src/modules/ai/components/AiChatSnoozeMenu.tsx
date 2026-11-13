@@ -11,22 +11,22 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { type InboxSnoozePreset } from '@/ai/types/AiChatSnoozePreset';
+import { type AiChatSnoozePreset } from '@/ai/types/AiChatSnoozePreset';
 
 const SNOOZE_MENU_WIDTH = 240;
 
-type InboxSnoozeMenuProps = {
+type AiChatSnoozeMenuProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  presets: InboxSnoozePreset[];
-  onSelectPreset: (presetKey: InboxSnoozePreset['key']) => void;
+  presets: AiChatSnoozePreset[];
+  onSelectPreset: (presetKey: AiChatSnoozePreset['key']) => void;
   onPickDate: () => void;
   onSomeoneReplies?: () => void;
   onAssistantFinishes?: () => void;
   disabled?: boolean;
 };
 
-export const InboxSnoozeMenu = ({
+export const AiChatSnoozeMenu = ({
   open,
   onOpenChange,
   presets,
@@ -35,7 +35,7 @@ export const InboxSnoozeMenu = ({
   onSomeoneReplies,
   onAssistantFinishes,
   disabled = false,
-}: InboxSnoozeMenuProps) => {
+}: AiChatSnoozeMenuProps) => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const hasEventOptions =

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type ChatWidgetOpenInChatPageEffectProps = {
@@ -12,12 +12,12 @@ export const ChatWidgetOpenInChatPageEffect = ({
   threadId,
 }: ChatWidgetOpenInChatPageEffectProps) => {
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { projectInboxThreadToUrl } = useProjectInboxThreadToUrl();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
 
   useEffect(() => {
     void closeSidePanelMenu();
-    projectInboxThreadToUrl(threadId);
-  }, [closeSidePanelMenu, projectInboxThreadToUrl, threadId]);
+    projectAiChatThreadToUrl(threadId);
+  }, [closeSidePanelMenu, projectAiChatThreadToUrl, threadId]);
 
   return null;
 };

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { AppPath } from 'twenty-shared/types';
 
 import { InboxSelectionEffect } from '@/ai/components/AiChatInboxSelectionEffect';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const navigate = jest.fn();
 
@@ -10,7 +10,7 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigate,
 }));
 
-const buildThreads = (ids: string[]): Pick<InboxThreadRecord, 'id'>[] =>
+const buildThreads = (ids: string[]): Pick<AiChatThreadRecord, 'id'>[] =>
   ids.map((id) => ({ id }));
 
 const expectSelected = (threadId: string | null) =>

@@ -3,26 +3,26 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InboxThreadListGroup } from '@/ai/components/AiChatThreadListGroup';
 import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
 type InboxThreadListProps = {
-  threads: InboxThreadRecord[];
+  threads: AiChatThreadRecord[];
   variant?: InboxThreadListVariant;
   selectedThreadIds?: string[];
   checkedThreadIds?: string[];
   onThreadClick: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onThreadCheckboxClick?: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onThreadContextMenu?: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onDetachThread?: (threadId: string) => void;
@@ -42,7 +42,7 @@ export const InboxThreadList = ({
   const selectedThreadIdSet = new Set(selectedThreadIds);
   const checkedThreadIdSet = new Set(checkedThreadIds);
 
-  const renderThread = (thread: InboxThreadRecord) => (
+  const renderThread = (thread: AiChatThreadRecord) => (
     <InboxThreadListItem
       key={thread.id}
       thread={thread}

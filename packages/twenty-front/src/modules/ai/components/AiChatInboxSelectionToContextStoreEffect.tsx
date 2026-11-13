@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useTargetInboxThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
+import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
 import { selectedRecordIdsComponentSelector } from '@/object-record/record-selection/states/selectors/selectedRecordIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
@@ -14,17 +14,17 @@ export const InboxSelectionToContextStoreEffect = ({
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
-  const { targetInboxThreadsInContextStore } =
-    useTargetInboxThreadsInContextStore();
+  const { targetAiChatThreadsInContextStore } =
+    useTargetAiChatThreadsInContextStore();
 
   useEffect(() => {
-    targetInboxThreadsInContextStore({
+    targetAiChatThreadsInContextStore({
       contextStoreInstanceId,
       threadIds: selectedRecordIds,
     });
 
     return () => {
-      targetInboxThreadsInContextStore({
+      targetAiChatThreadsInContextStore({
         contextStoreInstanceId,
         threadIds: [],
       });
@@ -32,7 +32,7 @@ export const InboxSelectionToContextStoreEffect = ({
   }, [
     contextStoreInstanceId,
     selectedRecordIds,
-    targetInboxThreadsInContextStore,
+    targetAiChatThreadsInContextStore,
   ]);
 
   return null;

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { getInboxThreadTriageStatus } from '@/ai/utils/getAiChatThreadTriageStatus';
@@ -26,8 +26,8 @@ export const useInboxThreadTriage = ({
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const inboxThreadParticipants = useAtomStateValue(
-    inboxThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const location = useLocation();
   const inboxSelectedChannelView = useAtomStateValue(
@@ -46,7 +46,7 @@ export const useInboxThreadTriage = ({
     status: getInboxThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isInChannel || isDefined(inboxThreadParticipants),
+      areParticipantsLoaded: isInChannel || isDefined(aiChatThreadParticipants),
       scope: inboxStatus?.scope ?? 'NONE',
     }),
     isInChannel,

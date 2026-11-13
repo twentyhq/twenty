@@ -225,7 +225,7 @@ const createDecorator = ({
     );
     jotaiStore.set(
       navigationDrawerActiveTabState.atom,
-      NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
     jotaiStore.set(
       commandMenuPinnedInlineLayoutFamilyState.atomFamily('page-header'),

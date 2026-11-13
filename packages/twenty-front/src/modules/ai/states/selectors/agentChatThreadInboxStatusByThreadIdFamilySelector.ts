@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getInboxThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
@@ -38,7 +38,7 @@ export const inboxThreadMemberStateByThreadIdFamilySelector =
               inboxThreadMemberStateFamilySelector,
               threadId,
             );
-            const thread = get(inboxThreadRecordFamilySelector, threadId);
+            const thread = get(aiChatThreadRecordFamilySelector, threadId);
 
             if (!isDefined(channelId) || thread?.channelId !== channelId) {
               return [threadId, inboxStatus];

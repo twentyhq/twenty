@@ -21,16 +21,16 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { INBOX_LAYOUT } from '@/ai/constants/AiChatInboxLayout';
-import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { inboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -50,7 +50,7 @@ import { InboxPage } from '~/pages/ai-chat/AiChatInboxPage';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const buildThread = (id: string, title: string): InboxThreadRecord => ({
+const buildThread = (id: string, title: string): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -84,19 +84,19 @@ jest.mock('@/ai/components/AiChatThreadList', () => ({
     onThreadCheckboxClick,
     onThreadContextMenu,
   }: {
-    threads: InboxThreadRecord[];
+    threads: AiChatThreadRecord[];
     selectedThreadIds: string[];
     checkedThreadIds: string[];
     onThreadClick: (
-      thread: InboxThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
     onThreadCheckboxClick?: (
-      thread: InboxThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
     onThreadContextMenu?: (
-      thread: InboxThreadRecord,
+      thread: AiChatThreadRecord,
       event: React.MouseEvent<HTMLElement>,
     ) => void;
   }) =>
@@ -155,15 +155,15 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
 }));
 
 jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
-  InboxThreadPageEffects: () => null,
+  AiChatPageEffects: () => null,
 }));
 
 jest.mock('@/ai/components/AiChatTab', () => ({
-  InboxTab: () => <div>New conversation composer</div>,
+  AiChatTab: () => <div>New conversation composer</div>,
 }));
 
 jest.mock('@/ai/components/AiChatPageHeader', () => ({
-  InboxThreadPageHeader: ({ actionButton }: { actionButton?: ReactNode }) => (
+  AiChatPageHeader: ({ actionButton }: { actionButton?: ReactNode }) => (
     <div>
       New chat header
       {actionButton}
@@ -173,7 +173,7 @@ jest.mock('@/ai/components/AiChatPageHeader', () => ({
 
 // Sending stands in for the composer with what a send applies right away
 jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
-  InboxThreadPageContent: ({
+  AiChatThreadPageContent: ({
     threadId,
     headerTitlePrefix,
     headerActions,
@@ -240,7 +240,7 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 
 const [firstThread, secondThread, thirdThread] = THREADS;
 
-const DIRECT_MESSAGE: InboxThreadRecord = {
+const DIRECT_MESSAGE: AiChatThreadRecord = {
   ...buildThread('8c3d5e7f-1a2b-4c6d-9e8f-0a1b2c3d4e5f', 'Marie Stoppa'),
   conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
 };
@@ -303,7 +303,7 @@ describe('InboxPage', () => {
     );
     // The member's own chats, which they follow
     jotaiStore.set(
-      inboxThreadParticipantsState.atom,
+      aiChatThreadParticipantsState.atom,
       Object.fromEntries(
         THREADS.map(({ id, updatedAt }) => [
           id,
@@ -347,7 +347,7 @@ describe('InboxPage', () => {
   });
 
   it('shows a new chat beside the list without opening the first saved chat', () => {
-    renderInbox(`/inbox/${INBOX_NEW_THREAD_PATH_SEGMENT}`);
+    renderInbox(`/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`);
 
     expect(screen.getByText('New conversation composer')).toBeInTheDocument();
     expect(
@@ -373,7 +373,7 @@ describe('InboxPage', () => {
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
     jotaiStore.set(
-      inboxThreadParticipantsState.atom,
+      aiChatThreadParticipantsState.atom,
       Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
@@ -635,7 +635,7 @@ describe('InboxPage', () => {
     });
 
     it('shows a new chat in place of the list', () => {
-      renderInbox(`/inbox/${INBOX_NEW_THREAD_PATH_SEGMENT}`);
+      renderInbox(`/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`);
 
       expect(screen.getByText('New conversation composer')).toBeInTheDocument();
       expect(
@@ -721,7 +721,7 @@ describe('InboxPage', () => {
     });
 
     it('shows a new chat with a way back to the inbox', () => {
-      renderInbox(`/inbox/${INBOX_NEW_THREAD_PATH_SEGMENT}`);
+      renderInbox(`/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`);
 
       expect(screen.getByText('New conversation composer')).toBeInTheDocument();
       expect(

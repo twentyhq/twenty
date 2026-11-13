@@ -5,6 +5,6 @@ import {
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
 
-export const isSilentInboxMessage = (message: ExtendedUIMessage): boolean =>
+export const isSilentAiChatMessage = (message: ExtendedUIMessage): boolean =>
   message.role === AGENT_MESSAGE_ROLE.ASSISTANT &&
   isSilentAgentChatMessageParts(message.parts);

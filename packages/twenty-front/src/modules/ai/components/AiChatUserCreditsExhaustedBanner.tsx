@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconSettings } from 'twenty-ui/icon';
 
-import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
+import { aiChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -27,9 +27,9 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   );
 
   const [
-    agentChatUserCreditsBannerDismissal,
-    setAgentChatUserCreditsBannerDismissal,
-  ] = useAtomState(agentChatUserCreditsBannerDismissalState);
+    aiChatUserCreditsBannerDismissal,
+    setAiChatUserCreditsBannerDismissal,
+  ] = useAtomState(aiChatUserCreditsBannerDismissalState);
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
     skip: isWorkspaceSetupChat,
@@ -46,10 +46,10 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   const { periodEnd, isFallingBackToWorkspaceCredits } = userCreditsUsage;
 
   if (
-    agentChatUserCreditsBannerDismissal?.workspaceMemberId ===
+    aiChatUserCreditsBannerDismissal?.workspaceMemberId ===
       currentWorkspaceMember.id &&
-    agentChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
-    agentChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
+    aiChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
+    aiChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
       isFallingBackToWorkspaceCredits
   ) {
     return null;
@@ -58,7 +58,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   const dismissAction = (
     <InlineBanner.Action
       onClick={() =>
-        setAgentChatUserCreditsBannerDismissal({
+        setAiChatUserCreditsBannerDismissal({
           workspaceMemberId: currentWorkspaceMember.id,
           periodEnd,
           isFallingBackToWorkspaceCredits,
@@ -69,29 +69,29 @@ export const AiChatUserCreditsExhaustedBanner = () => {
 
   if (isFallingBackToWorkspaceCredits) {
     return (
-      <InboxInlineBanner
+      <AiChatInlineBanner
         status="info"
         action={dismissAction}
-      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</InboxInlineBanner>
+      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</AiChatInlineBanner>
     );
   }
 
   if (hasPermissionToManageBilling) {
     return (
-      <InboxInlineBanner
+      <AiChatInlineBanner
         action={
           <InlineBanner.Action
             startIcon={<IconSettings />}
             onClick={() => navigateSettings(SettingsPath.Billing)}
           >{t`Settings`}</InlineBanner.Action>
         }
-      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</InboxInlineBanner>
+      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
     );
   }
 
   return (
-    <InboxInlineBanner
+    <AiChatInlineBanner
       action={dismissAction}
-    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</InboxInlineBanner>
+    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
   );
 };

@@ -1,1 +1,1 @@
-export const INBOX_USER_MESSAGE_MAX_WIDTH = '560px';
+export const AI_CHAT_USER_MESSAGE_MAX_WIDTH = '560px';

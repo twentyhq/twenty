@@ -88,7 +88,7 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
     <Section.Root>
       <SettingsTableListSection<AdminUsageLimitRow>
         title={t`Limits`}
-        description={t`What caps this workspace. Instance defaults come from config variables and only an operator can replace one.`}
+        description={t`What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one.`}
         items={rows}
         columns={[
           {
@@ -113,11 +113,13 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
             label: t`Limit`,
             Cell: ({ item }) => (
               <>
-                {formatLimitValue({
-                  value: item.limitValue,
-                  unit: item.unit,
-                  operationType: item.operationType,
-                })}
+                {isDefined(item.limitValue)
+                  ? formatLimitValue({
+                      value: item.limitValue,
+                      unit: item.unit,
+                      operationType: item.operationType,
+                    })
+                  : t`None`}
               </>
             ),
           },

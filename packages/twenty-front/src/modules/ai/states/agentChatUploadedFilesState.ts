@@ -1,8 +1,8 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
-export const inboxUploadedFilesState = createAtomState<InboxFileUIPart[]>({
+export const aiChatUploadedFilesState = createAtomState<AiChatFileUIPart[]>({
   key: 'ai/agentChatUploadedFilesState',
   defaultValue: [],
   useSessionStorage: true,

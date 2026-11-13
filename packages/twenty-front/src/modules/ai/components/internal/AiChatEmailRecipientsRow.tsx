@@ -32,7 +32,7 @@ const StyledInputContainer = styled.div`
   min-width: 0;
 `;
 
-type InboxEmailRecipientsRowProps = {
+type AiChatEmailRecipientsRowProps = {
   label: string;
   recipients: EmailRecipient[];
   disabled: boolean;
@@ -40,13 +40,13 @@ type InboxEmailRecipientsRowProps = {
   trailing?: ReactNode;
 };
 
-export const InboxEmailRecipientsRow = ({
+export const AiChatEmailRecipientsRow = ({
   label,
   recipients,
   disabled,
   onChange,
   trailing,
-}: InboxEmailRecipientsRowProps) => {
+}: AiChatEmailRecipientsRowProps) => {
   const { t } = useLingui();
   const [draftRecipient, setDraftRecipient] = useState('');
   const { resolutionByRecipientKey } = useEmailRecipientsResolution({

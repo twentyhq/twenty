@@ -3,8 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
+import { type AiChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { getAiChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   FindChatMessageAgentDocument,
@@ -16,7 +16,7 @@ const AGENT_DETAILS_ERROR_TOAST_DEDUPE_KEY = 'agent-details-query-error';
 
 type AiChatAgentAuthorResolverProps = {
   agentId: string;
-  children: (author: InboxMessageAuthor) => ReactNode;
+  children: (author: AiChatMessageAuthor) => ReactNode;
 };
 
 export const AiChatAgentAuthorResolver = ({
@@ -43,7 +43,7 @@ export const AiChatAgentAuthorResolver = ({
         dedupeKey={AGENT_DETAILS_ERROR_TOAST_DEDUPE_KEY}
       />
       {children(
-        getAgentChatAgentAuthor({
+        getAiChatAgentAuthor({
           agentId,
           agentName: data?.findOneAgent.label,
         }),

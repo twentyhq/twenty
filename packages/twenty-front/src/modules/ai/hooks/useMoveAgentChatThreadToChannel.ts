@@ -4,9 +4,9 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useRefreshInboxChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { MoveAgentChatThreadToChannelDocument } from '~/generated-metadata/graphql';
 
@@ -14,7 +14,7 @@ export const useMoveInboxThreadToChannel = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyInboxThreadUpdate } = useApplyInboxThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
   const moveAgentChatThreadToChannel = useCallback(
@@ -26,14 +26,14 @@ export const useMoveInboxThreadToChannel = () => {
       channelId: string | null;
     }) => {
       const previousThread = store.get(
-        inboxThreadRecordFamilySelector.selectorFamily(threadId),
+        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
       );
 
       if (!isDefined(previousThread?.channelId) && !isDefined(channelId)) {
         return;
       }
 
-      applyInboxThreadUpdate({
+      applyAiChatThreadUpdate({
         id: threadId,
         channelId,
         channelArchivedAt: null,
@@ -50,10 +50,10 @@ export const useMoveInboxThreadToChannel = () => {
         enqueueToast(getToastOptionsFromError({ error }));
 
         if (
-          store.get(inboxThreadRecordFamilySelector.selectorFamily(threadId))
+          store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
             ?.channelId === channelId
         ) {
-          applyInboxThreadUpdate({
+          applyAiChatThreadUpdate({
             id: threadId,
             channelId: previousThread?.channelId ?? null,
             channelArchivedAt: previousThread?.channelArchivedAt ?? null,
@@ -63,7 +63,7 @@ export const useMoveInboxThreadToChannel = () => {
       }
     },
     [
-      applyInboxThreadUpdate,
+      applyAiChatThreadUpdate,
       client,
       enqueueToast,
       refreshInboxChannelSummaries,

@@ -1,4 +1,4 @@
-import { getInboxMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
+import { getAiChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
 
 const ASSISTANT_AUTHOR = {
   type: 'builtInAssistant' as const,
@@ -6,10 +6,10 @@ const ASSISTANT_AUTHOR = {
   isNameResolved: true,
 };
 
-describe('getInboxMessageQuoteSource', () => {
+describe('getAiChatMessageQuoteSource', () => {
   it('keeps what the author said without the quote it answers', () => {
     expect(
-      getInboxMessageQuoteSource({
+      getAiChatMessageQuoteSource({
         message: {
           id: 'message-id',
           parts: [
@@ -30,7 +30,7 @@ describe('getInboxMessageQuoteSource', () => {
 
   it('quotes a message without text with an empty excerpt', () => {
     expect(
-      getInboxMessageQuoteSource({
+      getAiChatMessageQuoteSource({
         message: {
           id: 'message-id',
           parts: [

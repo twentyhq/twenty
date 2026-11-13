@@ -1,23 +1,23 @@
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { InboxEditorSection } from '@/ai/components/AiChatEditorSection';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const useInboxEditor = jest.fn();
+const useAiChatEditor = jest.fn();
 jest.mock('@/ai/hooks/useAiChatEditor', () => ({
-  useInboxEditor: () => useInboxEditor(),
+  useAiChatEditor: () => useAiChatEditor(),
 }));
 jest.mock('@/ai/components/AiChatStandaloneError', () => ({
-  InboxStandaloneError: () => null,
+  AiChatStandaloneError: () => null,
 }));
 // The gate's cards pull in a rich text editor Jest cannot load.
 jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
@@ -33,13 +33,13 @@ describe('Shared conversation composer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(currentInboxThreadState.atom, 'shared-thread');
+    jotaiStore.set(currentAiChatThreadState.atom, 'shared-thread');
   });
 
   it.each([false, undefined])(
     'keeps the composer read-only without update permission (%s)',
     (canUpdate) => {
-      setInboxThreadPermissions({
+      setAiChatThreadPermissions({
         store: jotaiStore,
         threadId: 'shared-thread',
         permissions:
@@ -52,18 +52,18 @@ describe('Shared conversation composer', () => {
                 canSoftDelete: false,
               },
       });
-      render(<InboxEditorSection />, { wrapper: Wrapper });
+      render(<AiChatEditorSection />, { wrapper: Wrapper });
       expect(screen.getByRole('status')).toHaveTextContent(
         canUpdate === undefined
           ? 'Loading conversation'
           : 'You can read this conversation',
       );
       expect(screen.queryByRole('textbox')).toBeNull();
-      expect(useInboxEditor).not.toHaveBeenCalled();
+      expect(useAiChatEditor).not.toHaveBeenCalled();
     },
   );
   it('shows unavailable rather than loading after access is revoked in either chat surface', () => {
-    setInboxThreadPermissions({
+    setAiChatThreadPermissions({
       store: jotaiStore,
       threadId: 'shared-thread',
       permissions: {
@@ -73,11 +73,11 @@ describe('Shared conversation composer', () => {
         canSoftDelete: false,
       },
     });
-    render(<InboxEditorSection />, { wrapper: Wrapper });
+    render(<AiChatEditorSection />, { wrapper: Wrapper });
     expect(screen.getByRole('status')).toHaveTextContent(
       'This conversation is no longer available.',
     );
     expect(screen.queryByText('Loading conversation…')).toBeNull();
-    expect(useInboxEditor).not.toHaveBeenCalled();
+    expect(useAiChatEditor).not.toHaveBeenCalled();
   });
 });

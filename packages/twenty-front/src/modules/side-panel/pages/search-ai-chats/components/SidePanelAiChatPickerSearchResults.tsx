@@ -4,29 +4,29 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SidePanelInboxPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
-import { SidePanelInboxPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
-import { INBOX_PICKER_RECORD_GQL_FIELDS } from '@/side-panel/pages/search-ai-chats/constants/AiChatPickerRecordGqlFields';
-import { inboxPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
+import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
+import { AI_CHAT_PICKER_RECORD_GQL_FIELDS } from '@/side-panel/pages/search-ai-chats/constants/AiChatPickerRecordGqlFields';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getInboxThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/utils/getAiChatThreadSearchFilter';
+import { getAiChatThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/utils/getAiChatThreadSearchFilter';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type SidePanelInboxPickerSearchResultsProps = {
+type SidePanelAiChatPickerSearchResultsProps = {
   searchTerm: string;
   isSearchPending: boolean;
 };
 
-export const SidePanelInboxPickerSearchResults = ({
+export const SidePanelAiChatPickerSearchResults = ({
   searchTerm,
   isSearchPending,
-}: SidePanelInboxPickerSearchResultsProps) => {
+}: SidePanelAiChatPickerSearchResultsProps) => {
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -35,15 +35,15 @@ export const SidePanelInboxPickerSearchResults = ({
   const isDirectMessageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
-  const inboxPickerOpeningThreadId = useAtomComponentStateValue(
-    inboxPickerOpeningThreadIdComponentState,
+  const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
+    aiChatPickerOpeningThreadIdComponentState,
   );
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
-    useFindManyRecords<InboxThreadRecord>({
+    useFindManyRecords<AiChatThreadRecord>({
       objectNameSingular: StandardObjectNameSingular.AgentChatThread,
-      recordGqlFields: INBOX_PICKER_RECORD_GQL_FIELDS,
-      filter: getInboxThreadSearchFilter({
+      recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
+      filter: getAiChatThreadSearchFilter({
         searchTerm,
         workspaceMembers: currentWorkspaceMembers,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
@@ -64,7 +64,7 @@ export const SidePanelInboxPickerSearchResults = ({
   };
 
   return (
-    <SidePanelInboxPickerList
+    <SidePanelAiChatPickerList
       threads={records}
       isLoading={isSearchPending || (loading && !isLoadingMoreChats)}
       loadingLabel={t`Searching chats...`}
@@ -82,18 +82,18 @@ export const SidePanelInboxPickerSearchResults = ({
       }
       footer={
         hasNextPage ? (
-          <SidePanelInboxPickerLoadMoreFooter
+          <SidePanelAiChatPickerLoadMoreFooter
             isLoadingMore={isLoadingMoreChats}
           >
             <Button
               fullWidth
               variant="ghost"
-              disabled={isDefined(inboxPickerOpeningThreadId)}
+              disabled={isDefined(aiChatPickerOpeningThreadId)}
               onClick={() => void handleLoadMore()}
             >
               {t`Load more chats`}
             </Button>
-          </SidePanelInboxPickerLoadMoreFooter>
+          </SidePanelAiChatPickerLoadMoreFooter>
         ) : undefined
       }
     />

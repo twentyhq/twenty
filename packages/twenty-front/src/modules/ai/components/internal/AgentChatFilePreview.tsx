@@ -43,7 +43,7 @@ const StyledPreviewButton = styled.button`
   }
 `;
 
-export const InboxFilePreview = ({
+export const AiChatFilePreview = ({
   file,
   onRemove,
   isUploading,

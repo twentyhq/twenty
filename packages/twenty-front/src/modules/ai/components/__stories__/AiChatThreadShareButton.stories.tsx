@@ -2,15 +2,15 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxThreadShareButton } from '@/ai/components/AiChatThreadShareButton';
+import { AiChatThreadShareButton } from '@/ai/components/AiChatThreadShareButton';
 
 const meta = {
   title: 'Modules/AI/AiChatThreadShareButton',
-  component: InboxThreadShareButton,
+  component: AiChatThreadShareButton,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 400 } },
   args: { onClick: fn() },
-} satisfies Meta<typeof InboxThreadShareButton>;
+} satisfies Meta<typeof AiChatThreadShareButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

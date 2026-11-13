@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const inboxLiveReactionRevisionsFamilyState = createAtomFamilyState<
+export const aiChatLiveReactionRevisionsFamilyState = createAtomFamilyState<
   Record<string, number>,
   { threadId: string | null }
 >({
-  key: 'inboxLiveReactionRevisionsFamilyState',
+  key: 'aiChatLiveReactionRevisionsFamilyState',
   defaultValue: {},
 });

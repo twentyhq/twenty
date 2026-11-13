@@ -3,10 +3,10 @@ import { Provider as JotaiProvider } from 'jotai';
 import { createElement } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { useEnterWorkspaceAfterOnboardingCheckout } from '@/onboarding/hooks/useEnterWorkspaceAfterOnboardingCheckout';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -46,7 +46,10 @@ const renderAndEnter = ({
     isOnboardingCheckoutPendingState.atom,
     isOnboardingCheckoutPending,
   );
-  jotaiStore.set(isOnboardingInboxEnabledState.atom, isOnboardingAiChatEnabled);
+  jotaiStore.set(
+    isOnboardingAiChatEnabledState.atom,
+    isOnboardingAiChatEnabled,
+  );
 
   enterWorkspace();
 };
@@ -63,7 +66,9 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
     });
 
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(true);
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
+      true,
+    );
   });
 
   it('should not open the setup chat when the ai chat is disabled', () => {
@@ -74,7 +79,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
     });
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(false);
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
   });
@@ -85,7 +90,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
     });
 
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
   });
@@ -97,7 +102,7 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
     });
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(true);
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
   });
@@ -110,11 +115,11 @@ describe('useEnterWorkspaceAfterOnboardingCheckout', () => {
 
     expect(jotaiStore.get(isOnboardingCheckoutPendingState.atom)).toBe(false);
 
-    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, false);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     enterWorkspace();
 
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
   });

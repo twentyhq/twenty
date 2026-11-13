@@ -6,19 +6,19 @@ import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/ai/constants/AgentChatChannelThreadListPageSize';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAddInboxThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useCaptureInboxSession } from '@/ai/hooks/useCaptureAgentChatSession';
-import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useAddAiChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useCaptureAiChatSession } from '@/ai/hooks/useCaptureAgentChatSession';
+import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { inboxThreadListLoadCountFamilyState } from '@/ai/states/agentChatThreadListLoadCountFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { mergeLoadedInboxThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { mergeLoadedAiChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
 import { mergeInboxThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -28,12 +28,12 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-type InboxThreadRecordsPage = {
-  threads: InboxThreadRecord[];
+type AiChatThreadRecordsPage = {
+  threads: AiChatThreadRecord[];
   participants: AgentChatThreadParticipantFieldsFragment[];
 };
 
-type InboxThreadListPage = InboxThreadRecordsPage & {
+type InboxThreadListPage = AiChatThreadRecordsPage & {
   threadIds: string[];
   hasNextPage: boolean;
   endCursor: string | null;
@@ -42,17 +42,18 @@ type InboxThreadListPage = InboxThreadRecordsPage & {
 export const useLoadInboxThreadList = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { fetchInboxThreadsPage } = useFetchInboxThreadsPage();
-  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
-  const { addInboxThreadParticipants } = useAddInboxThreadParticipants();
+  const { fetchAiChatThreadsPage } = useFetchAiChatThreadsPage();
+  const { refreshAiChatThreadPermissions } =
+    useRefreshAiChatThreadPermissions();
+  const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
-  const { captureInboxSession } = useCaptureInboxSession();
+  const { captureAiChatSession } = useCaptureAiChatSession();
 
   const fetchThreadsByIds = useCallback(
     async (
       threadIds: string[],
-    ): Promise<InboxThreadRecordsPage | undefined> => {
-      const threads: InboxThreadRecord[] = [];
+    ): Promise<AiChatThreadRecordsPage | undefined> => {
+      const threads: AiChatThreadRecord[] = [];
       const participants: AgentChatThreadParticipantFieldsFragment[] = [];
 
       if (!isNonEmptyArray(threadIds)) {
@@ -62,7 +63,7 @@ export const useLoadInboxThreadList = () => {
       let lastCursor: string | null = null;
 
       do {
-        const page = await fetchInboxThreadsPage({
+        const page = await fetchAiChatThreadsPage({
           lastCursor,
           threadIdFilter: { id: { in: threadIds } },
         });
@@ -78,7 +79,7 @@ export const useLoadInboxThreadList = () => {
 
       return { threads, participants };
     },
-    [fetchInboxThreadsPage],
+    [fetchAiChatThreadsPage],
   );
 
   const fetchListPage = useCallback(
@@ -143,7 +144,7 @@ export const useLoadInboxThreadList = () => {
         };
       }
 
-      const page = await fetchInboxThreadsPage({
+      const page = await fetchAiChatThreadsPage({
         lastCursor,
         threadIdFilter:
           source.type === 'presetFilter' && isDefined(workspaceMemberId)
@@ -165,7 +166,7 @@ export const useLoadInboxThreadList = () => {
 
       return { ...page, threadIds: page.threads.map(({ id }) => id) };
     },
-    [apolloClient, fetchInboxThreadsPage, fetchThreadsByIds, store],
+    [apolloClient, fetchAiChatThreadsPage, fetchThreadsByIds, store],
   );
 
   const loadInboxThreadList = useCallback(
@@ -175,7 +176,7 @@ export const useLoadInboxThreadList = () => {
     }: {
       source: InboxThreadListSource;
       mode: 'refresh' | 'fetch-more';
-    }): Promise<InboxThreadRecord[] | undefined> => {
+    }): Promise<AiChatThreadRecord[] | undefined> => {
       const sourceKey = getInboxThreadListSourceKey(source);
       const listAtom = inboxThreadListFamilyState.atomFamily(sourceKey);
       const loadCountAtom =
@@ -191,7 +192,7 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const { isSameSession } = captureInboxSession();
+      const { isSameSession } = captureAiChatSession();
       const loadCount = store.get(loadCountAtom) + (isFetchMore ? 0 : 1);
 
       store.set(loadCountAtom, loadCount);
@@ -224,9 +225,9 @@ export const useLoadInboxThreadList = () => {
         return undefined;
       }
 
-      const selectedThreadId = store.get(currentInboxThreadState.atom);
+      const selectedThreadId = store.get(currentAiChatThreadState.atom);
 
-      await refreshInboxThreadPermissions([
+      await refreshAiChatThreadPermissions([
         ...page.threadIds,
         ...unlistedFavoritesPage.threads.map(({ id }) => id),
         ...(isDefined(selectedThreadId) && isValidUuid(selectedThreadId)
@@ -247,15 +248,17 @@ export const useLoadInboxThreadList = () => {
       upsertRecordsInStore({
         partialRecords: [...page.threads, ...unlistedFavoritesPage.threads].map(
           (loadedThread) =>
-            mergeLoadedInboxThread({
+            mergeLoadedAiChatThread({
               loadedThread,
               storedThread: store.get(
-                inboxThreadRecordFamilySelector.selectorFamily(loadedThread.id),
+                aiChatThreadRecordFamilySelector.selectorFamily(
+                  loadedThread.id,
+                ),
               ),
             }),
         ),
       });
-      addInboxThreadParticipants([
+      addAiChatThreadParticipants([
         ...page.participants,
         ...unlistedFavoritesPage.participants,
       ]);
@@ -264,7 +267,7 @@ export const useLoadInboxThreadList = () => {
       const lastPageThread = isDefined(lastPageThreadId)
         ? (page.threads.find(({ id }) => id === lastPageThreadId) ??
           store.get(
-            inboxThreadRecordFamilySelector.selectorFamily(lastPageThreadId),
+            aiChatThreadRecordFamilySelector.selectorFamily(lastPageThreadId),
           ))
         : undefined;
 
@@ -285,11 +288,11 @@ export const useLoadInboxThreadList = () => {
       return page.threads;
     },
     [
-      addInboxThreadParticipants,
-      captureInboxSession,
+      addAiChatThreadParticipants,
+      captureAiChatSession,
       fetchListPage,
       fetchThreadsByIds,
-      refreshInboxThreadPermissions,
+      refreshAiChatThreadPermissions,
       store,
       upsertRecordsInStore,
     ],

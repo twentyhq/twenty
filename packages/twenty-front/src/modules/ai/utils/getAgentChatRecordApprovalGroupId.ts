@@ -1,6 +1,6 @@
-import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 
-export const getInboxRecordApprovalGroupId = ({
+export const getAiChatRecordApprovalGroupId = ({
   proposal,
-}: AgentChatPendingRecordApproval) =>
+}: AiChatPendingRecordApproval) =>
   `${proposal.template}:${proposal.objectNameSingular}`;

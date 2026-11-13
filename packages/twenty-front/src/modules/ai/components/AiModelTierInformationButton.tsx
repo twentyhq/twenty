@@ -20,7 +20,7 @@ import {
   useThemeContainer,
 } from 'twenty-ui/theme';
 
-import { useInboxHoverCard } from '@/ai/hooks/useAiChatHoverCard';
+import { useAiChatHoverCard } from '@/ai/hooks/useAiChatHoverCard';
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
@@ -53,7 +53,7 @@ export const AiModelTierInformationButton = ({
   const themeContainer = useThemeContainer();
 
   const { isOpen, refs, floatingStyles, getReferenceProps, getFloatingProps } =
-    useInboxHoverCard({ placement: 'top-end', role: 'tooltip' });
+    useAiChatHoverCard({ placement: 'top-end', role: 'tooltip' });
 
   const model = resolvedTier.model;
 

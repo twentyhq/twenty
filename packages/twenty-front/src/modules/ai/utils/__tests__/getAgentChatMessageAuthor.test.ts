@@ -1,4 +1,4 @@
-import { getInboxMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 
 const JULIA = {
   id: 'julia-id',
@@ -12,10 +12,10 @@ const AUTHOR_CONTEXT = {
   currentWorkspace: null,
 };
 
-describe('getInboxMessageAuthor', () => {
+describe('getAiChatMessageAuthor', () => {
   it('names a member by their name', () => {
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'user',
@@ -34,7 +34,7 @@ describe('getInboxMessageAuthor', () => {
 
   it('labels a member who left the workspace', () => {
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'user',
@@ -47,7 +47,7 @@ describe('getInboxMessageAuthor', () => {
 
   it('names the built-in assistant with its profile name', () => {
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'assistant',
@@ -66,7 +66,7 @@ describe('getInboxMessageAuthor', () => {
     };
 
     expect(
-      getInboxMessageAuthor({ message, authorLookup: AUTHOR_CONTEXT }),
+      getAiChatMessageAuthor({ message, authorLookup: AUTHOR_CONTEXT }),
     ).toEqual({
       type: 'agent',
       agentId: 'agent-id',
@@ -74,7 +74,7 @@ describe('getInboxMessageAuthor', () => {
       isNameResolved: false,
     });
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message,
         authorLookup: AUTHOR_CONTEXT,
         agentName: 'Sales agent',
@@ -84,7 +84,7 @@ describe('getInboxMessageAuthor', () => {
 
   it('names an application sender', () => {
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: {
           id: 'message-id',
           role: 'assistant',
@@ -102,13 +102,13 @@ describe('getInboxMessageAuthor', () => {
 
   it('falls back to a neutral label without a known sender', () => {
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: { id: 'message-id', role: 'assistant' },
         authorLookup: AUTHOR_CONTEXT,
       }).name,
     ).toBe('Assistant');
     expect(
-      getInboxMessageAuthor({
+      getAiChatMessageAuthor({
         message: { id: 'message-id', role: 'user' },
         authorLookup: AUTHOR_CONTEXT,
       }).name,

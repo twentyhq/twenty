@@ -1,6 +1,6 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { InboxComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
-import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { GETTING_STARTED_STEP_PREVIEWS } from '@/getting-started/constants/GettingStartedStepPreviews';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
@@ -51,7 +51,7 @@ export const GettingStartedPromptAction = ({
   const [prompt, setPrompt] = useState(defaultPrompt ?? '');
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { updateGettingStarted } = useUpdateGettingStarted();
-  const canSendInboxMessage = useCanSendInboxMessage();
+  const canSendAiChatMessage = useCanSendAiChatMessage();
   const trimmedPrompt = prompt.trim();
   const StepPreview = GETTING_STARTED_STEP_PREVIEWS[actionKey];
 
@@ -78,7 +78,7 @@ export const GettingStartedPromptAction = ({
           value={prompt}
           onChange={setPrompt}
         />
-        <InboxComposerActionsRow
+        <AiChatComposerActionsRow
           modelTierDropdownId={`getting-started-${actionKey}-model`}
           sendButton={
             <IconButton
@@ -88,7 +88,7 @@ export const GettingStartedPromptAction = ({
               shape="round"
               aria-label={t`Send instructions`}
               disabled={
-                !canSendInboxMessage || !isNonEmptyString(trimmedPrompt)
+                !canSendAiChatMessage || !isNonEmptyString(trimmedPrompt)
               }
               onClick={() => void sendPrompt()}
             >

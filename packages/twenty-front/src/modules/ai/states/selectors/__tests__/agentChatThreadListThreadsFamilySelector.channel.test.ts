@@ -5,7 +5,7 @@ import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agen
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   AgentChatChannelAssignmentFilter,
@@ -26,7 +26,7 @@ const buildThread = ({
 }: {
   id: string;
   lastActivityAt: string;
-}): InboxThreadRecord => ({
+}): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,

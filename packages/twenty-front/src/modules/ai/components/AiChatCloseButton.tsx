@@ -4,13 +4,13 @@ import { IconButton } from 'twenty-ui/components/input';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 
-type InboxCloseButtonProps = {
+type AiChatCloseButtonProps = {
   destinationPath?: string;
 };
 
-export const InboxCloseButton = ({
+export const AiChatCloseButton = ({
   destinationPath,
-}: InboxCloseButtonProps = {}) => {
+}: AiChatCloseButtonProps = {}) => {
   const { t } = useLingui();
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: false,

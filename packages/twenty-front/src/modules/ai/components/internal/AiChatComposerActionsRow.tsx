@@ -25,19 +25,19 @@ const StyledRightActions = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-type InboxComposerActionsRowProps = {
+type AiChatComposerActionsRowProps = {
   leftActions?: ReactNode;
   modelTierDropdownId: string;
   sendButton: ReactNode;
   isModelPickerHidden?: boolean;
 };
 
-export const InboxComposerActionsRow = ({
+export const AiChatComposerActionsRow = ({
   leftActions,
   modelTierDropdownId,
   sendButton,
   isModelPickerHidden = false,
-}: InboxComposerActionsRowProps) => {
+}: AiChatComposerActionsRowProps) => {
   const aiModels = useAtomStateValue(aiModelsState);
 
   return (

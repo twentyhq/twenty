@@ -18,7 +18,7 @@ const StyledLoadingIconWrapper = styled.span`
   transform: rotate(90deg);
 `;
 
-export const InboxInitialLoadingIndicator = () => {
+export const AiChatInitialLoadingIndicator = () => {
   const theme = useTheme();
 
   return (

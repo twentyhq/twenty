@@ -1,6 +1,6 @@
-import { InboxMemberPresence } from '@/ai/components/AiChatMemberPresence';
-import { InboxThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { AiChatMemberPresence } from '@/ai/components/AiChatMemberPresence';
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -26,7 +26,7 @@ export const NavigationDrawerDirectMessageItem = ({
   const { t } = useLingui();
   const peerName = directMessage.peer?.name ?? t`Former member`;
   const thread = useAtomFamilySelectorValue(
-    inboxThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     directMessage.threadId,
   );
   const actionsInstanceId = useId();
@@ -39,7 +39,7 @@ export const NavigationDrawerDirectMessageItem = ({
     <NavigationDrawerItem
       label={peerName}
       Icon={
-        <InboxMemberPresence
+        <AiChatMemberPresence
           workspaceMemberId={directMessage.peer?.workspaceMemberId}
         >
           <Avatar
@@ -51,7 +51,7 @@ export const NavigationDrawerDirectMessageItem = ({
             shape="circle"
             size="md"
           />
-        </InboxMemberPresence>
+        </AiChatMemberPresence>
       }
       active={isActive}
       isUnread={directMessage.isUnread}
@@ -61,7 +61,7 @@ export const NavigationDrawerDirectMessageItem = ({
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
         isDefined(thread) ? (
-          <InboxThreadActionsDropdown
+          <AiChatThreadActionsDropdown
             thread={thread}
             instanceId={actionsInstanceId}
           />

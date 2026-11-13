@@ -1,6 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { NewInboxCommand } from '@/command-menu-item/engine-command/global/components/NewAiChatCommand';
+import { NewAiChatCommand } from '@/command-menu-item/engine-command/global/components/NewAiChatCommand';
 import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeCampaignCommand } from '@/command-menu-item/engine-command/global/components/ComposeCampaignCommand';
@@ -271,7 +271,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <HeadlessFrontComponentRendererEngineCommand />
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
-  [EngineComponentKey.NEW_AI_CHAT]: <NewInboxCommand />,
+  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
   [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
     <InboxThreadInboxCommand action={AgentChatInboxAction.READ} />

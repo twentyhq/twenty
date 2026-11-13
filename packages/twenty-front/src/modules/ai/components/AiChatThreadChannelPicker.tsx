@@ -6,13 +6,13 @@ import { IconFolderSymlink } from 'twenty-ui/icon';
 
 import { useMoveInboxThreadToChannel } from '@/ai/hooks/useMoveAgentChatThreadToChannel';
 import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type InboxThreadChannelPickerProps = {
-  thread: InboxThreadRecord;
+  thread: AiChatThreadRecord;
   dropdownId: string;
 };
 

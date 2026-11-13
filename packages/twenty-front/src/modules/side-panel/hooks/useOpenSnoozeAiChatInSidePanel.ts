@@ -7,14 +7,14 @@ import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
-import { snoozeInboxThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 
-export const useOpenSnoozeInboxInSidePanel = () => {
+export const useOpenSnoozeAiChatInSidePanel = () => {
   const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openSnoozeInboxInSidePanel = useCallback(
+  const openSnoozeAiChatInSidePanel = useCallback(
     ({
       threadIds,
       isInChannel,
@@ -25,7 +25,7 @@ export const useOpenSnoozeInboxInSidePanel = () => {
       const pageId = v4();
 
       store.set(
-        snoozeInboxThreadIdsComponentState.atomFamily({ instanceId: pageId }),
+        snoozeAiChatThreadIdsComponentState.atomFamily({ instanceId: pageId }),
         threadIds,
       );
       store.set(
@@ -45,5 +45,5 @@ export const useOpenSnoozeInboxInSidePanel = () => {
     [navigateSidePanelMenu, store, t],
   );
 
-  return { openSnoozeInboxInSidePanel };
+  return { openSnoozeAiChatInSidePanel };
 };

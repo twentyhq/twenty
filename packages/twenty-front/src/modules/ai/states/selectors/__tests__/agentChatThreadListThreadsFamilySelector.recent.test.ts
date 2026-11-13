@@ -1,10 +1,10 @@
 import { createStore } from 'jotai';
 
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
 
@@ -14,7 +14,7 @@ const buildThread = ({
 }: {
   id: string;
   channelId: string | null;
-}): InboxThreadRecord => ({
+}): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -34,7 +34,7 @@ describe('inboxThreadListThreadsFamilySelector for recent chats', () => {
       buildThread({ id: 'followed-channel-chat', channelId: 'channel' }),
       buildThread({ id: 'read-channel-chat', channelId: 'channel' }),
     ]);
-    store.set(inboxThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       'followed-channel-chat': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'participant',

@@ -4,22 +4,22 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
-import { INBOX_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
-import { INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
-import { INBOX_INPUT_ID } from '@/ai/constants/AiChatInputId';
-import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
+import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
-import { getAgentChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
+import { getAiChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
@@ -34,14 +34,14 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { useLingui } from '@lingui/react/macro';
 
-export const useInboxEditor = () => {
+export const useAiChatEditor = () => {
   const { t } = useLingui();
   const { displayName: assistantDisplayName } = useAiChatAssistantProfile();
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const aiModels = useAtomStateValue(aiModelsState);
-  const newInboxThreadId = useAtomStateValue(newInboxThreadIdState);
-  const [inboxDraftsByThreadId, setInboxDraftsByThreadId] = useAtomState(
-    inboxDraftsByThreadIdState,
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const [aiChatDraftsByThreadId, setAiChatDraftsByThreadId] = useAtomState(
+    aiChatDraftsByThreadIdState,
   );
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
@@ -49,19 +49,19 @@ export const useInboxEditor = () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const { searchSkills } = useSkillSuggestionSearch();
-  const { uploadFiles } = useInboxFileUpload();
+  const { uploadFiles } = useAiChatFileUpload();
   const isDirectMessage = useAtomFamilySelectorValue(
     inboxThreadIsDirectMessageFamilySelector,
-    currentInboxThread,
+    currentAiChatThread,
   );
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentInboxThread ?? newInboxThreadId;
-  const initialDraft = inboxDraftsByThreadId[draftKey] ?? '';
+  const draftKey = currentAiChatThread ?? newAiChatThreadId;
+  const initialDraft = aiChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
-    profile: INBOX_EDITOR_PROFILE,
+    profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: isDirectMessage
       ? t`Write a message...`
       : t`Ask, search or make anything...`,
@@ -81,7 +81,7 @@ export const useInboxEditor = () => {
           }
 
           event.preventDefault();
-          dispatchBrowserEvent(INBOX_SEND_MESSAGE_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_SEND_MESSAGE_EVENT_NAME);
           return true;
         }
         return false;
@@ -113,17 +113,17 @@ export const useInboxEditor = () => {
       const serializedDraft =
         text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
 
-      setInboxDraftsByThreadId((prev) => ({
+      setAiChatDraftsByThreadId((prev) => ({
         ...prev,
         [draftKey]: serializedDraft,
       }));
     },
     onFocus: () => {
       pushFocusItemToFocusStack({
-        focusId: INBOX_INPUT_ID,
+        focusId: AI_CHAT_INPUT_ID,
         component: {
           type: FocusComponentType.TEXT_AREA,
-          instanceId: INBOX_INPUT_ID,
+          instanceId: AI_CHAT_INPUT_ID,
         },
         globalHotkeysConfig: {
           enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -131,7 +131,7 @@ export const useInboxEditor = () => {
       });
     },
     onBlur: () => {
-      removeFocusItemFromFocusStackById({ focusId: INBOX_INPUT_ID });
+      removeFocusItemFromFocusStackById({ focusId: AI_CHAT_INPUT_ID });
     },
   });
 
@@ -159,7 +159,7 @@ export const useInboxEditor = () => {
       }
 
       return [
-        ...getAgentChatAssistantMentionSearchResults({
+        ...getAiChatAssistantMentionSearchResults({
           query,
           assistantDisplayName,
           objectLabelSingular: t`Assistant`,
@@ -189,7 +189,7 @@ export const useInboxEditor = () => {
   );
 
   useListenToBrowserEvent<{ content: string }>({
-    eventName: INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+    eventName: AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     onBrowserEvent: handleRestoreEditorContent,
   });
 

@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/ai';
 
 import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -182,7 +182,7 @@ const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
     ),
   );
   store.set(
-    inboxThreadParticipantsState.atom,
+    aiChatThreadParticipantsState.atom,
     Object.fromEntries(
       THREADS.filter(({ participant }) => participant !== undefined).map(
         ({ id, participant }) => [id, { id, threadId: id, ...participant! }],

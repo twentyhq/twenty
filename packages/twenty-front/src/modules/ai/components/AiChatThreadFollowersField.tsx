@@ -7,33 +7,33 @@ import { IconBell, IconBellOff } from 'twenty-ui/icon';
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 
 const StyledEmptyValue = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-type InboxThreadFollowersFieldProps = {
+type AiChatThreadFollowersFieldProps = {
   followers: { id: string; name: string; avatarUrl?: string | null }[];
   isFollowing: boolean;
   isSaving?: boolean;
   onFollowingChange?: (isFollowing: boolean) => void;
 };
 
-export const InboxThreadFollowersField = ({
+export const AiChatThreadFollowersField = ({
   followers,
   isFollowing,
   isSaving = false,
   onFollowingChange,
-}: InboxThreadFollowersFieldProps) => {
+}: AiChatThreadFollowersFieldProps) => {
   const { t } = useLingui();
   const actionLabel = isFollowing ? t`Unfollow for me` : t`Follow for me`;
   const ActionIcon = isFollowing ? IconBellOff : IconBell;
 
   return (
     <DetailsRow
-      labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+      labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
       startIcon={<IconBell size={themeCssVariables.icon.size.md} />}
       label={t`Following`}
       action={

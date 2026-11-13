@@ -5,13 +5,13 @@ import { applyAgentChatInboxAction } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { inboxReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
-  type InboxThreadVisit,
-  inboxThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   AgentChatInboxAction,
@@ -21,7 +21,7 @@ import {
 // On the thread on screen, a chat marked unread stays unread until the member
 // leaves it, and its unread line moves to the first message from someone else
 const OPTIMISTIC_VISIT_BY_ACTION: Partial<
-  Record<AgentChatInboxAction, Partial<InboxThreadVisit>>
+  Record<AgentChatInboxAction, Partial<AiChatThreadVisit>>
 > = {
   [AgentChatInboxAction.READ]: { isKeptUnread: false },
   [AgentChatInboxAction.UNREAD]: {
@@ -49,27 +49,29 @@ export const useUpdateInboxThreadStatus = () => {
     }) => {
       const now = new Date();
       const optimisticVisit = OPTIMISTIC_VISIT_BY_ACTION[action];
-      const previousVisit = store.get(inboxThreadVisitState.atom);
-      const previousParticipants = store.get(inboxThreadParticipantsState.atom);
+      const previousVisit = store.get(aiChatThreadVisitState.atom);
+      const previousParticipants = store.get(
+        aiChatThreadParticipantsState.atom,
+      );
 
       if (
         isDefined(optimisticVisit) &&
         isDefined(previousVisit) &&
         threadIds.includes(previousVisit.threadId)
       ) {
-        store.set(inboxThreadVisitState.atom, {
+        store.set(aiChatThreadVisitState.atom, {
           ...previousVisit,
           ...optimisticVisit,
         });
       }
-      const optimisticVisitState = store.get(inboxThreadVisitState.atom);
+      const optimisticVisitState = store.get(aiChatThreadVisitState.atom);
       const getThreadLastActivityAt = (threadId: string) =>
-        store.get(inboxThreadRecordFamilySelector.selectorFamily(threadId))
+        store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
           ?.lastActivityAt ?? null;
 
       if (action === AgentChatInboxAction.MOVE_TO_INBOX) {
         store.set(
-          inboxReopenedThreadActivityState.atom,
+          aiChatReopenedThreadActivityState.atom,
           (reopenedThreadActivity) => ({
             ...reopenedThreadActivity,
             ...Object.fromEntries(
@@ -82,7 +84,7 @@ export const useUpdateInboxThreadStatus = () => {
         );
       }
 
-      store.set(inboxThreadParticipantsState.atom, (participants) => {
+      store.set(aiChatThreadParticipantsState.atom, (participants) => {
         if (!isDefined(participants)) {
           return participants;
         }
@@ -106,7 +108,7 @@ export const useUpdateInboxThreadStatus = () => {
         return updatedParticipants;
       });
       const optimisticParticipants = store.get(
-        inboxThreadParticipantsState.atom,
+        aiChatThreadParticipantsState.atom,
       );
 
       try {
@@ -122,12 +124,12 @@ export const useUpdateInboxThreadStatus = () => {
         enqueueToast(getToastOptionsFromError({ error }));
 
         // A visit to another chat since then is kept
-        store.set(inboxThreadVisitState.atom, (visit) =>
+        store.set(aiChatThreadVisitState.atom, (visit) =>
           visit === optimisticVisitState ? previousVisit : visit,
         );
 
         // A newer row may have arrived since, and is kept
-        store.set(inboxThreadParticipantsState.atom, (participants) => {
+        store.set(aiChatThreadParticipantsState.atom, (participants) => {
           if (!isDefined(participants)) {
             return participants;
           }

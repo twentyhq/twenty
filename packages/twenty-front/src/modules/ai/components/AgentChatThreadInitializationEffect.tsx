@@ -8,18 +8,18 @@ import {
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { inboxRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { hasInitializedInboxThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { hasInitializedAiChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -32,9 +32,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const INBOX_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
+const AI_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
-export const InboxThreadInitializationEffect = () => {
+export const AiChatThreadInitializationEffect = () => {
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
@@ -70,8 +70,8 @@ export const InboxThreadInitializationEffect = () => {
     inboxRecentThreadsLoadingSelector,
   );
 
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
-  const setCurrentInboxThread = useSetAtomState(currentInboxThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
   const favoriteThreadIdsKey = useAtomStateValue(inboxFavoriteThreadsSelector)
     .map(({ id }) => id)
@@ -83,8 +83,8 @@ export const InboxThreadInitializationEffect = () => {
     inboxThreadListThreadsFamilySelector,
     inboxSelectedThreadListSource,
   );
-  const [hasInitializedInboxThreads, setHasInitializedInboxThreads] =
-    useAtomState(hasInitializedInboxThreadsState);
+  const [hasInitializedAiChatThreads, setHasInitializedAiChatThreads] =
+    useAtomState(hasInitializedAiChatThreadsState);
 
   useEffect(() => {
     if (!areFieldMetadataItemsLoaded || !canLoadChatThreads) {
@@ -114,7 +114,7 @@ export const InboxThreadInitializationEffect = () => {
 
       retryTimeoutId = window.setTimeout(
         () => void refreshUntilLoaded(),
-        INBOX_THREADS_REFRESH_RETRY_DELAY_MS,
+        AI_CHAT_THREADS_REFRESH_RETRY_DELAY_MS,
       );
     };
 
@@ -137,26 +137,26 @@ export const InboxThreadInitializationEffect = () => {
   ]);
 
   useEffect(() => {
-    if (hasInitializedInboxThreads || inboxRecentThreadsLoading) {
+    if (hasInitializedAiChatThreads || inboxRecentThreadsLoading) {
       return;
     }
 
-    if (isDefined(currentInboxThread)) {
+    if (isDefined(currentAiChatThread)) {
       const selectedThread = store.get(
-        inboxThreadRecordFamilySelector.selectorFamily(currentInboxThread),
+        aiChatThreadRecordFamilySelector.selectorFamily(currentAiChatThread),
       );
 
       if (isDefined(selectedThread)) {
         store.set(
-          agentChatUsageFamilyState.atomFamily({ threadId: selectedThread.id }),
-          getAgentChatUsageFromThread(selectedThread),
+          aiChatUsageFamilyState.atomFamily({ threadId: selectedThread.id }),
+          getAiChatUsageFromThread(selectedThread),
         );
       }
-      setHasInitializedInboxThreads(true);
+      setHasInitializedAiChatThreads(true);
       return;
     }
 
-    setHasInitializedInboxThreads(true);
+    setHasInitializedAiChatThreads(true);
 
     const sortedThreads = sortChatThreadsByLastActivityDesc(
       inboxThreadListThreads,
@@ -165,21 +165,21 @@ export const InboxThreadInitializationEffect = () => {
     if (sortedThreads.length > 0) {
       const firstThread = sortedThreads[0];
 
-      setCurrentInboxThread(firstThread.id);
+      setCurrentAiChatThread(firstThread.id);
       store.set(
-        agentChatUsageFamilyState.atomFamily({ threadId: firstThread.id }),
-        getAgentChatUsageFromThread(firstThread),
+        aiChatUsageFamilyState.atomFamily({ threadId: firstThread.id }),
+        getAiChatUsageFromThread(firstThread),
       );
     } else {
-      setCurrentInboxThread(store.get(newInboxThreadIdState.atom));
+      setCurrentAiChatThread(store.get(newAiChatThreadIdState.atom));
     }
   }, [
     inboxThreadListThreads,
-    currentInboxThread,
+    currentAiChatThread,
     inboxRecentThreadsLoading,
-    hasInitializedInboxThreads,
-    setHasInitializedInboxThreads,
-    setCurrentInboxThread,
+    hasInitializedAiChatThreads,
+    setHasInitializedAiChatThreads,
+    setCurrentAiChatThread,
     store,
   ]);
 

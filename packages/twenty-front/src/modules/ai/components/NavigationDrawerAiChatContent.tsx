@@ -5,19 +5,19 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
-import { InboxSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerInboxChannelsSection } from '@/ai/components/NavigationDrawerAiChatChannelsSection';
 import { NavigationDrawerInboxFavoritesSection } from '@/ai/components/NavigationDrawerAiChatFavoritesSection';
-import { NavigationDrawerInboxThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
+import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerInboxTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
 import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
 import { INBOX_RECENT_THREADS_MAX_COUNT } from '@/ai/constants/AiChatInboxRecentThreadsMaxCount';
-import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useInboxThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { inboxDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { inboxFavoriteChannelsSelector } from '@/ai/states/selectors/agentChatFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -45,9 +45,9 @@ const StyledSectionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const INBOX_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
+const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
-export const NavigationDrawerInboxContent = () => {
+export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
@@ -59,8 +59,8 @@ export const NavigationDrawerInboxContent = () => {
   );
   const isDirectMessagesSectionShown =
     isAiChatInboxEnabled && isDirectMessageEnabled;
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
-  const { handleThreadClick } = useInboxThreadClick(
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const { handleThreadClick } = useAiChatThreadClick(
     isAiChatInboxEnabled
       ? { shouldOpenInFullPage: true }
       : { resetNavigationStack: true },
@@ -79,7 +79,9 @@ export const NavigationDrawerInboxContent = () => {
 
   if (isLoading && threads.length === 0) {
     return (
-      <StyledContainer>{isExpanded && <InboxSkeletonLoader />}</StyledContainer>
+      <StyledContainer>
+        {isExpanded && <AiChatSkeletonLoader />}
+      </StyledContainer>
     );
   }
 
@@ -106,24 +108,24 @@ export const NavigationDrawerInboxContent = () => {
           <NavigationDrawerInboxFavoritesSection
             channels={isAiChatInboxEnabled ? inboxFavoriteChannels : []}
             threads={inboxFavoriteThreads}
-            currentThreadId={currentInboxThread}
+            currentThreadId={currentAiChatThread}
             onThreadClick={handleThreadClick}
           />
           {isAiChatInboxEnabled && <NavigationDrawerInboxChannelsSection />}
           {isDirectMessagesSectionShown && (
             <NavigationDrawerDirectMessagesSection
               directMessages={inboxDirectMessageSidebarItems}
-              currentThreadId={currentInboxThread}
+              currentThreadId={currentAiChatThread}
               onSelect={(threadId) => handleThreadClick({ id: threadId })}
               memberPicker={<OpenDirectMessageButton />}
             />
           )}
           {recentThreads.length > 0 && (
-            <NavigationDrawerInboxThreadSection
-              sectionId={INBOX_RECENTS_NAVIGATION_SECTION_ID}
+            <NavigationDrawerAiChatThreadSection
+              sectionId={AI_CHAT_RECENTS_NAVIGATION_SECTION_ID}
               title={t`Recent`}
               threads={recentThreads}
-              currentThreadId={currentInboxThread}
+              currentThreadId={currentAiChatThread}
               onThreadClick={handleThreadClick}
             />
           )}

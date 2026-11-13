@@ -10,13 +10,11 @@ import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChan
 const CHANNEL_ID = '20202020-0000-4000-8000-0000000000cc';
 
 jest.mock('@/ai/hooks/useSelectAiChatThread', () => ({
-  useSelectInboxThread: () => ({ selectInboxThread: jest.fn() }),
+  useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
 }));
 
 jest.mock('@/ai/hooks/useNavigateToAiChatPage', () => ({
-  useNavigateToInboxThreadPage: () => ({
-    navigateToInboxThreadPage: jest.fn(),
-  }),
+  useNavigateToAiChatPage: () => ({ navigateToAiChatPage: jest.fn() }),
 }));
 
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({

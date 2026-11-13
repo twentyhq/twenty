@@ -2,26 +2,27 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAddInboxThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useFetchInboxThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { mergeLoadedInboxThread } from '@/ai/utils/mergeLoadedAgentChatThread';
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { useAddAiChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeLoadedAiChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
-export const useLoadInboxThread = () => {
+export const useLoadAiChatThread = () => {
   const store = useStore();
-  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
-  const { addLoadedInboxThread } = useApplyInboxThreadUpdate();
-  const { fetchInboxThreadsPage } = useFetchInboxThreadsPage();
-  const { addInboxThreadParticipants } = useAddInboxThreadParticipants();
+  const { refreshAiChatThreadPermissions } =
+    useRefreshAiChatThreadPermissions();
+  const { addLoadedAiChatThread } = useApplyAiChatThreadUpdate();
+  const { fetchAiChatThreadsPage } = useFetchAiChatThreadsPage();
+  const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
-  const loadInboxThread = useCallback(
+  const loadAiChatThread = useCallback(
     async (threadId: string) => {
-      const page = await fetchInboxThreadsPage({
+      const page = await fetchAiChatThreadsPage({
         lastCursor: null,
         threadIdFilter: { id: { eq: threadId } },
       });
@@ -36,36 +37,36 @@ export const useLoadInboxThread = () => {
         return null;
       }
 
-      await refreshInboxThreadPermissions([thread.id]);
+      await refreshAiChatThreadPermissions([thread.id]);
 
-      const loadedThread = mergeLoadedInboxThread({
+      const loadedThread = mergeLoadedAiChatThread({
         loadedThread: thread,
         storedThread: store.get(
-          inboxThreadRecordFamilySelector.selectorFamily(thread.id),
+          aiChatThreadRecordFamilySelector.selectorFamily(thread.id),
         ),
       });
 
-      addLoadedInboxThread(loadedThread);
-      addInboxThreadParticipants(page.participants);
+      addLoadedAiChatThread(loadedThread);
+      addAiChatThreadParticipants(page.participants);
 
-      const usageAtom = agentChatUsageFamilyState.atomFamily({
+      const usageAtom = aiChatUsageFamilyState.atomFamily({
         threadId: thread.id,
       });
 
       if (!isDefined(store.get(usageAtom))) {
-        store.set(usageAtom, getAgentChatUsageFromThread(loadedThread));
+        store.set(usageAtom, getAiChatUsageFromThread(loadedThread));
       }
 
       return loadedThread;
     },
     [
-      addLoadedInboxThread,
-      addInboxThreadParticipants,
-      fetchInboxThreadsPage,
-      refreshInboxThreadPermissions,
+      addLoadedAiChatThread,
+      addAiChatThreadParticipants,
+      fetchAiChatThreadsPage,
+      refreshAiChatThreadPermissions,
       store,
     ],
   );
 
-  return { loadInboxThread };
+  return { loadAiChatThread };
 };

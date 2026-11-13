@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatIsStreamingFamilyState = createAtomFamilyState<
+export const aiChatIsStreamingFamilyState = createAtomFamilyState<
   boolean,
   { threadId: string | null }
 >({
-  key: 'agentChatIsStreamingFamilyState',
+  key: 'aiChatIsStreamingFamilyState',
   defaultValue: false,
 });

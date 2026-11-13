@@ -6,9 +6,9 @@ import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 const StyledTriggerContainer = styled.div`
   margin-top: 200px;
@@ -24,16 +24,17 @@ const meta: Meta<typeof AiModelTierDropdown> = {
       const store = useStore();
       const setupChat = parameters.setupChat === true;
       useEffect(() => {
-        store.set(agentChatUserSelectedModelTierState.atom, null);
-        store.set(shouldOpenInboxAfterOnboardingState.atom, setupChat);
-        return () => store.set(shouldOpenInboxAfterOnboardingState.atom, false);
+        store.set(aiChatUserSelectedModelTierState.atom, null);
+        store.set(shouldOpenAiChatAfterOnboardingState.atom, setupChat);
+        return () =>
+          store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       }, [store, setupChat]);
       return (
-        <InboxSurfaceContext.Provider value="side-panel">
+        <AiChatSurfaceContext.Provider value="side-panel">
           <StyledTriggerContainer>
             <Story />
           </StyledTriggerContainer>
-        </InboxSurfaceContext.Provider>
+        </AiChatSurfaceContext.Provider>
       );
     },
     ComponentDecorator,

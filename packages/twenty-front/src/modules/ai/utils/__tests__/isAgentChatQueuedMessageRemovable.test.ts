@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { isAgentChatQueuedMessageRemovable } from '@/ai/utils/isAgentChatQueuedMessageRemovable';
+import { isAiChatQueuedMessageRemovable } from '@/ai/utils/isAgentChatQueuedMessageRemovable';
 
 const CURRENT_WORKSPACE_MEMBER_ID = 'current-workspace-member';
 const OWN_MESSAGE = {
@@ -16,7 +16,7 @@ const SENDERLESS_MESSAGE = {
 } satisfies Pick<ExtendedUIMessage, 'role' | 'metadata'>;
 
 type QueuedMessageRemovalTestCase = Parameters<
-  typeof isAgentChatQueuedMessageRemovable
+  typeof isAiChatQueuedMessageRemovable
 >[0] & {
   description: string;
   expected: boolean;
@@ -92,7 +92,7 @@ const TEST_CASES: QueuedMessageRemovalTestCase[] = [
   },
 ];
 
-describe('isAgentChatQueuedMessageRemovable', () => {
+describe('isAiChatQueuedMessageRemovable', () => {
   it.each(TEST_CASES)(
     '$description',
     ({
@@ -103,7 +103,7 @@ describe('isAgentChatQueuedMessageRemovable', () => {
       expected,
     }) => {
       expect(
-        isAgentChatQueuedMessageRemovable({
+        isAiChatQueuedMessageRemovable({
           message,
           currentWorkspaceMemberId,
           isAiChatInboxEnabled,

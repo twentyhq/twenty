@@ -14,8 +14,8 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { INBOX_THREAD_LIST_FILTER } from '@/ai/constants/AgentChatThreadListFilter';
 import { INBOX_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getInboxThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -31,11 +31,11 @@ import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFla
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-export const useFetchInboxThreadsPage = () => {
+export const useFetchAiChatThreadsPage = () => {
   const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
 
-  const fetchInboxThreadsPage = useCallback(
+  const fetchAiChatThreadsPage = useCallback(
     async ({
       lastCursor,
       threadIdFilter,
@@ -118,7 +118,7 @@ export const useFetchInboxThreadsPage = () => {
       }
 
       const records = getRecordsFromRecordConnection<
-        InboxThreadRecord & { participants?: ObjectRecord[] }
+        AiChatThreadRecord & { participants?: ObjectRecord[] }
       >({ recordConnection: connection });
 
       return {
@@ -132,7 +132,7 @@ export const useFetchInboxThreadsPage = () => {
             (participant) =>
               participant.workspaceMemberId === currentWorkspaceMemberId,
           )
-          .map(getInboxThreadParticipantFromRecord),
+          .map(getAiChatThreadParticipantFromRecord),
         hasNextPage: connection.pageInfo.hasNextPage ?? false,
         endCursor: connection.pageInfo.endCursor ?? null,
       };
@@ -140,5 +140,5 @@ export const useFetchInboxThreadsPage = () => {
     [apolloCoreClient, store],
   );
 
-  return { fetchInboxThreadsPage };
+  return { fetchAiChatThreadsPage };
 };

@@ -1,19 +1,19 @@
 import { type MouseEvent } from 'react';
 
 import { InboxThreadList } from '@/ai/components/AiChatThreadList';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 
 type InboxPageThreadListProps = {
-  threads: InboxThreadRecord[];
+  threads: AiChatThreadRecord[];
   selectedThreadIds: string[];
   checkedThreadIds: string[];
   onThreadClick: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
   onThreadCheckboxClick?: (
-    thread: InboxThreadRecord,
+    thread: AiChatThreadRecord,
     event: MouseEvent<HTMLDivElement>,
   ) => void;
 };

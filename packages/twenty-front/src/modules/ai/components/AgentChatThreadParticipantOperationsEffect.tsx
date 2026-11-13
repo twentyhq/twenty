@@ -4,10 +4,10 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshInboxOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { getInboxThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
-import { mergeInboxThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { getAiChatThreadParticipantFromRecord } from '@/ai/utils/getAgentChatThreadParticipantFromRecord';
+import { mergeAiChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
@@ -19,7 +19,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 // The member's inbox state follows what they do in their other tabs and
 // devices, and snoozes the server ends
-export const InboxThreadParticipantOperationsEffect = () => {
+export const AiChatThreadParticipantOperationsEffect = () => {
   const store = useStore();
   const { refreshInboxOpenThreadsSummary } =
     useRefreshInboxOpenThreadsSummary();
@@ -62,13 +62,13 @@ export const InboxThreadParticipantOperationsEffect = () => {
         participants: AgentChatThreadParticipantFieldsFragment[],
       ) => {
         store.set(
-          inboxThreadStreamedParticipantsState.atom,
+          aiChatThreadStreamedParticipantsState.atom,
           (streamedParticipants) =>
-            mergeInboxThreadParticipants(streamedParticipants, participants),
+            mergeAiChatThreadParticipants(streamedParticipants, participants),
         );
-        store.set(inboxThreadParticipantsState.atom, (loadedParticipants) =>
+        store.set(aiChatThreadParticipantsState.atom, (loadedParticipants) =>
           isDefined(loadedParticipants)
-            ? mergeInboxThreadParticipants(loadedParticipants, participants)
+            ? mergeAiChatThreadParticipants(loadedParticipants, participants)
             : loadedParticipants,
         );
         refreshInboxOpenThreadsSummary();
@@ -77,7 +77,7 @@ export const InboxThreadParticipantOperationsEffect = () => {
       switch (operation.type) {
         case 'create-one': {
           applyParticipants([
-            getInboxThreadParticipantFromRecord(operation.createdRecord),
+            getAiChatThreadParticipantFromRecord(operation.createdRecord),
           ]);
           return;
         }
@@ -92,7 +92,7 @@ export const InboxThreadParticipantOperationsEffect = () => {
             updateInputs
               .map(({ updatedRecord }) => updatedRecord)
               .filter(isDefined)
-              .map(getInboxThreadParticipantFromRecord),
+              .map(getAiChatThreadParticipantFromRecord),
           );
           return;
         }

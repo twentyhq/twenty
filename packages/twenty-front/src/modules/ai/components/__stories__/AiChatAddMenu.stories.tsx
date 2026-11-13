@@ -7,8 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
-import { InboxAddMenu } from '@/ai/components/AiChatAddMenu';
-import { INBOX_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
+import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
+import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -21,9 +21,9 @@ const StyledComposer = styled.div`
   width: 400px;
 `;
 
-const InboxAddMenuWithEditor = () => {
+const AiChatAddMenuWithEditor = () => {
   const editor = useAdvancedTextEditor({
-    profile: INBOX_EDITOR_PROFILE,
+    profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: 'Ask anything',
     readonly: false,
     defaultValue: null,
@@ -33,14 +33,14 @@ const InboxAddMenuWithEditor = () => {
   return (
     <StyledComposer>
       <EditorContent editor={editor} />
-      <InboxAddMenu editor={editor} />
+      <AiChatAddMenu editor={editor} />
     </StyledComposer>
   );
 };
 
-const meta: Meta<typeof InboxAddMenuWithEditor> = {
+const meta: Meta<typeof AiChatAddMenuWithEditor> = {
   title: 'Modules/AI/AiChatAddMenu',
-  component: InboxAddMenuWithEditor,
+  component: AiChatAddMenuWithEditor,
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
@@ -83,7 +83,7 @@ const meta: Meta<typeof InboxAddMenuWithEditor> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof InboxAddMenuWithEditor>;
+type Story = StoryObj<typeof AiChatAddMenuWithEditor>;
 
 const openAddMenu = async (canvasElement: HTMLElement) => {
   await userEvent.click(

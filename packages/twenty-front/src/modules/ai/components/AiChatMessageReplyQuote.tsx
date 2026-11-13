@@ -4,13 +4,13 @@ import { type KeyboardEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
-import { useIsOwnInboxMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
-import { inboxReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/agentChatReplyQuotedMessageIdFamilySelector';
-import { type InboxMessageQuote } from '@/ai/types/AgentChatMessageQuote';
-import { scrollToInboxMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
+import { useIsOwnAiChatMessage } from '@/ai/hooks/useIsOwnAgentChatMessage';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
+import { aiChatReplyQuotedMessageIdFamilySelector } from '@/ai/states/selectors/agentChatReplyQuotedMessageIdFamilySelector';
+import { type AiChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -29,30 +29,30 @@ const StyledReplyLine = styled.div<{ isClickable: boolean }>`
   }
 `;
 
-type InboxMessageReplyQuoteProps = {
+type AiChatMessageReplyQuoteProps = {
   replyMessageId: string;
-  quote: InboxMessageQuote;
+  quote: AiChatMessageQuote;
 };
 
-export const InboxMessageReplyQuote = ({
+export const AiChatMessageReplyQuote = ({
   replyMessageId,
   quote,
-}: InboxMessageReplyQuoteProps) => {
+}: AiChatMessageReplyQuoteProps) => {
   const { t } = useLingui();
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
   const quotedMessageId = useAtomFamilySelectorValue(
-    inboxReplyQuotedMessageIdFamilySelector,
+    aiChatReplyQuotedMessageIdFamilySelector,
     { replyMessageId },
   );
   const quotedMessage = useAtomFamilySelectorValue(
-    inboxThreadMessageFamilySelector,
-    { threadId: inboxDisplayedThread, messageId: quotedMessageId },
+    aiChatThreadMessageFamilySelector,
+    { threadId: aiChatDisplayedThread, messageId: quotedMessageId },
   );
-  const isOwnQuotedMessage = useIsOwnInboxMessage(quotedMessage);
+  const isOwnQuotedMessage = useIsOwnAiChatMessage(quotedMessage);
   const authorName = isOwnQuotedMessage ? t`You` : quote.authorName;
 
   const preview = (
-    <InboxQuotedMessagePreview
+    <AiChatQuotedMessagePreview
       source={{ status: 'available', authorName, excerpt: quote.excerpt }}
     />
   );
@@ -64,7 +64,7 @@ export const InboxMessageReplyQuote = ({
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      scrollToInboxMessage(quotedMessageId);
+      scrollToAiChatMessage(quotedMessageId);
     }
   };
 
@@ -74,7 +74,7 @@ export const InboxMessageReplyQuote = ({
       role="button"
       tabIndex={0}
       aria-label={t`View original message`}
-      onClick={() => scrollToInboxMessage(quotedMessageId)}
+      onClick={() => scrollToAiChatMessage(quotedMessageId)}
       onKeyDown={handleKeyDown}
     >
       {preview}

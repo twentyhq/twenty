@@ -5,21 +5,21 @@ import { useStore } from 'jotai';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
-export const useNavigateToInboxThreadPage = () => {
+export const useNavigateToAiChatPage = () => {
   const store = useStore();
   const navigate = useNavigateApp();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
-  const navigateToInboxThreadPage = ({
+  const navigateToAiChatPage = ({
     threadId,
   }: {
     threadId?: string | null;
   } = {}) => {
     if (
       store.get(isLayoutCustomizationModeEnabledState.atom) ||
-      isCurrentPathInboxThreadPage()
+      isCurrentPathAiChatPage()
     ) {
       return;
     }
@@ -44,5 +44,5 @@ export const useNavigateToInboxThreadPage = () => {
     );
   };
 
-  return { navigateToInboxThreadPage };
+  return { navigateToAiChatPage };
 };

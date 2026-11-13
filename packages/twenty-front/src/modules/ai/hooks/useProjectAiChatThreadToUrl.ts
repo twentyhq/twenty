@@ -3,25 +3,25 @@ import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
-import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getCurrentHistoryEntryState } from '~/utils/getCurrentHistoryEntryState';
 import { isInboxPath } from '~/utils/isAiChatInboxPath';
-import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 import { isMatchingPathname } from '~/utils/isMatchingPathname';
 
-type UseProjectInboxThreadToUrlParams = {
+type UseProjectAiChatThreadToUrlParams = {
   shouldPreserveClosedInbox?: boolean;
 };
 
-export const useProjectInboxThreadToUrl = ({
+export const useProjectAiChatThreadToUrl = ({
   shouldPreserveClosedInbox = false,
-}: UseProjectInboxThreadToUrlParams = {}) => {
+}: UseProjectAiChatThreadToUrlParams = {}) => {
   const navigateApp = useNavigateApp();
   const store = useStore();
 
-  const projectInboxThreadToUrl = useCallback(
+  const projectAiChatThreadToUrl = useCallback(
     (threadId: string) => {
       const pathname = window.location.pathname;
       const isOnInboxPage = isInboxPath(pathname);
@@ -34,13 +34,13 @@ export const useProjectInboxThreadToUrl = ({
         return;
       }
 
-      if (!isCurrentPathInboxThreadPage() && !isOnInboxPage) {
+      if (!isCurrentPathAiChatPage() && !isOnInboxPage) {
         return;
       }
 
-      const isNewChat = threadId === store.get(newInboxThreadIdState.atom);
+      const isNewChat = threadId === store.get(newAiChatThreadIdState.atom);
       const newThreadPathSegment = isOnInboxPage
-        ? INBOX_NEW_THREAD_PATH_SEGMENT
+        ? AI_CHAT_NEW_THREAD_PATH_SEGMENT
         : null;
 
       navigateApp(
@@ -55,5 +55,5 @@ export const useProjectInboxThreadToUrl = ({
     [navigateApp, shouldPreserveClosedInbox, store],
   );
 
-  return { projectInboxThreadToUrl };
+  return { projectAiChatThreadToUrl };
 };

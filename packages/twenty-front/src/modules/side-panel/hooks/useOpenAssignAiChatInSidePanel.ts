@@ -6,19 +6,19 @@ import { IconUsers } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { assignInboxThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 
-export const useOpenAssignInboxInSidePanel = () => {
+export const useOpenAssignAiChatInSidePanel = () => {
   const { t } = useLingui();
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openAssignInboxInSidePanel = useCallback(
+  const openAssignAiChatInSidePanel = useCallback(
     (threadIds: string[]) => {
       const pageId = v4();
 
       store.set(
-        assignInboxThreadIdsComponentState.atomFamily({ instanceId: pageId }),
+        assignAiChatThreadIdsComponentState.atomFamily({ instanceId: pageId }),
         threadIds,
       );
 
@@ -32,5 +32,5 @@ export const useOpenAssignInboxInSidePanel = () => {
     [navigateSidePanelMenu, store, t],
   );
 
-  return { openAssignInboxInSidePanel };
+  return { openAssignAiChatInSidePanel };
 };

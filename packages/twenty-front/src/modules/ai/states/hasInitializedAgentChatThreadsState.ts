@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const hasInitializedInboxThreadsState = createAtomState<boolean>({
-  key: 'hasInitializedInboxThreadsState',
+export const hasInitializedAiChatThreadsState = createAtomState<boolean>({
+  key: 'hasInitializedAiChatThreadsState',
   defaultValue: false,
 });

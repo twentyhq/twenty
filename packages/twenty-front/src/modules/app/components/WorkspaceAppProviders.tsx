@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { InboxProvider } from '@/ai/components/AgentChatProvider';
+import { AiChatProvider } from '@/ai/components/AgentChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { WorkspaceAppPageTitle } from '@/app/components/WorkspaceAppPageTitle';
@@ -65,7 +65,7 @@ export const WorkspaceAppProviders = () => {
                   >
                     <AppToaster />
                     <ErrorMessageEffect />
-                    <InboxProvider>
+                    <AiChatProvider>
                       <DialogComponentInstanceContext.Provider
                         value={{ instanceId: 'dialog-manager' }}
                       >
@@ -91,7 +91,7 @@ export const WorkspaceAppProviders = () => {
                           </StrictMode>
                         </DialogManager>
                       </DialogComponentInstanceContext.Provider>
-                    </InboxProvider>
+                    </AiChatProvider>
                   </ContextStoreComponentInstanceContext.Provider>
                   <SupportChatEffect />
                   <InitializeQueryParamStateEffect />

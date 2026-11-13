@@ -3,14 +3,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
-export type AssignInboxMemberOption = {
+export type AssignAiChatMemberOption = {
   workspaceMember: PartialWorkspaceMember;
   label: string;
 };
 
 // The member's own name comes first, as assigning to oneself is the most
 // common pick
-export const getAssignInboxMemberOptions = ({
+export const getAssignAiChatMemberOptions = ({
   workspaceMembers,
   currentWorkspaceMemberId,
   search,
@@ -18,7 +18,7 @@ export const getAssignInboxMemberOptions = ({
   workspaceMembers: PartialWorkspaceMember[];
   currentWorkspaceMemberId: string | undefined;
   search: string;
-}): AssignInboxMemberOption[] => {
+}): AssignAiChatMemberOption[] => {
   const normalizedSearch = search.trim().toLowerCase();
 
   return workspaceMembers

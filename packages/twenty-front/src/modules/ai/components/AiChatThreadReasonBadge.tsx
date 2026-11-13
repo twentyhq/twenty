@@ -3,8 +3,8 @@ import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { INBOX_THREAD_REASONS } from '@/ai/constants/AiChatThreadReasons';
-import { type InboxThreadReason } from '@/ai/types/AiChatThreadReason';
+import { AI_CHAT_THREAD_REASONS } from '@/ai/constants/AiChatThreadReasons';
+import { type AiChatThreadReason } from '@/ai/types/AiChatThreadReason';
 
 const StyledReason = styled.span<{
   $isHighlighted: boolean;
@@ -28,18 +28,18 @@ const StyledReason = styled.span<{
   white-space: nowrap;
 `;
 
-type InboxThreadReasonBadgeProps = {
-  reason: InboxThreadReason;
+type AiChatThreadReasonBadgeProps = {
+  reason: AiChatThreadReason;
   isUnread?: boolean;
 };
 
-export const InboxThreadReasonBadge = ({
+export const AiChatThreadReasonBadge = ({
   reason,
   isUnread = false,
-}: InboxThreadReasonBadgeProps) => {
+}: AiChatThreadReasonBadgeProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { Icon, label } = INBOX_THREAD_REASONS[reason];
+  const { Icon, label } = AI_CHAT_THREAD_REASONS[reason];
   const isHighlighted =
     isUnread && ['needsInput', 'mentioned', 'assigned'].includes(reason);
 

@@ -1,10 +1,10 @@
-import { NavigationDrawerInboxContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 type NavigationDrawerTabbedContentProps = {
-  showInboxContent: boolean;
-  shouldMountInboxContent: boolean;
+  showAiChatContent: boolean;
+  shouldMountAiChatContent: boolean;
   navigationContent: ReactNode;
 };
 
@@ -13,18 +13,18 @@ const StyledTabContent = styled.div<{ isHidden: boolean }>`
 `;
 
 export const NavigationDrawerTabbedContent = ({
-  showInboxContent,
-  shouldMountInboxContent,
+  showAiChatContent,
+  shouldMountAiChatContent,
   navigationContent,
 }: NavigationDrawerTabbedContentProps) => {
   return (
     <>
-      <StyledTabContent isHidden={showInboxContent}>
+      <StyledTabContent isHidden={showAiChatContent}>
         {navigationContent}
       </StyledTabContent>
-      {shouldMountInboxContent && (
-        <StyledTabContent isHidden={!showInboxContent}>
-          <NavigationDrawerInboxContent />
+      {shouldMountAiChatContent && (
+        <StyledTabContent isHidden={!showAiChatContent}>
+          <NavigationDrawerAiChatContent />
         </StyledTabContent>
       )}
     </>

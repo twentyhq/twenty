@@ -10,7 +10,7 @@ const StyledIndicatorContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const InboxCompactionIndicator = () => {
+export const AiChatCompactionIndicator = () => {
   const { t } = useLingui();
   const theme = useTheme();
 

@@ -1,4 +1,4 @@
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { inboxThreadMemberStateByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -107,13 +107,13 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   // A chat's read and done state belongs to the member, not to the record,
   // so the inbox commands read it from here. They stay hidden until the
   // member state loads rather than offering the wrong half of a pair
-  const inboxThreadParticipants = useAtomStateValue(
-    inboxThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const inboxStatusThreadIds =
     objectMetadataItem?.nameSingular ===
       StandardObjectNameSingular.AgentChatThread &&
-    isDefined(inboxThreadParticipants)
+    isDefined(aiChatThreadParticipants)
       ? (recordIds ?? [])
       : [];
   const inboxSelectedChannelView = useAtomStateValue(

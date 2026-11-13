@@ -2,21 +2,21 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { aiChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
+import { aiChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const NEW_CHAT_THREAD_ID = 'new-chat-thread-id';
 const OTHER_CHAT_THREAD_ID = 'other-chat-thread-id';
 
-const uploadedFile: InboxFileUIPart = {
+const uploadedFile: AiChatFileUIPart = {
   type: 'file',
   filename: 'contacts.csv',
   mediaType: 'text/csv',
@@ -29,16 +29,16 @@ let finishUpload: () => void = () => {};
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({
     switchToNewChat: () =>
-      jotaiStore.set(currentInboxThreadState.atom, NEW_CHAT_THREAD_ID),
+      jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID),
   }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatFileUpload', () => ({
-  useInboxFileUpload: () => ({
+  useAiChatFileUpload: () => ({
     uploadFiles: () =>
-      new Promise<InboxFileUIPart[]>((resolve) => {
+      new Promise<AiChatFileUIPart[]>((resolve) => {
         finishUpload = () => {
-          jotaiStore.set(inboxUploadedFilesState.atom, [uploadedFile]);
+          jotaiStore.set(aiChatUploadedFilesState.atom, [uploadedFile]);
           resolve([uploadedFile]);
         };
       }),
@@ -55,9 +55,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 describe('useOpenAskAiPageWithPreprompt', () => {
   beforeEach(() => {
-    jotaiStore.set(inboxDraftsByThreadIdState.atom, {});
-    jotaiStore.set(agentChatPrepromptState.atom, null);
-    jotaiStore.set(inboxUploadedFilesState.atom, []);
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {});
+    jotaiStore.set(aiChatPrepromptState.atom, null);
+    jotaiStore.set(aiChatUploadedFilesState.atom, []);
   });
 
   it('sends the prompt in the new chat once the files have uploaded', async () => {
@@ -76,14 +76,14 @@ describe('useOpenAskAiPageWithPreprompt', () => {
       await opening;
     });
 
-    expect(jotaiStore.get(inboxDraftsByThreadIdState.atom)).toEqual({
+    expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({
       [NEW_CHAT_THREAD_ID]: 'Import these contacts',
     });
-    expect(jotaiStore.get(agentChatPrepromptState.atom)).toEqual({
+    expect(jotaiStore.get(aiChatPrepromptState.atom)).toEqual({
       serializedDocument: 'Import these contacts',
       mode: 'SEND',
     });
-    expect(jotaiStore.get(inboxUploadedFilesState.atom)).toEqual([
+    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([
       uploadedFile,
     ]);
   });
@@ -100,21 +100,21 @@ describe('useOpenAskAiPageWithPreprompt', () => {
         files: [new File(['name'], 'contacts.csv')],
       });
 
-      jotaiStore.set(currentInboxThreadState.atom, OTHER_CHAT_THREAD_ID);
+      jotaiStore.set(currentAiChatThreadState.atom, OTHER_CHAT_THREAD_ID);
       finishUpload();
       await opening;
     });
 
-    expect(jotaiStore.get(inboxDraftsByThreadIdState.atom)).toEqual({});
-    expect(jotaiStore.get(agentChatPrepromptState.atom)).toBeNull();
-    expect(jotaiStore.get(inboxUploadedFilesState.atom)).toEqual([]);
+    expect(jotaiStore.get(aiChatDraftsByThreadIdState.atom)).toEqual({});
+    expect(jotaiStore.get(aiChatPrepromptState.atom)).toBeNull();
+    expect(jotaiStore.get(aiChatUploadedFilesState.atom)).toEqual([]);
   });
 
   it('addresses the prompt to the default recipients instead of a leftover draft', async () => {
     const newChatRecipientsAtom =
-      inboxNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID);
+      aiChatNewThreadRecipientsFamilyState.atomFamily(NEW_CHAT_THREAD_ID);
 
-    jotaiStore.set(newInboxThreadIdState.atom, NEW_CHAT_THREAD_ID);
+    jotaiStore.set(newAiChatThreadIdState.atom, NEW_CHAT_THREAD_ID);
     jotaiStore.set(newChatRecipientsAtom, {
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: ['20202020-0000-4000-8000-0000000000bb'],
@@ -132,7 +132,7 @@ describe('useOpenAskAiPageWithPreprompt', () => {
     });
 
     expect(jotaiStore.get(newChatRecipientsAtom)).toEqual(
-      INBOX_NEW_THREAD_DEFAULT_RECIPIENTS,
+      AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
     );
   });
 });

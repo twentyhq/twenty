@@ -6,7 +6,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxSelectionPile } from '@/ai/components/AiChatInboxSelectionPile';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
@@ -28,7 +28,7 @@ const StyledButtons = styled.div`
 `;
 
 type InboxSelectionPaneProps = {
-  selectedThreads: InboxThreadRecord[];
+  selectedThreads: AiChatThreadRecord[];
 };
 
 export const InboxSelectionPane = ({

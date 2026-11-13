@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { findInboxQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
+import { findAiChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
 
 const JULIA = {
   id: 'julia-id',
@@ -46,7 +46,7 @@ const findQuotedMessageId = ({
   messages: ExtendedUIMessage[];
   quote?: { authorName: string; excerpt: string };
 }) =>
-  findInboxQuotedMessage({
+  findAiChatQuotedMessage({
     messages,
     replyMessageId: REPLY.id,
     quote,
@@ -57,7 +57,7 @@ const findQuotedMessageId = ({
     },
   })?.id;
 
-describe('findInboxQuotedMessage', () => {
+describe('findAiChatQuotedMessage', () => {
   it('finds the quoted message', () => {
     expect(
       findQuotedMessageId({

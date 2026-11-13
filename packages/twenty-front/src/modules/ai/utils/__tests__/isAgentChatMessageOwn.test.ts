@@ -1,6 +1,6 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { isInboxMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { isAiChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 
 const CURRENT_WORKSPACE_MEMBER_ID = 'current-workspace-member';
 const OTHER_WORKSPACE_MEMBER_ID = 'other-workspace-member';
@@ -65,7 +65,7 @@ const TEST_CASES: MessageOwnershipTestCase[] = [
   },
 ];
 
-describe('isInboxMessageOwn', () => {
+describe('isAiChatMessageOwn', () => {
   it.each(TEST_CASES)(
     '$name',
     ({
@@ -76,7 +76,7 @@ describe('isInboxMessageOwn', () => {
       expected,
     }) => {
       expect(
-        isInboxMessageOwn({
+        isAiChatMessageOwn({
           message: {
             role,
             metadata: { senderWorkspaceMemberId, senderApplicationId },

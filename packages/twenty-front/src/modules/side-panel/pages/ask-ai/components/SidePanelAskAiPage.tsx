@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { InboxTab } from '@/ai/components/AiChatTab';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 
 const StyledContainer = styled.div`
   height: 100%;
@@ -10,10 +10,10 @@ const StyledContainer = styled.div`
 
 export const SidePanelAskAiPage = () => {
   return (
-    <InboxSurfaceContext.Provider value={INBOX_SURFACE.SIDE_PANEL}>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
       <StyledContainer>
-        <InboxTab />
+        <AiChatTab />
       </StyledContainer>
-    </InboxSurfaceContext.Provider>
+    </AiChatSurfaceContext.Provider>
   );
 };

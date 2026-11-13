@@ -7,7 +7,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { InboxThreadList } from '@/ai/components/AiChatThreadList';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -34,7 +34,7 @@ type ChatThreadsCardContentProps = {
   error?: unknown;
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
-  threads: InboxThreadRecord[];
+  threads: AiChatThreadRecord[];
   hasNextPage?: boolean;
   pagination?: ReactNode;
 };

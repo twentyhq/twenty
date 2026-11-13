@@ -6,7 +6,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -62,7 +62,7 @@ const AiNavigationContent = () => {
 
   // Persisted auth atoms must hydrate before capturing the permission snapshot.
   useEffect(() => {
-    setInboxThreadPermissions({
+    setAiChatThreadPermissions({
       store,
       threadId: THREAD.id,
       permissions: THREAD_PERMISSIONS,

@@ -1,90 +1,90 @@
 import { useEffect } from 'react';
 
-import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { useInboxSubscription } from '@/ai/hooks/useAgentChatSubscription';
-import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChat } from '@/ai/hooks/useAgentChat';
+import { useAiChatSubscription } from '@/ai/hooks/useAgentChatSubscription';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const AgentChatStreamSubscriptionEffect = () => {
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
-  const isOnNewInboxSlot = useIsOnNewInboxSlot();
+export const AiChatStreamSubscriptionEffect = () => {
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
 
-  useAgentChat();
+  useAiChat();
 
-  useInboxSubscription(isOnNewInboxSlot ? null : currentInboxThread);
+  useAiChatSubscription(isOnNewAiChatSlot ? null : currentAiChatThread);
 
-  const inboxFetchedMessages = useAtomFamilyStateValue(
-    inboxFetchedMessagesFamilyState,
-    { threadId: currentInboxThread },
+  const aiChatFetchedMessages = useAtomFamilyStateValue(
+    aiChatFetchedMessagesFamilyState,
+    { threadId: currentAiChatThread },
   );
 
-  const setInboxMessages = useSetAtomFamilyState(inboxMessagesFamilyState, {
-    threadId: currentInboxThread,
+  const setAiChatMessages = useSetAtomFamilyState(aiChatMessagesFamilyState, {
+    threadId: currentAiChatThread,
   });
 
-  const agentChatIsStreaming = useAtomFamilyStateValue(
-    agentChatIsStreamingFamilyState,
-    { threadId: currentInboxThread },
+  const aiChatIsStreaming = useAtomFamilyStateValue(
+    aiChatIsStreamingFamilyState,
+    { threadId: currentAiChatThread },
   );
 
-  const agentChatIsAwaitingPersistedRefetch = useAtomFamilyStateValue(
-    agentChatIsAwaitingPersistedRefetchFamilyState,
-    { threadId: currentInboxThread },
+  const aiChatIsAwaitingPersistedRefetch = useAtomFamilyStateValue(
+    aiChatIsAwaitingPersistedRefetchFamilyState,
+    { threadId: currentAiChatThread },
   );
 
-  const agentChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
-    agentChatIsAwaitingFirstChunkFamilyState,
-    { threadId: currentInboxThread },
+  const aiChatIsAwaitingFirstChunk = useAtomFamilyStateValue(
+    aiChatIsAwaitingFirstChunkFamilyState,
+    { threadId: currentAiChatThread },
   );
 
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
 
-  const setInboxDisplayedThread = useSetAtomState(inboxDisplayedThreadState);
+  const setAiChatDisplayedThread = useSetAtomState(aiChatDisplayedThreadState);
 
   useEffect(() => {
-    if (agentChatIsStreaming) {
+    if (aiChatIsStreaming) {
       return;
     }
 
-    const isThreadSwitch = currentInboxThread !== inboxDisplayedThread;
+    const isThreadSwitch = currentAiChatThread !== aiChatDisplayedThread;
 
     if (
       !isThreadSwitch &&
-      (agentChatIsAwaitingPersistedRefetch || agentChatIsAwaitingFirstChunk)
+      (aiChatIsAwaitingPersistedRefetch || aiChatIsAwaitingFirstChunk)
     ) {
       return;
     }
 
-    if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
-      setInboxDisplayedThread(currentInboxThread);
+    if (isThreadSwitch && aiChatIsAwaitingFirstChunk) {
+      setAiChatDisplayedThread(currentAiChatThread);
 
       return;
     }
 
-    setInboxMessages(inboxFetchedMessages);
+    setAiChatMessages(aiChatFetchedMessages);
 
     if (isThreadSwitch) {
-      setInboxDisplayedThread(currentInboxThread);
+      setAiChatDisplayedThread(currentAiChatThread);
     }
   }, [
-    inboxFetchedMessages,
-    agentChatIsStreaming,
-    agentChatIsAwaitingPersistedRefetch,
-    agentChatIsAwaitingFirstChunk,
-    setInboxMessages,
-    currentInboxThread,
-    inboxDisplayedThread,
-    setInboxDisplayedThread,
+    aiChatFetchedMessages,
+    aiChatIsStreaming,
+    aiChatIsAwaitingPersistedRefetch,
+    aiChatIsAwaitingFirstChunk,
+    setAiChatMessages,
+    currentAiChatThread,
+    aiChatDisplayedThread,
+    setAiChatDisplayedThread,
   ]);
 
   return null;

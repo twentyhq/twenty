@@ -1,7 +1,7 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 // Threads created before last activity was tracked fall back to their last
 // change
-export const getInboxThreadLastActivityAt = (
-  thread: Pick<InboxThreadRecord, 'lastActivityAt' | 'updatedAt'>,
+export const getAiChatThreadLastActivityAt = (
+  thread: Pick<AiChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,
 ): string => thread.lastActivityAt ?? thread.updatedAt;

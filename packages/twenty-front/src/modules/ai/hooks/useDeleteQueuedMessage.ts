@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { DeleteQueuedChatMessageDocument } from '~/generated-metadata/graphql';
 
@@ -16,7 +16,7 @@ export const useDeleteQueuedMessage = () => {
       });
 
       if (data?.deleteQueuedChatMessage) {
-        dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       }
     },
     [apolloClient],

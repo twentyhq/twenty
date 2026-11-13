@@ -3,10 +3,10 @@ import { isNonEmptyString } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
-import { useInboxThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
-import { useIsInboxThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
+import { useAiChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 const StyledSubtitle = styled.div`
   align-items: center;
@@ -25,18 +25,18 @@ const StyledPreview = styled.div`
   min-width: 0;
 `;
 
-type InboxThreadSubtitleProps = {
-  thread: InboxThreadRecord;
+type AiChatThreadSubtitleProps = {
+  thread: AiChatThreadRecord;
   size?: 'sm' | 'md';
 };
 
-export const InboxThreadSubtitle = ({
+export const AiChatThreadSubtitle = ({
   thread,
   size = 'sm',
-}: InboxThreadSubtitleProps) => {
-  const isUnread = useIsInboxThreadShownAsUnread(thread);
+}: AiChatThreadSubtitleProps) => {
+  const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { isAwaitingAnswer, hasDraft, previewText } =
-    useInboxThreadSubtitleContent(thread);
+    useAiChatThreadSubtitleContent(thread);
 
   return (
     <Text
@@ -45,10 +45,10 @@ export const InboxThreadSubtitle = ({
       color={isUnread ? 'secondary' : 'tertiary'}
     >
       {isAwaitingAnswer && (
-        <InboxThreadReasonBadge reason="needsInput" isUnread={isUnread} />
+        <AiChatThreadReasonBadge reason="needsInput" isUnread={isUnread} />
       )}
       {isAwaitingAnswer && hasDraft && <span aria-hidden>·</span>}
-      {hasDraft && <InboxThreadReasonBadge reason="draft" />}
+      {hasDraft && <AiChatThreadReasonBadge reason="draft" />}
       {(isAwaitingAnswer || hasDraft) && isNonEmptyString(previewText) && (
         <span aria-hidden>·</span>
       )}

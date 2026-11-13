@@ -5,14 +5,14 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { INBOX_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { inboxThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
-import { inboxMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
-import { inboxMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
-import { getInboxMessageReaders } from '@/ai/utils/getAgentChatMessageReaders';
-import { getInboxSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/AiChatReceiptReaderSentenceMaxCount';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
+import { aiChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
+import { aiChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
+import { getAiChatMessageReaders } from '@/ai/utils/getAgentChatMessageReaders';
+import { getAiChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
@@ -44,26 +44,26 @@ const StyledPendingLabel = styled.div`
   opacity: 0.5;
 `;
 
-type InboxMessageReceiptProps = {
+type AiChatMessageReceiptProps = {
   messageId: string;
 };
 
-export const InboxMessageReceipt = ({
+export const AiChatMessageReceipt = ({
   messageId,
-}: InboxMessageReceiptProps) => {
+}: AiChatMessageReceiptProps) => {
   const { t } = useLingui();
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
-  const inboxThreadReadPositions = useAtomFamilyStateValue(
-    inboxThreadReadPositionsFamilyState,
-    { threadId: inboxDisplayedThread },
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
+  const aiChatThreadReadPositions = useAtomFamilyStateValue(
+    aiChatThreadReadPositionsFamilyState,
+    { threadId: aiChatDisplayedThread },
   );
-  const inboxIsSendingMessage = useAtomFamilyStateValue(
-    inboxIsSendingMessageFamilyState,
-    { threadId: inboxDisplayedThread ?? '' },
+  const aiChatIsSendingMessage = useAtomFamilyStateValue(
+    aiChatIsSendingMessageFamilyState,
+    { threadId: aiChatDisplayedThread ?? '' },
   );
-  const inboxMessageIds = useAtomStateValue(inboxMessageIdsSelector);
+  const aiChatMessageIds = useAtomStateValue(aiChatMessageIdsSelector);
   const agentChatMessage = useAtomFamilySelectorValue(
-    inboxMessageFamilySelector,
+    aiChatMessageFamilySelector,
     { messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -72,19 +72,19 @@ export const InboxMessageReceipt = ({
   );
 
   if (
-    !isDefined(inboxThreadReadPositions) ||
+    !isDefined(aiChatThreadReadPositions) ||
     !isDefined(agentChatMessage?.metadata?.createdAt)
   ) {
     return null;
   }
 
-  if (inboxIsSendingMessage && inboxMessageIds.at(-1) === messageId) {
+  if (aiChatIsSendingMessage && aiChatMessageIds.at(-1) === messageId) {
     return <ChatMessageReceipt status="sending" />;
   }
 
   const { readerWorkspaceMemberIds, pendingWorkspaceMemberIds } =
-    getInboxMessageReaders({
-      readPositions: inboxThreadReadPositions,
+    getAiChatMessageReaders({
+      readPositions: aiChatThreadReadPositions,
       createdAt: agentChatMessage.metadata.createdAt,
       senderWorkspaceMemberId:
         agentChatMessage.metadata.senderWorkspaceMemberId ?? undefined,
@@ -102,7 +102,7 @@ export const InboxMessageReceipt = ({
     return {
       id: workspaceMemberId,
       avatarUrl: member?.avatarUrl,
-      name: getInboxSenderLabel({
+      name: getAiChatSenderLabel({
         sender: member,
         isCurrentWorkspaceMember:
           workspaceMemberId === currentWorkspaceMember?.id,
@@ -117,7 +117,7 @@ export const InboxMessageReceipt = ({
   const recipientCount = readerCount + pendingMembers.length;
   const isSentence =
     !isNonEmptyArray(pendingMembers) &&
-    readerCount <= INBOX_RECEIPT_READER_SENTENCE_MAX_COUNT;
+    readerCount <= AI_CHAT_RECEIPT_READER_SENTENCE_MAX_COUNT;
 
   return (
     <Tooltip

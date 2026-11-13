@@ -2,11 +2,11 @@ import { useStore } from 'jotai';
 import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isInboxPath } from '~/utils/isAiChatInboxPath';
-import { isInboxThreadPath } from '~/utils/isAiChatPath';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type SidePanelAskAiHandoffEffectProps = {
@@ -21,23 +21,23 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isInboxThreadPath(pathname)) {
+    if (isAiChatPath(pathname)) {
       return;
     }
 
     // The inbox shows its own chat, which keeps the handoff pending; only the
     // onboarding chat ends there
     if (isInboxPath(pathname)) {
-      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       return;
     }
 
-    if (!store.get(shouldContinueInboxInSidePanelState.atom)) {
+    if (!store.get(shouldContinueAiChatInSidePanelState.atom)) {
       return;
     }
 
-    store.set(shouldContinueInboxInSidePanelState.atom, false);
-    store.set(shouldOpenInboxAfterOnboardingState.atom, false);
+    store.set(shouldContinueAiChatInSidePanelState.atom, false);
+    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     if (isSettingsPath(pathname)) {
       return;

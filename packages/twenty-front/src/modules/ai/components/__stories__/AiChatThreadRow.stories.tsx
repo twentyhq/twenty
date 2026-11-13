@@ -8,9 +8,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
-import { InboxThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
-import { InboxThreadRow } from '@/ai/components/AiChatThreadRow';
+import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
+import { AiChatThreadRequestActions } from '@/ai/components/AiChatThreadRequestActions';
+import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { InboxThreadTriageButtons } from '@/ai/components/AiChatThreadTriageButtons';
 
 const StyledSubtitle = styled.div`
@@ -27,7 +27,7 @@ const onReview = fn();
 
 const meta = {
   title: 'Modules/AI/AiChatThreadRow',
-  component: InboxThreadRow,
+  component: AiChatThreadRow,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 760 } },
   args: {
@@ -61,7 +61,7 @@ const meta = {
     onCheckboxClick: fn(),
     onContextMenu: fn(),
   },
-} satisfies Meta<typeof InboxThreadRow>;
+} satisfies Meta<typeof AiChatThreadRow>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -180,14 +180,14 @@ export const UnreadRequest: Story = {
     ),
     subtitle: (
       <StyledSubtitle>
-        <InboxThreadReasonBadge reason="needsInput" isUnread />
+        <AiChatThreadReasonBadge reason="needsInput" isUnread />
         <Text size="sm" color="secondary" truncate>
           Ada: Five renewal drafts are ready for your review.
         </Text>
       </StyledSubtitle>
     ),
     children: (
-      <InboxThreadRequestActions
+      <AiChatThreadRequestActions
         request={{ type: 'review', label: 'Review 5 drafts', onReview }}
       />
     ),
@@ -211,8 +211,8 @@ export const NarrowDraft: Story = {
   args: {
     subtitle: (
       <StyledSubtitle>
-        <InboxThreadReasonBadge reason="needsInput" isUnread />
-        <InboxThreadReasonBadge reason="draft" />
+        <AiChatThreadReasonBadge reason="needsInput" isUnread />
+        <AiChatThreadReasonBadge reason="draft" />
         <Text size="sm" color="tertiary" truncate>
           Quote the annual plan and include the renewal details
         </Text>

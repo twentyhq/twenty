@@ -13,7 +13,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-export const useTargetInboxThreadsInContextStore = () => {
+export const useTargetAiChatThreadsInContextStore = () => {
   const store = useStore();
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -23,7 +23,7 @@ export const useTargetInboxThreadsInContextStore = () => {
     },
   );
 
-  const targetInboxThreadsInContextStore = useCallback(
+  const targetAiChatThreadsInContextStore = useCallback(
     ({
       contextStoreInstanceId,
       threadIds,
@@ -61,5 +61,5 @@ export const useTargetInboxThreadsInContextStore = () => {
     [store, chatObjectMetadataItem],
   );
 
-  return { targetInboxThreadsInContextStore };
+  return { targetAiChatThreadsInContextStore };
 };

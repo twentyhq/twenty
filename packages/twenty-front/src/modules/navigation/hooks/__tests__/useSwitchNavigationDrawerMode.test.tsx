@@ -27,14 +27,14 @@ jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
 jest.mock('@/ai/hooks/useSelectAiChatThread', () => ({
-  useSelectInboxThread: () => ({ selectInboxThread: jest.fn() }),
+  useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
 }));
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
   useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: jest.fn() }),
 }));
 
 const DEFAULT_HOME_PAGE_PATH = '/objects/companies';
-const INBOX_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
+const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
 
 const mockSwitchToNewChat = jest.fn();
 const mockReturnFromExpandedAiChat = jest.fn();
@@ -118,7 +118,7 @@ describe('useSwitchNavigationDrawerMode', () => {
   it('leaves settings for the default home page when it was opened from the chat', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/settings/profile',
-      memorizedUrl: INBOX_PATH,
+      memorizedUrl: AI_CHAT_PATH,
     });
 
     act(() =>
@@ -132,7 +132,7 @@ describe('useSwitchNavigationDrawerMode', () => {
 
   it('returns from the chat page without navigating itself', () => {
     const { result, store } = renderSwitchNavigationDrawerMode({
-      pathname: INBOX_PATH,
+      pathname: AI_CHAT_PATH,
     });
 
     act(() =>
@@ -154,13 +154,13 @@ describe('useSwitchNavigationDrawerMode', () => {
 
     act(() =>
       result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
 
     expect(mockSwitchToNewChat).toHaveBeenCalled();
     expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
-      NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
   });
 
@@ -171,21 +171,21 @@ describe('useSwitchNavigationDrawerMode', () => {
 
     act(() =>
       result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
 
     expect(mockSwitchToNewChat).toHaveBeenCalled();
   });
 
-  it.each([INBOX_PATH, '/inbox'])(
+  it.each([AI_CHAT_PATH, '/inbox'])(
     'does not start a new chat when %s is already open',
     (pathname) => {
       const { result } = renderSwitchNavigationDrawerMode({ pathname });
 
       act(() =>
         result.current.switchNavigationDrawerMode(
-          NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+          NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
         ),
       );
 
@@ -268,7 +268,7 @@ describe('useSwitchNavigationDrawerMode', () => {
 
     for (const [mode, pathname] of [
       [NAVIGATION_DRAWER_TABS.SETTINGS, '/settings/profile'],
-      [NAVIGATION_DRAWER_TABS.INBOX_HISTORY, '/chat'],
+      [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY, '/chat'],
       [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU, DEFAULT_HOME_PAGE_PATH],
     ] as const) {
       window.history.replaceState(null, '', result.current.location.pathname);

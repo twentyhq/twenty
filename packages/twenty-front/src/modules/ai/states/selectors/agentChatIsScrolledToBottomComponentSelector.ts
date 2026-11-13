@@ -1,11 +1,11 @@
-import { INBOX_SCROLL_BOTTOM_THRESHOLD_IN_PX } from '@/ai/constants/AiChatScrollBottomThresholdInPx';
+import { AI_CHAT_SCROLL_BOTTOM_THRESHOLD_IN_PX } from '@/ai/constants/AiChatScrollBottomThresholdInPx';
 import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-export const inboxIsScrolledToBottomComponentSelector =
+export const aiChatIsScrolledToBottomComponentSelector =
   createAtomComponentSelector<boolean>({
-    key: 'inboxIsScrolledToBottomComponentSelector',
+    key: 'aiChatIsScrolledToBottomComponentSelector',
     componentInstanceContext: ScrollWrapperComponentInstanceContext,
     get:
       ({ instanceId }) =>
@@ -14,6 +14,6 @@ export const inboxIsScrolledToBottomComponentSelector =
           instanceId,
         });
 
-        return scrollBottom <= INBOX_SCROLL_BOTTOM_THRESHOLD_IN_PX;
+        return scrollBottom <= AI_CHAT_SCROLL_BOTTOM_THRESHOLD_IN_PX;
       },
   });

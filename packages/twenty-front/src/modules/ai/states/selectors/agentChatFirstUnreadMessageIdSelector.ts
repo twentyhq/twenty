@@ -1,24 +1,24 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { isInboxMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
-import { isSilentInboxMessage } from '@/ai/utils/isSilentAgentChatMessage';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { isAiChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { isSilentAiChatMessage } from '@/ai/utils/isSilentAgentChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 // The member's own messages are never new to them; a message without a sender
 // predates multiplayer chats, when every user message was the owner's
-export const inboxFirstUnreadMessageIdSelector = createAtomSelector<
+export const aiChatFirstUnreadMessageIdSelector = createAtomSelector<
   string | null
 >({
-  key: 'inboxFirstUnreadMessageIdSelector',
+  key: 'aiChatFirstUnreadMessageIdSelector',
   get: ({ get }) => {
-    const threadId = get(inboxDisplayedThreadState);
-    const visit = get(inboxThreadVisitState);
+    const threadId = get(aiChatDisplayedThreadState);
+    const visit = get(aiChatThreadVisitState);
 
     if (
       !isDefined(threadId) ||
@@ -30,7 +30,7 @@ export const inboxFirstUnreadMessageIdSelector = createAtomSelector<
 
     const currentWorkspaceMember = get(currentWorkspaceMemberState);
     const threadOwnerWorkspaceMemberId = get(
-      inboxThreadRecordFamilySelector,
+      aiChatThreadRecordFamilySelector,
       threadId,
     )?.workspaceMemberId;
     const isSenderlessMessageOwn =
@@ -40,8 +40,8 @@ export const inboxFirstUnreadMessageIdSelector = createAtomSelector<
       ? new Date(visit.lastReadAt).getTime()
       : null;
 
-    const messages = get(inboxDisplayedThreadMessagesSelector).filter(
-      (message) => !isSilentInboxMessage(message),
+    const messages = get(aiChatDisplayedThreadMessagesSelector).filter(
+      (message) => !isSilentAiChatMessage(message),
     );
 
     const firstUnreadMessageIndex = messages.findIndex((message) => {
@@ -52,7 +52,7 @@ export const inboxFirstUnreadMessageIdSelector = createAtomSelector<
       }
 
       if (message.role === AGENT_MESSAGE_ROLE.USER) {
-        const isOwnMessage = isInboxMessageOwn({
+        const isOwnMessage = isAiChatMessageOwn({
           message,
           currentWorkspaceMemberId: currentWorkspaceMember?.id,
           isSenderlessUserMessageOwn: isSenderlessMessageOwn,

@@ -1,46 +1,46 @@
-import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { getDisplayedInboxThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 
 const URL_CHAT_ID = '20202020-0000-4000-8000-0000000000aa';
 const CURRENT_CHAT_ID = '20202020-0000-4000-8000-0000000000bb';
 
-describe('getDisplayedInboxThreadId', () => {
+describe('getDisplayedAiChatThreadId', () => {
   it('shows the chat in the URL first', () => {
     expect(
-      getDisplayedInboxThreadId({
+      getDisplayedAiChatThreadId({
         urlThreadId: URL_CHAT_ID,
-        currentInboxThread: CURRENT_CHAT_ID,
-        isOnNewInboxSlot: false,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBe(URL_CHAT_ID);
   });
 
   it('falls back to the current chat', () => {
     expect(
-      getDisplayedInboxThreadId({
+      getDisplayedAiChatThreadId({
         urlThreadId: undefined,
-        currentInboxThread: CURRENT_CHAT_ID,
-        isOnNewInboxSlot: false,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBe(CURRENT_CHAT_ID);
   });
 
   it('shows no record for a new chat', () => {
     expect(
-      getDisplayedInboxThreadId({
+      getDisplayedAiChatThreadId({
         urlThreadId: undefined,
-        currentInboxThread: CURRENT_CHAT_ID,
-        isOnNewInboxSlot: true,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: true,
       }),
     ).toBeNull();
   });
 
   it('shows a draft route before the current chat has switched', () => {
     expect(
-      getDisplayedInboxThreadId({
-        urlThreadId: INBOX_NEW_THREAD_PATH_SEGMENT,
-        currentInboxThread: CURRENT_CHAT_ID,
-        isOnNewInboxSlot: false,
+      getDisplayedAiChatThreadId({
+        urlThreadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT,
+        currentAiChatThread: CURRENT_CHAT_ID,
+        isOnNewAiChatSlot: false,
       }),
     ).toBeNull();
   });

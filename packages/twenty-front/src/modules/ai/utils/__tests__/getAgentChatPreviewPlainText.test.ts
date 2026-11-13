@@ -1,7 +1,7 @@
-import { getInboxPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
+import { getAiChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
 import { formatRecordReference } from 'twenty-shared/ai';
 
-describe('getInboxPreviewPlainText', () => {
+describe('getAiChatPreviewPlainText', () => {
   it('uses the configured assistant label and keeps literal punctuation', () => {
     const displayName = 'Scout [team] *helper* `Ada` 100%';
     const reference = formatRecordReference({
@@ -11,7 +11,7 @@ describe('getInboxPreviewPlainText', () => {
     });
 
     expect(
-      getInboxPreviewPlainText({
+      getAiChatPreviewPlainText({
         markdown: `Ask ${reference} **today**`,
         assistantDisplayName: displayName,
       }),
@@ -23,7 +23,7 @@ describe('getInboxPreviewPlainText', () => {
       '@Ada asked [[record:company:20202020-a305-41e7-8c72-ba44072a4c58:Ada]] and [[record:agentChatAssistant:agentChatAssistant:Ada]]';
 
     expect(
-      getInboxPreviewPlainText({ markdown, assistantDisplayName: 'Scout' }),
+      getAiChatPreviewPlainText({ markdown, assistantDisplayName: 'Scout' }),
     ).toBe('@Ada asked Ada and @Scout');
   });
 });

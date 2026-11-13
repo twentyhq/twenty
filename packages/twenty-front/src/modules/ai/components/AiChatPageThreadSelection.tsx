@@ -1,13 +1,13 @@
 import { useLocation, useParams } from 'react-router-dom';
 
-import { InboxThreadPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
-import { INBOX_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
+import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
+import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
 
-export const InboxThreadPageThreadSelection = () => {
+export const AiChatPageThreadSelection = () => {
   const { key } = useLocation();
   const { threadId } = useParams();
   const threadSelectionKey =
-    threadId === INBOX_NEW_THREAD_PATH_SEGMENT ? key : threadId;
+    threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT ? key : threadId;
 
-  return <InboxThreadPageThreadUrlSyncEffect key={threadSelectionKey} />;
+  return <AiChatPageThreadUrlSyncEffect key={threadSelectionKey} />;
 };

@@ -1,9 +1,9 @@
-import { getExpandedInboxReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 
-describe('getExpandedInboxReturnLocation', () => {
+describe('getExpandedAiChatReturnLocation', () => {
   it('should return the location the chat was expanded from', () => {
     expect(
-      getExpandedInboxReturnLocation({
+      getExpandedAiChatReturnLocation({
         returnLocation: '/objects/people?viewId=1#top',
       }),
     ).toBe('/objects/people?viewId=1#top');
@@ -18,6 +18,6 @@ describe('getExpandedInboxReturnLocation', () => {
     ['a backslash escape', { returnLocation: '/objects\\..\\people' }],
     ['an onboarding path', { returnLocation: '/create/profile' }],
   ])('should return null for %s', (_case, historyState) => {
-    expect(getExpandedInboxReturnLocation(historyState)).toBeNull();
+    expect(getExpandedAiChatReturnLocation(historyState)).toBeNull();
   });
 });

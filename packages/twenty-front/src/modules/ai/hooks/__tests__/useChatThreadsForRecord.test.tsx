@@ -3,7 +3,7 @@ import { createStore, Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
-import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type AiChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getDefaultObjectPermissions } from '@/object-metadata/utils/getDefaultObjectPermissions';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
@@ -48,7 +48,7 @@ const buildLink = ({
   id: string;
   threadId: string;
   title: string;
-}): InboxThreadTargetRecord => ({
+}): AiChatThreadTargetRecord => ({
   __typename: 'AgentChatThreadTarget',
   id,
   threadId,

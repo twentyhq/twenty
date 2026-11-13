@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getInboxThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
 import { isInboxThreadInChannelThreadFilter } from '@/ai/utils/isAgentChatThreadInChannelThreadFilter';
 import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
@@ -13,7 +13,7 @@ export const isInboxThreadInChannelView = ({
   isMentioned,
 }: {
   thread: Pick<
-    InboxThreadRecord,
+    AiChatThreadRecord,
     | 'deletedAt'
     | 'channelId'
     | 'assigneeId'

@@ -1,24 +1,24 @@
 import { type ReactNode, Suspense } from 'react';
 
 import { InboxChannelsEffect } from '@/ai/components/AgentChatChannelsEffect';
-import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
-import { InboxThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
-import { InboxThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
-import { InboxThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
-import { AgentChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
+import { AiChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
+import { AiChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
+import { AiChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
+import { AiChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
+import { AiChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
 
-type InboxProviderProps = {
+type AiChatProviderProps = {
   children: ReactNode;
 };
 
-export const InboxProvider = ({ children }: InboxProviderProps) => (
+export const AiChatProvider = ({ children }: AiChatProviderProps) => (
   <Suspense fallback={null}>
-    <InboxThreadInitializationEffect />
-    <InboxThreadRecordOperationsEffect />
-    <InboxThreadParticipantOperationsEffect />
+    <AiChatThreadInitializationEffect />
+    <AiChatThreadRecordOperationsEffect />
+    <AiChatThreadParticipantOperationsEffect />
     <InboxChannelsEffect />
-    <AgentChatRuntimeEffects />
-    <AgentChatToolIndexInvalidationEffect />
+    <AiChatRuntimeEffects />
+    <AiChatToolIndexInvalidationEffect />
     {children}
   </Suspense>
 );

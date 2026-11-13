@@ -1,16 +1,16 @@
 import { useLocation } from 'react-router-dom';
 
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isAiModePath } from '~/utils/isAiModePath';
 
 // Only a chat on the main page, full page or in the inbox, leaves room for a
 // side panel artifact; the onboarding chat owns the screen.
-export const useIsInboxArtifactSurface = () => {
+export const useIsAiChatArtifactSurface = () => {
   const { pathname } = useLocation();
-  const shouldOpenInboxAfterOnboarding = useAtomStateValue(
-    shouldOpenInboxAfterOnboardingState,
+  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
+    shouldOpenAiChatAfterOnboardingState,
   );
 
-  return isAiModePath(pathname) && !shouldOpenInboxAfterOnboarding;
+  return isAiModePath(pathname) && !shouldOpenAiChatAfterOnboarding;
 };

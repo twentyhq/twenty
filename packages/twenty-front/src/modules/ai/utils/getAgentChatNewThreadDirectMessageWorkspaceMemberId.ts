@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
-import { type InboxParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type AiChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
+import { type AiChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
 
 export const getInboxNewThreadDirectMessageWorkspaceMemberId = ({
   isDirectMessageIdentityEnabled,
@@ -12,11 +12,11 @@ export const getInboxNewThreadDirectMessageWorkspaceMemberId = ({
   participantMentions,
 }: {
   isDirectMessageIdentityEnabled: boolean;
-  newInboxChatRecipients: InboxNewThreadRecipients | undefined;
+  newInboxChatRecipients: AiChatNewThreadRecipients | undefined;
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
-  initialRecipients: InboxParticipantMention[];
-  participantMentions: InboxParticipantMention[];
+  initialRecipients: AiChatParticipantMention[];
+  participantMentions: AiChatParticipantMention[];
 }): string | undefined => {
   if (
     !isDirectMessageIdentityEnabled ||

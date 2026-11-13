@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { InboxSelectionToContextStoreEffect } from '@/ai/components/AiChatInboxSelectionToContextStoreEffect';
-import { InboxThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
+import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
 import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { CommandMenuDropdownAtCursor } from '@/command-menu-item/components/CommandMenuDropdownAtCursor';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
@@ -30,7 +30,7 @@ export const InboxCommandMenuScope = ({
         containerType={CommandMenuItemContainerType.IndexPageDropdown}
       >
         <CommandMenuDropdownAtCursor>
-          <InboxThreadCommandMenuItems />
+          <AiChatThreadCommandMenuItems />
         </CommandMenuDropdownAtCursor>
       </CommandMenuContextProvider>
       {children}

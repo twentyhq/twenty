@@ -6,9 +6,9 @@ import { ReactionButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { useToggleInboxMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { getInboxSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { getAiChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -20,36 +20,36 @@ const StyledReactions = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-type InboxMessageReactionsProps = {
+type AiChatMessageReactionsProps = {
   messageId: string;
 };
 
-export const InboxMessageReactions = ({
+export const AiChatMessageReactions = ({
   messageId,
-}: InboxMessageReactionsProps) => {
+}: AiChatMessageReactionsProps) => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
-  const inboxMessageReactions = useAtomFamilyStateValue(
-    inboxMessageReactionsFamilyState,
+  const aiChatMessageReactions = useAtomFamilyStateValue(
+    aiChatMessageReactionsFamilyState,
     { messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const { toggleInboxMessageReaction } = useToggleInboxMessageReaction();
+  const { toggleAiChatMessageReaction } = useToggleAiChatMessageReaction();
 
-  if (!isNonEmptyArray(inboxMessageReactions)) {
+  if (!isNonEmptyArray(aiChatMessageReactions)) {
     return null;
   }
 
   return (
     <StyledReactions>
-      {inboxMessageReactions.map(
+      {aiChatMessageReactions.map(
         ({ emoji, workspaceMemberIds, agentIds, hasAssistantReacted }) => {
           const reactorNameList = [
             ...workspaceMemberIds.map((workspaceMemberId) =>
-              getInboxSenderLabel({
+              getAiChatSenderLabel({
                 sender: currentWorkspaceMembers.find(
                   ({ id }) => id === workspaceMemberId,
                 ),
@@ -85,7 +85,7 @@ export const InboxMessageReactions = ({
               title={reactorNames}
               aria-label={t`${emoji} by ${reactorNames}`}
               onPressedChange={() =>
-                void toggleInboxMessageReaction({ messageId, emoji })
+                void toggleAiChatMessageReaction({ messageId, emoji })
               }
             />
           );

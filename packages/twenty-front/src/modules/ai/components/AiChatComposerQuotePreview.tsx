@@ -4,8 +4,8 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { InboxQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
-import { type InboxQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
+import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
+import { type AiChatQuotedMessageSource } from '@/ai/types/AiChatQuotedMessageSource';
 
 const StyledReplyBar = styled.div`
   align-items: center;
@@ -17,20 +17,20 @@ const StyledReplyBar = styled.div`
     ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
-type InboxComposerQuotePreviewProps = {
-  source: InboxQuotedMessageSource;
+type AiChatComposerQuotePreviewProps = {
+  source: AiChatQuotedMessageSource;
   onRemove: () => void;
 };
 
-export const InboxComposerQuotePreview = ({
+export const AiChatComposerQuotePreview = ({
   source,
   onRemove,
-}: InboxComposerQuotePreviewProps) => {
+}: AiChatComposerQuotePreviewProps) => {
   const { t } = useLingui();
 
   return (
     <StyledReplyBar>
-      <InboxQuotedMessagePreview source={source} label={t`Replying to`} />
+      <AiChatQuotedMessagePreview source={source} label={t`Replying to`} />
       <LightIconButton aria-label={t`Remove quote`} onClick={onRemove}>
         <IconX />
       </LightIconButton>

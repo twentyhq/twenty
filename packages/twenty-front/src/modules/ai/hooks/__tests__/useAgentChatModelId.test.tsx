@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { useAiChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   jotaiStore,
@@ -17,16 +17,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 const renderHooks = () =>
   renderHook(
     () => ({
-      setSelectedTier: useSetAtomState(agentChatUserSelectedModelTierState),
-      setShouldOpenInboxAfterOnboarding: useSetAtomState(
-        shouldOpenInboxAfterOnboardingState,
+      setSelectedTier: useSetAtomState(aiChatUserSelectedModelTierState),
+      setShouldOpenAiChatAfterOnboarding: useSetAtomState(
+        shouldOpenAiChatAfterOnboardingState,
       ),
-      ...useAgentChatModelId(),
+      ...useAiChatModelId(),
     }),
     { wrapper: Wrapper },
   );
 
-describe('useAgentChatModelId', () => {
+describe('useAiChatModelId', () => {
   beforeEach(() => {
     window.localStorage.clear();
     resetJotaiStore();
@@ -63,7 +63,7 @@ describe('useAgentChatModelId', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.setShouldOpenInboxAfterOnboarding(true);
+      result.current.setShouldOpenAiChatAfterOnboarding(true);
     });
 
     expect(result.current.modelIdForRequest).toBe('default-fast-model');

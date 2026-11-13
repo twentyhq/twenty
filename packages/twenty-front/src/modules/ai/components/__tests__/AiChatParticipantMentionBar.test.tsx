@@ -10,9 +10,9 @@ import { type Editor as ReactEditor } from '@tiptap/react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
-import { InboxParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -29,27 +29,27 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const renderBar = (editor: Editor) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     onInitializeJotaiStore: (store) => {
-      store.set(currentInboxThreadState.atom, THREAD_ID);
+      store.set(currentAiChatThreadState.atom, THREAD_ID);
     },
   });
 
   return render(
     <Wrapper>
       <I18nProvider i18n={i18n}>
-        <InboxParticipantMentionBar editor={editor as ReactEditor} />
+        <AiChatParticipantMentionBar editor={editor as ReactEditor} />
       </I18nProvider>
     </Wrapper>,
   );
 };
 
-describe('InboxParticipantMentionBar', () => {
+describe('AiChatParticipantMentionBar', () => {
   let editor: Editor;
 
   beforeEach(() => {
     editor = new Editor({
       extensions: [Document, Paragraph, Text, MentionTag],
       onUpdate: ({ editor: updatedEditor }) => {
-        jotaiStore.set(inboxDraftsByThreadIdState.atom, {
+        jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
           [THREAD_ID]: serializeAdvancedTextEditorDocument(updatedEditor),
         });
       },

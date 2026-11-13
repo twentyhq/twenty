@@ -4,7 +4,7 @@ import { SettingsPath } from 'twenty-shared/types';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { getExpandedInboxReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
+import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -56,7 +56,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: false,
     destinationPath: getNavigationDrawerHomeDestination({
-      memorizedUrl: getExpandedInboxReturnLocation(location.state),
+      memorizedUrl: getExpandedAiChatReturnLocation(location.state),
       defaultHomePagePath,
     }),
   });
@@ -86,7 +86,7 @@ export const useSwitchNavigationDrawerMode = () => {
 
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
-    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.INBOX_HISTORY);
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
     switchToNewChat();
   };
 
@@ -101,7 +101,7 @@ export const useSwitchNavigationDrawerMode = () => {
         }
         switchToNavigationMenu();
         break;
-      case NAVIGATION_DRAWER_TABS.INBOX_HISTORY:
+      case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
         if (isAiModePage) {
           return;
         }

@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const inboxMessagesLoadingState = createAtomState({
-  key: 'inboxMessagesLoadingState',
+export const aiChatMessagesLoadingState = createAtomState({
+  key: 'aiChatMessagesLoadingState',
   defaultValue: false,
 });

@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
@@ -12,7 +12,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type InboxThreadPaginationProps = {
-  threads: Pick<InboxThreadRecord, 'id'>[];
+  threads: Pick<AiChatThreadRecord, 'id'>[];
   threadId: string;
   onThreadSelect: (threadId: string) => void;
 };

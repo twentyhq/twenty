@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { useLocation } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { isInboxThreadPath } from '~/utils/isAiChatPath';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
 // Lets taps reach the page scrolling underneath; flex-start follows the writing direction.
 const StyledFloatingContainer = styled.div`
@@ -91,7 +91,7 @@ export const MobileNavigationBar = () => {
   const isHidden =
     isSidePanelOpened ||
     !isMobileNavigationBarVisible ||
-    isInboxThreadPath(pathname);
+    isAiChatPath(pathname);
 
   return (
     <>

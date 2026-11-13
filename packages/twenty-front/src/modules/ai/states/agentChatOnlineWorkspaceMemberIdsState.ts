@@ -1,8 +1,8 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const inboxOnlineWorkspaceMemberIdsState = createAtomState<
+export const aiChatOnlineWorkspaceMemberIdsState = createAtomState<
   string[] | null
 >({
-  key: 'ai/inboxOnlineWorkspaceMemberIdsState',
+  key: 'ai/aiChatOnlineWorkspaceMemberIdsState',
   defaultValue: null,
 });

@@ -1,13 +1,13 @@
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { renderHook } from '@testing-library/react';
 import { Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai/hooks/useCanRetryCurrentAiChatTurn';
-import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -20,8 +20,8 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('Shared chat execution controls', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(inboxDisplayedThreadState.atom, 'thread');
-    jotaiStore.set(currentInboxThreadState.atom, 'thread');
+    jotaiStore.set(aiChatDisplayedThreadState.atom, 'thread');
+    jotaiStore.set(currentAiChatThreadState.atom, 'thread');
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       id: 'bob',
     } as never);
@@ -35,7 +35,7 @@ describe('Shared chat execution controls', () => {
   ])(
     'uses normal update permission (%s) and the saved sender (%s) for retries',
     (canUpdate, senderWorkspaceMemberId, expected) => {
-      setInboxThreadPermissions({
+      setAiChatThreadPermissions({
         store: jotaiStore,
         threadId: 'thread',
         permissions: {
@@ -46,7 +46,7 @@ describe('Shared chat execution controls', () => {
         },
       });
       jotaiStore.set(
-        inboxMessagesFamilyState.atomFamily({ threadId: 'thread' }),
+        aiChatMessagesFamilyState.atomFamily({ threadId: 'thread' }),
         [
           {
             id: 'message',
@@ -73,7 +73,7 @@ describe('Shared chat execution controls', () => {
       const { result } = renderHook(
         () => ({
           canRetry: useCanRetryCurrentAiChatTurn(),
-          access: useCurrentInboxThreadAccess(),
+          access: useCurrentAiChatThreadAccess(),
         }),
         { wrapper },
       );

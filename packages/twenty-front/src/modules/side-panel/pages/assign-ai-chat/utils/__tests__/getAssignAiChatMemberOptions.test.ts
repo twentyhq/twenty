@@ -1,5 +1,5 @@
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { getAssignInboxMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
+import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 
 const buildMember = (
   id: string,
@@ -21,13 +21,13 @@ const WORKSPACE_MEMBERS = [
 ];
 
 const listLabels = (search: string, currentWorkspaceMemberId = 'jane') =>
-  getAssignInboxMemberOptions({
+  getAssignAiChatMemberOptions({
     workspaceMembers: WORKSPACE_MEMBERS,
     currentWorkspaceMemberId,
     search,
   }).map(({ label }) => label);
 
-describe('getAssignInboxMemberOptions', () => {
+describe('getAssignAiChatMemberOptions', () => {
   it('lists the current member first and labels members without a name by email', () => {
     expect(listLabels('')).toEqual([
       'Jane Austen',

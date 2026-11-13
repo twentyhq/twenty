@@ -8,12 +8,12 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { InboxThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
-import { InboxThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
-import { InboxThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
-import { type InboxThreadLabel } from '@/ai/types/AiChatThreadLabel';
-import { type InboxThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
+import { AiChatThreadFollowersField } from '@/ai/components/AiChatThreadFollowersField';
+import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
+import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
+import { type AiChatThreadLabel } from '@/ai/types/AiChatThreadLabel';
+import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 
 const StyledFields = styled.dl`
   background: ${themeCssVariables.background.primary};
@@ -28,7 +28,7 @@ const StyledFields = styled.dl`
   width: 100%;
 `;
 
-const LABELS: InboxThreadLabel[] = [
+const LABELS: AiChatThreadLabel[] = [
   { id: 'pipeline', label: 'Pipeline', color: 'blue' },
   { id: 'quarter', label: 'Q4', color: 'purple' },
 ];
@@ -38,21 +38,21 @@ const onStatusChange = fn();
 const onLabelsChange = fn();
 const onFollowingChange = fn();
 
-type InboxThreadDetailsFieldsStoryProps = {
-  scope: InboxThreadStatusScope;
+type AiChatThreadDetailsFieldsStoryProps = {
+  scope: AiChatThreadStatusScope;
   isReadOnly?: boolean;
   isSaving?: boolean;
   isEmpty?: boolean;
 };
 
-const InboxThreadDetailsFieldsStory = ({
+const AiChatThreadDetailsFieldsStory = ({
   scope,
   isReadOnly = false,
   isSaving = false,
   isEmpty = false,
-}: InboxThreadDetailsFieldsStoryProps) => {
+}: AiChatThreadDetailsFieldsStoryProps) => {
   const [status, setStatus] =
-    useState<ComponentProps<typeof InboxThreadStatusField>['status']>('open');
+    useState<ComponentProps<typeof AiChatThreadStatusField>['status']>('open');
   const [selectedLabelIds, setSelectedLabelIds] = useState(
     isEmpty ? [] : ['pipeline', 'quarter'],
   );
@@ -62,7 +62,7 @@ const InboxThreadDetailsFieldsStory = ({
     ...(isEmpty ? [] : [OTHER_FOLLOWER]),
   ];
   const handleStatusChange: NonNullable<
-    ComponentProps<typeof InboxThreadStatusField>['onStatusChange']
+    ComponentProps<typeof AiChatThreadStatusField>['onStatusChange']
   > = (change) => {
     onStatusChange(change);
     setStatus(change.status);
@@ -78,14 +78,14 @@ const InboxThreadDetailsFieldsStory = ({
 
   return (
     <StyledFields>
-      <InboxThreadStatusField
+      <AiChatThreadStatusField
         status={status}
         scope={scope}
         isSaving={isSaving}
         onStatusChange={isReadOnly ? undefined : handleStatusChange}
       />
       <DetailsRow
-        labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+        labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
         startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
         label="Linked to"
       >
@@ -100,7 +100,7 @@ const InboxThreadDetailsFieldsStory = ({
         ))}
       </DetailsRow>
       <DetailsRow
-        labelWidth={INBOX_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+        labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
         startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
         label="Assignee"
       >
@@ -111,13 +111,13 @@ const InboxThreadDetailsFieldsStory = ({
           Thomas
         </Chip>
       </DetailsRow>
-      <InboxThreadLabelsField
+      <AiChatThreadLabelsField
         labels={LABELS}
         selectedLabelIds={selectedLabelIds}
         isSaving={isSaving}
         onLabelsChange={isReadOnly ? undefined : handleLabelsChange}
       />
-      <InboxThreadFollowersField
+      <AiChatThreadFollowersField
         followers={followers}
         isFollowing={isFollowing}
         isSaving={isSaving}
@@ -129,7 +129,7 @@ const InboxThreadDetailsFieldsStory = ({
 
 const meta = {
   title: 'Modules/AI/AiChatThreadDetailsFields',
-  component: InboxThreadDetailsFieldsStory,
+  component: AiChatThreadDetailsFieldsStory,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 400 } },
   args: { scope: { type: 'personal' } },
@@ -138,7 +138,7 @@ const meta = {
     onLabelsChange.mockClear();
     onFollowingChange.mockClear();
   },
-} satisfies Meta<typeof InboxThreadDetailsFieldsStory>;
+} satisfies Meta<typeof AiChatThreadDetailsFieldsStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

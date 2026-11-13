@@ -2,19 +2,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type InboxThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { type AiChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
 import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
-export const getInboxThreadDisplayLabel = ({
+export const getAiChatThreadDisplayLabel = ({
   thread,
   currentWorkspaceMemberId,
   workspaceMembers,
   fallbackLabel,
   formerMemberLabel,
 }: {
-  thread: InboxThreadDisplayIdentity | null | undefined;
+  thread: AiChatThreadDisplayIdentity | null | undefined;
   currentWorkspaceMemberId: string | undefined;
   workspaceMembers: readonly Pick<
     PartialWorkspaceMember,

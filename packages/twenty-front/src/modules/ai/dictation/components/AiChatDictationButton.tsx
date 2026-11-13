@@ -4,7 +4,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { useDictation } from '@/ai/dictation/hooks/useDictation';
 import { useLingui } from '@lingui/react/macro';
 
-export const InboxDictationButton = () => {
+export const AiChatDictationButton = () => {
   const { t } = useLingui();
   const { isAvailable, isRecording, toggleDictation } = useDictation();
 

@@ -9,16 +9,16 @@ import { useTheme } from 'twenty-ui/theme';
 import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
 import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
-import { InboxNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
+import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { useIsOnNewInboxSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
 import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -32,27 +32,27 @@ import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorks
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-export const InboxNewThreadRecipientBar = () => {
+export const AiChatNewThreadRecipientBar = () => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const theme = useTheme();
   const dropdownInstanceId = useId();
   const recipientRowRef = useRef<HTMLDivElement>(null);
   const addRecipientsButtonRef = useRef<HTMLButtonElement>(null);
-  const isOnNewInboxSlot = useIsOnNewInboxSlot();
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const newInboxThreadId = useAtomStateValue(newInboxThreadIdState);
-  const inboxIsSendingMessage = useAtomFamilyStateValue(
-    inboxIsSendingMessageFamilyState,
-    { threadId: newInboxThreadId },
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
+  const aiChatIsSendingMessage = useAtomFamilyStateValue(
+    aiChatIsSendingMessageFamilyState,
+    { threadId: newAiChatThreadId },
   );
   const [recipients, setRecipients] = useAtomFamilyState(
-    inboxNewThreadRecipientsFamilyState,
-    newInboxThreadId,
+    aiChatNewThreadRecipientsFamilyState,
+    newAiChatThreadId,
   );
   const [inboxNewThreadChannelId, setInboxNewThreadChannelId] = useAtomState(
     inboxNewThreadChannelIdState,
@@ -67,13 +67,13 @@ export const InboxNewThreadRecipientBar = () => {
     recipients.recipientWorkspaceMemberIds.includes(id),
   );
 
-  const isCreatingChat = isOnNewInboxSlot || !isDefined(currentInboxThread);
+  const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
 
   if (
     !isAiChatInboxEnabled ||
     !isCreatingChat ||
     isWorkspaceSetupChat ||
-    inboxIsSendingMessage
+    aiChatIsSendingMessage
   ) {
     return null;
   }
@@ -163,7 +163,7 @@ export const InboxNewThreadRecipientBar = () => {
           width={GenericDropdownContentWidth.ExtraLarge}
           aria-label={t`Select recipients`}
         >
-          <InboxNewThreadRecipientPicker />
+          <AiChatNewThreadRecipientPicker />
         </DropdownContent>
       </DropdownRoot>
     </FormFieldRow>

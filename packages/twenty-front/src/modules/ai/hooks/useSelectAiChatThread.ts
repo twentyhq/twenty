@@ -1,26 +1,26 @@
 import { useStore } from 'jotai';
 
-import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useSwitchInboxThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useSwitchAiChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { closingInboxThreadIdState } from '@/ai/states/closingAiChatInboxThreadIdState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
-export const useSelectInboxThread = () => {
+export const useSelectAiChatThread = () => {
   const store = useStore();
-  const { switchThreadWithDraft } = useSwitchInboxThreadWithDraft();
-  const { projectInboxThreadToUrl } = useProjectInboxThreadToUrl();
+  const { switchThreadWithDraft } = useSwitchAiChatThreadWithDraft();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
 
-  const selectInboxThread = (toThreadId: string) => {
+  const selectAiChatThread = (toThreadId: string) => {
     store.set(closingInboxThreadIdState.atom, null);
 
-    if (store.get(currentInboxThreadState.atom) !== toThreadId) {
-      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
+    if (store.get(currentAiChatThreadState.atom) !== toThreadId) {
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
     }
 
     switchThreadWithDraft(toThreadId);
-    projectInboxThreadToUrl(toThreadId);
+    projectAiChatThreadToUrl(toThreadId);
   };
 
-  return { selectInboxThread };
+  return { selectAiChatThread };
 };

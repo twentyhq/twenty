@@ -1,1 +1,1 @@
-export const INBOX_STOP_EVENT_NAME = 'agent-chat-stop' as const;
+export const AI_CHAT_STOP_EVENT_NAME = 'agent-chat-stop' as const;

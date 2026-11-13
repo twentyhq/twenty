@@ -7,7 +7,7 @@ import { useTheme } from 'twenty-ui/theme';
 import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
 import { inboxSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledChannelIcon = styled.div`
@@ -16,7 +16,7 @@ const StyledChannelIcon = styled.div`
 `;
 
 type InboxThreadChannelIconProps = {
-  thread: InboxThreadRecord;
+  thread: AiChatThreadRecord;
 };
 
 export const InboxThreadChannelIcon = ({

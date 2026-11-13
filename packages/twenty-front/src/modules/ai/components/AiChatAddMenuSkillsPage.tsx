@@ -24,13 +24,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-type InboxAddMenuSkillsPageProps = {
+type AiChatAddMenuSkillsPageProps = {
   editor: Editor | null;
 };
 
-export const InboxAddMenuSkillsPage = ({
+export const AiChatAddMenuSkillsPage = ({
   editor,
-}: InboxAddMenuSkillsPageProps) => {
+}: AiChatAddMenuSkillsPageProps) => {
   const { t } = useLingui();
   const { isActive } = useDropdownPage();
   const { getIcon } = useIcons();

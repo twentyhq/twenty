@@ -5,20 +5,20 @@ import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { DropZone } from '@/activities/files/components/DropZone';
-import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
-import { InboxThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
-import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
-import { InboxEditorSection } from '@/ai/components/AiChatEditorSection';
-import { InboxNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
-import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { AiChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
+import { AiChatThreadMarkAsReadEffect } from '@/ai/components/AgentChatThreadMarkAsReadEffect';
+import { AiChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
+import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
+import { AiChatNewThreadRecipientBar } from '@/ai/components/AiChatNewThreadRecipientBar';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
-import { InboxTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { InboxTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
+import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
+import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
 
 const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
   background: ${themeCssVariables.background.primary};
@@ -30,16 +30,16 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
     isDraggingFile ? themeCssVariables.spacing[3] : '0'};
 `;
 
-export const InboxTab = () => {
+export const AiChatTab = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     inboxThreadIsDirectMessageFamilySelector,
-    currentInboxThread,
+    currentAiChatThread,
   );
 
-  const { uploadFiles } = useInboxFileUpload();
+  const { uploadFiles } = useAiChatFileUpload();
 
   const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
     if (
@@ -66,9 +66,9 @@ export const InboxTab = () => {
       onDrop={handleDrop}
     >
       {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
-      <AgentChatHasBeenOpenedEffect />
-      <InboxThreadMarkAsReadEffect />
-      <AgentChatStreamingPartsDiffSyncEffect />
+      <AiChatHasBeenOpenedEffect />
+      <AiChatThreadMarkAsReadEffect />
+      <AiChatStreamingPartsDiffSyncEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
@@ -77,11 +77,11 @@ export const InboxTab = () => {
       )}
       {!isDraggingFile && (
         <>
-          <InboxNewThreadRecipientBar />
-          <InboxTabMessageList />
-          <InboxTypingParticipants />
+          <AiChatNewThreadRecipientBar />
+          <AiChatTabMessageList />
+          <AiChatTypingParticipants />
           <AiChatQueuedMessages />
-          <InboxEditorSection key={currentInboxThread} />
+          <AiChatEditorSection key={currentAiChatThread} />
         </>
       )}
     </StyledContainer>

@@ -5,10 +5,10 @@ import { CountPager } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
-import { InboxRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
-import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { isAgentChatPendingRecordApproval } from '@/ai/utils/isAgentChatPendingRecordApproval';
+import { AiChatRecordApprovalDeck } from '@/ai/components/AiChatRecordApprovalDeck';
+import { useAiChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { isAiChatPendingRecordApproval } from '@/ai/utils/isAgentChatPendingRecordApproval';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledGate = styled.div`
@@ -40,8 +40,8 @@ export const AiChatPendingAskGate = ({
   children,
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
-  const pendingToolCalls = useAgentChatPendingToolCalls();
-  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const pendingToolCalls = useAiChatPendingToolCalls();
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
   const [selection, setSelection] = useState<RequestSelection>({
     threadId: null,
     toolCallId: null,
@@ -59,7 +59,7 @@ export const AiChatPendingAskGate = ({
 
   const requestCount = pendingToolCalls.length;
   const pendingRecordApprovals = pendingToolCalls.filter(
-    isAgentChatPendingRecordApproval,
+    isAiChatPendingRecordApproval,
   );
   // the deck stays while its last calls are being answered, so they cannot be answered twice
   const isReviewingRecordApprovals =
@@ -69,7 +69,7 @@ export const AiChatPendingAskGate = ({
 
   if (isReviewingRecordApprovals) {
     return (
-      <InboxRecordApprovalDeck
+      <AiChatRecordApprovalDeck
         recordApprovals={pendingRecordApprovals}
         answeringToolCallIds={answeringToolCallIds}
         onAnsweringToolCallIdsChange={setAnsweringToolCallIds}
@@ -84,7 +84,7 @@ export const AiChatPendingAskGate = ({
   // a selection made in another conversation or for an earlier batch does not carry over, so
   // each new set of requests opens on its oldest one
   const isSameBatch =
-    selection.threadId === inboxDisplayedThread &&
+    selection.threadId === aiChatDisplayedThread &&
     pendingToolCalls.some((pendingToolCall) =>
       selection.batchToolCallIds.includes(pendingToolCall.toolCallId),
     );
@@ -97,7 +97,7 @@ export const AiChatPendingAskGate = ({
 
   const selectRequest = (index: number) =>
     setSelection({
-      threadId: inboxDisplayedThread,
+      threadId: aiChatDisplayedThread,
       toolCallId: pendingToolCalls[index].toolCallId,
       index,
       batchToolCallIds: pendingToolCalls.map(

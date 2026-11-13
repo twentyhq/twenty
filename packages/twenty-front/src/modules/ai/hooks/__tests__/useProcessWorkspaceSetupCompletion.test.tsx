@@ -1,6 +1,6 @@
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -8,7 +8,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -41,9 +41,9 @@ jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <InboxSurfaceContext.Provider value={INBOX_SURFACE.PAGE}>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
       {children}
-    </InboxSurfaceContext.Provider>
+    </AiChatSurfaceContext.Provider>
   </JotaiProvider>
 );
 
@@ -75,13 +75,13 @@ describe('useProcessWorkspaceSetupCompletion', () => {
   });
 
   it('keeps the current page and side panel open when setup finishes there', () => {
-    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: ({ children }) => (
         <Wrapper>
-          <InboxSurfaceContext.Provider value={INBOX_SURFACE.SIDE_PANEL}>
+          <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
             {children}
-          </InboxSurfaceContext.Provider>
+          </AiChatSurfaceContext.Provider>
         </Wrapper>
       ),
     });
@@ -94,14 +94,14 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).not.toHaveBeenCalled();
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
     expect(getProcessedToolCallIds()).toEqual(['side-panel-call']);
   });
 
   it('should redirect to the available homepage and move the chat to the side panel', () => {
-    jotaiStore.set(shouldContinueInboxInSidePanelState.atom, true);
+    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
 
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
@@ -115,7 +115,9 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
     expect(navigateMock).toHaveBeenCalledWith('/objects/people');
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(true);
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
+      true,
+    );
     expect(getProcessedToolCallIds()).toEqual(['call-1']);
   });
 
@@ -136,8 +138,8 @@ describe('useProcessWorkspaceSetupCompletion', () => {
 
   it('returns to settings and ends setup when no readable object homepage exists', () => {
     defaultHomePagePath = '/settings/profile';
-    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, true);
-    jotaiStore.set(shouldContinueInboxInSidePanelState.atom, true);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, true);
     const { result } = renderHook(() => useProcessWorkspaceSetupCompletion(), {
       wrapper: Wrapper,
     });
@@ -149,10 +151,10 @@ describe('useProcessWorkspaceSetupCompletion', () => {
     );
 
     expect(navigateMock).toHaveBeenCalledWith('/settings/profile');
-    expect(jotaiStore.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(
+    expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
-    expect(jotaiStore.get(shouldContinueInboxInSidePanelState.atom)).toBe(
+    expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
     expect(closeSidePanelMenuMock).toHaveBeenCalledTimes(1);

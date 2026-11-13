@@ -7,16 +7,16 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxComposerQuote } from '@/ai/components/AiChatComposerQuote';
-import { InboxMessage } from '@/ai/components/AiChatMessage';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
+import { AiChatMessage } from '@/ai/components/AiChatMessage';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { scrollToInboxMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -47,11 +47,11 @@ jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
 }));
 
 jest.mock('@/ai/components/AiChatMessageReactionPicker', () => ({
-  InboxMessageReactionPicker: () => null,
+  AiChatMessageReactionPicker: () => null,
 }));
 
 jest.mock('@/ai/components/AiChatMessageReactions', () => ({
-  InboxMessageReactions: () => null,
+  AiChatMessageReactions: () => null,
 }));
 
 jest.mock('@/ai/components/AiChatErrorRenderer', () => ({
@@ -63,7 +63,7 @@ jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
 }));
 
 jest.mock('@/ai/utils/scrollToAgentChatMessage', () => ({
-  scrollToInboxMessage: jest.fn(),
+  scrollToAiChatMessage: jest.fn(),
 }));
 
 const THREAD_ID = '1b8e5c2a-4d3f-4a6b-9c7e-2f1d0a9b8c71';
@@ -217,33 +217,36 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
-  jotaiStore.set(newInboxThreadIdState.atom, THREAD_ID);
-  jotaiStore.set(currentInboxThreadState.atom, THREAD_ID);
-  jotaiStore.set(inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }), [
-    USER_MESSAGE,
-    ASSISTANT_MESSAGE,
-    NAMED_ASSISTANT_MESSAGE,
-    SILENT_MESSAGE,
-    MESSAGE_WITHOUT_SENDER,
-    REPLY_MESSAGE,
-    REPLY_TO_MISSING_MESSAGE,
-    BUILT_IN_ASSISTANT_MESSAGE,
-    TOOL_ONLY_ASSISTANT_MESSAGE,
-    REPLY_TO_ASSISTANT_MESSAGE,
-  ]);
+  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
+  jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
+  jotaiStore.set(
+    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    [
+      USER_MESSAGE,
+      ASSISTANT_MESSAGE,
+      NAMED_ASSISTANT_MESSAGE,
+      SILENT_MESSAGE,
+      MESSAGE_WITHOUT_SENDER,
+      REPLY_MESSAGE,
+      REPLY_TO_MISSING_MESSAGE,
+      BUILT_IN_ASSISTANT_MESSAGE,
+      TOOL_ONLY_ASSISTANT_MESSAGE,
+      REPLY_TO_ASSISTANT_MESSAGE,
+    ],
+  );
 
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <InboxMessage messageId={messageId} error={error} />
-        {hasComposerQuote && <InboxComposerQuote />}
+        <AiChatMessage messageId={messageId} error={error} />
+        {hasComposerQuote && <AiChatComposerQuote />}
       </I18nProvider>
     </JotaiProvider>,
   );
 };
 
-describe('InboxMessage', () => {
+describe('AiChatMessage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -382,7 +385,7 @@ describe('InboxMessage', () => {
       screen.getByRole('button', { name: 'View original message' }),
     );
 
-    expect(scrollToInboxMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
   });
 
   it('names the current member "You" when a reply quotes their own message', () => {
@@ -422,9 +425,9 @@ describe('InboxMessage', () => {
     expect(screen.getByText('Replying to')).toBeInTheDocument();
 
     act(() => {
-      jotaiStore.set(currentInboxThreadState.atom, 'another-thread');
+      jotaiStore.set(currentAiChatThreadState.atom, 'another-thread');
       jotaiStore.set(
-        inboxQuotedMessageIdFamilyState.atomFamily({
+        aiChatQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',
         }),
         USER_MESSAGE.id,
@@ -443,7 +446,7 @@ describe('InboxMessage', () => {
     screen.getByRole('button', { name: 'View original message' }).focus();
     await userEvent.keyboard('{Enter}');
 
-    expect(scrollToInboxMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
   });
 
   it('shows a quote whose original is missing without a way to open it', () => {
@@ -515,7 +518,7 @@ describe('InboxMessage', () => {
       screen.getByRole('button', { name: 'View original message' }),
     );
 
-    expect(scrollToInboxMessage).toHaveBeenCalledWith(
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(
       BUILT_IN_ASSISTANT_MESSAGE.id,
     );
   });

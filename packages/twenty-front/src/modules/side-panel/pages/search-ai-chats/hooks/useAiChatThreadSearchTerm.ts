@@ -5,7 +5,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const CHAT_PICKER_SEARCH_DEBOUNCE_DELAY_IN_MS = 300;
 
-export const useInboxThreadSearchTerm = () => {
+export const useAiChatThreadSearchTerm = () => {
   const search = useAtomStateValue(sidePanelSearchState).trim();
   const [searchTerm] = useDebounce(
     search,

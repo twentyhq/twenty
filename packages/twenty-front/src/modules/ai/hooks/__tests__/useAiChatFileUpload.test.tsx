@@ -5,9 +5,9 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { aiChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -53,9 +53,9 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </MetadataAndApolloMocksWrapper>
 );
 
-describe('useInboxFileUpload', () => {
+describe('useAiChatFileUpload', () => {
   it('uploads after leaving a DM and aborts files removed from the selection', async () => {
-    const previousThreadId = jotaiStore.get(currentInboxThreadState.atom);
+    const previousThreadId = jotaiStore.get(currentAiChatThreadState.atom);
     const directMessageAtom = recordStoreFamilyState.atomFamily(
       DIRECT_MESSAGE_THREAD_ID,
     );
@@ -65,8 +65,8 @@ describe('useInboxFileUpload', () => {
       __typename: 'AgentChatThread',
       conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
     });
-    jotaiStore.set(currentInboxThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
-    const { result } = renderHook(() => useInboxFileUpload(), {
+    jotaiStore.set(currentAiChatThreadState.atom, DIRECT_MESSAGE_THREAD_ID);
+    const { result } = renderHook(() => useAiChatFileUpload(), {
       wrapper: Wrapper,
     });
     const file = new File(['brief'], 'brief.pdf');
@@ -77,21 +77,21 @@ describe('useInboxFileUpload', () => {
 
     try {
       act(() => {
-        jotaiStore.set(currentInboxThreadState.atom, NEW_THREAD_ID);
+        jotaiStore.set(currentAiChatThreadState.atom, NEW_THREAD_ID);
         upload = result.current.uploadFiles([file]);
       });
 
       await waitFor(() => expect(putFile).toHaveBeenCalled());
 
       await act(async () => {
-        jotaiStore.set(inboxSelectedFilesState.atom, []);
+        jotaiStore.set(aiChatSelectedFilesState.atom, []);
         await upload;
       });
 
       expect(putFile.mock.calls[0][1]?.signal?.aborted).toBe(true);
       expect(screen.queryByRole('status')).not.toBeInTheDocument();
     } finally {
-      jotaiStore.set(currentInboxThreadState.atom, previousThreadId);
+      jotaiStore.set(currentAiChatThreadState.atom, previousThreadId);
       jotaiStore.set(directMessageAtom, previousDirectMessage);
     }
   });

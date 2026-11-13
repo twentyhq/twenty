@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
-import { type InboxSurface } from '@/ai/types/AiChatSurface';
+import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 
-export const InboxSurfaceContext = createContext<InboxSurface | undefined>(
+export const AiChatSurfaceContext = createContext<AiChatSurface | undefined>(
   undefined,
 );

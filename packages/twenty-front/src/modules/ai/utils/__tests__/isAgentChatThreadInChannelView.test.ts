@@ -1,5 +1,5 @@
 import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isInboxThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import {
   AgentChatChannelAssignmentFilter,
@@ -15,8 +15,8 @@ const OPEN_CHANNEL_VIEW: InboxChannelView = {
 };
 
 const buildThread = (
-  thread: Partial<InboxThreadRecord> = {},
-): InboxThreadRecord => ({
+  thread: Partial<AiChatThreadRecord> = {},
+): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id: 'thread-1',
   title: null,

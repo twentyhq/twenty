@@ -1,7 +1,7 @@
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { mergeLoadedInboxThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { mergeLoadedAiChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
 
-const LOADED_THREAD: InboxThreadRecord = {
+const LOADED_THREAD: AiChatThreadRecord = {
   __typename: 'AgentChatThread',
   id: 'thread',
   title: 'Loaded title',
@@ -11,10 +11,10 @@ const LOADED_THREAD: InboxThreadRecord = {
   updatedAt: '2026-11-02T00:00:00.000Z',
 };
 
-describe('mergeLoadedInboxThread', () => {
+describe('mergeLoadedAiChatThread', () => {
   it('takes the loaded chat when nothing newer is stored', () => {
     expect(
-      mergeLoadedInboxThread({
+      mergeLoadedAiChatThread({
         loadedThread: LOADED_THREAD,
         storedThread: {
           ...LOADED_THREAD,
@@ -24,7 +24,7 @@ describe('mergeLoadedInboxThread', () => {
       }),
     ).toEqual(LOADED_THREAD);
     expect(
-      mergeLoadedInboxThread({
+      mergeLoadedAiChatThread({
         loadedThread: LOADED_THREAD,
         storedThread: null,
       }),
@@ -33,7 +33,7 @@ describe('mergeLoadedInboxThread', () => {
 
   it('keeps a local change made on the same version of the chat', () => {
     expect(
-      mergeLoadedInboxThread({
+      mergeLoadedAiChatThread({
         loadedThread: LOADED_THREAD,
         storedThread: { ...LOADED_THREAD, title: 'Renamed locally' },
       }),
@@ -42,7 +42,7 @@ describe('mergeLoadedInboxThread', () => {
 
   it('keeps what a more recent update stored, and fills the rest', () => {
     expect(
-      mergeLoadedInboxThread({
+      mergeLoadedAiChatThread({
         loadedThread: LOADED_THREAD,
         storedThread: {
           id: 'thread',

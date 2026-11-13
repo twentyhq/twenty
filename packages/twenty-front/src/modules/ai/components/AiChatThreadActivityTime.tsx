@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { useIsInboxThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useFormatInboxThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getInboxThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -15,27 +15,27 @@ const StyledActivityTime = styled.div`
   flex-shrink: 0;
 `;
 
-type InboxThreadActivityTimeProps = {
-  thread: InboxThreadRecord;
+type AiChatThreadActivityTimeProps = {
+  thread: AiChatThreadRecord;
   variant?: InboxThreadListVariant;
 };
 
-export const InboxThreadActivityTime = ({
+export const AiChatThreadActivityTime = ({
   thread,
   variant = 'default',
-}: InboxThreadActivityTimeProps) => {
+}: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
-  const isUnread = useIsInboxThreadShownAsUnread(thread);
+  const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
     inboxThreadMemberStateFamilySelector,
     thread.id,
   );
-  const { formatInboxThreadDay } = useFormatInboxThreadDate();
+  const { formatAiChatThreadDay } = useFormatAiChatThreadDate();
 
   const getActivityTimeLabel = () => {
     switch (event?.type) {
       case 'SNOOZED': {
-        const snoozedUntilDay = formatInboxThreadDay(new Date(event.at));
+        const snoozedUntilDay = formatAiChatThreadDay(new Date(event.at));
 
         return t`Until ${snoozedUntilDay}`;
       }
@@ -53,7 +53,7 @@ export const InboxThreadActivityTime = ({
       }
       default:
         return beautifyPastDateRelativeToNowShort(
-          getInboxThreadLastActivityAt(thread),
+          getAiChatThreadLastActivityAt(thread),
         );
     }
   };

@@ -2,14 +2,14 @@ import uniqBy from 'lodash.uniqby';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type AiChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 
 export const getChatThreadsForRecordPage = ({
   links,
   pageSize,
 }: {
-  links: InboxThreadTargetRecord[];
+  links: AiChatThreadTargetRecord[];
   pageSize: number;
 }) => ({
   threads: sortChatThreadsByLastActivityDesc(

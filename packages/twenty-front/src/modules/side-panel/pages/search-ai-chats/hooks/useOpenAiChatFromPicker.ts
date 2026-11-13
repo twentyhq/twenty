@@ -3,41 +3,41 @@ import { useStore } from 'jotai';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useInboxThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useLoadInboxThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { useLoadAiChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { inboxPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
-import { inboxPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
-import { inboxPickerUnavailableThreadIdsComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerUnavailableThreadIdsComponentState';
-import { isInboxPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
+import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
+import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
+import { aiChatPickerUnavailableThreadIdsComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerUnavailableThreadIdsComponentState';
+import { isAiChatPickerRequestCurrent } from '@/side-panel/pages/search-ai-chats/utils/isAiChatPickerRequestCurrent';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isAiModePath } from '~/utils/isAiModePath';
 import { logError } from '~/utils/logError';
 
-export const useOpenInboxFromPicker = () => {
+export const useOpenAiChatFromPicker = () => {
   const store = useStore();
   const { pathname } = useLocation();
-  const { loadInboxThread } = useLoadInboxThread();
-  const { handleThreadClick } = useInboxThreadClick();
+  const { loadAiChatThread } = useLoadAiChatThread();
+  const { handleThreadClick } = useAiChatThreadClick();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const setInboxPickerOpeningThreadId = useSetAtomComponentState(
-    inboxPickerOpeningThreadIdComponentState,
+  const setAiChatPickerOpeningThreadId = useSetAtomComponentState(
+    aiChatPickerOpeningThreadIdComponentState,
   );
-  const setInboxPickerOpenError = useSetAtomComponentState(
-    inboxPickerOpenErrorComponentState,
+  const setAiChatPickerOpenError = useSetAtomComponentState(
+    aiChatPickerOpenErrorComponentState,
   );
-  const setInboxPickerUnavailableThreadIds = useSetAtomComponentState(
-    inboxPickerUnavailableThreadIdsComponentState,
+  const setAiChatPickerUnavailableThreadIds = useSetAtomComponentState(
+    aiChatPickerUnavailableThreadIdsComponentState,
   );
 
-  const openInboxFromPicker = async (threadId: string) => {
+  const openAiChatFromPicker = async (threadId: string) => {
     const pickerPage = store.get(sidePanelNavigationStackState.atom).at(-1);
     const workspaceId = store.get(currentWorkspaceState.atom)?.id;
     const isPickerStillOpen = () =>
-      isInboxPickerRequestCurrent({
+      isAiChatPickerRequestCurrent({
         isSidePanelOpened: store.get(isSidePanelOpenedState.atom),
         initialPage: pickerPage,
         currentPage: store.get(sidePanelNavigationStackState.atom).at(-1),
@@ -45,27 +45,27 @@ export const useOpenInboxFromPicker = () => {
         currentWorkspaceId: store.get(currentWorkspaceState.atom)?.id,
       });
 
-    setInboxPickerOpeningThreadId(threadId);
-    setInboxPickerOpenError(null);
+    setAiChatPickerOpeningThreadId(threadId);
+    setAiChatPickerOpenError(null);
 
     try {
-      const thread = await loadInboxThread(threadId);
+      const thread = await loadAiChatThread(threadId);
 
       if (!isPickerStillOpen()) {
         return;
       }
 
       if (isNull(thread)) {
-        setInboxPickerUnavailableThreadIds((threadIds) => [
+        setAiChatPickerUnavailableThreadIds((threadIds) => [
           ...threadIds,
           threadId,
         ]);
-        setInboxPickerOpenError({ threadId, isThreadUnavailable: true });
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: true });
         return;
       }
 
       if (!isDefined(thread)) {
-        setInboxPickerOpenError({ threadId, isThreadUnavailable: false });
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: false });
         return;
       }
 
@@ -78,12 +78,12 @@ export const useOpenInboxFromPicker = () => {
       logError(error);
 
       if (isPickerStillOpen()) {
-        setInboxPickerOpenError({ threadId, isThreadUnavailable: false });
+        setAiChatPickerOpenError({ threadId, isThreadUnavailable: false });
       }
     } finally {
-      setInboxPickerOpeningThreadId(null);
+      setAiChatPickerOpeningThreadId(null);
     }
   };
 
-  return { openInboxFromPicker };
+  return { openAiChatFromPicker };
 };

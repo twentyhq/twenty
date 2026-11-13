@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
-import { inboxThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
@@ -26,7 +26,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-export const useInboxThreadRecordTargets = ({
+export const useAiChatThreadRecordTargets = ({
   threadId,
   recordPickerInstanceId,
 }: {
@@ -110,7 +110,7 @@ export const useInboxThreadRecordTargets = ({
   );
 
   const permissions = useAtomFamilySelectorValue(
-    inboxThreadPermissionsFamilySelector,
+    aiChatThreadPermissionsFamilySelector,
     threadId,
   );
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();

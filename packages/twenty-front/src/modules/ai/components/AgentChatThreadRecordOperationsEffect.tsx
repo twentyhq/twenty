@@ -4,14 +4,14 @@ import { useCallback } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useLeaveRemovedInboxThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { useRefreshInboxOpenThreadsSummary } from '@/ai/hooks/useRefreshAgentChatOpenThreadsSummary';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -19,7 +19,7 @@ import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/Obj
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
-const INBOX_THREADS_OPERATION_SIGNATURE = {
+const AI_CHAT_THREADS_OPERATION_SIGNATURE = {
   objectNameSingular: StandardObjectNameSingular.AgentChatThread,
   variables: {},
 };
@@ -28,7 +28,7 @@ const toThreadUpdate = ({
   recordId,
   updatedFields,
   updatedRecord,
-}: ObjectRecordOperationUpdateInput): Partial<InboxThreadRecord> & {
+}: ObjectRecordOperationUpdateInput): Partial<AiChatThreadRecord> & {
   id: string;
 } => {
   const updatedAt = updatedRecord?.updatedAt;
@@ -36,11 +36,11 @@ const toThreadUpdate = ({
   return {
     id: recordId,
     ...(isString(updatedAt) ? { updatedAt } : {}),
-    ...(Object.assign({}, ...updatedFields) as Partial<InboxThreadRecord>),
+    ...(Object.assign({}, ...updatedFields) as Partial<AiChatThreadRecord>),
   };
 };
 
-export const InboxThreadRecordOperationsEffect = () => {
+export const AiChatThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
     {
@@ -48,10 +48,10 @@ export const InboxThreadRecordOperationsEffect = () => {
       objectNameType: 'singular',
     },
   );
-  const { applyInboxThreadUpdate, addInboxThread } =
-    useApplyInboxThreadUpdate();
+  const { applyAiChatThreadUpdate, addAiChatThread } =
+    useApplyAiChatThreadUpdate();
   const { loadInboxThreadList } = useLoadInboxThreadList();
-  const refreshInboxThreads = useCallback(
+  const refreshAiChatThreads = useCallback(
     () =>
       loadInboxThreadList({
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
@@ -59,28 +59,28 @@ export const InboxThreadRecordOperationsEffect = () => {
       }),
     [loadInboxThreadList],
   );
-  const { leaveRemovedInboxThread } = useLeaveRemovedInboxThread();
+  const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const store = useStore();
   const { refreshInboxOpenThreadsSummary } =
     useRefreshInboxOpenThreadsSummary();
   const isEnabled = isDefined(chatObjectMetadataItem);
 
   // The removal check looks the chat up itself, so it runs even if the reload fails.
-  const reloadInboxThreads = useCallback(async () => {
+  const reloadAiChatThreads = useCallback(async () => {
     refreshInboxOpenThreadsSummary();
-    await refreshInboxThreads();
-    await leaveRemovedInboxThread();
+    await refreshAiChatThreads();
+    await leaveRemovedAiChatThread();
   }, [
-    leaveRemovedInboxThread,
+    leaveRemovedAiChatThread,
     refreshInboxOpenThreadsSummary,
-    refreshInboxThreads,
+    refreshAiChatThreads,
   ]);
 
   useListenToEventsForQuery({
     queryId: 'agent-chat-thread-record-operations',
-    operationSignature: INBOX_THREADS_OPERATION_SIGNATURE,
+    operationSignature: AI_CHAT_THREADS_OPERATION_SIGNATURE,
     skip: !isEnabled,
-    onSseReconnected: reloadInboxThreads,
+    onSseReconnected: reloadAiChatThreads,
   });
 
   const handleRecordOperation = useCallback(
@@ -89,18 +89,18 @@ export const InboxThreadRecordOperationsEffect = () => {
       refreshInboxOpenThreadsSummary();
 
       const applyUpdates = (
-        updates: (Partial<InboxThreadRecord> & { id: string })[],
+        updates: (Partial<AiChatThreadRecord> & { id: string })[],
       ) => {
         for (const update of updates) {
-          applyInboxThreadUpdate(update);
+          applyAiChatThreadUpdate(update);
         }
       };
 
       switch (operation.type) {
         case 'create-one': {
-          const createdThread = operation.createdRecord as InboxThreadRecord;
+          const createdThread = operation.createdRecord as AiChatThreadRecord;
 
-          addInboxThread(createdThread);
+          addAiChatThread(createdThread);
           return;
         }
         case 'update-one':
@@ -125,7 +125,7 @@ export const InboxThreadRecordOperationsEffect = () => {
               ({ recordId }) => !listedThreadIds.includes(recordId),
             )
           ) {
-            void refreshInboxThreads();
+            void refreshAiChatThreads();
           }
           return;
         }
@@ -154,15 +154,15 @@ export const InboxThreadRecordOperationsEffect = () => {
         }
         default:
           // Destroy and bulk create events carry no ids
-          void reloadInboxThreads();
+          void reloadAiChatThreads();
       }
     },
     [
-      addInboxThread,
-      applyInboxThreadUpdate,
+      addAiChatThread,
+      applyAiChatThreadUpdate,
       refreshInboxOpenThreadsSummary,
-      refreshInboxThreads,
-      reloadInboxThreads,
+      refreshAiChatThreads,
+      reloadAiChatThreads,
       store,
     ],
   );

@@ -3,9 +3,9 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { inboxReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
@@ -46,7 +46,7 @@ const renderUpdateInboxState = () => {
     id: THREAD_ID,
     lastActivityAt: LAST_ACTIVITY_AT,
   } as never);
-  store.set(inboxThreadParticipantsState.atom, {});
+  store.set(aiChatThreadParticipantsState.atom, {});
 
   const { result } = renderHook(() => useUpdateInboxThreadStatus(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -73,7 +73,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
       threadId: THREAD_ID,
       lastReadAt: LAST_ACTIVITY_AT,
       archivedAt: null,
@@ -95,7 +95,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    const participants = store.get(inboxThreadParticipantsState.atom);
+    const participants = store.get(aiChatThreadParticipantsState.atom);
 
     expect(participants?.[THREAD_ID]).toMatchObject({
       archivedAt: expect.any(String),
@@ -118,7 +118,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxReopenedThreadActivityState.atom)).toEqual({
+    expect(store.get(aiChatReopenedThreadActivityState.atom)).toEqual({
       [THREAD_ID]: LAST_ACTIVITY_AT,
       [OTHER_THREAD_ID]: null,
     });
@@ -128,7 +128,7 @@ describe('useUpdateInboxThreadStatus', () => {
     mutate.mockRejectedValue(new Error('Snooze time must be in the future'));
     const { result, store } = renderUpdateInboxState();
 
-    store.set(inboxThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: READ_PARTICIPANT,
     });
 
@@ -140,7 +140,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
       READ_PARTICIPANT,
     );
     expect(enqueueToast).toHaveBeenCalled();
@@ -154,11 +154,11 @@ describe('useUpdateInboxThreadStatus', () => {
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
 
-    store.set(inboxThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: READ_PARTICIPANT,
     });
     mutate.mockImplementation(async () => {
-      store.set(inboxThreadParticipantsState.atom, {
+      store.set(aiChatThreadParticipantsState.atom, {
         [THREAD_ID]: archivedParticipant,
       });
 
@@ -172,7 +172,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
       archivedParticipant,
     );
   });
@@ -188,14 +188,14 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadParticipantsState.atom)).toEqual({});
+    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({});
   });
 
   it('keeps the thread on screen unread when the member marks it unread', async () => {
     mutate.mockReturnValue(new Promise(() => undefined));
     const { result, store } = renderUpdateInboxState();
 
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: false,
       lastReadAt: LAST_ACTIVITY_AT,
@@ -209,7 +209,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadVisitState.atom)).toEqual({
+    expect(store.get(aiChatThreadVisitState.atom)).toEqual({
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,
@@ -227,7 +227,7 @@ describe('useUpdateInboxThreadStatus', () => {
       isKeptUnread: false,
     };
 
-    store.set(inboxThreadVisitState.atom, visit);
+    store.set(aiChatThreadVisitState.atom, visit);
 
     await act(async () => {
       await result.current.updateAgentChatThreadInboxState({
@@ -236,7 +236,7 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadVisitState.atom)).toEqual(visit);
+    expect(store.get(aiChatThreadVisitState.atom)).toEqual(visit);
   });
 
   it('keeps a visit to another chat opened while the refused request was pending', async () => {
@@ -249,10 +249,10 @@ describe('useUpdateInboxThreadStatus', () => {
     };
 
     mutate.mockImplementation(async () => {
-      store.set(inboxThreadVisitState.atom, otherVisit);
+      store.set(aiChatThreadVisitState.atom, otherVisit);
       throw new Error('Network error');
     });
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: false,
       lastReadAt: LAST_ACTIVITY_AT,
@@ -266,6 +266,6 @@ describe('useUpdateInboxThreadStatus', () => {
       });
     });
 
-    expect(store.get(inboxThreadVisitState.atom)).toEqual(otherVisit);
+    expect(store.get(aiChatThreadVisitState.atom)).toEqual(otherVisit);
   });
 });

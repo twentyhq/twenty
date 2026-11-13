@@ -1,29 +1,29 @@
 import { useContext } from 'react';
 
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { useShouldShowInboxEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
+import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmptyState';
 import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useIsInboxComposerCentered = () => {
-  const inboxSurface = useContext(InboxSurfaceContext);
+export const useIsAiChatComposerCentered = () => {
+  const aiChatSurface = useContext(AiChatSurfaceContext);
   // The workspace setup preamble is its own intro; centering would fight it.
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const shouldShowInboxEmptyState = useShouldShowInboxEmptyState();
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
     inboxThreadIsDirectMessageFamilySelector,
-    currentInboxThread,
+    currentAiChatThread,
   );
 
   return (
-    inboxSurface === INBOX_SURFACE.PAGE &&
+    aiChatSurface === AI_CHAT_SURFACE.PAGE &&
     !isDirectMessage &&
     !isWorkspaceSetupChat &&
-    shouldShowInboxEmptyState
+    shouldShowAiChatEmptyState
   );
 };

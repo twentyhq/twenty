@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -42,7 +42,7 @@ export const inboxFavoriteThreadsSelector = createAtomSelector<
 
         // The loaded chat carries its latest title and deletion, which the favorite's identifier doesn't follow.
         const loadedThread = get(
-          inboxThreadRecordFamilySelector,
+          aiChatThreadRecordFamilySelector,
           item.targetRecordId,
         );
 

@@ -2,10 +2,10 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useToggleInboxMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
-import { inboxLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const THREAD_ID = 'thread-id';
@@ -31,9 +31,9 @@ const renderToggleReaction = () => {
   store.set(currentWorkspaceMemberState.atom, {
     id: WORKSPACE_MEMBER_ID,
   } as never);
-  store.set(currentInboxThreadState.atom, THREAD_ID);
+  store.set(currentAiChatThreadState.atom, THREAD_ID);
 
-  const { result } = renderHook(() => useToggleInboxMessageReaction(), {
+  const { result } = renderHook(() => useToggleAiChatMessageReaction(), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Provider store={store}>{children}</Provider>
     ),
@@ -41,7 +41,7 @@ const renderToggleReaction = () => {
 
   const getReactions = () =>
     store.get(
-      inboxMessageReactionsFamilyState.atomFamily({
+      aiChatMessageReactionsFamilyState.atomFamily({
         messageId: MESSAGE_ID,
       }),
     );
@@ -49,7 +49,7 @@ const renderToggleReaction = () => {
   return { result, getReactions, store };
 };
 
-describe('useToggleInboxMessageReaction', () => {
+describe('useToggleAiChatMessageReaction', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -70,11 +70,11 @@ describe('useToggleInboxMessageReaction', () => {
     let thumbsUpToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      thumbsUpToggle = result.current.toggleInboxMessageReaction({
+      thumbsUpToggle = result.current.toggleAiChatMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
-      await result.current.toggleInboxMessageReaction({
+      await result.current.toggleAiChatMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '🎉',
       });
@@ -128,11 +128,11 @@ describe('useToggleInboxMessageReaction', () => {
     let removeToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      addToggle = result.current.toggleInboxMessageReaction({
+      addToggle = result.current.toggleAiChatMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
-      removeToggle = result.current.toggleInboxMessageReaction({
+      removeToggle = result.current.toggleAiChatMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
@@ -177,7 +177,7 @@ describe('useToggleInboxMessageReaction', () => {
     let addToggle: Promise<void> = Promise.resolve();
 
     await act(async () => {
-      addToggle = result.current.toggleInboxMessageReaction({
+      addToggle = result.current.toggleAiChatMessageReaction({
         messageId: MESSAGE_ID,
         emoji: '👍',
       });
@@ -185,13 +185,13 @@ describe('useToggleInboxMessageReaction', () => {
 
     await act(async () => {
       store.set(
-        inboxLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatLiveReactionRevisionsFamilyState.atomFamily({
           threadId: THREAD_ID,
         }),
         { [MESSAGE_ID]: 1 },
       );
       store.set(
-        inboxMessageReactionsFamilyState.atomFamily({
+        aiChatMessageReactionsFamilyState.atomFamily({
           messageId: MESSAGE_ID,
         }),
         confirmedReactions,

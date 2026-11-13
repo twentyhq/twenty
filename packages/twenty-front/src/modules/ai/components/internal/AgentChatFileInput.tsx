@@ -1,4 +1,4 @@
-import { useInboxFileUpload } from '@/ai/hooks/useAiChatFileUpload';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { styled } from '@linaria/react';
 import { type ChangeEvent, type Ref } from 'react';
 
@@ -6,12 +6,12 @@ const StyledFileInput = styled.input`
   display: none;
 `;
 
-type InboxFileInputProps = {
+type AiChatFileInputProps = {
   ref: Ref<HTMLInputElement>;
 };
 
-export const InboxFileInput = ({ ref }: InboxFileInputProps) => {
-  const { uploadFiles } = useInboxFileUpload();
+export const AiChatFileInput = ({ ref }: AiChatFileInputProps) => {
+  const { uploadFiles } = useAiChatFileUpload();
 
   const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {

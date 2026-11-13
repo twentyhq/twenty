@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconBellOff, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useFormatInboxThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -25,11 +25,11 @@ const StyledNotice = styled.div`
 export const InboxThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { formatInboxThreadDateTime } = useFormatInboxThreadDate();
-  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { event } = useAtomFamilySelectorValue(
     inboxThreadMemberStateFamilySelector,
-    currentInboxThread ?? '',
+    currentAiChatThread ?? '',
   );
 
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -40,7 +40,7 @@ export const InboxThreadStatusNotice = () => {
     return null;
   }
 
-  const eventTime = formatInboxThreadDateTime(new Date(event.at));
+  const eventTime = formatAiChatThreadDateTime(new Date(event.at));
   const notice = {
     SNOOZED: { Icon: IconZzz, text: t`Snoozed until ${eventTime}` },
     SNOOZE_ENDED: { Icon: IconZzz, text: t`Snooze ended ${eventTime}` },

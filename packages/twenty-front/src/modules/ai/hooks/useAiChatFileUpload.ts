@@ -1,7 +1,7 @@
-import { inboxSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { inboxUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { aiChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -10,23 +10,23 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
-export const useInboxFileUpload = () => {
+export const useAiChatFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const setInboxSelectedFiles = useSetAtomState(inboxSelectedFilesState);
-  const setInboxUploadedFiles = useSetAtomState(inboxUploadedFilesState);
+  const setAiChatSelectedFiles = useSetAtomState(aiChatSelectedFilesState);
+  const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
   const store = useStore();
 
-  const sendFile = async (file: File): Promise<InboxFileUIPart | null> => {
+  const sendFile = async (file: File): Promise<AiChatFileUIPart | null> => {
     const abortController = new AbortController();
     const unsubscribeFromSelectedFiles = store.sub(
-      inboxSelectedFilesState.atom,
+      aiChatSelectedFilesState.atom,
       () => {
-        if (!store.get(inboxSelectedFilesState.atom).includes(file)) {
+        if (!store.get(aiChatSelectedFilesState.atom).includes(file)) {
           abortController.abort();
         }
       },
@@ -38,7 +38,7 @@ export const useInboxFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(inboxSelectedFilesState.atom).includes(file)) {
+      if (!store.get(aiChatSelectedFilesState.atom).includes(file)) {
         return null;
       }
 
@@ -62,16 +62,18 @@ export const useInboxFileUpload = () => {
       return null;
     } finally {
       unsubscribeFromSelectedFiles();
-      setInboxSelectedFiles((previousSelectedFiles) =>
+      setAiChatSelectedFiles((previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
   };
 
   const uploadFiles = async (files: File[]) => {
-    const currentInboxThread = store.get(currentInboxThreadState.atom);
+    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
     const currentThread = store.get(
-      inboxThreadRecordFamilySelector.selectorFamily(currentInboxThread ?? ''),
+      aiChatThreadRecordFamilySelector.selectorFamily(
+        currentAiChatThread ?? '',
+      ),
     );
 
     if (
@@ -81,7 +83,7 @@ export const useInboxFileUpload = () => {
       return [];
     }
 
-    setInboxSelectedFiles((previousSelectedFiles) => [
+    setAiChatSelectedFiles((previousSelectedFiles) => [
       ...previousSelectedFiles,
       ...files,
     ]);
@@ -91,7 +93,7 @@ export const useInboxFileUpload = () => {
     );
 
     if (isNonEmptyArray(successfulUploads)) {
-      setInboxUploadedFiles((previousUploadedFiles) => [
+      setAiChatUploadedFiles((previousUploadedFiles) => [
         ...previousUploadedFiles,
         ...successfulUploads,
       ]);

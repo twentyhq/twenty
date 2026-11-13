@@ -1,26 +1,26 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { mergeInboxThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { mergeAiChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
 
 // The member's inbox state comes with the threads it belongs to
-export const useAddInboxThreadParticipants = () => {
+export const useAddAiChatThreadParticipants = () => {
   const store = useStore();
 
-  const addInboxThreadParticipants = useCallback(
+  const addAiChatThreadParticipants = useCallback(
     (participants: AgentChatThreadParticipantFieldsFragment[]) => {
-      store.set(inboxThreadParticipantsState.atom, (loadedParticipants) =>
-        mergeInboxThreadParticipants(
-          mergeInboxThreadParticipants(loadedParticipants ?? {}, participants),
-          Object.values(store.get(inboxThreadStreamedParticipantsState.atom)),
+      store.set(aiChatThreadParticipantsState.atom, (loadedParticipants) =>
+        mergeAiChatThreadParticipants(
+          mergeAiChatThreadParticipants(loadedParticipants ?? {}, participants),
+          Object.values(store.get(aiChatThreadStreamedParticipantsState.atom)),
         ),
       );
     },
     [store],
   );
 
-  return { addInboxThreadParticipants };
+  return { addAiChatThreadParticipants };
 };

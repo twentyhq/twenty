@@ -3,34 +3,34 @@ import { useCallback } from 'react';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { inboxThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
 
-type InboxThreadUpdate = Partial<InboxThreadRecord> & {
+type AiChatThreadUpdate = Partial<AiChatThreadRecord> & {
   id: string;
 };
 
-export const useApplyInboxThreadUpdate = () => {
+export const useApplyAiChatThreadUpdate = () => {
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   // A list page requested before this update must not overwrite it
-  const applyInboxThreadUpdate = useCallback(
-    (update: InboxThreadUpdate) => {
+  const applyAiChatThreadUpdate = useCallback(
+    (update: AiChatThreadUpdate) => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
       store.set(
-        inboxThreadRecordUpdateCountState.atom,
+        aiChatThreadRecordUpdateCountState.atom,
         (updateCount) => updateCount + 1,
       );
     },
     [store, upsertRecordsInStore],
   );
 
-  const prependInboxThreadToList = useCallback(
+  const prependAiChatThreadToList = useCallback(
     (threadId: string) => {
       const recentThreadListAtom = inboxThreadListFamilyState.atomFamily(
         getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
@@ -52,27 +52,27 @@ export const useApplyInboxThreadUpdate = () => {
     [store],
   );
 
-  const addInboxThread = useCallback(
-    (thread: InboxThreadUpdate) => {
-      applyInboxThreadUpdate(thread);
-      prependInboxThreadToList(thread.id);
+  const addAiChatThread = useCallback(
+    (thread: AiChatThreadUpdate) => {
+      applyAiChatThreadUpdate(thread);
+      prependAiChatThreadToList(thread.id);
     },
-    [applyInboxThreadUpdate, prependInboxThreadToList],
+    [applyAiChatThreadUpdate, prependAiChatThreadToList],
   );
 
-  const addLoadedInboxThread = useCallback(
-    (thread: InboxThreadUpdate) => {
+  const addLoadedAiChatThread = useCallback(
+    (thread: AiChatThreadUpdate) => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
       });
-      prependInboxThreadToList(thread.id);
+      prependAiChatThreadToList(thread.id);
     },
-    [prependInboxThreadToList, upsertRecordsInStore],
+    [prependAiChatThreadToList, upsertRecordsInStore],
   );
 
   return {
-    applyInboxThreadUpdate,
-    addInboxThread,
-    addLoadedInboxThread,
+    applyAiChatThreadUpdate,
+    addAiChatThread,
+    addLoadedAiChatThread,
   };
 };

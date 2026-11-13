@@ -1,7 +1,7 @@
 import { createStore } from 'jotai';
 
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
 
@@ -49,7 +49,7 @@ describe('inboxThreadMemberStateFamilySelector', () => {
   it('reads a stored thread against the member state', () => {
     const store = buildStore();
 
-    store.set(inboxThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(aiChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
 
     expect(isUnread(store)).toBe(true);
   });
@@ -57,7 +57,7 @@ describe('inboxThreadMemberStateFamilySelector', () => {
   it('never reads as unread for a member who does not participate', () => {
     const store = buildStore();
 
-    store.set(inboxThreadParticipantsState.atom, {});
+    store.set(aiChatThreadParticipantsState.atom, {});
 
     expect(isUnread(store)).toBe(false);
   });
@@ -69,8 +69,8 @@ describe('inboxThreadMemberStateFamilySelector', () => {
   it('never reads the thread on screen as unread, unless the member kept it unread', () => {
     const store = buildStore();
 
-    store.set(inboxThreadParticipantsState.atom, UNREAD_PARTICIPANT);
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, UNREAD_PARTICIPANT);
+    store.set(aiChatThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,
@@ -79,7 +79,7 @@ describe('inboxThreadMemberStateFamilySelector', () => {
 
     expect(isUnread(store)).toBe(false);
 
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: THREAD_ID,
       isUnread: true,
       lastReadAt: null,

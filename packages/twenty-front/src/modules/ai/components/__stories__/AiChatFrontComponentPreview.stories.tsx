@@ -11,7 +11,7 @@ import {
   getFrontComponentPreviewMock,
   seedFrontComponentPreviewWorkspace,
 } from '@/ai/components/__mocks__/aiChatFrontComponentPreviewMocks';
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -167,7 +167,7 @@ export const RetryDraftLoad: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'Could not load preview.',
     );
-    dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+    dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     await expect(
       await canvas.findByRole(
         'button',
@@ -221,7 +221,7 @@ export const RefreshStatusPreservesInteraction: Story = {
           { once: true },
         ),
       );
-      dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
       await expect(
         await canvas.findByText(
           status === 'saved'
@@ -267,7 +267,7 @@ export const SupersededInitialLoad: Story = {
     await expect(canvas.getByRole('status')).toHaveTextContent(
       'Loading preview',
     );
-    dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+    dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
     completeInitialRequest?.();
     await userEvent.click(canvas.getByRole('button', { name: 'Count: 0' }));

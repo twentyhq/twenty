@@ -9,9 +9,9 @@ import { AiChatApprovalRecordReview } from '@/ai/components/AiChatApprovalRecord
 import { AiChatToolCallApprovalFieldDisplay } from '@/ai/components/internal/AiChatToolCallApprovalFieldDisplay';
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai/components/internal/AiChatToolCallApprovalRecordStoreEffect';
-import { INBOX_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai/constants/AiChatRecordApprovalReviewColumnWidth';
+import { AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH } from '@/ai/constants/AiChatRecordApprovalReviewColumnWidth';
 import { useToolCallApprovalFieldDefinitions } from '@/ai/hooks/useToolCallApprovalFieldDefinitions';
-import { type AgentChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 
 const RECORD_COLUMN_ID = 'id';
@@ -22,17 +22,17 @@ const StyledRawValue = styled.span`
   text-overflow: ellipsis;
 `;
 
-type InboxRecordApprovalReviewProps = {
+type AiChatRecordApprovalReviewProps = {
   objectNameSingular: string;
   operation: 'create' | 'update' | 'delete';
   label: string;
-  recordApprovals: AgentChatPendingRecordApproval[];
+  recordApprovals: AiChatPendingRecordApproval[];
   selectedToolCallIds: string[];
   onSelectedToolCallIdsChange: (toolCallIds: string[]) => void;
   disabled: boolean;
 };
 
-export const InboxRecordApprovalReview = ({
+export const AiChatRecordApprovalReview = ({
   objectNameSingular,
   operation,
   label,
@@ -40,7 +40,7 @@ export const InboxRecordApprovalReview = ({
   selectedToolCallIds,
   onSelectedToolCallIdsChange,
   disabled,
-}: InboxRecordApprovalReviewProps) => {
+}: AiChatRecordApprovalReviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -77,7 +77,7 @@ export const InboxRecordApprovalReview = ({
       icon: isDefined(iconName) ? (
         <Icon size={theme.icon.size.sm} />
       ) : undefined,
-      width: INBOX_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH,
+      width: AI_CHAT_RECORD_APPROVAL_REVIEW_COLUMN_WIDTH,
     };
   });
 

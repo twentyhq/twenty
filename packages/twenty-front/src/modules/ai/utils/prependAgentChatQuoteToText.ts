@@ -1,4 +1,4 @@
-export const prependInboxQuoteToText = ({
+export const prependAiChatQuoteToText = ({
   text,
   authorName,
   excerpt,

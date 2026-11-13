@@ -3,10 +3,10 @@ import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 
-import { InboxThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { useInboxThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useIsInboxThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -14,17 +14,17 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { type InboxThreadListItemData } from '@/ai/types/AgentChatThreadListItem';
 
-type NavigationDrawerInboxThreadItemProps = {
+type NavigationDrawerAiChatThreadItemProps = {
   thread: InboxThreadListItemData;
   isActive: boolean;
   onClick: (thread: InboxThreadListItemData) => void;
 };
 
-export const NavigationDrawerInboxThreadItem = ({
+export const NavigationDrawerAiChatThreadItem = ({
   thread,
   isActive,
   onClick,
-}: NavigationDrawerInboxThreadItemProps) => {
+}: NavigationDrawerAiChatThreadItemProps) => {
   const { t } = useLingui();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const {
@@ -34,11 +34,11 @@ export const NavigationDrawerInboxThreadItem = ({
     startRename,
     cancelRename,
     commitRename,
-  } = useInboxThreadRename(thread);
+  } = useAiChatThreadRename(thread);
 
   const isDeleted = Boolean(thread.deletedAt);
-  const isShownAsUnread = useIsInboxThreadShownAsUnread(thread);
-  const displayLabel = useInboxThreadDisplayLabel({
+  const isShownAsUnread = useIsAiChatThreadShownAsUnread(thread);
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`New chat`,
   });
@@ -70,7 +70,7 @@ export const NavigationDrawerInboxThreadItem = ({
       isUnread={isShownAsUnread}
       isRightOptionsDropdownOpen={isDropdownOpen}
       rightOptions={
-        <InboxThreadActionsDropdown
+        <AiChatThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}

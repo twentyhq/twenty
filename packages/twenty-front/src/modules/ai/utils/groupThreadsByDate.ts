@@ -3,10 +3,10 @@ import { differenceInCalendarDays, startOfWeek } from 'date-fns';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InboxThreadDateGroup } from '@/ai/types/AgentChatThreadDateGroup';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadDateGroup } from '@/ai/types/AgentChatThreadDateGroup';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getInboxThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 
 const RECENT_THREAD_DAY_COUNT = 7;
 const COMPACT_DATE_GROUP_IDS = ['today', 'this-week', 'earlier'];
@@ -43,7 +43,7 @@ const getCompactPastThreadDateGroup = ({
 }: {
   daysSinceActivity: number;
   daysSinceWeekStart: number;
-}): Omit<InboxThreadDateGroup, 'threads'> => {
+}): Omit<AiChatThreadDateGroup, 'threads'> => {
   if (daysSinceActivity <= daysSinceWeekStart) {
     return {
       id: 'this-week',
@@ -67,7 +67,7 @@ const getThreadDateGroup = ({
   today: Date;
   variant: InboxThreadListVariant;
   daysSinceWeekStart: number;
-}): Omit<InboxThreadDateGroup, 'threads'> => {
+}): Omit<AiChatThreadDateGroup, 'threads'> => {
   const daysSinceActivity = differenceInCalendarDays(today, threadActivityAt);
   const isToday = daysSinceActivity === 0;
   const isUpcomingCompactThread =
@@ -113,17 +113,17 @@ export const groupThreadsByDate = ({
   variant = 'default',
   calendarStartDay = CalendarStartDay.MONDAY,
 }: {
-  threads: InboxThreadRecord[];
+  threads: AiChatThreadRecord[];
   today?: Date;
   variant?: InboxThreadListVariant;
   calendarStartDay?: CalendarStartDay;
-}): InboxThreadDateGroup[] => {
-  const groupedThreadsByDate = new Map<string, InboxThreadDateGroup>();
+}): AiChatThreadDateGroup[] => {
+  const groupedThreadsByDate = new Map<string, AiChatThreadDateGroup>();
   const daysSinceWeekStart = getDaysSinceWeekStart({ today, calendarStartDay });
 
   for (const thread of threads) {
     const threadDateGroup = getThreadDateGroup({
-      threadActivityAt: new Date(getInboxThreadLastActivityAt(thread)),
+      threadActivityAt: new Date(getAiChatThreadLastActivityAt(thread)),
       today,
       variant,
       daysSinceWeekStart,

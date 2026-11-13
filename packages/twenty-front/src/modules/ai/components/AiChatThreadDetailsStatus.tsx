@@ -1,21 +1,21 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { InboxThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
-import { useInboxThreadDetailsStatus } from '@/ai/hooks/useAiChatThreadDetailsStatus';
+import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
+import { useAiChatThreadDetailsStatus } from '@/ai/hooks/useAiChatThreadDetailsStatus';
 import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
-type InboxThreadDetailsStatusProps = {
+type AiChatThreadDetailsStatusProps = {
   threadId: string;
   dropdownId: string;
 };
 
-export const InboxThreadDetailsStatus = ({
+export const AiChatThreadDetailsStatus = ({
   threadId,
   dropdownId,
-}: InboxThreadDetailsStatusProps) => {
+}: AiChatThreadDetailsStatusProps) => {
   const { status, scope, canChangeStatus, isPending, changeStatus } =
-    useInboxThreadDetailsStatus(threadId);
+    useAiChatThreadDetailsStatus(threadId);
   const { closeDropdown } = useCloseDropdown();
 
   const handleStatusChange = ({
@@ -35,7 +35,7 @@ export const InboxThreadDetailsStatus = ({
   }
 
   return (
-    <InboxThreadStatusField
+    <AiChatThreadStatusField
       status={status}
       scope={scope}
       isSaving={isPending}

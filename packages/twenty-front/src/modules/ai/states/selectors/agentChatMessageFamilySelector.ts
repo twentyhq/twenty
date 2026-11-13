@@ -1,17 +1,17 @@
-import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Nullable } from 'twenty-shared/types';
 
-export const inboxMessageFamilySelector = createAtomFamilySelector<
+export const aiChatMessageFamilySelector = createAtomFamilySelector<
   Nullable<ExtendedUIMessage>,
   { messageId: Nullable<string> }
 >({
-  key: 'inboxMessageFamilySelector',
+  key: 'aiChatMessageFamilySelector',
   get:
     ({ messageId }) =>
     ({ get }) =>
-      get(inboxDisplayedThreadMessagesSelector).find(
+      get(aiChatDisplayedThreadMessagesSelector).find(
         (message) => message.id === messageId,
       ),
 });

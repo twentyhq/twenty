@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { inboxOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
+import { aiChatOnlineWorkspaceMemberIdsState } from '@/ai/states/agentChatOnlineWorkspaceMemberIdsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledPresence = styled.span`
@@ -27,28 +27,28 @@ const StyledDot = styled.span<{ isOnline: boolean }>`
   width: ${themeCssVariables.spacing['1.5']};
 `;
 
-type InboxMemberPresenceProps = {
+type AiChatMemberPresenceProps = {
   workspaceMemberId: string | undefined;
   children: ReactNode;
 };
 
-export const InboxMemberPresence = ({
+export const AiChatMemberPresence = ({
   workspaceMemberId,
   children,
-}: InboxMemberPresenceProps) => {
+}: AiChatMemberPresenceProps) => {
   const { t } = useLingui();
-  const inboxOnlineWorkspaceMemberIds = useAtomStateValue(
-    inboxOnlineWorkspaceMemberIdsState,
+  const aiChatOnlineWorkspaceMemberIds = useAtomStateValue(
+    aiChatOnlineWorkspaceMemberIdsState,
   );
 
   if (
-    !isDefined(inboxOnlineWorkspaceMemberIds) ||
+    !isDefined(aiChatOnlineWorkspaceMemberIds) ||
     !isDefined(workspaceMemberId)
   ) {
     return children;
   }
 
-  const isOnline = inboxOnlineWorkspaceMemberIds.includes(workspaceMemberId);
+  const isOnline = aiChatOnlineWorkspaceMemberIds.includes(workspaceMemberId);
 
   return (
     <StyledPresence>

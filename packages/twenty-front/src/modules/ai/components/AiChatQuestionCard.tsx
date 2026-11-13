@@ -30,11 +30,11 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { InboxComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { type AiChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const NUMBER_ICONS: IconComponent[] = [
@@ -165,7 +165,7 @@ const areAllQuestionsAnswered = (
   );
 
 type AiChatQuestionCardProps = {
-  pendingQuestion: AgentChatPendingQuestion;
+  pendingQuestion: AiChatPendingQuestion;
   onSkip?: () => void;
 };
 
@@ -193,7 +193,7 @@ export const AiChatQuestionCard = ({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
+  const { answerAiChatToolCall } = useAnswerAiChatToolCall();
 
   const currentQuestion = questions[currentIndex];
   const hasMultipleQuestions = questions.length > 1;
@@ -223,7 +223,7 @@ export const AiChatQuestionCard = ({
     setIsSubmitting(true);
 
     const [{ selectedOptionIndices, freeText }] = answers;
-    const isAnswered = await answerAgentChatToolCall(
+    const isAnswered = await answerAiChatToolCall(
       pendingQuestion.kind === 'question'
         ? {
             toolCallId,
@@ -467,7 +467,7 @@ export const AiChatQuestionCard = ({
       <StyledDivider />
 
       <StyledComposerSection>
-        <InboxComposerActionsRow
+        <AiChatComposerActionsRow
           leftActions={
             <>
               {isDefined(onSkip) && (

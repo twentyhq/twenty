@@ -1,6 +1,6 @@
-import { INBOX_USER_MESSAGE_COLLAPSE_THRESHOLD_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapseThresholdLineCount';
+import { AI_CHAT_USER_MESSAGE_COLLAPSE_THRESHOLD_LINE_COUNT } from '@/ai/constants/AiChatUserMessageCollapseThresholdLineCount';
 
-export const isInboxUserMessageCollapsible = ({
+export const isAiChatUserMessageCollapsible = ({
   contentHeightInPx,
   lineHeightInPx,
 }: {
@@ -8,4 +8,4 @@ export const isInboxUserMessageCollapsible = ({
   lineHeightInPx: number;
 }) =>
   Math.round(contentHeightInPx / lineHeightInPx) >
-  INBOX_USER_MESSAGE_COLLAPSE_THRESHOLD_LINE_COUNT;
+  AI_CHAT_USER_MESSAGE_COLLAPSE_THRESHOLD_LINE_COUNT;

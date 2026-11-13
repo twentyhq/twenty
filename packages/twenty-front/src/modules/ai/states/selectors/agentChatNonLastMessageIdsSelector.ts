@@ -1,13 +1,13 @@
-import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
-import { inboxLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
+import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { aiChatLastMessageIdSelector } from '@/ai/states/selectors/agentChatLastMessageIdSelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
-export const inboxNonLastMessageIdsSelector = createAtomSelector<string[]>({
-  key: 'inboxNonLastMessageIdsSelector',
+export const aiChatNonLastMessageIdsSelector = createAtomSelector<string[]>({
+  key: 'aiChatNonLastMessageIdsSelector',
   get: ({ get }) => {
-    const lastMessageId = get(inboxLastMessageIdSelector);
+    const lastMessageId = get(aiChatLastMessageIdSelector);
 
-    return get(inboxDisplayedThreadMessagesSelector)
+    return get(aiChatDisplayedThreadMessagesSelector)
       .filter((message) => message.id !== lastMessageId)
       .map((message) => message.id);
   },

@@ -2,14 +2,14 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { useAiChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { findToolPartOutput } from '@/ai/utils/findToolPartOutput';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { toAiChatError } from '@/ai/utils/toAiChatError';
 import { updateToolPartOutput } from '@/ai/utils/updateToolPartOutput';
@@ -22,19 +22,19 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { AnswerToolCallDocument } from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-export const useAnswerAgentChatToolCall = () => {
+export const useAnswerAiChatToolCall = () => {
   const apolloCoreClient = useApolloCoreClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { modelIdForRequest } = useAgentChatModelId();
+  const { modelIdForRequest } = useAiChatModelId();
 
   // Returns whether answered, so a card stays disabled until the call closes.
-  const answerAgentChatToolCall = useCallback(
+  const answerAiChatToolCall = useCallback(
     async ({
       toolCallId,
       response,
       optimisticToolOutput,
-      threadId = store.get(inboxDisplayedThreadState.atom),
+      threadId = store.get(aiChatDisplayedThreadState.atom),
     }: {
       toolCallId: string;
       response: Record<string, unknown>;
@@ -45,12 +45,12 @@ export const useAnswerAgentChatToolCall = () => {
         return false;
       }
 
-      const messagesAtom = inboxMessagesFamilyState.atomFamily({
+      const messagesAtom = aiChatMessagesFamilyState.atomFamily({
         threadId,
       });
-      const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
+      const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
       const isAwaitingFirstChunkAtom =
-        agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+        aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
 
       const previousToolOutput = findToolPartOutput({
         messages: store.get(messagesAtom),
@@ -88,7 +88,7 @@ export const useAnswerAgentChatToolCall = () => {
           store.set(isAwaitingFirstChunkAtom, false);
         }
 
-        dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
 
         return true;
       } catch (error) {
@@ -103,7 +103,7 @@ export const useAnswerAgentChatToolCall = () => {
         if (
           isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)
         ) {
-          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
         } else if (isDefined(optimisticToolOutput)) {
           store.set(messagesAtom, (messages) =>
             updateToolPartOutput({
@@ -122,5 +122,5 @@ export const useAnswerAgentChatToolCall = () => {
     [apolloCoreClient, store, enqueueToast, modelIdForRequest],
   );
 
-  return { answerAgentChatToolCall };
+  return { answerAiChatToolCall };
 };

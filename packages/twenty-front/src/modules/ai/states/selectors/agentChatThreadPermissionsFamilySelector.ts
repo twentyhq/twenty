@@ -6,11 +6,11 @@ import { recordPermissionsFamilySelector } from '@/object-record/record-sharing/
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 
-export const inboxThreadPermissionsFamilySelector = createAtomFamilySelector<
+export const aiChatThreadPermissionsFamilySelector = createAtomFamilySelector<
   RecordPermissionsDto | undefined,
   string
 >({
-  key: 'inboxThreadPermissionsFamilySelector',
+  key: 'aiChatThreadPermissionsFamilySelector',
   get:
     (threadId) =>
     ({ get }) => {

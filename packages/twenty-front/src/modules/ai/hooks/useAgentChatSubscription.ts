@@ -1,10 +1,10 @@
-import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { inboxLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { inboxFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
-import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { aiChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { aiChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
 import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
@@ -21,27 +21,27 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AgentChatStreamLivenessCheckIntervalInMs';
-import { AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai/constants/AgentChatStreamLivenessTimeoutInMs';
-import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
-import { agentChatHandleEventCallbackFamilyState } from '@/ai/states/agentChatHandleEventCallbackFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
-import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai/constants/AgentChatStreamLivenessCheckIntervalInMs';
+import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai/constants/AgentChatStreamLivenessTimeoutInMs';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
+import { aiChatHandleEventCallbackFamilyState } from '@/ai/states/agentChatHandleEventCallbackFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatStreamRecoveryAttemptsState } from '@/ai/states/agentChatStreamRecoveryAttemptsState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { accumulateAiChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { createMidStreamAdapter } from '@/ai/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
-import { getInboxMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
-import { upsertInboxMessage } from '@/ai/utils/upsertAgentChatMessage';
+import { getAiChatMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
+import { upsertAiChatMessage } from '@/ai/utils/upsertAgentChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -57,14 +57,15 @@ const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
 
-export const useInboxSubscription = (threadId: string | null) => {
+export const useAiChatSubscription = (threadId: string | null) => {
   const store = useStore();
   // Only a resubscribe trigger: an access denial ends the subscription until the member's permissions change
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
-  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
+  const { refreshAiChatThreadPermissions } =
+    useRefreshAiChatThreadPermissions();
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const { refreshAiChatUsage } = useRefreshAiChatUsage();
-  const { applyInboxThreadUpdate } = useApplyInboxThreadUpdate();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const [resubscribeNonce, setResubscribeNonce] = useState(0);
 
@@ -75,25 +76,24 @@ export const useInboxSubscription = (threadId: string | null) => {
 
     const familyKey = { threadId };
 
-    const errorAtom = agentChatErrorFamilyState.atomFamily(familyKey);
-    const isStreamingAtom =
-      agentChatIsStreamingFamilyState.atomFamily(familyKey);
+    const errorAtom = aiChatErrorFamilyState.atomFamily(familyKey);
+    const isStreamingAtom = aiChatIsStreamingFamilyState.atomFamily(familyKey);
     const isAwaitingFirstChunkAtom =
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey);
+      aiChatIsAwaitingFirstChunkFamilyState.atomFamily(familyKey);
     const firstLiveSeqAtom =
-      agentChatFirstLiveSeqFamilyState.atomFamily(familyKey);
+      aiChatFirstLiveSeqFamilyState.atomFamily(familyKey);
     const isAwaitingPersistedRefetchAtom =
-      agentChatIsAwaitingPersistedRefetchFamilyState.atomFamily(familyKey);
+      aiChatIsAwaitingPersistedRefetchFamilyState.atomFamily(familyKey);
     const handleEventCallbackAtom =
-      agentChatHandleEventCallbackFamilyState.atomFamily(familyKey);
-    const messagesAtom = inboxMessagesFamilyState.atomFamily(familyKey);
+      aiChatHandleEventCallbackFamilyState.atomFamily(familyKey);
+    const messagesAtom = aiChatMessagesFamilyState.atomFamily(familyKey);
     const fetchedMessagesAtom =
-      inboxFetchedMessagesFamilyState.atomFamily(familyKey);
+      aiChatFetchedMessagesFamilyState.atomFamily(familyKey);
     const queuedMessagesAtom =
-      agentChatQueuedMessagesFamilyState.atomFamily(familyKey);
-    const usageAtom = agentChatUsageFamilyState.atomFamily(familyKey);
+      aiChatQueuedMessagesFamilyState.atomFamily(familyKey);
+    const usageAtom = aiChatUsageFamilyState.atomFamily(familyKey);
     const liveReactionRevisionsAtom =
-      inboxLiveReactionRevisionsFamilyState.atomFamily(familyKey);
+      aiChatLiveReactionRevisionsFamilyState.atomFamily(familyKey);
 
     // Changes made while unsubscribed were missed, so fetches must fill them in again
     store.set(liveReactionRevisionsAtom, {});
@@ -133,7 +133,7 @@ export const useInboxSubscription = (threadId: string | null) => {
       }
 
       store.set(messagesAtom, (currentMessages) =>
-        upsertInboxMessage(currentMessages, messageToFlush),
+        upsertAiChatMessage(currentMessages, messageToFlush),
       );
     };
 
@@ -161,10 +161,10 @@ export const useInboxSubscription = (threadId: string | null) => {
         }
         const extendedMessage = message as ExtendedUIMessage;
 
-        const title = getInboxMessageThreadTitle(extendedMessage);
+        const title = getAiChatMessageThreadTitle(extendedMessage);
 
         const threadRecord = store.get(
-          inboxThreadRecordFamilySelector.selectorFamily(threadId),
+          aiChatThreadRecordFamilySelector.selectorFamily(threadId),
         );
 
         if (
@@ -172,7 +172,7 @@ export const useInboxSubscription = (threadId: string | null) => {
           isDefined(threadRecord) &&
           !isNonEmptyString(threadRecord.title)
         ) {
-          applyInboxThreadUpdate({ id: threadId, title });
+          applyAiChatThreadUpdate({ id: threadId, title });
         }
 
         const usage = extendedMessage.metadata?.usage;
@@ -186,7 +186,7 @@ export const useInboxSubscription = (threadId: string | null) => {
           lastUsageCountedMessageId = extendedMessage.id;
 
           store.set(usageAtom, (previousUsage) =>
-            accumulateAgentChatUsage(previousUsage, usage, model),
+            accumulateAiChatUsage(previousUsage, usage, model),
           );
         }
 
@@ -231,7 +231,7 @@ export const useInboxSubscription = (threadId: string | null) => {
     const chunkSequencer = createStreamChunkSequencer({
       onApply: applyChunk,
       onGapStalled: () =>
-        dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME),
+        dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME),
     });
 
     const resetStreamProcessing = () => {
@@ -262,13 +262,13 @@ export const useInboxSubscription = (threadId: string | null) => {
         case 'message-persisted': {
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
 
         case 'message-added':
         case 'tool-call-resolved': {
-          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
 
@@ -285,7 +285,7 @@ export const useInboxSubscription = (threadId: string | null) => {
             [event.messageId]: event.revision,
           });
           store.set(
-            inboxMessageReactionsFamilyState.atomFamily({
+            aiChatMessageReactionsFamilyState.atomFamily({
               messageId: event.messageId,
             }),
             event.reactions,
@@ -294,7 +294,7 @@ export const useInboxSubscription = (threadId: string | null) => {
         }
 
         case 'queue-updated': {
-          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
 
@@ -306,7 +306,7 @@ export const useInboxSubscription = (threadId: string | null) => {
               PERMISSIONS_REFRESH_INTERVAL_MS
           ) {
             lastPermissionsRefreshAt = Date.now();
-            void refreshInboxThreadPermissions([threadId]);
+            void refreshAiChatThreadPermissions([threadId]);
           }
           break;
         }
@@ -336,7 +336,7 @@ export const useInboxSubscription = (threadId: string | null) => {
 
           resetStreamProcessing();
           store.set(isAwaitingPersistedRefetchAtom, true);
-          dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+          dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           store.set(isStreamingAtom, false);
           break;
         }
@@ -401,7 +401,7 @@ export const useInboxSubscription = (threadId: string | null) => {
           // The server yields the first keepalive itself on subscribe, so only later events prove pub/sub delivers
           if (hasReceivedInitialKeepalive) {
             lastBroadcastAt = Date.now();
-            store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
+            store.set(aiChatStreamRecoveryAttemptsState.atom, 0);
           }
           hasReceivedInitialKeepalive = true;
 
@@ -416,7 +416,7 @@ export const useInboxSubscription = (threadId: string | null) => {
               isGraphqlErrorOfType(error, AiChatErrorCode.CONNECTION_LOST)
             ) {
               store.set(errorAtom, null);
-              dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
+              dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
             }
             handleEvent(event);
           }
@@ -446,20 +446,20 @@ export const useInboxSubscription = (threadId: string | null) => {
       const isPending =
         store.get(isStreamingAtom) || store.get(isAwaitingFirstChunkAtom);
       const recoveryAttempts = store.get(
-        agentChatStreamRecoveryAttemptsState.atom,
+        aiChatStreamRecoveryAttemptsState.atom,
       );
 
       // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
       if (
         accessDenied ||
         (!isPending && recoveryAttempts === 0) ||
-        Date.now() - lastBroadcastAt <= AGENT_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
+        Date.now() - lastBroadcastAt <= AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
       ) {
         return;
       }
 
       if (recoveryAttempts >= MAX_SILENT_RECOVERY_ATTEMPTS) {
-        store.set(agentChatStreamRecoveryAttemptsState.atom, 0);
+        store.set(aiChatStreamRecoveryAttemptsState.atom, 0);
         store.set(
           errorAtom,
           createAiChatCodedError(
@@ -472,13 +472,10 @@ export const useInboxSubscription = (threadId: string | null) => {
         return;
       }
 
-      store.set(
-        agentChatStreamRecoveryAttemptsState.atom,
-        recoveryAttempts + 1,
-      );
+      store.set(aiChatStreamRecoveryAttemptsState.atom, recoveryAttempts + 1);
       setResubscribeNonce((nonce) => nonce + 1);
-      dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
-    }, AGENT_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
+      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+    }, AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
     return () => {
       disposed = true;
@@ -500,9 +497,9 @@ export const useInboxSubscription = (threadId: string | null) => {
     resubscribeNonce,
     store,
     loadInboxThreadList,
-    refreshInboxThreadPermissions,
+    refreshAiChatThreadPermissions,
     refreshAiChatUsage,
-    applyInboxThreadUpdate,
+    applyAiChatThreadUpdate,
     currentUserWorkspace,
   ]);
 };

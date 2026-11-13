@@ -3,14 +3,14 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { type InboxMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { type InboxMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
-import { getAgentChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
-import { getInboxSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { type AiChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type AiChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
+import { getAiChatAgentAuthor } from '@/ai/utils/getAgentChatAgentAuthor';
+import { getAiChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getInstalledApplicationDisplayName } from '@/settings/app-preferences/utils/getInstalledApplicationDisplayName';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const getInboxMessageAuthor = <
+export const getAiChatMessageAuthor = <
   TWorkspaceMember extends Pick<
     PartialWorkspaceMember,
     'id' | 'name' | 'userEmail'
@@ -21,9 +21,9 @@ export const getInboxMessageAuthor = <
   agentName,
 }: {
   message: Pick<ExtendedUIMessage, 'id' | 'role' | 'metadata'>;
-  authorLookup: InboxMessageAuthorLookup<TWorkspaceMember>;
+  authorLookup: AiChatMessageAuthorLookup<TWorkspaceMember>;
   agentName?: string;
-}): InboxMessageAuthor<TWorkspaceMember> => {
+}): AiChatMessageAuthor<TWorkspaceMember> => {
   const applicationId = message.metadata?.senderApplicationId;
   const senderWorkspaceMemberId = message.metadata?.senderWorkspaceMemberId;
   const agentId = message.metadata?.agentId;
@@ -49,7 +49,7 @@ export const getInboxMessageAuthor = <
   }
 
   if (isDefined(agentId) && !isDefined(senderWorkspaceMemberId)) {
-    return getAgentChatAgentAuthor({ agentId, agentName });
+    return getAiChatAgentAuthor({ agentId, agentName });
   }
 
   if (isDefined(senderWorkspaceMemberId)) {
@@ -61,7 +61,7 @@ export const getInboxMessageAuthor = <
       type: 'member',
       senderWorkspaceMemberId,
       sender,
-      name: getInboxSenderLabel({
+      name: getAiChatSenderLabel({
         sender,
         isCurrentWorkspaceMember: false,
       }),

@@ -3,8 +3,8 @@ import { type ComponentProps, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxSnoozeMenu } from '@/ai/components/AiChatSnoozeMenu';
-import { getInboxThreadSnoozeOptions } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+import { AiChatSnoozeMenu } from '@/ai/components/AiChatSnoozeMenu';
+import { getAiChatThreadSnoozeOptions } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 
 const SNOOZE_PREVIEW_TIME_ZONE = 'UTC';
 const SNOOZE_PREVIEW_DATE = new Date('2026-10-21T15:00:00Z');
@@ -24,11 +24,11 @@ const ControlledSnoozeMenu = ({
   onSomeoneReplies,
   onAssistantFinishes,
   disabled,
-}: ComponentProps<typeof InboxSnoozeMenu>) => {
+}: ComponentProps<typeof AiChatSnoozeMenu>) => {
   const [open, setOpen] = useState(initialOpen);
 
   return (
-    <InboxSnoozeMenu
+    <AiChatSnoozeMenu
       open={open}
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
@@ -44,16 +44,16 @@ const ControlledSnoozeMenu = ({
   );
 };
 
-const meta: Meta<typeof InboxSnoozeMenu> = {
+const meta: Meta<typeof AiChatSnoozeMenu> = {
   title: 'Modules/AI/AiChatSnoozeMenu',
-  component: InboxSnoozeMenu,
+  component: AiChatSnoozeMenu,
   decorators: [ComponentDecorator],
   render: ControlledSnoozeMenu,
   parameters: { container: { width: 320, height: 360 } },
   args: {
     open: false,
     onOpenChange: fn(),
-    presets: getInboxThreadSnoozeOptions({
+    presets: getAiChatThreadSnoozeOptions({
       now: SNOOZE_PREVIEW_DATE,
       timeZone: SNOOZE_PREVIEW_TIME_ZONE,
     }).map((option) => ({
@@ -66,7 +66,7 @@ const meta: Meta<typeof InboxSnoozeMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof InboxSnoozeMenu>;
+type Story = StoryObj<typeof AiChatSnoozeMenu>;
 
 export const TimedPresets: Story = {
   play: async ({ canvasElement, args }) => {

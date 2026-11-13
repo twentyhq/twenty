@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { SidePanelSnoozeInboxThreadPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { snoozeInboxThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -15,7 +15,7 @@ const CLICK_OUTSIDE_ID = 'snooze-ai-chat-story-click-outside';
 
 const meta = {
   title: 'Modules/SidePanel/SnoozeAiChat',
-  component: SidePanelSnoozeInboxThreadPage,
+  component: SidePanelSnoozeAiChatPage,
   decorators: [
     (Story) => (
       <ParentClickOutsideIdContext.Provider value={CLICK_OUTSIDE_ID}>
@@ -30,11 +30,11 @@ const meta = {
   ],
   beforeEach: () => {
     jotaiStore.set(
-      snoozeInboxThreadIdsComponentState.atomFamily(PAGE_CONTEXT),
+      snoozeAiChatThreadIdsComponentState.atomFamily(PAGE_CONTEXT),
       ['thread-1', 'thread-2'],
     );
   },
-} satisfies Meta<typeof SidePanelSnoozeInboxThreadPage>;
+} satisfies Meta<typeof SidePanelSnoozeAiChatPage>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -6,7 +6,7 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 
 // The page and a chat in the side panel would share one current chat
-export const InboxThreadPageCloseSidePanelChatEffect = () => {
+export const AiChatPageCloseSidePanelChatEffect = () => {
   const store = useStore();
   const { closeSidePanelMenu } = useSidePanelMenu();
 

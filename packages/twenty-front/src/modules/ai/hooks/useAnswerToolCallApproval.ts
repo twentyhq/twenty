@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
-import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 
 export const useAnswerToolCallApproval = ({
@@ -18,7 +18,7 @@ export const useAnswerToolCallApproval = ({
   proposal: ProposedToolCall;
 }) => {
   const { refreshFrontComponents } = useRefreshFrontComponents();
-  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
+  const { answerAiChatToolCall } = useAnswerAiChatToolCall();
   const [pendingResponse, setPendingResponse] =
     useState<ToolCallApprovalResponse | null>(null);
   const [isFeedbackShown, setIsFeedbackShown] = useState(false);
@@ -27,7 +27,7 @@ export const useAnswerToolCallApproval = ({
   const answerToolCallApproval = async (response: ToolCallApprovalResponse) => {
     setPendingResponse(response);
 
-    const isAnswered = await answerAgentChatToolCall({
+    const isAnswered = await answerAiChatToolCall({
       toolCallId,
       response,
       // Only a rejection is certain before the server answers: the approved call can still fail.

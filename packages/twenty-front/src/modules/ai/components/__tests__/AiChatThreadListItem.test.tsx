@@ -11,8 +11,8 @@ import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-
 import { InboxThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -28,11 +28,11 @@ i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
 jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
-  InboxThreadActionsDropdown: () => null,
+  AiChatThreadActionsDropdown: () => null,
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
-  useInboxThreadRename: () => ({
+  useAiChatThreadRename: () => ({
     isRenaming: false,
     draftTitle: '',
     setDraftTitle: jest.fn(),
@@ -43,8 +43,8 @@ jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
 }));
 
 const buildThread = (
-  thread: Partial<InboxThreadRecord>,
-): InboxThreadRecord => ({
+  thread: Partial<AiChatThreadRecord>,
+): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id: '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60',
   title: 'Q3 renewal outreach',
@@ -134,7 +134,7 @@ describe('InboxThreadListItem', () => {
   it('shows an unsent draft in place of the last message', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(inboxDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
       [thread.id]: serializePlainTextAsAdvancedTextEditorDocument(
         'Quote the **annual** plan',
       ),
@@ -152,7 +152,7 @@ describe('InboxThreadListItem', () => {
   it('shows no draft once the composer is cleared', () => {
     const thread = buildThread({});
 
-    jotaiStore.set(inboxDraftsByThreadIdState.atom, { [thread.id]: '' });
+    jotaiStore.set(aiChatDraftsByThreadIdState.atom, { [thread.id]: '' });
 
     renderListItem({ thread });
 

@@ -9,22 +9,22 @@ import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
 
-import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
-import { InboxTab } from '@/ai/components/AiChatTab';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { inboxDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { newInboxThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { inboxTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
+import { AiChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
+import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { aiChatTypingWorkspaceMemberIdsFamilyState } from '@/ai/states/agentChatTypingWorkspaceMemberIdsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { initializeNewInboxStory } from '@/ai/testing/initializeNewAiChatStory';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { initializeNewAiChatStory } from '@/ai/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { InboxNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
+import { AiChatNewThreadPageContent } from '~/pages/ai-chat/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
@@ -39,8 +39,8 @@ const StyledPageChat = styled.div`
 const NewChatStory = () => (
   <StyledPageChat>
     <Suspense fallback={null}>
-      <InboxNewThreadPageContent showInformationBanner={false} />
-      <AgentChatPrepromptEffect />
+      <AiChatNewThreadPageContent showInformationBanner={false} />
+      <AiChatPrepromptEffect />
     </Suspense>
   </StyledPageChat>
 );
@@ -50,28 +50,28 @@ const WorkspaceSetupChatStory = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    store.set(shouldOpenInboxAfterOnboardingState.atom, true);
+    store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
     store.set(hasRequestedWorkspaceSetupChatState.atom, true);
     setIsReady(true);
 
     return () => {
-      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       store.set(hasRequestedWorkspaceSetupChatState.atom, false);
     };
   }, [store]);
 
   return isReady ? (
-    <InboxSurfaceContext.Provider value={INBOX_SURFACE.SIDE_PANEL}>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
       <Suspense fallback={null}>
-        <InboxTab />
+        <AiChatTab />
       </Suspense>
-    </InboxSurfaceContext.Provider>
+    </AiChatSurfaceContext.Provider>
   ) : null;
 };
 
 const meta = {
   title: 'Modules/AI/AiChatTab',
-  component: InboxTab,
+  component: AiChatTab,
   decorators: [
     ComponentDecorator,
     RootDecorator,
@@ -79,7 +79,7 @@ const meta = {
     MemoryRouterDecorator,
   ],
   parameters: { container: { width: 480, height: 700 } },
-} satisfies Meta<typeof InboxTab>;
+} satisfies Meta<typeof AiChatTab>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -127,7 +127,7 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
 
 export const FullPageNewChat: Story = {
   decorators: [ObjectMetadataItemsDecorator],
-  beforeEach: () => initializeNewInboxStory({ isInboxEnabled: false }),
+  beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: false }),
   parameters: {
     ...newChatParameters,
     container: { width: 1000, height: 784 },
@@ -155,7 +155,7 @@ const focusRecipientRemoval = async ({
 
 export const InboxNewChat: Story = {
   ...FullPageNewChat,
-  beforeEach: () => initializeNewInboxStory({ isInboxEnabled: true }),
+  beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: true }),
   parameters: {
     ...newChatParameters,
     container: { width: 660, height: 784 },
@@ -174,8 +174,8 @@ export const InboxNewChat: Story = {
     ).not.toBeInTheDocument();
     await expect(
       jotaiStore.get(
-        inboxNewThreadRecipientsFamilyState.atomFamily(
-          jotaiStore.get(newInboxThreadIdState.atom),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(
+          jotaiStore.get(newAiChatThreadIdState.atom),
         ),
       ).isAssistantParticipant,
     ).toBe(false);
@@ -207,8 +207,8 @@ export const InboxNewChat: Story = {
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
-    const isSendingMessageAtom = inboxIsSendingMessageFamilyState.atomFamily({
-      threadId: jotaiStore.get(newInboxThreadIdState.atom),
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: jotaiStore.get(newAiChatThreadIdState.atom),
     });
 
     jotaiStore.set(isSendingMessageAtom, true);
@@ -257,8 +257,8 @@ export const NewChatSuggestedPrompt: Story = {
 
     await waitFor(() =>
       expect(
-        jotaiStore.get(inboxDraftsByThreadIdState.atom)[
-          jotaiStore.get(newInboxThreadIdState.atom)
+        jotaiStore.get(aiChatDraftsByThreadIdState.atom)[
+          jotaiStore.get(newAiChatThreadIdState.atom)
         ],
       ).toContain('A new partner'),
     );
@@ -285,7 +285,7 @@ export const WorkspaceSetupCompletion: Story = {
     ).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
 
-    jotaiStore.set(shouldOpenInboxAfterOnboardingState.atom, false);
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
     await waitFor(() =>
       expect(
@@ -297,9 +297,9 @@ export const WorkspaceSetupCompletion: Story = {
 };
 
 const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
-  const threadId = jotaiStore.get(newInboxThreadIdState.atom);
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
 
-  jotaiStore.set(inboxMessagesFamilyState.atomFamily({ threadId }), [
+  jotaiStore.set(aiChatMessagesFamilyState.atomFamily({ threadId }), [
     {
       id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c90',
       role: 'user',
@@ -307,7 +307,7 @@ const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
     },
   ]);
   jotaiStore.set(
-    inboxTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
+    aiChatTypingWorkspaceMemberIdsFamilyState.atomFamily({ threadId }),
     typingWorkspaceMemberIds,
   );
 };
@@ -315,7 +315,7 @@ const seedTypingConversation = (typingWorkspaceMemberIds: string[]) => {
 export const MemberTyping: Story = {
   ...FullPageNewChat,
   beforeEach: () => {
-    initializeNewInboxStory({ isInboxEnabled: true });
+    initializeNewAiChatStory({ isInboxEnabled: true });
     seedTypingConversation(
       jotaiStore
         .get(currentWorkspaceMembersState.atom)
@@ -343,11 +343,11 @@ export const MemberTypingInSidePanel: Story = {
     container: { width: 400, height: 784 },
   },
   render: () => (
-    <InboxSurfaceContext.Provider value={INBOX_SURFACE.SIDE_PANEL}>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.SIDE_PANEL}>
       <Suspense fallback={null}>
-        <InboxTab />
+        <AiChatTab />
       </Suspense>
-    </InboxSurfaceContext.Provider>
+    </AiChatSurfaceContext.Provider>
   ),
   play: async ({ canvasElement }) => {
     await expect(
@@ -359,15 +359,15 @@ export const MemberTypingInSidePanel: Story = {
 const initializeInboxChatWithTeammate = (
   getMessages: (teammateId: string | undefined) => ExtendedUIMessage[],
 ) => {
-  initializeNewInboxStory({ isInboxEnabled: true });
+  initializeNewAiChatStory({ isInboxEnabled: true });
 
-  const threadId = jotaiStore.get(newInboxThreadIdState.atom);
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
   const teammate = jotaiStore
     .get(currentWorkspaceMembersState.atom)
     .find(({ name }) => name.firstName === 'Jane');
 
   jotaiStore.set(
-    inboxMessagesFamilyState.atomFamily({ threadId }),
+    aiChatMessagesFamilyState.atomFamily({ threadId }),
     getMessages(teammate?.id),
   );
 };

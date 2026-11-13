@@ -1,16 +1,16 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { type InboxThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
-import { getInboxThreadDisplayLabel } from '@/ai/utils/getAgentChatThreadDisplayLabel';
+import { type AiChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { getAiChatThreadDisplayLabel } from '@/ai/utils/getAgentChatThreadDisplayLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useInboxThreadDisplayLabel = ({
+export const useAiChatThreadDisplayLabel = ({
   thread,
   fallbackLabel,
 }: {
-  thread: InboxThreadDisplayIdentity | null | undefined;
+  thread: AiChatThreadDisplayIdentity | null | undefined;
   fallbackLabel: string;
 }) => {
   const { t } = useLingui();
@@ -19,7 +19,7 @@ export const useInboxThreadDisplayLabel = ({
     currentWorkspaceMembersState,
   );
 
-  return getInboxThreadDisplayLabel({
+  return getAiChatThreadDisplayLabel({
     thread,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     workspaceMembers: currentWorkspaceMembers,

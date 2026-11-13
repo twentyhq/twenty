@@ -1,4 +1,4 @@
-import { isInboxThreadPath } from '~/utils/isAiChatPath';
+import { isAiChatPath } from '~/utils/isAiChatPath';
 
-export const isCurrentPathInboxThreadPage = () =>
-  isInboxThreadPath(window.location.pathname);
+export const isCurrentPathAiChatPage = () =>
+  isAiChatPath(window.location.pathname);

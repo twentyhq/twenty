@@ -2,18 +2,18 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
+import { AiChatQuotedMessagePreview } from '@/ai/components/AiChatQuotedMessagePreview';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
-const meta: Meta<typeof InboxQuotedMessagePreview> = {
+const meta: Meta<typeof AiChatQuotedMessagePreview> = {
   title: 'Modules/AI/AiChatQuotedMessagePreview',
-  component: InboxQuotedMessagePreview,
+  component: AiChatQuotedMessagePreview,
   decorators: [ComponentDecorator, RootDecorator],
   parameters: { container: { width: 400 } },
 };
 
 export default meta;
-type Story = StoryObj<typeof InboxQuotedMessagePreview>;
+type Story = StoryObj<typeof AiChatQuotedMessagePreview>;
 
 export const Default: Story = {
   args: {

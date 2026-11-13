@@ -1,6 +1,6 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { getInboxThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/utils/getAiChatThreadSearchFilter';
+import { getAiChatThreadSearchFilter } from '@/side-panel/pages/search-ai-chats/utils/getAiChatThreadSearchFilter';
 
 const workspaceMembers = [
   {
@@ -15,10 +15,10 @@ const workspaceMembers = [
   },
 ];
 
-describe('getInboxThreadSearchFilter', () => {
+describe('getAiChatThreadSearchFilter', () => {
   it('finds renamed peers through canonical pair IDs without searching DM titles', () => {
     expect(
-      getInboxThreadSearchFilter({
+      getAiChatThreadSearchFilter({
         searchTerm: 'Robert',
         workspaceMembers,
         currentWorkspaceMemberId: 'alice',
@@ -59,7 +59,7 @@ describe('getInboxThreadSearchFilter', () => {
 
   it('escapes wildcard characters in ordinary title searches', () => {
     expect(
-      getInboxThreadSearchFilter({
+      getAiChatThreadSearchFilter({
         searchTerm: '100%_complete',
         workspaceMembers,
         currentWorkspaceMemberId: 'alice',
@@ -81,7 +81,7 @@ describe('getInboxThreadSearchFilter', () => {
 
   it('does not match every direct message by the current member name', () => {
     expect(
-      getInboxThreadSearchFilter({
+      getAiChatThreadSearchFilter({
         searchTerm: 'Alice',
         workspaceMembers,
         currentWorkspaceMemberId: 'alice',
@@ -103,7 +103,7 @@ describe('getInboxThreadSearchFilter', () => {
 
   it('keeps member-name searches on existing fields until direct-message identity is enabled', () => {
     expect(
-      getInboxThreadSearchFilter({
+      getAiChatThreadSearchFilter({
         searchTerm: 'Robert',
         workspaceMembers,
         currentWorkspaceMemberId: 'alice',

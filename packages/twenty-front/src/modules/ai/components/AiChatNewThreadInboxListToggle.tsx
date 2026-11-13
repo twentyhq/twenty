@@ -9,7 +9,7 @@ import { inboxLayoutState } from '@/ai/states/aiChatInboxLayoutState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isInboxPath } from '~/utils/isAiChatInboxPath';
 
-export const InboxNewThreadInboxListToggle = () => {
+export const InboxNewThreadListToggle = () => {
   const { t } = useLingui();
   const { pathname } = useLocation();
   const isMobile = useIsMobile();

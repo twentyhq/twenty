@@ -1,7 +1,7 @@
-import { INBOX_SCROLL_PIN_MAX_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMaxDurationInMs';
-import { INBOX_SCROLL_PIN_MIN_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMinDurationInMs';
-import { INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinQuietDurationInMs';
-import { pinInboxScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
+import { AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMaxDurationInMs';
+import { AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinMinDurationInMs';
+import { AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS } from '@/ai/constants/AiChatScrollPinQuietDurationInMs';
+import { pinAiChatScrollToBottom } from '@/ai/utils/pinAiChatScrollToBottom';
 
 const FRAME_DURATION_IN_MS = 16;
 
@@ -44,7 +44,7 @@ const advanceFrames = (frameCount: number) => {
 const framesToCover = (durationInMs: number) =>
   Math.ceil(durationInMs / FRAME_DURATION_IN_MS) + 2;
 
-describe('pinInboxScrollToBottom', () => {
+describe('pinAiChatScrollToBottom', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     currentTimeInMs = 0;
@@ -76,7 +76,7 @@ describe('pinInboxScrollToBottom', () => {
   it('should pin to the bottom synchronously before any frame runs', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
 
-    pinInboxScrollToBottom({ scrollWrapperElement });
+    pinAiChatScrollToBottom({ scrollWrapperElement });
 
     expect(scrollWrapperElement.scrollTop).toBe(1000);
   });
@@ -84,7 +84,7 @@ describe('pinInboxScrollToBottom', () => {
   it('should keep re-pinning while the content keeps growing', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
 
-    pinInboxScrollToBottom({ scrollWrapperElement });
+    pinAiChatScrollToBottom({ scrollWrapperElement });
 
     scrollWrapperElement.scrollHeight = 5000;
     advanceOneFrame();
@@ -101,11 +101,11 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({ scrollWrapperElement, onPinningStopped });
+    pinAiChatScrollToBottom({ scrollWrapperElement, onPinningStopped });
 
     for (
       let frameIndex = 0;
-      frameIndex < framesToCover(INBOX_SCROLL_PIN_MIN_DURATION_IN_MS);
+      frameIndex < framesToCover(AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS);
       frameIndex++
     ) {
       scrollWrapperElement.clientWidth -= 1;
@@ -113,11 +113,11 @@ describe('pinInboxScrollToBottom', () => {
     }
 
     expect(currentTimeInMs).toBeGreaterThan(
-      INBOX_SCROLL_PIN_MIN_DURATION_IN_MS,
+      AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS,
     );
     expect(onPinningStopped).not.toHaveBeenCalled();
 
-    advanceFrames(framesToCover(INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS));
+    advanceFrames(framesToCover(AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS));
 
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
@@ -126,14 +126,15 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({ scrollWrapperElement, onPinningStopped });
+    pinAiChatScrollToBottom({ scrollWrapperElement, onPinningStopped });
 
     advanceFrames(
-      Math.floor(INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS) +
-        1,
+      Math.floor(
+        AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS,
+      ) + 1,
     );
 
-    expect(currentTimeInMs).toBeLessThan(INBOX_SCROLL_PIN_MIN_DURATION_IN_MS);
+    expect(currentTimeInMs).toBeLessThan(AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS);
     expect(onPinningStopped).not.toHaveBeenCalled();
   });
 
@@ -141,12 +142,12 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({
+    pinAiChatScrollToBottom({
       scrollWrapperElement,
       onPinningStopped,
     });
 
-    advanceFrames(framesToCover(INBOX_SCROLL_PIN_MIN_DURATION_IN_MS));
+    advanceFrames(framesToCover(AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS));
 
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
@@ -155,15 +156,15 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({ scrollWrapperElement, onPinningStopped });
+    pinAiChatScrollToBottom({ scrollWrapperElement, onPinningStopped });
 
     const quietFrameCount = Math.floor(
-      INBOX_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS,
+      AI_CHAT_SCROLL_PIN_QUIET_DURATION_IN_MS / FRAME_DURATION_IN_MS,
     );
 
     while (
       currentTimeInMs <
-      INBOX_SCROLL_PIN_MIN_DURATION_IN_MS + FRAME_DURATION_IN_MS
+      AI_CHAT_SCROLL_PIN_MIN_DURATION_IN_MS + FRAME_DURATION_IN_MS
     ) {
       scrollWrapperElement.scrollHeight += 100;
       advanceOneFrame();
@@ -187,7 +188,7 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({
+    pinAiChatScrollToBottom({
       scrollWrapperElement,
       onPinningStopped,
     });
@@ -206,12 +207,12 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    pinInboxScrollToBottom({
+    pinAiChatScrollToBottom({
       scrollWrapperElement,
       onPinningStopped,
     });
 
-    jest.advanceTimersByTime(INBOX_SCROLL_PIN_MAX_DURATION_IN_MS);
+    jest.advanceTimersByTime(AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS);
 
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
   });
@@ -220,14 +221,14 @@ describe('pinInboxScrollToBottom', () => {
     const scrollWrapperElement = buildScrollWrapperElement();
     const onPinningStopped = jest.fn();
 
-    const stop = pinInboxScrollToBottom({
+    const stop = pinAiChatScrollToBottom({
       scrollWrapperElement,
       onPinningStopped,
     });
 
     stop();
     stop();
-    jest.advanceTimersByTime(INBOX_SCROLL_PIN_MAX_DURATION_IN_MS);
+    jest.advanceTimersByTime(AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS);
 
     expect(onPinningStopped).toHaveBeenCalledTimes(1);
     expect(listenersByEventName.size).toBe(0);

@@ -12,7 +12,7 @@ const renderToggleNavigationDrawer = (isExpanded: boolean) => {
   store.set(isNavigationDrawerExpandedState.atom, isExpanded);
   store.set(
     navigationDrawerActiveTabState.atom,
-    NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+    NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
   );
 
   const { result } = renderHook(() => useToggleNavigationDrawer(), {
@@ -47,7 +47,7 @@ describe('useToggleNavigationDrawer', () => {
 
     expect(result.current.isNavigationDrawerExpanded).toBe(true);
     expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
-      NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
+      NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
   });
 

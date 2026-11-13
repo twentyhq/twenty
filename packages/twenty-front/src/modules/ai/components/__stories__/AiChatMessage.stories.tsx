@@ -17,16 +17,16 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-import { InboxMessage } from '@/ai/components/AiChatMessage';
+import { AiChatMessage } from '@/ai/components/AiChatMessage';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { inboxIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { inboxThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
-import { type InboxThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
-import { inboxThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { inboxMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatThreadReadPositionsFamilyState } from '@/ai/states/agentChatThreadReadPositionsFamilyState';
+import { type AiChatThreadReadPosition } from '@/ai/types/AgentChatThreadReadPosition';
+import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -38,13 +38,13 @@ import {
 } from '~/testing/mock-data/users';
 import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 import { PROTECTED_CHAT_REFERENCE_MARKER } from '@/ai/constants/ProtectedChatReferenceMarker';
-import { type InboxFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
-import { setInboxThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { inboxDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { inboxMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { currentInboxThreadState } from '@/ai/states/currentAiChatThreadState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -490,7 +490,7 @@ const allMockMessages = [
   mockNamedAssistantMessage,
 ];
 
-const InboxMessagesSetterEffect = ({
+const AiChatMessagesSetterEffect = ({
   messages,
   isInboxEnabled,
   assistantProfile,
@@ -503,22 +503,22 @@ const InboxMessagesSetterEffect = ({
 
   useEffect(() => {
     const currentThreadId = 'conversation-presentation-story';
-    const previousCurrentThread = store.get(currentInboxThreadState.atom);
-    const previousDisplayedThread = store.get(inboxDisplayedThreadState.atom);
+    const previousCurrentThread = store.get(currentAiChatThreadState.atom);
+    const previousDisplayedThread = store.get(aiChatDisplayedThreadState.atom);
     const previousWorkspace = store.get(currentWorkspaceState.atom);
     const previousUserWorkspace = store.get(currentUserWorkspaceState.atom);
     const previousMember = store.get(currentWorkspaceMemberState.atom);
     const previousMembers = store.get(currentWorkspaceMembersState.atom);
-    const previousVisit = store.get(inboxThreadVisitState.atom);
-    const messagesAtom = inboxMessagesFamilyState.atomFamily({
+    const previousVisit = store.get(aiChatThreadVisitState.atom);
+    const messagesAtom = aiChatMessagesFamilyState.atomFamily({
       threadId: currentThreadId,
     });
-    const reactionsAtom = inboxMessageReactionsFamilyState.atomFamily({
+    const reactionsAtom = aiChatMessageReactionsFamilyState.atomFamily({
       messageId: mockTeammateMessage.id,
     });
 
-    store.set(currentInboxThreadState.atom, currentThreadId);
-    store.set(inboxDisplayedThreadState.atom, currentThreadId);
+    store.set(currentAiChatThreadState.atom, currentThreadId);
+    store.set(aiChatDisplayedThreadState.atom, currentThreadId);
     store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
     store.set(currentUserWorkspaceState.atom, {
       ...mockedUserData.currentUserWorkspace,
@@ -535,7 +535,7 @@ const InboxMessagesSetterEffect = ({
         { key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED, value: isInboxEnabled },
       ],
     });
-    store.set(inboxThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       threadId: currentThreadId,
       isUnread: true,
       isKeptUnread: false,
@@ -552,13 +552,13 @@ const InboxMessagesSetterEffect = ({
     ]);
 
     return () => {
-      store.set(currentInboxThreadState.atom, previousCurrentThread);
-      store.set(inboxDisplayedThreadState.atom, previousDisplayedThread);
+      store.set(currentAiChatThreadState.atom, previousCurrentThread);
+      store.set(aiChatDisplayedThreadState.atom, previousDisplayedThread);
       store.set(currentWorkspaceState.atom, previousWorkspace);
       store.set(currentUserWorkspaceState.atom, previousUserWorkspace);
       store.set(currentWorkspaceMemberState.atom, previousMember);
       store.set(currentWorkspaceMembersState.atom, previousMembers);
-      store.set(inboxThreadVisitState.atom, previousVisit);
+      store.set(aiChatThreadVisitState.atom, previousVisit);
       store.set(messagesAtom, []);
       store.set(reactionsAtom, []);
     };
@@ -567,9 +567,9 @@ const InboxMessagesSetterEffect = ({
   return null;
 };
 
-const InboxMessagesDecorator: Decorator = (Story, { parameters }) => (
+const AiChatMessagesDecorator: Decorator = (Story, { parameters }) => (
   <>
-    <InboxMessagesSetterEffect
+    <AiChatMessagesSetterEffect
       messages={parameters.messages ?? allMockMessages}
       isInboxEnabled={parameters.isInboxEnabled ?? false}
       assistantProfile={
@@ -582,14 +582,14 @@ const InboxMessagesDecorator: Decorator = (Story, { parameters }) => (
   </>
 );
 
-const meta: Meta<typeof InboxMessage> = {
+const meta: Meta<typeof AiChatMessage> = {
   title: 'Modules/AI/AiChatMessage',
-  component: InboxMessage,
+  component: AiChatMessage,
   decorators: [
     ComponentDecorator,
     RootDecorator,
     ToastDecorator,
-    InboxMessagesDecorator,
+    AiChatMessagesDecorator,
   ],
   parameters: {
     container: { width: 700 },
@@ -597,30 +597,30 @@ const meta: Meta<typeof InboxMessage> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof InboxMessage>;
+type Story = StoryObj<typeof AiChatMessage>;
 
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>
-      <InboxMessage messageId={mockUserMessage.id} />
-      <InboxMessage messageId={mockAssistantWithCodeExecution.id} />
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockAssistantWithCodeExecution.id} />
     </StyledConversationContainer>
   ),
 };
 
 export const UserMessage: Story = {
-  render: () => <InboxMessage messageId={mockUserMessage.id} />,
+  render: () => <AiChatMessage messageId={mockUserMessage.id} />,
 };
 
 const playInWritableThread = async (play: () => Promise<void>) => {
-  const threadId = jotaiStore.get(currentInboxThreadState.atom);
+  const threadId = jotaiStore.get(currentAiChatThreadState.atom);
   assertIsDefinedOrThrow(threadId);
   const objectMetadataItemsAtom = metadataStoreState.atomFamily(
     'objectMetadataItems',
   );
   const previousObjectMetadataItems = jotaiStore.get(objectMetadataItemsAtom);
 
-  setInboxThreadPermissions({
+  setAiChatThreadPermissions({
     store: jotaiStore,
     threadId,
     permissions: {
@@ -666,8 +666,8 @@ export const TeammateMessageHasNoOwnActions: Story = {
   parameters: { isInboxEnabled: true },
   render: (args) => (
     <StyledConversationContainer>
-      <InboxMessage {...args} messageId={mockUserMessage.id} />
-      <InboxMessage {...args} messageId={mockTeammateMessage.id} />
+      <AiChatMessage {...args} messageId={mockUserMessage.id} />
+      <AiChatMessage {...args} messageId={mockTeammateMessage.id} />
     </StyledConversationContainer>
   ),
   args: { onEdit: fn(), onDelete: fn() },
@@ -693,10 +693,10 @@ export const LongUserMessage: Story = {
     <StyledScrollableConversationContainer>
       <ScrollWrapper componentInstanceId="ai-chat-message-long-user-message">
         <StyledConversationContainer>
-          <InboxMessage messageId={mockLongUserMessage.id} />
-          <InboxMessage messageId={mockUsageReportUserMessage.id} />
-          <InboxMessage messageId={mockLongAssistantMessage.id} />
-          <InboxMessage messageId={mockUserMessage.id} />
+          <AiChatMessage messageId={mockLongUserMessage.id} />
+          <AiChatMessage messageId={mockUsageReportUserMessage.id} />
+          <AiChatMessage messageId={mockLongAssistantMessage.id} />
+          <AiChatMessage messageId={mockUserMessage.id} />
         </StyledConversationContainer>
       </ScrollWrapper>
     </StyledScrollableConversationContainer>
@@ -758,7 +758,7 @@ export const LongUserMessage: Story = {
 };
 
 export const AssistantTextResponse: Story = {
-  render: () => <InboxMessage messageId={mockSimpleTextResponse.id} />,
+  render: () => <AiChatMessage messageId={mockSimpleTextResponse.id} />,
 };
 
 export const AssistantMentions: Story = {
@@ -767,7 +767,7 @@ export const AssistantMentions: Story = {
     messages: [mockAssistantMentionMessage],
     assistantProfile: MOCK_CONFIGURED_ASSISTANT_PROFILE,
   },
-  render: () => <InboxMessage messageId={mockAssistantMentionMessage.id} />,
+  render: () => <AiChatMessage messageId={mockAssistantMentionMessage.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -785,27 +785,27 @@ export const AssistantMentions: Story = {
 };
 
 export const AssistantStreaming: Story = {
-  render: () => <InboxMessage messageId={mockStreamingMessage.id} />,
+  render: () => <AiChatMessage messageId={mockStreamingMessage.id} />,
 };
 
 export const CodeExecutionRunning: Story = {
-  render: () => <InboxMessage messageId={mockCodeExecutionRunning.id} />,
+  render: () => <AiChatMessage messageId={mockCodeExecutionRunning.id} />,
 };
 
 export const CodeExecutionWithError: Story = {
-  render: () => <InboxMessage messageId={mockCodeExecutionError.id} />,
+  render: () => <AiChatMessage messageId={mockCodeExecutionError.id} />,
 };
 
 export const ThinkingStepsThinkingState: Story = {
-  render: () => <InboxMessage messageId={mockThinkingStepsStreaming.id} />,
+  render: () => <AiChatMessage messageId={mockThinkingStepsStreaming.id} />,
 };
 
 export const ThinkingStepsDoneCollapsed: Story = {
-  render: () => <InboxMessage messageId={mockThinkingStepsDone.id} />,
+  render: () => <AiChatMessage messageId={mockThinkingStepsDone.id} />,
 };
 
 export const ThinkingStepsDoneExpanded: Story = {
-  render: () => <InboxMessage messageId={mockThinkingStepsDone.id} />,
+  render: () => <AiChatMessage messageId={mockThinkingStepsDone.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const summaryButton = await canvas.findByRole('button', {
@@ -817,7 +817,7 @@ export const ThinkingStepsDoneExpanded: Story = {
 };
 
 export const AnsweredForm: Story = {
-  render: () => <InboxMessage messageId={mockAnsweredForm.id} />,
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };
 
 export const MultiplayerConversation: Story = {
@@ -827,9 +827,9 @@ export const MultiplayerConversation: Story = {
   },
   render: () => (
     <StyledConversationContainer>
-      <InboxMessage messageId={mockUserMessage.id} />
-      <InboxMessage messageId={mockTeammateMessage.id} />
-      <InboxMessage messageId={mockSimpleTextResponse.id} />
+      <AiChatMessage messageId={mockUserMessage.id} />
+      <AiChatMessage messageId={mockTeammateMessage.id} />
+      <AiChatMessage messageId={mockSimpleTextResponse.id} />
     </StyledConversationContainer>
   ),
   play: async ({ canvasElement }) => {
@@ -853,7 +853,7 @@ export const MultiplayerConversation: Story = {
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
 
-    const threadId = jotaiStore.get(currentInboxThreadState.atom);
+    const threadId = jotaiStore.get(currentAiChatThreadState.atom);
     assertIsDefinedOrThrow(threadId);
     const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
     const previousThread = jotaiStore.get(threadRecordAtom);
@@ -881,8 +881,8 @@ export const MultiplayerConversation: Story = {
 
 const READ_RECEIPTS_THREAD_ID = 'conversation-presentation-story';
 
-const seedReadPositions = (readPositions: InboxThreadReadPosition[]) => {
-  const readPositionsAtom = inboxThreadReadPositionsFamilyState.atomFamily({
+const seedReadPositions = (readPositions: AiChatThreadReadPosition[]) => {
+  const readPositionsAtom = aiChatThreadReadPositionsFamilyState.atomFamily({
     threadId: READ_RECEIPTS_THREAD_ID,
   });
 
@@ -942,7 +942,7 @@ export const SendingThenSentReceipt: Story = {
   },
   args: { messageId: mockUserMessage.id },
   beforeEach: () => {
-    const isSendingMessageAtom = inboxIsSendingMessageFamilyState.atomFamily({
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
       threadId: READ_RECEIPTS_THREAD_ID,
     });
     const resetReadPositions = seedReadPositions([
@@ -964,7 +964,7 @@ export const SendingThenSentReceipt: Story = {
     ).toBeVisible();
 
     jotaiStore.set(
-      inboxIsSendingMessageFamilyState.atomFamily({
+      aiChatIsSendingMessageFamilyState.atomFamily({
         threadId: READ_RECEIPTS_THREAD_ID,
       }),
       false,
@@ -1002,9 +1002,9 @@ export const SenderFallbacks: Story = {
   parameters: { isInboxEnabled: true },
   render: () => (
     <StyledConversationContainer>
-      <InboxMessage messageId={mockFormerMemberMessage.id} />
-      <InboxMessage messageId={mockUnknownSenderMessage.id} />
-      <InboxMessage messageId={mockNamedAssistantMessage.id} />
+      <AiChatMessage messageId={mockFormerMemberMessage.id} />
+      <AiChatMessage messageId={mockUnknownSenderMessage.id} />
+      <AiChatMessage messageId={mockNamedAssistantMessage.id} />
     </StyledConversationContainer>
   ),
   play: async ({ canvasElement }) => {
@@ -1081,11 +1081,11 @@ export const ConfiguredAssistantIdentity: Story = {
   },
   render: () => (
     <StyledConversationContainer>
-      <InboxMessage messageId={mockSimpleTextResponse.id} />
-      <InboxMessage messageId={mockTeammateMessage.id} />
-      <InboxMessage messageId={mockDistinctAgentMessage.id} />
-      <InboxMessage messageId={mockUnavailableAgentMessage.id} />
-      <InboxMessage messageId={mockLegacyAssistantMessage.id} />
+      <AiChatMessage messageId={mockSimpleTextResponse.id} />
+      <AiChatMessage messageId={mockTeammateMessage.id} />
+      <AiChatMessage messageId={mockDistinctAgentMessage.id} />
+      <AiChatMessage messageId={mockUnavailableAgentMessage.id} />
+      <AiChatMessage messageId={mockLegacyAssistantMessage.id} />
     </StyledConversationContainer>
   ),
   play: async ({ canvasElement }) => {
@@ -1132,8 +1132,8 @@ export const AgentLookupFailure: Story = {
   render: () => (
     <ToastStoryContainer>
       <StyledConversationContainer>
-        <InboxMessage messageId={mockDistinctAgentMessage.id} />
-        <InboxMessage messageId={mockRepeatedAgentMessage.id} />
+        <AiChatMessage messageId={mockDistinctAgentMessage.id} />
+        <AiChatMessage messageId={mockRepeatedAgentMessage.id} />
       </StyledConversationContainer>
     </ToastStoryContainer>
   ),
@@ -1149,7 +1149,7 @@ export const AgentLookupFailure: Story = {
   },
 };
 
-const mockImageFilePart: InboxFileUIPart = {
+const mockImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-dashboard',
   filename: 'dashboard.png',
@@ -1157,7 +1157,7 @@ const mockImageFilePart: InboxFileUIPart = {
   url: IMAGE_URL_MOCK,
 };
 
-const mockSecondImageFilePart: InboxFileUIPart = {
+const mockSecondImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-team',
   filename: 'team.png',
@@ -1165,7 +1165,7 @@ const mockSecondImageFilePart: InboxFileUIPart = {
   url: IMAGE_URL_MOCK,
 };
 
-const mockBrokenImageFilePart: InboxFileUIPart = {
+const mockBrokenImageFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-broken',
   filename: 'broken.png',
@@ -1173,7 +1173,7 @@ const mockBrokenImageFilePart: InboxFileUIPart = {
   url: 'data:image/png;base64,broken',
 };
 
-const mockPdfFilePart: InboxFileUIPart = {
+const mockPdfFilePart: AiChatFileUIPart = {
   type: 'file',
   fileId: 'file-brief',
   filename: 'brief.pdf',
@@ -1216,7 +1216,7 @@ export const UserMessageWithImage: Story = {
     isInboxEnabled: true,
     messages: [mockUserMessageWithImage],
   },
-  render: () => <InboxMessage messageId={mockUserMessageWithImage.id} />,
+  render: () => <AiChatMessage messageId={mockUserMessageWithImage.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -1232,7 +1232,7 @@ export const UserMessageWithImages: Story = {
     isInboxEnabled: true,
     messages: [mockUserMessageWithImages],
   },
-  render: () => <InboxMessage messageId={mockUserMessageWithImages.id} />,
+  render: () => <AiChatMessage messageId={mockUserMessageWithImages.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -1259,7 +1259,7 @@ const mockUserMessageWithManyImages: ExtendedUIMessage = {
   role: 'user',
   parts: [
     { type: 'text', text: 'All the photos from the offsite.' },
-    ...[1, 2, 3, 4, 5, 6].map((photoNumber): InboxFileUIPart => ({
+    ...[1, 2, 3, 4, 5, 6].map((photoNumber): AiChatFileUIPart => ({
       type: 'file',
       fileId: `file-photo-${photoNumber}`,
       filename: `photo-${photoNumber}.png`,
@@ -1281,7 +1281,7 @@ export const UserMessageWithManyImages: Story = {
     isInboxEnabled: true,
     messages: [mockUserMessageWithManyImages],
   },
-  render: () => <InboxMessage messageId={mockUserMessageWithManyImages.id} />,
+  render: () => <AiChatMessage messageId={mockUserMessageWithManyImages.id} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -1323,7 +1323,7 @@ const getUserMessageWithImagesMock = ({
   role: 'user',
   parts: [
     { type: 'text', text },
-    ...images.map(({ filename, width, height }): InboxFileUIPart => ({
+    ...images.map(({ filename, width, height }): AiChatFileUIPart => ({
       type: 'file',
       fileId: `file-${filename}`,
       filename,
@@ -1383,7 +1383,7 @@ export const MessagesWithImages: Story = {
   render: () => (
     <StyledConversationContainer>
       {mockMessagesWithImages.map((message) => (
-        <InboxMessage key={message.id} messageId={message.id} />
+        <AiChatMessage key={message.id} messageId={message.id} />
       ))}
     </StyledConversationContainer>
   ),

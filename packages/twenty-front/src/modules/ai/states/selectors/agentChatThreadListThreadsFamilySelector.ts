@@ -3,18 +3,18 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { inboxThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { inboxRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { type InboxThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { filterInboxThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { filterAiChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
 import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { isInboxThreadInChannelView } from '@/ai/utils/isAgentChatThreadInChannelView';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
-  InboxThreadRecord[],
+  AiChatThreadRecord[],
   InboxThreadListSource
 >({
   key: 'inboxThreadListThreadsFamilySelector',
@@ -38,7 +38,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
         getInboxThreadListSourceKey(source),
       );
       const listedThreads = (threadList?.threadIds ?? [])
-        .map((threadId) => get(inboxThreadRecordFamilySelector, threadId))
+        .map((threadId) => get(aiChatThreadRecordFamilySelector, threadId))
         .filter(isDefined);
       const threadsById = new Map(
         [...recentThreads, ...listedThreads].map((thread) => [
@@ -73,7 +73,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
         );
       });
 
-      return filterInboxThreadsWithinLoadedPages({
+      return filterAiChatThreadsWithinLoadedPages({
         threads,
         pagedList: threadList,
       });

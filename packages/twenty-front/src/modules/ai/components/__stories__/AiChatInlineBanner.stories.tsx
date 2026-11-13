@@ -4,15 +4,15 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { IconExternalLink } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { InboxInlineBanner } from '@/ai/components/AiChatInlineBanner';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 
 const onConfigureModels = fn();
 const onUpgrade = fn();
 const onViewDocs = fn();
 
-const meta: Meta<typeof InboxInlineBanner> = {
+const meta: Meta<typeof AiChatInlineBanner> = {
   title: 'Modules/AI/AiChatInlineBanner',
-  component: InboxInlineBanner,
+  component: AiChatInlineBanner,
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 744 },
@@ -20,7 +20,7 @@ const meta: Meta<typeof InboxInlineBanner> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof InboxInlineBanner>;
+type Story = StoryObj<typeof AiChatInlineBanner>;
 
 export const NoEnabledModels: Story = {
   args: {

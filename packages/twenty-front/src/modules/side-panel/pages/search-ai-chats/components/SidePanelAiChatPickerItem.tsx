@@ -1,24 +1,24 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconMessage } from 'twenty-ui/icon';
 
-import { useInboxThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { type InboxThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { type AiChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
-type SidePanelInboxPickerItemProps = {
-  thread: InboxThreadDisplayIdentity & { id: string };
+type SidePanelAiChatPickerItemProps = {
+  thread: AiChatThreadDisplayIdentity & { id: string };
   isOpeningThread: boolean;
   onOpen: (threadId: string) => void;
 };
 
-export const SidePanelInboxPickerItem = ({
+export const SidePanelAiChatPickerItem = ({
   thread,
   isOpeningThread,
   onOpen,
-}: SidePanelInboxPickerItemProps) => {
+}: SidePanelAiChatPickerItemProps) => {
   const { t } = useLingui();
-  const displayLabel = useInboxThreadDisplayLabel({
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`New chat`,
   });

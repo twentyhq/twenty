@@ -1,4 +1,4 @@
-import { getInboxThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
+import { getAiChatThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
 
 const READ_ONLY_PERMISSIONS = {
   canRead: true,
@@ -7,42 +7,42 @@ const READ_ONLY_PERMISSIONS = {
   canSoftDelete: false,
 };
 
-describe('getInboxThreadAccess', () => {
+describe('getAiChatThreadAccess', () => {
   it.each([
     {
       description:
         'lets the author write in the new chat, which has no thread yet',
-      isOnNewInboxSlot: true,
+      isOnNewAiChatSlot: true,
       permissions: undefined,
       expectedAccess: 'writer',
     },
     {
       description: 'keeps any other thread loading until its permissions load',
-      isOnNewInboxSlot: false,
+      isOnNewAiChatSlot: false,
       permissions: undefined,
       expectedAccess: 'loading',
     },
     {
       description: 'lets a member who can only read the thread view it',
-      isOnNewInboxSlot: false,
+      isOnNewAiChatSlot: false,
       permissions: READ_ONLY_PERMISSIONS,
       expectedAccess: 'viewer',
     },
     {
       description: 'lets a member who can update the thread write in it',
-      isOnNewInboxSlot: false,
+      isOnNewAiChatSlot: false,
       permissions: { ...READ_ONLY_PERMISSIONS, canUpdate: true },
       expectedAccess: 'writer',
     },
     {
       description:
         'marks a thread the member can no longer read as unavailable',
-      isOnNewInboxSlot: false,
+      isOnNewAiChatSlot: false,
       permissions: { ...READ_ONLY_PERMISSIONS, canRead: false },
       expectedAccess: 'unavailable',
     },
-  ])('$description', ({ isOnNewInboxSlot, permissions, expectedAccess }) => {
-    expect(getInboxThreadAccess({ isOnNewInboxSlot, permissions })).toBe(
+  ])('$description', ({ isOnNewAiChatSlot, permissions, expectedAccess }) => {
+    expect(getAiChatThreadAccess({ isOnNewAiChatSlot, permissions })).toBe(
       expectedAccess,
     );
   });

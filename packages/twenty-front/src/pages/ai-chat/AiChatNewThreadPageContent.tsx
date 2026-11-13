@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { InboxThreadPageHeader } from '@/ai/components/AiChatPageHeader';
-import { InboxTab } from '@/ai/components/AiChatTab';
-import { INBOX_SURFACE } from '@/ai/constants/AiChatSurface';
-import { InboxSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
+import { AiChatTab } from '@/ai/components/AiChatTab';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 
 const StyledChatContainer = styled.div`
@@ -17,23 +17,23 @@ const StyledChatContainer = styled.div`
   width: 100%;
 `;
 
-type InboxNewThreadPageContentProps = {
+type AiChatNewThreadPageContentProps = {
   headerActions?: ReactNode;
   showInformationBanner?: boolean;
 };
 
-export const InboxNewThreadPageContent = ({
+export const AiChatNewThreadPageContent = ({
   headerActions,
   showInformationBanner = true,
-}: InboxNewThreadPageContentProps) => (
+}: AiChatNewThreadPageContentProps) => (
   <PageCardLayout
-    header={<InboxThreadPageHeader actionButton={headerActions} />}
+    header={<AiChatPageHeader actionButton={headerActions} />}
     showInformationBanner={showInformationBanner}
   >
     <StyledChatContainer>
-      <InboxSurfaceContext.Provider value={INBOX_SURFACE.PAGE}>
-        <InboxTab />
-      </InboxSurfaceContext.Provider>
+      <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+        <AiChatTab />
+      </AiChatSurfaceContext.Provider>
     </StyledChatContainer>
   </PageCardLayout>
 );

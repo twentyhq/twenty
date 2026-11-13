@@ -1,9 +1,9 @@
-import { prependInboxQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
+import { prependAiChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 
-describe('prependInboxQuoteToText', () => {
+describe('prependAiChatQuoteToText', () => {
   it('quotes every line of the excerpt above the reply', () => {
     expect(
-      prependInboxQuoteToText({
+      prependAiChatQuoteToText({
         text: 'I will take Stripe.',
         authorName: 'Marco Rossi',
         excerpt: 'Can you take Stripe?\nI will handle Google.',

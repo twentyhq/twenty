@@ -4,8 +4,8 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useRefreshInboxChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
 import { useRefreshInboxChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
-import { inboxThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { inboxThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -71,11 +71,11 @@ export const InboxChannelsEffect = () => {
     onBrowserEvent: handleChannelOperation,
   });
 
-  const inboxThreadRecordUpdateCount = useAtomStateValue(
-    inboxThreadRecordUpdateCountState,
+  const aiChatThreadRecordUpdateCount = useAtomStateValue(
+    aiChatThreadRecordUpdateCountState,
   );
-  const inboxThreadParticipants = useAtomStateValue(
-    inboxThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
 
   useEffect(() => {
@@ -83,10 +83,10 @@ export const InboxChannelsEffect = () => {
       debouncedRefreshSummaries();
     }
   }, [
-    inboxThreadParticipants,
+    aiChatThreadParticipants,
     debouncedRefreshSummaries,
     isEnabled,
-    inboxThreadRecordUpdateCount,
+    aiChatThreadRecordUpdateCount,
   ]);
 
   return null;

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useTheme } from 'twenty-ui/theme';
 
-import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
+import { aiChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 
 export const useAiChatSentMessageHandOff = (messageId: string) => {
@@ -14,9 +14,7 @@ export const useAiChatSentMessageHandOff = (messageId: string) => {
 
   return useCallback(
     (messageTextElement: HTMLDivElement | null) => {
-      const sentMessageHandOff = store.get(
-        agentChatSentMessageHandOffState.atom,
-      );
+      const sentMessageHandOff = store.get(aiChatSentMessageHandOffState.atom);
 
       if (
         !isDefined(messageTextElement) ||
@@ -26,7 +24,7 @@ export const useAiChatSentMessageHandOff = (messageId: string) => {
         return;
       }
 
-      store.set(agentChatSentMessageHandOffState.atom, null);
+      store.set(aiChatSentMessageHandOffState.atom, null);
 
       if (shouldReduceMotion) {
         return;

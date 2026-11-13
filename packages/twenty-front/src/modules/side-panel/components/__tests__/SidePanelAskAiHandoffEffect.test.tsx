@@ -2,8 +2,8 @@ import { render } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
-import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 
 const openAskAiPage = jest.fn();
@@ -16,8 +16,8 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
 const leaveChatPageFor = (pathname: string) => {
   const store = createStore();
 
-  store.set(shouldContinueInboxInSidePanelState.atom, true);
-  store.set(shouldOpenInboxAfterOnboardingState.atom, true);
+  store.set(shouldContinueAiChatInSidePanelState.atom, true);
+  store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
   render(
     <Provider store={store}>
@@ -50,7 +50,7 @@ describe('SidePanelAskAiHandoffEffect', () => {
 
     expect(openAskAiPage).not.toHaveBeenCalled();
     expect(onContinueChatFromFullWidth).not.toHaveBeenCalled();
-    expect(store.get(shouldContinueInboxInSidePanelState.atom)).toBe(false);
+    expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
   });
 
   it.each(['/inbox', '/inbox/20202020-0000-4000-8000-000000000001'])(
@@ -59,8 +59,8 @@ describe('SidePanelAskAiHandoffEffect', () => {
       const store = leaveChatPageFor(pathname);
 
       expect(openAskAiPage).not.toHaveBeenCalled();
-      expect(store.get(shouldContinueInboxInSidePanelState.atom)).toBe(true);
-      expect(store.get(shouldOpenInboxAfterOnboardingState.atom)).toBe(false);
+      expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
+      expect(store.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(false);
     },
   );
 });
