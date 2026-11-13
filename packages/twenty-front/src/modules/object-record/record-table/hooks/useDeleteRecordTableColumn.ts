@@ -9,17 +9,29 @@ export const useDeleteRecordTableColumn = (recordTableId: string) => {
 
   const deleteRecordTableColumn = useCallback(
     async (recordFieldId: string) => {
-      store.set(
+      const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
           instanceId: recordTableId,
-        }),
-        (previousRecordFields) =>
-          previousRecordFields.filter(
-            (recordField) => recordField.id !== recordFieldId,
-          ),
+        });
+
+      const previousRecordFields = store.get(currentRecordFieldsAtom);
+
+      store.set(
+        currentRecordFieldsAtom,
+        previousRecordFields.filter(
+          (recordField) => recordField.id !== recordFieldId,
+        ),
       );
 
-      await performViewFieldApiDestroy([{ input: { id: recordFieldId } }]);
+      const result = await performViewFieldApiDestroy([
+        { input: { id: recordFieldId } },
+      ]);
+
+      if (result.status === 'failed') {
+        store.set(currentRecordFieldsAtom, previousRecordFields);
+      }
+
+      return result.status === 'successful';
     },
     [performViewFieldApiDestroy, recordTableId, store],
   );
