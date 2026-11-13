@@ -1,7 +1,6 @@
 import { compositeTypeDefinitions, FieldMetadataType } from '@/types';
 import { getFieldOrSubFieldType } from '@/utils/filter/getFieldOrSubFieldType';
 
-// Mirrors what the field's view filter takes: one value of its own type, or several for select and relation fields
 export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
   fieldType,
   subFieldName,
