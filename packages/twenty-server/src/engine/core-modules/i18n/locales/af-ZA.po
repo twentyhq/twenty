@@ -280,7 +280,7 @@ msgstr "’n Bemarkings-e-pos kan slegs op ’n slag aan een ontvanger gestuur w
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "’n Boodskap benodig teks of ten minste een aanhangsel."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1221,7 +1221,7 @@ msgstr "'n Indeksmetadata-fout het voorgekom."
 #. js-lingui-id: +MvnxO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "An index must contain at least one field"
-msgstr " 80Nag \\b0aan vergelykings \\b8met ten minste een veld"
+msgstr " 80Nag \b0aan vergelykings \b8met ten minste een veld"
 
 #. js-lingui-id: KvWKJI
 #: src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception.ts
@@ -8489,7 +8489,7 @@ msgstr "Merk as ongelees"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Die logikafunksie om gesprekke as gelees te merk \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" is nie in hierdie toepassing gevind nie"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "Boodskap"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "Boodskapaanhangsels kon nie gestoor word nie. Probeer asseblief weer."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14098,7 +14098,7 @@ msgstr "Die logiese funksie wat die verbinding begin, is nie gevind nie."
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "Die logikafunksie waarmee hierdie boodskapverskaffer gesprekke as gelees merk, is nie in sy toepassing gevind nie."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -17086,7 +17086,7 @@ msgstr "Ons kon nie die rekening identifiseer wat jy gemagtig het nie. Probeer a
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "Ons kon nie hierdie gesprek as gelees merk nie."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

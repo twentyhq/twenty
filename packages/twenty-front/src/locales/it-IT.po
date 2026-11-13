@@ -1121,7 +1121,7 @@ msgstr "{runCount, plural, one {# turno} other {# turni}}"
 #. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — il valore predefinito per questo spazio di lavoro è {defaultText}. Il salvataggio si applica solo a questo spazio di lavoro."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1656,7 +1656,7 @@ msgstr "Si apre un modulo per la persona che avvia il workflow e viene compilato
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
-msgstr ""
+msgstr "Un messaggio può avere fino a {maxAttachmentCount} file"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -3342,7 +3342,7 @@ msgstr "Tutte le aziende"
 #. js-lingui-id: S63MQu
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "All conversations"
-msgstr ""
+msgstr "Tutte le conversazioni"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7390,7 +7390,7 @@ msgstr "Conferma del pagamento in corso"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Connetti"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8709,7 +8709,7 @@ msgstr "Crediti"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Crediti · 14 gg"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8749,7 +8749,7 @@ msgstr "Crediti concessi oltre la quota inclusa nel piano. Rimangono spendibili 
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Crediti al giorno"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -13790,7 +13790,7 @@ msgstr "Filtra chat"
 #. js-lingui-id: KGtrou
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "Filter conversations"
-msgstr ""
+msgstr "Filtra conversazioni"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19976,7 +19976,7 @@ msgstr "Nessun contenuto"
 #. js-lingui-id: xHzV2w
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No conversation uses this channel."
-msgstr ""
+msgstr "Nessuna conversazione utilizza questo canale."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -20254,7 +20254,7 @@ msgstr "Nessuna attività corrispondente"
 #. js-lingui-id: fV9l8S
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No matching conversations"
-msgstr ""
+msgstr "Nessuna conversazione corrispondente"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20606,7 +20606,7 @@ msgstr "Nessun risultato del test ancora disponibile"
 #. js-lingui-id: hn2q8h
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
-msgstr ""
+msgstr "Nessun contenuto"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -24605,7 +24605,7 @@ msgstr "Rispondi"
 #. js-lingui-id: VKsaTi
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
-msgstr ""
+msgstr "In risposta a"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -27727,7 +27727,7 @@ msgstr "Si è verificato un errore durante il recupero delle conversazioni di qu
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Qualcosa è andato storto durante il recupero dei messaggi di questo record."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30281,7 +30281,7 @@ msgstr "Token"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Token · 14g"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -32796,7 +32796,7 @@ msgstr "Non è stato possibile caricare le conversazioni"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Impossibile caricare i messaggi"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32985,17 +32985,17 @@ msgstr "Settimanale"
 #. js-lingui-id: fWh1RG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
-msgstr ""
+msgstr "Limite settimanale di utilizzo personale dell'IA raggiunto. Chiedi a un amministratore di abilitare i crediti dell'area di lavoro."
 
 #. js-lingui-id: GkVwb2
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
-msgstr ""
+msgstr "Limite settimanale di utilizzo personale dell'IA raggiunto. Abilita i crediti dell'area di lavoro per continuare."
 
 #. js-lingui-id: Kf6mmq
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
-msgstr ""
+msgstr "Limite settimanale di utilizzo personale dell'IA raggiunto. Ora vengono utilizzati i crediti dell'area di lavoro."
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33041,7 +33041,7 @@ msgstr "Cosa puoi fare?"
 #. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
-msgstr ""
+msgstr "Cosa limita questo spazio di lavoro. I valori predefiniti provengono dalle variabili di configurazione e dal piano dello spazio di lavoro, e solo un operatore può sostituirne uno."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

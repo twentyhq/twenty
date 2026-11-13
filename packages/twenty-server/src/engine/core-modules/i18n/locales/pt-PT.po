@@ -280,7 +280,7 @@ msgstr "Um e-mail de marketing só pode ser enviado a um destinatário por vez, 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "Uma mensagem precisa de texto ou de pelo menos um anexo."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8489,7 +8489,7 @@ msgstr "Marcar como não lido"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "A função lógica para marcar conversa como lida \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" não foi encontrada nesta aplicação"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "Mensagem"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "Não foi possível salvar os anexos da mensagem. Tente novamente."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14098,7 +14098,7 @@ msgstr "A função de lógica que inicia a conexão não foi encontrada."
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "A função lógica que este provedor de mensagens usa para marcar conversas como lidas não foi encontrada na sua aplicação."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -17086,7 +17086,7 @@ msgstr "Não foi possível identificar a conta que você autorizou. Tente novame
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "Não foi possível marcar esta conversa como lida."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

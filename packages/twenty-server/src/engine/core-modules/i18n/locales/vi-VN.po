@@ -280,7 +280,7 @@ msgstr "Mỗi lần chỉ có thể gửi email tiếp thị cho một người 
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "Một tin nhắn cần có nội dung hoặc ít nhất một tệp đính kèm."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8489,7 +8489,7 @@ msgstr "Đánh dấu là chưa đọc"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Không tìm thấy hàm logic đánh dấu luồng là đã đọc \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" trong ứng dụng này"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "Tin nhắn"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "Không thể lưu tệp đính kèm của tin nhắn. Vui lòng thử lại."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14098,7 +14098,7 @@ msgstr "Không tìm thấy hàm logic bắt đầu kết nối."
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "Không tìm thấy hàm logic mà nhà cung cấp dịch vụ nhắn tin này dùng để đánh dấu luồng là đã đọc trong ứng dụng của nó."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -17086,7 +17086,7 @@ msgstr "Chúng tôi không thể xác định tài khoản bạn đã ủy quy�
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "Chúng tôi không thể đánh dấu cuộc trò chuyện này là đã đọc."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

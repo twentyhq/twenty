@@ -1121,7 +1121,7 @@ msgstr "{runCount, plural, one {# beurt} other {# beurte}}"
 #. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — die verstek vir hierdie werkruimte is {defaultText}. Stoor is slegs op hierdie werkruimte van toepassing."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1641,7 +1641,7 @@ msgstr "A konseps bestaan reeds"
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 #: src/modules/object-core/workflows/versions/components/CoreWorkflowVersionRestoreButton.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
-msgstr "E'n konsep bestaan reeds vir hierdie werkuns. Is jy seker jy wil dit uitvee?"
+msgstr ""
 
 #. js-lingui-id: xk6SkO
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1656,7 +1656,7 @@ msgstr "'n Vorm maak oop vir die persoon wat die werksvloei begin en word dadeli
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
-msgstr ""
+msgstr "'n Boodskap kan tot {maxAttachmentCount} lêers hê"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -1691,7 +1691,7 @@ msgstr "’n Rol word vereis"
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
-msgstr "7n Rol moet vir die API-sleutel gekies word"
+msgstr ""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -3342,7 +3342,7 @@ msgstr "Alle maatskappye"
 #. js-lingui-id: S63MQu
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "All conversations"
-msgstr ""
+msgstr "Alle gesprekke"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -3677,7 +3677,7 @@ msgstr "'n Fout het voorgekom tydens die laai van hierdie widget."
 #. js-lingui-id: I/scZd
 #: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
-msgstr "9n Fout het voorgekom terwyl jou boodskap verwerk is"
+msgstr ""
 
 #. js-lingui-id: g6Wfbf
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
@@ -7390,7 +7390,7 @@ msgstr "Bevestig jou betaling"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Koppel"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8709,7 +8709,7 @@ msgstr "Krediete"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Krediete · 14d"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8749,7 +8749,7 @@ msgstr "Krediete wat bo en behalwe die plantoelaag toegeken word. Hulle bly best
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Krediete per dag"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -11789,7 +11789,7 @@ msgstr "Voer 'n invoer hierbo in en druk dan \"Test\""
 #. js-lingui-id: wgNkIh
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 msgid "Enter an item"
-msgstr "Voer n item in"
+msgstr ""
 
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowEditActionIterator.tsx
@@ -13790,7 +13790,7 @@ msgstr "Filtreer kletse"
 #. js-lingui-id: KGtrou
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "Filter conversations"
-msgstr ""
+msgstr "Filtreer gesprekke"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19976,7 +19976,7 @@ msgstr "Geen inhoud"
 #. js-lingui-id: xHzV2w
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No conversation uses this channel."
-msgstr ""
+msgstr "Geen gesprek gebruik hierdie kanaal nie."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -20254,7 +20254,7 @@ msgstr "Geen ooreenstemmende aktiwiteit nie"
 #. js-lingui-id: fV9l8S
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No matching conversations"
-msgstr ""
+msgstr "Geen ooreenstemmende gesprekke nie"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20606,7 +20606,7 @@ msgstr "Nog geen toetsresultaat nie"
 #. js-lingui-id: hn2q8h
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
-msgstr ""
+msgstr "Geen teksinhoud"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -24605,7 +24605,7 @@ msgstr "Reageer"
 #. js-lingui-id: VKsaTi
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
-msgstr ""
+msgstr "Antwoord aan"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -27727,7 +27727,7 @@ msgstr "Iets het verkeerd geloop tydens die ophaal van hierdie rekord se gesprek
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Iets het verkeerd geloop terwyl hierdie rekord se boodskappe gehaal is."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30279,7 +30279,7 @@ msgstr "Tokens"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Tekens · 14d"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -32794,7 +32794,7 @@ msgstr "Ons kon nie die gesprekke laai nie"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Ons kon nie die boodskappe laai nie"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32983,17 +32983,17 @@ msgstr "Weekliks"
 #. js-lingui-id: fWh1RG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
-msgstr ""
+msgstr "Weeklikse persoonlike KI-gebruik bereik. Vra 'n admin om werkspasiekrediete te aktiveer."
 
 #. js-lingui-id: GkVwb2
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
-msgstr ""
+msgstr "Weeklikse persoonlike KI-gebruik bereik. Aktiveer werkspasiekrediete om voort te gaan."
 
 #. js-lingui-id: Kf6mmq
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
-msgstr ""
+msgstr "Weeklikse persoonlike KI-gebruik bereik. Werkspasiekrediete word nou gebruik."
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33039,7 +33039,7 @@ msgstr "Wat kan jy doen?"
 #. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
-msgstr ""
+msgstr "Wat hierdie werkruimte beperk. Verstekwaardes kom van konfigurasieveranderlikes en die werkruimteplan, en slegs ’n operateur kan een vervang."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

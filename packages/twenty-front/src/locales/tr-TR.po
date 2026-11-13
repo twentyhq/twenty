@@ -1121,7 +1121,7 @@ msgstr "{runCount, plural, one {# tur} other {# tur}}"
 #. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — bu çalışma alanı için varsayılan değer {defaultText}. Kaydetme yalnızca bu çalışma alanı için geçerlidir."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1656,7 +1656,7 @@ msgstr "İş akışını başlatan kişi için bir form açılır ve yerinde dol
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
-msgstr ""
+msgstr "Bir mesaj en fazla {maxAttachmentCount} dosya içerebilir"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -3342,7 +3342,7 @@ msgstr "Tüm Şirketler"
 #. js-lingui-id: S63MQu
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "All conversations"
-msgstr ""
+msgstr "Tüm sohbetler"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6622,7 +6622,7 @@ msgstr "Değişikliklerinizi uygulamak için işaret onayını tıklayın."
 #. js-lingui-id: WTlZnA
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
 msgid "Click to add your first widget"
-msgstr "İlk widget1inizi eklemek için tıklayın"
+msgstr ""
 
 #. js-lingui-id: cwMTjO
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
@@ -7390,7 +7390,7 @@ msgstr "Ödemeniz onaylanıyor"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Bağlan"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8709,7 +8709,7 @@ msgstr "Krediler"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Krediler · 14gün"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8749,7 +8749,7 @@ msgstr "Plan kotasına ek olarak verilen krediler. Tüketilene kadar harcanabili
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Günlük kredi"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -13790,7 +13790,7 @@ msgstr "Sohbetleri filtrele"
 #. js-lingui-id: KGtrou
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "Filter conversations"
-msgstr ""
+msgstr "Konuşmaları filtrele"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19976,7 +19976,7 @@ msgstr "İçerik yok"
 #. js-lingui-id: xHzV2w
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No conversation uses this channel."
-msgstr ""
+msgstr "Hiçbir konuşma bu kanalı kullanmıyor."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -20254,7 +20254,7 @@ msgstr "Eşleşen etkinlik yok"
 #. js-lingui-id: fV9l8S
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No matching conversations"
-msgstr ""
+msgstr "Eşleşen konuşma yok"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20606,7 +20606,7 @@ msgstr "Henüz test sonucu yok"
 #. js-lingui-id: hn2q8h
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
-msgstr ""
+msgstr "Metin içeriği yok"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -24605,7 +24605,7 @@ msgstr "Cevapla"
 #. js-lingui-id: VKsaTi
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
-msgstr ""
+msgstr "Şuna yanıt veriliyor"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -27727,7 +27727,7 @@ msgstr "Bu kaydın sohbetleri alınırken bir sorun oluştu."
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Bu kaydın mesajları getirilirken bir şeyler ters gitti."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30279,7 +30279,7 @@ msgstr "Belirteçler"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Tokenlar · 14g"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -32794,7 +32794,7 @@ msgstr "Sohbetleri yükleyemedik"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Mesajları yükleyemedik"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32983,17 +32983,17 @@ msgstr "Haftalık"
 #. js-lingui-id: fWh1RG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
-msgstr ""
+msgstr "Haftalık kişisel yapay zeka kullanım sınırına ulaşıldı. Çalışma alanı kredilerini etkinleştirmesi için bir yöneticiden isteyin."
 
 #. js-lingui-id: GkVwb2
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
-msgstr ""
+msgstr "Haftalık kişisel yapay zeka kullanım sınırına ulaşıldı. Devam etmek için çalışma alanı kredilerini etkinleştirin."
 
 #. js-lingui-id: Kf6mmq
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
-msgstr ""
+msgstr "Haftalık kişisel yapay zeka kullanım sınırına ulaşıldı. Artık çalışma alanı kredileri kullanılıyor."
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33039,7 +33039,7 @@ msgstr "Ne yapabilirsiniz?"
 #. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
-msgstr ""
+msgstr "Bu çalışma alanının sınırını ne belirler. Varsayılanlar yapılandırma değişkenlerinden ve çalışma alanı planından gelir ve bunlardan birini yalnızca bir operatör değiştirebilir."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33873,7 +33873,7 @@ msgstr "İş akışlarına erişim izniniz yok."
 #. js-lingui-id: D0mU8n
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to view this widget"
-msgstr "Bu widget1'i görüntüleme izniniz yoktur"
+msgstr ""
 
 #. js-lingui-id: SDVtJI
 #: src/modules/object-record/record-index/components/RecordIndexEmptyStateNotShared.tsx

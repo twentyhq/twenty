@@ -280,7 +280,7 @@ msgstr "Маркетиншка е-порука може се послати са
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "Порука мора да садржи текст или бар један прилог."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8489,7 +8489,7 @@ msgstr "Означи као непрочитано"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Функција логике за означавање нити као прочитане \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" није пронађена у овој апликацији"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "Порука"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "Прилози поруке нису могли бити сачувани. Покушајте поново."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14098,7 +14098,7 @@ msgstr "Логичка функција која покреће конекциј
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "Функција логике коју овај добављач размене порука користи за означавање нити као прочитаних није пронађена у његовој апликацији."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -17086,7 +17086,7 @@ msgstr "Нисмо могли да идентификујемо налог ко�
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "Нисмо могли да означимо овај разговор као прочитан."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

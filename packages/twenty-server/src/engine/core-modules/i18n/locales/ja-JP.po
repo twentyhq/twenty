@@ -280,7 +280,7 @@ msgstr "マーケティングメールは一度に1人の受信者にのみ送�
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "メッセージにはテキストまたは少なくとも1つの添付ファイルが必要です。"
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8489,7 +8489,7 @@ msgstr "未読にする"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "スレッドを既読としてマークするロジック関数 \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" がこのアプリケーションに見つかりませんでした"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "メッセージ"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "メッセージの添付ファイルを保存できませんでした。再試行してください。"
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -14098,7 +14098,7 @@ msgstr "接続を開始するロジック関数が見つかりませんでした
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "このメッセージングプロバイダーがスレッドを既読としてマークするために使用するロジック関数が、そのアプリケーションに見つかりませんでした。"
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -17086,7 +17086,7 @@ msgstr "承認したアカウントを特定できませんでした。もう一
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "この会話を既読としてマークできませんでした。"
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts

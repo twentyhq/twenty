@@ -1121,7 +1121,7 @@ msgstr "{runCount, plural, one {# σειρά} other {# σειρές}}"
 #. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — η προεπιλογή για αυτόν τον χώρο εργασίας είναι {defaultText}. Η αποθήκευση ισχύει μόνο για αυτόν τον χώρο εργασίας."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1656,7 +1656,7 @@ msgstr "Ανοίγει μια φόρμα για το άτομο που ξεκι�
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
-msgstr ""
+msgstr "Ένα μήνυμα μπορεί να έχει έως {maxAttachmentCount} αρχεία"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -3342,7 +3342,7 @@ msgstr "Όλες οι εταιρείες"
 #. js-lingui-id: S63MQu
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "All conversations"
-msgstr ""
+msgstr "Όλες οι συνομιλίες"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7390,7 +7390,7 @@ msgstr "Γίνεται επιβεβαίωση της πληρωμής σας"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Σύνδεση"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8709,7 +8709,7 @@ msgstr "Πιστώσεις"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Πιστώσεις · 14ημ."
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8749,7 +8749,7 @@ msgstr "Πιστώσεις που χορηγούνται επιπλέον του
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Πιστώσεις ανά ημέρα"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -13790,7 +13790,7 @@ msgstr "Φιλτράρισμα συνομιλιών"
 #. js-lingui-id: KGtrou
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "Filter conversations"
-msgstr ""
+msgstr "Φιλτράρισμα συνομιλιών"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19976,7 +19976,7 @@ msgstr "Χωρίς περιεχόμενο"
 #. js-lingui-id: xHzV2w
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No conversation uses this channel."
-msgstr ""
+msgstr "Καμία συνομιλία δεν χρησιμοποιεί αυτό το κανάλι."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -20254,7 +20254,7 @@ msgstr "Δεν υπάρχει δραστηριότητα που να αντισ�
 #. js-lingui-id: fV9l8S
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No matching conversations"
-msgstr ""
+msgstr "Δεν βρέθηκαν αντίστοιχες συνομιλίες"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20606,7 +20606,7 @@ msgstr "Δεν υπάρχει ακόμη αποτέλεσμα δοκιμής"
 #. js-lingui-id: hn2q8h
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
-msgstr ""
+msgstr "Χωρίς περιεχόμενο"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -24605,7 +24605,7 @@ msgstr "Απάντηση"
 #. js-lingui-id: VKsaTi
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
-msgstr ""
+msgstr "Απάντηση σε"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -27727,7 +27727,7 @@ msgstr "Παρουσιάστηκε κάποιο σφάλμα κατά την α�
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Κάτι πήγε στραβά κατά την ανάκτηση των μηνυμάτων αυτής της εγγραφής."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -28458,7 +28458,7 @@ msgstr "Κατάληξη"
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Suggested"
-msgstr "1110110110KTHNKAT"
+msgstr ""
 
 #. js-lingui-id: 8J32PY
 #: src/modules/ui/suggestion/components/SuggestionMenu.tsx
@@ -30281,7 +30281,7 @@ msgstr "Tokens"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Tokens · 14ημ."
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -32796,7 +32796,7 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των συνομιλιώ
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Δεν ήταν δυνατή η φόρτωση των μηνυμάτων"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32985,17 +32985,17 @@ msgstr "Εβδομαδιαία"
 #. js-lingui-id: fWh1RG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
-msgstr ""
+msgstr "Εξαντλήθηκε η εβδομαδιαία προσωπική χρήση AI. Ζητήστε από έναν διαχειριστή να ενεργοποιήσει τις πιστώσεις χώρου εργασίας."
 
 #. js-lingui-id: GkVwb2
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
-msgstr ""
+msgstr "Εξαντλήθηκε η εβδομαδιαία προσωπική χρήση AI. Ενεργοποιήστε τις πιστώσεις χώρου εργασίας για να συνεχίσετε."
 
 #. js-lingui-id: Kf6mmq
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
-msgstr ""
+msgstr "Εξαντλήθηκε η εβδομαδιαία προσωπική χρήση AI. Χρησιμοποιούνται τώρα πιστώσεις χώρου εργασίας."
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33041,7 +33041,7 @@ msgstr "Τι μπορείτε να κάνετε;"
 #. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
-msgstr ""
+msgstr "Τι περιορίζει αυτόν τον χώρο εργασίας. Οι προεπιλογές προέρχονται από τις μεταβλητές διαμόρφωσης και το πλάνο του χώρου εργασίας, και μόνο ένας χειριστής μπορεί να αντικαταστήσει κάποια."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

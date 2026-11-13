@@ -1121,7 +1121,7 @@ msgstr "{runCount, plural, one {# סבב} two {# סבבים} other {# סבבים
 #. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
-msgstr ""
+msgstr "{scopeLabel} — ברירת המחדל עבור סביבת עבודה זו היא {defaultText}. השמירה חלה על סביבת עבודה זו בלבד."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1656,7 +1656,7 @@ msgstr "טופס נפתח עבור האדם שמפעיל את תהליך העב�
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
-msgstr ""
+msgstr "הודעה יכולה לכלול עד {maxAttachmentCount} קבצים"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -3342,7 +3342,7 @@ msgstr "כל החברות"
 #. js-lingui-id: S63MQu
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "All conversations"
-msgstr ""
+msgstr "כל השיחות"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -7390,7 +7390,7 @@ msgstr "מאשר את התשלום שלך"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "התחבר"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8709,7 +8709,7 @@ msgstr "קרדיטים"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "נקודות זכות · 14 ימים"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8749,7 +8749,7 @@ msgstr "קרדיטים שניתנים מעבר למכסה של התוכנית. �
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "נקודות זכות ליום"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -13790,7 +13790,7 @@ msgstr "סנן צ'אטים"
 #. js-lingui-id: KGtrou
 #: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
 msgid "Filter conversations"
-msgstr ""
+msgstr "סינון שיחות"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -14728,7 +14728,7 @@ msgstr "אפור"
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
-msgstr "תום גדול יותר או שווה\\aF"
+msgstr "תום גדול יותר או שווה\aF"
 
 #. js-lingui-id: CZXzs4
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -17201,7 +17201,7 @@ msgstr "פחות"
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Less than or equal"
-msgstr "או קטן יותר"
+msgstr ""
 
 #. js-lingui-id: 6W7LRT
 #: src/modules/marketplace/utils/buildApplicationIframeMediaPermissionSummary.ts
@@ -19976,7 +19976,7 @@ msgstr "ללא תוכן"
 #. js-lingui-id: xHzV2w
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No conversation uses this channel."
-msgstr ""
+msgstr "אף שיחה אינה משתמשת בערוץ זה."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
@@ -20254,7 +20254,7 @@ msgstr "אין פעילות תואמת"
 #. js-lingui-id: fV9l8S
 #: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 msgid "No matching conversations"
-msgstr ""
+msgstr "אין שיחות תואמות"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20606,7 +20606,7 @@ msgstr "אין עדיין תוצאת בדיקה"
 #. js-lingui-id: hn2q8h
 #: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
 msgid "No text content"
-msgstr ""
+msgstr "ללא תוכן"
 
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
@@ -24605,7 +24605,7 @@ msgstr "תגובה"
 #. js-lingui-id: VKsaTi
 #: src/modules/ai/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
-msgstr ""
+msgstr "בתשובה ל-"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -27158,7 +27158,7 @@ msgstr "Shift"
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/utils/getChartNumberFormatLabel.ts
 msgid "Short"
-msgstr "הֶשלוֹש"
+msgstr ""
 
 #. js-lingui-id: 2rtIq8
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -27727,7 +27727,7 @@ msgstr "משהו השתבש בעת אחזור השיחות של רשומה זו.
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "משהו השתבש בעת אחזור ההודעות של רשומה זו."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30279,7 +30279,7 @@ msgstr "אסימונים"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "אסימונים · 14 ימים"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -32794,7 +32794,7 @@ msgstr "לא הצלחנו לטעון את השיחות"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "לא הצלחנו לטעון את ההודעות"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32983,17 +32983,17 @@ msgstr "שבועי"
 #. js-lingui-id: fWh1RG
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
-msgstr ""
+msgstr "הגעת למגבלת השימוש האישית השבועית בבינה מלאכותית. בקש ממנהל מערכת להפעיל נקודות זכות של סביבת העבודה."
 
 #. js-lingui-id: GkVwb2
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
-msgstr ""
+msgstr "הגעת למגבלת השימוש האישית השבועית בבינה מלאכותית. הפעל נקודות זכות של סביבת העבודה כדי להמשיך."
 
 #. js-lingui-id: Kf6mmq
 #: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 msgid "Weekly personal AI usage reached. Now using workspace credits."
-msgstr ""
+msgstr "הגעת למגבלת השימוש האישית השבועית בבינה מלאכותית. כעת נעשה שימוש בנקודות זכות של סביבת העבודה."
 
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -33039,7 +33039,7 @@ msgstr "מה אתה יכול לעשות?"
 #. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
-msgstr ""
+msgstr "מה מגביל סביבת עבודה זו. ערכי ברירת המחדל מגיעים ממשתני התצורה ומתוכנית סביבת העבודה, ורק מפעיל יכול להחליף אחד מהם."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

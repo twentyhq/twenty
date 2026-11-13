@@ -280,7 +280,7 @@ msgstr "אפשר לשלוח אימייל שיווקי לנמען אחד בלבד
 #. js-lingui-id: Spm4/x
 #: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
 msgid "A message needs text or at least one attachment."
-msgstr ""
+msgstr "הודעה זקוקה לטקסט או לקובץ מצורף אחד לפחות."
 
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -8489,7 +8489,7 @@ msgstr "סמן כלא נקרא"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "פונקציית הלוגיקה לסימון שרשור כנקרא \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" לא נמצאה ביישום זה"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8686,7 +8686,7 @@ msgstr "הודעה"
 #. js-lingui-id: 2/+56a
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message attachments could not be saved. Please retry."
-msgstr ""
+msgstr "לא ניתן היה לשמור את קבצי ההודעות המצורפים. נסו שוב."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -10304,7 +10304,7 @@ msgstr "ערך אפשרות חורג מ-63 תווים."
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value format not supported"
-msgstr "פורמט ערך האפשרות אינו נתמך"
+msgstr ""
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
@@ -10315,7 +10315,7 @@ msgstr "נדרש ערך אפשרות."
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr "ערך האפשרות חייב להיות מחרוזת של לפחות תו אחד"
+msgstr ""
 
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
@@ -14098,7 +14098,7 @@ msgstr "פונקציית הלוגיקה שמתחילה את החיבור לא נ
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "פונקציית הלוגיקה שבה ספק הודעות זה מסמן שרשורים כנקראו לא נמצאה ביישום שלו."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -16633,7 +16633,7 @@ msgstr "הערך \"{stringifiedValue}\" אינו מוביל לשום רשומה 
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-value.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr " תַאִים לִהְיוֹת בְּאוֹתִיּוֹת רִשׁוֹנוֹת   ובפורמט snake_case \"{sanitizedValue}\""
+msgstr ""
 
 #. js-lingui-id: OG7PgU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -17086,7 +17086,7 @@ msgstr "לא הצלחנו לזהות את החשבון שאישרת. נסה שו
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "לא הצלחנו לסמן את השיחה הזו כנקראה."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
