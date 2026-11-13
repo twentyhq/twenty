@@ -206,6 +206,7 @@ export {
 export { getFilterValueSchema } from './filter/utils/validation-schemas/getFilterValueSchema';
 export type { FilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
 export { getFilterValueValidationIssue } from './filter/utils/validation-schemas/getFilterValueValidationIssue';
+export { isFilterValueExpectedAsArray } from './filter/utils/validation-schemas/isFilterValueExpectedAsArray';
 export {
   relationFilterValueSchemaObject,
   jsonRelationFilterValueSchema,
@@ -235,6 +236,10 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isNativePageKey } from './navigation/isNativePageKey';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
+export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
+export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
+export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
+export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';

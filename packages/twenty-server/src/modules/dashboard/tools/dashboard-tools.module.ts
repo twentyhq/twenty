@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 
+import { PageLayoutToolsModule } from 'src/engine/metadata-modules/page-layout/tools/page-layout-tools.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { DASHBOARD_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/dashboard-tool-service.token';
@@ -7,12 +8,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PageLayoutTabModule } from 'src/engine/metadata-modules/page-layout-tab/page-layout-tab.module';
 import { PageLayoutWidgetModule } from 'src/engine/metadata-modules/page-layout-widget/page-layout-widget.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
-
 import { DashboardToolWorkspaceService } from './services/dashboard-tool.workspace-service';
 
 @Global()
 @Module({
   imports: [
+    PageLayoutToolsModule,
     PageLayoutModule,
     PageLayoutTabModule,
     PageLayoutWidgetModule,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -30,6 +31,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { getVerticalListWidgetInsertionPositions } from 'src/engine/metadata-modules/page-layout-widget/utils/get-vertical-list-widget-insertion-positions.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { validateFieldConfigurationNestedRelationOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util';
 import { validateRichTextWidgetBodyOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-rich-text-widget-body-or-throw.util';
@@ -260,6 +262,7 @@ export class PageLayoutWidgetService {
 
     const {
       flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatFrontComponentMaps,
@@ -271,6 +274,7 @@ export class PageLayoutWidgetService {
           workspaceId,
           flatMapsKeys: [
             'flatPageLayoutTabMaps',
+            'flatPageLayoutWidgetMaps',
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatFrontComponentMaps',
@@ -302,11 +306,75 @@ export class PageLayoutWidgetService {
       });
     }
 
+    const widgetsToUpdate: FlatPageLayoutWidget[] = [];
+
+    if (
+      flatPageLayoutWidgetToCreate.position?.layoutMode ===
+      PageLayoutTabLayoutMode.VERTICAL_LIST
+    ) {
+      const parentTab = findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: createInput.pageLayoutTabId,
+        flatEntityMaps: flatPageLayoutTabMaps,
+      });
+      const siblings = parentTab.widgetUniversalIdentifiers
+        .map(
+          (universalIdentifier) =>
+            flatPageLayoutWidgetMaps.byUniversalIdentifier[universalIdentifier],
+        )
+        .filter(isDefined)
+        .filter((widget) => !isDefined(widget.deletedAt))
+        .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
+      const positions = getVerticalListWidgetInsertionPositions({
+        widgets: siblings,
+        widgetToCreate: {
+          id: flatPageLayoutWidgetToCreate.id,
+          type: flatPageLayoutWidgetToCreate.type,
+          position: flatPageLayoutWidgetToCreate.position,
+        },
+      });
+
+      for (const { id, position } of positions) {
+        if (id === flatPageLayoutWidgetToCreate.id) {
+          flatPageLayoutWidgetToCreate.position = position;
+          continue;
+        }
+
+        const previousPosition = siblings.find(
+          (widget) => widget.id === id,
+        )?.position;
+
+        if (
+          previousPosition?.layoutMode ===
+            PageLayoutTabLayoutMode.VERTICAL_LIST &&
+          previousPosition.index === position.index
+        ) {
+          continue;
+        }
+
+        widgetsToUpdate.push(
+          fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
+            updatePageLayoutWidgetInput: { id, update: { position } },
+            flatPageLayoutWidgetMaps,
+            flatPageLayoutTabMaps,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatFrontComponentMaps,
+            flatViewFieldGroupMaps,
+            flatViewMaps,
+            callerApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
+          }),
+        );
+      }
+    }
+
     await this.validateAndRunWidgetMigration({
       workspaceId,
       operations: {
         flatEntityToCreate: [flatPageLayoutWidgetToCreate],
-        flatEntityToUpdate: [],
+        flatEntityToUpdate: widgetsToUpdate,
         flatEntityToDelete: [],
       },
       errorMessage:
