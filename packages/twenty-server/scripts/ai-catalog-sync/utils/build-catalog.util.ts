@@ -31,7 +31,6 @@ const EXCLUDED_MODEL_PREFIXES = [
 
 const EXCLUDED_MODEL_SUFFIXES = ['-audio-preview', '-realtime-preview'];
 
-// models.dev's deprecated context_over_200k carries no threshold of its own
 const LEGACY_LONG_CONTEXT_THRESHOLD_TOKENS = 200000;
 
 const isLanguageModel = (modelId: string): boolean => {
