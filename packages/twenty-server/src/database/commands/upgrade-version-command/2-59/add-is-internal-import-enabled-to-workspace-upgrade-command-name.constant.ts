@@ -1,2 +1,2 @@
 export const ADD_IS_INTERNAL_IMPORT_ENABLED_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
-  '2.59.0_AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand_1794514679647';
+  '2.59.0_AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand_1794588217126';

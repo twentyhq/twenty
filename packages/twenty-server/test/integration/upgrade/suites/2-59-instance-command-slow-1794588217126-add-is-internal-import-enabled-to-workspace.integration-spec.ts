@@ -1,11 +1,11 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794514679647-add-is-internal-import-enabled-to-workspace';
+import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794588217126-add-is-internal-import-enabled-to-workspace';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
-describe('2-59 slow instance command 1794514679647 - AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand (integration)', () => {
+describe('2-59 slow instance command 1794588217126 - AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand (integration)', () => {
   const command =
     new AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand();
   let queryRunner: QueryRunner;
