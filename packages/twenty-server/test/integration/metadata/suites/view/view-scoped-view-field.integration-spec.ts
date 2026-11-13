@@ -14,6 +14,12 @@ import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+type DealFieldNode = {
+  id: string;
+  name: string;
+  object?: { id: string };
+};
+
 const SCOPE_VIEW_GQL_FIELDS = `
   ${VIEW_GQL_FIELDS}
   scopedViewFieldId
@@ -136,13 +142,14 @@ describe('View scoping a one-to-many view field', () => {
     });
 
     const dealFields = fields
-      .map(({ node }) => node)
-      .filter((field) => field.object?.id === dealObjectId);
+      .map(({ node }: { node: DealFieldNode }) => node)
+      .filter((field: DealFieldNode) => field.object?.id === dealObjectId);
 
     testContext.dealObjectId = dealObjectId;
     testContext.actionItemObjectId = actionItemObjectId;
     testContext.actionItemsFieldId =
-      dealFields.find((field) => field.name === 'actionItems')?.id ?? '';
+      dealFields.find((field: DealFieldNode) => field.name === 'actionItems')
+        ?.id ?? '';
     testContext.nextStepFieldId = nextStepFieldId;
 
     const {
