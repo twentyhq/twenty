@@ -1,5 +1,5 @@
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType, type ViewFilterOperand } from 'twenty-shared/types';
+import { type ViewFilterOperand } from 'twenty-shared/types';
 import {
   arrayOfStringsOrVariablesSchema,
   isDefined,
@@ -28,17 +28,12 @@ export const parseSelectFilterValues = (
 };
 
 export const getInvalidSelectFilterOptionValues = ({
-  fieldMetadata,
+  options,
   operand,
   subFieldName,
   value,
 }: {
-  fieldMetadata: Pick<
-    FlatFieldMetadata<
-      FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT
-    >,
-    'type' | 'options'
-  >;
+  options: FlatFieldMetadata['options'];
   operand: ViewFilterOperand;
   subFieldName?: string | null;
   value: ViewFilterValue | null;
@@ -57,11 +52,11 @@ export const getInvalidSelectFilterOptionValues = ({
     return [];
   }
 
-  if (!isDefined(fieldMetadata.options)) {
+  if (!isDefined(options)) {
     return filterValues;
   }
 
   return filterValues.filter((filterValue) =>
-    fieldMetadata.options.every((option) => option.value !== filterValue),
+    options.every((option) => option.value !== filterValue),
   );
 };

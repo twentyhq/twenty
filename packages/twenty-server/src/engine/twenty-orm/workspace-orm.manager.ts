@@ -123,12 +123,14 @@ export class WorkspaceOrmManager {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       flatIndexMaps,
       featureFlagsMap,
       billingEntitlements,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
+      'flatFieldMetadataOptionMaps',
       'flatIndexMaps',
       'featureFlagsMap',
       'billingEntitlements',
@@ -163,6 +165,7 @@ export class WorkspaceOrmManager {
       authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       flatIndexMaps,
       flatValidationRuleMaps,
       objectIdByNameSingular,
@@ -181,10 +184,12 @@ export class WorkspaceOrmManager {
     const {
       flatObjectMetadataMaps,
       flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       billingEntitlements,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatObjectMetadataMaps',
       'flatFieldMetadataMapsOrm',
+      'flatFieldMetadataOptionMaps',
       'billingEntitlements',
     ]);
 
@@ -195,6 +200,7 @@ export class WorkspaceOrmManager {
       authContext,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      flatFieldMetadataOptionMaps,
       flatIndexMaps: {
         byUniversalIdentifier: {},
         universalIdentifierById: {},

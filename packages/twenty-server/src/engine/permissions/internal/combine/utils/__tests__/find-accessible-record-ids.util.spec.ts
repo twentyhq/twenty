@@ -184,6 +184,7 @@ const findGranted = ({
     principals,
     metadataMaps: {
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {
         [MEMBER_ROLE_ID]: {
