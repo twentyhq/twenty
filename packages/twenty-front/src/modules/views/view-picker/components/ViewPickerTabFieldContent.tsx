@@ -80,7 +80,7 @@ export const ViewPickerTabFieldContent = () => {
     recordIndexTabMode === 'field'
       ? recordIndexTabFieldMetadataItem?.label
       : recordIndexTabMode === 'custom'
-        ? t`Custom filters`
+        ? t`Custom`
         : t`None`;
 
   const handleVisibleTabDragEnd = async (result: DraggableListDropResult) => {
