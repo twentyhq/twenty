@@ -10,6 +10,7 @@ import { INGEST_MESSAGES_MAX_BATCH_SIZE } from 'src/constants/ingest-messages-ma
 import { buildLinkedinChatSubject } from 'src/logic-functions/utils/build-linkedin-chat-subject.util';
 import { buildLinkedinProfileHandle } from 'src/logic-functions/utils/build-linkedin-profile-handle.util';
 import { createLinkedinPerson } from 'src/logic-functions/utils/create-linkedin-person.util';
+import { getLinkedinChatReadState } from 'src/logic-functions/utils/get-linkedin-chat-read-state.util';
 import { hasPersonNamedLikeLinkedinUser } from 'src/logic-functions/utils/has-person-named-like-linkedin-user.util';
 import { importLinkedinMessageAttachments } from 'src/logic-functions/utils/import-linkedin-message-attachments.util';
 import { isLinkedinContactCreationAllowed } from 'src/logic-functions/utils/is-linkedin-contact-creation-allowed.util';
@@ -209,6 +210,7 @@ export const ingestLinkedinMessages = async ({
   } = resolvedPersons;
 
   const subject = buildLinkedinChatSubject(chat);
+  const isChatRead = getLinkedinChatReadState(chat);
   const ingestMessagesInput = ingestableMessages
     .map((message) =>
       mapUnipileMessageToIngestMessage({
@@ -222,6 +224,7 @@ export const ingestLinkedinMessages = async ({
         },
         channelHandle: channel.handle,
         counterparts: resolvedCounterparts,
+        isChatRead,
       }),
     )
     .filter(isDefined)

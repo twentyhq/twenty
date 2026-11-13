@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   listMessageChannels,
@@ -13,6 +14,7 @@ import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { syncLinkedinChatReadState } from 'src/logic-functions/utils/sync-linkedin-chat-read-state.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
@@ -69,7 +71,43 @@ const ingestUnipileMessage = async ({
     };
   }
 
+  await syncLinkedinChatReadState({ messageChannelId: channel.id, chat });
+
   return { handled: true };
+};
+
+const syncUnipileChatReadState = async ({
+  connectedAccountId,
+  unipileAccountId,
+  chatId,
+}: {
+  connectedAccountId: string;
+  unipileAccountId: string;
+  chatId: string | undefined;
+}): Promise<LinkedinWebhookEventResult> => {
+  if (!isNonEmptyString(chatId)) {
+    return { handled: false, reason: 'Chat update carries no chat id' };
+  }
+
+  const [channel] = await listMessageChannels({ connectedAccountId });
+
+  if (!isDefined(channel)) {
+    return { handled: false, reason: 'Connection has no message channel' };
+  }
+
+  const chat = await getUnipileChat({
+    accountId: unipileAccountId,
+    chatId,
+  });
+
+  const isSynced = await syncLinkedinChatReadState({
+    messageChannelId: channel.id,
+    chat,
+  });
+
+  return isSynced
+    ? { handled: true }
+    : { handled: false, reason: 'Chat read state needs no change in Twenty' };
 };
 
 export const linkedinHandleWebhookEventHandler = async (
@@ -98,6 +136,12 @@ export const linkedinHandleWebhookEventHandler = async (
         message: event.payload,
         attachmentDeadlineAtMs,
       });
+    case 'chat.update':
+      return syncUnipileChatReadState({
+        connectedAccountId: connection.id,
+        unipileAccountId: event.account_id,
+        chatId: event.payload.chat_id ?? event.payload.id,
+      });
     case 'account.status.disconnected':
     case 'account.status.errored':
       await reportConnectionAuthFailure({
@@ -115,7 +159,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-handle-webhook-event',
   description:
-    'Imports new LinkedIn messages into the connection message channel and flags connections LinkedIn signed out.',
+    'Imports new LinkedIn messages into the connection message channel, mirrors chats read on LinkedIn and flags connections LinkedIn signed out.',
   timeoutSeconds: LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS,
   handler: linkedinHandleWebhookEventHandler,
 });

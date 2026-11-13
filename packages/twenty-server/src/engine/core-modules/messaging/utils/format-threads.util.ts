@@ -22,6 +22,7 @@ export const formatThreads = (
   },
   threadVisibilityByThreadId: Record<string, MessageChannelVisibility>,
   threadChannelByThreadId: Record<string, TimelineThreadChannelDTO>,
+  unreadMessageThreadIds: Set<string> = new Set(),
 ): TimelineThreadDTO[] => {
   return threads
     .filter((thread) => isDefined(threadParticipantsByThreadId[thread.id]))
@@ -44,7 +45,7 @@ export const formatThreads = (
         ...extractParticipantSummary(threadParticipantsByThreadId[thread.id]),
         visibility,
         channel: threadChannelByThreadId[thread.id] ?? null,
-        read: true,
+        read: !unreadMessageThreadIds.has(thread.id),
       };
     });
 };

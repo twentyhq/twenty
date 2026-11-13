@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   downloadUnipileMessageAttachment: vi.fn(),
   query: vi.fn(),
   mutation: vi.fn(),
+  metadataMutation: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -35,6 +36,12 @@ vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = mocks.query;
     mutation = mocks.mutation;
+  },
+}));
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    mutation = mocks.metadataMutation;
   },
 }));
 
@@ -288,6 +295,143 @@ describe('linkedinHandleWebhookEventHandler', () => {
         id: true,
       },
     });
+  });
+
+  it('ingests a message of an unread chat as unread without re-flagging the thread', async () => {
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      user: DAPHNE,
+      unread_count: 1,
+    });
+
+    await linkedinHandleWebhookEventHandler(
+      buildMessageEvent({
+        sender_id: DAPHNE.id,
+        sender: DAPHNE,
+        is_sender: false,
+      }),
+    );
+
+    expect(mocks.ingestMessages.mock.calls[0][0].messages[0].isRead).toBe(
+      false,
+    );
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
+  });
+
+  it('keeps a thread read in Twenty when LinkedIn still counts it unread', async () => {
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      unread_count: 2,
+    });
+
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        id: 'evt_4',
+        created_at: '2026-10-29T08:00:00.000Z',
+        account_id: 'acc_1',
+        account_provider: 'linkedin',
+        type: 'chat.update',
+        payload: { id: 'chat-1' },
+      }),
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'Chat read state needs no change in Twenty',
+    });
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
+  });
+
+  it('mirrors a chat marked unread on LinkedIn into Twenty', async () => {
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      unread_count: -1,
+    });
+
+    await linkedinHandleWebhookEventHandler({
+      id: 'evt_5',
+      created_at: '2026-10-29T08:00:00.000Z',
+      account_id: 'acc_1',
+      account_provider: 'linkedin',
+      type: 'chat.update',
+      payload: { id: 'chat-1' },
+    });
+
+    expect(mocks.metadataMutation).toHaveBeenCalledExactlyOnceWith({
+      setAppMessageThreadReadState: {
+        __args: {
+          input: {
+            messageChannelId: 'channel-id',
+            threadExternalId: 'chat-1',
+            isRead: false,
+          },
+        },
+        updatedMessageCount: true,
+      },
+    });
+  });
+
+  it('mirrors a chat read on LinkedIn into Twenty', async () => {
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Daphné Müller',
+      is_group: false,
+      is_1to1: true,
+      unread_count: 0,
+    });
+
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        id: 'evt_2',
+        created_at: '2026-10-29T08:00:00.000Z',
+        account_id: 'acc_1',
+        account_provider: 'linkedin',
+        type: 'chat.update',
+        payload: { id: 'chat-1' },
+      }),
+    ).resolves.toEqual({ handled: true });
+
+    expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
+      accountId: 'acc_1',
+      chatId: 'chat-1',
+    });
+    expect(mocks.metadataMutation).toHaveBeenCalledExactlyOnceWith({
+      setAppMessageThreadReadState: {
+        __args: {
+          input: {
+            messageChannelId: 'channel-id',
+            threadExternalId: 'chat-1',
+            isRead: true,
+          },
+        },
+        updatedMessageCount: true,
+      },
+    });
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('ignores a chat update that names no chat', async () => {
+    await expect(
+      linkedinHandleWebhookEventHandler({
+        id: 'evt_3',
+        created_at: '2026-10-29T08:00:00.000Z',
+        account_id: 'acc_1',
+        account_provider: 'linkedin',
+        type: 'chat.update',
+        payload: {},
+      }),
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'Chat update carries no chat id',
+    });
+    expect(mocks.metadataMutation).not.toHaveBeenCalled();
   });
 
   it('ignores events of accounts no connection owns', async () => {

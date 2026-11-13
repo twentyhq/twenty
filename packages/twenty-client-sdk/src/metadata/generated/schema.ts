@@ -2663,6 +2663,7 @@ export interface Mutation {
     sendMessageCampaign: SendMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
+    setAppMessageThreadReadState: SetAppMessageThreadReadStateOutput
     setBillingPartnerCode: BillingPartnerCode
     setEnterpriseKey: EnterpriseLicenseInfoDTO
     setRecordPrivate: RecordSharingDTO
@@ -3707,6 +3708,11 @@ export interface Sentry {
     release?: Scalars['String']
     tracesSampleRate?: Scalars['Float']
     __typename: 'Sentry'
+}
+
+export interface SetAppMessageThreadReadStateOutput {
+    updatedMessageCount: Scalars['Int']
+    __typename: 'SetAppMessageThreadReadStateOutput'
 }
 
 export interface SettingsMenuItem {
@@ -4983,7 +4989,7 @@ export interface AppMessageAttachmentInput {fileId: Scalars['UUID'],label: Scala
 
 export interface AppMessageFolderInput {externalId: Scalars['String'],isSynced?: (Scalars['Boolean'] | null),name: Scalars['String']}
 
-export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
+export interface AppMessageInput {attachments?: (AppMessageAttachmentInput[] | null),externalId: Scalars['String'],folderExternalIds?: (Scalars['String'][] | null),isRead?: (Scalars['Boolean'] | null),participants: AppMessageParticipantInput[],receivedAt: Scalars['DateTime'],subject?: (Scalars['String'] | null),text: Scalars['String'],threadExternalId: Scalars['String']}
 
 export interface AppMessageParticipantInput {displayName?: (Scalars['String'] | null),handle: Scalars['String'],personId?: (Scalars['UUID'] | null),role: MessageParticipantRole,workspaceMemberId?: (Scalars['UUID'] | null)}
 
@@ -7538,6 +7544,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
+    setAppMessageThreadReadState?: (SetAppMessageThreadReadStateOutputGenqlSelection & { __args: {input: SetAppMessageThreadReadStateInput} })
     setBillingPartnerCode?: (BillingPartnerCodeGenqlSelection & { __args: {partnerCode: Scalars['String']} })
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
     setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
@@ -8696,6 +8703,14 @@ export interface SentryGenqlSelection{
 }
 
 export interface SetAppKeyValueInput {key: Scalars['String'],scope?: (AppKeyValueScope | null),value?: (Scalars['JSON'] | null)}
+
+export interface SetAppMessageThreadReadStateInput {isRead: Scalars['Boolean'],messageChannelId: Scalars['UUID'],threadExternalId: Scalars['String']}
+
+export interface SetAppMessageThreadReadStateOutputGenqlSelection{
+    updatedMessageCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
 
 export interface SettingsMenuItemGenqlSelection{
     applicationId?: boolean | number
@@ -12240,6 +12255,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isSentry = (obj?: { __typename?: any } | null): obj is Sentry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSentry"')
       return Sentry_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SetAppMessageThreadReadStateOutput_possibleTypes: string[] = ['SetAppMessageThreadReadStateOutput']
+    export const isSetAppMessageThreadReadStateOutput = (obj?: { __typename?: any } | null): obj is SetAppMessageThreadReadStateOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSetAppMessageThreadReadStateOutput"')
+      return SetAppMessageThreadReadStateOutput_possibleTypes.includes(obj.__typename)
     }
     
 

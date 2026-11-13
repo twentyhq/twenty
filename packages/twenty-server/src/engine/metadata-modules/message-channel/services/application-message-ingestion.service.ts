@@ -20,6 +20,7 @@ import { buildAppMessageHeaderMessageId } from 'src/engine/metadata-modules/mess
 import { resolveAppMessageDirection } from 'src/engine/metadata-modules/message-channel/utils/resolve-app-message-direction.util';
 import { withCanonicalParticipantHandlesOrThrow } from 'src/engine/metadata-modules/message-channel/utils/with-canonical-participant-handles-or-throw.util';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -28,6 +29,7 @@ import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-
 import { PersonHandleFieldService } from 'src/modules/match-participant/person-handle-field/person-handle-field.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { isMessageReadStateProvisioned } from 'src/modules/messaging/common/utils/is-message-read-state-provisioned.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 type IngestArgs = {
@@ -50,6 +52,7 @@ export class ApplicationMessageIngestionService {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async ingest({
@@ -84,8 +87,14 @@ export class ApplicationMessageIngestionService {
         messageChannel.participantHandleFieldUniversalIdentifier,
     });
 
+    const isReadStateProvisioned = await isMessageReadStateProvisioned({
+      workspaceCacheService: this.workspaceCacheService,
+      workspaceId,
+    });
+
     const messagesToSave = messages.map((message) =>
       this.toMessageWithParticipants({
+        isReadStateProvisioned,
         message: isDefined(personHandleField)
           ? withCanonicalParticipantHandlesOrThrow({
               message,
@@ -207,10 +216,12 @@ export class ApplicationMessageIngestionService {
     message,
     applicationId,
     messageChannel,
+    isReadStateProvisioned,
   }: {
     message: AppMessageInput;
     applicationId: string;
     messageChannel: MessageChannelEntity;
+    isReadStateProvisioned: boolean;
   }): MessageWithParticipants {
     return {
       headerMessageId: buildAppMessageHeaderMessageId({
@@ -225,6 +236,7 @@ export class ApplicationMessageIngestionService {
       externalId: message.externalId,
       messageThreadExternalId: message.threadExternalId,
       messageFolderExternalIds: [...new Set(message.folderExternalIds ?? [])],
+      isRead: isReadStateProvisioned ? message.isRead : undefined,
       direction: resolveAppMessageDirection({
         participants: message.participants,
         channelHandle: messageChannel.handle,

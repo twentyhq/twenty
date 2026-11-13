@@ -21,6 +21,7 @@ export type Message = Omit<
   externalId: string;
   messageThreadExternalId: string;
   direction: MessageDirection;
+  isRead?: boolean;
   messageFolderIds?: string[];
   messageFolderExternalIds?: string[];
   attachmentFiles?: MessageAttachmentFile[];

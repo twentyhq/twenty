@@ -19,7 +19,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
      query { findManyLogicFunctions { id name } }
      ```
 
-   - **Events**: `message.new`, `account.status.disconnected`, `account.status.errored`
+   - **Events**: `message.new`, `chat.update`, `account.status.disconnected`, `account.status.errored`
    - **Accounts**: leave empty so every connected account is covered, including future ones.
 
 ## 2. Configure Twenty
@@ -37,7 +37,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 | Connect | `linkedin-authorize`, `linkedin-callback` | Sends the member to Unipile's hosted sign-in, then confirms the account it returns |
 | On connect | `linkedin-on-connect` | Creates a private message channel matched on the Person **LinkedIn** field and bound to the `linkedin-messaging` provider, and routes the Unipile account's webhooks to this workspace |
 | Webhook | `linkedin-webhook-resolver` | Checks the `unipile-signature` header and dispatches the event to the workspace that connected the account |
-| New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when LinkedIn signs the account out |
+| New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel with the chat's read state; mirrors a chat read or marked unread on LinkedIn; flags the connection when LinkedIn signs the account out |
 | Reply | `linkedin-send-message` | Sends a reply written in Twenty to the conversation's Unipile chat; the `message.new` webhook that follows is de-duplicated on the returned message id |
 | Install, upgrade | `linkedin-post-install` | Binds channels connected before replies existed to the `linkedin-messaging` provider |
 | Disconnect, uninstall | `linkedin-on-disconnect`, `linkedin-uninstall` | Deletes the channel and the Unipile account, which Unipile bills per connected account |
