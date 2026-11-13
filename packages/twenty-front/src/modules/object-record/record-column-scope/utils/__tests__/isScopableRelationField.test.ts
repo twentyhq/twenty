@@ -2,7 +2,13 @@ import { isScopableRelationField } from '@/object-record/record-column-scope/uti
 import { isDefined } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-const getFieldOrThrow = (objectNameSingular: string, fieldName: string) => {
+const getFieldOrThrow = ({
+  objectNameSingular,
+  fieldName,
+}: {
+  objectNameSingular: string;
+  fieldName: string;
+}) => {
   const field = getMockObjectMetadataItemOrThrow(
     objectNameSingular,
   ).fields.find(({ name }) => name === fieldName);
@@ -16,22 +22,31 @@ const getFieldOrThrow = (objectNameSingular: string, fieldName: string) => {
 
 describe('isScopableRelationField', () => {
   it('accepts a one-to-many relation', () => {
-    expect(isScopableRelationField(getFieldOrThrow('company', 'people'))).toBe(
-      true,
-    );
+    expect(
+      isScopableRelationField(
+        getFieldOrThrow({ objectNameSingular: 'company', fieldName: 'people' }),
+      ),
+    ).toBe(true);
   });
 
   it('rejects a many-to-one relation and a non-relation field', () => {
-    expect(isScopableRelationField(getFieldOrThrow('person', 'company'))).toBe(
-      false,
-    );
-    expect(isScopableRelationField(getFieldOrThrow('company', 'name'))).toBe(
-      false,
-    );
+    expect(
+      isScopableRelationField(
+        getFieldOrThrow({ objectNameSingular: 'person', fieldName: 'company' }),
+      ),
+    ).toBe(false);
+    expect(
+      isScopableRelationField(
+        getFieldOrThrow({ objectNameSingular: 'company', fieldName: 'name' }),
+      ),
+    ).toBe(false);
   });
 
   it('rejects a one-to-many relation through a junction object', () => {
-    const peopleField = getFieldOrThrow('company', 'people');
+    const peopleField = getFieldOrThrow({
+      objectNameSingular: 'company',
+      fieldName: 'people',
+    });
 
     expect(
       isScopableRelationField({
