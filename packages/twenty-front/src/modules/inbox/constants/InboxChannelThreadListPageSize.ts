@@ -1,0 +1,1 @@
+export const INBOX_CHANNEL_THREAD_LIST_PAGE_SIZE = 30;
