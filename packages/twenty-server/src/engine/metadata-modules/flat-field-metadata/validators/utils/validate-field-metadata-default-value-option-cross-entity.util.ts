@@ -146,12 +146,24 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       flatFieldMetadataOptionMaps,
       isWorkspaceCaller,
     });
+  const createdOptionUniversalIdentifiers = new Set(
+    orchestratorActionsReport.fieldMetadataOption.create.map(
+      ({ flatEntity }) => flatEntity.universalIdentifier,
+    ),
+  );
   const fromInactiveOptionValuesByFieldMetadataUniversalIdentifier =
     groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
-      // The before-state only holds the rows the migration touches; the others are unchanged.
+      // The before-state only holds the rows the migration touches; the others are unchanged, and created ones didn't exist.
       flatFieldMetadataOptionMaps: {
         byUniversalIdentifier: {
-          ...flatFieldMetadataOptionMaps?.byUniversalIdentifier,
+          ...Object.fromEntries(
+            Object.entries(
+              flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
+            ).filter(
+              ([universalIdentifier]) =>
+                !createdOptionUniversalIdentifiers.has(universalIdentifier),
+            ),
+          ),
           ...fromFlatFieldMetadataOptionMaps?.byUniversalIdentifier,
         },
       },

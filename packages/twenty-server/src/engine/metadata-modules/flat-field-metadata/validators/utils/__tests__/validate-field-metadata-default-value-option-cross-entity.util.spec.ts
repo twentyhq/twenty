@@ -89,4 +89,64 @@ describe('validateFieldMetadataDefaultValueOptionCrossEntity', () => {
       validate({ update: { label: 'State' }, isPausedActiveBefore: true }),
     ).toHaveLength(1);
   });
+  it('rejects replacing the active default option with an inactive one of the same value', () => {
+    const recreatedPausedOption = {
+      universalIdentifier: 'recreated-paused-option',
+      fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+      value: 'PAUSED',
+      isActive: false,
+      overrides: null,
+    };
+    const {
+      [PAUSED_OPTION_UNIVERSAL_IDENTIFIER]: _deletedPausedOption,
+      ...remainingOptions
+    } = buildOptionMaps({ isPausedActive: true }).byUniversalIdentifier;
+
+    expect(
+      validateFieldMetadataDefaultValueOptionCrossEntity({
+        isWorkspaceCaller: true,
+        fromFlatFieldMetadataOptionMaps: {
+          ...createEmptyFlatEntityMaps(),
+          byUniversalIdentifier: {
+            [PAUSED_OPTION_UNIVERSAL_IDENTIFIER]: buildOptionMaps({
+              isPausedActive: true,
+            }).byUniversalIdentifier[PAUSED_OPTION_UNIVERSAL_IDENTIFIER],
+          },
+        } as never,
+        optimisticUniversalFlatMaps: {
+          flatFieldMetadataMaps: {
+            ...createEmptyFlatEntityMaps(),
+            byUniversalIdentifier: {
+              [FIELD_UNIVERSAL_IDENTIFIER]: {
+                universalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+                name: 'status',
+                objectMetadataUniversalIdentifier: 'ticket-object',
+                type: FieldMetadataType.SELECT,
+                defaultValue: "'PAUSED'",
+                options: null,
+              },
+            },
+          } as never,
+          flatFieldMetadataOptionMaps: {
+            ...createEmptyFlatEntityMaps(),
+            byUniversalIdentifier: {
+              ...remainingOptions,
+              [recreatedPausedOption.universalIdentifier]:
+                recreatedPausedOption,
+            },
+          } as never,
+        },
+        orchestratorActionsReport: {
+          fieldMetadata: { create: [], update: [], delete: [] },
+          fieldMetadataOption: {
+            create: [{ flatEntity: recreatedPausedOption }],
+            update: [],
+            delete: [
+              { universalIdentifier: PAUSED_OPTION_UNIVERSAL_IDENTIFIER },
+            ],
+          },
+        } as never,
+      }).fieldMetadata,
+    ).toHaveLength(1);
+  });
 });
