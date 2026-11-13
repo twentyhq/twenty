@@ -1,12 +1,12 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordTableColumnScopePageEffects } from '@/object-record/record-column-scope/components/RecordTableColumnScopePageEffects';
 import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
+import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const RecordTableColumnScopeEffectHost = ({
@@ -28,8 +28,7 @@ const RecordTableColumnScopeEffectHost = ({
 
   if (
     !isDefined(fieldMetadataItem) ||
-    fieldMetadataItem.type !== FieldMetadataType.RELATION ||
-    fieldMetadataItem.relation?.type !== RelationType.ONE_TO_MANY ||
+    !isScopableRelationField(fieldMetadataItem) ||
     !isRecordFieldScoped({ recordField, scopeView })
   ) {
     return null;

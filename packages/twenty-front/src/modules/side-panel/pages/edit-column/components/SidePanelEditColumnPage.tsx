@@ -1,7 +1,7 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
-import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -33,7 +33,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -125,16 +124,13 @@ const SidePanelEditColumnForm = ({
     { ownerViewFieldId: recordField.id },
   );
 
-  const isScopableRelationField =
-    fieldMetadataItem?.type === FieldMetadataType.RELATION &&
-    fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY &&
-    !hasJunctionConfig(fieldMetadataItem.settings);
-
-  const relationObjectMetadataItem = isScopableRelationField
-    ? objectMetadataItems.find(
-        ({ id }) => id === fieldMetadataItem.relation?.targetObjectMetadata.id,
-      )
-    : undefined;
+  const relationObjectMetadataItem =
+    isDefined(fieldMetadataItem) && isScopableRelationField(fieldMetadataItem)
+      ? objectMetadataItems.find(
+          ({ id }) =>
+            id === fieldMetadataItem.relation?.targetObjectMetadata.id,
+        )
+      : undefined;
 
   const [columnName, setColumnName] = useState(
     recordField.settings?.label ?? '',

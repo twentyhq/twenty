@@ -2,6 +2,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
+import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
@@ -74,7 +75,6 @@ export const RecordTableCellFieldContextGeneric = ({
     operationType: 'read',
   });
   let isInvalidJunctionRelation = false;
-  let isJunctionRelation = false;
 
   // todo @guillim : adjust this to handle morph relations permissions display
   if (
@@ -105,7 +105,6 @@ export const RecordTableCellFieldContextGeneric = ({
       });
 
       if (isDefined(junctionConfig)) {
-        isJunctionRelation = true;
         isInvalidJunctionRelation = !isUsableJunctionConfig(junctionConfig);
 
         if (isInvalidJunctionRelation) {
@@ -137,8 +136,7 @@ export const RecordTableCellFieldContextGeneric = ({
 
   const isScopedRelationColumn =
     isColumnSettingsEnabled &&
-    isFieldRelationOneToMany(fieldDefinition) &&
-    !isJunctionRelation &&
+    isScopableRelationField(fieldMetadataItem) &&
     isRecordFieldScoped({ recordField, scopeView });
 
   return (

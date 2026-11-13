@@ -4,7 +4,7 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
+import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -124,7 +124,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     canConfigureColumns &&
     isCanonical &&
     isDefined(fieldMetadataItem) &&
-    isOneToManyRelationField(fieldMetadataItem);
+    isScopableRelationField(fieldMetadataItem);
   const canEditColumn = canConfigureColumns && !isCanonical;
   const canDeleteColumn = canPersistChanges && !isCanonical;
   const canHide = isLabelIdentifier !== true && isCanonical;
