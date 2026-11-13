@@ -2722,6 +2722,11 @@ msgstr "No se puede modificar el predicado para cambiar su rol de {existingRoleI
 msgid "Cannot remove the last admin from the workspace."
 msgstr "No se puede eliminar al último administrador del espacio de trabajo."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain

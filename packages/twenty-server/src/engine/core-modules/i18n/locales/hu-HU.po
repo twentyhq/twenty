@@ -2722,6 +2722,11 @@ msgstr "A predikátumot nem lehet úgy módosítani, hogy a szerepköre {existin
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Az utolsó admin nem távolítható el a munkaterületről."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain

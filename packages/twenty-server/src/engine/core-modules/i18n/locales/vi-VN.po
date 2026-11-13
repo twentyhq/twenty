@@ -2722,6 +2722,11 @@ msgstr "Không thể sửa đổi điều kiện để thay đổi vai trò củ
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Không thể loại bỏ quản trị viên cuối cùng khỏi không gian làm việc."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
