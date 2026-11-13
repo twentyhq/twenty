@@ -9,7 +9,6 @@ export type VisibleToCallerSqlPredicate = {
   userWorkspaceId: string | null;
 };
 
-// Undefined means the caller bypasses privacy, so the query carries no predicate and binds nothing.
 export const buildVisibleToCallerSqlPredicate = ({
   rootMetadataName,
   tableAlias,

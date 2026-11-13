@@ -175,7 +175,7 @@ describe('getInvalidatedVisibilityScopeByFlatEntityMapsKey', () => {
     ).toBe('private');
   });
 
-  it('does not count a child when the root map is not loaded', () => {
+  it('records a child as unknown when the root map is not loaded', () => {
     expect(
       getInvalidatedVisibilityScopeByFlatEntityMapsKey({
         metadataEvents: [
@@ -190,7 +190,53 @@ describe('getInvalidatedVisibilityScopeByFlatEntityMapsKey', () => {
         fromAllFlatEntityMaps: {},
         toAllFlatEntityMaps: {},
       }),
-    ).toEqual({});
+    ).toEqual(
+      Object.fromEntries(
+        VIEW_FAMILY_FLAT_ENTITY_MAPS_KEYS.map((flatEntityMapsKey) => [
+          flatEntityMapsKey,
+          'unknown',
+        ]),
+      ),
+    );
+  });
+
+  it('records a workflow version saved on its own as unknown, since the migration loads no workflow map', () => {
+    expect(
+      getInvalidatedVisibilityScopeByFlatEntityMapsKey({
+        metadataEvents: [
+          buildMetadataEvent({
+            metadataName: 'workflowVersion',
+            type: 'updated',
+            properties: {
+              before: { id: 'workflow-version', coreWorkflowId: 'workflow' },
+              after: { id: 'workflow-version', coreWorkflowId: 'workflow' },
+            },
+          }),
+        ],
+        fromAllFlatEntityMaps: {},
+        toAllFlatEntityMaps: {},
+      }),
+    ).toEqual({
+      flatWorkflowMaps: 'unknown',
+      flatWorkflowVersionMaps: 'unknown',
+    });
+  });
+
+  it('prefers a resolved privacy over an unknown one in the same migration', () => {
+    expect(
+      getScopes([
+        buildMetadataEvent({
+          metadataName: 'view',
+          type: 'deleted',
+          properties: { before: privateView },
+        }),
+        buildMetadataEvent({
+          metadataName: 'viewField',
+          type: 'created',
+          properties: { after: { id: 'view-field', viewId: privateView.id } },
+        }),
+      ]).flatViewMaps,
+    ).toBe('private');
   });
 
   it('keeps the view and workflow families apart', () => {

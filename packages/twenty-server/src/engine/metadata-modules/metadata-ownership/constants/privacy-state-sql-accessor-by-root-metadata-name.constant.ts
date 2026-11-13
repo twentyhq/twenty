@@ -4,8 +4,6 @@ import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metada
 import { type OwnableRootPrivacyStateSql } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-privacy-state-sql.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// A root belongs here only while its privacy state lives in columns SQL can read:
-// view visibility can be overridden in its jsonb, which only the accessor resolves.
 export const PRIVACY_STATE_SQL_ACCESSOR_BY_ROOT_METADATA_NAME = {
   workflow: ({
     tableAlias,

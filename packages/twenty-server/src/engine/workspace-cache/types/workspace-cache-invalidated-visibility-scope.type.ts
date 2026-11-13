@@ -1,4 +1,5 @@
 export type WorkspaceCacheInvalidatedVisibilityScope =
   | 'private'
   | 'workspace'
-  | 'both';
+  | 'both'
+  | 'unknown';

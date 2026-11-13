@@ -9,6 +9,7 @@ import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/fl
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { OWNERSHIP_INDEX_SOURCE_KEY_NAMES_BY_ROOT_METADATA_NAME } from 'src/engine/metadata-modules/metadata-ownership/constants/ownership-index-source-key-names-by-root-metadata-name.constant';
+import { type OwnableRootRow } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-row.type';
 import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-metadata-name.type';
 import { findOwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/utils/find-ownable-root-metadata-name.util';
 import { isOwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/utils/is-ownable-root-metadata-name.util';
@@ -38,7 +39,9 @@ const getMetadataEventRows = (
   return [metadataEvent.properties.before, metadataEvent.properties.after];
 };
 
-const getTouchedRootPrivateStates = ({
+type TouchedRootPrivacyScope = 'private' | 'workspace' | 'unknown';
+
+const getTouchedRootPrivacyScopes = ({
   metadataEvent,
   rootMetadataName,
   loadedRootFlatEntityMaps,
@@ -48,25 +51,30 @@ const getTouchedRootPrivateStates = ({
   loadedRootFlatEntityMaps: FlatEntityMaps<
     MetadataFlatEntity<OwnableRootMetadataName>
   >[];
-}): boolean[] => {
+}): TouchedRootPrivacyScope[] => {
   const rows = getMetadataEventRows(metadataEvent);
+  const scopeOfRoot = (row: OwnableRootRow): TouchedRootPrivacyScope =>
+    resolveOwnableRootPrivacyState({ rootMetadataName, row }).isPrivate
+      ? 'private'
+      : 'workspace';
 
   if (isOwnableRootMetadataName(metadataEvent.metadataName)) {
-    return rows.map(
-      (row) =>
-        resolveOwnableRootPrivacyState({ rootMetadataName, row }).isPrivate,
-    );
+    return rows.map(scopeOfRoot);
   }
 
   const children: Partial<Record<string, { rootIdProperty: string }>> =
     OWNABLE_METADATA_BY_ROOT_METADATA_NAME[rootMetadataName].children;
   const rootIdProperty = children[metadataEvent.metadataName]?.rootIdProperty;
 
-  if (!isDefined(rootIdProperty) || loadedRootFlatEntityMaps.length === 0) {
+  if (!isDefined(rootIdProperty)) {
     return [];
   }
 
-  return rows.flatMap((row) => {
+  if (loadedRootFlatEntityMaps.length === 0) {
+    return ['unknown'];
+  }
+
+  return rows.flatMap((row): TouchedRootPrivacyScope[] => {
     const rootId = row[rootIdProperty];
     const roots = isString(rootId)
       ? loadedRootFlatEntityMaps
@@ -79,14 +87,25 @@ const getTouchedRootPrivateStates = ({
           .filter(isDefined)
       : [];
 
-    return roots.length === 0
-      ? [true]
-      : roots.map(
-          (root) =>
-            resolveOwnableRootPrivacyState({ rootMetadataName, row: root })
-              .isPrivate,
-        );
+    return roots.length === 0 ? ['private'] : roots.map(scopeOfRoot);
   });
+};
+
+const combineTouchedRootPrivacyScopes = (
+  touchedScopes: Set<TouchedRootPrivacyScope>,
+): WorkspaceCacheInvalidatedVisibilityScope => {
+  const hasPrivate = touchedScopes.has('private');
+  const hasWorkspace = touchedScopes.has('workspace');
+
+  if (hasPrivate && hasWorkspace) {
+    return 'both';
+  }
+
+  if (hasPrivate) {
+    return 'private';
+  }
+
+  return hasWorkspace ? 'workspace' : 'unknown';
 };
 
 export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
@@ -98,9 +117,9 @@ export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
   fromAllFlatEntityMaps: OwnableRootFlatEntityMaps;
   toAllFlatEntityMaps: OwnableRootFlatEntityMaps;
 }): InvalidatedVisibilityScopeByFlatEntityMapsKey => {
-  const touchedPrivateStatesByRootMetadataName = new Map<
+  const touchedScopesByRootMetadataName = new Map<
     OwnableRootMetadataName,
-    Set<boolean>
+    Set<TouchedRootPrivacyScope>
   >();
 
   for (const metadataEvent of metadataEvents) {
@@ -114,11 +133,11 @@ export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
 
     const rootFlatEntityMapsKey =
       getMetadataFlatEntityMapsKey(rootMetadataName);
-    const touchedPrivateStates =
-      touchedPrivateStatesByRootMetadataName.get(rootMetadataName) ??
-      new Set<boolean>();
+    const touchedScopes =
+      touchedScopesByRootMetadataName.get(rootMetadataName) ??
+      new Set<TouchedRootPrivacyScope>();
 
-    for (const isPrivate of getTouchedRootPrivateStates({
+    for (const touchedScope of getTouchedRootPrivacyScopes({
       metadataEvent,
       rootMetadataName,
       loadedRootFlatEntityMaps: [
@@ -126,13 +145,10 @@ export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
         toAllFlatEntityMaps[rootFlatEntityMapsKey],
       ].filter(isDefined),
     })) {
-      touchedPrivateStates.add(isPrivate);
+      touchedScopes.add(touchedScope);
     }
 
-    touchedPrivateStatesByRootMetadataName.set(
-      rootMetadataName,
-      touchedPrivateStates,
-    );
+    touchedScopesByRootMetadataName.set(rootMetadataName, touchedScopes);
   }
 
   const invalidatedVisibilityScopeByFlatEntityMapsKey: InvalidatedVisibilityScopeByFlatEntityMapsKey =
@@ -140,18 +156,13 @@ export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
 
   for (const [
     rootMetadataName,
-    touchedPrivateStates,
-  ] of touchedPrivateStatesByRootMetadataName) {
-    if (touchedPrivateStates.size === 0) {
+    touchedScopes,
+  ] of touchedScopesByRootMetadataName) {
+    if (touchedScopes.size === 0) {
       continue;
     }
 
-    const visibilityScope: WorkspaceCacheInvalidatedVisibilityScope =
-      touchedPrivateStates.size === 2
-        ? 'both'
-        : touchedPrivateStates.has(true)
-          ? 'private'
-          : 'workspace';
+    const visibilityScope = combineTouchedRootPrivacyScopes(touchedScopes);
 
     for (const flatEntityMapsKey of OWNERSHIP_INDEX_SOURCE_KEY_NAMES_BY_ROOT_METADATA_NAME[
       rootMetadataName
