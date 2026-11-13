@@ -20,7 +20,6 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 
-// Only the member's own session may create their credential; the flow service checks scope access
 @UseGuards(
   AccessPolicyGuard({
     authPrincipals: {

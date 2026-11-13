@@ -1,5 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
@@ -9,7 +9,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const useStartAppConnection = () => {
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const navigateSettings = useNavigateSettings();
-  const location = useLocation();
 
   const startAppConnection = useCallback(
     async ({
@@ -29,14 +28,14 @@ export const useStartAppConnection = () => {
         navigateSettings(
           SettingsPath.ApplicationConnectWithApiKey,
           { applicationId, connectionProviderName },
-          reconnectingConnectedAccountId
+          isNonEmptyString(reconnectingConnectedAccountId)
             ? { reconnectingConnectedAccountId }
             : undefined,
           {
             state: {
               returnTo:
                 redirectLocation ??
-                `${location.pathname}${location.search}${location.hash}`,
+                `${window.location.pathname}${window.location.search}${window.location.hash}`,
             },
           },
         );
@@ -51,7 +50,7 @@ export const useStartAppConnection = () => {
         redirectLocation,
       });
     },
-    [location, navigateSettings, triggerAppOAuth],
+    [navigateSettings, triggerAppOAuth],
   );
 
   return { startAppConnection };

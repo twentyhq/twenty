@@ -10,7 +10,7 @@ import {
 } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 
@@ -73,7 +73,7 @@ export const SettingsApplicationConnectWithApiKey = () => {
 
   const stateReturnTo =
     typeof location.state === 'object' &&
-    location.state !== null &&
+    isDefined(location.state) &&
     'returnTo' in location.state &&
     typeof location.state.returnTo === 'string' &&
     isValidReturnToPath(location.state.returnTo)
