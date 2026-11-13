@@ -1,6 +1,5 @@
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -24,8 +23,6 @@ export const useHandleToggleColumnSort = ({
   const { columnDefinitions } =
     useColumnDefinitionsFromObjectMetadata(objectMetadataItem);
 
-  const { upsertRecordSort } = useUpsertRecordSort();
-
   const currentRecordSortsCallbackState = useAtomComponentStateCallbackState(
     currentRecordSortsComponentState,
   );
@@ -45,27 +42,28 @@ export const useHandleToggleColumnSort = ({
 
       const currentRecordSorts = store.get(currentRecordSortsCallbackState);
 
-      const existingSort = currentRecordSorts.find(
-        (sort) => sort.fieldMetadataId === fieldMetadataId,
-      );
+      const primarySort = currentRecordSorts[0];
+      const isSortingByThisColumn =
+        primarySort?.fieldMetadataId === fieldMetadataId;
 
       const newSort: RecordSort = {
-        id: existingSort?.id ?? v4(),
+        id: isSortingByThisColumn ? primarySort.id : v4(),
         fieldMetadataId,
-        direction: existingSort
-          ? existingSort.direction === ViewSortDirection.ASC
+        direction: isSortingByThisColumn
+          ? primarySort.direction === ViewSortDirection.ASC
             ? ViewSortDirection.DESC
             : ViewSortDirection.ASC
           : ViewSortDirection.ASC,
       };
 
-      upsertRecordSort(newSort);
+      // A column-header sort replaces the view's sorts so the table is
+      // ordered by that column alone; multi-column sorts stay in the Sort menu
+      store.set(currentRecordSortsCallbackState, [newSort]);
     },
     [
       columnDefinitions,
       currentRecordSortsCallbackState,
       store,
-      upsertRecordSort,
     ],
   );
 
