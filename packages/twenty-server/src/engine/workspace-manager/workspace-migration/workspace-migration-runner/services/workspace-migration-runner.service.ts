@@ -594,7 +594,7 @@ export class WorkspaceMigrationRunnerService {
       });
     } catch (visibilityScopeError) {
       this.logger.error(
-        `Failed to record invalidated visibility scopes: ${visibilityScopeError}`,
+        `Failed to record invalidated visibility scopes for workspace ${workspaceId}: ${visibilityScopeError}`,
         'Runner',
       );
     }
