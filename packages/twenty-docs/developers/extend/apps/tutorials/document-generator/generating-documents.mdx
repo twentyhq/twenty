@@ -136,8 +136,7 @@ and create documents, so allow that in `src/roles/default-role.ts`:
 export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Document Generator default role',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: true,
+  recordsPermissions: { canReadAllRecords: true, canUpdateAllRecords: true },
   canAccessAllTools: true,
   canBeAssignedToAgents: true,
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],

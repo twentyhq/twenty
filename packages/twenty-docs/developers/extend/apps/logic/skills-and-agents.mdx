@@ -494,7 +494,8 @@ your application when nobody did. It never exceeds your application's role, and
 an application without a default role cannot call it.
 
 Without `scope`, the call reads and writes no records. To let it use the
-database, pass a `scope`, written like a role's permissions:
+database, pass a `scope`. It uses its own properties (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`), not a role's `recordsPermissions` block:
 
 ```ts
 const { object } = await ai.generate({

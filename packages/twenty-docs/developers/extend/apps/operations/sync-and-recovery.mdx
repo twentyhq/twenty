@@ -133,7 +133,7 @@ If dependency installation fails for a new project, the scaffold is kept. Run `y
 - fields your app added to objects it does not own;
 - authored indexes;
 - permission flags your app declares, as `definePermissionFlag()` files;
-- roles, with their object permissions, field permissions, row-level permission predicates and groups, and permission flags inline. Your app's default role is written with `defineApplicationRole()`. An object or field permission whose identifier is the one the build derives is written without it. When the default role is not one of your app's own roles, as for the workspace Custom application, the application config keeps `defaultRoleUniversalIdentifier` instead;
+- roles, with their `recordsPermissions` and permission flags inline. `recordsPermissions` holds the grants for all objects and, per object, its all records grants, `unreadableFields`, `uneditableFields` and row-level records permissions, with their predicates and predicate groups nested inside. Predicates linked to no rule are written in the deprecated `rowLevelPermissionPredicates` and `rowLevelPermissionPredicateGroups`. Your app's default role is written with `defineApplicationRole()`. An object of `recordsPermissions` whose identifier is the one the build derives is written without it. When the default role is not one of your app's own roles, as for the workspace Custom application, the application config keeps `defaultRoleUniversalIdentifier` instead;
 - views, with their fields, field groups, filters, filter groups, sorts and groups inline;
 - view fields your app added to views it does not own, as standalone `defineViewField()` files;
 - page layouts, with their tabs and widgets inline;
