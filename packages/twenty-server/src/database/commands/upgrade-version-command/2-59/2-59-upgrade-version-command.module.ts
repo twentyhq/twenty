@@ -4,7 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { UpdateDashboardBuildingSkillPageLayoutToolsCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794489929066-update-dashboard-building-skill-page-layout-tools.command';
 import { BackfillAgentTurnAgentIdCreatedAtIndexCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794548649004-backfill-agent-turn-agent-id-created-at-index.command';
 import { ExcludeDeletedRecordsFromUniqueFieldIndexesCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794498818636-exclude-deleted-records-from-unique-field-indexes.command';
-import { AddMessageChannelMessageAssociationIsReadFieldCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794516623861-add-message-channel-message-association-is-read-field.command';
+import { AddMessageChannelMessageAssociationIsReadFieldCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794580871993-add-message-channel-message-association-is-read-field.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
