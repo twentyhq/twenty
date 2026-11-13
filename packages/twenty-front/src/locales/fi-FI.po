@@ -6136,7 +6136,7 @@ msgid "Chat details"
 msgstr "Keskustelun tiedot"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Keskustelun nimi"
 
@@ -7760,7 +7760,7 @@ msgid "Conversation title"
 msgstr "Keskustelun otsikko"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Keskustelut"
 
@@ -19459,8 +19459,8 @@ msgstr "Uusi kanava"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Uusi keskustelu"
@@ -23740,7 +23740,7 @@ msgid "Receive an email containing password update link"
 msgstr "Vastaanota sähköposti salasanan päivityslinkillä"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Viimeisin"
 

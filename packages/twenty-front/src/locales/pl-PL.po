@@ -6136,7 +6136,7 @@ msgid "Chat details"
 msgstr "Szczegóły czatu"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Nazwa czatu"
 
@@ -7760,7 +7760,7 @@ msgid "Conversation title"
 msgstr "Tytuł rozmowy"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Konwersacje"
 
@@ -19459,8 +19459,8 @@ msgstr "Nowy kanał"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Nowa rozmowa"
@@ -23740,7 +23740,7 @@ msgid "Receive an email containing password update link"
 msgstr "Otrzymaj e-mail z linkiem do aktualizacji hasła"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Ostatnie"
 

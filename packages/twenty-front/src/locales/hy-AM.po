@@ -6136,7 +6136,7 @@ msgid "Chat details"
 msgstr "Զրույցի մանրամասներ"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Զրույցի անուն"
 
@@ -7760,7 +7760,7 @@ msgid "Conversation title"
 msgstr "Զրույցի վերնագիր"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Զրույցներ"
 
@@ -19459,8 +19459,8 @@ msgstr "Նոր ալիք"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Նոր զրույց"
@@ -23740,7 +23740,7 @@ msgid "Receive an email containing password update link"
 msgstr "Ստացեք էլփոստային նամակ՝ գաղտնաբառի թարմացման հղումով"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Վերջին"
 
