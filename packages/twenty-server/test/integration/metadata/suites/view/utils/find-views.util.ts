@@ -10,10 +10,12 @@ export const findViews = async <TView = ViewEntity>({
   objectMetadataId,
   gqlFields,
   expectToFail,
+  token,
 }: {
   objectMetadataId?: string;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   getViews: TView[];
 }> => {
@@ -22,7 +24,7 @@ export const findViews = async <TView = ViewEntity>({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

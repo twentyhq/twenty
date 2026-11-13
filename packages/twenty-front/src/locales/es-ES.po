@@ -1118,10 +1118,10 @@ msgstr "{roleTargetName} será asignado al rol \"{newRoleName}\"."
 msgid "{runCount, plural, one {# turn} other {# turns}}"
 msgstr "{runCount, plural, one {# turno} other {# turnos}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — el valor predeterminado de la instancia es {defaultText}. Al guardar, se aplica solo a este espacio de trabajo."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — el valor predeterminado para este espacio de trabajo es {defaultText}. Al guardar, se aplica solo a este espacio de trabajo."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1652,6 +1652,11 @@ msgstr "Se abre un formulario para la persona que inicia el flujo de trabajo y s
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Se abre un formulario para la persona que inicia el flujo de trabajo y se completa en el momento. Con este desencadenante, solo se muestra en la ejecución del flujo de trabajo. Para pedir a alguien una respuesta o una aprobación en su bandeja de entrada, usa en su lugar un paso Enviar a la bandeja de entrada."
+
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "Un mensaje puede tener hasta {maxAttachmentCount} archivos"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -2942,7 +2947,7 @@ msgid "agent"
 msgstr "agente"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3333,6 +3338,11 @@ msgstr "Todos los canales"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Todas las empresas"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "Todas las conversaciones"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4479,8 +4489,8 @@ msgid "Assignment"
 msgstr "Asignación"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Asistente"
 
@@ -4864,6 +4874,7 @@ msgid "Average"
 msgstr "Promedio"
 
 #. js-lingui-id: RSsxRl
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Avg duration"
 msgstr "Duración media"
@@ -5804,7 +5815,7 @@ msgstr "Cancelado el"
 
 #. js-lingui-id: vv7kpg
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 msgid "Cancelled"
 msgstr "Cancelado"
 
@@ -6537,6 +6548,7 @@ msgid "Clear"
 msgstr "Limpiar"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -7076,7 +7088,7 @@ msgstr "completado"
 #. js-lingui-id: qqWcBV
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
@@ -7374,6 +7386,11 @@ msgstr "Confirmar actualización"
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Confirming your payment"
 msgstr "Confirmando tu pago"
+
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr "Conectar"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8004,7 +8021,7 @@ msgid "Could not load related records"
 msgstr "No se pudieron cargar los registros relacionados"
 
 #. js-lingui-id: 3167/q
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 msgid "Could not load run insights"
 msgstr "No se pudo cargar la información de la ejecución"
 
@@ -8679,6 +8696,7 @@ msgstr "créditos"
 #. js-lingui-id: lDIOek
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/object-core/agents/components/CoreAgentCreditsPerDayChart.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -8687,6 +8705,11 @@ msgstr "créditos"
 #: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Credits"
 msgstr "Créditos"
+
+#. js-lingui-id: 6AopcF
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits · 14d"
+msgstr "Créditos · 14 d"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8722,6 +8745,11 @@ msgstr "créditos disponibles durante el período de prueba"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Credits handed out on top of the plan allowance. They stay spendable until used up."
 msgstr "Créditos otorgados además de la asignación del plan. Se pueden gastar hasta que se agoten."
+
+#. js-lingui-id: hujkPL
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Credits per day"
+msgstr "Créditos por día"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -10583,7 +10611,7 @@ msgstr "No importar eventos marcados como privados"
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 #: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadPresetFilterLabels.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
 msgstr "Completado"
@@ -11188,7 +11216,7 @@ msgid "else if"
 msgstr "en caso contrario, si"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -12792,8 +12820,8 @@ msgstr "Cara"
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
 #: src/modules/ai/components/CodeExecutionDisplay.tsx
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApplicationMonitoringWorkspacesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -13059,7 +13087,7 @@ msgid "Failed to link the related records to this event"
 msgstr "No se pudieron vincular los registros relacionados a este evento"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "No se pudieron cargar los detalles del agente."
 
@@ -13759,6 +13787,11 @@ msgstr "Filtrar por ID de registro"
 msgid "Filter chats"
 msgstr "Filtrar chats"
 
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr "Filtrar conversaciones"
+
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
 msgid "Filter group rule options"
@@ -14073,6 +14106,7 @@ msgid "Formats"
 msgstr "Formatos"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
@@ -16940,6 +16974,7 @@ msgid "Last refreshed"
 msgstr "Última actualización"
 
 #. js-lingui-id: WT1Ibn
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Last run"
 msgstr "Última ejecución"
@@ -19938,6 +19973,11 @@ msgstr "Ninguna variable de configuración coincide con sus filtros actuales. In
 msgid "No content"
 msgstr "Sin contenido"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "Ninguna conversación utiliza este canal."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -20210,6 +20250,11 @@ msgstr "No se registraron logs para este paso."
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No matching activity"
 msgstr "Ninguna actividad coincidente"
+
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "No hay conversaciones coincidentes"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20558,6 +20603,11 @@ msgstr "No hay destinos disponibles"
 msgid "No test result yet"
 msgstr "Aún no hay resultados de la prueba"
 
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "Sin contenido"
+
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
@@ -20769,6 +20819,8 @@ msgstr "Configuración del nodo"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -21915,7 +21967,7 @@ msgstr "Mensaje original no disponible"
 #: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowRunsPerDayChart.tsx
+#: src/modules/object-core/components/CoreObjectRunsPerDayChart.tsx
 #: src/modules/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -22064,6 +22116,7 @@ msgid "Override Draft"
 msgstr "Sobrescribir Borrador"
 
 #. js-lingui-id: 6/dCYd
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowShowPageTabList.tsx
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
@@ -22551,11 +22604,6 @@ msgstr "Uso personal de IA"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Uso personal"
-
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "El límite de uso personal se restablece en {daysUntilReset, plural, one {# día} other {# días}}."
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -23648,7 +23696,8 @@ msgid "Recent failed runs"
 msgstr "Ejecuciones fallidas recientes"
 
 #. js-lingui-id: dF8kMd
-#: src/modules/object-core/workflows/components/CoreWorkflowRecentRunsCell.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
+#: src/modules/object-core/components/cells/CoreObjectRecentRunsCell.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Recent runs"
 msgstr "Ejecuciones recientes"
@@ -24545,12 +24594,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Los enlaces de instalación de Replit requieren una URL MCP HTTPS."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Responder"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Respondiendo a"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -25199,7 +25254,7 @@ msgstr "Ejecutar herramienta"
 
 #. js-lingui-id: RiQMUh
 #: src/modules/ai/components/AiChatApprovalOutcome.tsx
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
 msgid "Running"
 msgstr "En ejecución"
@@ -25245,6 +25300,8 @@ msgid "Runs"
 msgstr "Ejecuciones"
 
 #. js-lingui-id: 24xGtY
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+#: src/modules/object-core/agents/constants/CoreAgentTableColumns.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 #: src/modules/object-core/workflows/constants/WorkflowCoreTableColumns.tsx
 msgid "Runs · 14d"
@@ -25261,6 +25318,7 @@ msgid "Runs appear here once this workflow is triggered"
 msgstr "Las ejecuciones aparecen aquí una vez que se activa este flujo de trabajo"
 
 #. js-lingui-id: NQVS6K
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
 msgid "Runs per day"
 msgstr "Ejecuciones por día"
@@ -26700,6 +26758,7 @@ msgstr "Enviando correo electrónico"
 
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "Error al enviar"
 
@@ -26932,6 +26991,7 @@ msgstr "Configurando tu <0>base de datos</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -27663,6 +27723,11 @@ msgstr "Algo salió mal al crear tu espacio de trabajo. Inténtalo de nuevo."
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "Something went wrong while fetching this record's conversations."
 msgstr "Se produjo un error al obtener las conversaciones de este registro."
+
+#. js-lingui-id: 3hQqVv
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "Something went wrong while fetching this record's messages."
+msgstr "Algo salió mal al recuperar los mensajes de este registro."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30213,6 +30278,11 @@ msgstr "tokens"
 msgid "Tokens"
 msgstr "Tokens"
 
+#. js-lingui-id: TfREwe
+#: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
+msgid "Tokens · 14d"
+msgstr "Tokens · 14 d"
+
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
 msgid "Tomato"
@@ -30613,6 +30683,7 @@ msgid "True/False"
 msgstr "Verdadero/Falso"
 
 #. js-lingui-id: KDw4GX
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -30624,7 +30695,7 @@ msgstr "Inténtalo de nuevo"
 
 #. js-lingui-id: P8jvuh
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-#: src/modules/object-core/workflows/components/CoreWorkflowOverviewTab.tsx
+#: src/modules/object-core/components/CoreObjectRunInsightsOverview.tsx
 #: src/modules/object-core/workflows/components/CoreWorkflowRunsTab.tsx
 msgid "Try again in a moment"
 msgstr "Inténtalo de nuevo en un momento"
@@ -31116,7 +31187,7 @@ msgstr "Error de análisis desconocido"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Remitente desconocido"
 
@@ -32136,11 +32207,6 @@ msgstr "Usando el valor de aplicación predeterminado. Configurar a través de v
 msgid "Using default value. Set a custom value to override."
 msgstr "Usando el valor predeterminado. Establece un valor personalizado para anular."
 
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Usando créditos del espacio de trabajo durante {daysUntilReset, plural, one {# día} other {# días}}."
-
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
@@ -32449,7 +32515,7 @@ msgid "View only — You can read this conversation."
 msgstr "Solo lectura — Puedes leer esta conversación."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Ver mensaje original"
 
@@ -32585,7 +32651,7 @@ msgid "Wait for the attachments to finish uploading."
 msgstr "Espere a que los archivos adjuntos terminen de cargarse."
 
 #. js-lingui-id: uUehLT
-#: src/modules/object-core/agents/components/CoreAgentRunStatus.tsx
+#: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "Waiting"
 msgstr "Esperando"
@@ -32726,6 +32792,11 @@ msgstr "No pudimos confirmar tu método de pago. Inténtalo de nuevo."
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 msgid "We couldn't load the conversations"
 msgstr "No pudimos cargar las conversaciones"
+
+#. js-lingui-id: BapVy1
+#: src/modules/activities/emails/components/EmailsCardErrorState.tsx
+msgid "We couldn't load the messages"
+msgstr "No pudimos cargar los mensajes"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32911,6 +32982,21 @@ msgstr "Semana"
 msgid "Weekly"
 msgstr "Semanal"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Se alcanzó el uso personal semanal de IA. Pide a un administrador que habilite los créditos del espacio de trabajo."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Se alcanzó el uso personal semanal de IA. Habilita los créditos del espacio de trabajo para continuar."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Se alcanzó el uso personal semanal de IA. Ahora se usan los créditos del espacio de trabajo."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32952,10 +33038,10 @@ msgstr "¿En qué puedo ayudarte?"
 msgid "What can you do?"
 msgstr "¿Qué puedes hacer?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "Lo que limita este espacio de trabajo. Los valores predeterminados de la instancia provienen de variables de configuración y solo un operador puede reemplazar uno."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "Qué limita este espacio de trabajo. Los valores predeterminados proceden de variables de configuración y del plan del espacio de trabajo, y solo un operador puede sustituir alguno."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33712,6 +33798,8 @@ msgstr "Ayer"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx

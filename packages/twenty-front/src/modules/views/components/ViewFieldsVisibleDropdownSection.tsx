@@ -71,8 +71,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const draggableRecordFields = visibleRecordFields
     .filter(
       (recordFieldToFilter) =>
-        nonDraggableRecordField?.fieldMetadataItemId !==
-        recordFieldToFilter.fieldMetadataItemId,
+        nonDraggableRecordField?.id !== recordFieldToFilter.id,
     )
     .toSorted(sortByProperty('position'));
 
@@ -117,12 +116,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataItemId}
-                      draggableId={recordField.fieldMetadataItemId}
+                      key={recordField.id}
+                      draggableId={recordField.id}
                       index={index}
                       itemComponent={
                         <DraggableListRow
-                          key={recordField.fieldMetadataItemId}
+                          key={recordField.id}
                           startIcon={
                             <ApplicationStackIcon
                               Icon={getIcon(fieldMetadataItem.icon)}
@@ -136,6 +135,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                                 handleChangeFieldVisibility({
                                   fieldMetadataId:
                                     recordField.fieldMetadataItemId,
+                                  recordFieldId: recordField.id,
                                   isVisible: false,
                                 });
                               }}

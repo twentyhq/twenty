@@ -6,6 +6,7 @@ import { Paragraph } from '@tiptap/extension-paragraph';
 import { Text } from '@tiptap/extension-text';
 import { Editor } from '@tiptap/react';
 import { type ReactNode } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -45,7 +46,9 @@ const renderEditorSection = (currentAiChatThread: string) => {
   return render(
     <MetadataAndApolloWrapper>
       <I18nProvider i18n={i18n}>
-        <AiChatEditorSection />
+        <MemoryRouter>
+          <AiChatEditorSection />
+        </MemoryRouter>
       </I18nProvider>
     </MetadataAndApolloWrapper>,
   );

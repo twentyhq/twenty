@@ -4,6 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const onSendMessage = fn(() => Promise.resolve());
 const onMessageSent = fn(() => new Promise(() => undefined));
@@ -11,7 +12,11 @@ const onMessageSent = fn(() => new Promise(() => undefined));
 const meta: Meta<typeof ChatThreadComposer> = {
   title: 'Modules/Activities/Emails/ChatThreadComposer',
   component: ChatThreadComposer,
-  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
+  decorators: [
+    ComponentDecorator,
+    ObjectMetadataItemsDecorator,
+    ToastDecorator,
+  ],
   parameters: { container: { width: 400 } },
   args: {
     channelName: 'WhatsApp',
@@ -80,7 +85,9 @@ export const SendingFailed: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    onSendMessage.mockImplementation(() => Promise.reject(new Error()));
+    onSendMessage.mockImplementation(() =>
+      Promise.reject(new Error('WhatsApp rejected the message')),
+    );
 
     await userEvent.type(
       await canvas.findByRole('textbox'),
@@ -88,6 +95,11 @@ export const SendingFailed: Story = {
     );
     await expect(await canvas.findByText('Sending failed')).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Retry' })).toBeVisible();
+
+    await userEvent.hover(canvas.getByText('Sending failed'));
+    await expect(
+      await within(document.body).findByText('WhatsApp rejected the message'),
+    ).toBeVisible();
   },
 };
 
@@ -100,5 +112,25 @@ export const Disconnected: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Attach files' }),
     ).toBeDisabled();
+  },
+};
+
+export const DisconnectedKeepsDraft: Story = {
+  args: { isDisconnected: true, draftKey: 'chat-thread-composer-story' },
+  beforeEach: () => {
+    sessionStorage.setItem(
+      'activities/chatThreadComposerDraftFamilyState__chat-thread-composer-story',
+      JSON.stringify('Signed copy attached, sending now.'),
+    );
+
+    return () => sessionStorage.clear();
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const textbox = await canvas.findByRole('textbox');
+
+    await expect(textbox).toBeDisabled();
+    await expect(textbox).toHaveValue('Signed copy attached, sending now.');
+    await expect(canvas.getByRole('button', { name: 'Send' })).toBeDisabled();
   },
 };

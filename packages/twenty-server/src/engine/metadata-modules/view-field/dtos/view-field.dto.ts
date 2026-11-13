@@ -27,6 +27,9 @@ export class ViewFieldDTO {
   @Field({ nullable: false })
   isSystemSideEffect: boolean;
 
+  @Field({ nullable: false, defaultValue: true })
+  isCanonical: boolean;
+
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 

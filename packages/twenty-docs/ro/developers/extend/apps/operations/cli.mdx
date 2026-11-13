@@ -29,7 +29,7 @@ Exemplele de mai jos folosesc `twenty`. Înlocuiți `twenty` cu `npx twenty@late
 | `autentificare` | Autentificați-vă, verificați și eliminați acreditările                                 |
 | `remote`        | Enumerați, selectați, redenumiți și eliminați conexiunile salvate la spațiile de lucru |
 | `metadate`      | Inspectați obiecte și câmpuri                                                          |
-| `data`          | Enumerați și citiți înregistrări                                                       |
+| `data`          | Listează, citește și exportă înregistrări                                              |
 | `api`           | Trimiteți cereri REST sau GraphQL brute                                                |
 | `open`          | Deschideți spațiul de lucru în browser                                                 |
 | `aplicație`     | Creați, compilați, sincronizați, depanați și dezinstalați aplicații                    |
@@ -73,6 +73,21 @@ Comenzile selectează un spațiu de lucru în această ordine:
 
 `auth login --name \<name>` salvează o conexiune, dar păstrează un remote implicit existent. Adăugați `--use` sau rulați `twenty remote use \<name>` pentru a schimba remote-ul implicit.
 
+### În spatele unui proxy de autentificare
+
+Dacă un proxy cu recunoaștere a identității, cum ar fi Cloudflare Access, Google IAP, Pomerium sau oauth2-proxy, se află în fața serverului, comenzile eșuează cu `PROXY_AUTH_REQUIRED`. Furnizați CLI-ului acreditările proxy-ului ca antete. Utilizați o comandă care afișează unele noi sau valori fixe pentru un token de serviciu:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Ambele sunt salvate în conexiune. Comanda afișează câte un rând `Name: value` pentru fiecare antet. CLI-ul o rulează din nou când proxy-ul respinge anteturile, iar `PROXY_HEADERS_FAILED` raportează o comandă care eșuează. În CI, setați în schimb `TWENTY_PROXY_HEADERS` (câte un `Name: value` pe rând) sau `TWENTY_PROXY_HEADER_COMMAND`. Anteturile proxy sunt trimise doar la URL-ul API al conexiunii și nu pot înlocui `Authorization`. Consultați [referința CLI](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) pentru fiecare opțiune.
+
 ## Explorarea datelor
 
 ```bash filename="Terminal"
@@ -112,18 +127,18 @@ npx twenty@latest app dev
 
 Alte comenzi pentru aplicații:
 
-| Comandă                       | Ce face                                                                          |
-| ----------------------------- | -------------------------------------------------------------------------------- |
-| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități          |
-| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                               |
-| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare            |
-| `app apply`                   | Compilați, încărcați și sincronizați aplicația                                   |
-| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                                |
-| `app pull`                    | Restaurează metadatele, traducerile, dependențele și sursa componentei acceptate |
-| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`                       |
-| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty                    |
-| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat            |
-| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru                   |
+| Comandă                       | Ce face                                                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `app add`                     | Generează structura unui obiect, câmp, funcții logice sau alte entități                               |
+| `app build` / `app typecheck` | Compilați sau verificați tipurile aplicației local                                                    |
+| `app plan`                    | Previzualizați modificările de metadate pe care le-ar face o aplicare                                 |
+| `app apply`                   | Compilați, încărcați și sincronizați aplicația                                                        |
+| `app generate-client`         | Regenerați clientul API tipizat fără sincronizare                                                     |
+| `app pull`                    | Restaurează metadatele, traducerile, dependențele, resursele publice și sursa componentelor acceptate |
+| `app translations extract`    | Extrage șirurile traducibile în cataloagele din `locales/`                                            |
+| `app publish`                 | Publicați aplicația pe npm sau într-un registru privat Twenty                                         |
+| `app install`                 | Instalați în spațiul de lucru un pachet de aplicație deja înregistrat                                 |
+| `app uninstall`               | Eliminați aplicația și tot ce îi aparține din spațiul de lucru                                        |
 
 Definițiile care lipsesc din sursă sunt șterse implicit din spațiul de lucru. Transmiteți `--no-prune` pentru a le păstra. Aplicația Personalizată pentru spațiul de lucru le păstrează dacă nu transmiteți `--prune`. Ștergerea obiectelor sau a câmpurilor șterge și datele acestora, deci necesită confirmare. Consultați [Sincronizare și recuperare](/ro/developers/extend/apps/operations/sync-and-recovery) pentru detalii.
 
@@ -181,3 +196,14 @@ Rezultatul compilării aparține CLI-ului. Nu citiți `.twenty/output/manifest.j
 [Referința comenzilor](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) acoperă fiecare opțiune, permisiune, format de ieșire și cod de ieșire.
 
 <PageBanner illustration="card-page-cli" />
+
+## Exportă înregistrările spațiului de lucru
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+```
+
+`data export` necesită permisiunea **Export CSV** a spațiului de lucru. Urmărește progresul exportului pe server, apoi transmite CSV-ul către `--output`. Permisiunile pentru înregistrări și câmpuri sunt aplicate de server. Nu este necesar un proiect de aplicație; selectează o conexiune salvată cu `--remote` sau folosește acreditările obișnuite din mediu.
+
+Fișierul de ieșire apare numai după o descărcare reușită. Fișierele existente sunt păstrate, cu excepția cazului în care transmiți `--force`. Descărcările sunt limitate la 1 GiB și 15 minute. Dacă este întrerupt, rulează din nou exportul; linkul de descărcare nu poate fi reutilizat. `--json` raportează ID-ul exportului, calea, dimensiunea și durata; `--format ndjson` transmite și progresul. CSV-ul însuși este scris numai în fișierul specificat.

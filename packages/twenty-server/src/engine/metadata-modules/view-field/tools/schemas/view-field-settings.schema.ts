@@ -24,4 +24,6 @@ export const viewFieldSettingsSchema = z
         'Maximum number of related records shown in the cell. Only for one-to-many relation fields.',
       ),
   })
-  .describe('Per-column display settings for this view.');
+  .describe(
+    'Display settings for an extra (non-canonical) column. Must be null on canonical columns.',
+  );

@@ -50,6 +50,7 @@ describe('Sync application should succeed when a view field and its scope view a
                   fieldMetadataUniversalIdentifier:
                     STANDARD_OBJECTS.company.fields.people.universalIdentifier,
                   position: 1,
+                  isCanonical: false,
                   settings: { label: 'Key person', recordLimit: 1 },
                 },
               ],
