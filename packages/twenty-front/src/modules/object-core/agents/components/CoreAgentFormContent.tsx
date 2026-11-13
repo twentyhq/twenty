@@ -205,16 +205,18 @@ export const CoreAgentFormContent = ({
             />
           }
         />
-        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW ? (
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW && (
           <CoreAgentOverviewTab
             agentId={agent.id}
             insights={runInsights}
             isLoading={isLoadingRunInsights}
             hasError={hasRunInsightsError}
           />
-        ) : activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS ? (
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS && (
           <CoreAgentRunsContent agentId={agent.id} />
-        ) : (
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS && (
           <SettingsPageContainer>
             <CoreAgentSettingsContent
               agent={agent}
