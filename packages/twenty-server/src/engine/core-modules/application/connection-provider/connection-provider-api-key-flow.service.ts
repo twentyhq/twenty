@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IdentifiedAccount } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -59,8 +58,7 @@ export class ConnectionProviderApiKeyFlowService {
     if (!isNonEmptyString(trimmedApiKey)) {
       throw new ConnectionProviderException(
         'API key is empty',
-        ConnectionProviderExceptionCode.INVALID_REQUEST,
-        { userFriendlyMessage: msg`Enter an API key.` },
+        ConnectionProviderExceptionCode.API_KEY_MISSING,
       );
     }
 

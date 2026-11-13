@@ -1,5 +1,4 @@
 import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
-import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
@@ -14,13 +13,17 @@ const StyledFooter = styled.div`
 
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
-  connectionProvider: ConnectableConnectionProvider;
+  connectionProviderName: string;
+  connectionProviderDisplayName: string;
+  connectionProviderType: string;
   redirectLocation?: string;
 };
 
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
-  connectionProvider,
+  connectionProviderName,
+  connectionProviderDisplayName,
+  connectionProviderType,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
   const { t } = useLingui();
@@ -34,7 +37,9 @@ export const SettingsApplicationAddConnectionButton = ({
         onClick={() =>
           startAppConnection({
             applicationId,
-            connectionProvider,
+            connectionProviderName,
+            connectionProviderDisplayName,
+            connectionProviderType,
             redirectLocation,
           })
         }

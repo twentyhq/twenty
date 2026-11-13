@@ -2,12 +2,12 @@ import { useLingui } from '@lingui/react/macro';
 
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
-import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
 import { IconRefresh } from 'twenty-ui/icon';
 
 type ChatThreadDisconnectedBannerProps = {
   applicationId: string;
-  connectionProvider: ConnectableConnectionProvider;
+  connectionProviderName: string;
+  connectionProviderType: string;
   channelName: string;
   connectedAccountId: string;
   canReconnect: boolean;
@@ -15,7 +15,8 @@ type ChatThreadDisconnectedBannerProps = {
 
 export const ChatThreadDisconnectedBanner = ({
   applicationId,
-  connectionProvider,
+  connectionProviderName,
+  connectionProviderType,
   channelName,
   connectedAccountId,
   canReconnect,
@@ -26,7 +27,9 @@ export const ChatThreadDisconnectedBanner = ({
   const handleReconnect = () =>
     startAppConnection({
       applicationId,
-      connectionProvider,
+      connectionProviderName,
+      connectionProviderDisplayName: channelName,
+      connectionProviderType,
       reconnectingConnectedAccountId: connectedAccountId,
       redirectLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
     });

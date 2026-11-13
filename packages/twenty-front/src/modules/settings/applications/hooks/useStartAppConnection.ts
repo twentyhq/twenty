@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
-import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
+import { isApiKeyConnectionProviderType } from '@/settings/applications/utils/isApiKeyConnectionProviderType';
 import { useOpenConnectApplicationWithApiKeyInSidePanel } from '@/side-panel/hooks/useOpenConnectApplicationWithApiKeyInSidePanel';
 
 export const useStartAppConnection = () => {
@@ -12,20 +12,24 @@ export const useStartAppConnection = () => {
   const startAppConnection = useCallback(
     async ({
       applicationId,
-      connectionProvider,
+      connectionProviderName,
+      connectionProviderDisplayName,
+      connectionProviderType,
       reconnectingConnectedAccountId,
       redirectLocation,
     }: {
       applicationId: string;
-      connectionProvider: ConnectableConnectionProvider;
+      connectionProviderName: string;
+      connectionProviderDisplayName: string;
+      connectionProviderType: string;
       reconnectingConnectedAccountId?: string;
       redirectLocation?: string;
     }) => {
-      if (connectionProvider.type === 'api-key') {
+      if (isApiKeyConnectionProviderType(connectionProviderType)) {
         openConnectApplicationWithApiKeyInSidePanel({
           applicationId,
-          providerName: connectionProvider.name,
-          providerDisplayName: connectionProvider.displayName,
+          providerName: connectionProviderName,
+          providerDisplayName: connectionProviderDisplayName,
           reconnectingConnectedAccountId:
             reconnectingConnectedAccountId ?? null,
         });
@@ -35,7 +39,7 @@ export const useStartAppConnection = () => {
 
       await triggerAppOAuth({
         applicationId,
-        providerName: connectionProvider.name,
+        providerName: connectionProviderName,
         reconnectingConnectedAccountId,
         redirectLocation,
       });

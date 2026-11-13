@@ -35,7 +35,9 @@ export const SettingsApplicationConnectCard = ({
       onClick={() =>
         startAppConnection({
           applicationId,
-          connectionProvider,
+          connectionProviderName: connectionProvider.name,
+          connectionProviderDisplayName: connectionProvider.displayName,
+          connectionProviderType: connectionProvider.type,
           redirectLocation,
         })
       }

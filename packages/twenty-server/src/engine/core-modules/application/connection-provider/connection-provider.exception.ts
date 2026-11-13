@@ -53,6 +53,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`We could not complete the connection. Please try again.`;
     case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
       return msg`We could not verify this key. Check it, or try again later if the service is down.`;
+    case ConnectionProviderExceptionCode.API_KEY_MISSING:
+      return msg`Enter an API key.`;
     default:
       assertUnreachable(code);
   }

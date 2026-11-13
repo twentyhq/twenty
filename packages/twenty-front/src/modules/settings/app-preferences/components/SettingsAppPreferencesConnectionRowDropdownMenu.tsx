@@ -2,7 +2,6 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAppPreferencesRemoveConnectionDialog } from '@/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog';
 import { SettingsApplicationConnectionName } from '@/settings/applications/components/SettingsApplicationConnectionName';
 import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
-import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -14,7 +13,9 @@ import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 
 type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
   applicationId: string;
-  connectionProvider: ConnectableConnectionProvider;
+  connectionProviderName: string;
+  connectionProviderDisplayName: string;
+  connectionProviderType: string;
   connection: ConnectedAccount;
   canStartAuthorization: boolean;
   reconnectRedirectLocation: string;
@@ -22,7 +23,9 @@ type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
 
 export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
   applicationId,
-  connectionProvider,
+  connectionProviderName,
+  connectionProviderDisplayName,
+  connectionProviderType,
   connection,
   canStartAuthorization,
   reconnectRedirectLocation,
@@ -54,7 +57,9 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
                   onClick={() =>
                     startAppConnection({
                       applicationId,
-                      connectionProvider,
+                      connectionProviderName,
+                      connectionProviderDisplayName,
+                      connectionProviderType,
                       reconnectingConnectedAccountId: connection.id,
                       redirectLocation: reconnectRedirectLocation,
                     })

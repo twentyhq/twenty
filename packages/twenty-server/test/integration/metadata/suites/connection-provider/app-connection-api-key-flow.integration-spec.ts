@@ -1,11 +1,11 @@
 import { createHash } from 'crypto';
 
-import gql from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
+import { connectApplicationWithApiKeyQueryFactory } from 'test/integration/metadata/suites/connection-provider/utils/connect-application-with-api-key-query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type MarkerServer } from 'test/integration/types/marker-server.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -29,14 +29,6 @@ const IDENTIFY_ACCOUNT_SOURCE = `export const handler = ({ accessToken }) => {
   if (!accessToken.startsWith('valid-')) throw new Error('401 Unauthorized');
   return { externalAccountId: 'company-a', handle: 'Company A (' + accessToken + ')' };
 };`;
-
-const CONNECT_APPLICATION_WITH_API_KEY_MUTATION = gql`
-  mutation ConnectApplicationWithApiKey(
-    $input: ConnectApplicationWithApiKeyInput!
-  ) {
-    connectApplicationWithApiKey(input: $input)
-  }
-`;
 
 describe('app connection api-key flow', () => {
   let provider: ConnectionProviderEntity;
@@ -74,17 +66,14 @@ describe('app connection api-key flow', () => {
     token?: string;
   }) => {
     const response = await makeMetadataApiRequest(
-      {
-        query: CONNECT_APPLICATION_WITH_API_KEY_MUTATION,
-        variables: {
-          input: {
-            applicationId: provider.applicationId,
-            providerName: provider.name,
-            apiKey,
-            reconnectingConnectedAccountId,
-          },
+      connectApplicationWithApiKeyQueryFactory({
+        input: {
+          applicationId: provider.applicationId,
+          providerName: provider.name,
+          apiKey,
+          reconnectingConnectedAccountId,
         },
-      },
+      }),
       token,
     );
 

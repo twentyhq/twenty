@@ -251,10 +251,9 @@ describe('defineConnectionProvider', () => {
     });
 
     it('rejects a config block meant for another type', () => {
-      const result = defineConnectionProvider({
-        ...baseApiKeyConfig,
-        oauth: baseValidConfig.oauth,
-      } as never);
+      const result = defineConnectionProvider(
+        Object.assign({}, baseApiKeyConfig, { oauth: baseValidConfig.oauth }),
+      );
 
       expect(result.success).toBe(false);
       expect(result.errors).toContain(
