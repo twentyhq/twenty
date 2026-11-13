@@ -1,4 +1,4 @@
-import { type RoleManifest } from '@/application/roleManifestType';
+import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
 import { SystemPermissionFlag } from '@/constants';
 import {
@@ -10,7 +10,9 @@ const PERSON = 'object-person';
 const COMPANY = 'object-company';
 const EMAIL_FIELD = 'field-email';
 
-const buildRole = (overrides: Partial<RoleManifest> = {}): RoleManifest => ({
+const buildRole = (
+  overrides: Partial<LegacyCompliantRoleManifest> = {},
+): LegacyCompliantRoleManifest => ({
   universalIdentifier: 'role',
   label: 'Role',
   ...overrides,

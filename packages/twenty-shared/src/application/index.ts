@@ -259,11 +259,21 @@ export type { RecordEventTriggerManifestSettings } from './recordEventTriggerMan
 export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
-  ObjectPermissionManifest,
-  FieldPermissionManifest,
-  RowLevelPermissionPredicateGroupManifest,
-  RowLevelPermissionPredicateManifest,
+  LegacyObjectPermissionManifest,
+  LegacyFieldPermissionManifest,
+  LegacyRowLevelPermissionPredicateGroupManifest,
+  LegacyRowLevelPermissionPredicateManifest,
+  RowLevelPermissionRulePredicateManifest,
+  RowLevelPermissionRulePredicateGroupManifest,
+  FieldRestrictionsManifest,
+  RowLevelRecordsPermissionsManifest,
+  AllRecordsPermissionsManifest,
+  ObjectRecordsPermissionsManifest,
+  RoleRecordsPermissionsManifest,
+  RowLevelPermissionRuleManifest,
+  LegacyRoleRecordsPermissionsManifest,
   RoleManifest,
+  LegacyCompliantRoleManifest,
 } from './roleManifestType';
 export type {
   ObjectPermissionGrant,
@@ -338,6 +348,11 @@ export {
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
+  RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionRuleManifests,
+} from './utils/flattenRowLevelPermissionRuleManifests';
+export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
+export type {
   EffectiveObjectPermissions,
   ObjectRecordsPermissionGrants,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
@@ -345,7 +360,10 @@ export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getReachableObjectPermissionsFromRoleManifest } from './utils/getReachableObjectPermissionsFromRoleManifest';
+export { getRecordsPermissionsFromRoleManifest } from './utils/getRecordsPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
+export { getRowLevelPermissionPredicatesFromRoleManifest } from './utils/getRowLevelPermissionPredicatesFromRoleManifest';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
@@ -358,6 +376,9 @@ export {
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
+export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
+export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

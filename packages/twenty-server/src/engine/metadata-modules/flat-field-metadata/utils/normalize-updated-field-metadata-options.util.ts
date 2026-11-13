@@ -1,0 +1,38 @@
+import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+
+type FieldMetadataOption =
+  | FieldMetadataDefaultOption
+  | FieldMetadataComplexOption;
+
+export const normalizeUpdatedFieldMetadataOptions = <
+  TOption extends FieldMetadataOption,
+>({
+  updatedOptions,
+  existingOptions,
+}: {
+  updatedOptions: TOption[];
+  existingOptions: FieldMetadataOption[];
+}): TOption[] => {
+  const updatedOptionIds = new Set(updatedOptions.map(({ id }) => id));
+  const unclaimedExistingOptionByValue = new Map(
+    existingOptions
+      .filter((option) => !updatedOptionIds.has(option.id))
+      .map((option) => [option.value, option]),
+  );
+
+  return updatedOptions.map((updatedOption) => {
+    const existingOption = isDefined(updatedOption.id)
+      ? undefined
+      : unclaimedExistingOptionByValue.get(updatedOption.value);
+
+    unclaimedExistingOptionByValue.delete(updatedOption.value);
+
+    // An explicit id, even null, is kept as sent so option id validation still sees it.
+    return { id: existingOption?.id ?? v4(), ...updatedOption };
+  });
+};

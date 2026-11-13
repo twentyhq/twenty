@@ -1,3 +1,4 @@
+import { validateFieldMetadataDefaultValueOptionCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util';
 import { validateFieldMetadataNotUsedByRowLevelPermissionPredicateCrossEntity } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-not-used-by-row-level-permission-predicate-cross-entity.util';
 import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util';
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
@@ -19,12 +20,16 @@ export const crossEntityTransversalValidation = ({
   orchestratorActionsReport,
   preDeletionFlatViewFieldMaps,
   fromFlatFieldMetadataMaps,
+  fromFlatFieldMetadataOptionMaps,
 }: {
   optimisticUniversalFlatMaps: AllUniversalFlatEntityMaps;
   orchestratorActionsReport: OrchestratorActionsReport;
   preDeletionFlatViewFieldMaps: UniversalFlatEntityMaps<UniversalFlatViewField>;
   fromFlatFieldMetadataMaps:
     | MetadataUniversalFlatEntityMaps<'fieldMetadata'>
+    | undefined;
+  fromFlatFieldMetadataOptionMaps:
+    | MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>
     | undefined;
 }): OrchestratorFailureReport => {
   const crossEntityFailureReport = EMPTY_ORCHESTRATOR_FAILURE_REPORT();
@@ -53,6 +58,13 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport,
     });
 
+  const { fieldMetadata: fieldMetadataDefaultValue } =
+    validateFieldMetadataDefaultValueOptionCrossEntity({
+      fromFlatFieldMetadataOptionMaps,
+      optimisticUniversalFlatMaps,
+      orchestratorActionsReport,
+    });
+
   const { navigationMenuItem } =
     validateNavigationMenuItemPageLayoutReferenceCrossEntity({
       optimisticUniversalFlatMaps,
@@ -63,7 +75,10 @@ export const crossEntityTransversalValidation = ({
   crossEntityFailureReport.viewField.push(...viewField);
   crossEntityFailureReport.permissionFlag.push(...permissionFlag);
   crossEntityFailureReport.navigationMenuItem.push(...navigationMenuItem);
-  crossEntityFailureReport.fieldMetadata.push(...fieldMetadata);
+  crossEntityFailureReport.fieldMetadata.push(
+    ...fieldMetadata,
+    ...fieldMetadataDefaultValue,
+  );
 
   validateUniversalIdentifierCrossEntityUniquenessThroughReportMutation({
     optimisticUniversalFlatMaps,
