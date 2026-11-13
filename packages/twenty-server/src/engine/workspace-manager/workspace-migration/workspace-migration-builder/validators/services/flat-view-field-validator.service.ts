@@ -227,13 +227,16 @@ export class FlatViewFieldValidatorService {
         universalIdentifiers: flatView.viewFieldUniversalIdentifiers,
         flatEntityMaps: optimisticFlatViewFieldMaps,
       });
-    const equivalentExistingFlatViewFieldExists = otherFlatViewFields.some(
-      (flatViewField) =>
-        flatViewField.viewUniversalIdentifier ===
-          flatViewFieldToValidate.viewUniversalIdentifier &&
-        flatViewField.fieldMetadataUniversalIdentifier ===
-          flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
-    );
+    const equivalentExistingFlatViewFieldExists =
+      !flatViewFieldToValidate.isCustom &&
+      otherFlatViewFields.some(
+        (flatViewField) =>
+          !flatViewField.isCustom &&
+          flatViewField.viewUniversalIdentifier ===
+            flatViewFieldToValidate.viewUniversalIdentifier &&
+          flatViewField.fieldMetadataUniversalIdentifier ===
+            flatViewFieldToValidate.fieldMetadataUniversalIdentifier,
+      );
 
     if (equivalentExistingFlatViewFieldExists) {
       validationResult.errors.push({
@@ -258,8 +261,30 @@ export class FlatViewFieldValidatorService {
       return validationResult;
     }
 
+    if (flatViewFieldToValidate.isCustom) {
+      if (flatView.type === ViewType.FIELDS_WIDGET) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`Custom view fields are not supported in fields widget views`,
+          userFriendlyMessage: msg`Custom columns are not supported here`,
+        });
+      }
+
+      if (
+        flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
+        flatViewFieldToValidate.fieldMetadataUniversalIdentifier
+      ) {
+        validationResult.errors.push({
+          code: ViewExceptionCode.INVALID_VIEW_DATA,
+          message: t`A custom view field cannot use the label identifier field`,
+          userFriendlyMessage: msg`A custom column cannot show the record name`,
+        });
+      }
+    }
+
     if (
       flatView.type !== ViewType.FIELDS_WIDGET &&
+      !flatViewFieldToValidate.isCustom &&
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatViewFieldToValidate.fieldMetadataUniversalIdentifier
     ) {

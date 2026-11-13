@@ -473,7 +473,8 @@ export class ViewWidgetUpsertService {
         inputField.fieldMetadataId,
       )
         ? existingViewFields.find(
-            (f) => f.fieldMetadataId === inputField.fieldMetadataId,
+            (f) =>
+              !f.isCustom && f.fieldMetadataId === inputField.fieldMetadataId,
           )
         : undefined;
 
@@ -594,6 +595,7 @@ export class ViewWidgetUpsertService {
         universalOverrides: null,
         isActive: true,
         isSystemSideEffect: false,
+        isCustom: false,
         createdAt: now,
         updatedAt: now,
         deletedAt: null,

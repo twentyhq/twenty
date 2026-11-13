@@ -258,6 +258,7 @@ export class FieldIndexViewFieldOnCreateSideEffectHandlerService extends Metadat
       aggregateOperation: null,
       isActive: true,
       isSystemSideEffect: true,
+      isCustom: false,
       universalOverrides: null,
       createdAt,
       updatedAt: createdAt,

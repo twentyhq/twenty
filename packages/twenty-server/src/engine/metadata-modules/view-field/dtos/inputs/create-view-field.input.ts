@@ -32,6 +32,11 @@ export class CreateViewFieldInput {
   isVisible?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  isCustom?: boolean;
+
+  @IsOptional()
   @IsNumber()
   @Field({ nullable: true, defaultValue: 0 })
   size?: number;

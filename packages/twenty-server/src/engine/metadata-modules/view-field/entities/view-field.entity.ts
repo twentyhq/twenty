@@ -17,6 +17,7 @@ import {
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ADD_VIEW_FIELD_IS_CUSTOM_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-custom-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -42,7 +43,7 @@ export type ViewFieldOverrides = {
   ['fieldMetadataId', 'viewId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL',
+    where: '"deletedAt" IS NULL AND "isCustom" = false',
   },
 )
 export class ViewFieldEntity
@@ -89,6 +90,13 @@ export class ViewFieldEntity
   })
   @Column({ nullable: false, default: false, type: 'boolean' })
   isSystemSideEffect: boolean;
+
+  // Columns added in the view; several can show the same field
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_FIELD_IS_CUSTOM_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isCustom: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
