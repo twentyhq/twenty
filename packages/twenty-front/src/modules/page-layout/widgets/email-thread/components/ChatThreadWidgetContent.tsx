@@ -23,10 +23,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FeatureFlagKey,
+  MyConnectedAccountsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
@@ -59,6 +61,7 @@ export const ChatThreadWidgetContent = ({
     useReplyConnectedAccount(messageChannelId);
   const { sendPendingChatMessage } = useSendPendingChatMessage();
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
+  const apolloClient = useApolloClient();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
@@ -99,19 +102,19 @@ export const ChatThreadWidgetContent = ({
 
   return (
     <StyledWidgetContentContainer>
+      {isDisconnected &&
+        isDefined(connectionProvider) &&
+        isDefined(connectedAccount.applicationId) && (
+          <ChatThreadDisconnectedBanner
+            applicationId={connectedAccount.applicationId}
+            connectionProviderName={connectionProvider.name}
+            channelName={connectionProvider.displayName}
+            connectedAccountId={connectedAccount.id}
+            canReconnect={canReconnect}
+          />
+        )}
       <WidgetRelationsHeader />
       <StyledChatThreadBody>
-        {isDisconnected &&
-          isDefined(connectionProvider) &&
-          isDefined(connectedAccount.applicationId) && (
-            <ChatThreadDisconnectedBanner
-              applicationId={connectedAccount.applicationId}
-              connectionProviderName={connectionProvider.name}
-              channelName={connectionProvider.displayName}
-              connectedAccountId={connectedAccount.id}
-              canReconnect={canReconnect}
-            />
-          )}
         <StyledWidgetScrollContainer
           ref={scrollContainerRef}
           onScroll={handleScroll}
@@ -137,11 +140,22 @@ export const ChatThreadWidgetContent = ({
               }
               isDisconnected={isDisconnected}
               canAttachFiles={isMessageAttachmentEnabled}
+              draftKey={
+                isDefined(currentWorkspaceMember)
+                  ? `${currentWorkspaceMember.id}:${messageThreadId}`
+                  : undefined
+              }
               onSendMessage={(pendingMessage) =>
                 sendPendingChatMessage({
                   messageChannelId: messageChannel.id,
                   messageThreadId,
                   pendingMessage,
+                }).catch((error) => {
+                  apolloClient
+                    .refetchQueries({ include: [MyConnectedAccountsDocument] })
+                    .catch(() => undefined);
+
+                  throw error;
                 })
               }
               onMessageSent={onMessageSent}

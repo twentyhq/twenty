@@ -7375,6 +7375,11 @@ msgstr "Bekreft oppgradering"
 msgid "Confirming your payment"
 msgstr "Bekrefter betalingen din"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr ""
+
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"
