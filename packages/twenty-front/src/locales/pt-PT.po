@@ -3334,6 +3334,11 @@ msgstr "Todos os canais"
 msgid "All Companies"
 msgstr "Todas as empresas"
 
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr ""
+
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -6538,6 +6543,7 @@ msgid "Clear"
 msgstr "Limpar"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -11205,7 +11211,7 @@ msgid "else if"
 msgstr "senão se"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -13775,6 +13781,11 @@ msgstr "Filtrar por ID do registro"
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filtrar chats"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr ""
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19957,6 +19968,11 @@ msgstr "Nenhuma variável de configuração corresponde aos seus filtros atuais.
 msgid "No content"
 msgstr "Sem conteúdo"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr ""
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -20229,6 +20245,11 @@ msgstr "Nenhum log foi registado para esta etapa."
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No matching activity"
 msgstr "Nenhuma atividade correspondente"
+
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr ""
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
