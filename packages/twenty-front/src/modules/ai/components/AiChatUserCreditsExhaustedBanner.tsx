@@ -7,7 +7,7 @@ import { IconSettings } from 'twenty-ui/icon';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
+import { aiChatUserCreditsBannerDismissalState } from '@/ai/states/aiChatUserCreditsBannerDismissalState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -27,9 +27,9 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   );
 
   const [
-    agentChatUserCreditsBannerDismissal,
-    setAgentChatUserCreditsBannerDismissal,
-  ] = useAtomState(agentChatUserCreditsBannerDismissalState);
+    aiChatUserCreditsBannerDismissal,
+    setAiChatUserCreditsBannerDismissal,
+  ] = useAtomState(aiChatUserCreditsBannerDismissalState);
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
     skip: isWorkspaceSetupChat,
@@ -46,10 +46,10 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   const { periodEnd, isFallingBackToWorkspaceCredits } = userCreditsUsage;
 
   if (
-    agentChatUserCreditsBannerDismissal?.workspaceMemberId ===
+    aiChatUserCreditsBannerDismissal?.workspaceMemberId ===
       currentWorkspaceMember.id &&
-    agentChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
-    agentChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
+    aiChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
+    aiChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
       isFallingBackToWorkspaceCredits
   ) {
     return null;
@@ -58,7 +58,7 @@ export const AiChatUserCreditsExhaustedBanner = () => {
   const dismissAction = (
     <InlineBanner.Action
       onClick={() =>
-        setAgentChatUserCreditsBannerDismissal({
+        setAiChatUserCreditsBannerDismissal({
           workspaceMemberId: currentWorkspaceMember.id,
           periodEnd,
           isFallingBackToWorkspaceCredits,

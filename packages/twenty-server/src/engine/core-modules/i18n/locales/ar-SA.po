@@ -324,6 +324,11 @@ msgstr "يجب أن يستخدم عنصر واجهة العلاقة المتدا
 msgid "A network error occurred while accessing calendar."
 msgstr "حدث خطأ في الشبكة أثناء الوصول إلى التقويم."
 
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
+
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1212,6 +1217,11 @@ msgstr "يوجد تصدير قيد التشغيل بالفعل في مساحة �
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "استغرقت خدمة خارجية وقتًا طويلًا للاستجابة."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -5362,6 +5372,11 @@ msgstr "معرّف البوت الخارجي"
 msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "معرّف التسجيل الخارجي"
+
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9537,6 +9552,11 @@ msgstr "لم يتم تحديد مستلمين صالحين"
 msgid "No verified sending domain matches this from address."
 msgstr "لا يوجد نطاق إرسال تم التحقق منه يطابق عنوان المرسِل هذا."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10028,6 +10048,11 @@ msgstr "لا يمكن إلغاء سوى حملة مجدولة أو قيد الإ
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "لا يمكن سوى لمسؤول الخادم إدارة رموز الاسترداد لهذا العضو."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10070,7 +10095,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "يمكن فقط للتطبيق الذي يملك هذا الوكيل تغيير مشغلاته"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "لا يمكن تغيير من يمكنه رؤية سير العمل هذا إلا للشخص الذي أنشأه"
 
