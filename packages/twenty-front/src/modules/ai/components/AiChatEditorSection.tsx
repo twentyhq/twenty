@@ -7,6 +7,7 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
@@ -164,6 +165,7 @@ const EditableAiChatEditorSection = () => {
 
   const composer = (
     <StyledInputBox isMobile={isMobile}>
+      <AiChatComposerQuote />
       <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>

@@ -30,6 +30,12 @@ import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadTo
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai/hooks/useWarnAboutParticipantMentionsNotAdded';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
+import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
+import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
+import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
 import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
@@ -67,6 +73,7 @@ import {
 } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
+  FindChatMessageAgentDocument,
   SendChatMessageDocument,
   StopAgentChatStreamDocument,
   FeatureFlagKey,
@@ -84,6 +91,7 @@ type AgentChatMessageToSend = {
   initialRecipients: AgentChatParticipantMention[];
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
+  quotedMessageId: string | null;
 };
 
 export const useAgentChat = () => {
@@ -133,6 +141,7 @@ export const useAgentChat = () => {
       initialRecipients,
       isAssistantMentioned,
       channelId,
+      quotedMessageId,
     }: AgentChatMessageToSend) => {
       const isSendingMessageAtom =
         agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
@@ -335,6 +344,13 @@ export const useAgentChat = () => {
           ...currentUploadedFiles,
         ]);
 
+        const quotedMessageIdAtom =
+          agentChatQuotedMessageIdFamilyState.atomFamily({ threadId });
+
+        if (!isDefined(store.get(quotedMessageIdAtom))) {
+          store.set(quotedMessageIdAtom, quotedMessageId);
+        }
+
         removeOptimisticUserMessage();
         store.set(errorAtom, toAiChatError(error));
 
@@ -390,13 +406,47 @@ export const useAgentChat = () => {
         : undefined;
     const serializedContentToSend =
       store.get(agentChatDraftsByThreadIdState.atom)[threadId] ?? '';
-    const contentToSend = tipTapDocumentToMarkdown(
-      serializedContentToSend,
-    ).trim();
+    const draftText = tipTapDocumentToMarkdown(serializedContentToSend).trim();
 
-    if (contentToSend === '') {
+    if (draftText === '') {
       return;
     }
+
+    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+      threadId,
+    });
+    const quotedMessageId = store.get(quotedMessageIdAtom);
+    const quotedMessage = store.get(
+      agentChatThreadMessageFamilySelector.selectorFamily({
+        threadId,
+        messageId: quotedMessageId,
+      }),
+    );
+    const quotedAgentId = quotedMessage?.metadata?.agentId;
+    // the composer preview starts loading the agent when the quote is picked; awaiting it here would race with further edits
+    const quotedAgentName = isDefined(quotedAgentId)
+      ? (apolloClient.cache.readQuery({
+          query: FindChatMessageAgentDocument,
+          variables: { id: quotedAgentId },
+        })?.findOneAgent.label ?? undefined)
+      : undefined;
+    const quotedMessageSource = isDefined(quotedMessage)
+      ? getAgentChatMessageQuoteSource({
+          message: quotedMessage,
+          author: getAgentChatMessageAuthor({
+            message: quotedMessage,
+            authorLookup: store.get(agentChatMessageAuthorLookupSelector.atom),
+            agentName: quotedAgentName,
+          }),
+        })
+      : null;
+    const contentToSend = isDefined(quotedMessageSource)
+      ? prependAgentChatQuoteToText({
+          text: draftText,
+          authorName: quotedMessageSource.author.name,
+          excerpt: quotedMessageSource.excerpt,
+        })
+      : draftText;
 
     const currentWorkspaceMemberId = store.get(
       currentWorkspaceMemberState.atom,
@@ -475,6 +525,7 @@ export const useAgentChat = () => {
           initialRecipients: [],
           isAssistantMentioned: false,
           channelId: undefined,
+          quotedMessageId: null,
         });
       }
 
@@ -498,6 +549,7 @@ export const useAgentChat = () => {
       ...prev,
       [threadId]: '',
     }));
+    store.set(quotedMessageIdAtom, null);
 
     dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
       content: '',
@@ -514,9 +566,11 @@ export const useAgentChat = () => {
       initialRecipients,
       isAssistantMentioned,
       channelId,
+      quotedMessageId,
     });
   }, [
     store,
+    apolloClient,
     setAgentChatDraftsByThreadId,
     canSendAgentChatMessage,
     isAiChatInboxEnabled,
