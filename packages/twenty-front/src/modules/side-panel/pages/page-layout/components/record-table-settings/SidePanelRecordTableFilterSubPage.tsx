@@ -1,30 +1,25 @@
+import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFilters } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilters';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 export const SidePanelRecordTableFilterSubPage = () => {
   const { pageLayoutId } = usePageLayoutSidePanelTarget();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
-  if (!isDefined(widgetInEditMode)) {
-    return null;
-  }
+  const viewId = isDefined(widgetInEditMode)
+    ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
+    : null;
 
-  const { configuration } = widgetInEditMode;
+  const { view } = useRecordTableWidgetViewForDisplay({
+    viewId: viewId ?? '',
+    widgetId: widgetInEditMode?.id ?? '',
+    pageLayoutId,
+  });
 
-  const isRecordTableConfiguration =
-    configuration.configurationType === WidgetConfigurationType.RECORD_TABLE;
-
-  const viewId =
-    isRecordTableConfiguration &&
-    'viewId' in configuration &&
-    isDefined(configuration.viewId)
-      ? (configuration.viewId as string)
-      : undefined;
-
-  if (!isDefined(viewId) || !isDefined(widgetInEditMode.objectMetadataId)) {
+  if (!isDefined(widgetInEditMode) || !isDefined(viewId) || !isDefined(view)) {
     return null;
   }
 
@@ -33,7 +28,7 @@ export const SidePanelRecordTableFilterSubPage = () => {
       viewId={viewId}
       widgetId={widgetInEditMode.id}
       pageLayoutId={pageLayoutId}
-      objectMetadataId={widgetInEditMode.objectMetadataId}
+      objectMetadataId={view.objectMetadataId}
     />
   );
 };

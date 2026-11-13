@@ -113,6 +113,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
   } = useRecordTableSettingsDescriptions({
     objectMetadataId: widgetInEditMode?.objectMetadataId,
     viewId,
+    widgetId: widgetInEditMode?.id ?? '',
+    pageLayoutId,
   });
 
   const { updateCurrentWidgetConfig } =

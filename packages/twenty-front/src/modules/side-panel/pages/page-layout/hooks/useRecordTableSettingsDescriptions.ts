@@ -1,11 +1,9 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useViewById } from '@/views/hooks/useViewById';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
 import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 
@@ -15,15 +13,23 @@ const PLACEHOLDER_INSTANCE_ID =
 type UseRecordTableSettingsDescriptionsParams = {
   objectMetadataId: string | null | undefined;
   viewId: string | null;
+  widgetId: string;
+  pageLayoutId: string;
 };
 
 export const useRecordTableSettingsDescriptions = ({
   objectMetadataId,
   viewId,
+  widgetId,
+  pageLayoutId,
 }: UseRecordTableSettingsDescriptionsParams) => {
   const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { view } = useViewById(viewId);
+  const { view } = useRecordTableWidgetViewForDisplay({
+    viewId: viewId ?? '',
+    widgetId,
+    pageLayoutId,
+  });
 
   const sourceObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === objectMetadataId,
@@ -36,16 +42,6 @@ export const useRecordTableSettingsDescriptions = ({
           viewId,
         )
       : PLACEHOLDER_INSTANCE_ID;
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-    recordIndexId,
-  );
-
-  const currentRecordSorts = useAtomComponentStateValue(
-    currentRecordSortsComponentState,
-    recordIndexId,
-  );
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -63,18 +59,19 @@ export const useRecordTableSettingsDescriptions = ({
       )
     : [];
 
-  const activeFilterLabels: Array<string | undefined> =
-    currentRecordFilters.length > 0
-      ? currentRecordFilters.map((filter) => filter.label)
-      : (view?.viewFilters ?? []).map(
-          (filter) =>
-            sourceObjectMetadataItem?.fields.find(
-              (field) => field.id === filter.fieldMetadataId,
-            )?.label,
-        );
+  const activeFilterLabels: Array<string | undefined> = (
+    view?.viewFilters ?? []
+  )
+    .filter((filter) => !isCurrentRecordViewFilter(filter))
+    .map(
+      (filter) =>
+        sourceObjectMetadataItem?.fields.find(
+          (field) => field.id === filter.fieldMetadataId,
+        )?.label,
+    );
 
   const activeSortLabels: Array<string | undefined> = (
-    currentRecordSorts.length > 0 ? currentRecordSorts : (view?.viewSorts ?? [])
+    view?.viewSorts ?? []
   ).map(
     (sort) =>
       sourceObjectMetadataItem?.fields.find(
