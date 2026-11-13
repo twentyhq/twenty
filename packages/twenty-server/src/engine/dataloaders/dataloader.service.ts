@@ -651,6 +651,7 @@ export class DataloaderService {
                 id: indexFieldMetadata.id,
                 fieldMetadataId: indexFieldMetadata.fieldMetadataId,
                 subFieldName: indexFieldMetadata.subFieldName ?? undefined,
+                direction: indexFieldMetadata.direction ?? undefined,
                 order: indexFieldMetadata.order,
                 createdAt: new Date(indexFieldMetadata.createdAt),
                 updatedAt: new Date(indexFieldMetadata.updatedAt),

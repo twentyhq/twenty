@@ -1,4 +1,8 @@
-import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  type OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
@@ -18,6 +22,7 @@ import {
 } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { normalizeIndexFieldDirection } from 'src/engine/metadata-modules/index-metadata/utils/normalize-index-field-direction.util';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
@@ -112,6 +117,30 @@ export const computeFlatIndexFieldColumnNames = ({
   );
 };
 
+export const computeFlatIndexColumnDirections = ({
+  flatIndexFieldMetadatas,
+  flatFieldMetadataMaps,
+}: {
+  flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
+  flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
+}): Partial<Record<string, OrderByDirection>> =>
+  Object.fromEntries(
+    flatIndexFieldMetadatas.flatMap((flatIndexFieldMetadata) => {
+      const direction = normalizeIndexFieldDirection(
+        flatIndexFieldMetadata.direction,
+      );
+
+      if (!isDefined(direction)) {
+        return [];
+      }
+
+      return computeFlatIndexFieldColumnNames({
+        flatIndexFieldMetadatas: [flatIndexFieldMetadata],
+        flatFieldMetadataMaps,
+      }).map((columnName) => [columnName, direction]);
+    }),
+  );
+
 export const deleteIndexMetadata = async ({
   entityId,
   queryRunner,
@@ -160,6 +189,10 @@ export const createIndexInWorkspaceSchema = async ({
   await workspaceSchemaManagerService.indexManager.createIndex({
     index: {
       columns,
+      columnDirections: computeFlatIndexColumnDirections({
+        flatIndexFieldMetadatas: flatIndexMetadata.flatIndexFieldMetadatas,
+        flatFieldMetadataMaps,
+      }),
       name: flatIndexMetadata.name,
       isUnique: flatIndexMetadata.isUnique,
       type: flatIndexMetadata.indexType,

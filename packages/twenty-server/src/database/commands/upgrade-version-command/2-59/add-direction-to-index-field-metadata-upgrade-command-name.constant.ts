@@ -1,0 +1,2 @@
+export const ADD_DIRECTION_TO_INDEX_FIELD_METADATA_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddDirectionToIndexFieldMetadataFastInstanceCommand_1794571410956';

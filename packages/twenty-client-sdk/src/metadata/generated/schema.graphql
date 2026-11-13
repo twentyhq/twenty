@@ -1761,6 +1761,10 @@ input CreateFrontComponentInput {
 }
 
 input CreateIndexFieldInput {
+  """
+  Sort order of this column in the index. Match the orderBy you query with, e.g. DescNullsLast for a newest first list. Btree only.
+  """
+  direction: OrderByDirection
   fieldMetadataId: UUID!
   subFieldName: String
 }
@@ -2958,6 +2962,9 @@ type IndexEdge {
 
 type IndexField {
   createdAt: DateTime!
+
+  """Null means ascending with nulls last, the btree default"""
+  direction: OrderByDirection
   fieldMetadataId: UUID!
   id: UUID!
   order: Float!
@@ -4086,6 +4093,14 @@ type OnboardingStepSuccess {
 enum OpenRecordIn {
   RECORD_PAGE
   SIDE_PANEL
+}
+
+"""Sort direction, including where nulls go"""
+enum OrderByDirection {
+  AscNullsFirst
+  AscNullsLast
+  DescNullsFirst
+  DescNullsLast
 }
 
 type PageInfo {

@@ -303,6 +303,7 @@ import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/
 import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
 import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
 import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
+import { AddDirectionToIndexFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794571410956-add-direction-to-index-field-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -608,4 +609,5 @@ export const INSTANCE_COMMANDS = [
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
   RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand,
   AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
+  AddDirectionToIndexFieldMetadataFastInstanceCommand,
 ];

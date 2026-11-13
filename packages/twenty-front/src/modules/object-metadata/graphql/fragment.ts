@@ -49,6 +49,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
         id
         fieldMetadataId
         subFieldName
+        direction
         createdAt
         updatedAt
         order

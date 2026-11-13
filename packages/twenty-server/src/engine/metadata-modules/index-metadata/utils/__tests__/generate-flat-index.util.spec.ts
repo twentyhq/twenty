@@ -2,6 +2,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import {
   FieldMetadataType,
   IndexType,
+  OrderByDirection,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -151,5 +152,54 @@ describe('generateFlatIndexMetadataWithNameOrThrow', () => {
       manyToOneJoin: manyToOneJoin.name,
       partialUnique: partialUnique.name,
     }).toMatchSnapshot();
+  });
+
+  describe('field direction', () => {
+    const employeesIndex = buildIndex({
+      universalIdentifier: 'idx-employees',
+      isUnique: false,
+      indexType: IndexType.BTREE,
+      fieldIds: [scalarNonUniqueField.universalIdentifier],
+    });
+
+    const computeNameWithDirection = (
+      direction: OrderByDirection | null | undefined,
+    ) =>
+      generateFlatIndexMetadataWithNameOrThrow({
+        flatObjectMetadata: companyObject,
+        objectFlatFieldMetadatas: [scalarNonUniqueField],
+        flatIndex: {
+          ...employeesIndex,
+          universalFlatIndexFieldMetadatas:
+            employeesIndex.universalFlatIndexFieldMetadatas.map(
+              (indexField) => ({ ...indexField, direction }),
+            ),
+        },
+      }).name;
+
+    it('keeps the default name for ascending nulls last', () => {
+      const defaultName = computeNameWithDirection(undefined);
+
+      expect(computeNameWithDirection(null)).toBe(defaultName);
+      expect(computeNameWithDirection(OrderByDirection.AscNullsLast)).toBe(
+        defaultName,
+      );
+    });
+
+    it('pins a distinct name for every other direction', () => {
+      const names = {
+        ascNullsFirst: computeNameWithDirection(OrderByDirection.AscNullsFirst),
+        descNullsFirst: computeNameWithDirection(
+          OrderByDirection.DescNullsFirst,
+        ),
+        descNullsLast: computeNameWithDirection(OrderByDirection.DescNullsLast),
+      };
+
+      expect(
+        new Set([computeNameWithDirection(undefined), ...Object.values(names)])
+          .size,
+      ).toBe(4);
+      expect(names).toMatchSnapshot();
+    });
   });
 });

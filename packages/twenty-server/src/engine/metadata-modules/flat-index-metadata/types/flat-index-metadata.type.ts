@@ -3,7 +3,11 @@ import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index
 import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
-export type FlatIndexFieldMetadata = FlatEntityFrom<IndexFieldMetadataEntity>;
+export type FlatIndexFieldMetadata = Omit<
+  FlatEntityFrom<IndexFieldMetadataEntity>,
+  'direction'
+> &
+  Partial<Pick<IndexFieldMetadataEntity, 'direction'>>;
 
 export type FlatIndexMetadata = FlatEntityFrom<IndexMetadataEntity> & {
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];

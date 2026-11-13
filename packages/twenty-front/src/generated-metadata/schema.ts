@@ -1882,6 +1882,8 @@ export type CreateFrontComponentInput = {
 };
 
 export type CreateIndexFieldInput = {
+  /** Sort order of this column in the index. Match the orderBy you query with, e.g. DescNullsLast for a newest first list. Btree only. */
+  direction?: InputMaybe<OrderByDirection>;
   fieldMetadataId: Scalars['UUID']['input'];
   subFieldName?: InputMaybe<Scalars['String']['input']>;
 };
@@ -3125,6 +3127,8 @@ export type IndexEdge = {
 export type IndexField = {
   __typename?: 'IndexField';
   createdAt: Scalars['DateTime']['output'];
+  /** Null means ascending with nulls last, the btree default */
+  direction?: Maybe<OrderByDirection>;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   order: Scalars['Float']['output'];
@@ -5857,6 +5861,14 @@ export type OnboardingStepSuccess = {
 export enum OpenRecordIn {
   RECORD_PAGE = 'RECORD_PAGE',
   SIDE_PANEL = 'SIDE_PANEL'
+}
+
+/** Sort direction, including where nulls go */
+export enum OrderByDirection {
+  AscNullsFirst = 'AscNullsFirst',
+  AscNullsLast = 'AscNullsLast',
+  DescNullsFirst = 'DescNullsFirst',
+  DescNullsLast = 'DescNullsLast'
 }
 
 export type PageInfo = {

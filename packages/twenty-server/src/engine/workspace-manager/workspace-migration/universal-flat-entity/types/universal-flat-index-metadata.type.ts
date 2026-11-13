@@ -13,11 +13,13 @@ export type UniversalFlatIndexFieldMetadata = Omit<
   | 'id'
   | 'workspaceId'
   | 'workspace'
+  | 'direction'
   | keyof CastRecordTypeOrmDatePropertiesToString<IndexFieldMetadataEntity>
 > & {
   indexMetadataUniversalIdentifier: string;
   fieldMetadataUniversalIdentifier: string;
-} & CastRecordTypeOrmDatePropertiesToString<IndexFieldMetadataEntity>;
+} & Partial<Pick<IndexFieldMetadataEntity, 'direction'>> &
+  CastRecordTypeOrmDatePropertiesToString<IndexFieldMetadataEntity>;
 
 export type UniversalFlatIndexMetadata =
   UniversalFlatEntityFrom<IndexMetadataEntity> & {

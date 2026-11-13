@@ -3,12 +3,15 @@ import { type IndexManifest } from 'twenty-shared/application';
 import {
   type FieldMetadataType,
   IndexType,
+  type OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { normalizeIndexFieldDirection } from 'src/engine/metadata-modules/index-metadata/utils/normalize-index-field-direction.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -49,6 +52,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
     name: string;
     label: string;
     subFieldName: string | null;
+    direction: OrderByDirection | null;
   }> = [];
 
   const universalFlatIndexFieldMetadatas = indexManifest.fields.map(
@@ -91,13 +95,21 @@ export const fromIndexManifestToUniversalFlatIndex = ({
         );
       }
 
+      if (isDefined(entry.direction) && !isOrderByDirection(entry.direction)) {
+        throw new Error(
+          `Field "${flatField.name}" has an invalid direction "${entry.direction}" in index "${indexManifest.universalIdentifier}"`,
+        );
+      }
+
       const subFieldName = isComposite ? (entry.subFieldName ?? null) : null;
+      const direction = normalizeIndexFieldDirection(entry.direction);
 
       resolvedFieldsForValidation.push({
         type: flatField.type,
         name: flatField.name,
         label: flatField.label,
         subFieldName,
+        direction,
       });
 
       return {
@@ -105,6 +117,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
         updatedAt: now,
         order,
         subFieldName,
+        direction,
         fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
         indexMetadataUniversalIdentifier: indexManifest.universalIdentifier,
       };

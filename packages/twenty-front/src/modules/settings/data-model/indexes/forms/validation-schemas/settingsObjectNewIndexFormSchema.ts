@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { IndexType } from '~/generated-metadata/graphql';
+import { IndexType, OrderByDirection } from '~/generated-metadata/graphql';
 
 export const settingsObjectNewIndexFormSchema = z.object({
   fields: z
@@ -7,6 +7,7 @@ export const settingsObjectNewIndexFormSchema = z.object({
       z.object({
         fieldMetadataId: z.string().uuid(),
         subFieldName: z.string().nullable(),
+        direction: z.nativeEnum(OrderByDirection),
       }),
     )
     .min(1),

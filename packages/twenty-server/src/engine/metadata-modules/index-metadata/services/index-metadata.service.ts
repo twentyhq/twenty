@@ -21,6 +21,7 @@ import {
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { normalizeIndexFieldDirection } from 'src/engine/metadata-modules/index-metadata/utils/normalize-index-field-direction.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { validateNoDuplicateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -172,6 +173,7 @@ export class IndexMetadataService {
       return {
         flatField,
         subFieldName: isComposite ? (input.subFieldName ?? null) : null,
+        direction: normalizeIndexFieldDirection(input.direction),
       };
     });
 
@@ -181,11 +183,12 @@ export class IndexMetadataService {
 
     validateIndexTypeAgainstFieldsOrThrow({
       indexType: createIndexInput.indexType,
-      fields: resolvedInputs.map(({ flatField, subFieldName }) => ({
+      fields: resolvedInputs.map(({ flatField, subFieldName, direction }) => ({
         type: flatField.type,
         name: flatField.name,
         label: flatField.label,
         subFieldName,
+        direction,
       })),
     });
 
@@ -250,11 +253,12 @@ export class IndexMetadataService {
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
           universalFlatIndexFieldMetadatas: resolvedInputs.map(
-            ({ flatField, subFieldName }, order) => ({
+            ({ flatField, subFieldName, direction }, order) => ({
               createdAt,
               updatedAt: createdAt,
               order,
               subFieldName,
+              direction,
               fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
               indexMetadataUniversalIdentifier,
             }),

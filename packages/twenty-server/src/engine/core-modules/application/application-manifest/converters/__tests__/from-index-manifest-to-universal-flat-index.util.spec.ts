@@ -1,4 +1,8 @@
-import { FieldMetadataType, IndexType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  IndexType,
+  OrderByDirection,
+} from 'twenty-shared/types';
 
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -261,6 +265,74 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     });
 
     expect(result.indexType).toBe(IndexType.GIN);
+  });
+
+  const buildScalarIndex = (direction?: OrderByDirection) =>
+    fromIndexManifestToUniversalFlatIndex({
+      indexManifest: {
+        ...baseManifest,
+        fields: [
+          {
+            universalIdentifier: 'field-entry-1',
+            fieldUniversalIdentifier: scalarField.universalIdentifier,
+            direction,
+          },
+        ],
+      },
+      flatObjectMetadata,
+      objectFlatFieldMetadatas: [scalarField],
+      applicationUniversalIdentifier,
+      now,
+    });
+
+  it('forwards a descending direction and names the index after it', () => {
+    const result = buildScalarIndex(OrderByDirection.DescNullsLast);
+
+    expect(result.universalFlatIndexFieldMetadatas[0].direction).toBe(
+      OrderByDirection.DescNullsLast,
+    );
+    expect(result.name).not.toBe(buildScalarIndex().name);
+  });
+
+  it('stores ascending nulls last as the default direction', () => {
+    const result = buildScalarIndex(OrderByDirection.AscNullsLast);
+
+    expect(result.universalFlatIndexFieldMetadatas[0].direction).toBeNull();
+    expect(result.name).toBe(buildScalarIndex().name);
+  });
+
+  it('throws when a field direction is not a known direction', () => {
+    expect(() => buildScalarIndex('Sideways' as OrderByDirection)).toThrow(
+      /invalid direction "Sideways"/,
+    );
+  });
+
+  it('throws when a GIN index sets a field direction', () => {
+    const tsVectorField = {
+      universalIdentifier: 'field-uuid-tsvector',
+      name: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+    } as UniversalFlatFieldMetadata;
+
+    expect(() =>
+      fromIndexManifestToUniversalFlatIndex({
+        indexManifest: {
+          ...baseManifest,
+          indexType: IndexType.GIN,
+          fields: [
+            {
+              universalIdentifier: 'field-entry-1',
+              fieldUniversalIdentifier: tsVectorField.universalIdentifier,
+              direction: OrderByDirection.DescNullsLast,
+            },
+          ],
+        },
+        flatObjectMetadata,
+        objectFlatFieldMetadatas: [tsVectorField],
+        applicationUniversalIdentifier,
+        now,
+      }),
+    ).toThrow(/does not support a sort direction/);
   });
 
   it('throws when fields is empty', () => {

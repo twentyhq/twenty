@@ -10,6 +10,7 @@ import {
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { generateDeterministicIndexName } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name';
+import { normalizeIndexFieldDirection } from 'src/engine/metadata-modules/index-metadata/utils/normalize-index-field-direction.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -19,7 +20,7 @@ type ComputeFlatIndexNameArgs = {
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   indexFields: Pick<
     UniversalFlatIndexFieldMetadata,
-    'order' | 'fieldMetadataUniversalIdentifier' | 'subFieldName'
+    'order' | 'fieldMetadataUniversalIdentifier' | 'subFieldName' | 'direction'
   >[];
   isUnique: boolean;
   indexWhereClause: string | null;
@@ -87,9 +88,19 @@ export const computeFlatIndexNameOrThrow = ({
         : relatedFlatFieldMetadata.name;
     });
 
+  const orderedIndexColumnDirections = [...indexFields]
+    .sort((a, b) => a.order - b.order)
+    .map(({ direction }) => normalizeIndexFieldDirection(direction));
+
   return generateDeterministicIndexName({
     flatObjectMetadata,
-    orderedIndexColumnNames,
+    orderedIndexColumnNames: orderedIndexColumnNames.map(
+      (columnName, columnIndex) => {
+        const direction = orderedIndexColumnDirections[columnIndex];
+
+        return isDefined(direction) ? `${columnName} ${direction}` : columnName;
+      },
+    ),
     isUnique,
     indexWhereClause,
   });

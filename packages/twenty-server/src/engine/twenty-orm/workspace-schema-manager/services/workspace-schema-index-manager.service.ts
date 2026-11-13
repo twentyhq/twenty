@@ -1,5 +1,7 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
+import { INDEX_COLUMN_DIRECTION_SQL } from 'src/engine/twenty-orm/workspace-schema-manager/constants/index-column-direction-sql.constant';
 import {
   WorkspaceSchemaManagerException,
   WorkspaceSchemaManagerExceptionCode,
@@ -38,9 +40,13 @@ export class WorkspaceSchemaIndexManagerService {
       );
     }
 
-    const quotedColumns = index.columns.map((column) =>
-      escapeIdentifier(column),
-    );
+    const quotedColumns = index.columns.map((column) => {
+      const direction = index.columnDirections?.[column];
+
+      return isDefined(direction)
+        ? `${escapeIdentifier(column)} ${INDEX_COLUMN_DIRECTION_SQL[direction]}`
+        : escapeIdentifier(column);
+    });
     const isUnique = index.isUnique ? 'UNIQUE' : '';
 
     let indexType = '';
