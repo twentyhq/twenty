@@ -1,11 +1,11 @@
-import { INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/ai/constants/InboxThreadStatusActionByTriageStatus';
-import { useInboxThreadTriage } from '@/ai/hooks/useInboxThreadTriage';
-import { useExecuteInboxThreadStatusAction } from '@/ai/hooks/useExecuteInboxThreadStatusAction';
-import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { INBOX_THREAD_STATUS_ACTION_BY_TRIAGE_STATUS } from '@/inbox/constants/InboxThreadStatusActionByTriageStatus';
+import { useInboxThreadTriage } from '@/inbox/hooks/useInboxThreadTriage';
+import { useExecuteInboxThreadStatusAction } from '@/inbox/hooks/useExecuteInboxThreadStatusAction';
+import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
 import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
-import { type InboxThreadTriageStatus } from '@/ai/types/InboxThreadTriageStatus';
-import { getInboxThreadChannelIdOutsideInbox } from '@/ai/utils/getInboxThreadChannelIdOutsideInbox';
+import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
+import { getInboxThreadChannelIdOutsideInbox } from '@/inbox/utils/getInboxThreadChannelIdOutsideInbox';
 import { getAiChatThreadDetailsStatusAccess } from '@/ai/utils/getAiChatThreadDetailsStatusAccess';
 import { getAiChatThreadStatusScope } from '@/ai/utils/getAiChatThreadStatusScope';
 import { isAiChatThreadStatusChangeNoOp } from '@/ai/utils/isAiChatThreadStatusChangeNoOp';

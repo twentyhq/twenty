@@ -3,7 +3,7 @@ import { useStore } from 'jotai';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useSwitchAiChatThreadWithDraft } from '@/ai/hooks/useSwitchAiChatThreadWithDraft';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { closingInboxThreadIdState } from '@/ai/states/closingInboxThreadIdState';
+import { closingInboxThreadIdState } from '@/inbox/states/closingInboxThreadIdState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useSelectAiChatThread = () => {

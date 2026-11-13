@@ -17,6 +17,7 @@ import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/l
 import { assertLoginTokenIsNotForImpersonation } from 'src/engine/core-modules/auth/utils/assert-login-token-is-not-for-impersonation.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -98,6 +99,7 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
   ) {}
@@ -139,6 +141,16 @@ export class TwoFactorAuthenticationResolver {
     }
 
     const user = await this.userService.findUserByEmailOrThrow(userEmail);
+
+    if (
+      this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED') &&
+      !user.isEmailVerified
+    ) {
+      throw new AuthException(
+        'Email is not verified',
+        AuthExceptionCode.EMAIL_NOT_VERIFIED,
+      );
+    }
 
     await this.twoFactorAuthenticationRecoveryService.assertEnrollmentNotReservedForRecoveryOrThrow(
       { userId: user.id, workspaceId: workspace.id },

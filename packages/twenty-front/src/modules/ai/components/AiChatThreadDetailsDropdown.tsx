@@ -17,13 +17,13 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { InboxChannelIcon } from '@/ai/components/InboxChannelIcon';
-import { InboxThreadChannelPicker } from '@/ai/components/InboxThreadChannelPicker';
+import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
+import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
 import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';

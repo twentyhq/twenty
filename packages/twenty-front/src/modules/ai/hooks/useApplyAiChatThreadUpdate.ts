@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/InboxRecentThreadListSource';
-import { inboxThreadListFamilyState } from '@/ai/states/inboxThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/ai/utils/getInboxThreadListSourceKey';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { aiChatThreadRecordUpdateCountState } from '@/ai/states/aiChatThreadRecordUpdateCountState';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';

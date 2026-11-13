@@ -3,7 +3,7 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AiChatThreadDisplayIdentity } from '@/ai/types/AiChatThreadDisplayIdentity';
-import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getInboxDirectMessagePeerWorkspaceMemberIds';
+import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/inbox/utils/getInboxDirectMessagePeerWorkspaceMemberIds';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 

@@ -63,7 +63,7 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
 
 const executeInboxThreadStatusAction = jest.fn();
 
-jest.mock('@/ai/hooks/useExecuteInboxThreadStatusAction', () => ({
+jest.mock('@/inbox/hooks/useExecuteInboxThreadStatusAction', () => ({
   useExecuteInboxThreadStatusAction: () => ({
     executeInboxThreadStatusAction,
     isPending: false,
