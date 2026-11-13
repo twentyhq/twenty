@@ -236,7 +236,7 @@ export class RowLevelPermissionPredicateService {
       );
     }
 
-    const ruleChanges = this.computeRuleChanges({
+    const ruleChanges = this.computeRuleChangesOrThrow({
       existingGroups,
       existingPredicates,
       groupsToCreate,
@@ -511,7 +511,7 @@ export class RowLevelPermissionPredicateService {
     };
   }
 
-  private computeRuleChanges({
+  private computeRuleChangesOrThrow({
     existingGroups,
     existingPredicates,
     groupsToCreate,
