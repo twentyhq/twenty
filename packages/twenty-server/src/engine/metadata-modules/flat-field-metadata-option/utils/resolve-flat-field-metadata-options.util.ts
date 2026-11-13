@@ -13,8 +13,10 @@ export type FlatFieldMetadataForOptions = Pick<FlatFieldMetadata, 'type'> &
     >
   >;
 
-export type FlatFieldMetadataOptionMapsForOptions =
-  UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>;
+export type FlatFieldMetadataOptionMapsForOptions = Pick<
+  UniversalFlatEntityMaps<UniversalFlatFieldMetadataOption>,
+  'byUniversalIdentifier'
+>;
 
 export const resolveFlatFieldMetadataOptions = ({
   flatFieldMetadata,

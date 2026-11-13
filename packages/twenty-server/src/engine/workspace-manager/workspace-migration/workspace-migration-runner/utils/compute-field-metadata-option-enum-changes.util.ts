@@ -8,7 +8,6 @@ import { type FieldMetadataOptionEnumChangeOfMigration } from 'src/engine/worksp
 type OptionRow = FieldMetadataOptionRowForOptions &
   Pick<FlatFieldMetadataOption, 'fieldMetadataUniversalIdentifier'>;
 
-// The option rows before and after the migration of each field an option action touches.
 export const computeFieldMetadataOptionEnumChanges = ({
   actions,
   flatFieldMetadataOptionMaps,

@@ -31,13 +31,15 @@ export const getFieldMetadata = (
     );
   }
 
-  return isDefined(flatFieldMetadataOptionMaps)
-    ? {
-        ...fieldMetadata,
-        options: resolveFlatFieldMetadataOptions({
-          flatFieldMetadata: fieldMetadata,
-          flatFieldMetadataOptionMaps,
-        }),
-      }
-    : fieldMetadata;
+  if (!isDefined(flatFieldMetadataOptionMaps)) {
+    return fieldMetadata;
+  }
+
+  return {
+    ...fieldMetadata,
+    options: resolveFlatFieldMetadataOptions({
+      flatFieldMetadata: fieldMetadata,
+      flatFieldMetadataOptionMaps,
+    }),
+  };
 };
