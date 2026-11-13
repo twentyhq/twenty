@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
 import { ChatMessageVoiceNote } from '@/chat/components/ChatMessageVoiceNote';
+import { CHAT_MESSAGE_BUBBLE_MAX_WIDTH } from '@/chat/constants/ChatMessageBubbleMaxWidth';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { FileChip } from '@/ui/field/display/components/FileChip';
@@ -19,7 +20,7 @@ const StyledImageButton = styled.button`
   border-radius: ${themeCssVariables.border.radius.md};
   cursor: pointer;
   display: block;
-  max-width: 100%;
+  max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
   overflow: hidden;
   padding: 0;
 
@@ -40,7 +41,7 @@ const StyledVideo = styled.video`
   border-radius: ${themeCssVariables.border.radius.md};
   display: block;
   max-height: ${CHAT_MESSAGE_MEDIA_MAX_HEIGHT};
-  max-width: 100%;
+  max-width: ${CHAT_MESSAGE_BUBBLE_MAX_WIDTH};
 `;
 
 type ChatMessageAttachmentProps = {

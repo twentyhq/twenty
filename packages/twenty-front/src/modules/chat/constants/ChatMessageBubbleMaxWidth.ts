@@ -1,0 +1,1 @@
+export const CHAT_MESSAGE_BUBBLE_MAX_WIDTH = '85%';

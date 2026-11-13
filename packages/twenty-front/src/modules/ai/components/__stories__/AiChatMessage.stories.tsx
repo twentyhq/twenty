@@ -1311,14 +1311,16 @@ const getSizedImageUrlMock = ({
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#dbeafe"/><rect x="1" y="1" width="${width - 2}" height="${height - 2}" fill="none" stroke="#3b82f6" stroke-width="2"/></svg>`,
   )}`;
 
-const getOwnMessageWithImagesMock = ({
+const getUserMessageWithImagesMock = ({
   id,
   text,
   images,
+  senderWorkspaceMemberId = mockedWorkspaceMemberData.id,
 }: {
   id: string;
   text: string;
   images: { filename: string; width: number; height: number }[];
+  senderWorkspaceMemberId?: string;
 }): ExtendedUIMessage => ({
   id,
   role: 'user',
@@ -1334,27 +1336,27 @@ const getOwnMessageWithImagesMock = ({
   ],
   metadata: {
     createdAt: MOCKED_DATE,
-    senderWorkspaceMemberId: mockedWorkspaceMemberData.id,
+    senderWorkspaceMemberId,
   },
 });
 
 const mockOwnMessagesWithImages = [
-  getOwnMessageWithImagesMock({
+  getUserMessageWithImagesMock({
     id: 'msg-own-portrait',
     text: 'Portrait screenshot from the mobile app',
     images: [{ filename: 'portrait.png', width: 390, height: 844 }],
   }),
-  getOwnMessageWithImagesMock({
+  getUserMessageWithImagesMock({
     id: 'msg-own-landscape',
     text: 'Landscape',
     images: [{ filename: 'landscape.png', width: 1600, height: 200 }],
   }),
-  getOwnMessageWithImagesMock({
+  getUserMessageWithImagesMock({
     id: 'msg-own-small',
     text: 'Small logo for the company record',
     images: [{ filename: 'small.png', width: 48, height: 48 }],
   }),
-  getOwnMessageWithImagesMock({
+  getUserMessageWithImagesMock({
     id: 'msg-own-two-images',
     text: 'Two',
     images: [
@@ -1364,14 +1366,26 @@ const mockOwnMessagesWithImages = [
   }),
 ];
 
-export const OwnMessagesWithImages: Story = {
+const mockTeammateMessageWithImage = getUserMessageWithImagesMock({
+  id: 'msg-teammate-landscape',
+  text: 'Reply',
+  images: [{ filename: 'teammate-landscape.png', width: 1600, height: 200 }],
+  senderWorkspaceMemberId: mockTeammate.id,
+});
+
+const mockMessagesWithImages = [
+  ...mockOwnMessagesWithImages,
+  mockTeammateMessageWithImage,
+];
+
+export const MessagesWithImages: Story = {
   parameters: {
     isInboxEnabled: true,
-    messages: mockOwnMessagesWithImages,
+    messages: mockMessagesWithImages,
   },
   render: () => (
     <StyledConversationContainer>
-      {mockOwnMessagesWithImages.map((message) => (
+      {mockMessagesWithImages.map((message) => (
         <AiChatMessage key={message.id} messageId={message.id} />
       ))}
     </StyledConversationContainer>
@@ -1379,18 +1393,32 @@ export const OwnMessagesWithImages: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    for (const [text, imageName] of [
+    for (const [text, lastImageName] of [
       ['Portrait screenshot from the mobile app', 'portrait.png'],
       ['Landscape', 'landscape.png'],
       ['Small logo for the company record', 'small.png'],
-      ['Two', 'first.png'],
+      ['Two', 'second.png'],
     ]) {
-      const image = await canvas.findByRole('img', { name: imageName });
+      const image = await canvas.findByRole('img', { name: lastImageName });
 
       await expect(image).toBeVisible();
-      await expect(image.getBoundingClientRect().left).toBeLessThanOrEqual(
-        canvas.getByText(text).getBoundingClientRect().left,
-      );
+
+      const ownTextToImageRightEdgeGapInPx =
+        image.getBoundingClientRect().right -
+        canvas.getByText(text).getBoundingClientRect().right;
+
+      await expect(ownTextToImageRightEdgeGapInPx).toBeGreaterThanOrEqual(0);
+      await expect(ownTextToImageRightEdgeGapInPx).toBeLessThan(16);
     }
+
+    const teammateImage = await canvas.findByRole('img', {
+      name: 'teammate-landscape.png',
+    });
+    const teammateImageToTextLeftEdgeGapInPx =
+      canvas.getByText('Reply').getBoundingClientRect().left -
+      teammateImage.getBoundingClientRect().left;
+
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeGreaterThanOrEqual(0);
+    await expect(teammateImageToTextLeftEdgeGapInPx).toBeLessThan(16);
   },
 };
