@@ -10262,6 +10262,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Opportunity stage"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -13768,6 +13774,12 @@ msgstr "The agent this step should run was not found."
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13947,6 +13959,12 @@ msgstr "The creator of the record"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "The date the message was received"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "The default option cannot be deactivated"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts

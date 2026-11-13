@@ -1964,6 +1964,7 @@ msgstr "Acciones que los usuarios pueden realizar en este objeto"
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -6136,7 +6137,7 @@ msgid "Chat details"
 msgstr "Detalles del chat"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Nombre del chat"
 
@@ -7760,7 +7761,7 @@ msgid "Conversation title"
 msgstr "Título de la conversación"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Conversaciones"
 
@@ -9502,6 +9503,7 @@ msgid "Days between triggers"
 msgstr "Días entre activadores"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10377,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Mensajes directos"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Los mensajes directos no admiten archivos adjuntos."
 
@@ -11959,6 +11961,11 @@ msgstr "Introduce una opción por línea"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
 msgstr "Introduce una opción por línea. Cada línea se convertirá en una nueva opción."
+
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+msgstr ""
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -15752,6 +15759,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -18237,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marcado como hecho {eventTime}"
 
@@ -19459,8 +19467,8 @@ msgstr "Nuevo canal"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Nuevo chat"
@@ -23740,7 +23748,7 @@ msgid "Receive an email containing password update link"
 msgstr "Recibir un correo electrónico con un enlace para actualizar la contraseña"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Reciente"
 
@@ -27702,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Posposición finalizada"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Posposición finalizada {eventTime}"
 
@@ -27725,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Pospuesto"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Pospuesto hasta {eventTime}"
 
@@ -31434,7 +31442,7 @@ msgid "Unsubscribed"
 msgstr "Dado de baja"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Cancelaste la suscripción {eventTime}. Los nuevos mensajes no aparecerán en tu bandeja de entrada a menos que te mencionen."
 

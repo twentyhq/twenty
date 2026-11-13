@@ -1964,6 +1964,7 @@ msgstr "Åtgärder användare kan utföra på det här objektet"
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -6136,7 +6137,7 @@ msgid "Chat details"
 msgstr "Chattdetaljer"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Chattnamn"
 
@@ -7760,7 +7761,7 @@ msgid "Conversation title"
 msgstr "Konversationstitel"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Konversationer"
 
@@ -9502,6 +9503,7 @@ msgid "Days between triggers"
 msgstr "Dagar mellan triggers"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10377,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Direktmeddelanden"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktmeddelanden har inte stöd för bilagor."
 
@@ -11959,6 +11961,11 @@ msgstr "Ange ett alternativ per rad"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
 msgstr "Ange ett alternativ per rad. Varje rad blir ett nytt alternativ."
+
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
+msgstr ""
 
 #. js-lingui-id: waLOUb
 #: src/modules/object-record/record-field/ui/form-types/components/FormPhoneFieldInput.tsx
@@ -15752,6 +15759,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -18237,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Markerad som klar {eventTime}"
 
@@ -19461,8 +19469,8 @@ msgstr "Ny kanal"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Ny chatt"
@@ -23742,7 +23750,7 @@ msgid "Receive an email containing password update link"
 msgstr "Ta emot ett e-postmeddelande med länk för att uppdatera lösenordet"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Senaste"
 
@@ -27706,7 +27714,7 @@ msgid "Snooze ended"
 msgstr "Snoozning avslutad"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snoozning avslutad {eventTime}"
 
@@ -27729,7 +27737,7 @@ msgid "Snoozed"
 msgstr "Snoozad"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Snoozad till {eventTime}"
 
@@ -31440,7 +31448,7 @@ msgid "Unsubscribed"
 msgstr "Avregistrerad"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Avprenumererade {eventTime}. Nya meddelanden hålls utanför din inkorg om du inte nämns."
 

@@ -1964,6 +1964,7 @@ msgstr "Acties die gebruikers op dit object kunnen uitvoeren"
 #. js-lingui-id: FQBaXG
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
@@ -6136,7 +6137,7 @@ msgid "Chat details"
 msgstr "Chatdetails"
 
 #. js-lingui-id: tDlhkF
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 msgid "Chat name"
 msgstr "Chatnaam"
 
@@ -7760,7 +7761,7 @@ msgid "Conversation title"
 msgstr "Gesprekstitel"
 
 #. js-lingui-id: EnJuK0
-#: src/modules/ai/components/MobileHomeAiChatSection.tsx
+#: src/modules/inbox/components/MobileHomeInboxSection.tsx
 msgid "Conversations"
 msgstr "Gesprekken"
 
@@ -9502,6 +9503,7 @@ msgid "Days between triggers"
 msgstr "Dagen tussen triggers"
 
 #. js-lingui-id: 5y3O+A
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
@@ -10377,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Privéberichten"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Directe berichten ondersteunen geen bijlagen."
 
@@ -11958,6 +11960,11 @@ msgstr ""
 #. js-lingui-id: Xj6ylP
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Enter one option per line. Each line will become a new option."
+msgstr ""
+
+#. js-lingui-id: 6FyWNj
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
+msgid "Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed."
 msgstr ""
 
 #. js-lingui-id: waLOUb
@@ -15752,6 +15759,7 @@ msgid "In-Reply-To"
 msgstr "In-Reply-To"
 
 #. js-lingui-id: NoNwIX
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
@@ -18237,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Gemarkeerd als voltooid {eventTime}"
 
@@ -19459,8 +19467,8 @@ msgstr "Nieuw kanaal"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Nieuw gesprek"
@@ -23740,7 +23748,7 @@ msgid "Receive an email containing password update link"
 msgstr "Ontvang een e-mail met een link om het wachtwoord bij te werken"
 
 #. js-lingui-id: CCTop/
-#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxContent.tsx
 msgid "Recent"
 msgstr "Recent"
 
@@ -27702,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Snoozen beëindigd"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snoozen beëindigd {eventTime}"
 
@@ -27725,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Gesnoozed"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Gesnoozed tot {eventTime}"
 
@@ -31434,7 +31442,7 @@ msgid "Unsubscribed"
 msgstr "Uitgeschreven"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Afgemeld {eventTime}. Nieuwe berichten blijven buiten je inbox, tenzij je wordt vermeld."
 
