@@ -1,6 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { type ConnectionProviderScope } from 'twenty-shared/application';
+import {
+  CONNECTION_PROVIDER_SCOPES,
+  type ConnectionProviderScope,
+} from 'twenty-shared/application';
 
 import {
   IsBoolean,
@@ -46,7 +49,7 @@ export class CreateMcpServerInput {
   @Field({ nullable: true })
   isActive?: boolean;
 
-  @IsIn(Object.values(ConnectionProviderScopeEnum))
+  @IsIn(CONNECTION_PROVIDER_SCOPES)
   @IsOptional()
   @Field(() => ConnectionProviderScopeEnum, { nullable: true })
   signInScope?: ConnectionProviderScope;
