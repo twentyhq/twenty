@@ -6,6 +6,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
@@ -32,6 +33,9 @@ import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { AgentFileLoaderService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-loader.service';
+import { AgentFilePartService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-part.service';
+import { AgentFileRejectionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-file-rejection.service';
 import { AgentStepLoopService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-step-loop.service';
 import { AgentToolsetService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
@@ -64,6 +68,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AiAgentRoleModule,
     ApiKeyModule,
     ApplicationLookupModule,
+    FileModule,
     FileUrlModule,
     MetricsModule,
     PendingWakeUpModule,
@@ -96,6 +101,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AiGenerateService,
     AgentRunSettlementService,
     AgentRunnerService,
+    AgentFileLoaderService,
+    AgentFilePartService,
+    AgentFileRejectionService,
     AgentStepLoopService,
     AgentToolsetService,
     AgentRunTurnService,

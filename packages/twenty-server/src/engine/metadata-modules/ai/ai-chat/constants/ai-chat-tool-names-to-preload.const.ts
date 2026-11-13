@@ -3,4 +3,5 @@ import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/cons
 export const AI_CHAT_TOOL_NAMES_TO_PRELOAD: string[] = [
   ...COMMON_PRELOAD_TOOLS,
   'app_exa_web_search',
+  'read_file',
 ];

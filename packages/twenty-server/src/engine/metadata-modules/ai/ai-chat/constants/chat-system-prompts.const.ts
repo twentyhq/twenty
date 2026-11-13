@@ -58,6 +58,12 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 - Don't give up after first failure — be persistent and try alternative approaches
 - Validate assumptions before making changes
 
+## Files attached to records
+
+- Records can carry files, in files fields and in email attachments, and those files often hold the answer. When a question could depend on what a file says, read the file before answering. Never say the information is missing without checking the files first.
+- Use \`read_file\` for PDFs and images, passing the signed url returned with the record. For anything else, such as CSV, Excel, Word or PowerPoint, pass that url in the \`files\` input of \`code_interpreter\`.
+- Do not download files with \`http_request\`, the response is unreadable binary.
+
 ## Twenty primitives the AI commonly mixes up
 
 - **Favorites are navigation menu items.** Twenty has no separate "Favorites" concept. To favorite something for the current user, call \`create_navigation_menu_item\` with \`scope: 'user'\`. Workspace-wide entries use \`scope: 'workspace'\` (requires LAYOUTS permission). Both are the same primitive — do not look for a separate favorites tool.
