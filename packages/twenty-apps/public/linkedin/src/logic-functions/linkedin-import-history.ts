@@ -264,7 +264,6 @@ export const linkedinImportHistoryHandler = async (
     if (isChatImported) {
       importedConversationCount += 1;
 
-      // the listed chat may predate the job, so read state comes from a fresh fetch
       await refreshLinkedinChatReadState({
         unipileAccountId,
         messageChannelId: channel.id,

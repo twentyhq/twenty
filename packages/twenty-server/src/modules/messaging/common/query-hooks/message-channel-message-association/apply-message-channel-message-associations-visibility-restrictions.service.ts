@@ -16,7 +16,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
-// read state is the channel owner's alone, whatever the channel's visibility shares
 @Injectable()
 export class ApplyMessageChannelMessageAssociationsVisibilityRestrictionsService
   implements RecordVisibilityRestrictionHandler, OnModuleInit
