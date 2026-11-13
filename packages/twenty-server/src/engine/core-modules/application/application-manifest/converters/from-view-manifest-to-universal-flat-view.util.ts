@@ -70,8 +70,8 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.calendarEndFieldMetadataUniversalIdentifier ?? null,
     mainGroupByFieldMetadataUniversalIdentifier:
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
-    scopedViewFieldUniversalIdentifier:
-      viewManifest.scopedViewFieldUniversalIdentifier ?? null,
+    ownerViewFieldUniversalIdentifier:
+      viewManifest.ownerViewFieldUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,
     shouldDisplayGroupsAsTabs: viewManifest.shouldDisplayGroupsAsTabs ?? false,
     kanbanColumnWidth: viewManifest.kanbanColumnWidth ?? null,
