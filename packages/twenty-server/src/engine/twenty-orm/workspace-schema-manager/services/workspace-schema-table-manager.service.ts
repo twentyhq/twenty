@@ -10,33 +10,25 @@ import {
 } from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { type WorkspaceSchemaTableColumnSlotUsage } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-table-column-slot-usage.type';
-import {
-  type WorkspaceSchemaTableRebuildPlan,
-  type WorkspaceSchemaTableRebuildPlanConstraint,
-  type WorkspaceSchemaTableRebuildPlanIdentitySequence,
-  type WorkspaceSchemaTableRebuildPlanIncomingForeignKey,
-} from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-table-rebuild-plan.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { getEscapedQualifiedTableName } from 'src/engine/twenty-orm/workspace-schema-manager/utils/get-escaped-qualified-table-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type WorkspaceSchemaTableArgs = {
-  queryRunner: QueryRunner;
-  schemaName: string;
-  tableName: string;
-};
-
-type ColumnRow = {
-  columnName: string;
-  isGenerated: boolean;
-  isIdentity: boolean;
-  sequenceName: string | null;
-};
-
-type UnsupportedFeatureRow = {
-  triggerCount: number;
-  policyCount: number;
-  inheritanceCount: number;
+type WorkspaceSchemaTableRebuildPlan = {
+  copiedColumnNames: string[];
+  identitySequences: {
+    columnName: string;
+    sequenceRelationName: string;
+    lastValue: string;
+    isCalled: boolean;
+  }[];
+  constraints: { constraintName: string; definition: string }[];
+  incomingForeignKeys: {
+    escapedQualifiedTableName: string;
+    constraintName: string;
+    definition: string;
+  }[];
+  indexDefinitions: string[];
 };
 
 export class WorkspaceSchemaTableManagerService {
@@ -103,9 +95,10 @@ export class WorkspaceSchemaTableManagerService {
   findColumnSlotUsages({
     queryRunner,
     schemaName,
-  }: Pick<WorkspaceSchemaTableArgs, 'queryRunner' | 'schemaName'>): Promise<
-    WorkspaceSchemaTableColumnSlotUsage[]
-  > {
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+  }): Promise<WorkspaceSchemaTableColumnSlotUsage[]> {
     return queryRunner.query(
       `SELECT c.relname AS "tableName",
               COALESCE(MAX(a.attnum), 0)::int AS "usedColumnSlotCount",
@@ -125,7 +118,11 @@ export class WorkspaceSchemaTableManagerService {
     queryRunner,
     schemaName,
     tableName,
-  }: WorkspaceSchemaTableArgs): Promise<void> {
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+  }): Promise<void> {
     const escapedQualifiedTableName = getEscapedQualifiedTableName({
       schemaName,
       tableName,
@@ -168,24 +165,33 @@ export class WorkspaceSchemaTableManagerService {
     queryRunner,
     schemaName,
     tableName,
-  }: WorkspaceSchemaTableArgs): Promise<WorkspaceSchemaTableRebuildPlan> {
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+  }): Promise<WorkspaceSchemaTableRebuildPlan> {
     const escapedQualifiedTableName = getEscapedQualifiedTableName({
       schemaName,
       tableName,
     });
 
-    const [unsupportedFeatures]: UnsupportedFeatureRow[] =
+    const [{ hasUnsupportedFeature }]: { hasUnsupportedFeature: boolean }[] =
       await queryRunner.query(
-        `SELECT (SELECT COUNT(*) FROM pg_trigger
-                  WHERE tgrelid = $1::regclass AND NOT tgisinternal)::int AS "triggerCount",
-                (SELECT COUNT(*) FROM pg_policy
-                  WHERE polrelid = $1::regclass)::int AS "policyCount",
-                (SELECT COUNT(*) FROM pg_inherits
-                  WHERE inhrelid = $1::regclass OR inhparent = $1::regclass)::int AS "inheritanceCount"`,
+        `SELECT EXISTS (SELECT 1 FROM pg_trigger
+                         WHERE tgrelid = $1::regclass AND NOT tgisinternal)
+             OR EXISTS (SELECT 1 FROM pg_policy WHERE polrelid = $1::regclass)
+             OR EXISTS (SELECT 1 FROM pg_inherits
+                         WHERE inhrelid = $1::regclass OR inhparent = $1::regclass)
+                AS "hasUnsupportedFeature"`,
         [escapedQualifiedTableName],
       );
 
-    const columns: ColumnRow[] = await queryRunner.query(
+    const columns: {
+      columnName: string;
+      isGenerated: boolean;
+      isIdentity: boolean;
+      sequenceName: string | null;
+    }[] = await queryRunner.query(
       `SELECT a.attname AS "columnName",
               a.attgenerated <> '' AS "isGenerated",
               a.attidentity <> '' AS "isIdentity",
@@ -202,19 +208,14 @@ export class WorkspaceSchemaTableManagerService {
       ({ sequenceName, isIdentity }) => isDefined(sequenceName) && !isIdentity,
     );
 
-    if (
-      unsupportedFeatures.triggerCount > 0 ||
-      unsupportedFeatures.policyCount > 0 ||
-      unsupportedFeatures.inheritanceCount > 0 ||
-      hasSerialColumn
-    ) {
+    if (hasUnsupportedFeature || hasSerialColumn) {
       throw new WorkspaceSchemaManagerException(
         `Table ${escapedQualifiedTableName} cannot be rebuilt: it has triggers, row level security policies, inheritance or serial columns, which a rebuild would not carry over`,
         WorkspaceSchemaManagerExceptionCode.TABLE_REBUILD_NOT_SUPPORTED,
       );
     }
 
-    const identitySequences: WorkspaceSchemaTableRebuildPlanIdentitySequence[] =
+    const identitySequences: WorkspaceSchemaTableRebuildPlan['identitySequences'] =
       [];
 
     for (const { columnName, sequenceName } of columns) {
@@ -222,10 +223,11 @@ export class WorkspaceSchemaTableManagerService {
         continue;
       }
 
-      const [{ sequenceRelationName, lastValue, isCalled }]: Omit<
-        WorkspaceSchemaTableRebuildPlanIdentitySequence,
-        'columnName'
-      >[] = await queryRunner.query(
+      const [{ sequenceRelationName, lastValue, isCalled }]: {
+        sequenceRelationName: string;
+        lastValue: string;
+        isCalled: boolean;
+      }[] = await queryRunner.query(
         `SELECT (SELECT relname FROM pg_class WHERE oid = $1::regclass) AS "sequenceRelationName",
                 last_value::text AS "lastValue",
                 is_called AS "isCalled"
@@ -241,7 +243,7 @@ export class WorkspaceSchemaTableManagerService {
       });
     }
 
-    const constraints: WorkspaceSchemaTableRebuildPlanConstraint[] =
+    const constraints: WorkspaceSchemaTableRebuildPlan['constraints'] =
       await queryRunner.query(
         `SELECT conname AS "constraintName",
                 pg_get_constraintdef(oid) AS "definition"
@@ -252,7 +254,7 @@ export class WorkspaceSchemaTableManagerService {
         [escapedQualifiedTableName],
       );
 
-    const incomingForeignKeys: WorkspaceSchemaTableRebuildPlanIncomingForeignKey[] =
+    const incomingForeignKeys: WorkspaceSchemaTableRebuildPlan['incomingForeignKeys'] =
       await queryRunner.query(
         `SELECT quote_ident(n.nspname) || '.' || quote_ident(c.relname) AS "escapedQualifiedTableName",
                 con.conname AS "constraintName",
@@ -295,7 +297,10 @@ export class WorkspaceSchemaTableManagerService {
     schemaName,
     tableName,
     workspaceTableRebuildPlan,
-  }: WorkspaceSchemaTableArgs & {
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
     workspaceTableRebuildPlan: WorkspaceSchemaTableRebuildPlan;
   }): Promise<void> {
     const temporaryTableName = `${tableName.slice(

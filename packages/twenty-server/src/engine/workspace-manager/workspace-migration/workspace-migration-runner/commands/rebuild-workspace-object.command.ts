@@ -22,7 +22,6 @@ import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-ma
 type RebuildWorkspaceObjectCommandOptions =
   ProvisionedWorkspaceCommandOptions & {
     objectNameSingular?: string[];
-    minimumUsedColumnSlotCount?: number;
   };
 
 @Command({
@@ -42,21 +41,11 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
 
   @Option({
     flags: '--object-name-singular <objectNameSingular>',
-    description:
-      'Object to rebuild. Can be specified multiple times. Defaults to every object whose table is at or above --minimum-used-column-slot-count.',
+    description: `Object to rebuild. Can be specified multiple times. Defaults to every object whose table uses at least ${OBJECT_REBUILD_MINIMUM_USED_COLUMN_SLOT_COUNT} column slots.`,
     required: false,
   })
   parseObjectNameSingular(value: string, previous?: string[]): string[] {
     return [...(previous ?? []), value];
-  }
-
-  @Option({
-    flags: '--minimum-used-column-slot-count <count>',
-    description: `Used column slots from which an object is rebuilt when no --object-name-singular is given (default ${OBJECT_REBUILD_MINIMUM_USED_COLUMN_SLOT_COUNT})`,
-    required: false,
-  })
-  parseMinimumUsedColumnSlotCount(value: string): number {
-    return parseInt(value, 10);
   }
 
   override async run(
@@ -114,8 +103,7 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
         options.objectNameSingular,
       )
         ? 0
-        : (options.minimumUsedColumnSlotCount ??
-          OBJECT_REBUILD_MINIMUM_USED_COLUMN_SLOT_COUNT);
+        : OBJECT_REBUILD_MINIMUM_USED_COLUMN_SLOT_COUNT;
 
       let scheduledRebuildCount = 0;
 
