@@ -13,15 +13,12 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
   flatFieldMetadatasToDelete = [],
   existingFlatFieldMetadataOptionMaps,
   applicationUniversalIdentifier,
-  shouldLeaveOtherApplicationOptions = false,
 }: {
   flatFieldMetadatasToCreate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToUpdate?: UniversalFlatFieldMetadata[];
   flatFieldMetadatasToDelete?: UniversalFlatFieldMetadata[];
   existingFlatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   applicationUniversalIdentifier: string;
-  // Set when field targets list only this application's options, so other applications' rows survive.
-  shouldLeaveOtherApplicationOptions?: boolean;
 }): FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> => {
   const operations: FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> = {
     flatEntityToCreate: [],
@@ -80,15 +77,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
 
     const fieldOperations = computeFieldMetadataOptionOperationsForField({
       targetUniversalFlatFieldMetadata,
-      existingOptions:
-        shouldLeaveOtherApplicationOptions &&
-        isDefined(targetUniversalFlatFieldMetadata)
-          ? existingOptions.filter(
-              (existingOption) =>
-                existingOption.applicationUniversalIdentifier ===
-                applicationUniversalIdentifier,
-            )
-          : existingOptions,
+      existingOptions,
       applicationUniversalIdentifier,
     });
 
