@@ -1,4 +1,4 @@
-import { buildApplicationGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/build-application-grant-role-object-permissions.util';
+import { addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions } from 'src/engine/core-modules/application/application-grant-role/utils/add-legacy-row-level-permission-rule-grants-to-grant-role-object-permissions.util';
 
 const FLAT_OBJECT_PERMISSION_WITHOUT_GRANTS = {
   canReadObjectRecords: false,
@@ -28,10 +28,10 @@ const buildGrantRoleFlatObjectPermission = ({
       >;
 }) => ({ objectMetadataUniversalIdentifier, isAdded: true, ...grants });
 
-describe('buildApplicationGrantRoleObjectPermissions', () => {
+describe('addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions', () => {
   it('should grant on all records every operation a rule of the object grants', () => {
     expect(
-      buildApplicationGrantRoleObjectPermissions({
+      addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions({
         grantRoleFlatObjectPermissions: [
           {
             objectMetadataUniversalIdentifier: 'company',
@@ -76,7 +76,7 @@ describe('buildApplicationGrantRoleObjectPermissions', () => {
 
   it('should add an object permission only for a rule that grants, leaving the other operations to their default', () => {
     expect(
-      buildApplicationGrantRoleObjectPermissions({
+      addLegacyRowLevelPermissionRuleGrantsToGrantRoleObjectPermissions({
         grantRoleFlatObjectPermissions: [],
         requestedRoleFlatRowLevelPermissionRules: [
           {
