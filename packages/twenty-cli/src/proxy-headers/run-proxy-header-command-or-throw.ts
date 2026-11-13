@@ -1,5 +1,6 @@
 import { isNumber } from '@sniptt/guards';
 import execa from 'execa';
+import { onExit } from 'signal-exit';
 
 import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
@@ -10,13 +11,21 @@ const SOURCE_NAME = 'The proxy header command';
 
 const IS_WINDOWS = process.platform === 'win32';
 
-const signalProcessGroup = ({
-  processId,
+const signalProcessTree = ({
+  subprocess,
   signalName,
 }: {
-  processId: number;
+  subprocess: execa.ExecaChildProcess;
   signalName: NodeJS.Signals;
 }) => {
+  const processId = subprocess.pid;
+
+  if (IS_WINDOWS || !isNumber(processId)) {
+    subprocess.kill(signalName);
+
+    return;
+  }
+
   try {
     process.kill(-processId, signalName);
   } catch {
@@ -27,21 +36,10 @@ const signalProcessGroup = ({
 const STOP_GRACE_PERIOD_MILLISECONDS = 1000;
 
 const stopProcessTree = (subprocess: execa.ExecaChildProcess) => {
-  const processId = subprocess.pid;
-  const canSignalGroup = !IS_WINDOWS && isNumber(processId);
-
-  if (canSignalGroup) {
-    signalProcessGroup({ processId, signalName: 'SIGTERM' });
-  } else {
-    subprocess.kill('SIGTERM');
-  }
+  signalProcessTree({ subprocess, signalName: 'SIGTERM' });
 
   setTimeout(() => {
-    if (canSignalGroup) {
-      signalProcessGroup({ processId, signalName: 'SIGKILL' });
-    } else {
-      subprocess.kill('SIGKILL');
-    }
+    signalProcessTree({ subprocess, signalName: 'SIGKILL' });
 
     // A process that left the group may still hold the pipes open.
     subprocess.stdout?.destroy();
@@ -84,6 +82,10 @@ export const runProxyHeaderCommandOrThrow = async ({
     detached: !IS_WINDOWS,
     maxBuffer: PROXY_HEADER_COMMAND.MAX_OUTPUT_BYTES,
   });
+  // execa skips its own exit cleanup for detached processes.
+  const removeExitHook = onExit(() =>
+    signalProcessTree({ subprocess, signalName: 'SIGKILL' }),
+  );
   let isTimedOut = false;
   const stop = () => stopProcessTree(subprocess);
   const timer = setTimeout(() => {
@@ -127,6 +129,7 @@ export const runProxyHeaderCommandOrThrow = async ({
       sourceName: SOURCE_NAME,
     });
   } finally {
+    removeExitHook();
     clearTimeout(timer);
     signal.removeEventListener('abort', stop);
   }

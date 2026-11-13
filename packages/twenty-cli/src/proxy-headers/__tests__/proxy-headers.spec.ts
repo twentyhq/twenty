@@ -1,6 +1,8 @@
 import { mkdtemp, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+
+import execa from 'execa';
 
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -27,6 +29,10 @@ import { createBoundedFetch } from '@/transport/create-target-fetch';
 import { subscribeGraphql } from '@/transport/graphql/subscribe-graphql';
 
 const API_KEY = 'valid-key';
+
+const PACKAGE_PATH = resolve(__dirname, '../../..');
+
+const TSX_PATH = resolve(PACKAGE_PATH, '../../node_modules/.bin/tsx');
 
 const PROXY_SIGN_IN_URL =
   'https://team.cloudflareaccess.com/cdn-cgi/access/login/twenty.example.com';
@@ -544,6 +550,46 @@ describe('proxy headers', () => {
         }
       }
     },
+  );
+
+  it.skipIf(process.platform === 'win32')(
+    'stops processes started by the header command when the CLI is terminated',
+    async () => {
+      const pidPath = join(home, 'orphan-pid');
+      const cli = execa(
+        TSX_PATH,
+        [
+          '-e',
+          `import { runProxyHeaderCommandOrThrow } from './src/proxy-headers/run-proxy-header-command-or-throw.ts';
+runProxyHeaderCommandOrThrow({ command: process.argv[1], signal: new AbortController().signal });`,
+          `echo "cf-access-token: $(sh -c 'echo $$ > ${pidPath}; exec sleep 30')"`,
+        ],
+        { cwd: PACKAGE_PATH, reject: false },
+      );
+
+      await vi.waitFor(
+        async () => {
+          expect((await readFile(pidPath, 'utf8')).trim()).not.toBe('');
+        },
+        { timeout: 10_000 },
+      );
+
+      const grandchildPid = Number((await readFile(pidPath, 'utf8')).trim());
+
+      try {
+        cli.kill('SIGTERM');
+        await cli;
+
+        await vi.waitFor(async () => {
+          expect(await isProcessRunning(grandchildPid)).toBe(false);
+        });
+      } finally {
+        if (await isProcessRunning(grandchildPid)) {
+          process.kill(grandchildPid, 'SIGKILL');
+        }
+      }
+    },
+    15_000,
   );
 
   it('keeps proxy settings out of app worker environments', () => {
