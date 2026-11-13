@@ -193,7 +193,6 @@ describe('Sync application after a workspace edit re-keyed its field options', (
       { value: 'OPEN', label: 'Open', color: 'purple', position: 1 },
     ]);
 
-    // The edit is stored as overrides, so the app rows keep their own values.
     expect(await findSelectFieldOptionRows()).toEqual(APP_OPTION_ROWS);
   }, 60000);
 

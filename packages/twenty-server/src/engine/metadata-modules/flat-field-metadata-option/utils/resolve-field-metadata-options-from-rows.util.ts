@@ -1,4 +1,8 @@
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataOptionActive,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
@@ -12,6 +16,17 @@ export type FieldMetadataOptionRowForOptions = Pick<
   Partial<
     Pick<FieldMetadataOptionEntity, 'overrides' | 'isActive' | 'applicationId'>
   >;
+
+const isOwnedByAnotherApplicationThanField = ({
+  optionApplicationId,
+  fieldApplicationId,
+}: {
+  optionApplicationId: string | undefined;
+  fieldApplicationId: string | undefined;
+}): boolean =>
+  isDefined(optionApplicationId) &&
+  isDefined(fieldApplicationId) &&
+  optionApplicationId !== fieldApplicationId;
 
 // Stored options stand for a field without rows and, with shouldRowsCoverStoredOptions, while one has no row.
 export const resolveFieldMetadataOptionsFromRows = ({
@@ -70,10 +85,13 @@ export const resolveFieldMetadataOptionsFromRows = ({
         label,
         position,
         ...(isDefined(color) ? { color } : {}),
-        ...(isActive === false ? { isActive: false } : {}),
-        ...(isDefined(applicationId) &&
-        isDefined(fieldMetadataEntity.applicationId) &&
-        applicationId !== fieldMetadataEntity.applicationId
+        ...(isFieldMetadataOptionActive({ isActive })
+          ? {}
+          : { isActive: false }),
+        ...(isOwnedByAnotherApplicationThanField({
+          optionApplicationId: applicationId,
+          fieldApplicationId: fieldMetadataEntity.applicationId,
+        })
           ? { applicationId }
           : {}),
       }),

@@ -42,7 +42,6 @@ export const computeFieldMetadataOptionOperationsForField = ({
   targetUniversalFlatFieldMetadata: UniversalFlatFieldMetadata | undefined;
   existingOptions: UniversalFlatFieldMetadataOption[];
   applicationUniversalIdentifier: string;
-  // Without it the caller is never overriding, so rows are written directly.
   workspaceCustomApplicationUniversalIdentifier?: string;
 }): FieldMetadataOptionOperations => {
   const now = new Date().toISOString();

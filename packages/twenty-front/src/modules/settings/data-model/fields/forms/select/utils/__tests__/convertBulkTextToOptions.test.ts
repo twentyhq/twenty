@@ -6,7 +6,7 @@ describe('convertBulkTextToOptions', () => {
     const text = 'Option 1\nOption 2\nOption 3';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(3);
     expect(result[0].label).toBe('Option 1');
@@ -21,7 +21,7 @@ describe('convertBulkTextToOptions', () => {
     const text = '';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(0);
   });
@@ -30,7 +30,7 @@ describe('convertBulkTextToOptions', () => {
     const text = '   \n   \n   ';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(0);
   });
@@ -39,7 +39,7 @@ describe('convertBulkTextToOptions', () => {
     const text = '  Option 1  \n  Option 2  ';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(2);
     expect(result[0].label).toBe('Option 1');
@@ -50,7 +50,7 @@ describe('convertBulkTextToOptions', () => {
     const text = 'Option 1\n\n\nOption 2\n\nOption 3';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(3);
     expect(result[0].label).toBe('Option 1');
@@ -77,7 +77,7 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('existing-id-1');
@@ -102,7 +102,7 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('existing-id');
@@ -130,7 +130,7 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('id-2');
@@ -158,7 +158,7 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    const result = convertBulkTextToOptions(text, currentOptions);
+    const result = convertBulkTextToOptions({ text, currentOptions });
 
     expect(result).toHaveLength(4);
     expect(result[0].id).toBe('existing-1');
@@ -212,7 +212,11 @@ describe('convertBulkTextToOptions', () => {
 
     it('deactivates an unlisted application option and drops an unlisted custom one', () => {
       expect(
-        convertBulkTextToOptions('New', currentOptions, applicationOptionIds),
+        convertBulkTextToOptions({
+          text: 'New',
+          currentOptions,
+          nonRemovableOptionIds: applicationOptionIds,
+        }),
       ).toEqual([
         newOption,
         { ...screeningOption, position: 1, isActive: false },
@@ -222,11 +226,11 @@ describe('convertBulkTextToOptions', () => {
 
     it('keeps an inactive option out of the text inactive', () => {
       expect(
-        convertBulkTextToOptions(
-          'New\nScreening\nPartner',
+        convertBulkTextToOptions({
+          text: 'New\nScreening\nPartner',
           currentOptions,
-          applicationOptionIds,
-        ),
+          nonRemovableOptionIds: applicationOptionIds,
+        }),
       ).toEqual(currentOptions);
     });
 
@@ -234,11 +238,11 @@ describe('convertBulkTextToOptions', () => {
       const { isActive: _isActive, ...activeLostOption } = lostOption;
 
       expect(
-        convertBulkTextToOptions(
-          'New\nScreening\nPartner\nLost!',
+        convertBulkTextToOptions({
+          text: 'New\nScreening\nPartner\nLost!',
           currentOptions,
-          applicationOptionIds,
-        ),
+          nonRemovableOptionIds: applicationOptionIds,
+        }),
       ).toEqual([
         newOption,
         screeningOption,
@@ -251,11 +255,11 @@ describe('convertBulkTextToOptions', () => {
       const { isActive: _isActive, ...activeLostOption } = lostOption;
 
       expect(
-        convertBulkTextToOptions(
-          'Lost\nNew\nScreening\nPartner',
+        convertBulkTextToOptions({
+          text: 'Lost\nNew\nScreening\nPartner',
           currentOptions,
-          applicationOptionIds,
-        ),
+          nonRemovableOptionIds: applicationOptionIds,
+        }),
       ).toEqual([
         { ...activeLostOption, position: 0 },
         { ...newOption, position: 1 },

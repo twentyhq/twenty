@@ -1,5 +1,6 @@
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { type FieldMetadataComplexOption } from 'twenty-shared/types';
+import { findOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -95,7 +96,8 @@ describe('a workspace overrides the options of a standard field', () => {
     const screeningOption = originalOptions.find(
       ({ value }) => value === 'SCREENING',
     );
-    const meetingOption = originalOptions.find(
+    const meetingOption = findOrThrow(
+      originalOptions,
       ({ value }) => value === 'MEETING',
     );
     const otherOptions = originalOptions.filter(
@@ -127,7 +129,7 @@ describe('a workspace overrides the options of a standard field', () => {
         {
           value: 'MEETING',
           label: 'Meeting',
-          color: meetingOption?.color ?? 'sky',
+          color: meetingOption.color,
           position: otherOptions.length + 2,
           isActive: false,
         },
@@ -146,7 +148,7 @@ describe('a workspace overrides the options of a standard field', () => {
     expect(
       updatedOptions.map(({ value, applicationId, isActive }) => ({
         value,
-        hasOtherOwnerThanField: applicationId !== undefined,
+        hasOtherOwnerThanField: isDefined(applicationId),
         isActive,
       })),
     ).toEqual([
@@ -165,11 +167,11 @@ describe('a workspace overrides the options of a standard field', () => {
     ).toBe(false);
 
     const updatedRows = await findOptionRows(fieldMetadataId);
-    const findRow = (rows: OptionRow[], value: string) =>
+    const findRow = ({ rows, value }: { rows: OptionRow[]; value: string }) =>
       rows.find((row) => row.value === value);
 
-    expect(findRow(updatedRows, 'SCREENING')).toEqual({
-      ...findRow(originalRows, 'SCREENING'),
+    expect(findRow({ rows: updatedRows, value: 'SCREENING' })).toEqual({
+      ...findRow({ rows: originalRows, value: 'SCREENING' }),
       overrides: {
         [workspaceCustomApplicationUniversalIdentifier]: {
           label: 'Qualifying',
@@ -178,8 +180,8 @@ describe('a workspace overrides the options of a standard field', () => {
         },
       },
     });
-    expect(findRow(updatedRows, 'MEETING')).toEqual({
-      ...findRow(originalRows, 'MEETING'),
+    expect(findRow({ rows: updatedRows, value: 'MEETING' })).toEqual({
+      ...findRow({ rows: originalRows, value: 'MEETING' }),
       overrides: {
         [workspaceCustomApplicationUniversalIdentifier]: {
           isActive: false,
@@ -187,7 +189,7 @@ describe('a workspace overrides the options of a standard field', () => {
         },
       },
     });
-    expect(findRow(updatedRows, 'ON_HOLD')).toMatchObject({
+    expect(findRow({ rows: updatedRows, value: 'ON_HOLD' })).toMatchObject({
       label: 'On hold',
       isActive: true,
       overrides: null,

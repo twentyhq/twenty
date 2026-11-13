@@ -65,7 +65,6 @@ export const restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation = ({
       fieldMetadataUniversalIdentifier
     ] = {
       ...flatFieldMetadata,
-      // What the application declares: no override, deactivation or owner
       options: resolveFieldMetadataOptionsFromRows({
         fieldMetadataEntity: {
           type: flatFieldMetadata.type,

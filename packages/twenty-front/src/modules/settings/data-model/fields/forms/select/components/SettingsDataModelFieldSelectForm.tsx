@@ -11,7 +11,11 @@ import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields
 import { convertBulkTextToOptions } from '@/settings/data-model/fields/forms/select/utils/convertBulkTextToOptions';
 import { convertOptionsToBulkText } from '@/settings/data-model/fields/forms/select/utils/convertOptionsToBulkText';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
+import { clearSelectOptionsKeepingApplicationOnes } from '@/settings/data-model/fields/forms/select/utils/clearSelectOptionsKeepingApplicationOnes';
+import { getApplicationSelectOptionIds } from '@/settings/data-model/fields/forms/select/utils/getApplicationSelectOptionIds';
+import { keepDefaultSelectOptionsActive } from '@/settings/data-model/fields/forms/select/utils/keepDefaultSelectOptionsActive';
 import { setSelectOptionIsActive } from '@/settings/data-model/fields/forms/select/utils/setSelectOptionIsActive';
+import { splitSelectOptionsByIsActive } from '@/settings/data-model/fields/forms/select/utils/splitSelectOptionsByIsActive';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -148,24 +152,11 @@ export const SettingsDataModelFieldSelectForm = ({
   );
   const isNullable = fieldMetadataItem?.isNullable;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const workspaceCustomApplicationId =
-    currentWorkspace?.workspaceCustomApplication?.id;
-  // Options another application ships can only be deactivated, and keep their API value.
-  const applicationOptionIds = new Set(
-    isDefined(workspaceCustomApplicationId)
-      ? (fieldMetadataItem?.options ?? [])
-          .filter((option) => {
-            const optionApplicationId =
-              option.applicationId ?? fieldMetadataItem?.applicationId;
-
-            return (
-              isDefined(optionApplicationId) &&
-              optionApplicationId !== workspaceCustomApplicationId
-            );
-          })
-          .map((option) => option.id)
-      : [],
-  );
+  const applicationOptionIds = getApplicationSelectOptionIds({
+    fieldMetadataItem,
+    workspaceCustomApplicationId:
+      currentWorkspace?.workspaceCustomApplication?.id,
+  });
 
   const [searchParams] = useSearchParams();
 
@@ -213,10 +204,8 @@ export const SettingsDataModelFieldSelectForm = ({
       return;
     }
 
-    const activeOptions = values.filter((option) => option.isActive !== false);
-    const inactiveOptions = values.filter(
-      (option) => option.isActive === false,
-    );
+    const { activeOptions, inactiveOptions } =
+      splitSelectOptionsByIsActive(values);
     const nextOptions = [
       ...moveArrayItem(activeOptions, {
         fromIndex: result.source.index,
@@ -298,12 +287,8 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const getOptionsWithNewOption = () => {
     const currentOptions = getValues('options');
-    const activeOptions = currentOptions.filter(
-      (option) => option.isActive !== false,
-    );
-    const inactiveOptions = currentOptions.filter(
-      (option) => option.isActive === false,
-    );
+    const { activeOptions, inactiveOptions } =
+      splitSelectOptionsByIsActive(currentOptions);
 
     return [
       ...activeOptions,
@@ -326,7 +311,13 @@ export const SettingsDataModelFieldSelectForm = ({
     );
   };
 
-  const handleSetOptionIsActive = (optionId: string, isActive: boolean) => {
+  const handleSetOptionIsActive = ({
+    optionId,
+    isActive,
+  }: {
+    optionId: string;
+    isActive: boolean;
+  }) => {
     if (disabled) {
       return;
     }
@@ -341,38 +332,6 @@ export const SettingsDataModelFieldSelectForm = ({
       { shouldDirty: true, shouldValidate: true },
     );
   };
-
-  // The server refuses an inactive default option, so it stays active until the default changes.
-  const keepDefaultSelectOptionsActive = (
-    options: FieldMetadataItemOption[],
-  ): FieldMetadataItemOption[] => {
-    const activeOptions: FieldMetadataItemOption[] = [];
-    const inactiveOptions: FieldMetadataItemOption[] = [];
-
-    for (const option of options) {
-      const { isActive, ...activeOption } = option;
-
-      if (isActive !== false || isOptionDefaultValue(option.value)) {
-        activeOptions.push(activeOption);
-      } else {
-        inactiveOptions.push(option);
-      }
-    }
-
-    return [...activeOptions, ...inactiveOptions].map((option, position) => ({
-      ...option,
-      position,
-    }));
-  };
-
-  const clearSelectOptionsKeepingApplicationOnes = (
-    options: FieldMetadataItemOption[],
-  ) =>
-    keepDefaultSelectOptionsActive(
-      options
-        .filter((option) => applicationOptionIds.has(option.id))
-        .map((option) => ({ ...option, isActive: false })),
-    );
 
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
@@ -404,135 +363,142 @@ export const SettingsDataModelFieldSelectForm = ({
         name="options"
         control={control}
         defaultValue={initialOptions}
-        render={({ field: { onChange, value: options } }) => (
-          <>
-            <Card.Content>
-              <StyledOptionsHeaderContainer>
-                <StyledLabelContainer>
-                  <Collapsible.Root
-                    open={isApiValuesVisible && !isBulkInputMode}
-                  >
-                    <Collapsible.Panel
-                      dimension="width"
-                      containAnimation={false}
+        render={({ field: { onChange, value: options } }) => {
+          const { activeOptions, inactiveOptions } =
+            splitSelectOptionsByIsActive(options);
+
+          return (
+            <>
+              <Card.Content>
+                <StyledOptionsHeaderContainer>
+                  <StyledLabelContainer>
+                    <Collapsible.Root
+                      open={isApiValuesVisible && !isBulkInputMode}
                     >
-                      <StyledApiValuesLabel>{t`API values`}</StyledApiValuesLabel>
-                    </Collapsible.Panel>
-                  </Collapsible.Root>
-                  <StyledOptionsLabel
-                    isApiValuesVisible={isApiValuesVisible}
-                    isBulkInputMode={isBulkInputMode}
-                  >
-                    {t`Options`}
-                  </StyledOptionsLabel>
-                </StyledLabelContainer>
-                {!disabled && (
-                  <DropdownRoot dropdownId={OPTIONS_DROPDOWN_ID} type="menu">
-                    <Dropdown.Trigger
-                      render={
-                        <LightIconButton
-                          emphasis="subtle"
-                          aria-label={t`More options`}
-                        >
-                          <IconDotsVertical />
-                        </LightIconButton>
-                      }
-                    />
-                    <DropdownContent
-                      width={GenericDropdownContentWidth.Narrow}
-                      align="end"
+                      <Collapsible.Panel
+                        dimension="width"
+                        containAnimation={false}
+                      >
+                        <StyledApiValuesLabel>{t`API values`}</StyledApiValuesLabel>
+                      </Collapsible.Panel>
+                    </Collapsible.Root>
+                    <StyledOptionsLabel
+                      isApiValuesVisible={isApiValuesVisible}
+                      isBulkInputMode={isBulkInputMode}
                     >
-                      <Dropdown.Section>
-                        <Dropdown.ActionItem
-                          startIcon={<IconPencil />}
-                          onClick={() => {
-                            if (!isBulkInputMode) {
-                              setBulkInputText(
-                                convertOptionsToBulkText(options),
-                              );
-                            }
-                            setIsBulkInputMode(
-                              (currentInputMode) => !currentInputMode,
-                            );
-                          }}
-                        >
-                          {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
-                        </Dropdown.ActionItem>
-                        {!isBulkInputMode && (
+                      {t`Options`}
+                    </StyledOptionsLabel>
+                  </StyledLabelContainer>
+                  {!disabled && (
+                    <DropdownRoot dropdownId={OPTIONS_DROPDOWN_ID} type="menu">
+                      <Dropdown.Trigger
+                        render={
+                          <LightIconButton
+                            emphasis="subtle"
+                            aria-label={t`More options`}
+                          >
+                            <IconDotsVertical />
+                          </LightIconButton>
+                        }
+                      />
+                      <DropdownContent
+                        width={GenericDropdownContentWidth.Narrow}
+                        align="end"
+                      >
+                        <Dropdown.Section>
                           <Dropdown.ActionItem
-                            startIcon={<IconApi />}
+                            startIcon={<IconPencil />}
+                            onClick={() => {
+                              if (!isBulkInputMode) {
+                                setBulkInputText(
+                                  convertOptionsToBulkText(options),
+                                );
+                              }
+                              setIsBulkInputMode(
+                                (currentInputMode) => !currentInputMode,
+                              );
+                            }}
+                          >
+                            {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
+                          </Dropdown.ActionItem>
+                          {!isBulkInputMode && (
+                            <Dropdown.ActionItem
+                              startIcon={<IconApi />}
+                              onClick={() =>
+                                setIsApiValuesVisible(
+                                  (currentIsApiValuesVisible) =>
+                                    !currentIsApiValuesVisible,
+                                )
+                              }
+                            >
+                              {isApiValuesVisible
+                                ? t`Hide API values`
+                                : t`Show API values`}
+                            </Dropdown.ActionItem>
+                          )}
+                          <Dropdown.ActionItem
+                            color="danger"
+                            startIcon={<IconTrash />}
                             onClick={() =>
-                              setIsApiValuesVisible(
-                                (currentIsApiValuesVisible) =>
-                                  !currentIsApiValuesVisible,
+                              onChange(
+                                clearSelectOptionsKeepingApplicationOnes({
+                                  options,
+                                  applicationOptionIds,
+                                  isDefaultOptionValue: isOptionDefaultValue,
+                                }),
                               )
                             }
-                          >
-                            {isApiValuesVisible
-                              ? t`Hide API values`
-                              : t`Show API values`}
-                          </Dropdown.ActionItem>
-                        )}
-                        <Dropdown.ActionItem
-                          color="danger"
-                          startIcon={<IconTrash />}
-                          onClick={() =>
-                            onChange(
-                              clearSelectOptionsKeepingApplicationOnes(options),
-                            )
-                          }
-                        >{t`Remove all`}</Dropdown.ActionItem>
-                      </Dropdown.Section>
-                    </DropdownContent>
-                  </DropdownRoot>
-                )}
-              </StyledOptionsHeaderContainer>
+                          >{t`Remove all`}</Dropdown.ActionItem>
+                        </Dropdown.Section>
+                      </DropdownContent>
+                    </DropdownRoot>
+                  )}
+                </StyledOptionsHeaderContainer>
 
-              {isBulkInputMode ? (
-                <StyledTextAreaContainer>
-                  <TextArea
-                    textAreaId="bulk-options-input"
-                    placeholder={t`Enter one option per line`}
-                    value={bulkInputText}
-                    onChange={(nextOptionAsText) => {
-                      if (disabled) {
-                        return;
+                {isBulkInputMode ? (
+                  <StyledTextAreaContainer>
+                    <TextArea
+                      textAreaId="bulk-options-input"
+                      placeholder={t`Enter one option per line`}
+                      value={bulkInputText}
+                      onChange={(nextOptionAsText) => {
+                        if (disabled) {
+                          return;
+                        }
+
+                        const nextOptions = keepDefaultSelectOptionsActive({
+                          options: convertBulkTextToOptions({
+                            text: nextOptionAsText,
+                            currentOptions: options,
+                            nonRemovableOptionIds: applicationOptionIds,
+                          }),
+                          isDefaultOptionValue: isOptionDefaultValue,
+                        });
+
+                        onChange(nextOptions);
+                        setBulkInputText(nextOptionAsText);
+                      }}
+                      minRows={5}
+                      maxRows={15}
+                      disabled={disabled}
+                    />
+                    <StyledHelpText>
+                      {applicationOptionIds.size > 0
+                        ? t`Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed.`
+                        : t`Enter one option per line. Each line will become a new option.`}
+                    </StyledHelpText>
+                  </StyledTextAreaContainer>
+                ) : (
+                  <>
+                    <DraggableList
+                      onDragEnd={(result) =>
+                        !disabled
+                          ? handleDragEnd(options, result, onChange)
+                          : undefined
                       }
-
-                      const nextOptions = keepDefaultSelectOptionsActive(
-                        convertBulkTextToOptions(
-                          nextOptionAsText,
-                          options,
-                          applicationOptionIds,
-                        ),
-                      );
-
-                      onChange(nextOptions);
-                      setBulkInputText(nextOptionAsText);
-                    }}
-                    minRows={5}
-                    maxRows={15}
-                    disabled={disabled}
-                  />
-                  <StyledHelpText>
-                    {applicationOptionIds.size > 0
-                      ? t`Enter one option per line. Each line will become a new option. Options that come with the field are deactivated when their line is removed.`
-                      : t`Enter one option per line. Each line will become a new option.`}
-                  </StyledHelpText>
-                </StyledTextAreaContainer>
-              ) : (
-                <>
-                  <DraggableList
-                    onDragEnd={(result) =>
-                      !disabled
-                        ? handleDragEnd(options, result, onChange)
-                        : undefined
-                    }
-                    draggableItems={
-                      <>
-                        {options
-                          .filter((option) => option.isActive !== false)
-                          .map((option, index, activeOptions) => (
+                      draggableItems={
+                        <>
+                          {activeOptions.map((option, index) => (
                             <DraggableItem
                               key={option.id}
                               draggableId={option.id}
@@ -574,10 +540,13 @@ export const SettingsDataModelFieldSelectForm = ({
                                       : () => handleRemoveOption(option.id)
                                   }
                                   onDeactivate={() =>
-                                    handleSetOptionIsActive(option.id, false)
+                                    handleSetOptionIsActive({
+                                      optionId: option.id,
+                                      isActive: false,
+                                    })
                                   }
                                   isDefault={isOptionDefaultValue(option.value)}
-                                  fieldIsNullable={!!isNullable}
+                                  fieldIsNullable={isNullable ?? false}
                                   onSetAsDefault={() => {
                                     if (disabled) {
                                       return;
@@ -600,15 +569,13 @@ export const SettingsDataModelFieldSelectForm = ({
                               }
                             />
                           ))}
-                      </>
-                    }
-                  />
-                  {options.some((option) => option.isActive === false) && (
-                    <>
-                      <StyledInactiveOptionsLabel>{t`Inactive`}</StyledInactiveOptionsLabel>
-                      {options
-                        .filter((option) => option.isActive === false)
-                        .map((option) => (
+                        </>
+                      }
+                    />
+                    {inactiveOptions.length > 0 && (
+                      <>
+                        <StyledInactiveOptionsLabel>{t`Inactive`}</StyledInactiveOptionsLabel>
+                        {inactiveOptions.map((option) => (
                           <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
@@ -621,26 +588,30 @@ export const SettingsDataModelFieldSelectForm = ({
                                 : () => handleRemoveOption(option.id)
                             }
                             onActivate={() =>
-                              handleSetOptionIsActive(option.id, true)
+                              handleSetOptionIsActive({
+                                optionId: option.id,
+                                isActive: true,
+                              })
                             }
                           />
                         ))}
-                    </>
-                  )}
-                </>
+                      </>
+                    )}
+                  </>
+                )}
+              </Card.Content>
+              {!disabled && !isBulkInputMode && (
+                <StyledFooter>
+                  <LightButton
+                    startIcon={<IconPlus />}
+                    fullWidth
+                    onClick={handleAddOption}
+                  >{t`Add option`}</LightButton>
+                </StyledFooter>
               )}
-            </Card.Content>
-            {!disabled && !isBulkInputMode && (
-              <StyledFooter>
-                <LightButton
-                  startIcon={<IconPlus />}
-                  fullWidth
-                  onClick={handleAddOption}
-                >{t`Add option`}</LightButton>
-              </StyledFooter>
-            )}
-          </>
-        )}
+            </>
+          );
+        }}
       />
     </>
   );

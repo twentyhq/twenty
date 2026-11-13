@@ -2,7 +2,7 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type FieldMetadataOption =
@@ -47,13 +47,12 @@ export const normalizeUpdatedFieldMetadataOptions = <
       updatedOptionId === undefined
         ? (existingOption?.id ?? v4())
         : updatedOptionId;
-    // Read-only: the owner comes from the option's row, never from the input.
     const applicationId = existingOptionById.get(id)?.applicationId;
 
     return {
       id,
       ...optionProperties,
-      ...(isActive === false ? { isActive: false } : {}),
+      ...(isFieldMetadataOptionActive({ isActive }) ? {} : { isActive: false }),
       ...(isDefined(applicationId) ? { applicationId } : {}),
     } as TOption;
   });

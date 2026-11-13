@@ -1,5 +1,6 @@
 import { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from 'twenty-shared/constants';
 import { type EnumFieldMetadataType } from 'twenty-shared/types';
+import { isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -10,7 +11,6 @@ import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modu
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { reduceFlatViewGroupsByViewUniversalIdentifier } from 'src/engine/metadata-modules/flat-view-group/utils/reduce-flat-view-groups-by-view-universal-identifier.util';
 
-// A view left without any group gets its first one at position 0.
 const NO_VIEW_GROUP_POSITION = -1;
 
 type RecomputeViewGroupsOnFlatFieldMetadataOptionsUpdateArgs = {
@@ -37,9 +37,9 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
     compareLabel: false,
     // An inactive option has no group, so deactivating removes it and reactivating recreates it.
     fromOptions: fromFlatFieldMetadata.options.filter(
-      (option) => option.isActive !== false,
+      isFieldMetadataOptionActive,
     ),
-    toOptions: toOptions.filter((option) => option.isActive !== false),
+    toOptions: toOptions.filter(isFieldMetadataOptionActive),
   });
 
   const flatViewsAffected = findManyFlatEntityByIdInFlatEntityMapsOrThrow({

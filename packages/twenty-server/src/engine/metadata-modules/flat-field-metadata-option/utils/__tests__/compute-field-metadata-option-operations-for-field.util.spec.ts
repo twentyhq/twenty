@@ -75,7 +75,7 @@ const computeOperations = ({
       CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
   });
 
-const editedTargetField = {
+const editedTargetField = getFlatFieldMetadataMock({
   ...targetField,
   options: [
     {
@@ -94,7 +94,7 @@ const editedTargetField = {
       isActive: false,
     },
   ],
-} as typeof targetField;
+});
 
 describe('computeFieldMetadataOptionOperationsForField', () => {
   it("creates rows on another app's field that has none", () => {
