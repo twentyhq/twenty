@@ -1,12 +1,14 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RECORD_INDEX_ALL_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexAllTabId';
 import { RECORD_INDEX_NO_VALUE_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexNoValueTabId';
 import { RECORD_INDEX_TAB_QUERY_PARAM_KEY } from '@/object-record/record-index-tab/constants/RecordIndexTabQueryParamKey';
 import { useRecordIndexTabRecordCounts } from '@/object-record/record-index-tab/hooks/useRecordIndexTabRecordCounts';
 import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
 import { activeRecordIndexTabIdComponentSelector } from '@/object-record/record-index-tab/states/selectors/activeRecordIndexTabIdComponentSelector';
 import { isRecordIndexTabsDisplayedComponentSelector } from '@/object-record/record-index-tab/states/selectors/isRecordIndexTabsDisplayedComponentSelector';
-import { recordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabsComponentSelector';
+import { visibleRecordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/visibleRecordIndexTabsComponentSelector';
+import { recordIndexViewTabsComponentState } from '@/object-record/record-index-tab/states/recordIndexViewTabsComponentState';
+import { type RecordIndexTab } from '@/object-record/record-index-tab/types/RecordIndexTab';
+import { RecordIndexCustomTabCount } from '@/object-record/record-index-tab/components/RecordIndexCustomTabCount';
+import { useGetRecordIndexTabLabel } from '@/object-record/record-index-tab/hooks/useGetRecordIndexTabLabel';
 import { getRecordIndexTabColorDotIcon } from '@/object-record/record-index-tab/utils/getRecordIndexTabColorDotIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
@@ -51,21 +53,25 @@ const StyledTabList = styled(TabList)`
   }
 `;
 
-type RecordIndexTabsContentProps = {
-  recordIndexTabFieldMetadataItem: FieldMetadataItem;
-};
-
-const RecordIndexTabsContent = ({
-  recordIndexTabFieldMetadataItem,
-}: RecordIndexTabsContentProps) => {
+const RecordIndexTabsContent = () => {
   const { t } = useLingui();
 
   const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { formatNumber } = useNumberFormat();
 
-  const recordIndexTabs = useAtomComponentSelectorValue(
-    recordIndexTabsComponentSelector,
+  const { getRecordIndexTabLabel } = useGetRecordIndexTabLabel();
+
+  const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexTabFieldMetadataItemComponentState,
+  );
+
+  const visibleRecordIndexTabs = useAtomComponentSelectorValue(
+    visibleRecordIndexTabsComponentSelector,
+  );
+
+  const recordIndexViewTabs = useAtomComponentStateValue(
+    recordIndexViewTabsComponentState,
   );
 
   const activeRecordIndexTabId = useAtomComponentSelectorValue(
@@ -99,28 +105,37 @@ const RecordIndexTabsContent = ({
     (isDefined(noValueRecordCount) && noValueRecordCount > 0) ||
     activeRecordIndexTabId === RECORD_INDEX_NO_VALUE_TAB_ID;
 
-  const tabs: SingleTabProps[] = [
-    ...recordIndexTabs.map((recordIndexTab) => ({
+  const getTabPill = (recordIndexTab: RecordIndexTab) => {
+    switch (recordIndexTab.kind) {
+      case 'all':
+        return formatRecordCount(totalCount);
+      case 'noValue':
+        return formatRecordCount(noValueRecordCount);
+      case 'custom':
+        return (
+          <RecordIndexCustomTabCount
+            viewFilters={
+              recordIndexViewTabs.find(
+                ({ id }) => id === recordIndexTab.viewTabId,
+              )?.viewFilters ?? []
+            }
+          />
+        );
+      default:
+        return formatRecordCount(getRecordCount(recordIndexTab.id));
+    }
+  };
+
+  const tabs: SingleTabProps[] = visibleRecordIndexTabs
+    .filter(({ kind }) => kind !== 'noValue' || shouldShowNoValueTab)
+    .map((recordIndexTab) => ({
       id: recordIndexTab.id,
-      title: recordIndexTab.label,
-      Icon: getRecordIndexTabColorDotIcon(recordIndexTab.color),
-      pill: formatRecordCount(getRecordCount(recordIndexTab.id)),
-    })),
-    ...(shouldShowNoValueTab
-      ? [
-          {
-            id: RECORD_INDEX_NO_VALUE_TAB_ID,
-            title: t`No value`,
-            pill: formatRecordCount(noValueRecordCount),
-          },
-        ]
-      : []),
-    {
-      id: RECORD_INDEX_ALL_TAB_ID,
-      title: t`All`,
-      pill: formatRecordCount(totalCount),
-    },
-  ];
+      title: getRecordIndexTabLabel(recordIndexTab),
+      Icon: isDefined(recordIndexTab.color)
+        ? getRecordIndexTabColorDotIcon(recordIndexTab.color)
+        : undefined,
+      pill: getTabPill(recordIndexTab),
+    }));
 
   const tabIdFromQueryParams = searchParams.get(
     RECORD_INDEX_TAB_QUERY_PARAM_KEY,
@@ -134,7 +149,7 @@ const RecordIndexTabsContent = ({
       : activeRecordIndexTabId;
 
   // A fresh instance per field keeps a stale option from staying selected
-  const tabListInstanceId = `record-index-tabs-${recordIndexId}-${recordIndexTabFieldMetadataItem.id}`;
+  const tabListInstanceId = `record-index-tabs-${recordIndexId}-${recordIndexTabFieldMetadataItem?.id ?? 'custom'}`;
 
   const handleChangeTab = (recordIndexTabId: string) => {
     if (recordIndexTabId === activeRecordIndexTabId) {
@@ -163,7 +178,7 @@ const RecordIndexTabsContent = ({
       <StyledSeparator />
       <TabListRoot componentInstanceId={tabListInstanceId}>
         <StyledTabList
-          aria-label={recordIndexTabFieldMetadataItem.label}
+          aria-label={recordIndexTabFieldMetadataItem?.label ?? t`Tabs`}
           tabs={tabs}
           behaveAsLinks={false}
           componentInstanceId={tabListInstanceId}
@@ -180,20 +195,9 @@ export const RecordIndexTabs = () => {
     isRecordIndexTabsDisplayedComponentSelector,
   );
 
-  const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
-    recordIndexTabFieldMetadataItemComponentState,
-  );
-
-  if (
-    !isRecordIndexTabsDisplayed ||
-    !isDefined(recordIndexTabFieldMetadataItem)
-  ) {
+  if (!isRecordIndexTabsDisplayed) {
     return null;
   }
 
-  return (
-    <RecordIndexTabsContent
-      recordIndexTabFieldMetadataItem={recordIndexTabFieldMetadataItem}
-    />
-  );
+  return <RecordIndexTabsContent />;
 };

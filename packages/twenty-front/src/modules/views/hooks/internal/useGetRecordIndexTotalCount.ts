@@ -5,6 +5,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,7 +16,13 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
-export const useGetRecordIndexTotalCount = () => {
+type UseGetRecordIndexTotalCountArgs = {
+  additionalRecordFilters?: RecordFilter[];
+};
+
+export const useGetRecordIndexTotalCount = ({
+  additionalRecordFilters = [],
+}: UseGetRecordIndexTotalCountArgs = {}) => {
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const currentRecordFilterGroups = useAtomComponentStateValue(
@@ -37,7 +44,11 @@ export const useGetRecordIndexTotalCount = () => {
 
   const computedFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
+    recordFilters: [
+      ...currentRecordFilters,
+      ...recordGroupsVisibilityFilter,
+      ...additionalRecordFilters,
+    ],
     recordFilterGroups: currentRecordFilterGroups,
     fieldMetadataItems: flattenedFieldMetadataItems,
   });

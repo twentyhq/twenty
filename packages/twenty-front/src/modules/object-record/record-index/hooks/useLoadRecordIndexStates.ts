@@ -25,6 +25,7 @@ import { recordIndexGroupAggregateOperationComponentState } from '@/object-recor
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { recordIndexKanbanColumnWidthComponentState } from '@/object-record/record-index/states/recordIndexKanbanColumnWidthComponentState';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
+import { recordIndexViewTabsComponentState } from '@/object-record/record-index-tab/states/recordIndexViewTabsComponentState';
 import { recordIndexShouldHideEmptyRecordGroupsComponentState } from '@/object-record/record-index/states/recordIndexShouldHideEmptyRecordGroupsComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
@@ -81,6 +82,10 @@ export const useLoadRecordIndexStates = () => {
     useAtomComponentStateCallbackState(
       recordIndexTabFieldMetadataItemComponentState,
     );
+
+  const recordIndexViewTabsAtom = useAtomComponentStateCallbackState(
+    recordIndexViewTabsComponentState,
+  );
 
   const recordIndexKanbanColumnWidthAtom = useAtomComponentStateCallbackState(
     recordIndexKanbanColumnWidthComponentState,
@@ -369,6 +374,8 @@ export const useLoadRecordIndexStates = () => {
             ),
           );
 
+          batchSet(recordIndexViewTabsAtom, view.viewTabs ?? []);
+
           batchSet(
             recordIndexKanbanColumnWidthAtom,
             clampRecordBoardColumnWidth(
@@ -422,6 +429,7 @@ export const useLoadRecordIndexStates = () => {
       recordIndexGroupAggregateFieldMetadataItemAtom,
       recordIndexShouldHideEmptyRecordGroupsAtom,
       recordIndexTabFieldMetadataItemAtom,
+      recordIndexViewTabsAtom,
       recordIndexKanbanColumnWidthAtom,
       recordIndexGroupLoadLimitAtom,
       getFieldMetadataItemByIdOrThrow,

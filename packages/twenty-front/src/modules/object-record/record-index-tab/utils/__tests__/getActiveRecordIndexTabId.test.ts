@@ -33,12 +33,21 @@ describe('getActiveRecordIndexTabId', () => {
     expect(
       getActiveRecordIndexTabId({
         selectedRecordIndexTabId: RECORD_INDEX_ALL_TAB_ID,
-        recordIndexTabIds: ['CONTACTED', 'REPLIED'],
+        recordIndexTabIds: ['CONTACTED', 'REPLIED', RECORD_INDEX_ALL_TAB_ID],
       }),
     ).toBe(RECORD_INDEX_ALL_TAB_ID);
   });
 
-  it('should fall back to the All tab when the field has no option', () => {
+  it('should fall back to the first tab when the selected All tab is hidden', () => {
+    expect(
+      getActiveRecordIndexTabId({
+        selectedRecordIndexTabId: RECORD_INDEX_ALL_TAB_ID,
+        recordIndexTabIds: ['CONTACTED', 'REPLIED'],
+      }),
+    ).toBe('CONTACTED');
+  });
+
+  it('should fall back to the All tab when no tab is visible', () => {
     expect(
       getActiveRecordIndexTabId({
         selectedRecordIndexTabId: null,

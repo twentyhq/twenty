@@ -12,8 +12,7 @@ export const getActiveRecordIndexTabId = ({
 }: GetActiveRecordIndexTabIdArgs): string => {
   if (
     isDefined(selectedRecordIndexTabId) &&
-    (selectedRecordIndexTabId === RECORD_INDEX_ALL_TAB_ID ||
-      recordIndexTabIds.includes(selectedRecordIndexTabId))
+    recordIndexTabIds.includes(selectedRecordIndexTabId)
   ) {
     return selectedRecordIndexTabId;
   }

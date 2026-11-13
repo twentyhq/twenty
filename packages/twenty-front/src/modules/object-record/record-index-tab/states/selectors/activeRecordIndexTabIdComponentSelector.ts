@@ -1,8 +1,7 @@
-import { RECORD_INDEX_NO_VALUE_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexNoValueTabId';
 import { RECORD_INDEX_ALL_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexAllTabId';
 import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
 import { isRecordIndexTabsDisplayedComponentSelector } from '@/object-record/record-index-tab/states/selectors/isRecordIndexTabsDisplayedComponentSelector';
-import { recordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabsComponentSelector';
+import { visibleRecordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/visibleRecordIndexTabsComponentSelector';
 import { getActiveRecordIndexTabId } from '@/object-record/record-index-tab/utils/getActiveRecordIndexTabId';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -23,12 +22,9 @@ export const activeRecordIndexTabIdComponentSelector =
             selectedRecordIndexTabIdComponentState,
             { instanceId },
           ),
-          recordIndexTabIds: [
-            ...get(recordIndexTabsComponentSelector, { instanceId }).map(
-              ({ id }) => id,
-            ),
-            RECORD_INDEX_NO_VALUE_TAB_ID,
-          ],
+          recordIndexTabIds: get(visibleRecordIndexTabsComponentSelector, {
+            instanceId,
+          }).map(({ id }) => id),
         });
       },
   });

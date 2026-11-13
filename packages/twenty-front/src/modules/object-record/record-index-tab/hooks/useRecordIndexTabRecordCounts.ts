@@ -26,7 +26,7 @@ const COUNT_GQL_FIELD = 'totalCount';
 
 // Counts every tab under the view's filters, so they do not move with the active tab
 export const useRecordIndexTabRecordCounts = (
-  recordIndexTabFieldMetadataItem: FieldMetadataItem,
+  recordIndexTabFieldMetadataItem: FieldMetadataItem | undefined,
 ) => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -76,7 +76,7 @@ export const useRecordIndexTabRecordCounts = (
     [objectMetadataItem],
   );
 
-  const optionCount = recordIndexTabFieldMetadataItem.options?.length ?? 0;
+  const optionCount = recordIndexTabFieldMetadataItem?.options?.length ?? 0;
 
   const { data } = useQuery(groupByAggregateQuery, {
     variables: {
@@ -85,13 +85,14 @@ export const useRecordIndexTabRecordCounts = (
         viewFilter,
         recordGroupGqlFilter ?? {},
       ]),
-      groupBy: buildGroupByFieldObject({
-        field: recordIndexTabFieldMetadataItem,
-      }),
+      groupBy: isDefined(recordIndexTabFieldMetadataItem)
+        ? buildGroupByFieldObject({ field: recordIndexTabFieldMetadataItem })
+        : {},
       // One extra group for records without a value
       limit: optionCount + 1,
     },
     client: apolloCoreClient,
+    skip: !isDefined(recordIndexTabFieldMetadataItem),
   });
 
   const recordCountByRecordIndexTabId = useMemo(() => {
