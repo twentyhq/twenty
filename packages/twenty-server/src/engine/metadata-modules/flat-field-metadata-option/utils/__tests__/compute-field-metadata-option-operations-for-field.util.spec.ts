@@ -59,18 +59,20 @@ const computeOperations = ({
   computeFieldMetadataOptionOperationsForField({
     targetUniversalFlatFieldMetadata: targetField,
     existingOptions,
-    isUniversalIdentifierUsedByOtherField: () => false,
     applicationUniversalIdentifier,
   });
 
 describe('computeFieldMetadataOptionOperationsForField', () => {
-  it("leaves another app's field without rows to the backfill", () => {
+  it("creates rows on another app's field that has none", () => {
     const operations = computeOperations({
       existingOptions: [],
       applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
     });
 
-    expect(Object.keys(operations.flatEntityToCreate)).toEqual([]);
+    expect(Object.keys(operations.flatEntityToCreate).sort()).toEqual([
+      OPEN_OPTION_ID,
+      CLOSED_OPTION_ID,
+    ]);
   });
 
   it("creates rows for the caller's own field", () => {

@@ -107,6 +107,7 @@ export class CompleteViewUpsertService {
 
     const {
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
       flatViewGroupMaps,
@@ -121,6 +122,7 @@ export class CompleteViewUpsertService {
           workspaceId,
           flatMapsKeys: [
             'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
             'flatObjectMetadataMaps',
             'flatViewMaps',
             'flatViewGroupMaps',
@@ -146,6 +148,7 @@ export class CompleteViewUpsertService {
           flatViewMaps,
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         })
       : this.buildCreateViewRootOperationsOrThrow({
           objectMetadataId,
@@ -162,6 +165,7 @@ export class CompleteViewUpsertService {
           userWorkspaceId,
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           flatObjectMetadataMaps,
         });
 
@@ -259,6 +263,7 @@ export class CompleteViewUpsertService {
     userWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
   }: {
     objectMetadataId?: string;
@@ -275,6 +280,7 @@ export class CompleteViewUpsertService {
     userWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   }): ViewUpsertRootOperations {
     if (!isDefined(objectMetadataId)) {
@@ -302,6 +308,7 @@ export class CompleteViewUpsertService {
         createdByUserWorkspaceId: userWorkspaceId,
         flatApplication,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         flatObjectMetadataMaps,
       });
 
@@ -335,6 +342,7 @@ export class CompleteViewUpsertService {
     flatViewMaps,
     flatViewGroupMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
   }: {
     existingViewId: string;
     name?: string;
@@ -345,6 +353,7 @@ export class CompleteViewUpsertService {
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewGroupMaps: AllFlatEntityMaps['flatViewGroupMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
+    flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   }): ViewUpsertRootOperations {
     if (
       !isDefined(name) &&
@@ -365,6 +374,7 @@ export class CompleteViewUpsertService {
         flatViewMaps,
         flatViewGroupMaps,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         userWorkspaceId,
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

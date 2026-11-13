@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
+import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
@@ -58,11 +58,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const leave = async () => {
-  const { result } = renderHook(() => useLeaveRemovedAiChatThread(), {
+  const { result } = renderHook(() => useLeaveRemovedInboxThread(), {
     wrapper: Wrapper,
   });
 
-  await act(() => result.current.leaveRemovedAiChatThread());
+  await act(() => result.current.leaveRemovedInboxThread());
 };
 
 describe('useLeaveRemovedAiChatThread', () => {

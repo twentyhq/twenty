@@ -13,6 +13,7 @@ export const buildUniversalFlatFieldMetadataOptionsForField = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatFieldMetadataOption[] => {
+  // TODO: drop the availability check once every instance has run the 2.56 option table command.
   if (
     !isFieldMetadataOptionEntityAvailable() ||
     isFieldMetadataOptionSyncSkipped(universalFlatFieldMetadata)

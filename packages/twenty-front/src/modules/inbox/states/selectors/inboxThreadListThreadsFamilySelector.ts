@@ -7,7 +7,7 @@ import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatTh
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { filterAiChatThreadsWithinLoadedPages } from '@/ai/utils/filterAiChatThreadsWithinLoadedPages';
+import { filterInboxThreadsWithinLoadedPages } from '@/inbox/utils/filterInboxThreadsWithinLoadedPages';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { isInboxThreadInChannelView } from '@/inbox/utils/isInboxThreadInChannelView';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -73,7 +73,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
         );
       });
 
-      return filterAiChatThreadsWithinLoadedPages({
+      return filterInboxThreadsWithinLoadedPages({
         threads,
         pagedList: threadList,
       });

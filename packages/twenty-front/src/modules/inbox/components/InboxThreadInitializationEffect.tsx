@@ -34,7 +34,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const AI_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
-export const AiChatThreadInitializationEffect = () => {
+export const InboxThreadInitializationEffect = () => {
   const { loadInboxThreadList } = useLoadInboxThreadList();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(

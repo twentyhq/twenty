@@ -3,7 +3,6 @@ import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   type EnumFieldMetadataType,
-  type FieldMetadataOptions,
   type NonNullableRequired,
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -15,13 +14,9 @@ import { validateFieldMetadataInputOptions } from 'src/engine/metadata-modules/f
 import { validateSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-select-option-colors.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-const validateSelectDefaultValue = ({
-  defaultValue,
-  options,
-}: {
-  options: FieldMetadataOptions<EnumFieldMetadataType>;
-  defaultValue: string | string[];
-}): FlatFieldMetadataValidationError[] => {
+const validateSelectDefaultValue = (
+  defaultValue: string | string[],
+): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   if (typeof defaultValue !== 'string') {
@@ -44,30 +39,12 @@ const validateSelectDefaultValue = ({
     });
   }
 
-  const matchesOptionValue = options.some(
-    (option) =>
-      option.value === defaultValue.replace(QUOTED_STRING_REGEX, '$1'),
-  );
-
-  if (!matchesOptionValue) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: t`Default value "${defaultValue}" must be one of the option values`,
-      userFriendlyMessage: msg`Default value "${defaultValue}" must be one of the option values`,
-      value: defaultValue,
-    });
-  }
-
   return errors;
 };
 
-const validateMultiSelectDefaultValue = ({
-  multiSelectDefaultValue,
-  options,
-}: {
-  options: FieldMetadataOptions<EnumFieldMetadataType>;
-  multiSelectDefaultValue: unknown;
-}): FlatFieldMetadataValidationError[] => {
+const validateMultiSelectDefaultValue = (
+  multiSelectDefaultValue: unknown,
+): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
 
   if (!Array.isArray(multiSelectDefaultValue)) {
@@ -102,12 +79,7 @@ const validateMultiSelectDefaultValue = ({
   }
 
   for (const defaultValue of multiSelectDefaultValue) {
-    errors.push(
-      ...validateSelectDefaultValue({
-        defaultValue,
-        options,
-      }),
-    );
+    errors.push(...validateSelectDefaultValue(defaultValue));
   }
 
   return errors;
@@ -115,7 +87,6 @@ const validateMultiSelectDefaultValue = ({
 
 const validateFieldMetadataDefaultValue = ({
   defaultValue,
-  options,
   type,
 }: Omit<UniversalFlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'> &
   NonNullableRequired<
@@ -124,15 +95,9 @@ const validateFieldMetadataDefaultValue = ({
   switch (type) {
     case FieldMetadataType.SELECT:
     case FieldMetadataType.RATING:
-      return validateSelectDefaultValue({
-        defaultValue,
-        options,
-      });
+      return validateSelectDefaultValue(defaultValue);
     case FieldMetadataType.MULTI_SELECT:
-      return validateMultiSelectDefaultValue({
-        multiSelectDefaultValue: defaultValue,
-        options,
-      });
+      return validateMultiSelectDefaultValue(defaultValue);
     default: {
       assertUnreachable(
         type,
@@ -165,7 +130,6 @@ export const validateEnumSelectFlatFieldMetadata = ({
       })
     : [];
 
-  // Option ids are not checked until the 2.57 backfill has regenerated legacy ones on every workspace.
   return [
     ...optionsValidationErrors,
     ...optionColorValidationErrors,

@@ -43,6 +43,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-rule-to-row-level-permission-rule-manifest.util';
 import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
 import { fromFlatRelatedRecordPathToRelatedRecordPathManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-related-record-path-to-related-record-path-manifest.util';
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
@@ -489,6 +490,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'fieldMetadata',
     emittedProperties: Object.keys(
       fromFlatFieldMetadataToFieldManifest({
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         flatFieldMetadata: getFlatFieldMetadataMock({
           universalIdentifier: FIELD_UID,
           objectMetadataId: 'object-id',

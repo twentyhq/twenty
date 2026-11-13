@@ -828,7 +828,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         now,
       },
     )) {
-      // An option id reused across fields keeps its first field's row.
       if (
         isDefined(
           allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps
@@ -837,7 +836,10 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           ],
         )
       ) {
-        continue;
+        throw new ApplicationException(
+          `Option id ${universalFlatFieldMetadataOption.universalIdentifier} of field ${universalFlatFieldMetadata.name} is already used by another option`,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
       }
 
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
