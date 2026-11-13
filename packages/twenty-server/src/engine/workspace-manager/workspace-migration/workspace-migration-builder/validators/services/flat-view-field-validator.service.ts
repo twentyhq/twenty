@@ -68,7 +68,6 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
-    // Settings edited on another app's view field land in universalOverrides
     if (
       isDefined(flatEntityUpdate.settings) ||
       isDefined(flatEntityUpdate.universalOverrides)
