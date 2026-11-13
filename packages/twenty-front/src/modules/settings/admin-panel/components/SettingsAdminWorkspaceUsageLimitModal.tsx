@@ -16,6 +16,7 @@ import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mut
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
+import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
 import { parseAdminUsageLimitValue } from '@/settings/admin-panel/utils/parseAdminUsageLimitValue';
 import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
@@ -75,7 +76,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const [label, setLabel] = useState<BillingArrangementLabel>(
     BillingArrangementLabel.OTHER,
   );
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState<string | undefined>(undefined);
 
   const mutationOptions = {
     client: apolloAdminClient,
@@ -112,6 +113,22 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue)) &&
     isEndsAtValid;
 
+  const unitLabel = getUsageLimitUnitLabel({
+    unit: row.unit,
+    operationType: row.operationType,
+  });
+  const scopeLabel = getAdminUsageLimitScopeLabel(row);
+  const grantedLimitText = isDefined(parsedLimitValue)
+    ? `${scopeLabel} · ${getAdminUsageLimitPeriodLabel(row)} · ${t(unitLabel.name)}: ${formatLimitValue(
+        {
+          value: parsedLimitValue,
+          unit: row.unit,
+          operationType: row.operationType,
+        },
+      )}`
+    : '';
+  const commentValue = comment ?? grantedLimitText;
+
   const handleClose = () => {
     closeDialog(dialogId);
   };
@@ -141,7 +158,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           payload,
           endsAt: endsAt?.toISOString() ?? null,
           label,
-          comment: comment.trim() || null,
+          comment: commentValue.trim() || null,
         },
       });
 
@@ -185,11 +202,6 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
   };
 
-  const unitLabel = getUsageLimitUnitLabel({
-    unit: row.unit,
-    operationType: row.operationType,
-  });
-  const scopeLabel = getAdminUsageLimitScopeLabel(row);
   const defaultText = isDefined(row.defaultValue)
     ? formatLimitValue({
         value: row.defaultValue,
@@ -276,7 +288,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                     instanceId={`${dialogId}-comment`}
                     label={t`Comment`}
                     placeholder={t`Compensation for the October outage`}
-                    value={comment}
+                    value={commentValue}
                     onChange={setComment}
                     maxLength={COMMENT_MAX_LENGTH}
                     fullWidth

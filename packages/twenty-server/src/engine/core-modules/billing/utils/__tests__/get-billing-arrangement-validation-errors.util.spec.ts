@@ -8,19 +8,6 @@ import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/b
 
 const STARTS_AT = new Date('2026-11-01T00:00:00.000Z');
 
-const USAGE_LIMIT_SNAPSHOT = {
-  resourceType: 'AI',
-  operationType: 'ALL',
-  spenderType: 'userWorkspace',
-  spenderId: '',
-  limitKind: 'quota',
-  periodCount: 1,
-  periodUnit: 'week',
-  unit: 'USER_CREDIT',
-  limitValue: 20_000_000,
-  burstValue: null,
-};
-
 const draft = (
   overrides: Partial<BillingArrangementDraft> &
     Pick<BillingArrangementDraft, 'type'>,
@@ -37,7 +24,6 @@ const draft = (
   stripeCreditNoteId: null,
   creditGrantId: null,
   usageLimitId: null,
-  usageLimitSnapshot: null,
   ...overrides,
 });
 
@@ -83,7 +69,6 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({
         type: BillingArrangementType.LIMIT_OVERRIDE,
         usageLimitId: '20202020-0000-4000-8000-000000000002',
-        usageLimitSnapshot: USAGE_LIMIT_SNAPSHOT,
         endsAt: new Date('2026-12-01T00:00:00.000Z'),
       }),
     ],
@@ -116,17 +101,6 @@ describe('getBillingArrangementValidationErrors', () => {
         draft({ type: BillingArrangementType.DISCOUNT, stripeDiscountId }),
       ),
     ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeDiscountId' }]);
-  });
-
-  it('requires a limit override to record the limit it granted', () => {
-    expect(
-      getBillingArrangementValidationErrors(
-        draft({
-          type: BillingArrangementType.LIMIT_OVERRIDE,
-          usageLimitId: '20202020-0000-4000-8000-000000000002',
-        }),
-      ),
-    ).toEqual([{ code: 'MISSING_SETTING', setting: 'usageLimitSnapshot' }]);
   });
 
   it('reports settings that belong to another type', () => {
