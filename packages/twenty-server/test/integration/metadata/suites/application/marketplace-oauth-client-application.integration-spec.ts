@@ -248,6 +248,35 @@ describe('Marketplace application that declares an OAuth client', () => {
     );
   });
 
+  it('should still list the connection when the marketplace catalog cannot be computed', async () => {
+    const brokenRegistrationId = await insertCatalogApplicationRegistration({
+      universalIdentifier: crypto.randomUUID(),
+      name: 'Marketplace App With A Malformed Manifest',
+      sourcePackage: '@test/malformed-manifest-marketplace-app',
+      workspaceId: null,
+      isListed: false,
+      manifest: {
+        application: { requiredServerVersionRange: { toString: null } },
+      },
+    });
+
+    try {
+      expect(
+        await findConnectionMarketplaceAppUniversalIdentifier(),
+      ).toBeNull();
+    } finally {
+      await dataSource.query(
+        `DELETE FROM core."applicationRegistration" WHERE id = $1`,
+        [brokenRegistrationId],
+      );
+      await invalidateMarketplaceCatalog();
+    }
+
+    expect(await findConnectionMarketplaceAppUniversalIdentifier()).toBe(
+      marketplaceAppUniversalIdentifier,
+    );
+  });
+
   it('should not attach the connection once the application is unlisted', async () => {
     await setMarketplaceAppListed(false);
 

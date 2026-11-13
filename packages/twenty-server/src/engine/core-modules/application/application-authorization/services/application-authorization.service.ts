@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +12,8 @@ import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/app
 
 @Injectable()
 export class ApplicationAuthorizationService {
+  private readonly logger = new Logger(ApplicationAuthorizationService.name);
+
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
@@ -21,19 +23,8 @@ export class ApplicationAuthorizationService {
   async toApplicationAuthorizationDTOs(
     authorizations: ApplicationAuthorizationEntity[],
   ): Promise<ApplicationAuthorizationDTO[]> {
-    const marketplaceCatalog =
-      (await this.coreEntityCacheService.get(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      )) ?? {};
     const marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl =
-      Object.fromEntries(
-        Object.values(marketplaceCatalog).flatMap((marketplaceApp) =>
-          (marketplaceApp.attributedClientIdMetadataDocumentUrls ?? []).map(
-            (url) => [url, marketplaceApp.id],
-          ),
-        ),
-      );
+      await this.findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl();
 
     return authorizations.map((authorization) =>
       toApplicationAuthorizationDTO({
@@ -41,6 +32,33 @@ export class ApplicationAuthorizationService {
         marketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl,
       }),
     );
+  }
+
+  private async findMarketplaceAppUniversalIdentifiersByClientIdMetadataDocumentUrl(): Promise<
+    Record<string, string>
+  > {
+    try {
+      const marketplaceCatalog =
+        (await this.coreEntityCacheService.get(
+          'marketplaceCatalog',
+          MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+        )) ?? {};
+
+      return Object.fromEntries(
+        Object.values(marketplaceCatalog).flatMap((marketplaceApp) =>
+          (marketplaceApp.attributedClientIdMetadataDocumentUrls ?? []).map(
+            (url) => [url, marketplaceApp.id],
+          ),
+        ),
+      );
+    } catch (error) {
+      this.logger.error(
+        'Failed to read the marketplace catalog, listing connections without their marketplace application',
+        error,
+      );
+
+      return {};
+    }
   }
 
   async recordAuthorization({
