@@ -21,6 +21,7 @@ const minimalState: PartnerApplicationState = {
   twentyExperience: ['WORKFLOWS'],
   twentyExperienceNotes: validExperienceNotes,
   twentyExperienceProofLink: 'https://www.loom.com/share/example',
+  acceptsTerms: true,
 };
 
 describe('buildPartnerApplicationRequestBody', () => {
@@ -36,6 +37,7 @@ describe('buildPartnerApplicationRequestBody', () => {
       twentyExperience: ['WORKFLOWS'],
       twentyExperienceNotes: validExperienceNotes,
       twentyExperienceProofLink: 'https://www.loom.com/share/example',
+      acceptsTerms: true,
     });
   });
 

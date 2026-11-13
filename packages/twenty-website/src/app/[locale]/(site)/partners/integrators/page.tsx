@@ -25,6 +25,7 @@ import {
   ProgramExplainer,
   ProgramStrip,
 } from '@/sections/partner-programs';
+import { PartnerTestimonials } from '@/sections/testimonials';
 import { Button } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('partnersIntegrators');
@@ -72,6 +73,7 @@ export default async function IntegratorProgramPage({
           }
         />
         <PartnerLevels />
+        <PartnerTestimonials />
         <ProgramExplainer
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
           eyebrow={msg`How it works`}

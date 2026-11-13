@@ -16,6 +16,7 @@ const minimalValid = {
   twentyExperience: ['WORKFLOWS'],
   twentyExperienceNotes: validExperienceNotes,
   twentyExperienceProofLink: 'https://www.loom.com/share/example',
+  acceptsTerms: true,
 };
 
 const fullValid = {
@@ -30,6 +31,19 @@ const fullValid = {
 };
 
 describe('partnerApplicationRequestSchema', () => {
+  it('rejects an application without the program terms accepted', () => {
+    expect(
+      partnerApplicationRequestSchema.safeParse({
+        ...minimalValid,
+        acceptsTerms: false,
+      }).success,
+    ).toBe(false);
+    const { acceptsTerms: _acceptsTerms, ...withoutTerms } = minimalValid;
+    expect(
+      partnerApplicationRequestSchema.safeParse(withoutTerms).success,
+    ).toBe(false);
+  });
+
   it('accepts the minimal required payload', () => {
     expect(
       partnerApplicationRequestSchema.safeParse(minimalValid).success,

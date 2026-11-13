@@ -39,6 +39,21 @@ describe('validatePartnerApplicationStep', () => {
     expect(errors.twentyExperienceProofLink).toBe('invalid_url');
   });
 
+  it('requires the program terms on the last step', () => {
+    const commercials = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 4,
+      hourlyRate: '150',
+      projectBudgetMin: '5000',
+    };
+    expect(validatePartnerApplicationStep(commercials)).toEqual({
+      acceptsTerms: 'terms_required',
+    });
+    expect(
+      validatePartnerApplicationStep({ ...commercials, acceptsTerms: true }),
+    ).toEqual({});
+  });
+
   it('accepts a complete Experience step', () => {
     const errors = validatePartnerApplicationStep({
       ...INITIAL_PARTNER_APPLICATION_STATE,
