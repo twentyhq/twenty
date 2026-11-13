@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { isBoolean, isString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
@@ -45,9 +45,11 @@ const groupInactiveOptionValuesByFieldMetadataUniversalIdentifier = ({
       : undefined;
 
     if (
-      (isBoolean(isActiveOverride)
-        ? isActiveOverride
-        : flatFieldMetadataOption.isActive) !== false
+      isFieldMetadataOptionActive({
+        isActive: isBoolean(isActiveOverride)
+          ? isActiveOverride
+          : flatFieldMetadataOption.isActive,
+      })
     ) {
       continue;
     }

@@ -363,7 +363,6 @@ describe('Sync application keeps the option edits a workspace made on its fields
     });
 
     expect((await findSelectField()).defaultValue).toBe("'PAUSED'");
-
   }, 120000);
 
   it('does not bring back the board column of an option the workspace deactivated', async () => {
