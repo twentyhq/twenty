@@ -324,6 +324,11 @@ msgstr "A beágyazott relációs widgetnek a táblázatos elrendezést kell hasz
 msgid "A network error occurred while accessing calendar."
 msgstr "Hálózati hiba történt a naptár elérése közben."
 
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
+
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1212,6 +1217,11 @@ msgstr "Ezen a munkaterületen már folyamatban van egy exportálás. Várja meg
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Egy külső szolgáltatás túl sokáig válaszolt."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -5095,6 +5105,11 @@ msgstr "Adatbővítés"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Adjon meg 1 és {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} karakter közötti nevet és támogatott asszisztensmegjelenési beállításokat."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5362,6 +5377,11 @@ msgstr "Külső botazonosító"
 msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Külső felvételazonosító"
+
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9537,6 +9557,11 @@ msgstr "Nincsenek megadva érvényes címzettek"
 msgid "No verified sending domain matches this from address."
 msgstr "Ehhez a feladói címhez nem tartozik ellenőrzött küldői domain."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10028,6 +10053,11 @@ msgstr "Csak ütemezett vagy küldés alatt álló kampány törölhető."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Csak egy kiszolgáló-rendszergazda kezelheti ennek a tagnak a helyreállítási kódjait."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10070,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Csak az ügynököt birtokló alkalmazás módosíthatja az indítóit"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Csak a munkafolyamatot létrehozó személy módosíthatja, hogy ki láthatja azt"
 
@@ -17102,6 +17132,11 @@ msgstr "Nem sikerült elküldeni az üzenetét. Kérjük, próbálja meg újra."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Nem sikerült elindítani a kapcsolatot. Kérjük, próbálja meg újra."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

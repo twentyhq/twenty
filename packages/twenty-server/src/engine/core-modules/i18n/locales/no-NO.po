@@ -324,6 +324,11 @@ msgstr "En nestet relasjonswidget må bruke tabelloppsettet."
 msgid "A network error occurred while accessing calendar."
 msgstr "Det oppstod en nettverksfeil ved tilgang til kalenderen."
 
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
+
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -1212,6 +1217,11 @@ msgstr "En eksport kjører allerede i dette arbeidsområdet. Vent til den er ful
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "En ekstern tjeneste brukte for lang tid på å svare."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -5095,6 +5105,11 @@ msgstr "Berik"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Skriv inn et navn på mellom 1 og {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} tegn og støttede alternativer for assistentens utseende."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5362,6 +5377,11 @@ msgstr "Ekstern bot-ID"
 msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "Ekstern opptaks-ID"
+
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9537,6 +9557,11 @@ msgstr "Ingen gyldige mottakere angitt"
 msgid "No verified sending domain matches this from address."
 msgstr "Ingen verifiserte avsenderdomener samsvarer med denne fra-adressen."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10028,6 +10053,11 @@ msgstr "Bare en planlagt eller sendende kampanje kan avbrytes."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Bare en serveradministrator kan administrere gjenopprettingskoder for dette medlemmet."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10070,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Bare applikasjonen som eier denne agenten, kan endre utløserne dens"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Bare personen som opprettet denne arbeidsflyten, kan endre hvem som kan se den"
 
@@ -17102,6 +17132,11 @@ msgstr "Vi kunne ikke sende meldingen din. Prøv igjen."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Vi kunne ikke starte tilkoblingen. Prøv igjen."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -1257,6 +1257,15 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Additional subdomains no workspace can use when multi-workspace is enabled (status, internal-tools). The built-in reserved list still applies. Exact match, no patterns',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  ADDITIONAL_RESERVED_SUBDOMAINS: string[] = [];
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
     isHiddenInAdminPanel: true,
