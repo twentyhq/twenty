@@ -22,6 +22,7 @@ import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const TOTP_STEP_MS = 30_000;
+const MINIMUM_TOTP_STEP_REMAINING_MS = 10_000;
 
 type Member = {
   id: string;
@@ -102,15 +103,30 @@ const enableTwoFactorAuthentication = async (accessToken: string) => {
   return secret;
 };
 
+const waitUntilSafelyInsideTotpStep = async () => {
+  const millisecondsRemainingInStep =
+    TOTP_STEP_MS - (Date.now() % TOTP_STEP_MS);
+
+  if (millisecondsRemainingInStep < MINIMUM_TOTP_STEP_REMAINING_MS) {
+    await new Promise((resolve) =>
+      setTimeout(resolve, millisecondsRemainingInStep + 100),
+    );
+  }
+};
+
 const updateServerAdminAccess = ({
   userId,
   canAccessFullAdminPanel,
+  canImpersonate,
   secret,
+  totpStepOffset = 1,
   accessToken,
 }: {
   userId: string;
   canAccessFullAdminPanel: boolean;
+  canImpersonate?: boolean;
   secret: string;
+  totpStepOffset?: number;
   accessToken: string;
 }) =>
   makeAdminPanelApiRequest(
@@ -119,11 +135,13 @@ const updateServerAdminAccess = ({
         mutation UpdateServerAdminAccess(
           $userId: UUID!
           $canAccessFullAdminPanel: Boolean
+          $canImpersonate: Boolean
           $otp: String
         ) {
           updateServerAdminAccess(
             userId: $userId
             canAccessFullAdminPanel: $canAccessFullAdminPanel
+            canImpersonate: $canImpersonate
             otp: $otp
           ) {
             id
@@ -133,8 +151,9 @@ const updateServerAdminAccess = ({
       variables: {
         userId,
         canAccessFullAdminPanel,
+        canImpersonate,
         otp: authenticator
-          .clone({ epoch: Date.now() + TOTP_STEP_MS })
+          .clone({ epoch: Date.now() + totpStepOffset * TOTP_STEP_MS })
           .generate(secret),
       },
     },
@@ -179,6 +198,7 @@ const expectServerAdminToBeUntouched = async (serverAdmin: Member) => {
 describe('Removing the last server admin', () => {
   let otherServerAdminIds: string[];
   let serverAdmin: Member;
+  let extraMembers: Member[];
 
   beforeAll(async () => {
     const otherServerAdmins = await getCoreRepository<UserEntity>(
@@ -193,21 +213,24 @@ describe('Removing the last server admin', () => {
 
   beforeEach(async () => {
     serverAdmin = await signUpServerAdmin();
+    extraMembers = [];
   });
 
   afterEach(async () => {
     await setCanAccessFullAdminPanel(otherServerAdminIds, true);
     await setCanAccessFullAdminPanel([USER_DATA_SEED_IDS.SCOTT], false);
 
-    const isServerAdminStillActive = await getCoreRepository<UserEntity>(
-      UserEntity,
-    ).exists({ where: { id: serverAdmin.id } });
+    for (const member of [serverAdmin, ...extraMembers]) {
+      const isMemberStillActive = await getCoreRepository<UserEntity>(
+        UserEntity,
+      ).exists({ where: { id: member.id } });
 
-    if (isServerAdminStillActive) {
-      await deleteUser({
-        accessToken: serverAdmin.accessToken,
-        expectToFail: false,
-      });
+      if (isMemberStillActive) {
+        await deleteUser({
+          accessToken: member.accessToken,
+          expectToFail: false,
+        });
+      }
     }
   });
 
@@ -267,6 +290,8 @@ describe('Removing the last server admin', () => {
     it('should refuse to remove a member before touching them', async () => {
       const member = await signUpMember();
 
+      extraMembers.push(member);
+
       await runWhileServerAdminsChange(async () => {
         const { data, errors } = await deleteUserFromWorkspace({
           input: { workspaceMemberIdToDelete: member.workspaceMemberId },
@@ -286,11 +311,6 @@ describe('Removing the last server admin', () => {
       expect(response.body.data.currentUser.workspaceMember.id).toBe(
         member.workspaceMemberId,
       );
-
-      await deleteUser({
-        accessToken: member.accessToken,
-        expectToFail: false,
-      });
     });
 
     it('should refuse to revoke admin panel access from another server admin', async () => {
@@ -364,6 +384,51 @@ describe('Removing the last server admin', () => {
 
       expect(removedMember?.deletedAt).not.toBeNull();
     });
+  });
+
+  it('should apply overlapping admin access changes on top of each other', async () => {
+    const target = await signUpMember();
+
+    extraMembers.push(target);
+
+    await getCoreRepository<UserEntity>(UserEntity).update(
+      { id: target.id },
+      { canImpersonate: true },
+    );
+
+    await waitUntilSafelyInsideTotpStep();
+
+    const secret = await enableTwoFactorAuthentication(serverAdmin.accessToken);
+
+    const responses = await Promise.all([
+      updateServerAdminAccess({
+        userId: target.id,
+        canAccessFullAdminPanel: true,
+        canImpersonate: false,
+        secret,
+        totpStepOffset: 1,
+        accessToken: serverAdmin.accessToken,
+      }),
+      updateServerAdminAccess({
+        userId: target.id,
+        canAccessFullAdminPanel: true,
+        secret,
+        totpStepOffset: -1,
+        accessToken: serverAdmin.accessToken,
+      }),
+    ]);
+
+    expect(responses.map(({ body }) => body.errors)).toEqual([
+      undefined,
+      undefined,
+    ]);
+
+    const updatedTarget = await getCoreRepository<UserEntity>(
+      UserEntity,
+    ).findOneOrFail({ where: { id: target.id } });
+
+    expect(updatedTarget.canAccessFullAdminPanel).toBe(true);
+    expect(updatedTarget.canImpersonate).toBe(false);
   });
 
   it('should remove more members at once than the database pool has connections', async () => {
