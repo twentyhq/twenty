@@ -1,0 +1,1 @@
+export const AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH = 280;

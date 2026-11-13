@@ -153,6 +153,18 @@ type AgentChatThreadParticipant {
   updatedAt: DateTime!
 }
 
+type AgentDailyRunCount {
+  completedRunCount: Int!
+  credits: Float!
+
+  """Day in the requested time zone, as YYYY-MM-DD"""
+  day: String!
+  failedRunCount: Int!
+
+  """Runs neither completed nor failed, such as running or cancelled"""
+  otherRunCount: Int!
+}
+
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
@@ -211,6 +223,12 @@ type AgentMessageReactionSummary {
   workspaceMemberIds: [UUID!]!
 }
 
+type AgentRecentRun {
+  createdAt: DateTime!
+  id: UUID!
+  status: AgentTurnStatus!
+}
+
 type AgentRun {
   canReadThread: Boolean!
   createdAt: DateTime!
@@ -230,6 +248,37 @@ type AgentRun {
   threadId: UUID
   threadTitle: String
   toolNames: [String!]!
+}
+
+type AgentRunInsights {
+  agentId: UUID!
+
+  """Average duration of completed runs over the same 14 days"""
+  averageDurationInMs: Float
+
+  """Credits spent over the same 14 days"""
+  credits: Float!
+
+  """
+  One entry per calendar day of the last 14 days in the requested time zone, oldest first
+  """
+  dailyRunCounts: [AgentDailyRunCount!]!
+
+  """
+  Runs over the last 14 days, the same window as the agents list run count
+  """
+  runCount: Int!
+
+  """Input and output tokens used over the same 14 days"""
+  tokenCount: Float!
+}
+
+type AgentRunSummary {
+  agentId: UUID!
+
+  """Most recent runs first"""
+  recentRuns: [AgentRecentRun!]!
+  runCountLast14Days: Int!
 }
 
 enum AgentTurnStatus {
@@ -3143,6 +3192,11 @@ type LoginToken {
   loginToken: AuthToken!
 }
 
+input MarkAppChannelThreadAsReadInput {
+  messageChannelId: UUID!
+  messageThreadId: UUID!
+}
+
 type MarketplaceApp {
   author: String!
   category: String!
@@ -3635,6 +3689,7 @@ type Mutation {
   installApplication(universalIdentifier: String!, version: String): Application!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
+  markAppChannelThreadAsRead(input: MarkAppChannelThreadAsReadInput!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
   openDirectMessage(workspaceMemberId: UUID!): UUID!
   prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
@@ -4320,6 +4375,13 @@ type Query {
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
+  agentRunInsights(
+    agentId: UUID!
+
+    """IANA time zone the days are counted in"""
+    timeZone: String!
+  ): AgentRunInsights!
+  agentRunSummaries: [AgentRunSummary!]!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   aiChatUserCreditsUsage: AiChatUserCreditsUsage

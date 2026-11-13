@@ -8,4 +8,5 @@ export type LinkedinSettings = {
   historyConversationLimit: LinkedinHistoryConversationLimit;
   contactAutoCreationPolicy: LinkedinContactAutoCreationPolicy;
   isNameMatchingEnabled: boolean;
+  areChatsMarkedAsRead: boolean;
 };

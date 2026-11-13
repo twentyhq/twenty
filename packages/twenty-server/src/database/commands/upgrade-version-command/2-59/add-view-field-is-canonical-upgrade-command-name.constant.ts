@@ -1,2 +1,2 @@
 export const ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME =
-  '2.59.0_AddViewFieldIsCanonicalFastInstanceCommand_1794567900000';
+  '2.59.0_AddViewFieldIsCanonicalFastInstanceCommand_1794578763738';
