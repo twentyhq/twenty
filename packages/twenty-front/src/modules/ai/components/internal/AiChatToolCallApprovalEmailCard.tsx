@@ -1,9 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { isString } from '@sniptt/guards';
-import { type JSONContent } from '@tiptap/core';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import {
+  isEmailDocumentShape,
   isNonEmptyArray,
   isPlainObject,
   parseCanonicalTipTapJsonDocument,
@@ -41,14 +41,6 @@ const readRecipients = (toolArguments: Record<string, unknown>) => {
   };
 };
 
-// the editor reads a document, or a string through its legacy parser
-const serializeEmailBody = (body: unknown): string =>
-  isString(body)
-    ? body
-    : isPlainObject(body)
-      ? serializeJsonContentAsAdvancedTextEditorDocument(body as JSONContent)
-      : '';
-
 type AiChatToolCallApprovalEmailCardProps = {
   toolCallId: string;
   proposal: ProposedToolCall;
@@ -62,8 +54,6 @@ export const AiChatToolCallApprovalEmailCard = ({
   const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
-  const [originalBody] = useState<unknown>(() => proposal.arguments.body);
-  const serializedOriginalBody = serializeEmailBody(originalBody);
   const [draft, setDraft] = useState<AiChatApprovalReviewEmailDraft>(() => {
     const recipients = readRecipients(proposal.arguments);
 
@@ -72,7 +62,11 @@ export const AiChatToolCallApprovalEmailCard = ({
       subject: isString(proposal.arguments.subject)
         ? proposal.arguments.subject
         : '',
-      body: serializedOriginalBody,
+      body: isEmailDocumentShape(proposal.arguments.body)
+        ? serializeJsonContentAsAdvancedTextEditorDocument(
+            proposal.arguments.body,
+          )
+        : '',
       isCcBccExpanded:
         isNonEmptyArray(recipients.cc) || isNonEmptyArray(recipients.bcc),
     };
@@ -96,10 +90,7 @@ export const AiChatToolCallApprovalEmailCard = ({
           bcc: serializeEmailRecipients(draft.bcc),
         },
         subject: draft.subject,
-        body:
-          draft.body === serializedOriginalBody
-            ? originalBody
-            : (parseCanonicalTipTapJsonDocument(draft.body) ?? draft.body),
+        body: parseCanonicalTipTapJsonDocument(draft.body),
       },
     });
   };
