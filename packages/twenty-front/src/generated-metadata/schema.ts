@@ -2087,8 +2087,8 @@ export type CreateViewInput = {
   objectMetadataId: Scalars['UUID']['input'];
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  ownerViewFieldId?: InputMaybe<Scalars['UUID']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
-  scopedViewFieldId?: InputMaybe<Scalars['UUID']['input']>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
@@ -8687,8 +8687,8 @@ export type View = {
   objectMetadataId: Scalars['UUID']['output'];
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
+  ownerViewFieldId?: Maybe<Scalars['UUID']['output']>;
   position: Scalars['Float']['output'];
-  scopedViewFieldId?: Maybe<Scalars['UUID']['output']>;
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;

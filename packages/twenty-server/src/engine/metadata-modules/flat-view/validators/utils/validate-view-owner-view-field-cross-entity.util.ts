@@ -22,46 +22,45 @@ const isOneToManyRelationField = ({
   'relationType' in universalSettings &&
   universalSettings.relationType === RelationType.ONE_TO_MANY;
 
-type ScopedViewFieldValidationMaps = Pick<
+type OwnerViewFieldValidationMaps = Pick<
   AllUniversalFlatEntityMaps,
   'flatViewMaps' | 'flatViewFieldMaps' | 'flatFieldMetadataMaps'
 >;
 
-const countScopeViewsByScopedViewFieldUniversalIdentifier = (
-  flatViewMaps: ScopedViewFieldValidationMaps['flatViewMaps'],
+const countScopeViewsByOwnerViewFieldUniversalIdentifier = (
+  flatViewMaps: OwnerViewFieldValidationMaps['flatViewMaps'],
 ): Map<string, number> => {
-  const scopeViewCountByScopedViewField = new Map<string, number>();
+  const scopeViewCountByOwnerViewField = new Map<string, number>();
 
   for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
-    if (!isDefined(flatView?.scopedViewFieldUniversalIdentifier)) {
+    if (!isDefined(flatView?.ownerViewFieldUniversalIdentifier)) {
       continue;
     }
 
-    const { scopedViewFieldUniversalIdentifier } = flatView;
+    const { ownerViewFieldUniversalIdentifier } = flatView;
 
-    scopeViewCountByScopedViewField.set(
-      scopedViewFieldUniversalIdentifier,
-      (scopeViewCountByScopedViewField.get(
-        scopedViewFieldUniversalIdentifier,
-      ) ?? 0) + 1,
+    scopeViewCountByOwnerViewField.set(
+      ownerViewFieldUniversalIdentifier,
+      (scopeViewCountByOwnerViewField.get(ownerViewFieldUniversalIdentifier) ??
+        0) + 1,
     );
   }
 
-  return scopeViewCountByScopedViewField;
+  return scopeViewCountByOwnerViewField;
 };
 
-const getScopedViewFieldErrorMessages = ({
+const getOwnerViewFieldErrorMessages = ({
   scopeView,
   optimisticUniversalFlatMaps,
-  scopedViewFieldUniversalIdentifier,
+  ownerViewFieldUniversalIdentifier,
   scopeViewCount,
 }: {
   scopeView: Pick<
     UniversalFlatView,
     'type' | 'objectMetadataUniversalIdentifier'
   >;
-  optimisticUniversalFlatMaps: ScopedViewFieldValidationMaps;
-  scopedViewFieldUniversalIdentifier: string;
+  optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
+  ownerViewFieldUniversalIdentifier: string;
   scopeViewCount: number;
 }) => {
   if (scopeView.type !== ViewType.TABLE_WIDGET) {
@@ -71,20 +70,20 @@ const getScopedViewFieldErrorMessages = ({
     };
   }
 
-  const scopedViewField = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: scopedViewFieldUniversalIdentifier,
+  const ownerViewField = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: ownerViewFieldUniversalIdentifier,
     flatEntityMaps: optimisticUniversalFlatMaps.flatViewFieldMaps,
   });
 
-  if (!isDefined(scopedViewField)) {
+  if (!isDefined(ownerViewField)) {
     return {
-      message: t`Scoped view field not found`,
+      message: t`Owner view field not found`,
       userFriendlyMessage: msg`The column this view scopes no longer exists`,
     };
   }
 
   const scopedFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: scopedViewField.fieldMetadataUniversalIdentifier,
+    universalIdentifier: ownerViewField.fieldMetadataUniversalIdentifier,
     flatEntityMaps: optimisticUniversalFlatMaps.flatFieldMetadataMaps,
   });
 
@@ -118,11 +117,11 @@ const getScopedViewFieldErrorMessages = ({
   return undefined;
 };
 
-export const validateViewScopedViewFieldCrossEntity = ({
+export const validateViewOwnerViewFieldCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
 }: {
-  optimisticUniversalFlatMaps: ScopedViewFieldValidationMaps;
+  optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
   orchestratorActionsReport: Pick<OrchestratorActionsReport, 'view'>;
 }): Pick<OrchestratorFailureReport, 'view'> => {
   const validationErrors: Pick<OrchestratorFailureReport, 'view'> = {
@@ -132,33 +131,32 @@ export const validateViewScopedViewFieldCrossEntity = ({
   const createdScopeViews = orchestratorActionsReport.view.create
     .map(({ flatEntity }) => flatEntity)
     .filter((flatView) =>
-      isDefined(flatView.scopedViewFieldUniversalIdentifier),
+      isDefined(flatView.ownerViewFieldUniversalIdentifier),
     );
 
   if (createdScopeViews.length === 0) {
     return validationErrors;
   }
 
-  const scopeViewCountByScopedViewField =
-    countScopeViewsByScopedViewFieldUniversalIdentifier(
+  const scopeViewCountByOwnerViewField =
+    countScopeViewsByOwnerViewFieldUniversalIdentifier(
       optimisticUniversalFlatMaps.flatViewMaps,
     );
 
   for (const scopeView of createdScopeViews) {
-    const { scopedViewFieldUniversalIdentifier } = scopeView;
+    const { ownerViewFieldUniversalIdentifier } = scopeView;
 
-    if (!isDefined(scopedViewFieldUniversalIdentifier)) {
+    if (!isDefined(ownerViewFieldUniversalIdentifier)) {
       continue;
     }
 
-    const errorMessages = getScopedViewFieldErrorMessages({
+    const errorMessages = getOwnerViewFieldErrorMessages({
       scopeView,
       optimisticUniversalFlatMaps,
-      scopedViewFieldUniversalIdentifier,
+      ownerViewFieldUniversalIdentifier,
       scopeViewCount:
-        scopeViewCountByScopedViewField.get(
-          scopedViewFieldUniversalIdentifier,
-        ) ?? 0,
+        scopeViewCountByOwnerViewField.get(ownerViewFieldUniversalIdentifier) ??
+        0,
     });
 
     if (!isDefined(errorMessages)) {

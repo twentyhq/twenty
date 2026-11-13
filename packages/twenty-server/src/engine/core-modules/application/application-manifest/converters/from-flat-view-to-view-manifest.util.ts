@@ -49,10 +49,10 @@ export const fromFlatViewToViewManifest = ({
           flatView.mainGroupByFieldMetadataUniversalIdentifier,
       }
     : {}),
-  ...(isDefined(flatView.scopedViewFieldUniversalIdentifier)
+  ...(isDefined(flatView.ownerViewFieldUniversalIdentifier)
     ? {
-        scopedViewFieldUniversalIdentifier:
-          flatView.scopedViewFieldUniversalIdentifier,
+        ownerViewFieldUniversalIdentifier:
+          flatView.ownerViewFieldUniversalIdentifier,
       }
     : {}),
   ...(isDefined(flatView.anyFieldFilterValue)

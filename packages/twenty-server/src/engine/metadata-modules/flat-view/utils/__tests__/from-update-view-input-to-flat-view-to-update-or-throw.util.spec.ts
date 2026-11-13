@@ -125,9 +125,9 @@ const buildExistingFlatView = ({
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isSystemSideEffect: false,
     mainGroupByFieldMetadataId: STAGE_FIELD_ID,
-    scopedViewFieldId: null,
+    ownerViewFieldId: null,
     mainGroupByFieldMetadataUniversalIdentifier: STAGE_FIELD_ID,
-    scopedViewFieldUniversalIdentifier: null,
+    ownerViewFieldUniversalIdentifier: null,
     overrides: {
       [WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER]: {
         mainGroupByFieldMetadataId: groupingOverride,
