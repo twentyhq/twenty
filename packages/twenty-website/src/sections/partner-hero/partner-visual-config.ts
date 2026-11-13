@@ -8,6 +8,8 @@ import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/Halfton
 // Program pages swap the photo and keep the same halftone and blue hover.
 export const CREATORS_HERO_IMAGE_URL =
   '/images/partners/hero/creators-hero.webp';
+export const MARKETPLACE_HERO_IMAGE_URL =
+  '/images/partners/hero/marketplace-hero.webp';
 
 export const PARTNER_HERO_VISUAL: Pick<
   HalftoneImageBackdropProps,
