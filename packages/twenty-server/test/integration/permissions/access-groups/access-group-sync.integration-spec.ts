@@ -1,5 +1,3 @@
-import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
-import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -208,14 +206,8 @@ describe('access group propagation progress (integration)', () => {
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let roleId: string;
-  const personId = v4();
 
   beforeAll(async () => {
-    // Other specs empty the person table, and a compute over no record never reaches a batch
-    await createOneOperation({
-      objectMetadataSingularName: 'person',
-      input: { id: personId },
-    });
     recordAccessGroupComputationService =
       getAppProviderByClassName<RecordAccessGroupComputationService>(
         'RecordAccessGroupComputationService',
@@ -244,6 +236,7 @@ describe('access group propagation progress (integration)', () => {
 
     roleId = data.createOneRole.id;
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    // Other specs empty the person table, and a compute over no record never reaches a batch
     await global.testDataSource.query(
       `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
       [personId],
@@ -265,10 +258,6 @@ describe('access group propagation progress (integration)', () => {
       expectToFail: false,
     });
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
-    await destroyOneOperation({
-      objectMetadataSingularName: 'person',
-      recordId: personId,
-    });
     await waitForAllJobsToFinish();
     await global.testDataSource.query(
       `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
