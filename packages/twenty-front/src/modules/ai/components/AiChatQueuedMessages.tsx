@@ -7,32 +7,16 @@ import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { AiChatQueuedMessageList } from '@/ai/components/AiChatQueuedMessageList';
-import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
-import { AI_CHAT_PAGE_CONTENT_INLINE_PADDING } from '@/ai/constants/AiChatPageContentInlinePadding';
-import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContentInset';
 import { useDeleteQueuedMessage } from '@/ai/hooks/useDeleteQueuedMessage';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledQueueContainer = styled(StyledAiChatContentContainer)<{
-  hasPageContentInset: boolean;
-}>`
-  padding: 0
-    ${({ hasPageContentInset }) =>
-      hasPageContentInset
-        ? AI_CHAT_PAGE_CONTENT_INLINE_PADDING
-        : themeCssVariables.spacing[4]};
-`;
 
 export const AiChatQueuedMessages = () => {
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
-  const hasPageContentInset = useHasAiChatPageContentInset();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -103,11 +87,9 @@ export const AiChatQueuedMessages = () => {
   });
 
   return (
-    <StyledQueueContainer hasPageContentInset={hasPageContentInset}>
-      <AiChatQueuedMessageList
-        messages={messages}
-        onRemove={isReadOnly ? undefined : deleteQueuedMessage}
-      />
-    </StyledQueueContainer>
+    <AiChatQueuedMessageList
+      messages={messages}
+      onRemove={isReadOnly ? undefined : deleteQueuedMessage}
+    />
   );
 };

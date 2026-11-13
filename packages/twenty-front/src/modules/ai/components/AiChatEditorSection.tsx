@@ -12,6 +12,7 @@ import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
+import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
@@ -96,6 +97,7 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
     outline: none;
     overflow-y: auto;
     padding: 0;
+    white-space: pre-wrap;
 
     p {
       margin: 0;
@@ -110,6 +112,12 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
       pointer-events: none;
     }
   }
+`;
+
+const StyledComposerStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 const StyledMessageListPlaceholder = styled.div`
@@ -163,7 +171,7 @@ const EditableAiChatEditorSection = () => {
   const [dictationInterimText, setDictationInterimText] = useState('');
 
   const composer = (
-    <StyledInputBox isMobile={isMobile}>
+    <StyledInputBox isMobile={isMobile} data-suggestion-menu-anchor>
       <StyledEditorWrapper isMobile={isMobile}>
         <EditorContent editor={editor} />
       </StyledEditorWrapper>
@@ -228,7 +236,10 @@ const EditableAiChatEditorSection = () => {
         )}
         {!isDirectMessage && <AiChatUserCreditsExhaustedBanner />}
         {!isDirectMessage && <AiChatParticipantMentionBar editor={editor} />}
-        <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        <StyledComposerStack>
+          <AiChatQueuedMessages />
+          <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
+        </StyledComposerStack>
       </StyledInputArea>
       <StyledComposerBottomSpacer
         className={isComposerCentered ? 'is-centered' : undefined}
@@ -248,6 +259,7 @@ export const AiChatEditorSection = () => {
         isMobile={isMobile}
         hasPageContentInset={hasPageContentInset}
       >
+        <AiChatQueuedMessages />
         <div role="status">
           {access === 'loading'
             ? t`Loading conversation…`

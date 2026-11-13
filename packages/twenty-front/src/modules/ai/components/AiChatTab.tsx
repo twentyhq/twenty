@@ -16,7 +16,6 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { AiChatQueuedMessages } from '@/ai/components/AiChatQueuedMessages';
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
 import { AiChatTypingParticipants } from '@/ai/components/AiChatTypingParticipants';
 
@@ -80,7 +79,6 @@ export const AiChatTab = () => {
           <AiChatNewThreadRecipientBar />
           <AiChatTabMessageList />
           <AiChatTypingParticipants />
-          <AiChatQueuedMessages />
           <AiChatEditorSection key={currentAiChatThread} />
         </>
       )}
