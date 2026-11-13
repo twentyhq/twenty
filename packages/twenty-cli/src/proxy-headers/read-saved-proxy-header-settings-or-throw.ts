@@ -25,7 +25,7 @@ const createInvalidSettingError = ({
     details: { remote: remoteName, field },
   });
 
-export const readSavedProxyHeaderSettings = ({
+export const readSavedProxyHeaderSettingsOrThrow = ({
   remote,
   remoteName,
 }: {

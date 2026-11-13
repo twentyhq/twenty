@@ -7,7 +7,7 @@ import { refreshOAuthSession } from '@/oauth/refresh-oauth-session';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { type CliWarning } from '@/output/types/cli-warning.type';
-import { readSavedProxyHeaderSettings } from '@/proxy-headers/read-saved-proxy-header-settings';
+import { readSavedProxyHeaderSettingsOrThrow } from '@/proxy-headers/read-saved-proxy-header-settings-or-throw';
 import { resolveProxyHeaders } from '@/proxy-headers/resolve-proxy-headers';
 import { TARGET_ENVIRONMENT_VARIABLE } from '@/target/constants/target-environment-variable.constant';
 import { parseApiUrl } from '@/target/parse-api-url';
@@ -41,7 +41,7 @@ const toRemoteTarget = async ({
   });
   const proxyHeaders = resolveProxyHeaders({
     environment,
-    savedSettings: readSavedProxyHeaderSettings({ remote, remoteName }),
+    savedSettings: readSavedProxyHeaderSettingsOrThrow({ remote, remoteName }),
   });
 
   if (isNonEmptyString(accessToken)) {
