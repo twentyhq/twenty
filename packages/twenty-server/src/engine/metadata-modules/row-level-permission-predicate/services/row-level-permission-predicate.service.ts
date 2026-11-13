@@ -220,7 +220,23 @@ export class RowLevelPermissionPredicateService {
         flatFieldMetadataMaps,
       });
 
-    const ruleChanges = this.computeRuleChanges({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    const ruleGrantRootGroupIds = (input.ruleGrants ?? []).map(
+      ({ rootPredicateGroupId }) => rootPredicateGroupId,
+    );
+
+    if (new Set(ruleGrantRootGroupIds).size !== ruleGrantRootGroupIds.length) {
+      throw new RowLevelPermissionPredicateException(
+        'Rule grants target the same root predicate group more than once',
+        RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+      );
+    }
+
+    const ruleChanges = this.computeRuleChangesOrThrow({
       existingGroups,
       existingPredicates,
       groupsToCreate,
@@ -243,11 +259,19 @@ export class RowLevelPermissionPredicateService {
           canSoftDeleteRecords: input.canSoftDeleteRecords,
           canDestroyRecords: input.canDestroyRecords,
         },
-        flatObjectMetadata: findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        }),
+        flatObjectMetadata,
       }),
+      ruleOperationsByRootPredicateGroupId: new Map(
+        (input.ruleGrants ?? []).map(
+          ({ rootPredicateGroupId, ...ruleGrant }) => [
+            rootPredicateGroupId,
+            removeDisabledOperationsFromRowLevelPermissionRule({
+              ruleOperations: ruleGrant,
+              flatObjectMetadata,
+            }),
+          ],
+        ),
+      ),
     });
 
     await this.runUpsertMigration({
@@ -487,7 +511,7 @@ export class RowLevelPermissionPredicateService {
     };
   }
 
-  private computeRuleChanges({
+  private computeRuleChangesOrThrow({
     existingGroups,
     existingPredicates,
     groupsToCreate,
@@ -503,6 +527,7 @@ export class RowLevelPermissionPredicateService {
     flatRowLevelPermissionRuleMaps,
     flatFieldPermissionMaps,
     ruleOperations,
+    ruleOperationsByRootPredicateGroupId,
   }: {
     existingGroups: FlatRowLevelPermissionPredicateGroup[];
     existingPredicates: FlatRowLevelPermissionPredicate[];
@@ -519,6 +544,10 @@ export class RowLevelPermissionPredicateService {
     flatRowLevelPermissionRuleMaps: FlatEntityMaps<FlatRowLevelPermissionRule>;
     flatFieldPermissionMaps: FlatEntityMaps<FlatFieldPermission>;
     ruleOperations: Partial<Pick<FlatRowLevelPermissionRule, RuleOperationKey>>;
+    ruleOperationsByRootPredicateGroupId: Map<
+      string,
+      Partial<Pick<FlatRowLevelPermissionRule, RuleOperationKey>>
+    >;
   }): {
     rulesToCreate: FlatRowLevelPermissionRule[];
     rulesToUpdate: FlatRowLevelPermissionRule[];
@@ -559,6 +588,23 @@ export class RowLevelPermissionPredicateService {
       toUpdate: groupsToUpdate,
       toDelete: groupsToDelete,
     });
+
+    const rootGroupIds = new Set(
+      groups
+        .filter(
+          (group) => !isDefined(group.parentRowLevelPermissionPredicateGroupId),
+        )
+        .map(({ id }) => id),
+    );
+
+    for (const rootPredicateGroupId of ruleOperationsByRootPredicateGroupId.keys()) {
+      if (!rootGroupIds.has(rootPredicateGroupId)) {
+        throw new RowLevelPermissionPredicateException(
+          `Rule grants target ${rootPredicateGroupId}, which is not a root predicate group of this role and object`,
+          RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        );
+      }
+    }
     const predicates = keepAfterUpsert({
       existing: existingPredicates,
       toCreate: predicatesToCreate,
@@ -588,6 +634,32 @@ export class RowLevelPermissionPredicateService {
       existingRules.map((rule) => [rule.universalIdentifier, rule]),
     );
 
+    const ruleOperationsByRuleUniversalIdentifier = new Map(
+      groups.flatMap((group) => {
+        const groupRuleOperations = ruleOperationsByRootPredicateGroupId.get(
+          group.id,
+        );
+        const ruleUniversalIdentifier =
+          ruleUniversalIdentifierByPredicateGroupUniversalIdentifier.get(
+            group.universalIdentifier,
+          );
+
+        return isDefined(groupRuleOperations) &&
+          isDefined(ruleUniversalIdentifier)
+          ? [[ruleUniversalIdentifier, groupRuleOperations] as const]
+          : [];
+      }),
+    );
+    const getRuleOperations = (ruleUniversalIdentifier: string) =>
+      withDefinedRuleOperations({
+        ...ruleOperations,
+        ...withDefinedRuleOperations(
+          ruleOperationsByRuleUniversalIdentifier.get(
+            ruleUniversalIdentifier,
+          ) ?? {},
+        ),
+      });
+
     const rulesToCreate: FlatRowLevelPermissionRule[] = rules
       .filter(
         ({ universalIdentifier }) =>
@@ -595,7 +667,7 @@ export class RowLevelPermissionPredicateService {
       )
       .map((rule) => ({
         ...rule,
-        ...withDefinedRuleOperations(ruleOperations),
+        ...getRuleOperations(rule.universalIdentifier),
         id: v4(),
         workspaceId,
         applicationId: flatApplication.id,
@@ -605,7 +677,7 @@ export class RowLevelPermissionPredicateService {
     const rulesToUpdate = existingRules.flatMap((existingRule) => {
       const updatedRule = {
         ...existingRule,
-        ...withDefinedRuleOperations(ruleOperations),
+        ...getRuleOperations(existingRule.universalIdentifier),
       };
 
       return RULE_OPERATION_KEYS.some(
