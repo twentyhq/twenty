@@ -18,6 +18,14 @@ describe('permissionRestApiExceptionCodeToHttpStatus', () => {
     ).toBe(403);
   });
 
+  it('should return 403 when removing the last server admin', () => {
+    expect(
+      permissionRestApiExceptionCodeToHttpStatus(
+        PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      ),
+    ).toBe(403);
+  });
+
   it('should return 403 for NO_AUTHENTICATION_CONTEXT', () => {
     expect(
       permissionRestApiExceptionCodeToHttpStatus(

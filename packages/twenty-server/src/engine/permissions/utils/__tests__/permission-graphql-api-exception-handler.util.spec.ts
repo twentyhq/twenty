@@ -33,6 +33,17 @@ describe('permissionGraphqlApiExceptionHandler', () => {
     );
   });
 
+  it('should throw ForbiddenError when removing the last server admin', () => {
+    const exception = new PermissionsException(
+      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    );
+
+    expect(() => permissionGraphqlApiExceptionHandler(exception)).toThrow(
+      ForbiddenError,
+    );
+  });
+
   it('should throw UserInputError for INVALID_ARG', () => {
     const exception = new PermissionsException(
       'Invalid argument',

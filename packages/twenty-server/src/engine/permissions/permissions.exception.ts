@@ -16,6 +16,7 @@ export enum PermissionsExceptionCode {
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
   CANNOT_UNASSIGN_LAST_ADMIN = 'CANNOT_UNASSIGN_LAST_ADMIN',
   CANNOT_DELETE_LAST_ADMIN_USER = 'CANNOT_DELETE_LAST_ADMIN_USER',
+  CANNOT_DELETE_LAST_SERVER_ADMIN = 'CANNOT_DELETE_LAST_SERVER_ADMIN',
   UNKNOWN_OPERATION_NAME = 'UNKNOWN_OPERATION_NAME_PERMISSIONS',
   UNKNOWN_REQUIRED_PERMISSION = 'UNKNOWN_REQUIRED_PERMISSION',
   CANNOT_UPDATE_SELF_ROLE = 'CANNOT_UPDATE_SELF_ROLE',
@@ -85,6 +86,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Cannot remove the last admin from the workspace.`;
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
       return msg`Cannot delete the last admin user.`;
+    case PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN:
+      return msg`Cannot remove the last server administrator. Grant server admin access to another user in the Admin Panel first.`;
     case PermissionsExceptionCode.UNKNOWN_OPERATION_NAME:
       return msg`Unknown operation.`;
     case PermissionsExceptionCode.UNKNOWN_REQUIRED_PERMISSION:
@@ -194,6 +197,7 @@ export enum PermissionsExceptionMessage {
   ROLE_NOT_FOUND = 'Role not found',
   CANNOT_UNASSIGN_LAST_ADMIN = 'Cannot unassign admin role from last admin of the workspace',
   CANNOT_DELETE_LAST_ADMIN_USER = 'Cannot delete account: user is the unique admin of a workspace',
+  CANNOT_DELETE_LAST_SERVER_ADMIN = 'Cannot remove the last server administrator',
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
   CANNOT_DELETE_OWN_ROLE = 'Cannot delete a role assigned to the acting user',

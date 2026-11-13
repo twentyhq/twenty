@@ -157,7 +157,7 @@ plugins: [
 
 #### Admin panel not accessible
 
-Run `UPDATE core."user" SET "canAccessFullAdminPanel" = TRUE WHERE email = 'you@yourdomain.com';` in the database container to get access to the admin panel.
+Run `yarn command:prod server-admin:grant --email you@yourdomain.com` in your twenty-server container to get access to the admin panel. It takes effect within seconds, no restart needed.
 
 #### When running workflow, workflow run fails with "Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable."
 

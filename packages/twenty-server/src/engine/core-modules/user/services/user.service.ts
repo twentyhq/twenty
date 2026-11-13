@@ -10,7 +10,14 @@ import {
   isWorkspaceProvisioned,
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
-import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
+import {
+  type EntityManager,
+  type QueryRunner,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
@@ -266,14 +273,15 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
+    await this.assertIsNotLastServerAdminOrThrow(userId);
+
     for (const userWorkspace of user.userWorkspaces) {
       await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
         userWorkspace,
       );
     }
 
-    await this.userRepository.softDelete({ id: userId });
-    await this.coreEntityCacheService.invalidate('user', userId);
+    await this.softDeleteUser(userId);
 
     return await this.userRepository.findOne({
       where: {
@@ -309,17 +317,68 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
+    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+
+    if (isLastUserWorkspace) {
+      await this.assertIsNotLastServerAdminOrThrow(userId);
+    }
+
     await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
       userWorkspace,
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
-      await this.userRepository.softDelete(userId);
-      await this.coreEntityCacheService.invalidate('user', userId);
+    if (isLastUserWorkspace) {
+      await this.softDeleteUser(userId);
     }
 
     return userWorkspace;
+  }
+
+  private async assertIsNotLastServerAdminOrThrow(userId: string) {
+    await this.userRepository.manager.transaction((manager) =>
+      this.lockServerAdminsAndAssertIsNotLastOrThrow(userId, manager),
+    );
+  }
+
+  private async softDeleteUser(userId: string) {
+    await this.userRepository.manager.transaction(async (manager) => {
+      await this.lockServerAdminsAndAssertIsNotLastOrThrow(userId, manager);
+      await manager.softDelete(UserEntity, { id: userId });
+    });
+
+    await this.coreEntityCacheService.invalidate('user', userId);
+  }
+
+  private async lockServerAdminsAndAssertIsNotLastOrThrow(
+    userId: string,
+    manager: EntityManager,
+  ) {
+    const serverAdmins = await manager.find(UserEntity, {
+      select: { id: true },
+      where: { canAccessFullAdminPanel: true },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    const isLastServerAdmin =
+      serverAdmins.length === 1 && serverAdmins[0].id === userId;
+
+    if (!isLastServerAdmin) {
+      return;
+    }
+
+    const hasOtherUsers = await manager.exists(UserEntity, {
+      where: { id: Not(userId) },
+    });
+
+    if (!hasOtherUsers) {
+      return;
+    }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    );
   }
 
   async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
