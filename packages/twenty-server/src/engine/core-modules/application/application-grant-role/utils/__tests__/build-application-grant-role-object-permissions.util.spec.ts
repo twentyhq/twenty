@@ -7,13 +7,6 @@ const FLAT_OBJECT_PERMISSION_WITHOUT_GRANTS = {
   canSoftDeleteObjectRecords: false,
   canDestroyObjectRecords: false,
 };
-const FLAT_ROLE_WITHOUT_GRANTS = {
-  canReadAllObjectRecords: false,
-  canCreateAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
-};
 const FLAT_ROW_LEVEL_PERMISSION_RULE_WITHOUT_GRANTS = {
   canReadRecords: false,
   canCreateRecords: false,
@@ -63,7 +56,6 @@ describe('buildApplicationGrantRoleObjectPermissions', () => {
             canUpdateRecords: true,
           },
         ],
-        requestedFlatRole: FLAT_ROLE_WITHOUT_GRANTS,
         buildGrantRoleFlatObjectPermission,
       }),
     ).toEqual([
@@ -82,7 +74,7 @@ describe('buildApplicationGrantRoleObjectPermissions', () => {
     ]);
   });
 
-  it('should add an object permission for a rule on an object that has none, keeping the role grants', () => {
+  it('should add an object permission only for a rule that grants, leaving the other operations to their default', () => {
     expect(
       buildApplicationGrantRoleObjectPermissions({
         grantRoleFlatObjectPermissions: [],
@@ -92,20 +84,22 @@ describe('buildApplicationGrantRoleObjectPermissions', () => {
             objectMetadataUniversalIdentifier: 'company',
             canReadRecords: true,
           },
+          {
+            ...FLAT_ROW_LEVEL_PERMISSION_RULE_WITHOUT_GRANTS,
+            objectMetadataUniversalIdentifier: 'person',
+          },
         ],
-        requestedFlatRole: {
-          ...FLAT_ROLE_WITHOUT_GRANTS,
-          canDestroyAllObjectRecords: true,
-        },
         buildGrantRoleFlatObjectPermission,
       }),
     ).toEqual([
       {
         objectMetadataUniversalIdentifier: 'company',
         isAdded: true,
-        ...FLAT_OBJECT_PERMISSION_WITHOUT_GRANTS,
         canReadObjectRecords: true,
-        canDestroyObjectRecords: true,
+        canCreateObjectRecords: null,
+        canUpdateObjectRecords: null,
+        canSoftDeleteObjectRecords: null,
+        canDestroyObjectRecords: null,
       },
     ]);
   });

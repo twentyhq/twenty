@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
-import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRowLevelPermissionRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-rule.type';
 
 type ObjectRecordsGrants = Pick<
@@ -22,7 +21,6 @@ export const buildApplicationGrantRoleObjectPermissions = <
 >({
   grantRoleFlatObjectPermissions,
   requestedRoleFlatRowLevelPermissionRules,
-  requestedFlatRole,
   buildGrantRoleFlatObjectPermission,
 }: {
   grantRoleFlatObjectPermissions: TGrantRoleFlatObjectPermission[];
@@ -35,14 +33,6 @@ export const buildApplicationGrantRoleObjectPermissions = <
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
   >[];
-  requestedFlatRole: Pick<
-    UniversalFlatRole,
-    | 'canReadAllObjectRecords'
-    | 'canCreateAllObjectRecords'
-    | 'canUpdateAllObjectRecords'
-    | 'canSoftDeleteAllObjectRecords'
-    | 'canDestroyAllObjectRecords'
-  >;
   buildGrantRoleFlatObjectPermission: (args: {
     objectMetadataUniversalIdentifier: string;
     grants: ObjectRecordsGrants;
@@ -76,28 +66,29 @@ export const buildApplicationGrantRoleObjectPermissions = <
     );
   }
 
+  // Null keeps the default of the role and of system objects
   const addRuleGrants = ({
     objectRecordsGrants,
     ruleGrants,
   }: {
-    objectRecordsGrants: ObjectRecordsGrants;
+    objectRecordsGrants: ObjectRecordsGrants | undefined;
     ruleGrants: Record<keyof ObjectRecordsGrants, boolean>;
   }): ObjectRecordsGrants => ({
     canReadObjectRecords:
       ruleGrants.canReadObjectRecords ||
-      objectRecordsGrants.canReadObjectRecords,
+      (objectRecordsGrants?.canReadObjectRecords ?? null),
     canCreateObjectRecords:
       ruleGrants.canCreateObjectRecords ||
-      objectRecordsGrants.canCreateObjectRecords,
+      (objectRecordsGrants?.canCreateObjectRecords ?? null),
     canUpdateObjectRecords:
       ruleGrants.canUpdateObjectRecords ||
-      objectRecordsGrants.canUpdateObjectRecords,
+      (objectRecordsGrants?.canUpdateObjectRecords ?? null),
     canSoftDeleteObjectRecords:
       ruleGrants.canSoftDeleteObjectRecords ||
-      objectRecordsGrants.canSoftDeleteObjectRecords,
+      (objectRecordsGrants?.canSoftDeleteObjectRecords ?? null),
     canDestroyObjectRecords:
       ruleGrants.canDestroyObjectRecords ||
-      objectRecordsGrants.canDestroyObjectRecords,
+      (objectRecordsGrants?.canDestroyObjectRecords ?? null),
   });
 
   const objectUniversalIdentifiersWithObjectPermission = new Set(
@@ -125,28 +116,15 @@ export const buildApplicationGrantRoleObjectPermissions = <
     }),
     ...[...ruleGrantsByObjectUniversalIdentifier]
       .filter(
-        ([objectMetadataUniversalIdentifier]) =>
+        ([objectMetadataUniversalIdentifier, ruleGrants]) =>
           !objectUniversalIdentifiersWithObjectPermission.has(
             objectMetadataUniversalIdentifier,
-          ),
+          ) && Object.values(ruleGrants).some(Boolean),
       )
       .map(([objectMetadataUniversalIdentifier, ruleGrants]) =>
         buildGrantRoleFlatObjectPermission({
           objectMetadataUniversalIdentifier,
-          grants: addRuleGrants({
-            objectRecordsGrants: {
-              canReadObjectRecords: requestedFlatRole.canReadAllObjectRecords,
-              canCreateObjectRecords:
-                requestedFlatRole.canCreateAllObjectRecords,
-              canUpdateObjectRecords:
-                requestedFlatRole.canUpdateAllObjectRecords,
-              canSoftDeleteObjectRecords:
-                requestedFlatRole.canSoftDeleteAllObjectRecords,
-              canDestroyObjectRecords:
-                requestedFlatRole.canDestroyAllObjectRecords,
-            },
-            ruleGrants,
-          }),
+          grants: addRuleGrants({ objectRecordsGrants: undefined, ruleGrants }),
         }),
       ),
   ];
