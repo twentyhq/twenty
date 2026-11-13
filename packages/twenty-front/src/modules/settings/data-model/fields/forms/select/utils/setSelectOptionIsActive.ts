@@ -24,7 +24,7 @@ export const setSelectOptionIsActive = ({
       return isActive ? activeOption : { ...activeOption, isActive: false };
     },
   );
-  const updatedOption = optionsWithUpdatedOption.filter(
+  const updatedOptions = optionsWithUpdatedOption.filter(
     (option) => option.id === optionId,
   );
   const { activeOptions, inactiveOptions } = splitSelectOptionsByIsActive(
@@ -34,7 +34,7 @@ export const setSelectOptionIsActive = ({
   if (isActive) {
     return withPositions([
       ...activeOptions,
-      ...updatedOption,
+      ...updatedOptions,
       ...inactiveOptions,
     ]);
   }
@@ -42,6 +42,6 @@ export const setSelectOptionIsActive = ({
   return withPositions([
     ...activeOptions,
     ...inactiveOptions,
-    ...updatedOption,
+    ...updatedOptions,
   ]);
 };
