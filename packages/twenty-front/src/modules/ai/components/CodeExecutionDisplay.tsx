@@ -180,7 +180,7 @@ export const CodeExecutionDisplay = ({
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const [isCodeExpanded, setIsCodeExpanded] = useState(false);
-  const [isOutputExpanded, setIsOutputExpanded] = useState(true);
+  const [isOutputExpanded, setIsOutputExpanded] = useState(false);
   const [isFilesExpanded, setIsFilesExpanded] = useState(true);
 
   const status: 'success' | 'error' | 'running' = isRunning

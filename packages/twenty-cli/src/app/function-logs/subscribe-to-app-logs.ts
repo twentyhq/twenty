@@ -54,6 +54,8 @@ export const subscribeToAppLogs = async ({
   let receivedRecords = 0;
   const subscribe = (includeIdentity: boolean) =>
     subscribeGraphql({
+      interruptionHint:
+        'Restart twenty app logs to resume watching. Logs produced while disconnected cannot be replayed.',
       target,
       signal,
       query: `subscription SubscribeToLogs($input: LogicFunctionLogsInput!) {

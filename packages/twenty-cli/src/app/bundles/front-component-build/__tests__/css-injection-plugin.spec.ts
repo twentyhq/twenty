@@ -7,7 +7,7 @@ import { join } from 'path';
 import * as esbuild from 'esbuild';
 
 import { MINIMAL_APP_PATH } from '@/app/__tests__/utils/fixture-paths';
-import { cssInjectionPlugin } from '@/app/bundles/front-component-build/css-injection-plugin';
+import { getFrontComponentBuildPlugins } from '@/app/bundles/front-component-build/utils/get-front-component-build-plugins';
 import { collectWatchInputs } from '@/app/dev/collect-watch-inputs';
 import { readWatchInputStamp } from '@/app/dev/read-watch-input-stamp';
 import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component-build/utils/get-base-front-component-build-options';
@@ -104,13 +104,19 @@ describe('front-component build CSS injection', () => {
       await writeFile(asset, '<svg xmlns="http://www.w3.org/2000/svg"/>');
 
       for (let buildIndex = 0; buildIndex < 2; buildIndex++) {
+        const sourcePaths: string[] = [];
         const { watchInputs } = await collectWatchInputs(() =>
           esbuild.build({
             entryPoints: [stylesheet],
             bundle: true,
             write: false,
-            plugins: [cssInjectionPlugin],
+            plugins: getFrontComponentBuildPlugins({
+              onSourceFiles: (paths) => sourcePaths.push(...paths),
+            }),
           }),
+        );
+        expect(sourcePaths).toEqual(
+          expect.arrayContaining([stylesheet, nestedStylesheet, asset]),
         );
         const files = watchInputs.filter((input) => input.kind === 'file');
 

@@ -181,6 +181,17 @@ export type AgentChatThreadParticipant = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type AgentDailyRunCount = {
+  __typename?: 'AgentDailyRunCount';
+  completedRunCount: Scalars['Int']['output'];
+  credits: Scalars['Float']['output'];
+  /** Day in the requested time zone, as YYYY-MM-DD */
+  day: Scalars['String']['output'];
+  failedRunCount: Scalars['Int']['output'];
+  /** Runs neither completed nor failed, such as running or cancelled */
+  otherRunCount: Scalars['Int']['output'];
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID']['input'];
@@ -242,6 +253,13 @@ export type AgentMessageReactionSummary = {
   workspaceMemberIds: Array<Scalars['UUID']['output']>;
 };
 
+export type AgentRecentRun = {
+  __typename?: 'AgentRecentRun';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['UUID']['output'];
+  status: AgentTurnStatus;
+};
+
 export type AgentRun = {
   __typename?: 'AgentRun';
   canReadThread: Scalars['Boolean']['output'];
@@ -262,6 +280,29 @@ export type AgentRun = {
   threadId?: Maybe<Scalars['UUID']['output']>;
   threadTitle?: Maybe<Scalars['String']['output']>;
   toolNames: Array<Scalars['String']['output']>;
+};
+
+export type AgentRunInsights = {
+  __typename?: 'AgentRunInsights';
+  agentId: Scalars['UUID']['output'];
+  /** Average duration of completed runs over the same 14 days */
+  averageDurationInMs?: Maybe<Scalars['Float']['output']>;
+  /** Credits spent over the same 14 days */
+  credits: Scalars['Float']['output'];
+  /** One entry per calendar day of the last 14 days in the requested time zone, oldest first */
+  dailyRunCounts: Array<AgentDailyRunCount>;
+  /** Runs over the last 14 days, the same window as the agents list run count */
+  runCount: Scalars['Int']['output'];
+  /** Input and output tokens used over the same 14 days */
+  tokenCount: Scalars['Float']['output'];
+};
+
+export type AgentRunSummary = {
+  __typename?: 'AgentRunSummary';
+  agentId: Scalars['UUID']['output'];
+  /** Most recent runs first */
+  recentRuns: Array<AgentRecentRun>;
+  runCountLast14Days: Scalars['Int']['output'];
 };
 
 export enum AgentTurnStatus {
@@ -577,7 +618,9 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  marketplaceAppUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -705,6 +748,7 @@ export enum ApplicationExportCoverageStatus {
 
 export type ApplicationExportFile = {
   __typename?: 'ApplicationExportFile';
+  /** Base64 for public-asset files, UTF-8 text for other folders. */
   content: Scalars['String']['output'];
   folder: Scalars['String']['output'];
   path: Scalars['String']['output'];
@@ -3314,10 +3358,16 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
+export type MarkAppChannelThreadAsReadInput = {
+  messageChannelId: Scalars['UUID']['input'];
+  messageThreadId: Scalars['UUID']['input'];
+};
+
 export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
   author: Scalars['String']['output'];
   category: Scalars['String']['output'];
+  connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
@@ -3332,6 +3382,7 @@ export type MarketplaceAppDetail = {
   author?: Maybe<Scalars['String']['output']>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
+  connectUrl?: Maybe<Scalars['String']['output']>;
   content?: Maybe<ApplicationContent>;
   defaultRoleUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -3828,6 +3879,7 @@ export type Mutation = {
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
+  markAppChannelThreadAsRead: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
   openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
@@ -3855,6 +3907,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationAuthorization: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4777,6 +4830,11 @@ export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
 };
 
 
+export type MutationMarkAppChannelThreadAsReadArgs = {
+  input: MarkAppChannelThreadAsReadInput;
+};
+
+
 export type MutationMoveAgentChatThreadToChannelArgs = {
   channelId?: InputMaybe<Scalars['UUID']['input']>;
   threadId: Scalars['UUID']['input'];
@@ -4895,6 +4953,11 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationAuthorizationArgs = {
+  applicationAuthorizationId: Scalars['UUID']['input'];
 };
 
 
@@ -6108,6 +6171,8 @@ export type Query = {
   agentChatChannelThreadIds: AgentChatChannelThreadIds;
   agentChatChannels: Array<AgentChatChannel>;
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary;
+  agentRunInsights: AgentRunInsights;
+  agentRunSummaries: Array<AgentRunSummary>;
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   aiChatUserCreditsUsage?: Maybe<AiChatUserCreditsUsage>;
@@ -6261,6 +6326,7 @@ export type Query = {
   validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
@@ -6271,6 +6337,12 @@ export type QueryAgentChatChannelThreadIdsArgs = {
   filter?: InputMaybe<AgentChatChannelThreadFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   status?: InputMaybe<AgentChatChannelThreadStatus>;
+};
+
+
+export type QueryAgentRunInsightsArgs = {
+  agentId: Scalars['UUID']['input'];
+  timeZone: Scalars['String']['input'];
 };
 
 
@@ -6409,6 +6481,7 @@ export type QueryEventLogsArgs = {
 
 export type QueryExportApplicationArgs = {
   shouldIncludeDependencies?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldIncludePublicAssets?: InputMaybe<Scalars['Boolean']['input']>;
   shouldIncludeSourceFiles?: InputMaybe<Scalars['Boolean']['input']>;
   universalIdentifier: Scalars['UUID']['input'];
 };
