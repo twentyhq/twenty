@@ -337,20 +337,21 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
     ...rolePermissionUniversalFlatEntityMaps,
     flatObjectPermissionMaps: toUniversalFlatEntityMaps(
       buildApplicationGrantRoleObjectPermissions({
-        objectPermissions: Object.values(
+        grantRoleFlatObjectPermissions: Object.values(
           rolePermissionUniversalFlatEntityMaps.flatObjectPermissionMaps
             .byUniversalIdentifier,
         ).filter(isDefined),
-        rules: requestedFlatRole.rowLevelPermissionRuleUniversalIdentifiers
-          .map(
-            (ruleUniversalIdentifier) =>
-              flatRowLevelPermissionRuleMaps?.byUniversalIdentifier[
-                ruleUniversalIdentifier
-              ],
-          )
-          .filter(isDefined),
-        roleGrants: requestedFlatRole,
-        buildObjectPermission: ({
+        requestedRoleFlatRowLevelPermissionRules:
+          requestedFlatRole.rowLevelPermissionRuleUniversalIdentifiers
+            .map(
+              (ruleUniversalIdentifier) =>
+                flatRowLevelPermissionRuleMaps?.byUniversalIdentifier[
+                  ruleUniversalIdentifier
+                ],
+            )
+            .filter(isDefined),
+        requestedFlatRole,
+        buildGrantRoleFlatObjectPermission: ({
           objectMetadataUniversalIdentifier,
           grants,
         }) => ({

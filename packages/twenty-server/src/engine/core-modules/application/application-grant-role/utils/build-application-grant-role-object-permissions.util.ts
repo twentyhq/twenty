@@ -13,19 +13,20 @@ type ObjectRecordsGrants = Pick<
   | 'canDestroyObjectRecords'
 >;
 
-// A limiting role carries no RLS, so an operation one of its rules grants becomes an all-records grant
+// Reads stored flat entities, not a manifest. A grant role carries no rule,
+// so what a rule of the requested role grants becomes an all-records grant
 export const buildApplicationGrantRoleObjectPermissions = <
-  TObjectPermission extends ObjectRecordsGrants & {
+  TGrantRoleFlatObjectPermission extends ObjectRecordsGrants & {
     objectMetadataUniversalIdentifier: string;
   },
 >({
-  objectPermissions,
-  rules,
-  roleGrants,
-  buildObjectPermission,
+  grantRoleFlatObjectPermissions,
+  requestedRoleFlatRowLevelPermissionRules,
+  requestedFlatRole,
+  buildGrantRoleFlatObjectPermission,
 }: {
-  objectPermissions: TObjectPermission[];
-  rules: Pick<
+  grantRoleFlatObjectPermissions: TGrantRoleFlatObjectPermission[];
+  requestedRoleFlatRowLevelPermissionRules: Pick<
     UniversalFlatRowLevelPermissionRule,
     | 'objectMetadataUniversalIdentifier'
     | 'canReadRecords'
@@ -34,7 +35,7 @@ export const buildApplicationGrantRoleObjectPermissions = <
     | 'canSoftDeleteRecords'
     | 'canDestroyRecords'
   >[];
-  roleGrants: Pick<
+  requestedFlatRole: Pick<
     UniversalFlatRole,
     | 'canReadAllObjectRecords'
     | 'canCreateAllObjectRecords'
@@ -42,17 +43,17 @@ export const buildApplicationGrantRoleObjectPermissions = <
     | 'canSoftDeleteAllObjectRecords'
     | 'canDestroyAllObjectRecords'
   >;
-  buildObjectPermission: (args: {
+  buildGrantRoleFlatObjectPermission: (args: {
     objectMetadataUniversalIdentifier: string;
     grants: ObjectRecordsGrants;
-  }) => TObjectPermission;
-}): TObjectPermission[] => {
+  }) => TGrantRoleFlatObjectPermission;
+}): TGrantRoleFlatObjectPermission[] => {
   const ruleGrantsByObjectUniversalIdentifier = new Map<
     string,
     Record<keyof ObjectRecordsGrants, boolean>
   >();
 
-  for (const rule of rules) {
+  for (const rule of requestedRoleFlatRowLevelPermissionRules) {
     const grants = ruleGrantsByObjectUniversalIdentifier.get(
       rule.objectMetadataUniversalIdentifier,
     );
@@ -84,35 +85,35 @@ export const buildApplicationGrantRoleObjectPermissions = <
   }): ObjectRecordsGrants => ({
     canReadObjectRecords:
       (objectRecordsGrants?.canReadObjectRecords ??
-        roleGrants.canReadAllObjectRecords) ||
+        requestedFlatRole.canReadAllObjectRecords) ||
       ruleGrants.canReadObjectRecords,
     canCreateObjectRecords:
       (objectRecordsGrants?.canCreateObjectRecords ??
-        roleGrants.canCreateAllObjectRecords) ||
+        requestedFlatRole.canCreateAllObjectRecords) ||
       ruleGrants.canCreateObjectRecords,
     canUpdateObjectRecords:
       (objectRecordsGrants?.canUpdateObjectRecords ??
-        roleGrants.canUpdateAllObjectRecords) ||
+        requestedFlatRole.canUpdateAllObjectRecords) ||
       ruleGrants.canUpdateObjectRecords,
     canSoftDeleteObjectRecords:
       (objectRecordsGrants?.canSoftDeleteObjectRecords ??
-        roleGrants.canSoftDeleteAllObjectRecords) ||
+        requestedFlatRole.canSoftDeleteAllObjectRecords) ||
       ruleGrants.canSoftDeleteObjectRecords,
     canDestroyObjectRecords:
       (objectRecordsGrants?.canDestroyObjectRecords ??
-        roleGrants.canDestroyAllObjectRecords) ||
+        requestedFlatRole.canDestroyAllObjectRecords) ||
       ruleGrants.canDestroyObjectRecords,
   });
 
   const objectUniversalIdentifiersWithObjectPermission = new Set(
-    objectPermissions.map(
+    grantRoleFlatObjectPermissions.map(
       ({ objectMetadataUniversalIdentifier }) =>
         objectMetadataUniversalIdentifier,
     ),
   );
 
   return [
-    ...objectPermissions.map((objectPermission) => {
+    ...grantRoleFlatObjectPermissions.map((objectPermission) => {
       const ruleGrants = ruleGrantsByObjectUniversalIdentifier.get(
         objectPermission.objectMetadataUniversalIdentifier,
       );
@@ -135,7 +136,7 @@ export const buildApplicationGrantRoleObjectPermissions = <
           ),
       )
       .map(([objectMetadataUniversalIdentifier, ruleGrants]) =>
-        buildObjectPermission({
+        buildGrantRoleFlatObjectPermission({
           objectMetadataUniversalIdentifier,
           grants: mergeGrants({ objectRecordsGrants: undefined, ruleGrants }),
         }),
