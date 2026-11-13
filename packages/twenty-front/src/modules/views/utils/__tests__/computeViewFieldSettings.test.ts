@@ -13,7 +13,7 @@ describe('computeViewFieldSettings', () => {
     ).toEqual({ recordLimit: 3 });
   });
 
-  it.each(['', '0', '-2', 'abc'])(
+  it.each(['', '0', '-2', 'abc', '12abc', '61'])(
     'leaves out record limit %j',
     (recordLimit) => {
       expect(

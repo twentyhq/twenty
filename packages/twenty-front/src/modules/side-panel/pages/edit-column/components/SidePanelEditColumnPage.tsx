@@ -26,10 +26,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { computeViewFieldSettings } from '@/views/utils/computeViewFieldSettings';
+import { parseRecordLimitInput } from '@/views/utils/parseRecordLimitInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
@@ -141,8 +143,16 @@ const SidePanelEditColumnForm = ({
     recordField.settings?.recordLimit?.toString() ?? '',
   );
 
+  const isRecordLimitValid =
+    !isDefined(relationObjectMetadataItem) ||
+    parseRecordLimitInput(recordLimit).isValid;
+
   const handleSaveClick = async () => {
-    await updateRecordTableColumnSettings({
+    if (!isRecordLimitValid) {
+      return;
+    }
+
+    const areSettingsSaved = await updateRecordTableColumnSettings({
       recordTableId,
       fieldMetadataItemId,
       settings: computeViewFieldSettings({
@@ -151,13 +161,21 @@ const SidePanelEditColumnForm = ({
       }),
     });
 
+    if (!areSettingsSaved) {
+      return;
+    }
+
     if (isDefined(relationObjectMetadataItem)) {
-      await saveColumnScope({
+      const isScopeSaved = await saveColumnScope({
         scopeInstanceId,
         ownerViewFieldId: recordField.id,
         relationObjectMetadataId: relationObjectMetadataItem.id,
         scopeView,
       });
+
+      if (!isScopeSaved) {
+        return;
+      }
     }
 
     goBackFromSidePanel();
@@ -202,6 +220,11 @@ const SidePanelEditColumnForm = ({
               scopeView={scopeView}
               relationObjectMetadataItem={relationObjectMetadataItem}
               recordLimit={recordLimit}
+              recordLimitError={
+                isRecordLimitValid
+                  ? undefined
+                  : t`Enter a whole number from 1 to ${QUERY_MAX_RECORDS_FROM_RELATION}`
+              }
               onRecordLimitChange={setRecordLimit}
             />
           </SidePanelGroup>
@@ -219,6 +242,7 @@ const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
+            disabled={!isRecordLimitValid}
             shortcut={['Mod', 'Enter']}
             variant="solid"
             color="accent"

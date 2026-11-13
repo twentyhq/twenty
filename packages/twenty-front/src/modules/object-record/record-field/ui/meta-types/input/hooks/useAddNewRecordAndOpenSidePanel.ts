@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
@@ -113,9 +114,15 @@ export const useAddNewRecordAndOpenSidePanel = ({
         attachRecord: shouldAttachToSourceRecord ? attachRecord : undefined,
       });
 
+      const recordLabelPayload = buildRecordLabelPayload({
+        searchInput,
+        objectMetadataItem: relationObjectMetadataItem,
+      });
+
       const createdRecord = await requestRecordCreation({
         objectMetadataItem: relationObjectMetadataItem,
         initialDraftRecord: {
+          ...recordLabelPayload,
           ...buildRecordInputFromFilter({
             currentRecordFilters: prefillRecordFilters,
             objectMetadataItem: relationObjectMetadataItem,
@@ -123,10 +130,7 @@ export const useAddNewRecordAndOpenSidePanel = ({
             timeZone: userTimezone,
           }),
           ...buildRecordInputFromRLSPredicates(),
-          ...buildRecordLabelPayload({
-            searchInput,
-            objectMetadataItem: relationObjectMetadataItem,
-          }),
+          ...(isNonEmptyString(searchInput) ? recordLabelPayload : {}),
           ...buildSourceRecordLink({
             relationFieldMetadataItem,
             sourceObjectMetadataId: objectMetadataItem.id,

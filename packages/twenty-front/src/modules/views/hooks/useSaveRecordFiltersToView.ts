@@ -75,14 +75,14 @@ export const useSaveRecordFiltersToView = () => {
         view,
       );
       if (createFilterGroupResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const updateFilterGroupResult = await performViewFilterGroupApiUpdate(
         viewFilterGroupsToUpdate,
       );
       if (updateFilterGroupResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const currentViewFilters = view.viewFilters ?? [];
@@ -148,28 +148,28 @@ export const useSaveRecordFiltersToView = () => {
         createViewFilterInputs,
       );
       if (createResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const updateResult = await performViewFilterApiUpdate(
         updateViewFilterInputs,
       );
       if (updateResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const deleteResult = await performViewFilterApiDestroy(
         destroyViewFilterInputs,
       );
       if (deleteResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const destroyFilterGroupResult = await performViewFilterGroupApiDestroy(
         viewFilterGroupIdsToDestroy,
       );
       if (destroyFilterGroupResult.status === 'failed') {
-        return;
+        return false;
       }
 
       // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
@@ -185,6 +185,8 @@ export const useSaveRecordFiltersToView = () => {
           ),
         }));
       }
+
+      return true;
     },
     [
       store,

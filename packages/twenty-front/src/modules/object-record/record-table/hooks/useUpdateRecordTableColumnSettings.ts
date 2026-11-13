@@ -33,7 +33,7 @@ export const useUpdateRecordTableColumnSettings = () => {
         );
 
       if (!isDefined(recordFieldToUpdate)) {
-        return;
+        return false;
       }
 
       store.set(currentRecordFieldsAtom, (previousRecordFields) =>
@@ -44,7 +44,7 @@ export const useUpdateRecordTableColumnSettings = () => {
         ),
       );
 
-      await performViewFieldApiUpdate([
+      const updateResult = await performViewFieldApiUpdate([
         {
           input: {
             id: recordFieldToUpdate.id,
@@ -52,6 +52,8 @@ export const useUpdateRecordTableColumnSettings = () => {
           },
         },
       ]);
+
+      return updateResult.status === 'successful';
     },
     [performViewFieldApiUpdate, store],
   );

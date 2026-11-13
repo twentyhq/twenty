@@ -166,13 +166,17 @@ export const RelationOneToManyFieldInput = () => {
     >
       <MultipleRecordPicker
         componentInstanceId={instanceId}
-        onChange={(morphItem) => {
+        onChange={async (morphItem) => {
           if (isJunctionRelation) {
             updateJunctionRelationFromCell({ morphItem });
             return;
           }
 
-          updateRelation(morphItem);
+          await updateRelation(morphItem);
+
+          if (isDefined(scopedRelationViewFieldId)) {
+            refetchScopedRelationRecords();
+          }
         }}
         onCreate={
           isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)

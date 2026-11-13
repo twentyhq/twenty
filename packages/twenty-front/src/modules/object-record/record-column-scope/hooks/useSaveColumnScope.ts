@@ -85,11 +85,13 @@ export const useSaveColumnScope = () => {
       );
 
       if (recordFilters.length === 0 && recordSorts.length === 0) {
-        if (isDefined(scopeView)) {
-          await performViewApiDestroy({ id: scopeView.id });
+        if (!isDefined(scopeView)) {
+          return true;
         }
 
-        return;
+        const destroyResult = await performViewApiDestroy({ id: scopeView.id });
+
+        return destroyResult.status === 'successful';
       }
 
       const viewToSave =
@@ -100,16 +102,20 @@ export const useSaveColumnScope = () => {
         }));
 
       if (!isDefined(viewToSave)) {
-        return;
+        return false;
       }
 
-      await saveRecordFiltersToView({
+      const areFiltersSaved = await saveRecordFiltersToView({
         view: viewToSave,
         recordFilters,
         recordFilterGroups,
       });
 
-      await saveRecordSortsToView({ view: viewToSave, recordSorts });
+      if (!areFiltersSaved) {
+        return false;
+      }
+
+      return saveRecordSortsToView({ view: viewToSave, recordSorts });
     },
     [
       createScopeView,

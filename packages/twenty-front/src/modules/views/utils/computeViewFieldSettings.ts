@@ -1,5 +1,7 @@
-import { type ViewFieldSettings } from 'twenty-shared/types';
+import { parseRecordLimitInput } from '@/views/utils/parseRecordLimitInput';
 import { isNonEmptyString } from '@sniptt/guards';
+import { type ViewFieldSettings } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const computeViewFieldSettings = ({
   label,
@@ -9,12 +11,12 @@ export const computeViewFieldSettings = ({
   recordLimit: string;
 }): ViewFieldSettings | null => {
   const trimmedLabel = label.trim();
-  const parsedRecordLimit = Number.parseInt(recordLimit, 10);
+  const parsedRecordLimit = parseRecordLimitInput(recordLimit);
 
   const settings: ViewFieldSettings = {
     ...(isNonEmptyString(trimmedLabel) ? { label: trimmedLabel } : {}),
-    ...(Number.isInteger(parsedRecordLimit) && parsedRecordLimit > 0
-      ? { recordLimit: parsedRecordLimit }
+    ...(parsedRecordLimit.isValid && isDefined(parsedRecordLimit.recordLimit)
+      ? { recordLimit: parsedRecordLimit.recordLimit }
       : {}),
   };
 

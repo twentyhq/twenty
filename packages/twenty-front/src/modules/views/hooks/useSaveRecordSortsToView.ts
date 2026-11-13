@@ -69,20 +69,22 @@ export const useSaveRecordSortsToView = () => {
 
       const createResult = await performViewSortApiCreate(createViewSortInputs);
       if (createResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const updateResult = await performViewSortApiUpdate(updateViewSortInputs);
       if (updateResult.status === 'failed') {
-        return;
+        return false;
       }
 
       const deleteResult = await performViewSortApiDestroy(
         destroyViewSortInputs,
       );
       if (deleteResult.status === 'failed') {
-        return;
+        return false;
       }
+
+      return true;
     },
     [
       performViewSortApiCreate,

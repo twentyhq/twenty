@@ -12,7 +12,6 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { type View } from '@/views/types/View';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -36,6 +35,7 @@ type SidePanelEditColumnScopeSectionProps = {
   scopeView: View | undefined;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   recordLimit: string;
+  recordLimitError?: string;
   onRecordLimitChange: (recordLimit: string) => void;
 };
 
@@ -44,6 +44,7 @@ export const SidePanelEditColumnScopeSection = ({
   scopeView,
   relationObjectMetadataItem,
   recordLimit,
+  recordLimitError,
   onRecordLimitChange,
 }: SidePanelEditColumnScopeSectionProps) => {
   const { t } = useLingui();
@@ -101,9 +102,8 @@ export const SidePanelEditColumnScopeSection = ({
       <TextInput
         label={t`Show at most`}
         type="number"
-        min={1}
-        max={QUERY_MAX_RECORDS_FROM_RELATION}
         value={recordLimit}
+        error={recordLimitError}
         onChange={onRecordLimitChange}
         placeholder={t`All`}
         fullWidth
