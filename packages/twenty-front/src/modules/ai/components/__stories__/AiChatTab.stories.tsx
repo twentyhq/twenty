@@ -4,6 +4,7 @@ import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { Suspense, useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ThemeProvider } from 'twenty-ui/theme';
@@ -352,6 +353,94 @@ export const MemberTypingInSidePanel: Story = {
   play: async ({ canvasElement }) => {
     await expect(
       await within(canvasElement).findByText('Jane Doe is typing…'),
+    ).toBeVisible();
+  },
+};
+
+const initializeInboxChatWithTeammate = (
+  getMessages: (teammateId: string | undefined) => ExtendedUIMessage[],
+) => {
+  initializeNewAiChatStory({ isInboxEnabled: true });
+
+  const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
+  const teammate = jotaiStore
+    .get(currentWorkspaceMembersState.atom)
+    .find(({ name }) => name.firstName === 'Jane');
+
+  jotaiStore.set(
+    agentChatMessagesFamilyState.atomFamily({ threadId }),
+    getMessages(teammate?.id),
+  );
+};
+
+export const ReplyToTeammate: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeInboxChatWithTeammate((teammateId) => [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const reply = await canvas.findByRole('button', { name: 'Reply' });
+
+    reply.focus();
+    await userEvent.click(reply);
+    await expect(await canvas.findByText('Replying to')).toBeVisible();
+    await waitFor(() => expect(canvas.getByRole('textbox')).toHaveFocus());
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove quote' }));
+    await expect(canvas.queryByText('Replying to')).not.toBeInTheDocument();
+  },
+};
+
+export const OpenOriginalFromReply: Story = {
+  ...FullPageNewChat,
+  beforeEach: () => {
+    initializeInboxChatWithTeammate((teammateId) => [
+      {
+        id: '20202020-7c1e-4a0f-9d2b-3f4e5a6b7c91',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: 'On it. Their procurement asked for a security review.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+      {
+        id: '20202020-8d2f-4b1a-8e3c-4a5b6c7d8e92',
+        role: 'user',
+        parts: [
+          {
+            type: 'text',
+            text: '> **Jane Doe:** On it. Their procurement asked for a security review.\n\nThanks, I will loop in our security lead.',
+          },
+        ],
+        metadata: { senderWorkspaceMemberId: teammateId },
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const quote = await canvas.findByRole('button', {
+      name: 'View original message',
+    });
+
+    await userEvent.click(quote);
+    await expect(
+      await canvas.findByText('Thanks, I will loop in our security lead.'),
     ).toBeVisible();
   },
 };

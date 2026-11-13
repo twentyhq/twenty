@@ -1,7 +1,8 @@
 import { UseGuards, UseFilters } from '@nestjs/common';
 import { Args, ArgsType, Field, Int, Mutation, Query } from '@nestjs/graphql';
 
-import { Max, MaxLength } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, Max, MaxLength, ValidateNested } from 'class-validator';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
@@ -12,6 +13,7 @@ import {
   TIMELINE_THREADS_SEARCH_INPUT_MAX_LENGTH,
 } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/messaging/dtos/dismiss-reconnect-account-banner.input';
+import { TimelineThreadChannelFilterInput } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel-filter.input';
 import { TimelineThreadChannelDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-channel.dto';
 import { TimelineThreadSearchResultDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread-search-result.dto';
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
@@ -57,6 +59,21 @@ class GetTimelineThreadsFromObjectRecordArgs {
   @Field(() => Int)
   @Max(TIMELINE_THREADS_MAX_PAGE_SIZE)
   pageSize: number;
+
+  @Field(() => TimelineThreadChannelFilterInput, { nullable: true })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => TimelineThreadChannelFilterInput)
+  channel?: TimelineThreadChannelFilterInput;
+}
+
+@ArgsType()
+class GetTimelineThreadChannelsFromObjectRecordArgs {
+  @Field(() => String)
+  objectNameSingular: string;
+
+  @Field(() => UUIDScalarType)
+  recordId: string;
 }
 
 @ArgsType()
@@ -140,6 +157,7 @@ export class TimelineMessagingResolver {
       recordId,
       page,
       pageSize,
+      channel,
     }: GetTimelineThreadsFromObjectRecordArgs,
   ) {
     return this.getMessagesFromPersonIdsService.getMessagesFromObjectRecord({
@@ -149,6 +167,27 @@ export class TimelineMessagingResolver {
       workspaceId: workspace.id,
       page,
       pageSize,
+      channel,
+    });
+  }
+
+  @Query(() => [TimelineThreadChannelDTO])
+  @UseGuards(
+    AccessPolicyGuard(TIMELINE_MESSAGING_READ_ACCESS_POLICY),
+    CustomPermissionGuard,
+  )
+  async getTimelineThreadChannelsFromObjectRecord(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args()
+    {
+      objectNameSingular,
+      recordId,
+    }: GetTimelineThreadChannelsFromObjectRecordArgs,
+  ): Promise<TimelineThreadChannelDTO[]> {
+    return this.getMessagesFromPersonIdsService.getChannelsFromObjectRecord({
+      objectNameSingular,
+      recordId,
+      workspaceId: workspace.id,
     });
   }
 
