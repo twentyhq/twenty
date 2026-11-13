@@ -266,6 +266,8 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
+    await this.assertUserIsNotUniqueServerAdminOrThrow(user);
+
     for (const userWorkspace of user.userWorkspaces) {
       await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
         userWorkspace,
@@ -309,17 +311,48 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
+    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+
+    if (isLastUserWorkspace) {
+      await this.assertUserIsNotUniqueServerAdminOrThrow(user);
+    }
+
     await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
       userWorkspace,
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
+    if (isLastUserWorkspace) {
       await this.userRepository.softDelete(userId);
       await this.coreEntityCacheService.invalidate('user', userId);
     }
 
     return userWorkspace;
+  }
+
+  private async assertUserIsNotUniqueServerAdminOrThrow(user: UserEntity) {
+    if (!user.canAccessFullAdminPanel) {
+      return;
+    }
+
+    const hasOtherServerAdmin = await this.userRepository.exists({
+      where: { id: Not(user.id), canAccessFullAdminPanel: true },
+    });
+
+    if (hasOtherServerAdmin) {
+      return;
+    }
+
+    const hasOtherUser = await this.userRepository.exists({
+      where: { id: Not(user.id) },
+    });
+
+    if (hasOtherUser) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+        PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      );
+    }
   }
 
   async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
