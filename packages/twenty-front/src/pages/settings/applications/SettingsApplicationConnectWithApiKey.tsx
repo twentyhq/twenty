@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -11,24 +10,21 @@ import {
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
+import { useConnectApplicationWithApiKey } from '@/settings/applications/hooks/useConnectApplicationWithApiKey';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ConnectApplicationWithApiKeyDocument } from '~/generated-metadata/graphql';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const SettingsApplicationConnectWithApiKey = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
   const location = useLocation();
-  const { enqueueToast } = useToast();
   const { applicationId = '', connectionProviderName = '' } = useParams();
   const [searchParams] = useSearchParams();
   const reconnectingConnectedAccountId = searchParams.get(
@@ -38,10 +34,12 @@ export const SettingsApplicationConnectWithApiKey = () => {
   const { connectionProviders } =
     useFindApplicationConnectionProviders(applicationId);
   const [apiKey, setApiKey] = useState('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [connectApplicationWithApiKey, { loading }] = useMutation(
-    ConnectApplicationWithApiKeyDocument,
-  );
+  const {
+    connectApplicationWithApiKey,
+    loading,
+    errorMessage,
+    clearErrorMessage,
+  } = useConnectApplicationWithApiKey();
 
   const connectionProvider = connectionProviders.find(
     (provider) => provider.name === connectionProviderName,
@@ -88,36 +86,17 @@ export const SettingsApplicationConnectWithApiKey = () => {
       return;
     }
 
-    setErrorMessage(null);
-
-    try {
-      await connectApplicationWithApiKey({
-        variables: {
-          input: {
-            applicationId,
-            providerName: connectionProviderName,
-            apiKey,
-            reconnectingConnectedAccountId,
-          },
-        },
-        // By name so only mounted lists refetch: the workspace list needs a permission the member may lack
-        refetchQueries: ['MyConnectedAccounts', 'ApplicationConnectedAccounts'],
-      });
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error
-          ? getErrorMessageFromApolloError(error)
-          : t`An error occurred.`,
-      );
-
-      return;
-    }
-
-    enqueueToast({
-      status: 'success',
-      children: t`${connectionProviderDisplayName} connected`,
+    const isConnected = await connectApplicationWithApiKey({
+      applicationId,
+      connectionProviderName,
+      connectionProviderDisplayName,
+      apiKey,
+      reconnectingConnectedAccountId,
     });
-    navigate(returnTo);
+
+    if (isConnected) {
+      navigate(returnTo);
+    }
   };
 
   const title = t`Connect ${connectionProviderDisplayName}`;
@@ -150,7 +129,7 @@ export const SettingsApplicationConnectWithApiKey = () => {
             error={errorMessage ?? undefined}
             onChange={(value) => {
               setApiKey(value);
-              setErrorMessage(null);
+              clearErrorMessage();
             }}
             onKeyDown={(event) => {
               if (event.nativeEvent.isComposing) {
