@@ -31,13 +31,25 @@ const isOneToManyRelationField = ({
 
 export const validateFlatViewFieldSettings = ({
   settings,
+  isCanonical,
   flatFieldMetadata,
 }: {
   settings: ViewFieldSettings | null;
+  isCanonical: boolean;
   flatFieldMetadata: ViewFieldSettingsFlatFieldMetadata;
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
   if (!isDefined(settings)) {
     return [];
+  }
+
+  if (isCanonical) {
+    return [
+      {
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Only non-canonical view fields can have settings`,
+        userFriendlyMessage: msg`Only added columns can be customized`,
+      },
+    ];
   }
 
   if (!isPlainObject(settings)) {

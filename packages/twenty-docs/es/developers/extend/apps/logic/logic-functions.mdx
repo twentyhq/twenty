@@ -451,7 +451,7 @@ Para eliminaciones permanentes, usa `.destroyed`.
 | `condición`                        | [Expresión de regla](/es/user-guide/data-model/capabilities/validation-rules#write-a-condition) opcional que debe cumplir el registro. `anterior.\<field>` lo lee antes de una actualización. Requiere `objectUniversalIdentifier`. |
 | `batchMode`                        | Booleano opcional. Cuando es `true`, se llama al manejador una vez por cada lote de registros en lugar de una vez por cada registro. El servidor decide cuántos registros contiene un lote, hasta un máximo de 200.                               |
 
-La compilación falla cuando se desconoce un objeto o campo, o cuando la condición lee un campo que el objeto no tiene. Una condición lee los propios campos del registro; una relación de varios a uno se lee mediante su id, como `companyId`.
+La compilación falla cuando se desconoce un objeto o campo, o cuando la condición lee un campo que el objeto no tiene. Una condición lee el registro tal como lo devuelve la API, como una regla de validación: `company.id` para la empresa relacionada, `company.employees > 100` para uno de sus campos. Los campos relacionados se leen cuando se envía el evento, con los permisos de la aplicación, por lo que un registro relacionado que la aplicación no puede leer se considera vacío. `previous.` solo abarca los campos propios del registro.
 
 <Note>
   La anterior `databaseEventTriggerSettings`, con `eventName` (como

@@ -18,6 +18,7 @@ import {
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-canonical-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_FIELD_SETTINGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-settings-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
@@ -46,7 +47,7 @@ export type ViewFieldOverrides = {
   ['fieldMetadataId', 'viewId'],
   {
     unique: true,
-    where: '"deletedAt" IS NULL',
+    where: '"deletedAt" IS NULL AND "isCanonical" = true',
   },
 )
 export class ViewFieldEntity
@@ -93,6 +94,13 @@ export class ViewFieldEntity
   })
   @Column({ nullable: false, default: false, type: 'boolean' })
   isSystemSideEffect: boolean;
+
+  // The field's own column; extra columns on the same field are non-canonical
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: true, type: 'boolean' })
+  isCanonical: boolean;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_VIEW_FIELD_SETTINGS_UPGRADE_COMMAND_NAME,

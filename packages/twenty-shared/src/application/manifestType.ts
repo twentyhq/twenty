@@ -1,3 +1,4 @@
+import { type SourceFileManifest } from './sourceFileManifestType';
 import { type WorkflowManifest } from './workflowManifestType';
 import { type AppLocale } from '@/translations';
 
@@ -53,6 +54,7 @@ export type Manifest = {
   messagingProviders?: MessagingProviderManifest[];
   mcpServers?: McpServerManifest[];
   publicAssets: AssetManifest[];
+  sourceFiles?: SourceFileManifest[];
   views: ViewManifest[];
   viewFields: StandaloneViewFieldManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];

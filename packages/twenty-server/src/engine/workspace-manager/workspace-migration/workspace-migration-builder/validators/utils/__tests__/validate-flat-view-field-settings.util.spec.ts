@@ -25,6 +25,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: null,
+        isCanonical: false,
         flatFieldMetadata: TEXT_FIELD,
       }),
     ).toEqual([]);
@@ -34,6 +35,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: { label: 'Next step', recordLimit: 1 },
+        isCanonical: false,
         flatFieldMetadata: ONE_TO_MANY_RELATION_FIELD,
       }),
     ).toEqual([]);
@@ -41,6 +43,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: { label: 'Deal name', recordLimit: null },
+        isCanonical: false,
         flatFieldMetadata: TEXT_FIELD,
       }),
     ).toEqual([]);
@@ -50,6 +53,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: { label },
+        isCanonical: false,
         flatFieldMetadata: TEXT_FIELD,
       }),
     ).toHaveLength(1);
@@ -59,6 +63,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: { recordLimit },
+        isCanonical: false,
         flatFieldMetadata: ONE_TO_MANY_RELATION_FIELD,
       }),
     ).toHaveLength(1);
@@ -70,11 +75,32 @@ describe('validateFlatViewFieldSettings', () => {
       expect(
         validateFlatViewFieldSettings({
           settings: { recordLimit: 1 },
+          isCanonical: false,
           flatFieldMetadata,
         }),
       ).toHaveLength(1);
     },
   );
+
+  it('accepts null settings on a canonical column', () => {
+    expect(
+      validateFlatViewFieldSettings({
+        settings: null,
+        isCanonical: true,
+        flatFieldMetadata: TEXT_FIELD,
+      }),
+    ).toEqual([]);
+  });
+
+  it('rejects settings on a canonical column', () => {
+    expect(
+      validateFlatViewFieldSettings({
+        settings: { label: 'Next step' },
+        isCanonical: true,
+        flatFieldMetadata: ONE_TO_MANY_RELATION_FIELD,
+      }),
+    ).toHaveLength(1);
+  });
 
   it('rejects unknown keys coming from an application manifest', () => {
     const manifestSettings = JSON.parse('{"label":"Next step","width":3}');
@@ -82,6 +108,7 @@ describe('validateFlatViewFieldSettings', () => {
     expect(
       validateFlatViewFieldSettings({
         settings: manifestSettings,
+        isCanonical: false,
         flatFieldMetadata: TEXT_FIELD,
       }),
     ).toHaveLength(1);
@@ -93,6 +120,7 @@ describe('validateFlatViewFieldSettings', () => {
       expect(
         validateFlatViewFieldSettings({
           settings: JSON.parse(manifestSettingsJson),
+          isCanonical: false,
           flatFieldMetadata: TEXT_FIELD,
         }),
       ).toHaveLength(1);

@@ -18,6 +18,7 @@ import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/buil
 import { computeRowConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-row-consumed.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
+import { isPerSpenderDefaultOverride } from 'src/engine/core-modules/usage-limit/utils/is-per-spender-default-override.util';
 import { normalizeSpenderId } from 'src/engine/core-modules/usage-limit/utils/normalize-spender-id.util';
 import { groupSpenderIdsByType } from 'src/engine/core-modules/usage-limit/utils/group-spender-ids-by-type.util';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -121,7 +122,11 @@ export class UsageQuotaConsumptionService {
   ): Promise<UsageQuotaWithConsumption[]> {
     const usageLimits = (
       await this.usageLimitService.findAll(workspaceId)
-    ).filter((usageLimit) => usageLimit.limitKind === 'quota');
+    ).filter(
+      (usageLimit) =>
+        usageLimit.limitKind === 'quota' &&
+        !isPerSpenderDefaultOverride(usageLimit),
+    );
 
     if (usageLimits.length === 0) {
       return [];
