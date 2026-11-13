@@ -1,7 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { RecordIndexTabs } from '@/object-record/record-index-tab/components/RecordIndexTabs';
+import { recordIndexViewTabsComponentState } from '@/object-record/record-index-tab/states/recordIndexViewTabsComponentState';
 import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
+import { type ViewTab } from '@/views/types/ViewTab';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
@@ -12,7 +14,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, ViewTabType } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -68,7 +70,13 @@ const TAB_FIELD_METADATA_ITEM: FieldMetadataItem = {
 };
 
 // The table decorator loads the mocked view asynchronously and resets this state
-const seedRecordIndexTabsState = () => {
+const seedRecordIndexTabsState = ({
+  hasTabField = true,
+  viewTabs = [],
+}: {
+  hasTabField?: boolean;
+  viewTabs?: ViewTab[];
+} = {}) => {
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     featureFlags: [
@@ -83,7 +91,13 @@ const seedRecordIndexTabsState = () => {
     recordIndexTabFieldMetadataItemComponentState.atomFamily({
       instanceId: RECORD_INDEX_ID,
     }),
-    TAB_FIELD_METADATA_ITEM,
+    hasTabField ? TAB_FIELD_METADATA_ITEM : undefined,
+  );
+  jotaiStore.set(
+    recordIndexViewTabsComponentState.atomFamily({
+      instanceId: RECORD_INDEX_ID,
+    }),
+    viewTabs,
   );
   jotaiStore.set(
     selectedRecordIndexTabIdComponentState.atomFamily({
@@ -174,5 +188,81 @@ export const OverflowsIntoMore: Story = {
         'data-active',
       );
     });
+  },
+};
+
+export const PlacesAndHidesTabsFromViewTabs: Story = {
+  parameters: { container: { width: 800 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      seedRecordIndexTabsState({
+        viewTabs: [
+          {
+            id: 'record-index-tabs-story-all-row',
+            type: ViewTabType.ALL,
+            position: -1,
+            isVisible: true,
+          },
+          {
+            id: 'record-index-tabs-story-replied-row',
+            type: ViewTabType.FIELD_VALUE,
+            fieldValue: 'REPLIED',
+            position: 1,
+            isVisible: false,
+          },
+        ],
+      });
+      expect(canvas.getByRole('tab', { name: /All/ })).toBeVisible();
+    });
+
+    const tabs = canvas.getAllByRole('tab');
+    expect(tabs[0]).toBe(canvas.getByRole('tab', { name: /All/ }));
+    expect(canvas.queryByRole('tab', { name: /Replied/ })).toBeNull();
+    expect(canvas.getByRole('tab', { name: /Meeting/ })).toBeVisible();
+  },
+};
+
+export const ListsCustomTabs: Story = {
+  parameters: { container: { width: 800 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await waitFor(() => {
+      seedRecordIndexTabsState({
+        hasTabField: false,
+        viewTabs: [
+          {
+            id: 'record-index-tabs-story-unassigned',
+            type: ViewTabType.CUSTOM,
+            name: 'Unassigned',
+            position: 1,
+            isVisible: true,
+            viewFilters: [],
+          },
+          {
+            id: 'record-index-tabs-story-mine',
+            type: ViewTabType.CUSTOM,
+            name: 'Mine',
+            position: 0,
+            isVisible: true,
+            viewFilters: [],
+          },
+        ],
+      });
+      expect(canvas.getByRole('tab', { name: /Mine/ })).toBeVisible();
+    });
+
+    const tabs = canvas.getAllByRole('tab');
+    expect(tabs.map((tab) => tab.textContent)).toEqual([
+      expect.stringContaining('Mine'),
+      expect.stringContaining('Unassigned'),
+      expect.stringContaining('All'),
+    ]);
+    expect(canvas.getByRole('tab', { name: /Mine/ })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   },
 };
