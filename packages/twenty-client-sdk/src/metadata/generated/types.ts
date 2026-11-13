@@ -4396,6 +4396,9 @@ export default {
             "id": [
                 564
             ],
+            "isCanonical": [
+                1
+            ],
             "isVisible": [
                 1
             ],
@@ -15611,6 +15614,9 @@ export default {
             "isGoogleAuthEnabled": [
                 1
             ],
+            "isInternalImportEnabled": [
+                1
+            ],
             "isInternalMessagesImportEnabled": [
                 1
             ],
@@ -16667,6 +16673,9 @@ export default {
             "isActive": [
                 1
             ],
+            "isCanonical": [
+                1
+            ],
             "isOverridden": [
                 1
             ],
@@ -17153,6 +17162,9 @@ export default {
                 1
             ],
             "isGoogleAuthEnabled": [
+                1
+            ],
+            "isInternalImportEnabled": [
                 1
             ],
             "isInternalMessagesImportEnabled": [

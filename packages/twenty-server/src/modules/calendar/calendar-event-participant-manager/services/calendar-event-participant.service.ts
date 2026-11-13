@@ -82,6 +82,7 @@ export class CalendarEventParticipantService {
   public async matchParticipantsAndEnqueueContactCreationJob({
     savedParticipantIds,
     participantsOfLinkedEvents,
+    resourceHandles,
     calendarChannel,
     connectedAccount,
     workspaceId,
@@ -89,6 +90,7 @@ export class CalendarEventParticipantService {
   }: {
     savedParticipantIds: string[];
     participantsOfLinkedEvents: FetchedCalendarEventParticipant[];
+    resourceHandles: string[];
     calendarChannel: CalendarChannelEntity;
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
@@ -126,11 +128,16 @@ export class CalendarEventParticipantService {
               contactsToCreate: [
                 ...savedParticipants,
                 ...participantsOfLinkedEvents,
-              ].map((participant) => ({
-                handle: participant.handle ?? '',
-                displayName:
-                  participant.displayName ?? participant.handle ?? '',
-              })),
+              ]
+                .filter(
+                  (participant) =>
+                    !resourceHandles.includes(participant.handle ?? ''),
+                )
+                .map((participant) => ({
+                  handle: participant.handle ?? '',
+                  displayName:
+                    participant.displayName ?? participant.handle ?? '',
+                })),
               source: FieldActorSource.CALENDAR,
             },
             {

@@ -1,7 +1,7 @@
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { aiChatSelectedFilesState } from '@/ai/states/aiChatSelectedFilesState';
+import { aiChatUploadedFilesState } from '@/ai/states/aiChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
@@ -10,27 +10,23 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
   const { uploadFile: directUploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const setAgentChatSelectedFiles = useSetAtomState(
-    agentChatSelectedFilesState,
-  );
-  const setAgentChatUploadedFiles = useSetAtomState(
-    agentChatUploadedFilesState,
-  );
+  const setAiChatSelectedFiles = useSetAtomState(aiChatSelectedFilesState);
+  const setAiChatUploadedFiles = useSetAtomState(aiChatUploadedFilesState);
   const store = useStore();
 
-  const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
+  const sendFile = async (file: File): Promise<AiChatFileUIPart | null> => {
     const abortController = new AbortController();
     const unsubscribeFromSelectedFiles = store.sub(
-      agentChatSelectedFilesState.atom,
+      aiChatSelectedFilesState.atom,
       () => {
-        if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+        if (!store.get(aiChatSelectedFilesState.atom).includes(file)) {
           abortController.abort();
         }
       },
@@ -42,7 +38,7 @@ export const useAiChatFileUpload = () => {
         signal: abortController.signal,
       });
 
-      if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+      if (!store.get(aiChatSelectedFilesState.atom).includes(file)) {
         return null;
       }
 
@@ -66,7 +62,7 @@ export const useAiChatFileUpload = () => {
       return null;
     } finally {
       unsubscribeFromSelectedFiles();
-      setAgentChatSelectedFiles((previousSelectedFiles) =>
+      setAiChatSelectedFiles((previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );
     }
@@ -75,7 +71,7 @@ export const useAiChatFileUpload = () => {
   const uploadFiles = async (files: File[]) => {
     const currentAiChatThread = store.get(currentAiChatThreadState.atom);
     const currentThread = store.get(
-      agentChatThreadRecordFamilySelector.selectorFamily(
+      aiChatThreadRecordFamilySelector.selectorFamily(
         currentAiChatThread ?? '',
       ),
     );
@@ -87,7 +83,7 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
-    setAgentChatSelectedFiles((previousSelectedFiles) => [
+    setAiChatSelectedFiles((previousSelectedFiles) => [
       ...previousSelectedFiles,
       ...files,
     ]);
@@ -97,7 +93,7 @@ export const useAiChatFileUpload = () => {
     );
 
     if (isNonEmptyArray(successfulUploads)) {
-      setAgentChatUploadedFiles((previousUploadedFiles) => [
+      setAiChatUploadedFiles((previousUploadedFiles) => [
         ...previousUploadedFiles,
         ...successfulUploads,
       ]);

@@ -251,7 +251,7 @@ describe('View tools', () => {
         type: 'user',
         userSessionVariant: 'standard',
       } as UserWorkspaceAuthContext,
-      actorContext: workspaceMemberId
+      actorMetadata: workspaceMemberId
         ? {
             source: FieldActorSource.MANUAL,
             workspaceMemberId,

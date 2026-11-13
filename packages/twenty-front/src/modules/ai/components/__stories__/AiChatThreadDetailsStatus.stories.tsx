@@ -9,16 +9,16 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
+import { setInboxSelectedChannelView } from '@/ai/testing/setInboxSelectedChannelView';
+import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -158,7 +158,7 @@ const checkSnoozeScope = async ({
 
   await expect(
     jotaiStore.get(
-      isSnoozeAiChatForChannelComponentState.atomFamily({
+      isSnoozeInboxForChannelComponentState.atomFamily({
         instanceId: snoozePage.pageId,
       }),
     ),
@@ -202,7 +202,7 @@ const seedStatusScenario = (scenario: StatusScenario) => {
     permissionFlags:
       (scenario.hasAiPermission ?? true) ? [PermissionFlagType.AI] : [],
   });
-  setAgentChatThreadPermissions({
+  setAiChatThreadPermissions({
     store: jotaiStore,
     threadId: THREAD_ID,
     permissions: {
@@ -230,16 +230,16 @@ const seedStatusScenario = (scenario: StatusScenario) => {
         },
   );
   jotaiStore.set(
-    agentChatChannelsState.atom,
+    inboxChannelsState.atom,
     scenario.areChannelsLoading
       ? null
       : [{ ...CHANNEL, isAccessible: !scenario.isChannelInaccessible }],
   );
   jotaiStore.set(
-    agentChatThreadParticipantsState.atom,
+    aiChatThreadParticipantsState.atom,
     getScenarioParticipants(scenario),
   );
-  setAgentChatSelectedChannelView(
+  setInboxSelectedChannelView(
     jotaiStore,
     scenario.isChannelView
       ? {
@@ -293,7 +293,7 @@ const meta = {
           return HttpResponse.json({
             data: {
               updateAgentChatThreadInboxState: [
-                jotaiStore.get(agentChatThreadParticipantsState.atom)?.[
+                jotaiStore.get(aiChatThreadParticipantsState.atom)?.[
                   THREAD_ID
                 ] ?? PARTICIPANT,
               ],

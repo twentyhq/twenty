@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { filterNewParticipantMentions } from '@/ai/utils/filterNewParticipantMentions';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -15,9 +15,9 @@ export const useAiChatPendingParticipantMentions = () => {
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const serializedDraft =
-    useAtomStateValue(agentChatDraftsByThreadIdState)[draftKey] ?? '';
+    useAtomStateValue(aiChatDraftsByThreadIdState)[draftKey] ?? '';
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     draftKey,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);

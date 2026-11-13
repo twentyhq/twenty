@@ -17,7 +17,7 @@ import { AiChatNoMoreBillingCreditsBanner } from '@/ai/components/AiChatNoMoreBi
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
-import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
+import { AiChatContextPreview } from '@/ai/components/internal/AiChatContextPreview';
 import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
@@ -34,12 +34,12 @@ import { useHasAiChatPageContentInset } from '@/ai/hooks/useHasAiChatPageContent
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/inboxThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 
@@ -151,10 +151,10 @@ const EditableAiChatEditorSection = () => {
     !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const canSendAiChatMessage = useCanSendAiChatMessage();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isDirectMessage = useAtomFamilySelectorValue(
-    agentChatThreadIsDirectMessageFamilySelector,
+    inboxThreadIsDirectMessageFamilySelector,
     currentAiChatThread,
   );
 
@@ -184,11 +184,11 @@ const EditableAiChatEditorSection = () => {
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"
         isModelPickerHidden={isDirectMessage}
-        sendButton={<SendMessageButton isDisabled={!canSendAgentChatMessage} />}
+        sendButton={<SendMessageButton isDisabled={!canSendAiChatMessage} />}
       />
     </StyledInputBox>
   );
-  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
+  const aiChatHasMessage = useAtomStateValue(aiChatHasMessageSelector);
 
   return (
     <>
@@ -203,7 +203,7 @@ const EditableAiChatEditorSection = () => {
           onFinalText={insertDictatedText}
         />
       )}
-      {!agentChatHasMessage && (
+      {!aiChatHasMessage && (
         <StyledMessageListPlaceholder>
           {!isComposerCentered && !isDirectMessage && <AiChatEmptyState />}
           <AiChatStandaloneError />
@@ -218,7 +218,7 @@ const EditableAiChatEditorSection = () => {
         {isComposerCentered && !isDirectMessage && (
           <AiChatEmptyState isCentered />
         )}
-        {!isDirectMessage && <AgentChatContextPreview />}
+        {!isDirectMessage && <AiChatContextPreview />}
         {hasNoEnabledModels && !isDirectMessage && (
           <AiChatInlineBanner>{t`No AI provider is configured on this instance.`}</AiChatInlineBanner>
         )}

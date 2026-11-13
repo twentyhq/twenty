@@ -4,8 +4,8 @@ import { type UsageQuotaDefinitionDTO } from 'src/engine/core-modules/usage-limi
 import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-kind.type';
 import { type UsageLimitOperationDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-operation-definition.type';
 import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/utils/find-allowed-usage-limit-units.util';
-import { findSingleOperationType } from 'src/engine/core-modules/usage-limit/utils/find-single-operation-type.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+import { getUsageLimitDefaultOverrideOperationType } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-default-override-operation-type.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -53,10 +53,18 @@ export const buildQuotaDefinitions = (): UsageQuotaDefinitionDTO[] =>
                 unit,
                 periodUnit,
               }) => {
-                const operationType = findSingleOperationType(operationTypes);
-
-                return isOverridable && isDefined(operationType)
-                  ? [{ operationType, spenderType, unit, periodUnit }]
+                return isOverridable
+                  ? [
+                      {
+                        operationType:
+                          getUsageLimitDefaultOverrideOperationType(
+                            operationTypes,
+                          ),
+                        spenderType,
+                        unit,
+                        periodUnit,
+                      },
+                    ]
                   : [];
               },
             ),

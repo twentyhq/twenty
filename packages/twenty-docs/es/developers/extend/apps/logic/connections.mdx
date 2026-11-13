@@ -9,7 +9,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Las conexiones son credenciales que un usuario posee para un servicio externo (Linear, GitHub, Slack, ...). Tu aplicación declara **cómo** se obtienen esas credenciales — un **proveedor de conexión** — y las consume en tiempo de ejecución para realizar llamadas autenticadas a la API de terceros.
 
-OAuth 2.0 está integrado. Los servicios con su propio flujo de conexión — una página de inicio de sesión alojada, un identificador de cuenta entregado mediante webhook — utilizan un proveedor `custom`, donde tu aplicación controla el flujo y Twenty conserva el usuario, el espacio de trabajo y la conexión guardada. Los futuros tipos de credenciales (tokens de acceso personal, claves de API, autenticación básica) se integrarán en la misma interfaz — las aplicaciones que ya usan `defineConnectionProvider({ type: 'oauth', ... })` no necesitarán migrar.
+OAuth 2.0 está integrado, ya sea con un cliente que usted mismo registra (`oauth`) o detectado desde el servicio (`oauth-discovery`). Los servicios con su propio flujo de conexión — una página de inicio de sesión alojada, un identificador de cuenta entregado mediante webhook — utilizan un proveedor `custom`, donde tu aplicación controla el flujo y Twenty conserva el usuario, el espacio de trabajo y la conexión guardada. Los futuros tipos de credenciales (tokens de acceso personal, claves de API, autenticación básica) se integrarán en la misma interfaz — las aplicaciones que ya usan `defineConnectionProvider({ type: 'oauth', ... })` no necesitarán migrar.
 
 <AccordionGroup>
 
@@ -96,7 +96,9 @@ Puntos clave:
 * `clientIdVariable` / `clientSecretVariable` son **nombres**, no valores — deben coincidir con las claves declaradas en `defineApplication.serverVariables`. Los `client_id` y `client_secret` reales los introduce el administrador del servidor a través de la interfaz de registro de la aplicación; nunca se incluyen en tu repositorio.
 * Usa `serverVariables` (no `applicationVariables`) — las credenciales de OAuth son a nivel de servidor y hay una aplicación OAuth por servidor de Twenty.
 * Hasta que ambas `serverVariables` estén completas, la pestaña General de la aplicación muestra un aviso de "requiere administrador del servidor" y el botón "Agregar conexión" está deshabilitado.
-* `type` es `'oauth'` (con un bloque `oauth`) o `'custom'` (con un bloque `custom`, consulta "Flujos de conexión personalizados"). El discriminador es compatible hacia adelante: tipos futuros (`'pat'`, `'api-key'`, ...) agregará nuevos bloques de subconfiguración junto a estos.
+* `type` es `'oauth'` (con un bloque `oauth`), `'oauth-discovery'` (con un bloque `oauthDiscovery`, consulte más abajo) o `'custom'` (con un bloque `custom`, consulte "Flujos de conexión personalizados"). El discriminador es compatible hacia adelante: tipos futuros (`'pat'`, `'api-key'`, ...) agregará nuevos bloques de subconfiguración junto a estos.
+
+Para un servicio que publica su configuración de OAuth, como un servidor MCP remoto, declare `type: 'oauth-discovery'` con `oauthDiscovery: { resourceUrl }`, una URL HTTP o HTTPS. Al conectarse, Twenty detecta el servidor de autorización a partir del recurso (RFC 9728), se identifica con su documento de metadatos de cliente cuando el servidor lo admite; de lo contrario, registra un cliente dinámicamente y renueva los tokens como cualquier conexión OAuth. No se necesitan `serverVariables`. La detección se incluye con Twenty 2.59.0: si su aplicación declara un proveedor `oauth-discovery`, declare `"engines": { "twenty": ">=2.59.0" }` en su `package.json`.
 
 La URL de callback de OAuth que tu proveedor debe autorizar es:
 
@@ -233,7 +235,7 @@ Ambas funciones se ejecutan mientras el miembro espera una redirección, por lo 
 
 Twenty no actualiza ni revoca las conexiones personalizadas. Libera lo que el servicio retiene para la cuenta en `onDisconnectLogicFunction`.
 
-El `type` de un proveedor, al igual que su `scope`, no puede cambiar una vez sincronizado: para mover un servicio entre `oauth` y `custom`, declara un nuevo proveedor con un nuevo `universalIdentifier`.
+El `type` de un proveedor, al igual que su `scope`, no puede cambiar una vez sincronizado: para mover un servicio entre `oauth`, `oauth-discovery` y `custom`, declare un proveedor nuevo con un `universalIdentifier` nuevo.
 
 Los proveedores personalizados se incluyen con Twenty 2.52.0.
 
@@ -460,7 +462,7 @@ Cada conexión tiene:
 | `scopes`            | Permisos de OAuth concedidos por el proveedor de origen (distintos de `scope` — no están relacionados)                                                                                                                                                                                                                                     |
 | `userWorkspaceId`   | El id de userWorkspace del propietario — útil para elegir "la conexión del usuario de la solicitud" en activadores de rutas HTTP                                                                                                                                                                                                           |
 | `workspaceMemberId` | El id de miembro del espacio de trabajo del propietario, o `null` si desde entonces ha abandonado el espacio de trabajo                                                                                                                                                                                                                    |
-| `providerType`      | `'oauth'` o `'custom'`, el tipo de proveedor de conexión. Compruébalo para restringir `accessToken`                                                                                                                                                                                                                                        |
+| `providerType`      | `'oauth'` o `'custom'`, el tipo del proveedor de conexión (las conexiones `oauth-discovery` informan `'oauth'`). Compruébalo para restringir `accessToken`                                                                                                                                                                                 |
 | `accessToken`       | Token de acceso OAuth actual (se actualiza automáticamente si caduca), siempre establecido cuando `providerType` es `'oauth'`. Para `'custom'`, `null` a menos que la devolución de llamada devuelva uno                                                                                                                                   |
 | `nombre`            | El nombre para mostrar de la conexión (derivado automáticamente en el callback de OAuth, el usuario puede cambiarlo)                                                                                                                                                                                                                       |
 | `identificador`     | La etiqueta de la cuenta upstream conectada, actualizada en cada reconexión: el `handle` devuelto por la función de identificación cuando lo hay; de lo contrario, el correo electrónico del `id_token` de OIDC devuelto durante el intercambio de tokens, con el correo electrónico del usuario de Twenty que se conecta como alternativa |

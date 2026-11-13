@@ -42,6 +42,7 @@ import { EventLogIngestionModule } from 'src/engine/core-modules/event-logs/inge
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { UsageLimitInstanceOverrideModule } from 'src/engine/core-modules/usage-limit/instance-override/usage-limit-instance-override.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UpdateWorkspaceMemberEmailJob } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
@@ -117,6 +118,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     PreInstalledAppsModule,
     PendingWakeUpModule,
     BillingReminderModule,
+    UsageLimitInstanceOverrideModule,
     ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
   ],
