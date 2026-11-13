@@ -28,6 +28,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Skip internal meetings`,
     description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
   },
+  [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
+    label: msg`Internal import setting column`,
+    description: msg`Read the internal import setting from its new workspace column. Turn on only after the 2.59 upgrade has completed and servers have restarted.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,

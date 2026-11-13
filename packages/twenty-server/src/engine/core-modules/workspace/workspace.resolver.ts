@@ -279,8 +279,18 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
-  isInternalImportEnabled(@Parent() workspace: WorkspaceEntity): boolean {
-    return workspace.isInternalMessagesImportEnabled;
+  async isInternalImportEnabled(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    const isInternalImportColumnEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED,
+        workspace.id,
+      );
+
+    return isInternalImportColumnEnabled
+      ? workspace.isInternalImportEnabled
+      : workspace.isInternalMessagesImportEnabled;
   }
 
   @ResolveField(() => AiDataPolicyDTO, { nullable: true })
