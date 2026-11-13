@@ -9,7 +9,10 @@ import {
 } from '~/generated/graphql';
 
 export const useTimelineThreadChannels = (
-  targetRecord: ActivityTargetableObject,
+  targetRecord: Pick<
+    ActivityTargetableObject,
+    'id' | 'targetObjectNameSingular'
+  >,
 ) => {
   const apolloCoreClient = useApolloCoreClient();
 

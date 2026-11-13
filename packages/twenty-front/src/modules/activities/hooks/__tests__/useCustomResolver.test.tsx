@@ -102,7 +102,13 @@ describe('useCustomResolver', () => {
     return fetchMore;
   };
 
-  const expectRequestedPage = (fetchMore: jest.Mock, page: number) =>
+  const expectRequestedPage = ({
+    fetchMore,
+    page,
+  }: {
+    fetchMore: jest.Mock;
+    page: number;
+  }) =>
     expect(fetchMore).toHaveBeenLastCalledWith(
       expect.objectContaining({
         variables: expect.objectContaining({ page }),
@@ -115,7 +121,7 @@ describe('useCustomResolver', () => {
 
     await act(() => result.current.fetchMoreRecords());
 
-    expectRequestedPage(fetchMore, 3);
+    expectRequestedPage({ fetchMore, page: 3 });
   });
 
   it('waits for the first page to reload before requesting more', async () => {
@@ -136,13 +142,13 @@ describe('useCustomResolver', () => {
     const { result, rerender } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(fetchMore, 2);
+    expectRequestedPage({ fetchMore, page: 2 });
 
     const nextFetchMore = mockLoadedThreads({ count: 3, loading: false });
     rerender();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(nextFetchMore, 3);
+    expectRequestedPage({ fetchMore: nextFetchMore, page: 3 });
   });
 
   it('stops once a page comes back empty', async () => {
@@ -164,7 +170,7 @@ describe('useCustomResolver', () => {
     const { result, rerender } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(fetchMore, 2);
+    expectRequestedPage({ fetchMore, page: 2 });
 
     mockLoadedThreads({ count: 2, loading: true });
     useQueryMock.mockReturnValue({
@@ -177,7 +183,7 @@ describe('useCustomResolver', () => {
     rerender();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(refetchedFetchMore, 2);
+    expectRequestedPage({ fetchMore: refetchedFetchMore, page: 2 });
   });
 
   it('resumes paginating after a refetch that follows the last page', async () => {
@@ -185,7 +191,7 @@ describe('useCustomResolver', () => {
     const { result, rerender } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(fetchMore, 2);
+    expectRequestedPage({ fetchMore, page: 2 });
 
     mockLoadedThreads({ count: 2, loading: true });
     useQueryMock.mockReturnValue({
@@ -202,6 +208,6 @@ describe('useCustomResolver', () => {
     rerender();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(refetchedFetchMore, 2);
+    expectRequestedPage({ fetchMore: refetchedFetchMore, page: 2 });
   });
 });
