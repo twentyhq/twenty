@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource, In, type QueryRunner } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -155,35 +155,6 @@ export class DeferredWorkspaceOperationRunnerService {
     } finally {
       await deferredOperationDataSource.destroy();
     }
-  }
-
-  async persistAndEnqueue({
-    deferredOperations,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: {
-    deferredOperations: DeferredWorkspaceOperation[];
-    workspaceId: string;
-    applicationUniversalIdentifier: string;
-  }): Promise<void> {
-    if (!isNonEmptyArray(deferredOperations)) {
-      return;
-    }
-
-    const queryRunner = this.coreDataSource.createQueryRunner();
-
-    try {
-      await this.persist({
-        deferredOperations,
-        workspaceId,
-        applicationUniversalIdentifier,
-        queryRunner,
-      });
-    } finally {
-      await queryRunner.release();
-    }
-
-    await this.enqueue(workspaceId);
   }
 
   async findOperationPayloads<TName extends DeferredWorkspaceOperationName>({

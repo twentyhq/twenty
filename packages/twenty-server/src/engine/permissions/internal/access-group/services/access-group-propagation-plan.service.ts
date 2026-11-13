@@ -1,8 +1,10 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -20,6 +22,8 @@ const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
 @Injectable()
 export class AccessGroupPropagationPlanService {
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly cacheLockService: CacheLockService,
     private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
@@ -82,22 +86,31 @@ export class AccessGroupPropagationPlanService {
         return;
       }
 
-      await this.deferredWorkspaceOperationRunnerService.persistAndEnqueue({
-        workspaceId,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION.universalIdentifier,
-        deferredOperations: plannedObjectMetadataIds.map(
-          (objectMetadataId) => ({
-            name: COMPUTE_OPERATION_NAME,
-            payload: {
-              objectMetadataId,
-              plannedRecordCount:
-                recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
-              computedRecordCount: 0,
-            },
-          }),
-        ),
-      });
+      const queryRunner = this.coreDataSource.createQueryRunner();
+
+      try {
+        await this.deferredWorkspaceOperationRunnerService.persist({
+          workspaceId,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION.universalIdentifier,
+          deferredOperations: plannedObjectMetadataIds.map(
+            (objectMetadataId) => ({
+              name: COMPUTE_OPERATION_NAME,
+              payload: {
+                objectMetadataId,
+                plannedRecordCount:
+                  recordCountByObjectMetadataId.get(objectMetadataId) ?? 0,
+                computedRecordCount: 0,
+              },
+            }),
+          ),
+          queryRunner,
+        });
+      } finally {
+        await queryRunner.release();
+      }
+
+      await this.deferredWorkspaceOperationRunnerService.enqueue(workspaceId);
     }, `access-group-propagation-plan:${workspaceId}`);
   }
 
