@@ -57,7 +57,7 @@ const renderUpdateInboxState = () => {
   return { result, store };
 };
 
-describe('useUpdateInboxThreadStatus', () => {
+describe('useUpdateAiChatThreadStatus', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

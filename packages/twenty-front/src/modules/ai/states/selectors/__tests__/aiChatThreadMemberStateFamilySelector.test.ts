@@ -45,7 +45,7 @@ const isUnread = (store: ReturnType<typeof createStore>) =>
   store.get(aiChatThreadMemberStateFamilySelector.selectorFamily(THREAD_ID))
     .isUnread;
 
-describe('inboxThreadMemberStateFamilySelector', () => {
+describe('aiChatThreadMemberStateFamilySelector', () => {
   it('reads a stored thread against the member state', () => {
     const store = buildStore();
 
