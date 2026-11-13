@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
 
 export const getAiChatThreadStatusScope = ({
@@ -8,7 +8,7 @@ export const getAiChatThreadStatusScope = ({
   channel,
 }: {
   isInChannel: boolean;
-  channel: AgentChatChannel | undefined;
+  channel: InboxChannel | undefined;
 }): AiChatThreadStatusScope | undefined => {
   if (!isInChannel) {
     return { type: 'personal' };

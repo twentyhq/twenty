@@ -1,7 +1,7 @@
 import { CalendarStartDay } from 'twenty-shared/constants';
 
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { groupThreadsByDate } from '@/inbox/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
   const today = new Date('2026-04-26T12:00:00');

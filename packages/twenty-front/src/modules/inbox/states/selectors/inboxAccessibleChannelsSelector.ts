@@ -1,9 +1,9 @@
 import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 
 export const inboxAccessibleChannelsSelector = createAtomSelector<
-  AgentChatChannel[]
+  InboxChannel[]
 >({
   key: 'inboxAccessibleChannelsSelector',
   get: ({ get }) =>

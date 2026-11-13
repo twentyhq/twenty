@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
+import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

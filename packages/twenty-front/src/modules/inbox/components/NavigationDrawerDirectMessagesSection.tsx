@@ -1,8 +1,8 @@
-import { NavigationDrawerDirectMessageItem } from '@/ai/components/NavigationDrawerDirectMessageItem';
+import { NavigationDrawerDirectMessageItem } from '@/inbox/components/NavigationDrawerDirectMessageItem';
 import { INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/inbox/constants/InboxDirectMessagesCollapsedMaxCount';
 import { INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/inbox/constants/InboxDirectMessagesExpandedMaxCount';
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
-import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { getVisibleDirectMessageSidebarItems } from '@/inbox/utils/getVisibleDirectMessageSidebarItems';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';

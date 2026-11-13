@@ -10,14 +10,14 @@ import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerA
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -44,7 +44,7 @@ const buildDirectMessageThread = (id: string): AiChatThreadRecord => ({
 });
 
 const mockFavoriteThreadsAtom = atom<InboxThreadListItemData[]>([]);
-const mockFavoriteChannelsAtom = atom<AgentChatChannel[]>([]);
+const mockFavoriteChannelsAtom = atom<InboxChannel[]>([]);
 let mockThreads: AiChatThreadRecord[] = [];
 
 jest.mock('@/inbox/states/selectors/inboxFavoriteThreadsSelector', () => ({
@@ -75,11 +75,11 @@ jest.mock('@/inbox/components/NavigationDrawerInboxChannelItem', () => ({
   NavigationDrawerInboxChannelItem: ({
     channel,
   }: {
-    channel: AgentChatChannel;
+    channel: InboxChannel;
   }) => <div>{channel.name}</div>,
 }));
 
-jest.mock('@/ai/components/NavigationDrawerDirectMessageItem', () => ({
+jest.mock('@/inbox/components/NavigationDrawerDirectMessageItem', () => ({
   NavigationDrawerDirectMessageItem: ({
     directMessage,
   }: {
@@ -87,7 +87,7 @@ jest.mock('@/ai/components/NavigationDrawerDirectMessageItem', () => ({
   }) => <div>{directMessage.peer?.name}</div>,
 }));
 
-jest.mock('@/ai/components/OpenDirectMessageButton', () => ({
+jest.mock('@/inbox/components/OpenDirectMessageButton', () => ({
   OpenDirectMessageButton: () => null,
 }));
 

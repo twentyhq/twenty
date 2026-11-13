@@ -1,4 +1,4 @@
-import { type DirectMessageMember } from '@/ai/types/DirectMessageMember';
+import { type DirectMessageMember } from '@/inbox/types/DirectMessageMember';
 
 export type DirectMessageSidebarItem = {
   threadId: string;

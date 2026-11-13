@@ -1,5 +1,5 @@
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
-import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
+import { getVisibleDirectMessageSidebarItems } from '@/inbox/utils/getVisibleDirectMessageSidebarItems';
 
 const buildDirectMessage = ({
   threadId,

@@ -1,4 +1,4 @@
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 
 export const getVisibleDirectMessageSidebarItems = ({
   directMessages,

@@ -14,7 +14,7 @@ import { useDeleteInboxChannel } from '@/inbox/hooks/useDeleteInboxChannel';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useUpdateInboxChannel } from '@/inbox/hooks/useUpdateInboxChannel';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
-import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
+import { type InboxChannelSummary } from '@/inbox/types/InboxChannelSummary';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -23,7 +23,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 const StyledIconPickerTrigger = styled.div`
@@ -36,9 +36,9 @@ const StyledIconPickerTrigger = styled.div`
 const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 type NavigationDrawerInboxChannelItemProps = {
-  channel: AgentChatChannel;
-  summary: AgentChatChannelSummary | undefined;
-  destinationChannels: AgentChatChannel[];
+  channel: InboxChannel;
+  summary: InboxChannelSummary | undefined;
+  destinationChannels: InboxChannel[];
   canManage: boolean;
   isExpandable?: boolean;
 };
