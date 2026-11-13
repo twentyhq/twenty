@@ -26705,6 +26705,7 @@ msgstr "이메일 보내는 중"
 
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "전송에 실패했습니다"
 

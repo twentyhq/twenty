@@ -26705,6 +26705,7 @@ msgstr "در حال ارسال ایمیل"
 
 #. js-lingui-id: G+UdVg
 #: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
+#: src/modules/activities/emails/components/ChatThreadPendingMessage.tsx
 msgid "Sending failed"
 msgstr "ارسال ناموفق بود"
 
