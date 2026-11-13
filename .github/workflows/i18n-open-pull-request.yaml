@@ -12,6 +12,10 @@ on:
       title:
         required: true
         type: string
+      body:
+        required: false
+        type: string
+        default: 'Created by Github action'
     secrets:
       TWENTY_PR_PRIVATE_KEY:
         required: true
@@ -42,10 +46,11 @@ jobs:
           GH_REPO: ${{ github.repository }}
           BRANCH: ${{ inputs.branch }}
           TITLE: ${{ inputs.title }}
+          BODY: ${{ inputs.body }}
         run: |
           OPEN_PRS=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq length)
           if [ "$OPEN_PRS" = 0 ]; then
-            gh pr create -B main -H "$BRANCH" --title "$TITLE" --body 'Created by Github action'
+            gh pr create -B main -H "$BRANCH" --title "$TITLE" --body "$BODY"
           else
             HEAD_SHA=$(gh api "repos/$GH_REPO/git/ref/heads/$BRANCH" --jq .object.sha)
             TREE_SHA=$(gh api "repos/$GH_REPO/git/commits/$HEAD_SHA" --jq .tree.sha)
