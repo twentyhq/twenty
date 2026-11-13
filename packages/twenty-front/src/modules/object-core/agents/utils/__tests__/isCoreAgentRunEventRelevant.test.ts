@@ -17,30 +17,41 @@ const runDeleted: MetadataOperationBrowserEventDetail<CoreAgentRunBroadcastRecor
 
 describe('isCoreAgentRunEventRelevant', () => {
   it('accepts every run when no agent is scoped', () => {
-    expect(isCoreAgentRunEventRelevant(runUpdated('agent-2'), undefined)).toBe(
-      true,
-    );
+    expect(
+      isCoreAgentRunEventRelevant({
+        ...runUpdated('agent-2'),
+        agentId: undefined,
+      }),
+    ).toBe(true);
   });
 
   it('accepts a run of the scoped agent', () => {
-    expect(isCoreAgentRunEventRelevant(runUpdated('agent-1'), 'agent-1')).toBe(
-      true,
-    );
+    expect(
+      isCoreAgentRunEventRelevant({
+        ...runUpdated('agent-1'),
+        agentId: 'agent-1',
+      }),
+    ).toBe(true);
   });
 
   it('rejects a run of another agent', () => {
-    expect(isCoreAgentRunEventRelevant(runUpdated('agent-2'), 'agent-1')).toBe(
-      false,
-    );
+    expect(
+      isCoreAgentRunEventRelevant({
+        ...runUpdated('agent-2'),
+        agentId: 'agent-1',
+      }),
+    ).toBe(false);
   });
 
   it('rejects a run without an agent', () => {
-    expect(isCoreAgentRunEventRelevant(runUpdated(null), 'agent-1')).toBe(
-      false,
-    );
+    expect(
+      isCoreAgentRunEventRelevant({ ...runUpdated(null), agentId: 'agent-1' }),
+    ).toBe(false);
   });
 
   it('accepts a deleted run, whose agent is unknown', () => {
-    expect(isCoreAgentRunEventRelevant(runDeleted, 'agent-1')).toBe(true);
+    expect(
+      isCoreAgentRunEventRelevant({ ...runDeleted, agentId: 'agent-1' }),
+    ).toBe(true);
   });
 });

@@ -4,7 +4,16 @@ import { In } from 'typeorm';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 
-const buildService = (turns: unknown[] = []) => {
+type TurnFixture = {
+  id: string;
+  agentId: string | null;
+  threadId: string | null;
+  status: AgentTurnStatus;
+};
+
+const TURN_SELECT = ['id', 'agentId', 'threadId', 'status'];
+
+const buildService = (turns: TurnFixture[] = []) => {
   const turnRepository = { find: jest.fn().mockResolvedValue(turns) };
   const workspaceEventBroadcaster = {
     broadcast: jest.fn().mockResolvedValue(undefined),
@@ -20,10 +29,17 @@ const buildService = (turns: unknown[] = []) => {
   };
 };
 
+const RUNNING_TURN: TurnFixture = {
+  id: 'turn-id',
+  agentId: 'agent-id',
+  threadId: 'thread-id',
+  status: AgentTurnStatus.RUNNING,
+};
+
 describe('AgentTurnEventPublisherService', () => {
   it('broadcasts the stored state of written turns to AI managers', async () => {
     const { service, turnRepository, workspaceEventBroadcaster } = buildService(
-      [{ id: 'turn-id', agentId: 'agent-id', status: AgentTurnStatus.RUNNING }],
+      [RUNNING_TURN],
     );
 
     await service.publish({
@@ -35,7 +51,7 @@ describe('AgentTurnEventPublisherService', () => {
     expect(turnRepository.find).toHaveBeenCalledTimes(1);
     expect(turnRepository.find).toHaveBeenCalledWith('workspace-id', {
       where: { id: In(['turn-id']) },
-      select: ['id', 'agentId', 'status'],
+      select: TURN_SELECT,
     });
     expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledTimes(1);
     expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith({
@@ -45,13 +61,7 @@ describe('AgentTurnEventPublisherService', () => {
           type: 'updated',
           entityName: 'agentTurn',
           recordId: 'turn-id',
-          properties: {
-            after: {
-              id: 'turn-id',
-              agentId: 'agent-id',
-              status: AgentTurnStatus.RUNNING,
-            },
-          },
+          properties: { after: RUNNING_TURN },
           requiredPermissionFlag: PermissionFlagType.AI_SETTINGS,
         },
       ],
@@ -77,7 +87,64 @@ describe('AgentTurnEventPublisherService', () => {
           type: 'deleted',
           recordId: 'turn-id',
           properties: {
-            before: { id: 'turn-id', agentId: undefined, status: undefined },
+            before: {
+              id: 'turn-id',
+              agentId: undefined,
+              threadId: undefined,
+              status: undefined,
+            },
+          },
+        }),
+      ],
+    });
+  });
+
+  it('broadcasts the turns of soft-deleted or restored threads', async () => {
+    const { service, turnRepository, workspaceEventBroadcaster } = buildService(
+      [RUNNING_TURN],
+    );
+
+    await service.publishTurnsOfThreads({
+      workspaceId: 'workspace-id',
+      threadIds: ['thread-id'],
+    });
+
+    expect(turnRepository.find).toHaveBeenCalledTimes(1);
+    expect(turnRepository.find).toHaveBeenCalledWith('workspace-id', {
+      where: { threadId: In(['thread-id']) },
+      select: TURN_SELECT,
+    });
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      events: [
+        expect.objectContaining({ type: 'updated', recordId: 'turn-id' }),
+      ],
+    });
+  });
+
+  it('names the thread for turns its destruction cascaded away', async () => {
+    const { service, turnRepository, workspaceEventBroadcaster } =
+      buildService();
+
+    await service.publishTurnsDestroyedWithThreads({
+      workspaceId: 'workspace-id',
+      threadIds: ['thread-id'],
+    });
+
+    expect(turnRepository.find).not.toHaveBeenCalled();
+    expect(workspaceEventBroadcaster.broadcast).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      events: [
+        expect.objectContaining({
+          type: 'deleted',
+          recordId: 'thread-id',
+          properties: {
+            before: {
+              id: 'thread-id',
+              agentId: undefined,
+              threadId: 'thread-id',
+              status: undefined,
+            },
           },
         }),
       ],
@@ -99,9 +166,7 @@ describe('AgentTurnEventPublisherService', () => {
   });
 
   it('does not fail the caller when the broadcast fails', async () => {
-    const { service, workspaceEventBroadcaster } = buildService([
-      { id: 'turn-id', agentId: null, status: AgentTurnStatus.COMPLETED },
-    ]);
+    const { service, workspaceEventBroadcaster } = buildService([RUNNING_TURN]);
 
     workspaceEventBroadcaster.broadcast.mockRejectedValue(new Error('down'));
 

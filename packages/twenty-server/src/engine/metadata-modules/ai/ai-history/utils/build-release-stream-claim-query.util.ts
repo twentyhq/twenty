@@ -3,8 +3,7 @@ import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-h
 
 // One statement, so a request that claims the thread right after cannot have
 // its new turn ended. Parameters: thread id, stream id, then the status and
-// error to end the running turn with, or null to leave it as is. Returns the
-// released thread with the turns it ended
+// error to end the running turn with, or null to leave it as is
 export const buildReleaseStreamClaimQuery = ({
   table,
 }: {

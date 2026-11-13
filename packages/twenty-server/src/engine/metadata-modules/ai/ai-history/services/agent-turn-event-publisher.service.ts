@@ -13,8 +13,10 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 export const AGENT_TURN_BROADCAST_ENTITY_NAME = 'agentTurn';
 
-// Turn writes skip record events, and turns are listed to whoever manages AI
-// rather than by record access, so their changes are broadcast from here
+type BroadcastTurn = Pick<AgentTurnWorkspaceEntity, 'id'> &
+  Partial<Pick<AgentTurnWorkspaceEntity, 'agentId' | 'threadId' | 'status'>>;
+
+// Turn writes skip record events and turns are listed by AI permission, not record access
 @Injectable()
 export class AgentTurnEventPublisherService {
   private readonly logger = new Logger(AgentTurnEventPublisherService.name);
@@ -25,7 +27,6 @@ export class AgentTurnEventPublisherService {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
-  // The write is already committed, so a lost event must not fail the caller
   async publish({
     workspaceId,
     type,
@@ -39,31 +40,90 @@ export class AgentTurnEventPublisherService {
       return;
     }
 
+    await this.broadcastSafely({
+      workspaceId,
+      buildEvents: async () =>
+        type === 'deleted'
+          ? turnIds.map((turnId) => this.buildEvent(type, { id: turnId }))
+          : (
+              await this.findTurns({ workspaceId, where: { id: In(turnIds) } })
+            ).map((turn) => this.buildEvent(type, turn)),
+    });
+  }
+
+  // A thread's deletion or restore changes whether its runs can be opened
+  async publishTurnsOfThreads({
+    workspaceId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    threadIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(threadIds)) {
+      return;
+    }
+
+    await this.broadcastSafely({
+      workspaceId,
+      buildEvents: async () =>
+        (
+          await this.findTurns({
+            workspaceId,
+            where: { threadId: In(threadIds) },
+          })
+        ).map((turn) => this.buildEvent('updated', turn)),
+    });
+  }
+
+  // The database cascade has already removed the turns, so each event names the thread they belonged to
+  async publishTurnsDestroyedWithThreads({
+    workspaceId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    threadIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(threadIds)) {
+      return;
+    }
+
+    await this.broadcastSafely({
+      workspaceId,
+      buildEvents: async () =>
+        threadIds.map((threadId) =>
+          this.buildEvent('deleted', { id: threadId, threadId }),
+        ),
+    });
+  }
+
+  // The write is already committed, so a lost event must not fail the caller
+  private async broadcastSafely({
+    workspaceId,
+    buildEvents,
+  }: {
+    workspaceId: string;
+    buildEvents: () => Promise<WorkspaceBroadcastEvent[]>;
+  }): Promise<void> {
     try {
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
-        events:
-          type === 'deleted'
-            ? turnIds.map((turnId) => this.buildEvent(type, { id: turnId }))
-            : (await this.findTurns({ workspaceId, turnIds })).map((turn) =>
-                this.buildEvent(type, turn),
-              ),
+        events: await buildEvents(),
       });
     } catch (error) {
       this.logger.warn(
-        `Could not publish ${type} turns ${turnIds.join(', ')}: ${formatErrorWithCause(error)}`,
+        `Could not publish turn events in workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
       );
     }
   }
 
   private buildEvent(
     type: WorkspaceBroadcastEvent['type'],
-    turn: Pick<AgentTurnWorkspaceEntity, 'id'> &
-      Partial<Pick<AgentTurnWorkspaceEntity, 'agentId' | 'status'>>,
+    turn: BroadcastTurn,
   ): WorkspaceBroadcastEvent {
     const record = {
       id: turn.id,
       agentId: turn.agentId,
+      threadId: turn.threadId,
       status: turn.status,
     };
 
@@ -78,14 +138,14 @@ export class AgentTurnEventPublisherService {
 
   private findTurns({
     workspaceId,
-    turnIds,
+    where,
   }: {
     workspaceId: string;
-    turnIds: string[];
-  }): Promise<Pick<AgentTurnWorkspaceEntity, 'id' | 'agentId' | 'status'>[]> {
+    where: Partial<Record<'id' | 'threadId', ReturnType<typeof In>>>;
+  }): Promise<BroadcastTurn[]> {
     return this.turnRepository.find(workspaceId, {
-      where: { id: In(turnIds) },
-      select: ['id', 'agentId', 'status'],
+      where,
+      select: ['id', 'agentId', 'threadId', 'status'],
     });
   }
 }

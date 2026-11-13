@@ -52,9 +52,14 @@ export class AgentTurnRecorderService {
     private readonly turnEventPublisherService: AgentTurnEventPublisherService,
   ) {}
 
-  // Updates are wrapped in a CTE: a bare UPDATE ... RETURNING comes back from
-  // the driver as [rows, rowCount], which is never empty
-  private publishUpdatedTurns(workspaceId: string, turnIds: string[]) {
+  // Updates return ids through a CTE: the driver turns a bare UPDATE ... RETURNING into [rows, rowCount]
+  private publishUpdatedTurns({
+    workspaceId,
+    turnIds,
+  }: {
+    workspaceId: string;
+    turnIds: string[];
+  }) {
     return this.turnEventPublisherService.publish({
       workspaceId,
       type: 'updated',
@@ -117,10 +122,10 @@ export class AgentTurnRecorderService {
       },
     );
 
-    await this.publishUpdatedTurns(
+    await this.publishUpdatedTurns({
       workspaceId,
-      runningTurns.map(({ id }) => id),
-    );
+      turnIds: runningTurns.map(({ id }) => id),
+    });
 
     return runningTurns.length > 0;
   }
@@ -166,10 +171,10 @@ export class AgentTurnRecorderService {
         ),
     );
 
-    await this.publishUpdatedTurns(
+    await this.publishUpdatedTurns({
       workspaceId,
-      finishedTurns.map(({ id }) => id),
-    );
+      turnIds: finishedTurns.map(({ id }) => id),
+    });
 
     return finishedTurns.length > 0;
   }
@@ -224,7 +229,7 @@ export class AgentTurnRecorderService {
           ],
         ),
       )
-      .then(() => this.publishUpdatedTurns(workspaceId, [turnId]))
+      .then(() => this.publishUpdatedTurns({ workspaceId, turnIds: [turnId] }))
       .catch((error: unknown) =>
         this.logger.warn(
           `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
@@ -251,10 +256,10 @@ export class AgentTurnRecorderService {
         ),
     );
 
-    await this.publishUpdatedTurns(
+    await this.publishUpdatedTurns({
       workspaceId,
-      endedTurns.map(({ id }) => id),
-    );
+      turnIds: endedTurns.map(({ id }) => id),
+    });
   }
 
   // a thread runs one turn at a time, so the running turn is the one the released stream was running
@@ -286,10 +291,10 @@ export class AgentTurnRecorderService {
         ),
     );
 
-    await this.publishUpdatedTurns(
+    await this.publishUpdatedTurns({
       workspaceId,
-      releasedThreads.flatMap(({ endedTurnIds }) => endedTurnIds),
-    );
+      turnIds: releasedThreads.flatMap(({ endedTurnIds }) => endedTurnIds),
+    });
 
     return releasedThreads.length > 0;
   }

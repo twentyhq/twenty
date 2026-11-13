@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { isString } from '@sniptt/guards';
-import { type ObjectLiteral } from 'typeorm';
+import { In, type ObjectLiteral } from 'typeorm';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
@@ -74,6 +74,33 @@ export class AgentHistoryTransactionService {
               turnIds,
             }),
           );
+        };
+
+        // The database cascade removes a thread's turns, so they are read before it runs
+        const publishTurnsOfDeletedThreadsAfterCommit = async (
+          where: ObjectLiteral,
+        ) => {
+          const threads = await getRepository('agentChatThread').find({
+            where,
+            select: ['id'],
+            withDeleted: true,
+          });
+
+          if (!isNonEmptyArray(threads)) {
+            return;
+          }
+
+          const turns = await getRepository('agentTurn').find({
+            where: { threadId: In(threads.map(({ id }) => id)) },
+            select: ['id'],
+            withDeleted: true,
+          });
+
+          publishTurnsAfterCommit({
+            name: 'agentTurn',
+            type: 'deleted',
+            records: turns,
+          });
         };
 
         const writtenMessageIds = new Set<string>();
@@ -204,6 +231,10 @@ export class AgentHistoryTransactionService {
             const pair = await resolveDirectMessagePair();
 
             if (!isDefined(pair)) {
+              if (name === 'agentChatThread') {
+                await publishTurnsOfDeletedThreadsAfterCommit(where);
+              }
+
               const { raw } = await getRepository(name).delete(where);
 
               publishTurnsAfterCommit({ name, type: 'deleted', records: raw });

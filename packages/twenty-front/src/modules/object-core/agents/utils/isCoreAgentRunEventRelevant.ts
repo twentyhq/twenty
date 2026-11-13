@@ -3,12 +3,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { type CoreAgentRunBroadcastRecord } from '@/object-core/agents/types/CoreAgentRunBroadcastRecord';
 
-export const isCoreAgentRunEventRelevant = (
-  {
-    operation,
-  }: MetadataOperationBrowserEventDetail<CoreAgentRunBroadcastRecord>,
-  agentId?: string,
-): boolean => {
+export const isCoreAgentRunEventRelevant = ({
+  operation,
+  agentId,
+}: Pick<
+  MetadataOperationBrowserEventDetail<CoreAgentRunBroadcastRecord>,
+  'operation'
+> & {
+  agentId?: string;
+}): boolean => {
   if (!isDefined(agentId)) {
     return true;
   }

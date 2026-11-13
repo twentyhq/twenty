@@ -1,7 +1,7 @@
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 
-// $1 is the question message id and $2 the status the turn ends with; returns the ended turn
+// $1 is the question message id and $2 the status the turn ends with
 export const buildEndWaitingAgentTurnQuery = ({
   table,
 }: {

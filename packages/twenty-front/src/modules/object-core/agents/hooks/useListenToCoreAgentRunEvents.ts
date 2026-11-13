@@ -31,7 +31,9 @@ export const useListenToCoreAgentRunEvents = ({
     onMetadataOperationBrowserEvent: (
       detail: MetadataOperationBrowserEventDetail<CoreAgentRunBroadcastRecord>,
     ) => {
-      if (isCoreAgentRunEventRelevant(detail, agentId)) {
+      if (
+        isCoreAgentRunEventRelevant({ operation: detail.operation, agentId })
+      ) {
         onRunsChangedDebounced();
       }
     },
