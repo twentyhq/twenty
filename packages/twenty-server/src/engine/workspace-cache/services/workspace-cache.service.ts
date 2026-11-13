@@ -35,7 +35,6 @@ import {
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import { WorkspaceCacheMetricsService } from 'src/engine/workspace-cache/services/workspace-cache-metrics.service';
 import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
-import { type WorkspaceCacheInvalidatedVisibilityScope } from 'src/engine/workspace-cache/types/workspace-cache-invalidated-visibility-scope.type';
 import {
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
@@ -466,27 +465,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.memoizer.clearKeys(`${workspaceId}-`);
       },
     );
-  }
-
-  public recordInvalidatedVisibilityScopes({
-    cacheKeyNames,
-    visibilityScopeByCacheKeyName,
-  }: {
-    cacheKeyNames: WorkspaceCacheKeyName[];
-    visibilityScopeByCacheKeyName: Partial<
-      Record<WorkspaceCacheKeyName, WorkspaceCacheInvalidatedVisibilityScope>
-    >;
-  }): void {
-    for (const cacheKeyName of cacheKeyNames) {
-      const visibilityScope = visibilityScopeByCacheKeyName[cacheKeyName];
-
-      if (isDefined(visibilityScope)) {
-        this.cacheMetricsService.recordInvalidation({
-          cacheKey: cacheKeyName,
-          visibilityScope,
-        });
-      }
-    }
   }
 
   public async getCacheHashes(
