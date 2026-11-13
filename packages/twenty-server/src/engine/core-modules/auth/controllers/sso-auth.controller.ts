@@ -19,9 +19,10 @@ import {
   AppPath,
   ConnectedAccountProvider,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -198,7 +199,7 @@ export class SsoAuthController {
           ? ConnectedAccountProvider.SAML
           : ConnectedAccountProvider.OIDC;
 
-      const { loginToken } = await this.generateLoginToken(
+      const { loginToken } = await this.signInUpAndIssueLoginToken(
         req.user,
         currentWorkspace,
         { oidcTokenClaims, connectedAccountProvider },
@@ -224,7 +225,7 @@ export class SsoAuthController {
     }
   }
 
-  private async generateLoginToken(
+  private async signInUpAndIssueLoginToken(
     payload: { email: string; workspaceInviteHash?: string },
     currentWorkspace: WorkspaceEntity,
     ssoContext?: {
@@ -232,13 +233,6 @@ export class SsoAuthController {
       connectedAccountProvider: ConnectedAccountProvider;
     },
   ) {
-    const invitation = payload.email
-      ? await this.authService.findInvitationForSignInUp({
-          currentWorkspace,
-          email: payload.email,
-        })
-      : undefined;
-
     const existingUser = await this.userService.findUserByEmail(payload.email);
 
     const { userData } = this.authService.formatUserDataPayload(
@@ -246,12 +240,26 @@ export class SsoAuthController {
       existingUser,
     );
 
-    await this.authService.checkAccessForSignIn({
-      userData,
-      invitation,
-      workspaceInviteHash: payload.workspaceInviteHash,
-      workspace: currentWorkspace,
-    });
+    let invitation: AppTokenEntity | undefined;
+
+    if (isDefined(existingUser)) {
+      await this.userService.hasUserAccessToWorkspaceOrThrow(
+        existingUser.id,
+        currentWorkspace.id,
+      );
+    } else {
+      invitation = await this.authService.findInvitationForSignInUp({
+        currentWorkspace,
+        email: payload.email,
+      });
+
+      await this.authService.checkAccessForSignIn({
+        userData,
+        invitation,
+        workspaceInviteHash: payload.workspaceInviteHash,
+        workspace: currentWorkspace,
+      });
+    }
 
     const { workspace, user } = await this.authService.signInUp({
       userData,
