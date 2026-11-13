@@ -277,6 +277,11 @@ msgstr "Kampaniyada kuzatiladigan havola"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Marketing xatini bir vaqtning o‘zida faqat bitta qabul qiluvchiga yuborish mumkin, shuning uchun har bir kishi o‘z obunani bekor qilish havolasini oladi."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr ""
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -8677,6 +8682,11 @@ msgstr "Xabar"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Xabar"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr ""
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts

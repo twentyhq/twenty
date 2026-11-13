@@ -3,6 +3,7 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 type DeferredWorkspaceOperationPayloadByName = {
   build_index: { indexMetadataId: string };
   validate_foreignKey: { fieldMetadataId: string };
+  rebuild_object: { objectMetadataId: string };
   delete_logicFunctionResources: { flatLogicFunction: FlatLogicFunction };
   delete_workflowRuns: {
     coreWorkflowId: string;

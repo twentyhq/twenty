@@ -7,8 +7,10 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DeferredWorkspaceOperationModule } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
+import { RebuildWorkspaceObjectCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/rebuild-workspace-object.command';
 import { RetryFailedDeferredWorkspaceOperationsCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/retry-failed-deferred-workspace-operations.command';
 import { DeferredWorkspaceOperationRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-operation-recovery.cron.command';
 import { DeferredWorkspaceOperationHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-operation-handler-registry.service';
@@ -29,6 +31,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DeferredWorkspaceOperationModule,
     WorkspaceIteratorModule,
     MetricsModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     WorkspaceMigrationRunnerService,
@@ -39,6 +42,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     InFlightDeferredWorkspaceOperationsService,
     DeferredWorkspaceOperationGaugeService,
     FlatCacheInvalidateCommand,
+    RebuildWorkspaceObjectCommand,
     RetryFailedDeferredWorkspaceOperationsCommand,
     DeferredWorkspaceOperationRecoveryCronCommand,
   ],

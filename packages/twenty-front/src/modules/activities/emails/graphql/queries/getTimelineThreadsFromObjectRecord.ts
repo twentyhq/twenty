@@ -7,12 +7,14 @@ export const getTimelineThreadsFromObjectRecord = gql`
     $recordId: UUID!
     $page: Int!
     $pageSize: Int!
+    $channel: TimelineThreadChannelFilterInput
   ) {
     getTimelineThreadsFromObjectRecord(
       objectNameSingular: $objectNameSingular
       recordId: $recordId
       page: $page
       pageSize: $pageSize
+      channel: $channel
     ) {
       ...TimelineThreadsWithTotalFragment
     }

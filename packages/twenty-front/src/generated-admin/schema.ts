@@ -162,7 +162,7 @@ export type AdminPanelUsageLimitDefault = {
   __typename?: 'AdminPanelUsageLimitDefault';
   isOverridable: Scalars['Boolean']['output'];
   limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
+  limitValue?: Maybe<Scalars['BigInt']['output']>;
   operationType: UsageOperationType;
   overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;
   periodCount: Scalars['Int']['output'];
