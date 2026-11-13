@@ -1,10 +1,9 @@
-import { isBoolean, isNull, isNumber, isString } from '@sniptt/guards';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
-import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 import { ENUM_FIELD_TYPES } from 'src/engine/metadata-modules/field-metadata/types/enum-field-metadata-type.type';
 
 export type FieldMetadataOptionRowForOptions = Pick<
@@ -14,36 +13,6 @@ export type FieldMetadataOptionRowForOptions = Pick<
   Partial<
     Pick<FieldMetadataOptionEntity, 'overrides' | 'isActive' | 'applicationId'>
   >;
-
-const readOverride = (
-  { overrides }: FieldMetadataOptionRowForOptions,
-  property: 'label' | 'color' | 'position' | 'isActive',
-): unknown =>
-  readAuthoredOverrideProperty({
-    metadataName: 'fieldMetadataOption',
-    overrides,
-    path: [property],
-    // The caches are built without an author, so a workspace override is read before the owner's
-    authorContext: { ownerApplicationUniversalIdentifier: undefined },
-  });
-
-const resolveEffectiveOptionRow = (
-  fieldMetadataOptionRow: FieldMetadataOptionRowForOptions,
-): FieldMetadataOptionRowForOptions => {
-  const label = readOverride(fieldMetadataOptionRow, 'label');
-  const color = readOverride(fieldMetadataOptionRow, 'color');
-  const position = readOverride(fieldMetadataOptionRow, 'position');
-  const isActive = readOverride(fieldMetadataOptionRow, 'isActive');
-
-  return {
-    ...fieldMetadataOptionRow,
-    label: isString(label) ? label : fieldMetadataOptionRow.label,
-    color:
-      isString(color) || isNull(color) ? color : fieldMetadataOptionRow.color,
-    position: isNumber(position) ? position : fieldMetadataOptionRow.position,
-    isActive: isBoolean(isActive) ? isActive : fieldMetadataOptionRow.isActive,
-  };
-};
 
 // A field without rows predates the option table or its backfill, so its stored options still stand.
 // With shouldRowsCoverStoredOptions, they also stand while a stored option has no row yet, which is
@@ -79,7 +48,13 @@ export const resolveFieldMetadataOptionsFromRows = ({
   }
 
   return fieldMetadataOptionRows
-    .map(resolveEffectiveOptionRow)
+    // Caches are built without an author, so a workspace override is read before the owner's.
+    .map((fieldMetadataOptionRow) =>
+      resolveEffectiveFlatEntity({
+        metadataName: 'fieldMetadataOption',
+        flatEntity: fieldMetadataOptionRow,
+      }),
+    )
     .sort(
       (first, second) =>
         first.position - second.position ||
