@@ -6,14 +6,15 @@ updates:
       - "packages/twenty-apps/**"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
-    versioning-strategy: "increase"
-    # Minor and patch bumps land as one weekly PR; each major gets its own PR.
+    # Routine version bumps stay off (limit 0) to avoid PR churn; only security
+    # advisory updates open PRs, grouped into one per entry.
+    open-pull-requests-limit: 0
+    versioning-strategy: "increase-if-necessary"
     groups:
-      minor-and-patch:
-        update-types:
-          - "minor"
-          - "patch"
+      security:
+        applies-to: "security-updates"
+        patterns:
+          - "*"
     assignees:
       - "mabdullahabaid"
     ignore:
@@ -24,27 +25,28 @@ updates:
       # FSEvents and hits EMFILE on a repo this size (see #20316)
       - dependency-name: "chokidar"
   # Public Twenty apps are standalone packages (own lockfiles) excluded from the
-  # root entry above. Each app folder is updated weekly, grouped into a single PR.
+  # root entry above, with the same security-only treatment.
   - package-ecosystem: "npm"
     directories:
       - "/packages/twenty-apps/public/*"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 5
-    versioning-strategy: "increase"
+    open-pull-requests-limit: 0
+    versioning-strategy: "increase-if-necessary"
     groups:
-      twenty-apps-public:
+      twenty-apps-public-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
-  # Internal Twenty apps, same treatment as the public apps above.
   - package-ecosystem: "npm"
     directories:
       - "/packages/twenty-apps/internal/*"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 5
-    versioning-strategy: "increase"
+    open-pull-requests-limit: 0
+    versioning-strategy: "increase-if-necessary"
     groups:
-      twenty-apps-internal:
+      twenty-apps-internal-security:
+        applies-to: "security-updates"
         patterns:
           - "*"
