@@ -9,7 +9,6 @@ import { useTabListActiveTabId } from '@/ui/layout/tab-list/hooks/useTabListActi
 
 type UseCoreWorkflowShowPageActiveTabArgs = {
   coreWorkflowId: string;
-  // undefined until the run insights have loaded
   hasRuns: boolean | undefined;
   requestedVersionId: string | null;
 };
