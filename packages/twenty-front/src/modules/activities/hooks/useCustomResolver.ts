@@ -11,6 +11,8 @@ import { useState } from 'react';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 
+const FIRST_PAGE = { pageNumber: 1, hasNextPage: true };
+
 type CustomResolverQueryResult<
   T extends {
     [key: string]: any;
@@ -68,10 +70,7 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
-  const [lastLoadedPage, setLastLoadedPage] = useState({
-    pageNumber: 1,
-    hasNextPage: true,
-  });
+  const [lastLoadedPage, setLastLoadedPage] = useState(FIRST_PAGE);
 
   const isLoadingFirstPage =
     networkStatus === NetworkStatus.loading ||
@@ -82,7 +81,7 @@ export const useCustomResolver = <
     isLoadingFirstPage &&
     (lastLoadedPage.pageNumber !== 1 || !lastLoadedPage.hasNextPage)
   ) {
-    setLastLoadedPage({ pageNumber: 1, hasNextPage: true });
+    setLastLoadedPage(FIRST_PAGE);
   }
 
   const fetchMoreRecords = async () => {
