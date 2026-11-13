@@ -26,6 +26,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
     flatEntityToDelete: [],
   };
 
+  // TODO: remove once every instance has run the 2.56 option table command.
   if (!isFieldMetadataOptionEntityAvailable()) {
     return operations;
   }

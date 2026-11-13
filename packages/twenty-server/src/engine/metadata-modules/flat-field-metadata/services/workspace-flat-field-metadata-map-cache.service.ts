@@ -129,6 +129,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
 
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
+    // Entries keep the stored options column as is: readers resolve options from the option rows.
+    // TODO: drop the stored options copy once 2.59 has run on every workspace, together with the options column drop.
     for (const fieldMetadataEntity of fieldMetadatas) {
       const flatFieldMetadata = fromFieldMetadataEntityToFlatFieldMetadata({
         entity: {

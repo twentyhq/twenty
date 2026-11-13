@@ -5,6 +5,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadataOption } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata-option.type';
 
+// TODO: keep only the option rows once 2.59 has run on every workspace, together with the options column drop.
 export type FlatFieldMetadataForOptions = Pick<FlatFieldMetadata, 'type'> &
   Partial<Pick<FlatFieldMetadata, 'fieldMetadataOptionUniversalIdentifiers'>> &
   (
