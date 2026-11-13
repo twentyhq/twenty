@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -54,6 +55,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
   ],
   providers: [
     BlocklistRepository,
+    WorkspaceInternalImportService,
     provideWorkspaceScopedRepository(CalendarChannelEntity),
     CalendarEventsImportService,
     CalendarFetchEventsService,

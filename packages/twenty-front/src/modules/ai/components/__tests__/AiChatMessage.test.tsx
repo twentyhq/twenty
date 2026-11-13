@@ -9,14 +9,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatComposerQuote } from '@/ai/components/AiChatComposerQuote';
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { scrollToAgentChatMessage } from '@/ai/utils/scrollToAgentChatMessage';
+import { scrollToAiChatMessage } from '@/ai/utils/scrollToAiChatMessage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
@@ -62,8 +62,8 @@ jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
   LightCopyIconButton: () => null,
 }));
 
-jest.mock('@/ai/utils/scrollToAgentChatMessage', () => ({
-  scrollToAgentChatMessage: jest.fn(),
+jest.mock('@/ai/utils/scrollToAiChatMessage', () => ({
+  scrollToAiChatMessage: jest.fn(),
 }));
 
 const THREAD_ID = '1b8e5c2a-4d3f-4a6b-9c7e-2f1d0a9b8c71';
@@ -217,11 +217,11 @@ const renderMessage = ({
       avatarUrl: null,
     },
   ]);
-  jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+  jotaiStore.set(aiChatDisplayedThreadState.atom, THREAD_ID);
   jotaiStore.set(newAiChatThreadIdState.atom, THREAD_ID);
   jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
   jotaiStore.set(
-    agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+    aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
     [
       USER_MESSAGE,
       ASSISTANT_MESSAGE,
@@ -385,7 +385,7 @@ describe('AiChatMessage', () => {
       screen.getByRole('button', { name: 'View original message' }),
     );
 
-    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
   });
 
   it('names the current member "You" when a reply quotes their own message', () => {
@@ -427,7 +427,7 @@ describe('AiChatMessage', () => {
     act(() => {
       jotaiStore.set(currentAiChatThreadState.atom, 'another-thread');
       jotaiStore.set(
-        agentChatQuotedMessageIdFamilyState.atomFamily({
+        aiChatQuotedMessageIdFamilyState.atomFamily({
           threadId: 'another-thread',
         }),
         USER_MESSAGE.id,
@@ -446,7 +446,7 @@ describe('AiChatMessage', () => {
     screen.getByRole('button', { name: 'View original message' }).focus();
     await userEvent.keyboard('{Enter}');
 
-    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(USER_MESSAGE.id);
   });
 
   it('shows a quote whose original is missing without a way to open it', () => {
@@ -518,7 +518,7 @@ describe('AiChatMessage', () => {
       screen.getByRole('button', { name: 'View original message' }),
     );
 
-    expect(scrollToAgentChatMessage).toHaveBeenCalledWith(
+    expect(scrollToAiChatMessage).toHaveBeenCalledWith(
       BUILT_IN_ASSISTANT_MESSAGE.id,
     );
   });

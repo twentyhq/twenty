@@ -15,7 +15,7 @@ import { v4 } from 'uuid';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -45,8 +45,7 @@ export class CreateCompanyAndPersonService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceInternalImportService: WorkspaceInternalImportService,
   ) {}
 
   async createCompaniesAndPeople(
@@ -75,17 +74,17 @@ export class CreateCompanyAndPersonService {
 
       const workspaceMembers = await workspaceMemberRepository.find();
 
-      const workspace = await this.workspaceRepository.findOne({
-        where: { id: workspaceId },
-        select: ['id', 'isInternalMessagesImportEnabled'],
-      });
+      const isInternalImportEnabled =
+        await this.workspaceInternalImportService.isInternalImportEnabled({
+          workspaceId,
+        });
 
       const peopleToCreateFromOtherCompanies =
         filterOutContactsThatBelongToSelfOrWorkspaceMembers(
           contactsToCreate,
           connectedAccount,
           workspaceMembers,
-          workspace?.isInternalMessagesImportEnabled ?? false,
+          isInternalImportEnabled,
         );
 
       const { uniqueContacts, uniqueHandles } = getUniqueContactsAndHandles(

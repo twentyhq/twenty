@@ -1,12 +1,12 @@
 import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { type AiChatMessageAuthor } from '@/ai/types/AiChatMessageAuthor';
 import { AppChip } from '@/applications/components/AppChip';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatMessageAuthorAvatarProps = {
-  author: AgentChatMessageAuthor;
+  author: AiChatMessageAuthor;
 };
 
 export const AiChatMessageAuthorAvatar = ({
