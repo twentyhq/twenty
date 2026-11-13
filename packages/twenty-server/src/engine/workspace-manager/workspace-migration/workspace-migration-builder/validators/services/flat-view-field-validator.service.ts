@@ -86,6 +86,7 @@ export class FlatViewFieldValidatorService {
               universalFlatEntity: updatedFlatViewField,
               property: 'settings',
             }),
+            isCanonical: updatedFlatViewField.isCanonical,
             flatFieldMetadata,
           }),
         );
@@ -237,6 +238,7 @@ export class FlatViewFieldValidatorService {
       validationResult.errors.push(
         ...validateFlatViewFieldSettings({
           settings: flatViewFieldToValidate.settings,
+          isCanonical: flatViewFieldToValidate.isCanonical,
           flatFieldMetadata,
         }),
       );
