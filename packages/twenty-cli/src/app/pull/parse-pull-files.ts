@@ -3,7 +3,6 @@ import {
   ASSETS_DIR,
   isRestorableFrontComponentSourcePath,
   type FrontComponentManifest,
-  type AssetManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
@@ -22,11 +21,9 @@ const isPackageJsonObject = (content: string): boolean => {
 export const parsePullFiles = ({
   value,
   frontComponents = [],
-  publicAssets = [],
 }: {
   value: unknown;
   frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
-  publicAssets?: Pick<AssetManifest, 'filePath'>[];
 }): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
@@ -57,13 +54,7 @@ export const parsePullFiles = ({
         (component) => component.sourceComponentPath === file.path,
       ) &&
       isRestorableFrontComponentSourcePath(file.path);
-    const isPublicAsset =
-      file.folder === FileFolder.PublicAsset &&
-      file.path.startsWith(`${ASSETS_DIR}/`) &&
-      !file.path.includes('\\') &&
-      !file.path.includes('\0') &&
-      file.path.split('/').every((part) => !['', '.', '..'].includes(part)) &&
-      publicAssets.some((asset) => asset.filePath === file.path);
+    const isPublicAsset = file.folder === FileFolder.PublicAsset;
 
     if (
       !isPublicAsset &&
@@ -75,6 +66,19 @@ export const parsePullFiles = ({
         code: 'TOOLING_UNSUPPORTED',
         message:
           'This CLI can only pull dependency files, public assets and declared front component sources. No local files were changed.',
+      });
+    }
+
+    if (
+      isPublicAsset &&
+      (!file.path.startsWith(`${ASSETS_DIR}/`) ||
+        file.path.includes('\\') ||
+        file.path.includes('\0') ||
+        file.path.split('/').some((part) => ['', '.', '..'].includes(part)))
+    ) {
+      throw new CliError({
+        code: 'INVALID_RESPONSE',
+        message: `The exported public asset ${file.path} must have a safe path under ${ASSETS_DIR}/.`,
       });
     }
 

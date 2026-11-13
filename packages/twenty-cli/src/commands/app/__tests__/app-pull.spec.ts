@@ -415,14 +415,14 @@ describe('app pull command with the packaged worker', () => {
   );
 
   it.each([
-    'source',
-    'public-asset',
-    'files-field',
-    'email-attachment',
-    'agent-chat',
+    ['source', 'TOOLING_UNSUPPORTED'],
+    ['public-asset', 'INVALID_RESPONSE'],
+    ['files-field', 'TOOLING_UNSUPPORTED'],
+    ['email-attachment', 'TOOLING_UNSUPPORTED'],
+    ['agent-chat', 'TOOLING_UNSUPPORTED'],
   ])(
     'rejects exported %s files without changing dependencies or metadata',
-    async (folder) => {
+    async (folder, errorCode) => {
       const originalPackageJson = await readFile(
         join(appPath, 'package.json'),
         'utf8',
@@ -431,7 +431,7 @@ describe('app pull command with the packaged worker', () => {
         { folder: 'dependencies', path: 'package.json', content: '{}' },
         { folder, path: 'package.json', content: 'private data' },
       ];
-      expect((await runJson()).envelope.error.code).toBe('TOOLING_UNSUPPORTED');
+      expect((await runJson()).envelope.error.code).toBe(errorCode);
       expect(await readFile(join(appPath, 'package.json'), 'utf8')).toBe(
         originalPackageJson,
       );

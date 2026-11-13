@@ -61,7 +61,6 @@ export const parseAppExport = ({
     coverage: applicationExport.coverage,
     files: parsePullFiles({
       value: applicationExport.files,
-      publicAssets: applicationExport.manifest.publicAssets ?? [],
       frontComponents:
         toPullManifest(applicationExport.manifest).frontComponents ?? [],
     }),

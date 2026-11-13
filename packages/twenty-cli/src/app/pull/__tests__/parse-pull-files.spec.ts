@@ -14,16 +14,13 @@ describe('parsePullFiles', () => {
     path: 'public/font.woff2',
     content: 'AP+A',
   };
-  const publicAssets = [{ filePath: asset.path }];
-  it('accepts binary public assets declared in the manifest', () => {
-    expect(parsePullFiles({ value: [asset], publicAssets })).toEqual([asset]);
+  it('accepts binary public assets by category without a manifest entry', () => {
+    expect(parsePullFiles({ value: [asset] })).toEqual([asset]);
   });
   it.each(['attachment', 'source', 'dependencies'])(
     'rejects an asset in the %s category',
     (folder) => {
-      expect(() =>
-        parsePullFiles({ value: [{ ...asset, folder }], publicAssets }),
-      ).toThrow();
+      expect(() => parsePullFiles({ value: [{ ...asset, folder }] })).toThrow();
     },
   );
   it.each([
@@ -31,22 +28,22 @@ describe('parsePullFiles', () => {
     'public/./font',
     'public//font',
     'public/\\font',
+    'public/font\0.woff2',
     '/public/font',
     'private/font',
+    'public/../application.config.ts',
+    'public/../../outside',
   ])('rejects the asset path %s', (path) => {
     expect(() =>
       parsePullFiles({
         value: [{ ...asset, path }],
-        publicAssets: [{ filePath: path }],
       }),
-    ).toThrow();
+    ).toThrow('safe path under public/');
   });
-  it('rejects unlisted assets and corrupt base64 before writing', () => {
-    expect(() => parsePullFiles({ value: [asset] })).toThrow();
+  it('rejects corrupt base64 before writing', () => {
     expect(() =>
       parsePullFiles({
         value: [{ ...asset, content: 'not base64!' }],
-        publicAssets,
       }),
     ).toThrow('base64');
   });

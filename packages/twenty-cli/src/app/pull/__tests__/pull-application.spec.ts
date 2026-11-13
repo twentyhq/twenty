@@ -290,17 +290,6 @@ export default defineField({
     const exported = createExport({ includeObject: false });
     return {
       ...exported,
-      manifest: {
-        ...exported.manifest,
-        publicAssets: [
-          {
-            filePath: 'public/fonts/example.woff2',
-            fileName: 'example.woff2',
-            fileType: 'woff2',
-            checksum: null,
-          },
-        ],
-      },
       files: [
         {
           folder: 'public-asset',
