@@ -9,7 +9,6 @@ import { type UserApplicationVariableValueMaps } from 'src/engine/core-modules/a
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
-
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
@@ -46,6 +45,8 @@ export type WorkspaceCacheKeyName = keyof WorkspaceCacheDataMap;
 export type RemovedWorkspaceCacheKeyName = 'ORMEntityMetadatas';
 
 export type WorkspaceDerivedCacheDataMap = {
+  objectIdByName: Record<string, string>;
+  fieldIdByObjectIdAndName: Map<string, string>;
   roleIdsWithAllRecordsAccess: string[];
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;

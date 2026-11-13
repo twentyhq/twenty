@@ -5,13 +5,15 @@ See [Contributing](../../CONTRIBUTING.md) for package setup and tests, and the
 
 The `twenty` CLI owns filesystem operations, source loading, build, typecheck,
 watching, pull and deployment. Apps use `twenty-sdk` to define application
-metadata and runtime behavior. They do not import or depend on the CLI, which
-is normally installed globally.
+metadata and runtime behavior. They do not import or depend on the CLI, which is
+normally installed globally.
+
+## Module map
 
 | Module                                   | Responsibility                                                       |
 | ---------------------------------------- | -------------------------------------------------------------------- |
-| `project`                             | Locate the app and resolve its installed SDK and Node requirements   |
-| `deployment`                          | Preview metadata changes, approve them, upload snapshots and sync    |
+| `project`                                | Locate the app and resolve its installed SDK and Node requirements   |
+| `deployment`                             | Preview metadata changes, approve them, upload snapshots and sync    |
 | [source](source/README.md)               | Discover and evaluate trusted app definitions in a disposable worker |
 | [manifest](manifest/README.md)           | Construct and validate metadata, compile translations                |
 | [bundles](bundles/README.md)             | Build artifacts and hold immutable snapshots for consumers           |
@@ -23,9 +25,11 @@ is normally installed globally.
 | [exec](exec/README.md)                   | Execute an installed logic function                                  |
 | [function-logs](function-logs/README.md) | Stream application function logs                                     |
 
+## Worker and snapshot guarantees
+
 The worker isolates process exits, captures bounded output, filters inherited
-CLI credentials and supports cancellation. It runs trusted developer code and
-is not a security sandbox. Configurations containing functions stay inside the
+CLI credentials and supports cancellation. It runs trusted developer code and is
+not a security sandbox. Configurations containing functions stay inside the
 worker; only serializable requests, results and diagnostics cross IPC.
 
 Snapshots retain files until their consumers finish. Uploads verify containment,
@@ -35,9 +39,10 @@ file watchers. Keep these guarantees when simplifying implementation details.
 ## Package boundaries
 
 The CLI imports the app's public SDK authoring exports and invokes its installed
-client SDK generator. The [typecheck documentation](typecheck/README.md) describes
-compiler resolution and project requirements.
+client SDK generator. The [typecheck documentation](typecheck/README.md)
+describes compiler resolution and project requirements.
 
 Parity tests compare generated source, manifests and bundles with the repository
-SDK. Command failure and cancellation tests inject tooling fixtures into a bundle
-of the production worker; real-app tests exercise its compiler and bundler.
+SDK. Command failure and cancellation tests inject tooling fixtures into a
+bundle of the production worker; real-app tests exercise its compiler and
+bundler.

@@ -11,8 +11,9 @@ import { NavigationDrawerAiChatChannelActionsDropdown } from '@/ai/components/Na
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { useAgentChatChannelIcon } from '@/ai/hooks/useAgentChatChannelIcon';
 import { useDeleteAgentChatChannel } from '@/ai/hooks/useDeleteAgentChatChannel';
+import { useIsAiChatInboxShowingDirectMessage } from '@/ai/hooks/useIsAiChatInboxShowingDirectMessage';
 import { useUpdateAgentChatChannel } from '@/ai/hooks/useUpdateAgentChatChannel';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
@@ -56,9 +57,11 @@ export const NavigationDrawerAiChatChannelItem = ({
   const iconPickerDropdownId = `ai-chat-channel-icon-${instanceId}`;
   const deleteDialogId = `ai-chat-channel-delete-${instanceId}`;
   const ChannelIcon = useAgentChatChannelIcon(channel.icon);
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const agentChatSelectedChannelView = useAtomStateValue(
+    agentChatSelectedChannelViewSelector,
   );
+  const isAiChatInboxShowingDirectMessage =
+    useIsAiChatInboxShowingDirectMessage();
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     dropdownId,
@@ -144,10 +147,11 @@ export const NavigationDrawerAiChatChannelItem = ({
         channel={channel}
         summary={summary}
         icon={icon}
-        channelView={agentChatShownChannelView}
+        channelView={agentChatSelectedChannelView}
         isActive={
           isAiChatInboxPath(location.pathname) &&
-          agentChatShownChannelView?.channelId === channel.id
+          !isAiChatInboxShowingDirectMessage &&
+          agentChatSelectedChannelView?.channelId === channel.id
         }
         isExpandable={isExpandable}
         isRightOptionsDropdownOpen={isDropdownOpen}

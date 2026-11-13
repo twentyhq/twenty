@@ -481,6 +481,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  testMcpToolStep: TestMcpToolStep;
   testWorkflowCodeStep: LogicFunctionExecutionResult;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
@@ -596,6 +597,11 @@ export type MutationTestHttpRequestArgs = {
 };
 
 
+export type MutationTestMcpToolStepArgs = {
+  input: TestMcpToolStepInput;
+};
+
+
 export type MutationTestWorkflowCodeStepArgs = {
   input: TestWorkflowCodeStepInput;
 };
@@ -661,6 +667,7 @@ export type Query = {
   getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
+  getTimelineThreadChannelsFromObjectRecord: Array<TimelineThreadChannel>;
   /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
   getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
@@ -761,6 +768,12 @@ export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
 };
 
 
+export type QueryGetTimelineThreadChannelsFromObjectRecordArgs = {
+  objectNameSingular: Scalars['String']['input'];
+  recordId: Scalars['UUID']['input'];
+};
+
+
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID']['input'];
   page: Scalars['Int']['input'];
@@ -769,6 +782,7 @@ export type QueryGetTimelineThreadsFromCompanyIdArgs = {
 
 
 export type QueryGetTimelineThreadsFromObjectRecordArgs = {
+  channel?: InputMaybe<TimelineThreadChannelFilterInput>;
   objectNameSingular: Scalars['String']['input'];
   page: Scalars['Int']['input'];
   pageSize: Scalars['Int']['input'];
@@ -904,6 +918,24 @@ export type TestHttpRequestInput = {
   url: Scalars['String']['input'];
 };
 
+export type TestMcpToolStep = {
+  __typename?: 'TestMcpToolStep';
+  error?: Maybe<Scalars['String']['output']>;
+  /** What the tool returned, saved as the step output sample */
+  result?: Maybe<Scalars['JSON']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type TestMcpToolStepInput = {
+  /** Must be true to run a tool that may change data, after the author confirmed it */
+  isDestructiveToolConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
+  mcpServerId: Scalars['UUID']['input'];
+  /** Tool arguments with workflow variables already replaced */
+  toolArguments?: InputMaybe<Scalars['JSON']['input']>;
+  toolName: Scalars['String']['input'];
+  workflowVersionId: Scalars['UUID']['input'];
+};
+
 export type TestWorkflowCodeStepInput = {
   /** TypeScript source of the code step */
   code: Scalars['String']['input'];
@@ -982,6 +1014,12 @@ export type TimelineThreadChannel = {
   applicationId?: Maybe<Scalars['UUID']['output']>;
   conversationStyle?: Maybe<Scalars['String']['output']>;
   provider: Scalars['String']['output'];
+  type: MessageChannelType;
+};
+
+export type TimelineThreadChannelFilterInput = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+  provider: Scalars['String']['input'];
   type: MessageChannelType;
 };
 

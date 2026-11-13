@@ -5,5 +5,6 @@ export const ActorContextObjectType = new GraphQLObjectType({
   fields: {
     provider: { type: GraphQLString },
     applicationId: { type: GraphQLString },
+    workflowId: { type: GraphQLString },
   },
 });

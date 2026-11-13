@@ -22,8 +22,8 @@ jest.mock('@/ai/hooks/useProjectAiChatThreadToUrl', () => ({
   useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
 }));
 
-jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
-  useRefreshAgentChatThreads: () => ({ loadAgentChatThread }),
+jest.mock('@/ai/hooks/useLoadAgentChatThread', () => ({
+  useLoadAgentChatThread: () => ({ loadAgentChatThread }),
 }));
 
 const REMOVED_CHAT_ID = '20202020-0000-4000-8000-0000000000aa';

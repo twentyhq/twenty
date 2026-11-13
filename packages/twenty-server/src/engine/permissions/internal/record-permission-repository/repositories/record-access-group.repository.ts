@@ -53,6 +53,35 @@ export class RecordAccessGroupRepository {
     return rows.map(({ id }) => id);
   }
 
+  async estimateRecordCount({
+    workspaceId,
+    flatObjectMetadatas,
+  }: {
+    workspaceId: string;
+    flatObjectMetadatas: FlatObjectMetadata[];
+  }): Promise<number> {
+    const [row] = await this.recordPermissionQueryService.execute<{
+      count: string;
+    }>({
+      workspaceId,
+      query: {
+        sql: `SELECT SUM(GREATEST("reltuples", pg_stat_get_live_tuples("oid")))::bigint AS "count"
+          FROM unnest(:tableExpressions::text[]) AS "tableExpression"
+          JOIN pg_class ON pg_class."oid" = to_regclass("tableExpression")`,
+        parameters: {
+          tableExpressions: flatObjectMetadatas.map((flatObjectMetadata) =>
+            buildWorkspaceTableExpression({
+              workspaceId,
+              tableName: computeObjectTargetTable(flatObjectMetadata),
+            }),
+          ),
+        },
+      },
+    });
+
+    return Math.max(0, Number(row?.count ?? 0));
+  }
+
   async findRelatedRecordIds({
     workspaceId,
     sourceFlatObjectMetadata,

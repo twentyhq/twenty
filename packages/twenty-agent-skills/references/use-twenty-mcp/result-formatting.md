@@ -14,7 +14,7 @@ Resolve the intended workspace before selecting a Twenty MCP server:
 - If a configured server exists but the matching MCP tools are not visible in the current thread, use the MCP setup troubleshooting workflow in `setup.md` instead of falling back to a different workspace.
 - Before querying workspace data, confirm the callable Twenty MCP namespace or server name corresponds to the intended workspace whenever there is any ambiguity.
 
-Use the selected connected Twenty MCP server when it is available. Call its listed tools, such as `find_many_companies`, by name. In meta mode (`/mcp?mode=meta`), reach registry tools through the sequence below and call the other listed tools, such as `load_skills`, directly:
+Use the selected connected Twenty MCP server when it is available. Call its listed tools by name: record tools such as `find_records` take the object as `objectName`, and `/mcp?mode=direct` lists one tool per object, such as `find_many_companies`. For tools that are not listed (workflows, views, app functions), and for every registry tool in meta mode (`/mcp?mode=meta`), reach them through the sequence below and call the other listed tools, such as `load_skills`, directly:
 
 ```text
 learn_tools -> execute_tool

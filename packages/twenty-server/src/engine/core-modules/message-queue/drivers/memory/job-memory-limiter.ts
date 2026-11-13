@@ -9,10 +9,12 @@ import {
   JOB_MEMORY_RECONCILE_SUSPECTS_TTL_SECONDS,
   JOB_MEMORY_TOP_GROUP_KEYS_CACHE_MS,
   JOB_MEMORY_TOP_GROUP_KEYS_REPORTED,
+  NOT_CHARGED_QUEUES,
 } from 'src/engine/core-modules/message-queue/constants/job-memory-limit.constant';
 import { JOB_MEMORY_ADMIT_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-admit-script.constant';
 import { JOB_MEMORY_RECONCILE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-reconcile-script.constant';
 import { JOB_MEMORY_RELEASE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-release-script.constant';
+import { JOB_MEMORY_RESTORE_SCRIPT } from 'src/engine/core-modules/message-queue/drivers/memory/job-memory-restore-script.constant';
 import { reportJobMemoryLimitRefusal } from 'src/engine/core-modules/message-queue/drivers/memory/report-job-memory-limit-refusal.util';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
@@ -112,7 +114,7 @@ export class JobMemoryLimiter {
     jobName: string;
     jobs: JobMemoryRequest[];
   }): Promise<JobMemoryAdmission> {
-    if (!this.isEnabled()) {
+    if (!this.isEnabled() || NOT_CHARGED_QUEUES.includes(queueName)) {
       return NOT_CHARGED;
     }
 
@@ -233,6 +235,22 @@ export class JobMemoryLimiter {
       script: JOB_MEMORY_RELEASE_SCRIPT,
       args: [this.buildMember({ queueName, jobId })],
       action: `release the job memory of job ${jobId}`,
+    });
+  }
+
+  async restore({
+    queueName,
+    jobId,
+    groupKeys,
+    sizeBytes,
+  }: ChargedJob & { sizeBytes: number }): Promise<void> {
+    await this.runChargeScript({
+      queueName,
+      groupKeys,
+      script: JOB_MEMORY_RESTORE_SCRIPT,
+      leadingKeys: [this.options.getJobKey({ queueName, jobId })],
+      args: [this.buildMember({ queueName, jobId }), sizeBytes],
+      action: `restore the job memory of job ${jobId}`,
     });
   }
 
@@ -404,12 +422,14 @@ export class JobMemoryLimiter {
     queueName,
     groupKeys,
     script,
+    leadingKeys = [],
     args,
     action,
   }: {
     queueName: MessageQueue;
     groupKeys: string[];
     script: string;
+    leadingKeys?: string[];
     args: (string | number)[];
     action: string;
   }): Promise<void> {
@@ -423,7 +443,10 @@ export class JobMemoryLimiter {
       await runRedisScript({
         client: await this.options.getClient(queueName),
         script,
-        keys: chargedGroupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
+        keys: [
+          ...leadingKeys,
+          ...chargedGroupKeys.flatMap((groupKey) => this.buildKeys(groupKey)),
+        ],
         args,
       });
     } catch (error) {

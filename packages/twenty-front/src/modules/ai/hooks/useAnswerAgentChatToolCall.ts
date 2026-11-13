@@ -34,13 +34,13 @@ export const useAnswerAgentChatToolCall = () => {
       toolCallId,
       response,
       optimisticToolOutput,
+      threadId = store.get(agentChatDisplayedThreadState.atom),
     }: {
       toolCallId: string;
       response: Record<string, unknown>;
       optimisticToolOutput?: unknown;
+      threadId?: string | null;
     }): Promise<boolean> => {
-      const threadId = store.get(agentChatDisplayedThreadState.atom);
-
       if (!isDefined(threadId)) {
         return false;
       }
