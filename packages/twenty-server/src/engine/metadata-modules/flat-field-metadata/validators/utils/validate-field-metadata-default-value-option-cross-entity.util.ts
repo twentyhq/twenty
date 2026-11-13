@@ -19,7 +19,10 @@ const groupInactiveOptionValuesByFieldMetadataUniversalIdentifier = ({
   isWorkspaceCaller,
 }: {
   flatFieldMetadataOptionMaps:
-    | MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>
+    | Pick<
+        MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>,
+        'byUniversalIdentifier'
+      >
     | undefined;
   isWorkspaceCaller: boolean;
 }): Map<string, Set<string>> => {
@@ -142,7 +145,13 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
     });
   const fromInactiveOptionValuesByFieldMetadataUniversalIdentifier =
     groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
-      flatFieldMetadataOptionMaps: fromFlatFieldMetadataOptionMaps,
+      // The before-state only holds the rows the migration touches; the others are unchanged.
+      flatFieldMetadataOptionMaps: {
+        byUniversalIdentifier: {
+          ...flatFieldMetadataOptionMaps?.byUniversalIdentifier,
+          ...fromFlatFieldMetadataOptionMaps?.byUniversalIdentifier,
+        },
+      },
       isWorkspaceCaller,
     });
   const fieldMetadataUniversalIdentifiersWithDefaultValueUpdate = new Set(

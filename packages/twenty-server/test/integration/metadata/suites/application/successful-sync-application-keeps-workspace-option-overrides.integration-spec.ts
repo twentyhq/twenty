@@ -363,6 +363,15 @@ describe('Sync application keeps the option edits a workspace made on its fields
     });
 
     expect((await findSelectField()).defaultValue).toBe("'PAUSED'");
+
+    // Options of the app and the workspace now tie at position 3, and the default is an inactive option.
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: selectFieldId,
+        updatePayload: { label: 'Status (renamed by the workspace)' },
+      },
+    });
   }, 120000);
 
   it('does not bring back the board column of an option the workspace deactivated', async () => {
