@@ -9,7 +9,7 @@ import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadRowContent } from '@/ai/components/AiChatThreadRowContent';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
 
 const StyledRow = styled.div<{ $isCompact: boolean }>`
   border-bottom: ${({ $isCompact }) =>
@@ -138,7 +138,7 @@ const StyledRequestActions = styled.div`
 `;
 
 type AiChatThreadRowProps = {
-  variant?: AiChatThreadListVariant;
+  variant?: InboxThreadListVariant;
   id: string;
   label: string;
   avatar: ReactNode;

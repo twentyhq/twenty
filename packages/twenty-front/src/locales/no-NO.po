@@ -1118,10 +1118,10 @@ msgstr "{roleTargetName} vil bli tilordnet rollen \"{newRoleName}\"."
 msgid "{runCount, plural, one {# turn} other {# turns}}"
 msgstr "{runCount, plural, one {# omgang} other {# omganger}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — forekomstens standardverdi er {defaultText}. Lagring gjelder bare for dette arbeidsområdet."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — standardinnstillingen for dette arbeidsområdet er {defaultText}. Lagring gjelder bare for dette arbeidsområdet."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1652,6 +1652,11 @@ msgstr "Et skjema åpnes for personen som starter arbeidsflyten, og fylles ut p�
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Et skjema åpnes for personen som starter arbeidsflyten, og fylles ut på stedet. Med denne utløseren vises det bare i arbeidsflytkjøringen. Bruk i stedet et Send til innboks-steg for å be noen om et svar eller en godkjenning i innboksen deres."
+
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "En melding kan ha opptil {maxAttachmentCount} filer"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -2942,7 +2947,7 @@ msgid "agent"
 msgstr "agent"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3333,6 +3338,11 @@ msgstr "Alle kanaler"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Alle selskaper"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "Alle samtaler"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4479,8 +4489,8 @@ msgid "Assignment"
 msgstr "Tilordning"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Assistent"
 
@@ -6538,6 +6548,7 @@ msgid "Clear"
 msgstr "Tøm"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -7379,7 +7390,7 @@ msgstr "Bekrefter betalingen din"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Koble til"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8698,7 +8709,7 @@ msgstr "Kreditter"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Kreditter · 14d"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8738,7 +8749,7 @@ msgstr "Kreditter tildelt i tillegg til planens kvote. De kan brukes til de er b
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Kreditter per dag"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -11205,7 +11216,7 @@ msgid "else if"
 msgstr "ellers hvis"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -13076,7 +13087,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Kunne ikke koble de relaterte oppføringene til denne hendelsen"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Kunne ikke laste inn agentdetaljer."
 
@@ -13775,6 +13786,11 @@ msgstr "Filtrer etter oppførings-ID"
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filtrer chatter"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
+msgstr "Filtrer samtaler"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -19957,6 +19973,11 @@ msgstr "Ingen konfigurasjonsvariabler samsvarer med dine gjeldende filtre. Prøv
 msgid "No content"
 msgstr "Ikke noe innhold"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "Ingen samtale bruker denne kanalen."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -20229,6 +20250,11 @@ msgstr "Det ble ikke registrert noen logger for dette trinnet."
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No matching activity"
 msgstr "Ingen samsvarende aktivitet"
+
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "Ingen samsvarende samtaler"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20577,6 +20603,11 @@ msgstr "Ingen mål tilgjengelige"
 msgid "No test result yet"
 msgstr "Ingen testresultater ennå"
 
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "Ikke noe tekstinnhold"
+
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
@@ -20788,6 +20819,8 @@ msgstr "Nodeinnstillinger"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -22572,11 +22605,6 @@ msgstr "Personlig AI-bruk"
 msgid "Personal usage"
 msgstr "Personlig bruk"
 
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Grensen for personlig bruk tilbakestilles om {daysUntilReset, plural, one {# dag} other {# dager}}."
-
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormPhonesFieldInput.tsx
@@ -23362,7 +23390,7 @@ msgstr ""
 #. js-lingui-id: Z9go8W
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
-msgstr "Sp f8rringer som var avhengige av den, vil falle tilbake til sekvensiell skanning. Du kan opprette den p e5 nytt senere."
+msgstr "Spørringer som var avhengige av den vil falle tilbake til et sekvensielt skann. Du kan opprette den på nytt senere."
 
 #. js-lingui-id: bfgr/e
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
@@ -24566,12 +24594,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit-installasjonslenker krever en HTTPS MCP-URL."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Svar"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Svarer til"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -26957,6 +26991,7 @@ msgstr "Konfigurerer <0>databasen</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -27692,7 +27727,7 @@ msgstr "Noe gikk galt under henting av samtalene for denne oppføringen."
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Noe gikk galt under henting av denne postens meldinger."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30244,7 +30279,7 @@ msgstr "Tokens"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Tokener · 14d"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -31150,7 +31185,7 @@ msgstr "Ukjent tolkningsfeil"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Ukjent avsender"
 
@@ -32170,11 +32205,6 @@ msgstr "Bruker standard applikasjonsverdi. Konfigurer via miljøvariabler."
 msgid "Using default value. Set a custom value to override."
 msgstr "Bruker standardverdi. Angi en tilpasset verdi for å overstyre."
 
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Bruker arbeidsområdets kreditter i {daysUntilReset, plural, one {# dag} other {# dager}}."
-
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
@@ -32483,7 +32513,7 @@ msgid "View only — You can read this conversation."
 msgstr "Bare visning — Du kan lese denne samtalen."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Vis opprinnelig melding"
 
@@ -32764,7 +32794,7 @@ msgstr "Vi kunne ikke laste inn samtalene"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Vi kunne ikke laste inn meldingene"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32950,6 +32980,21 @@ msgstr "Uke"
 msgid "Weekly"
 msgstr "Ukentlig"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Ukentlig personlig AI-bruk er nådd. Be en administrator om å aktivere arbeidsområdekreditter."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Ukentlig personlig AI-bruk er nådd. Aktiver arbeidsområdekreditter for å fortsette."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Ukentlig personlig AI-bruk er nådd. Bruker nå arbeidsområdekreditter."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32991,10 +33036,10 @@ msgstr "Hva kan jeg hjelpe deg med?"
 msgid "What can you do?"
 msgstr "Hva kan du gjøre?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "Hva som begrenser dette arbeidsområdet. Standardverdier for instansen kommer fra konfigurasjonsvariabler, og bare en operatør kan erstatte en."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "Hva som setter grensen for dette arbeidsområdet. Standardverdier kommer fra konfigurasjonsvariabler og arbeidsområdeplanen, og bare en operatør kan overstyre en av dem."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33751,6 +33796,8 @@ msgstr "I går"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx

@@ -1956,6 +1956,7 @@ input CreateViewFieldInput {
   aggregateOperation: AggregateOperations
   fieldMetadataId: UUID!
   id: UUID
+  isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
   size: Float = 0
@@ -2503,6 +2504,7 @@ enum FeatureFlagKey {
   IS_AI_DATA_POLICY_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
@@ -4914,6 +4916,11 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageAttachmentInput {
+  id: UUID!
+  name: String!
+}
+
 input SendAppChannelMessageEmailInput {
   bcc: String
   body: String!
@@ -4924,6 +4931,7 @@ input SendAppChannelMessageEmailInput {
 }
 
 input SendAppChannelMessageInput {
+  attachments: [SendAppChannelMessageAttachmentInput!]
   email: SendAppChannelMessageEmailInput
   idempotencyKey: UUID!
   messageChannelId: UUID!
@@ -6391,6 +6399,7 @@ type ViewField {
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
+  isCanonical: Boolean!
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!

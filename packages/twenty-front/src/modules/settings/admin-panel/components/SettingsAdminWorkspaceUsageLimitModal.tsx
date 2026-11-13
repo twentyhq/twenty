@@ -8,20 +8,30 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { billingState } from '@/client-config/states/billingState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
-import { UPDATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/updateWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
+import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
+import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { parseUsageLimitValue } from '@/settings/billing/utils/parseUsageLimitValue';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
+import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
+import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { type DeleteWorkspaceUsageLimitMutation } from '~/generated-admin/graphql';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  BillingArrangementLabel,
+  type DeleteWorkspaceUsageLimitMutation,
+} from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceUsageLimitModalProps = {
   dialogId: string;
@@ -39,11 +49,7 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parsePositiveInteger = (value: string): number | null => {
-  const parsed = Number(value);
-
-  return Number.isInteger(parsed) && parsed >= 1 ? parsed : null;
-};
+const COMMENT_MAX_LENGTH = 500;
 
 export const SettingsAdminWorkspaceUsageLimitModal = ({
   dialogId,
@@ -55,11 +61,22 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const { closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
+  const billing = useAtomStateValue(billingState);
 
-  const [limitValue, setLimitValue] = useState(String(row.limitValue));
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const inputScale = getUsageLimitInputScale(row.unit);
+
+  const [limitValue, setLimitValue] = useState(
+    isDefined(row.limitValue) ? String(row.limitValue / inputScale) : '',
+  );
   const [burstValue, setBurstValue] = useState(
     isDefined(row.burstValue) ? String(row.burstValue) : '',
   );
+  const [endsAt, setEndsAt] = useState<Date | undefined>(undefined);
+  const [label, setLabel] = useState<BillingArrangementLabel>(
+    BillingArrangementLabel.OTHER,
+  );
+  const [comment, setComment] = useState<string | undefined>(undefined);
 
   const mutationOptions = {
     client: apolloAdminClient,
@@ -72,26 +89,45 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     CREATE_WORKSPACE_USAGE_LIMIT,
     mutationOptions,
   );
-  const [updateWorkspaceUsageLimit, { loading: isUpdating }] = useMutation(
-    UPDATE_WORKSPACE_USAGE_LIMIT,
-    mutationOptions,
-  );
   const [deleteWorkspaceUsageLimit, { loading: isResetting }] =
     useMutation<DeleteWorkspaceUsageLimitMutation>(
       DELETE_WORKSPACE_USAGE_LIMIT,
       mutationOptions,
     );
 
-  const parsedLimitValue = parsePositiveInteger(limitValue);
+  const minimumLimitValue = row.limitKind === 'quota' ? 0 : 1;
+  const parsedLimitValue = parseUsageLimitValue({
+    value: limitValue,
+    min: minimumLimitValue,
+    scale: inputScale,
+  });
   const hasBurstValue = isNonEmptyString(burstValue.trim());
   const parsedBurstValue = hasBurstValue
-    ? parsePositiveInteger(burstValue)
+    ? parseUsageLimitValue({ value: burstValue, min: 1, scale: 1 })
     : null;
   const isBurstAllowed = row.limitKind === 'speed';
-  const isBusy = isCreating || isUpdating || isResetting;
+  const isBusy = isCreating || isResetting;
+  const isEndsAtValid = !isDefined(endsAt) || endsAt.getTime() > Date.now();
   const isValid =
     isDefined(parsedLimitValue) &&
-    (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue));
+    (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue)) &&
+    isEndsAtValid;
+
+  const unitLabel = getUsageLimitUnitLabel({
+    unit: row.unit,
+    operationType: row.operationType,
+  });
+  const scopeLabel = getAdminUsageLimitScopeLabel(row);
+  const grantedLimitText = isDefined(parsedLimitValue)
+    ? `${scopeLabel} · ${getAdminUsageLimitPeriodLabel(row)} · ${t(unitLabel.name)}: ${formatLimitValue(
+        {
+          value: parsedLimitValue,
+          unit: row.unit,
+          operationType: row.operationType,
+        },
+      )}`
+    : '';
+  const commentValue = comment ?? grantedLimitText;
 
   const handleClose = () => {
     closeDialog(dialogId);
@@ -116,18 +152,15 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     };
 
     try {
-      if (isDefined(row.usageLimitId)) {
-        await updateWorkspaceUsageLimit({
-          variables: {
-            workspaceId,
-            payload: { id: row.usageLimitId, payload },
-          },
-        });
-      } else {
-        await createWorkspaceUsageLimit({
-          variables: { workspaceId, payload },
-        });
-      }
+      await createWorkspaceUsageLimit({
+        variables: {
+          workspaceId,
+          payload,
+          endsAt: endsAt?.toISOString() ?? null,
+          label,
+          comment: commentValue.trim() || null,
+        },
+      });
 
       enqueueToast({
         status: 'success',
@@ -169,16 +202,13 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     }
   };
 
-  const unitLabel = getUsageLimitUnitLabel({
-    unit: row.unit,
-    operationType: row.operationType,
-  });
-  const scopeLabel = getAdminUsageLimitScopeLabel(row);
-  const defaultText = formatLimitValue({
-    value: row.defaultValue,
-    unit: row.unit,
-    operationType: row.operationType,
-  });
+  const defaultText = isDefined(row.defaultValue)
+    ? formatLimitValue({
+        value: row.defaultValue,
+        unit: row.unit,
+        operationType: row.operationType,
+      })
+    : t`None`;
 
   return (
     <DialogInstance
@@ -196,7 +226,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           <Dialog.Header>
             <Dialog.Title>{t`Set limit for this workspace`}</Dialog.Title>
             <Dialog.Description>
-              {t`${scopeLabel} — the instance default is ${defaultText}. Saving applies to this workspace only.`}
+              {t`${scopeLabel} — the default for this workspace is ${defaultText}. Saving applies to this workspace only.`}
             </Dialog.Description>
           </Dialog.Header>
           <Dialog.Body>
@@ -205,9 +235,10 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 instanceId={`${dialogId}-limit-value`}
                 label={t(unitLabel.name)}
                 type="number"
-                min={1}
+                min={minimumLimitValue}
                 value={limitValue}
                 onChange={setLimitValue}
+                disabled={row.isOverridden}
                 autoFocusOnMount
                 fullWidth
               />
@@ -221,8 +252,48 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                   min={1}
                   value={burstValue}
                   onChange={setBurstValue}
+                  disabled={row.isOverridden}
                   fullWidth
                 />
+              )}
+
+              {isBillingEnabled && !row.isOverridden && (
+                <>
+                  <SettingsDatePickerInput
+                    instanceId={`${dialogId}-ends-at`}
+                    label={t`Ends (optional)`}
+                    placeholder={t`No end date`}
+                    value={endsAt}
+                    onChange={setEndsAt}
+                    isInModal
+                  />
+
+                  <Select
+                    dropdownId={`${dialogId}-label`}
+                    label={t`Reason`}
+                    value={label}
+                    options={Object.values(BillingArrangementLabel).map(
+                      (arrangementLabel) => ({
+                        value: arrangementLabel,
+                        label: t(
+                          BILLING_ARRANGEMENT_REASON_LABELS[arrangementLabel],
+                        ),
+                      }),
+                    )}
+                    onChange={setLabel}
+                    fullWidth
+                  />
+
+                  <SettingsTextInput
+                    instanceId={`${dialogId}-comment`}
+                    label={t`Comment`}
+                    placeholder={t`Compensation for the October outage`}
+                    value={commentValue}
+                    onChange={setComment}
+                    maxLength={COMMENT_MAX_LENGTH}
+                    fullWidth
+                  />
+                </>
               )}
             </StyledFields>
           </Dialog.Body>
@@ -245,15 +316,17 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 variant="outline"
               >{t`Cancel`}</Button>
             </StyledActionSlot>
-            <StyledActionSlot>
-              <Button
-                onClick={handleSubmit}
-                fullWidth
-                disabled={!isValid || isBusy}
-                variant="solid"
-                color="accent"
-              >{t`Save`}</Button>
-            </StyledActionSlot>
+            {!row.isOverridden && (
+              <StyledActionSlot>
+                <Button
+                  onClick={handleSubmit}
+                  fullWidth
+                  disabled={!isValid || isBusy}
+                  variant="solid"
+                  color="accent"
+                >{t`Save`}</Button>
+              </StyledActionSlot>
+            )}
           </Dialog.Footer>
         </Dialog.Popup>
       )}

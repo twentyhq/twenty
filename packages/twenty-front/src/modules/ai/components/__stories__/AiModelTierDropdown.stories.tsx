@@ -7,7 +7,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/aiChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 const StyledTriggerContainer = styled.div`
@@ -24,7 +24,7 @@ const meta: Meta<typeof AiModelTierDropdown> = {
       const store = useStore();
       const setupChat = parameters.setupChat === true;
       useEffect(() => {
-        store.set(agentChatUserSelectedModelTierState.atom, null);
+        store.set(aiChatUserSelectedModelTierState.atom, null);
         store.set(shouldOpenAiChatAfterOnboardingState.atom, setupChat);
         return () =>
           store.set(shouldOpenAiChatAfterOnboardingState.atom, false);

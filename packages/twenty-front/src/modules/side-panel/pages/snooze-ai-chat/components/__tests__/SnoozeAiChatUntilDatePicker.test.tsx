@@ -13,18 +13,18 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const updateAgentChatThreadInboxState = jest.fn();
-const snoozeAgentChatThreadsInChannel = jest.fn();
+const snoozeInboxThreadsInChannel = jest.fn();
 const onSnoozed = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
-  useUpdateAgentChatThreadInboxState: () => ({
+jest.mock('@/ai/hooks/useUpdateInboxThreadStatus', () => ({
+  useUpdateInboxThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));
 
-jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
-  useSnoozeAgentChatThreadsInChannel: () => ({
-    snoozeAgentChatThreadsInChannel,
+jest.mock('@/ai/hooks/useSnoozeInboxThreadsInChannel', () => ({
+  useSnoozeInboxThreadsInChannel: () => ({
+    snoozeInboxThreadsInChannel,
   }),
 }));
 
