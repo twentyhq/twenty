@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Text } from 'twenty-ui/primitives/typography';
 
-import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
-import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
+import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -16,8 +16,8 @@ const StyledActivityTime = styled.div`
 `;
 
 type AiChatThreadActivityTimeProps = {
-  thread: AgentChatThreadRecord;
-  variant?: AiChatThreadListVariant;
+  thread: AiChatThreadRecord;
+  variant?: InboxThreadListVariant;
 };
 
 export const AiChatThreadActivityTime = ({
@@ -25,17 +25,17 @@ export const AiChatThreadActivityTime = ({
   variant = 'default',
 }: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
-  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
+  const isUnread = useIsAiChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
+    inboxThreadMemberStateFamilySelector,
     thread.id,
   );
-  const { formatAgentChatThreadDay } = useFormatAgentChatThreadDate();
+  const { formatAiChatThreadDay } = useFormatAiChatThreadDate();
 
   const getActivityTimeLabel = () => {
     switch (event?.type) {
       case 'SNOOZED': {
-        const snoozedUntilDay = formatAgentChatThreadDay(new Date(event.at));
+        const snoozedUntilDay = formatAiChatThreadDay(new Date(event.at));
 
         return t`Until ${snoozedUntilDay}`;
       }
@@ -53,7 +53,7 @@ export const AiChatThreadActivityTime = ({
       }
       default:
         return beautifyPastDateRelativeToNowShort(
-          getAgentChatThreadLastActivityAt(thread),
+          getAiChatThreadLastActivityAt(thread),
         );
     }
   };

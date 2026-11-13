@@ -1,9 +1,9 @@
-import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
 
 export const isAiChatThreadStatusChangeNoOp = ({
   currentStatus,
   nextStatus,
 }: {
-  currentStatus: AiChatThreadTriageStatus | undefined;
-  nextStatus: AiChatThreadTriageStatus;
+  currentStatus: InboxThreadTriageStatus | undefined;
+  nextStatus: InboxThreadTriageStatus;
 }) => nextStatus === currentStatus && nextStatus !== 'snoozed';

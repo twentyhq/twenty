@@ -1,7 +1,7 @@
-import { type AgentChatChannelSummary as AgentChatChannelSummaryRow } from '~/generated-metadata/graphql';
+import { type AgentChatChannelSummary as InboxChannelSummaryRow } from '~/generated-metadata/graphql';
 
 export type AgentChatChannelSummary = Pick<
-  AgentChatChannelSummaryRow,
+  InboxChannelSummaryRow,
   | 'openCount'
   | 'needsInputCount'
   | 'mentionedCount'

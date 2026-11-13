@@ -7,6 +7,7 @@ export enum CoreWorkflowMetadataExceptionCode {
   INVALID_WORKFLOW_VERSION_DEFINITION = 'INVALID_WORKFLOW_VERSION_DEFINITION',
   WORKFLOW_NOT_FOUND = 'WORKFLOW_NOT_FOUND',
   WORKFLOW_ALREADY_EXISTS = 'WORKFLOW_ALREADY_EXISTS',
+  WORKFLOW_OWNERSHIP_CONDITION_NOT_MET = 'WORKFLOW_OWNERSHIP_CONDITION_NOT_MET',
   WORKFLOW_VERSION_NOT_FOUND = 'WORKFLOW_VERSION_NOT_FOUND',
   WORKFLOW_VERSION_ALREADY_EXISTS = 'WORKFLOW_VERSION_ALREADY_EXISTS',
   WORKFLOW_VERSION_MISSING_WORKFLOW = 'WORKFLOW_VERSION_MISSING_WORKFLOW',
@@ -22,6 +23,8 @@ const getCoreWorkflowMetadataExceptionUserFriendlyMessage = (
       return msg`Workflow not found.`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_ALREADY_EXISTS:
       return msg`This workflow already exists.`;
+    case CoreWorkflowMetadataExceptionCode.WORKFLOW_OWNERSHIP_CONDITION_NOT_MET:
+      return msg`Only the person who created this workflow can change who sees it`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_NOT_FOUND:
       return msg`Workflow version not found.`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_ALREADY_EXISTS:

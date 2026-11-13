@@ -4,9 +4,9 @@ import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
 const StyledTitle = styled.div`
   flex: 1;
@@ -15,13 +15,13 @@ const StyledTitle = styled.div`
 `;
 
 type AiChatThreadTitleProps = {
-  thread: AgentChatThreadRecord;
+  thread: AiChatThreadRecord;
 };
 
 export const AiChatThreadTitle = ({ thread }: AiChatThreadTitleProps) => {
   const { t } = useLingui();
-  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const isUnread = useIsAiChatThreadShownAsUnread(thread);
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`Untitled`,
   });

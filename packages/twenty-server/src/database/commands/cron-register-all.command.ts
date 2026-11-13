@@ -11,6 +11,7 @@ import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modu
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
+import { UsageLimitInstanceOverrideExpiryCronCommand } from 'src/engine/core-modules/usage-limit/instance-override/crons/commands/usage-limit-instance-override-expiry.cron.command';
 import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
@@ -86,6 +87,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workspaceDataExportCleanupCronCommand: WorkspaceDataExportCleanupCronCommand,
     private readonly deferredWorkspaceOperationRecoveryCronCommand: DeferredWorkspaceOperationRecoveryCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
+    private readonly usageLimitInstanceOverrideExpiryCronCommand: UsageLimitInstanceOverrideExpiryCronCommand,
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
@@ -240,6 +242,11 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'BillingReminder',
         command: this.billingReminderCronCommand,
+        isEnabled: isBillingEnabled,
+      },
+      {
+        name: 'UsageLimitInstanceOverrideExpiry',
+        command: this.usageLimitInstanceOverrideExpiryCronCommand,
         isEnabled: isBillingEnabled,
       },
       {
