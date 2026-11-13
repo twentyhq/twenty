@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type RelationTargetValidationFieldMetadata = Pick<
@@ -15,16 +16,43 @@ type RelationTargetValidationFieldMetadata = Pick<
 >;
 
 export const validateFlatViewFieldRelationTarget = ({
-  isCanonical,
-  flatFieldMetadata,
-  relationTargetFlatFieldMetadata,
+  flatViewField: {
+    isCanonical,
+    fieldMetadataUniversalIdentifier,
+    relationTargetFieldMetadataUniversalIdentifier,
+  },
+  flatFieldMetadataMaps,
 }: {
-  isCanonical: boolean;
-  flatFieldMetadata: RelationTargetValidationFieldMetadata;
-  relationTargetFlatFieldMetadata:
-    | RelationTargetValidationFieldMetadata
-    | undefined;
+  flatViewField: Pick<
+    UniversalFlatViewField,
+    | 'isCanonical'
+    | 'fieldMetadataUniversalIdentifier'
+    | 'relationTargetFieldMetadataUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, RelationTargetValidationFieldMetadata>
+    >;
+  };
 }): FlatEntityValidationError<ViewExceptionCode>[] => {
+  const flatFieldMetadata =
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      fieldMetadataUniversalIdentifier
+    ];
+
+  // A missing field is reported by the view field's own field metadata check
+  if (
+    !isDefined(relationTargetFieldMetadataUniversalIdentifier) ||
+    !isDefined(flatFieldMetadata)
+  ) {
+    return [];
+  }
+
+  const relationTargetFlatFieldMetadata =
+    flatFieldMetadataMaps.byUniversalIdentifier[
+      relationTargetFieldMetadataUniversalIdentifier
+    ];
+
   if (isCanonical) {
     return [
       {
