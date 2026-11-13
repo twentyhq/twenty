@@ -6,8 +6,7 @@ import { type MetadataOwnershipIndex } from 'src/engine/metadata-modules/metadat
 import { type OwnableChildMetadataName } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-child-metadata-name.type';
 import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-metadata-name.type';
 import { type OwnershipSourceFlatEntityMaps } from 'src/engine/metadata-modules/metadata-ownership/types/ownership-source-flat-entity-maps.type';
-import { getOwnableRootOwnerUserWorkspaceId } from 'src/engine/metadata-modules/metadata-ownership/utils/get-ownable-root-owner-user-workspace-id.util';
-import { isOwnableRootPrivate } from 'src/engine/metadata-modules/metadata-ownership/utils/is-ownable-root-private.util';
+import { resolveOwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/utils/resolve-ownable-root-privacy-state.util';
 
 export type BuildMetadataOwnershipIndexArgs = {
   [P in OwnableRootMetadataName]: {
@@ -39,14 +38,14 @@ export const buildMetadataOwnershipIndex = ({
 
     rootIds.add(root.id);
 
-    if (!isOwnableRootPrivate({ rootMetadataName, row: root })) {
-      continue;
-    }
-
-    const ownerUserWorkspaceId = getOwnableRootOwnerUserWorkspaceId({
+    const { isPrivate, ownerUserWorkspaceId } = resolveOwnableRootPrivacyState({
       rootMetadataName,
       row: root,
     });
+
+    if (!isPrivate) {
+      continue;
+    }
 
     metadataOwnershipIndex.ownerUserWorkspaceIdByPrivateRootId[root.id] =
       ownerUserWorkspaceId;

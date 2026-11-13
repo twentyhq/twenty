@@ -1,3 +1,4 @@
-export type MetadataCaller = {
-  userWorkspaceId?: string;
-};
+export type MetadataCaller =
+  | { type: 'bypassesPrivacy' }
+  | { type: 'workspaceMember'; userWorkspaceId: string }
+  | { type: 'withoutWorkspaceMember' };

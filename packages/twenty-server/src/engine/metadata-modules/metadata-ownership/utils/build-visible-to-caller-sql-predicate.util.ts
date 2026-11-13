@@ -1,17 +1,38 @@
-import { OWNABLE_METADATA_BY_ROOT_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/ownable-metadata-by-root-metadata-name.constant';
-import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-metadata-name.type';
+import {
+  PRIVACY_STATE_SQL_ACCESSOR_BY_ROOT_METADATA_NAME,
+  type SqlReadablePrivacyRootMetadataName,
+} from 'src/engine/metadata-modules/metadata-ownership/constants/privacy-state-sql-accessor-by-root-metadata-name.constant';
+import { type MetadataCaller } from 'src/engine/metadata-modules/metadata-ownership/types/metadata-caller.type';
 
+export type VisibleToCallerSqlPredicate = {
+  sql: string;
+  userWorkspaceId: string | null;
+};
+
+// Undefined means the caller bypasses privacy, so the query carries no predicate and binds nothing.
 export const buildVisibleToCallerSqlPredicate = ({
   rootMetadataName,
   tableAlias,
   userWorkspaceIdParameter,
+  caller,
 }: {
-  rootMetadataName: OwnableRootMetadataName;
+  rootMetadataName: SqlReadablePrivacyRootMetadataName;
   tableAlias: string;
   userWorkspaceIdParameter: string;
-}): string => {
-  const { visibilityProperty, workspaceVisibility, ownerProperty } =
-    OWNABLE_METADATA_BY_ROOT_METADATA_NAME[rootMetadataName];
+  caller: MetadataCaller;
+}): VisibleToCallerSqlPredicate | undefined => {
+  if (caller.type === 'bypassesPrivacy') {
+    return undefined;
+  }
 
-  return `(${tableAlias}."${visibilityProperty}" = '${workspaceVisibility}' OR ${tableAlias}."${ownerProperty}" = ${userWorkspaceIdParameter}::uuid)`;
+  const { isPrivateSql, ownerUserWorkspaceIdSql } =
+    PRIVACY_STATE_SQL_ACCESSOR_BY_ROOT_METADATA_NAME[rootMetadataName]({
+      tableAlias,
+    });
+
+  return {
+    sql: `(NOT (${isPrivateSql}) OR ${ownerUserWorkspaceIdSql} = ${userWorkspaceIdParameter}::uuid)`,
+    userWorkspaceId:
+      caller.type === 'workspaceMember' ? caller.userWorkspaceId : null,
+  };
 };

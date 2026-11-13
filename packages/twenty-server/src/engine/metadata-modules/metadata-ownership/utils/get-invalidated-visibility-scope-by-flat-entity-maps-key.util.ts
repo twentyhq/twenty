@@ -12,7 +12,7 @@ import { OWNERSHIP_INDEX_SOURCE_KEY_NAMES_BY_ROOT_METADATA_NAME } from 'src/engi
 import { type OwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-metadata-name.type';
 import { findOwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/utils/find-ownable-root-metadata-name.util';
 import { isOwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-ownership/utils/is-ownable-root-metadata-name.util';
-import { isOwnableRootPrivate } from 'src/engine/metadata-modules/metadata-ownership/utils/is-ownable-root-private.util';
+import { resolveOwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/utils/resolve-ownable-root-privacy-state.util';
 import { type WorkspaceCacheInvalidatedVisibilityScope } from 'src/engine/workspace-cache/types/workspace-cache-invalidated-visibility-scope.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 
@@ -52,7 +52,10 @@ const getTouchedRootPrivateStates = ({
   const rows = getMetadataEventRows(metadataEvent);
 
   if (isOwnableRootMetadataName(metadataEvent.metadataName)) {
-    return rows.map((row) => isOwnableRootPrivate({ rootMetadataName, row }));
+    return rows.map(
+      (row) =>
+        resolveOwnableRootPrivacyState({ rootMetadataName, row }).isPrivate,
+    );
   }
 
   const children: Partial<Record<string, { rootIdProperty: string }>> =
@@ -78,8 +81,10 @@ const getTouchedRootPrivateStates = ({
 
     return roots.length === 0
       ? [true]
-      : roots.map((root) =>
-          isOwnableRootPrivate({ rootMetadataName, row: root }),
+      : roots.map(
+          (root) =>
+            resolveOwnableRootPrivacyState({ rootMetadataName, row: root })
+              .isPrivate,
         );
   });
 };
