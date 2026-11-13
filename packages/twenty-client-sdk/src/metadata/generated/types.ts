@@ -11583,6 +11583,9 @@ export default {
                     "shouldIncludeDependencies": [
                         1
                     ],
+                    "shouldIncludePublicAssets": [
+                        1
+                    ],
                     "shouldIncludeSourceFiles": [
                         1
                     ],

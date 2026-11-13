@@ -22,7 +22,7 @@ const COMPARATORS = [
   'like',
   'ilike',
 ];
-const invalidFilter = () =>
+const createInvalidFilterError = () =>
   new CliError({
     code: 'USAGE',
     exitCode: EXIT_CODE.USAGE,
@@ -78,7 +78,7 @@ const splitPredicates = (expression: string) => {
       isValue = false;
     }
     if (parentheses < 0 || brackets < 0) {
-      throw invalidFilter();
+      throw createInvalidFilterError();
     }
     if (character === ',' && parentheses === 0 && brackets === 0) {
       parts.push(expression.slice(start, index));
@@ -86,7 +86,7 @@ const splitPredicates = (expression: string) => {
     }
   }
   if (parentheses !== 0 || brackets !== 0 || isNonEmptyString(quote)) {
-    throw invalidFilter();
+    throw createInvalidFilterError();
   }
   parts.push(expression.slice(start));
   return parts;
@@ -109,7 +109,7 @@ const parseFilterValue = ({
     return comparator === 'is' ? text : unquote(text);
   }
   if (!text.startsWith('[') || !text.endsWith(']')) {
-    throw invalidFilter();
+    throw createInvalidFilterError();
   }
   return splitFilterArrayItems(text.slice(1, -1)).map(unquote);
 };
@@ -122,7 +122,7 @@ const parsePredicate = ({
   depth: number;
 }): Filter => {
   if (depth > 50) {
-    throw invalidFilter();
+    throw createInvalidFilterError();
   }
   const conjunction = /^(and|or|not)\((.+)\)$/.exec(expression);
   if (isDefined(conjunction)) {
@@ -131,7 +131,7 @@ const parsePredicate = ({
     );
     if (conjunction[1] === 'not') {
       if (predicates.length !== 1) {
-        throw invalidFilter();
+        throw createInvalidFilterError();
       }
       return { not: predicates[0] };
     }
@@ -139,7 +139,7 @@ const parsePredicate = ({
   }
   const condition = /^([^\[\]]+)\[([^\[\]]+)\]:(.+)$/.exec(expression);
   if (!isDefined(condition) || !COMPARATORS.includes(condition[2])) {
-    throw invalidFilter();
+    throw createInvalidFilterError();
   }
   const [, field, comparator, text] = condition;
   const value = parseFilterValue({ comparator, text });
@@ -149,7 +149,7 @@ const parsePredicate = ({
     .reduce<Filter>(
       (nested, name) => {
         if (!isNonEmptyString(name)) {
-          throw invalidFilter();
+          throw createInvalidFilterError();
         }
         return { [name]: nested };
       },

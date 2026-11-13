@@ -20,4 +20,9 @@ export class ExportApplicationInput {
   @IsOptional()
   @IsBoolean()
   shouldIncludeSourceFiles?: boolean;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
+  shouldIncludePublicAssets?: boolean;
 }
