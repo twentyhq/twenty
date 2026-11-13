@@ -158,7 +158,6 @@ export const SettingsApplicationConnectionDetail = () => {
     startAppConnection({
       applicationId,
       connectionProviderName: provider.name,
-      connectionProviderDisplayName: provider.displayName,
       connectionProviderType: provider.type,
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,

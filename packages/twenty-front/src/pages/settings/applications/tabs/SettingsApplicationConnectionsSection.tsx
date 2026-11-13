@@ -119,7 +119,6 @@ export const SettingsApplicationConnectionsSection = ({
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
                 connectionProviderName={provider.name}
-                connectionProviderDisplayName={provider.displayName}
                 connectionProviderType={provider.type}
               />
             )}

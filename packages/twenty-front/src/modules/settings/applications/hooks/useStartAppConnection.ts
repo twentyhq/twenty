@@ -1,38 +1,45 @@
 import { useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
 
 import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
 import { isApiKeyConnectionProviderType } from '@/settings/applications/utils/isApiKeyConnectionProviderType';
-import { useOpenConnectApplicationWithApiKeyInSidePanel } from '@/side-panel/hooks/useOpenConnectApplicationWithApiKeyInSidePanel';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const useStartAppConnection = () => {
   const { triggerAppOAuth } = useTriggerAppOAuth();
-  const { openConnectApplicationWithApiKeyInSidePanel } =
-    useOpenConnectApplicationWithApiKeyInSidePanel();
+  const navigateSettings = useNavigateSettings();
+  const location = useLocation();
 
   const startAppConnection = useCallback(
     async ({
       applicationId,
       connectionProviderName,
-      connectionProviderDisplayName,
       connectionProviderType,
       reconnectingConnectedAccountId,
       redirectLocation,
     }: {
       applicationId: string;
       connectionProviderName: string;
-      connectionProviderDisplayName: string;
       connectionProviderType: string;
       reconnectingConnectedAccountId?: string;
       redirectLocation?: string;
     }) => {
       if (isApiKeyConnectionProviderType(connectionProviderType)) {
-        openConnectApplicationWithApiKeyInSidePanel({
-          applicationId,
-          providerName: connectionProviderName,
-          providerDisplayName: connectionProviderDisplayName,
-          reconnectingConnectedAccountId:
-            reconnectingConnectedAccountId ?? null,
-        });
+        navigateSettings(
+          SettingsPath.ApplicationConnectWithApiKey,
+          { applicationId, connectionProviderName },
+          reconnectingConnectedAccountId
+            ? { reconnectingConnectedAccountId }
+            : undefined,
+          {
+            state: {
+              returnTo:
+                redirectLocation ??
+                `${location.pathname}${location.search}${location.hash}`,
+            },
+          },
+        );
 
         return;
       }
@@ -44,7 +51,7 @@ export const useStartAppConnection = () => {
         redirectLocation,
       });
     },
-    [openConnectApplicationWithApiKeyInSidePanel, triggerAppOAuth],
+    [location, navigateSettings, triggerAppOAuth],
   );
 
   return { startAppConnection };

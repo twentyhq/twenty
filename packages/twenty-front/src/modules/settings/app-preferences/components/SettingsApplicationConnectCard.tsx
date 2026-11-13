@@ -7,7 +7,7 @@ type SettingsApplicationConnectCardProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'displayName' | 'type' | 'logoUrl'
+    'name' | 'type' | 'logoUrl'
   >;
   title: string;
   redirectLocation: string;
@@ -36,7 +36,6 @@ export const SettingsApplicationConnectCard = ({
         startAppConnection({
           applicationId,
           connectionProviderName: connectionProvider.name,
-          connectionProviderDisplayName: connectionProvider.displayName,
           connectionProviderType: connectionProvider.type,
           redirectLocation,
         })

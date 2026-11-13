@@ -85,7 +85,6 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
         SidePanelPages.AddToMessageList,
         SidePanelPages.ShareRecord,
         SidePanelPages.MergeWithRecord,
-        SidePanelPages.ConnectApplicationWithApiKey,
       ].includes(pageChip.page.page)
     : false;
 

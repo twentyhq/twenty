@@ -16,7 +16,6 @@ const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(0, 1fr) auto ${themeC
 type SettingsAppPreferencesConnectionsTableProps = {
   applicationId: string;
   connectionProviderName: string;
-  connectionProviderDisplayName: string;
   connectionProviderType: string;
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;
@@ -27,7 +26,6 @@ type SettingsAppPreferencesConnectionsTableProps = {
 export const SettingsAppPreferencesConnectionsTable = ({
   applicationId,
   connectionProviderName,
-  connectionProviderDisplayName,
   connectionProviderType,
   connections,
   canStartAuthorization,
@@ -71,7 +69,6 @@ export const SettingsAppPreferencesConnectionsTable = ({
               <SettingsAppPreferencesConnectionRowDropdownMenu
                 applicationId={applicationId}
                 connectionProviderName={connectionProviderName}
-                connectionProviderDisplayName={connectionProviderDisplayName}
                 connectionProviderType={connectionProviderType}
                 connection={connection}
                 canStartAuthorization={canStartAuthorization}

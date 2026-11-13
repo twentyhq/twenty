@@ -14,7 +14,6 @@ import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/icon';
 type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
   applicationId: string;
   connectionProviderName: string;
-  connectionProviderDisplayName: string;
   connectionProviderType: string;
   connection: ConnectedAccount;
   canStartAuthorization: boolean;
@@ -24,7 +23,6 @@ type SettingsAppPreferencesConnectionRowDropdownMenuProps = {
 export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
   applicationId,
   connectionProviderName,
-  connectionProviderDisplayName,
   connectionProviderType,
   connection,
   canStartAuthorization,
@@ -58,7 +56,6 @@ export const SettingsAppPreferencesConnectionRowDropdownMenu = ({
                     startAppConnection({
                       applicationId,
                       connectionProviderName,
-                      connectionProviderDisplayName,
                       connectionProviderType,
                       reconnectingConnectedAccountId: connection.id,
                       redirectLocation: reconnectRedirectLocation,

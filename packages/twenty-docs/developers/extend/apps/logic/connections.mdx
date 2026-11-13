@@ -130,7 +130,7 @@ export default defineConnectionProvider({
 });
 ```
 
-**Add connection** and **Reconnect** open a side panel where the member pastes the key. Twenty stores it encrypted on the connection, and `getConnection` returns it as `accessToken`, with `providerType: 'api-key'`. Twenty never refreshes or revokes it: when the service rejects it, call `reportConnectionAuthFailure` so the member is asked to reconnect with a new one.
+**Add connection** and **Reconnect** open a settings page where the member pastes the key. Twenty stores it encrypted on the connection, and `getConnection` returns it as `accessToken`, with `providerType: 'api-key'`. Twenty never refreshes or revokes it: when the service rejects it, call `reportConnectionAuthFailure` so the member is asked to reconnect with a new one.
 
 Declare an `identifyAccountLogicFunction` (see "Identify the connected account"). It runs with the pasted key as `accessToken` before anything is saved, so one call to the service's "who am I" endpoint both checks the key and names the connection. If it throws, the key is rejected and the member sees the error. Without it, any non-empty key is saved and the connection is named after the member's email.
 

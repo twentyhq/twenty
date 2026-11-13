@@ -14,7 +14,6 @@ const StyledFooter = styled.div`
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
   connectionProviderName: string;
-  connectionProviderDisplayName: string;
   connectionProviderType: string;
   redirectLocation?: string;
 };
@@ -22,7 +21,6 @@ type SettingsApplicationAddConnectionButtonProps = {
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
   connectionProviderName,
-  connectionProviderDisplayName,
   connectionProviderType,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
@@ -38,7 +36,6 @@ export const SettingsApplicationAddConnectionButton = ({
           startAppConnection({
             applicationId,
             connectionProviderName,
-            connectionProviderDisplayName,
             connectionProviderType,
             redirectLocation,
           })

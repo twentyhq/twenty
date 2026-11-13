@@ -28,7 +28,6 @@ export const ChatThreadDisconnectedBanner = ({
     startAppConnection({
       applicationId,
       connectionProviderName,
-      connectionProviderDisplayName: channelName,
       connectionProviderType,
       reconnectingConnectedAccountId: connectedAccountId,
       redirectLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
