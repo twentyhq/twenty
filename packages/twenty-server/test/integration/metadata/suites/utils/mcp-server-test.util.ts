@@ -131,7 +131,13 @@ const DELETE_CONNECTED_ACCOUNT_MUTATION = gql`
 export const getMyConnectedAccounts = (token?: string) =>
   makeMetadataApiRequest({ query: MY_CONNECTED_ACCOUNTS_QUERY }, token);
 
-export const deleteConnectedAccount = (id: string, token?: string) =>
+export const deleteConnectedAccount = ({
+  id,
+  token,
+}: {
+  id: string;
+  token?: string;
+}) =>
   makeMetadataApiRequest(
     { query: DELETE_CONNECTED_ACCOUNT_MUTATION, variables: { id } },
     token,

@@ -100,23 +100,26 @@ const readBody = async (request: http.IncomingMessage): Promise<string> => {
   const chunks: Buffer[] = [];
 
   for await (const chunk of request) {
-    chunks.push(chunk as Buffer);
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
 
   return Buffer.concat(chunks).toString();
 };
 
-const sendJson = (
-  response: http.ServerResponse,
-  status: number,
-  body: unknown,
-): void => {
+const sendJson = ({
+  response,
+  status,
+  body,
+}: {
+  response: http.ServerResponse;
+  status: number;
+  body: unknown;
+}): void => {
   response
     .writeHead(status, { 'Content-Type': 'application/json' })
     .end(JSON.stringify(body));
 };
 
-// A minimal OAuth 2.1 authorization server with dynamic client registration and PKCE.
 const createFakeOAuthServer = () => {
   const registeredClientIds: string[] = [];
   const tokenRequests: URLSearchParams[] = [];
@@ -152,25 +155,33 @@ const createFakeOAuthServer = () => {
     const url = new URL(request.url ?? '/', baseUrl);
 
     if (url.pathname === '/.well-known/oauth-protected-resource/mcp') {
-      sendJson(response, 200, {
-        resource: `${baseUrl}/mcp`,
-        authorization_servers: [baseUrl],
-        scopes_supported: ['docs:read'],
+      sendJson({
+        response,
+        status: 200,
+        body: {
+          resource: `${baseUrl}/mcp`,
+          authorization_servers: [baseUrl],
+          scopes_supported: ['docs:read'],
+        },
       });
 
       return true;
     }
 
     if (url.pathname === '/.well-known/oauth-authorization-server') {
-      sendJson(response, 200, {
-        issuer: baseUrl,
-        authorization_endpoint: `${baseUrl}/authorize`,
-        token_endpoint: `${baseUrl}/token`,
-        registration_endpoint: `${baseUrl}/register`,
-        response_types_supported: ['code'],
-        grant_types_supported: ['authorization_code', 'refresh_token'],
-        code_challenge_methods_supported: ['S256'],
-        token_endpoint_auth_methods_supported: ['none'],
+      sendJson({
+        response,
+        status: 200,
+        body: {
+          issuer: baseUrl,
+          authorization_endpoint: `${baseUrl}/authorize`,
+          token_endpoint: `${baseUrl}/token`,
+          registration_endpoint: `${baseUrl}/register`,
+          response_types_supported: ['code'],
+          grant_types_supported: ['authorization_code', 'refresh_token'],
+          code_challenge_methods_supported: ['S256'],
+          token_endpoint_auth_methods_supported: ['none'],
+        },
       });
 
       return true;
@@ -181,10 +192,14 @@ const createFakeOAuthServer = () => {
       const clientId = `client-${randomUUID()}`;
 
       registeredClientIds.push(clientId);
-      sendJson(response, 201, {
-        ...clientMetadata,
-        client_id: clientId,
-        client_id_issued_at: Math.floor(Date.now() / 1000),
+      sendJson({
+        response,
+        status: 201,
+        body: {
+          ...clientMetadata,
+          client_id: clientId,
+          client_id_issued_at: Math.floor(Date.now() / 1000),
+        },
       });
 
       return true;
@@ -194,13 +209,6 @@ const createFakeOAuthServer = () => {
       const clientId = url.searchParams.get('client_id') ?? '';
       const redirectUri = url.searchParams.get('redirect_uri') ?? '';
       const codeChallenge = url.searchParams.get('code_challenge') ?? '';
-
-      if (!registeredClientIds.includes(clientId)) {
-        sendJson(response, 400, { error: 'invalid_client' });
-
-        return true;
-      }
-
       const code = randomUUID();
 
       authorizationCodes.set(code, {
@@ -229,7 +237,7 @@ const createFakeOAuthServer = () => {
       tokenRequests.push(params);
 
       if (!registeredClientIds.includes(clientId)) {
-        sendJson(response, 401, { error: 'invalid_client' });
+        sendJson({ response, status: 401, body: { error: 'invalid_client' } });
 
         return true;
       }
@@ -238,12 +246,12 @@ const createFakeOAuthServer = () => {
         const refreshToken = params.get('refresh_token') ?? '';
 
         if (!issuedRefreshTokens.delete(refreshToken)) {
-          sendJson(response, 400, { error: 'invalid_grant' });
+          sendJson({ response, status: 400, body: { error: 'invalid_grant' } });
 
           return true;
         }
 
-        sendJson(response, 200, issueTokens());
+        sendJson({ response, status: 200, body: issueTokens() });
 
         return true;
       }
@@ -263,12 +271,12 @@ const createFakeOAuthServer = () => {
         authorizationCode.redirectUri !== params.get('redirect_uri') ||
         authorizationCode.codeChallenge !== expectedChallenge
       ) {
-        sendJson(response, 400, { error: 'invalid_grant' });
+        sendJson({ response, status: 400, body: { error: 'invalid_grant' } });
 
         return true;
       }
 
-      sendJson(response, 200, issueTokens());
+      sendJson({ response, status: 200, body: issueTokens() });
 
       return true;
     }

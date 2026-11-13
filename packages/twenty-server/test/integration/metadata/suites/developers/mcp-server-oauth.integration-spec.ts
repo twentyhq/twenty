@@ -11,6 +11,8 @@ import {
   type FakeMcpServer,
   startFakeMcpServer,
 } from 'test/integration/metadata/suites/utils/mcp-server-fake-server.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
+import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
@@ -66,40 +68,55 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     return mcpServer.connectionProviderId;
   };
 
-  const requestAuthorization = async (
-    reconnectingConnectedAccountId?: string,
-    accessToken: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  ): Promise<URL> => {
+  let browserCookie: string | undefined;
+
+  const requestAuthorization = async ({
+    reconnectingConnectedAccountId,
+    accessToken = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  }: {
+    reconnectingConnectedAccountId?: string;
+    accessToken?: string;
+  } = {}): Promise<URL> => {
     const [connectionProvider] = await readConnectionProvider(
       getConnectionProviderId(),
     );
     const transient = await generateTransientTokenResponse({
       token: accessToken,
     });
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
 
     const response = await twentyServer()
       .get('/auth/apps/authorize')
+      .set(
+        await buildSignedInBrowserHeaders({
+          transientToken,
+          flowCookie: browserCookie,
+        }),
+      )
       .query({
         applicationId: mcpServer.applicationId,
         providerName: connectionProvider.name,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
         ...(reconnectingConnectedAccountId && {
           reconnectingConnectedAccountId,
         }),
       });
 
     expect(response.status).toBe(302);
+    browserCookie = readFlowCookie(response) ?? browserCookie;
 
     return new URL(response.headers.location);
   };
 
-  const signIn = async (
-    reconnectingConnectedAccountId?: string,
-  ): Promise<URL> => {
-    const authorizationUrl = await requestAuthorization(
+  const signIn = async ({
+    reconnectingConnectedAccountId,
+  }: {
+    reconnectingConnectedAccountId?: string;
+  } = {}): Promise<URL> => {
+    const authorizationUrl = await requestAuthorization({
       reconnectingConnectedAccountId,
-    );
+    });
     const authorizationResponse = await fetch(authorizationUrl, {
       redirect: 'manual',
     });
@@ -110,6 +127,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     const callbackUrl = new URL(callbackLocation);
     const callbackResponse = await twentyServer()
       .get(callbackUrl.pathname)
+      .set('Cookie', browserCookie ?? '')
       .query(Object.fromEntries(callbackUrl.searchParams));
 
     expect(callbackResponse.status).toBe(302);
@@ -238,7 +256,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       getConnectionProviderId(),
     );
 
-    await signIn(connectedAccount.id);
+    await signIn({ reconnectingConnectedAccountId: connectedAccount.id });
 
     expect(fakeMcpServer.oauth.registeredClientIds).toHaveLength(1);
     expect(
@@ -300,7 +318,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       getConnectionProviderId(),
     );
 
-    await signIn(connectedAccount.id);
+    await signIn({ reconnectingConnectedAccountId: connectedAccount.id });
     const [signedInConnectedAccount] = await readConnectedAccounts(
       getConnectionProviderId(),
     );
@@ -324,7 +342,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       getConnectionProviderId(),
     );
 
-    await signIn(connectedAccount.id);
+    await signIn({ reconnectingConnectedAccountId: connectedAccount.id });
     fakeMcpServer.oauth.issuedAccessTokens.clear();
     fakeMcpServer.oauth.issuedRefreshTokens.clear();
 
@@ -348,7 +366,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
       getConnectionProviderId(),
     );
 
-    await signIn(connectedAccount.id);
+    await signIn({ reconnectingConnectedAccountId: connectedAccount.id });
     await globalThis.testDataSource.query(
       `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
       [getConnectionProviderId()],
@@ -392,16 +410,16 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     );
 
     const [{ id }] = connections;
-    const memberDeleteResponse = await deleteConnectedAccount(
+    const memberDeleteResponse = await deleteConnectedAccount({
       id,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(memberDeleteResponse.body.errors?.[0]?.extensions?.code).toBe(
       'FORBIDDEN',
     );
 
-    const deleteResponse = await deleteConnectedAccount(id);
+    const deleteResponse = await deleteConnectedAccount({ id });
 
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(await readConnectedAccounts(getConnectionProviderId())).toHaveLength(
@@ -415,6 +433,13 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     );
 
     fakeMcpServer.oauth.forgetRegisteredClients();
+
+    const rejectedRedirectUrl = await signIn();
+
+    expect(rejectedRedirectUrl.searchParams.get('errorMessage')).toEqual(
+      expect.any(String),
+    );
+    expect(await readOAuthClients(getConnectionProviderId())).toHaveLength(0);
 
     const redirectUrl = await signIn();
     const [oauthClient] = await readOAuthClients(getConnectionProviderId());
@@ -474,10 +499,9 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     });
     expect(await readConnectionProvider(userConnectionProviderId)).toEqual([]);
 
-    const memberAuthorizationResponse = await requestAuthorization(
-      undefined,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    const memberAuthorizationResponse = await requestAuthorization({
+      accessToken: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(
       memberAuthorizationResponse.searchParams.get('errorMessage'),

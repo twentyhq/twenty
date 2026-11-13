@@ -83,10 +83,17 @@ export class ConnectedAccountRefreshTokensService {
     return this.cacheLockService.withLock(
       async () => {
         const latestConnectedAccount =
-          (await this.connectedAccountRepository.findOneBy({
+          await this.connectedAccountRepository.findOneBy({
             id: connectedAccount.id,
             workspaceId,
-          })) ?? connectedAccount;
+          });
+
+        if (!isDefined(latestConnectedAccount)) {
+          throw new ConnectedAccountRefreshAccessTokenException(
+            `Connected account ${connectedAccount.id} not found in workspace ${workspaceId}`,
+            ConnectedAccountRefreshAccessTokenExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+          );
+        }
 
         if (
           latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==

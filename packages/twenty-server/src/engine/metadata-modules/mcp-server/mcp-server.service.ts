@@ -75,7 +75,6 @@ export class McpServerService {
       );
 
     const url = this.normalizeUrl(input.url);
-    // Without a chosen provider, a server that asks for sign-in gets one of its own.
     const signInFlatConnectionProvider = isDefined(input.connectionProviderId)
       ? null
       : await this.mcpServerSignInService.buildSignInFlatConnectionProviderIfRequired(

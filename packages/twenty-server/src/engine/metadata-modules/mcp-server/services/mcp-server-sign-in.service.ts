@@ -4,6 +4,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type ConnectionProviderScope } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatConnectionProvider } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -22,10 +23,10 @@ type ConnectionProviderUpdate = Partial<
   >
 >;
 
-// Provisions the oauth-discovery connection provider Twenty generates for a server that asks for sign-in.
 @Injectable()
 export class McpServerSignInService {
   constructor(
+    private readonly applicationService: ApplicationService,
     private readonly mcpServerMigrationService: McpServerMigrationService,
     private readonly mcpServerClientService: McpServerClientService,
   ) {}
@@ -62,13 +63,16 @@ export class McpServerSignInService {
       isDefined(existingSignInFlatConnectionProvider) &&
       signInScope !== existingSignInFlatConnectionProvider.scope;
 
-    // A server on its own sign-in, or on none, gets a new sign-in when its URL or scope changes:
-    // provider scopes are immutable, and tokens for the old resource stay behind.
+    // Provider scopes are immutable and tokens stay bound to the old resource, so a URL or scope change replaces the generated provider.
     const shouldRecomputeSignIn =
       (isUrlChanged || isSignInScopeChanged) &&
       isUndefined(connectionProviderId) &&
       (!isDefined(existingFlatMcpServer.connectionProviderId) ||
-        isDefined(existingSignInFlatConnectionProvider));
+        isDefined(existingSignInFlatConnectionProvider)) &&
+      (await this.isWorkspaceCustomMcpServer({
+        flatMcpServer: existingFlatMcpServer,
+        workspaceId,
+      }));
 
     if (shouldRecomputeSignIn) {
       const signInFlatConnectionProvider =
@@ -122,6 +126,13 @@ export class McpServerSignInService {
         await this.mcpServerMigrationService.getFlatMcpServerMaps(workspaceId),
       mcpServerId,
     });
+
+    if (
+      !(await this.isWorkspaceCustomMcpServer({ flatMcpServer, workspaceId }))
+    ) {
+      return false;
+    }
+
     const signInFlatConnectionProvider =
       await this.buildSignInFlatConnectionProviderIfRequired({
         mcpServer: flatMcpServer,
@@ -174,6 +185,22 @@ export class McpServerSignInService {
     });
 
     return true;
+  }
+
+  // An app sync deletes providers missing from the manifest, so only a workspace-owned server gets a generated one.
+  private async isWorkspaceCustomMcpServer({
+    flatMcpServer,
+    workspaceId,
+  }: {
+    flatMcpServer: Pick<FlatMcpServer, 'applicationId'>;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return flatMcpServer.applicationId === workspaceCustomFlatApplication.id;
   }
 
   private async buildNextSignInFlatConnectionProvider({

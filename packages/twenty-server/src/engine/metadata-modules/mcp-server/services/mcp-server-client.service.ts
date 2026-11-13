@@ -5,6 +5,7 @@ import {
   StreamableHTTPClientTransport,
   StreamableHTTPError,
 } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 import {
   type CallToolResult,
   CallToolResultSchema,
@@ -222,19 +223,24 @@ export class McpServerClientService {
     return [...page.tools, ...nextPages];
   }
 
+  // A server that cannot be reached cannot ask for sign-in; the tool sync records why it is unreachable.
   async requiresSignIn({
     url,
     workspaceId,
   }: Pick<McpServerTarget, 'url' | 'workspaceId'>): Promise<boolean> {
-    const { isSignInRequired } = await probeProtectedResource({
-      resourceUrl: url,
-      fetchFunction: this.buildFetch({
-        workspaceId,
-        timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
-      }),
-    });
+    try {
+      const { isSignInRequired } = await probeProtectedResource({
+        resourceUrl: url,
+        fetchFunction: this.buildFetch({
+          workspaceId,
+          timeoutMs: SIGN_IN_PROBE_TIMEOUT_MS,
+        }),
+      });
 
-    return isSignInRequired;
+      return isSignInRequired;
+    } catch {
+      return false;
+    }
   }
 
   private buildFetch({
