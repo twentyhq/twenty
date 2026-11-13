@@ -73,6 +73,21 @@ Los comandos seleccionan un espacio de trabajo en este orden:
 
 `auth login --name \<name>` guarda una conexión, pero mantiene un valor predeterminado existente. Añade `--use`, o ejecuta `twenty remote use \<name>`, para cambiar el valor predeterminado.
 
+### Detrás de un proxy de autenticación
+
+Si un proxy con reconocimiento de identidad, como Cloudflare Access, Google IAP, Pomerium u oauth2-proxy, se encuentra delante del servidor, los comandos fallan con `PROXY_AUTH_REQUIRED`. Proporcione a la CLI las credenciales del proxy como encabezados. Use un comando que imprima credenciales nuevas o valores fijos para un token de servicio:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Ambos se guardan en la conexión. El comando imprime una línea `Name: value` por encabezado. La CLI lo ejecuta de nuevo cuando el proxy rechaza los encabezados, y `PROXY_HEADERS_FAILED` informa de un comando que falla. En CI, configure `TWENTY_PROXY_HEADERS` (un `Name: value` por línea) o `TWENTY_PROXY_HEADER_COMMAND` en su lugar. Los encabezados del proxy solo se envían a la URL de la API de la conexión y no pueden reemplazar `Authorization`. Consulte la [referencia de la CLI](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) para ver todas las opciones.
+
 ## Explorar tus datos
 
 ```bash filename="Terminal"
@@ -112,18 +127,18 @@ npx twenty@latest app dev
 
 Otros comandos de la aplicación:
 
-| Comando                       | Qué hace                                                                                   |
-| ----------------------------- | ------------------------------------------------------------------------------------------ |
-| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad                 |
-| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                                   |
-| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación           |
-| `app apply`                   | Compila, carga y sincroniza la aplicación                                                  |
-| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                          |
-| `app pull`                    | Restore metadata, translations, dependencies, public assets and supported component source |
-| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                                     |
-| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                            |
-| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo                    |
-| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                           |
+| Comando                       | Qué hace                                                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad                                    |
+| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                                                      |
+| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación                              |
+| `app apply`                   | Compila, carga y sincroniza la aplicación                                                                     |
+| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                                             |
+| `app pull`                    | Restaurar metadatos, traducciones, dependencias, recursos públicos y código fuente de componentes compatibles |
+| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                                                        |
+| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                                               |
+| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo                                       |
+| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                                              |
 
 Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-prune` para conservarlos. La aplicación personalizada del espacio de trabajo los conserva a menos que pases `--prune`. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
 

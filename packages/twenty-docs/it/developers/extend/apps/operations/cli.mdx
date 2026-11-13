@@ -73,6 +73,21 @@ I comandi selezionano un workspace in questo ordine:
 
 `auth login --name \<name>` salva una connessione ma mantiene un valore predefinito esistente. Aggiungi `--use` oppure esegui `twenty remote use \<name>` per modificare il valore predefinito.
 
+### Dietro un proxy di autenticazione
+
+Se un proxy basato sull'identità come Cloudflare Access, Google IAP, Pomerium o oauth2-proxy si trova davanti al server, i comandi non riescono e restituiscono `PROXY_AUTH_REQUIRED`. Fornisci alla CLI le credenziali del proxy come intestazioni. Usa un comando che stampi credenziali aggiornate, oppure valori fissi per un token di servizio:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Entrambi vengono salvati nella connessione. Il comando stampa una riga `Name: value` per ogni intestazione. La CLI lo esegue nuovamente quando il proxy rifiuta le intestazioni e `PROXY_HEADERS_FAILED` segnala un comando non riuscito. In CI, imposta invece `TWENTY_PROXY_HEADERS` (un `Name: value` per riga) o `TWENTY_PROXY_HEADER_COMMAND`. Le intestazioni del proxy vengono inviate solo all'URL API della connessione e non possono sostituire `Authorization`. Consulta il [riferimento della CLI](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) per tutte le opzioni.
+
 ## Esplorazione dei dati
 
 ```bash filename="Terminal"

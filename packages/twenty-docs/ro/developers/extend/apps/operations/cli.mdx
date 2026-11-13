@@ -73,6 +73,21 @@ Comenzile selectează un spațiu de lucru în această ordine:
 
 `auth login --name \<name>` salvează o conexiune, dar păstrează un remote implicit existent. Adăugați `--use` sau rulați `twenty remote use \<name>` pentru a schimba remote-ul implicit.
 
+### În spatele unui proxy de autentificare
+
+Dacă un proxy cu recunoaștere a identității, cum ar fi Cloudflare Access, Google IAP, Pomerium sau oauth2-proxy, se află în fața serverului, comenzile eșuează cu `PROXY_AUTH_REQUIRED`. Furnizați CLI-ului acreditările proxy-ului ca antete. Utilizați o comandă care afișează unele noi sau valori fixe pentru un token de serviciu:
+
+```bash filename="Terminal"
+twenty auth login --url https://twenty.example.com \
+  --proxy-header-command 'echo "cf-access-token: $(cloudflared access token -app=https://twenty.example.com)"'
+
+twenty auth login --url https://twenty.example.com \
+  --proxy-header "CF-Access-Client-Id: $CLIENT_ID" \
+  --proxy-header "CF-Access-Client-Secret: $CLIENT_SECRET"
+```
+
+Ambele sunt salvate în conexiune. Comanda afișează câte un rând `Name: value` pentru fiecare antet. CLI-ul o rulează din nou când proxy-ul respinge anteturile, iar `PROXY_HEADERS_FAILED` raportează o comandă care eșuează. În CI, setați în schimb `TWENTY_PROXY_HEADERS` (câte un `Name: value` pe rând) sau `TWENTY_PROXY_HEADER_COMMAND`. Anteturile proxy sunt trimise doar la URL-ul API al conexiunii și nu pot înlocui `Authorization`. Consultați [referința CLI](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md#authenticating-proxies) pentru fiecare opțiune.
+
 ## Explorarea datelor
 
 ```bash filename="Terminal"
