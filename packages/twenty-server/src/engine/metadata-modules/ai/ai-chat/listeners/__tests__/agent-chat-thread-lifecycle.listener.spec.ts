@@ -31,6 +31,7 @@ const buildListener = async () => {
   return {
     listener: module.get(AgentChatThreadLifecycleListener),
     turnEventPublisherService,
+    threadLifecycleService,
   };
 };
 
@@ -70,6 +71,34 @@ describe('AgentChatThreadLifecycleListener', () => {
     expect(
       turnEventPublisherService.publishThreadsDestroyed,
     ).toHaveBeenCalledTimes(1);
+    expect(
+      turnEventPublisherService.publishThreadsDestroyed,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      threadIds: ['thread-id'],
+    });
+  });
+
+  it('signals the destroyed thread even when cancelling its stream fails', async () => {
+    const { listener, turnEventPublisherService, threadLifecycleService } =
+      await buildListener();
+
+    threadLifecycleService.cancelStream.mockRejectedValue(new Error('down'));
+
+    await expect(
+      listener.handleDestroyedThreads({
+        workspaceId: 'workspace-id',
+        events: [
+          {
+            recordId: 'thread-id',
+            properties: {
+              before: { id: 'thread-id', activeStreamId: 'stream-id' },
+            },
+          },
+        ],
+      }),
+    ).rejects.toThrow('down');
+
     expect(
       turnEventPublisherService.publishThreadsDestroyed,
     ).toHaveBeenCalledWith({

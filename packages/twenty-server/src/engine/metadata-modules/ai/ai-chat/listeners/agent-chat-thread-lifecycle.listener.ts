@@ -39,26 +39,26 @@ export class AgentChatThreadLifecycleListener {
   async handleDeletedThreads(
     payload: ThreadEventBatch<ThreadIdEvent>,
   ): Promise<void> {
-    await this.turnEventPublisherService.publishTurnsOfThreads({
-      workspaceId: payload.workspaceId,
-      threadIds: payload.events.map(({ recordId }) => recordId),
-    });
+    await this.publishTurnsOfThreads(payload);
   }
 
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.RESTORED)
   async handleRestoredThreads(
     payload: ThreadEventBatch<ThreadIdEvent>,
   ): Promise<void> {
-    await this.turnEventPublisherService.publishTurnsOfThreads({
-      workspaceId: payload.workspaceId,
-      threadIds: payload.events.map(({ recordId }) => recordId),
-    });
+    await this.publishTurnsOfThreads(payload);
   }
 
   @OnDatabaseBatchEvent('agentChatThread', DatabaseEventAction.DESTROYED)
   async handleDestroyedThreads(
     payload: ThreadEventBatch<DestroyedThreadEvent>,
   ): Promise<void> {
+    // Sent first so a failed stream cancellation cannot leave open run lists stale
+    await this.turnEventPublisherService.publishThreadsDestroyed({
+      workspaceId: payload.workspaceId,
+      threadIds: payload.events.map(({ recordId }) => recordId),
+    });
+
     for (const event of payload.events) {
       const { id, activeStreamId } = event.properties.before;
 
@@ -73,10 +73,15 @@ export class AgentChatThreadLifecycleListener {
         threadId: id,
       });
     }
+  }
 
-    await this.turnEventPublisherService.publishThreadsDestroyed({
-      workspaceId: payload.workspaceId,
-      threadIds: payload.events.map(({ recordId }) => recordId),
+  private publishTurnsOfThreads({
+    workspaceId,
+    events,
+  }: ThreadEventBatch<ThreadIdEvent>): Promise<void> {
+    return this.turnEventPublisherService.publishTurnsOfThreads({
+      workspaceId,
+      threadIds: events.map(({ recordId }) => recordId),
     });
   }
 }
