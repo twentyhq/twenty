@@ -1,34 +1,21 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { resolveFlatFieldMetadataOptionsFromCachedMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options-from-cached-maps.util';
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 
 const OPEN_OPTION_ID = '20202020-0000-4000-8000-000000000101';
 const CLOSED_OPTION_ID = '20202020-0000-4000-8000-000000000102';
 
-const buildOptionRow = (
-  optionRow: Pick<
-    FlatFieldMetadataOption,
-    'universalIdentifier' | 'value' | 'label' | 'position'
-  >,
-): FlatFieldMetadataOption =>
-  ({
-    color: null,
-    isActive: true,
-    overrides: null,
-    ...optionRow,
-  }) as FlatFieldMetadataOption;
-
 const flatFieldMetadataOptionMaps = {
   byUniversalIdentifier: {
-    [OPEN_OPTION_ID]: buildOptionRow({
+    [OPEN_OPTION_ID]: getFlatFieldMetadataOptionMock({
       universalIdentifier: OPEN_OPTION_ID,
       value: 'OPEN',
       label: 'Open',
       position: 0,
     }),
-    [CLOSED_OPTION_ID]: buildOptionRow({
+    [CLOSED_OPTION_ID]: getFlatFieldMetadataOptionMock({
       universalIdentifier: CLOSED_OPTION_ID,
       value: 'CLOSED',
       label: 'Closed',

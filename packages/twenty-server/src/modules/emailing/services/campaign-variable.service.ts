@@ -143,12 +143,12 @@ export class CampaignVariableService {
     const variables: Record<string, string> = {};
 
     for (const definition of definitions) {
-      variables[definition.name] = this.formatValue(
-        this.resolveValue(person, definition.name),
+      variables[definition.name] = this.formatValue({
+        value: this.resolveValue(person, definition.name),
         definition,
-        fieldsByName.get(definition.fieldName),
+        field: fieldsByName.get(definition.fieldName),
         flatFieldMetadataOptionMaps,
-      );
+      });
     }
 
     variables.personId = this.stringify(this.resolveValue(person, 'id'));
@@ -203,12 +203,17 @@ export class CampaignVariableService {
       );
   }
 
-  private formatValue(
-    value: unknown,
-    definition: CampaignVariableDefinition,
-    field: FlatFieldMetadata | undefined,
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
-  ): string {
+  private formatValue({
+    value,
+    definition,
+    field,
+    flatFieldMetadataOptionMaps,
+  }: {
+    value: unknown;
+    definition: CampaignVariableDefinition;
+    field: FlatFieldMetadata | undefined;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): string {
     if (!isDefined(value) || value === '') {
       return '';
     }

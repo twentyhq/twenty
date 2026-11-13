@@ -256,20 +256,25 @@ const computeSchemaComponent = ({
   return result;
 };
 
-export const computeSchemaComponents = (
-  flatObjectMetadataItems: FlatObjectMetadata[],
+export const computeSchemaComponents = ({
+  flatObjectMetadataItems,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
+}: {
+  flatObjectMetadataItems: FlatObjectMetadata[];
   flatObjectMetadataMaps: Pick<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps'
-  >['flatObjectMetadataMaps'],
+  >['flatObjectMetadataMaps'];
   flatFieldMetadataMaps: Pick<
     AllFlatEntityMaps,
     'flatFieldMetadataMaps'
-  >['flatFieldMetadataMaps'],
+  >['flatFieldMetadataMaps'];
   flatFieldMetadataOptionMaps:
     | FlatFieldMetadataOptionMapsForOptions
-    | undefined,
-): Record<string, OpenAPIV3_1.SchemaObject> => {
+    | undefined;
+}): Record<string, OpenAPIV3_1.SchemaObject> => {
   return flatObjectMetadataItems.reduce(
     (schemas, item) => {
       const flatFieldMetadatas =

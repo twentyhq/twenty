@@ -12,7 +12,7 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -642,21 +642,6 @@ describe('buildRecordFilterForRule with access group member values', () => {
   });
 
   it('should read the options of the target field from its option rows', () => {
-    const buildOptionRow = (
-      universalIdentifier: string,
-      value: string,
-      position: number,
-    ): FlatFieldMetadataOption =>
-      ({
-        universalIdentifier,
-        value,
-        label: value,
-        position,
-        color: null,
-        isActive: true,
-        overrides: null,
-      }) as FlatFieldMetadataOption;
-
     expect(
       buildForAccessGroup({
         roleId: TEAM_BOUND_ROLE_ID,
@@ -665,9 +650,21 @@ describe('buildRecordFilterForRule with access group member values', () => {
         },
         flatFieldMetadataOptionMaps: {
           byUniversalIdentifier: {
-            'option-open': buildOptionRow('option-open', 'OPEN', 0),
-            'option-closed': buildOptionRow('option-closed', 'CLOSED', 1),
-            'option-sales': buildOptionRow('option-sales', 'SALES', 2),
+            'option-open': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-open',
+              value: 'OPEN',
+              position: 0,
+            }),
+            'option-closed': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-closed',
+              value: 'CLOSED',
+              position: 1,
+            }),
+            'option-sales': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'option-sales',
+              value: 'SALES',
+              position: 2,
+            }),
           },
         },
       }),

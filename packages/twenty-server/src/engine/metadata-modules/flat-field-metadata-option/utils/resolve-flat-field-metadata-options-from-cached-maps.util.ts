@@ -12,8 +12,7 @@ const RESOLVED_OPTIONS_BY_FIELD_BY_OPTION_MAPS = new WeakMap<
   WeakMap<FlatFieldMetadataForOptions, FlatFieldMetadata['options']>
 >();
 
-// For per-record callers. Only safe with maps and fields read from the workspace cache, which are
-// never mutated; a migration build's optimistic maps must use resolveFlatFieldMetadataOptions.
+// Memoized by object identity, so only for never-mutated workspace cache maps, not a migration build's.
 export const resolveFlatFieldMetadataOptionsFromCachedMaps = ({
   flatFieldMetadata,
   flatFieldMetadataOptionMaps,

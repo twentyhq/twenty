@@ -24,11 +24,15 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
 
   constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
-  public buildAndStore(
-    flatObjectMetadata: FlatObjectMetadata,
-    fields: FlatFieldMetadata[],
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
-  ) {
+  public buildAndStore({
+    flatObjectMetadata,
+    fields,
+    flatFieldMetadataOptionMaps,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    fields: FlatFieldMetadata[];
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }) {
     for (const fieldMetadata of fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
         continue;
@@ -39,20 +43,24 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
           flatObjectMetadata.nameSingular,
           fieldMetadata.name,
         ),
-        this.generateEnum(
-          flatObjectMetadata.nameSingular,
+        this.generateEnum({
+          objectName: flatObjectMetadata.nameSingular,
           fieldMetadata,
           flatFieldMetadataOptionMaps,
-        ),
+        }),
       );
     }
   }
 
-  private generateEnum(
-    objectName: string,
-    fieldMetadata: FlatFieldMetadata,
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
-  ): GraphQLEnumType {
+  private generateEnum({
+    objectName,
+    fieldMetadata,
+    flatFieldMetadataOptionMaps,
+  }: {
+    objectName: string;
+    fieldMetadata: FlatFieldMetadata;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
     const enumOptions = transformEnumValue(

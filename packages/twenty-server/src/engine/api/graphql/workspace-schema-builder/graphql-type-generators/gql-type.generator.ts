@@ -93,11 +93,11 @@ export class GqlTypeGenerator {
         flatFieldMetadataMaps,
       );
 
-      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore(
+      generators.enumFieldMetadataGqlEnumTypeGenerator.buildAndStore({
         flatObjectMetadata,
         fields,
         flatFieldMetadataOptionMaps,
-      );
+      });
       generators.objectMetadataGqlObjectTypeGenerator.buildAndStore(
         flatObjectMetadata,
         fields,

@@ -9,7 +9,7 @@ import {
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
-import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
@@ -601,19 +601,6 @@ describe('isRecordMatchingFilter', () => {
   );
 
   it('orders select values by the option rows rather than the stored options', () => {
-    const buildOptionRow = (
-      value: string,
-      position: number,
-    ): FlatFieldMetadataOption =>
-      ({
-        universalIdentifier: `${value}-option-id`,
-        value,
-        label: value,
-        position,
-        color: null,
-        isActive: true,
-        overrides: null,
-      }) as FlatFieldMetadataOption;
     const priorityField: FlatFieldMetadata = {
       ...createMockFlatFieldMetadata(
         'priority-id',
@@ -641,8 +628,16 @@ describe('isRecordMatchingFilter', () => {
         ...evaluationArgs,
         flatFieldMetadataOptionMaps: {
           byUniversalIdentifier: {
-            'LOW-option-id': buildOptionRow('LOW', 0),
-            'HIGH-option-id': buildOptionRow('HIGH', 1),
+            'LOW-option-id': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'LOW-option-id',
+              value: 'LOW',
+              position: 0,
+            }),
+            'HIGH-option-id': getFlatFieldMetadataOptionMock({
+              universalIdentifier: 'HIGH-option-id',
+              value: 'HIGH',
+              position: 1,
+            }),
           },
         },
       }),

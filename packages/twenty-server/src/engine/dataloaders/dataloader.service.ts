@@ -610,10 +610,10 @@ export class DataloaderService {
                   !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
               )
               .map((flatFieldMetadata) =>
-                fromFlatFieldMetadataToFieldMetadataDto(
+                fromFlatFieldMetadataToFieldMetadataDto({
                   flatFieldMetadata,
                   flatFieldMetadataOptionMaps,
-                ),
+                }),
               );
           },
         );

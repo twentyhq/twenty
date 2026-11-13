@@ -106,14 +106,14 @@ export class FieldMetadataConnectionLoaderFactory {
         ...connection,
         edges: connection.edges.map((edge) => ({
           ...edge,
-          node: fromFlatFieldMetadataToFieldMetadataDto(
-            resolveEffectiveTranslatedFlatEntity({
+          node: fromFlatFieldMetadataToFieldMetadataDto({
+            flatFieldMetadata: resolveEffectiveTranslatedFlatEntity({
               metadataName: 'fieldMetadata',
               flatEntity: edge.node,
               i18nContext: getI18nContext(edge.node.applicationId),
             }),
             flatFieldMetadataOptionMaps,
-          ),
+          }),
         })),
       }));
     });

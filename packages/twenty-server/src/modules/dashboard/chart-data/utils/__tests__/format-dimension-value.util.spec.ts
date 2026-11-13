@@ -4,7 +4,8 @@ import {
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
 
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { getFlatFieldMetadataOptionMock } from 'src/engine/metadata-modules/flat-field-metadata-option/__mocks__/get-flat-field-metadata-option.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { formatDimensionValue } from 'src/modules/dashboard/chart-data/utils/format-dimension-value.util';
 
@@ -103,16 +104,17 @@ describe('formatDimensionValue', () => {
           fieldMetadataOptionUniversalIdentifiers: [optionUniversalIdentifier],
         }),
         flatFieldMetadataOptionMaps: {
+          ...createEmptyFlatEntityMaps(),
           byUniversalIdentifier: {
-            [optionUniversalIdentifier]: {
+            [optionUniversalIdentifier]: getFlatFieldMetadataOptionMock({
               universalIdentifier: optionUniversalIdentifier,
               value: 'ACTIVE',
               label: 'Renamed',
               color: 'green',
               position: 0,
-            },
+            }),
           },
-        } as unknown as FlatFieldMetadataOptionMaps,
+        },
         userTimezone,
         firstDayOfTheWeek,
       });

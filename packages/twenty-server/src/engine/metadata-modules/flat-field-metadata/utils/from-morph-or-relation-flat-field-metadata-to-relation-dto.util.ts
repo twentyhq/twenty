@@ -20,13 +20,13 @@ export const fromMorphOrRelationFlatFieldMetadataToRelationDto = ({
   sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
     sourceFlatObjectMetadata,
   ),
-  sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-    sourceFlatFieldMetadata,
-  ),
+  sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto({
+    flatFieldMetadata: sourceFlatFieldMetadata,
+  }),
   targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
     targetFlatObjectMetadata,
   ),
-  targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-    targetFlatFieldMetadata,
-  ),
+  targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto({
+    flatFieldMetadata: targetFlatFieldMetadata,
+  }),
 });

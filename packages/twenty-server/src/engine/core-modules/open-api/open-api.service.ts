@@ -198,12 +198,12 @@ export class OpenApiService {
 
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeSchemaComponents(
-        flatObjectMetadataArray,
+      schemas: computeSchemaComponents({
+        flatObjectMetadataItems: flatObjectMetadataArray,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
-      ),
+      }),
       parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),

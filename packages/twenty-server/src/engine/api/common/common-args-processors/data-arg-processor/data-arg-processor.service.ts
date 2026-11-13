@@ -168,14 +168,14 @@ export class DataArgProcessorService {
           continue;
         }
 
-        processedRecord[key] = await this.processField(
+        processedRecord[key] = await this.processField({
           fieldMetadata,
           key,
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           flatFieldMetadataOptionMaps,
-        );
+        });
       }
       processedRecords.push(processedRecord);
     }
@@ -183,14 +183,21 @@ export class DataArgProcessorService {
     return processedRecords;
   }
 
-  private async processField(
-    fieldMetadata: OrmFlatFieldMetadata,
-    key: string,
-    value: unknown,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
-  ): Promise<unknown> {
+  private async processField({
+    fieldMetadata,
+    key,
+    value,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
+  }: {
+    fieldMetadata: OrmFlatFieldMetadata;
+    key: string;
+    value: unknown;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
         return validateOverriddenPositionFieldOrThrow(value, key);
@@ -288,13 +295,13 @@ export class DataArgProcessorService {
         const connectWhere = connectOperation.connect?.where;
 
         if (isObject(connectWhere)) {
-          const processedWhere = await this.processConnectWhere(
-            connectWhere as Record<string, unknown>,
-            fieldMetadata,
+          const processedWhere = await this.processConnectWhere({
+            connectWhere: connectWhere as Record<string, unknown>,
+            relationFieldMetadata: fieldMetadata,
             flatFieldMetadataMaps,
             flatObjectMetadataMaps,
             flatFieldMetadataOptionMaps,
-          );
+          });
 
           return {
             ...connectOperation,
@@ -382,13 +389,19 @@ export class DataArgProcessorService {
     }
   }
 
-  private async processConnectWhere(
-    connectWhere: Record<string, unknown>,
-    relationFieldMetadata: OrmFlatFieldMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps,
-  ): Promise<Record<string, unknown>> {
+  private async processConnectWhere({
+    connectWhere,
+    relationFieldMetadata,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataOptionMaps,
+  }: {
+    connectWhere: Record<string, unknown>;
+    relationFieldMetadata: OrmFlatFieldMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  }): Promise<Record<string, unknown>> {
     if (!isDefined(relationFieldMetadata.relationTargetObjectMetadataId)) {
       throw new CommonQueryRunnerException(
         `Relation target object metadata id not found for field ${relationFieldMetadata.name}`,
@@ -438,14 +451,14 @@ export class DataArgProcessorService {
       }
 
       try {
-        const processedValue = await this.processField(
-          whereFieldMetadata,
-          whereKey,
-          whereValue,
+        const processedValue = await this.processField({
+          fieldMetadata: whereFieldMetadata,
+          key: whereKey,
+          value: whereValue,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           flatFieldMetadataOptionMaps,
-        );
+        });
 
         // Only keep original keys — processField may add null subfields that alter WHERE semantics
         if (isObject(whereValue) && isObject(processedValue)) {

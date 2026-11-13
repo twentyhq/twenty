@@ -19,5 +19,5 @@ export const getSelectOptions = ({
   return resolveFlatFieldMetadataOptionsFromCachedMaps({
     flatFieldMetadata: fieldMetadata,
     flatFieldMetadataOptionMaps,
-  }) as FieldMetadataOption[] | null;
+  });
 };
