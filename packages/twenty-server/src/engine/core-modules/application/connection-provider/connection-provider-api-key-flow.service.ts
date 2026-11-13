@@ -134,7 +134,7 @@ export class ConnectionProviderApiKeyFlowService {
     return provider;
   }
 
-  // The identify function is the only check a pasted key gets, so its failure is the member's to fix
+  // A throw can mean a wrong key or an unreachable service; only the app knows which, so the member gets both
   private async identifyAccountOrThrow({
     provider,
     workspaceId,
@@ -156,7 +156,7 @@ export class ConnectionProviderApiKeyFlowService {
       ) {
         throw new ConnectionProviderException(
           error.message,
-          ConnectionProviderExceptionCode.API_KEY_REJECTED,
+          ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED,
         );
       }
 

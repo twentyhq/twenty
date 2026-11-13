@@ -108,7 +108,7 @@ describe('SidePanelConnectApplicationWithApiKeyPage', () => {
             message: 'identifyAccount failed',
             extensions: {
               userFriendlyMessage:
-                'This key was rejected. Check it and try again.',
+                'We could not verify this key. Check it, or try again later if the service is down.',
             },
           },
         ],
@@ -121,7 +121,9 @@ describe('SidePanelConnectApplicationWithApiKeyPage', () => {
     await userEvent.click(screen.getByRole('button', { name: /Connect/ }));
 
     expect(
-      await screen.findByText('This key was rejected. Check it and try again.'),
+      await screen.findByText(
+        'We could not verify this key. Check it, or try again later if the service is down.',
+      ),
     ).toBeInTheDocument();
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   });

@@ -51,8 +51,8 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`The logic function that completes the connection was not found.`;
     case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
       return msg`We could not complete the connection. Please try again.`;
-    case ConnectionProviderExceptionCode.API_KEY_REJECTED:
-      return msg`This key was rejected. Check it and try again.`;
+    case ConnectionProviderExceptionCode.API_KEY_NOT_VERIFIED:
+      return msg`We could not verify this key. Check it, or try again later if the service is down.`;
     default:
       assertUnreachable(code);
   }
