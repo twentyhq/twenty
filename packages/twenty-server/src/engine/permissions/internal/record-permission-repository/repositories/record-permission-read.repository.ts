@@ -221,22 +221,25 @@ export class RecordPermissionReadRepository {
     workspaceId,
     sourceIdsQuery,
     limit,
+    transactionScope,
   }: {
     workspaceId: string;
     sourceIdsQuery: SQLCondition;
     limit: number;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<string[]> {
     const rows = await this.recordPermissionQueryService.execute<{
-      sourceId: string | null;
+      sourceId: string;
     }>({
       workspaceId,
+      transactionScope,
       query: {
-        sql: `SELECT "sourceIds"."sourceId" FROM (${sourceIdsQuery.sql}) AS "sourceIds"("sourceId") LIMIT :sourceIdsLimit`,
+        sql: `SELECT "sourceIds"."sourceId" FROM (${sourceIdsQuery.sql}) AS "sourceIds"("sourceId") WHERE "sourceIds"."sourceId" IS NOT NULL LIMIT :sourceIdsLimit`,
         parameters: { ...sourceIdsQuery.parameters, sourceIdsLimit: limit },
       },
     });
 
-    return rows.map(({ sourceId }) => sourceId).filter(isDefined);
+    return rows.map(({ sourceId }) => sourceId);
   }
 
   async findRecordIdsMatchingSQLCondition({

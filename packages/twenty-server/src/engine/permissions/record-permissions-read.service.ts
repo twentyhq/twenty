@@ -343,9 +343,11 @@ export class RecordPermissionsReadService {
 
   async buildReadRecordsAccessSQLCondition({
     tableAlias,
+    transactionScope,
     ...question
   }: Omit<RecordOperationQuestion, 'operationType'> & {
     tableAlias: string;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<SQLCondition | boolean> {
     const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
       ...question,
@@ -378,6 +380,7 @@ export class RecordPermissionsReadService {
       await this.buildListingRelatedRecordPathSQLCondition({
         objectAccessRequest,
         tableAlias,
+        transactionScope,
       }),
     ]);
   }
@@ -386,9 +389,11 @@ export class RecordPermissionsReadService {
   private async buildListingRelatedRecordPathSQLCondition({
     objectAccessRequest,
     tableAlias,
+    transactionScope,
   }: {
     objectAccessRequest: PermissionsObjectAccessRequest;
     tableAlias: string;
+    transactionScope?: RecordPermissionTransactionScope;
   }): Promise<SQLCondition | boolean> {
     const buildSQLCondition = (
       buildListedTablePathSQLCondition: BuildListedTablePathSQLCondition,
@@ -406,43 +411,56 @@ export class RecordPermissionsReadService {
           }),
       });
 
-    const sourceIdsQueries: SQLCondition[] = [];
+    const sourceIdsQueryByPathKey = new Map<string, SQLCondition>();
 
-    buildSQLCondition(({ sourceIdsQuery }) => {
-      sourceIdsQueries.push(sourceIdsQuery);
+    buildSQLCondition(({ pathKey, sourceIdsQuery }) => {
+      sourceIdsQueryByPathKey.set(pathKey, sourceIdsQuery);
 
       return false;
     });
 
-    const sourceIdsOfPaths = await Promise.all(
-      sourceIdsQueries.map((sourceIdsQuery) =>
-        this.recordPermissionReadRepository.findRelatedRecordPathSourceIds({
-          workspaceId: objectAccessRequest.principals.workspaceId,
-          sourceIdsQuery,
-          limit: MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS + 1,
-        }),
+    const sourceIdsByPathKey = new Map(
+      await Promise.all(
+        [...sourceIdsQueryByPathKey].map(
+          async ([pathKey, sourceIdsQuery]) =>
+            [
+              pathKey,
+              await this.recordPermissionReadRepository.findRelatedRecordPathSourceIds(
+                {
+                  workspaceId: objectAccessRequest.principals.workspaceId,
+                  sourceIdsQuery,
+                  limit: MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS + 1,
+                  transactionScope,
+                },
+              ),
+            ] as const,
+        ),
       ),
     );
-    let pathIndex = 0;
 
-    return buildSQLCondition(({ targetColumnExpression, sourceIdsQuery }) => {
-      const parameterName = `relatedRecordPathSourceIds_${randomBytes(5).toString('hex')}`;
-      const sourceIds = sourceIdsOfPaths[pathIndex++];
+    return buildSQLCondition(
+      ({ pathKey, targetColumnExpression, sourceIdsQuery }) => {
+        const sourceIds = sourceIdsByPathKey.get(pathKey) ?? [];
 
-      if (sourceIds.length === 0) {
-        return false;
-      }
+        if (sourceIds.length === 0) {
+          return false;
+        }
 
-      return sourceIds.length > MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS
-        ? {
+        if (sourceIds.length > MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS) {
+          return {
             sql: `${targetColumnExpression} IN (${sourceIdsQuery.sql})`,
             parameters: sourceIdsQuery.parameters,
-          }
-        : {
-            sql: `${targetColumnExpression} = ANY(:${parameterName})`,
-            parameters: { [parameterName]: sourceIds },
           };
-    });
+        }
+
+        const parameterName = `relatedRecordPathSourceIds_${randomBytes(5).toString('hex')}`;
+
+        return {
+          sql: `${targetColumnExpression} = ANY(:${parameterName})`,
+          parameters: { [parameterName]: sourceIds },
+        };
+      },
+    );
   }
 
   private async findPrincipalsAccessGroupCompactIds(

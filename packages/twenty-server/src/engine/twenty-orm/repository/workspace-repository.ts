@@ -2094,6 +2094,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         principals,
         objectMetadataId: flatObjectMetadata.id,
         tableAlias: alias,
+        transactionScope: this.buildRecordPermissionTransactionScope(),
       });
     }
 

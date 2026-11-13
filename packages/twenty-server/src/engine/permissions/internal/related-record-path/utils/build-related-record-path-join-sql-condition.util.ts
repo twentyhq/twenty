@@ -21,6 +21,7 @@ export type BuildEntrySQLCondition = (args: {
 }) => SQLCondition | boolean;
 
 export type BuildListedTablePathSQLCondition = (args: {
+  pathKey: string;
   targetColumnExpression: string;
   sourceIdsQuery: SQLCondition;
 }) => SQLCondition | boolean;
@@ -118,16 +119,26 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
       parameters,
     };
 
-    return targetTableAlias === tableAlias &&
-      isDefined(buildListedTablePathSQLCondition)
-      ? buildListedTablePathSQLCondition({
-          targetColumnExpression,
-          sourceIdsQuery,
-        })
-      : {
-          sql: `${targetColumnExpression} = ANY(ARRAY(${sourceIdsQuery.sql}))`,
-          parameters,
-        };
+    if (
+      targetTableAlias !== tableAlias ||
+      !isDefined(buildListedTablePathSQLCondition)
+    ) {
+      return {
+        sql: `${targetColumnExpression} = ANY(ARRAY(${sourceIdsQuery.sql}))`,
+        parameters,
+      };
+    }
+
+    return buildListedTablePathSQLCondition({
+      pathKey: resolvedPath.hops
+        .map(
+          (hop) =>
+            `${hop.flatObjectMetadata.id}.${hop.sourceColumnName}.${hop.targetColumnName}`,
+        )
+        .join('>'),
+      targetColumnExpression,
+      sourceIdsQuery,
+    });
   };
 
   const buildReadableSQLCondition = ({
