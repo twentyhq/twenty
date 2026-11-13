@@ -135,6 +135,7 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
 import { BuildIndexDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/build-index-deferred-operation-handler.service';
 import { DeleteLogicFunctionResourcesDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/delete-logic-function-resources-deferred-operation-handler.service';
 import { DeleteWorkflowRunsDeferredOperationHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/delete-workflow-runs-deferred-operation-handler.workspace-service';
+import { RebuildObjectDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/rebuild-object-deferred-operation-handler.service';
 import { ValidateForeignKeyDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/validate-foreign-key-deferred-operation-handler.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
@@ -313,6 +314,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
     BuildIndexDeferredOperationHandlerService,
     ValidateForeignKeyDeferredOperationHandlerService,
+    RebuildObjectDeferredOperationHandlerService,
     DeleteLogicFunctionResourcesDeferredOperationHandlerService,
     DeleteWorkflowRunsDeferredOperationHandlerWorkspaceService,
   ],

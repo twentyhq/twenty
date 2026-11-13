@@ -6,9 +6,9 @@ import { ReactionButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
-import { useToggleAgentChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAiChatMessageReaction';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/aiChatMessageReactionsFamilyState';
+import { getAiChatSenderLabel } from '@/ai/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -29,28 +29,27 @@ export const AiChatMessageReactions = ({
 }: AiChatMessageReactionsProps) => {
   const { t } = useLingui();
   const { displayName: assistantName } = useAiChatAssistantProfile();
-  const agentChatMessageReactions = useAtomFamilyStateValue(
-    agentChatMessageReactionsFamilyState,
+  const aiChatMessageReactions = useAtomFamilyStateValue(
+    aiChatMessageReactionsFamilyState,
     { messageId },
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const { toggleAgentChatMessageReaction } =
-    useToggleAgentChatMessageReaction();
+  const { toggleAiChatMessageReaction } = useToggleAiChatMessageReaction();
 
-  if (!isNonEmptyArray(agentChatMessageReactions)) {
+  if (!isNonEmptyArray(aiChatMessageReactions)) {
     return null;
   }
 
   return (
     <StyledReactions>
-      {agentChatMessageReactions.map(
+      {aiChatMessageReactions.map(
         ({ emoji, workspaceMemberIds, agentIds, hasAssistantReacted }) => {
           const reactorNameList = [
             ...workspaceMemberIds.map((workspaceMemberId) =>
-              getAgentChatSenderLabel({
+              getAiChatSenderLabel({
                 sender: currentWorkspaceMembers.find(
                   ({ id }) => id === workspaceMemberId,
                 ),
@@ -86,7 +85,7 @@ export const AiChatMessageReactions = ({
               title={reactorNames}
               aria-label={t`${emoji} by ${reactorNames}`}
               onPressedChange={() =>
-                void toggleAgentChatMessageReaction({ messageId, emoji })
+                void toggleAiChatMessageReaction({ messageId, emoji })
               }
             />
           );

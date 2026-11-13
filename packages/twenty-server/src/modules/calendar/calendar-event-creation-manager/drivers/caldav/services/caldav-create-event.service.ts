@@ -161,6 +161,7 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         isPrivate: false,
         status: 'CONFIRMED',
         organizerHandle: '',
+        resourceHandles: [],
         conferenceLinkLabel: '',
         conferenceLinkUrl: '',
         conferenceSolution: '',

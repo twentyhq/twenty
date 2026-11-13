@@ -28,9 +28,11 @@ export const useChangeRecordFieldVisibility = (
 
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
+    recordFieldId,
     isVisible,
   }: {
     fieldMetadataId: string;
+    recordFieldId?: string;
     isVisible: boolean;
   }) => {
     const lastPosition =
@@ -40,7 +42,9 @@ export const useChangeRecordFieldVisibility = (
     const shouldShowFieldMetadataItem = isVisible === true;
     const correspondingRecordField = currentRecordFields.find(
       (recordFieldToFind) =>
-        recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
+        isDefined(recordFieldId)
+          ? recordFieldToFind.id === recordFieldId
+          : recordFieldToFind.fieldMetadataItemId === fieldMetadataId,
     );
 
     const noExistingRecordField = !isDefined(correspondingRecordField);
@@ -58,7 +62,7 @@ export const useChangeRecordFieldVisibility = (
 
       await saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
     } else {
-      updateRecordField(fieldMetadataId, {
+      updateRecordField(correspondingRecordField.id, {
         isVisible: shouldShowFieldMetadataItem,
       });
 

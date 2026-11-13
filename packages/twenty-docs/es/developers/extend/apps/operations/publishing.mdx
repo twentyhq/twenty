@@ -42,6 +42,16 @@ twenty app build
 
 Esto verifica los tipos y empaqueta la aplicación en una instantánea temporal de la CLI. Usa `--json` para inspeccionar el manifiesto y los metadatos del artefacto. `twenty app publish` crea el paquete en sí; no se requiere una compilación de tarball independiente.
 
+Las compilaciones conservan los archivos de entrada del frontend y de las funciones lógicas, sus asistentes y tipos locales importados, la configuración local de TypeScript y el CSS y los recursos anidados. Las rutas y los bytes originales se conservan en un inventario de fuentes. Las dependencias en `node_modules`, los archivos no relacionados y las importaciones fuera del directorio de la aplicación (incluidos los destinos de enlaces simbólicos) se excluyen del inventario. Estas exclusiones no impiden que se compilen las aplicaciones existentes. Si usas `package.json#files`, incluye estas fuentes conservadas o la publicación informará de los archivos que faltan. Los paquetes instalados más antiguos deben recompilarse y publicarse para obtener este inventario. Esto todavía no amplía los archivos que restaura `twenty app pull`.
+
+### Compatibilidad del inventario de código fuente
+
+La carga del inventario completo de código fuente requiere Twenty server **2.59.0 o posterior**. Actualice el servidor antes de usar `twenty app apply` o `twenty app dev` con CSS, JavaScript, imágenes o fuentes importados. Los servidores más antiguos solo aceptan `.ts`, `.tsx` y `.json` en la carpeta de código fuente y rechazan los tipos de archivo adicionales. Las compilaciones locales siguen funcionando sin un servidor; esta CLI no omite automáticamente los archivos fuente para servidores más antiguos.
+
+### Conflictos de rutas de código fuente y paquetes
+
+Si una compilación informa `Application source \<path> collides with a built application file`, un archivo original sobrescribiría la salida generada. Por ejemplo, `src/run.ts` genera `src/run.mjs`, por lo que otra entrada no puede importar un archivo fuente existente en `src/run.mjs`. Cambie el nombre del archivo importado (por ejemplo, a `src/run-helper.mjs`) y actualice sus importaciones; luego, vuelva a compilar. La CLI se detiene antes de copiar el archivo conflictivo.
+
 ## Despliegue en un servidor (tarball)
 
 Para aplicaciones que no quieres que estén disponibles públicamente — herramientas propietarias, integraciones solo para empresas o compilaciones experimentales — puedes desplegar un tarball directamente en un servidor de Twenty.

@@ -488,6 +488,7 @@ export type Mutation = {
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
+  /** @deprecated Use updateCoreWorkflow with a visibility instead */
   updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
 };
@@ -1066,7 +1067,8 @@ export type UuidFilter = {
 
 export type UpdateCoreWorkflowInput = {
   coreWorkflowId: Scalars['UUID']['input'];
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  visibility?: InputMaybe<WorkflowVisibility>;
 };
 
 export type UpdateCoreWorkflowVersionPositionsInput = {
