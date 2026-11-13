@@ -11,6 +11,7 @@ import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPi
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
 import { ViewPickerTabFieldContent } from '@/views/view-picker/components/ViewPickerTabFieldContent';
+import { ViewPickerTabFieldSelectContent } from '@/views/view-picker/components/ViewPickerTabFieldSelectContent';
 import { isRecordIndexTabsDisplayedComponentSelector } from '@/object-record/record-index-tab/states/selectors/isRecordIndexTabsDisplayedComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
@@ -127,6 +128,8 @@ export const ViewPickerDropdown = () => {
             );
           case 'tab-field':
             return <ViewPickerTabFieldContent />;
+          case 'tab-field-select':
+            return <ViewPickerTabFieldSelectContent />;
           case 'edit':
             return (
               <>

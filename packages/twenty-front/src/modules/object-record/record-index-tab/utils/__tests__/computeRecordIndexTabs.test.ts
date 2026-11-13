@@ -60,6 +60,7 @@ describe('computeRecordIndexTabs', () => {
       color: 'red',
       viewTabId: undefined,
       isVisible: true,
+      position: 0,
     });
   });
 

@@ -9,4 +9,5 @@ export type RecordIndexTab = {
   color?: ThemeColor;
   viewTabId?: string;
   isVisible: boolean;
+  position: number;
 };

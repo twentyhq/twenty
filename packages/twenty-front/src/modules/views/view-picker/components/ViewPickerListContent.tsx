@@ -20,6 +20,9 @@ import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/select
 import { isRecordIndexTabsSupportedForViewType } from '@/object-record/record-index-tab/utils/isRecordIndexTabsSupportedForViewType';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { recordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabsComponentSelector';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
@@ -87,6 +90,16 @@ export const ViewPickerListContent = () => {
   const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
     recordIndexTabFieldMetadataItemComponentState,
   );
+
+  const recordIndexTabs = useAtomComponentSelectorValue(
+    recordIndexTabsComponentSelector,
+  );
+
+  const recordIndexTabsDescription = isDefined(recordIndexTabFieldMetadataItem)
+    ? recordIndexTabFieldMetadataItem.label
+    : isNonEmptyArray(recordIndexTabs)
+      ? t`Custom`
+      : t`None`;
 
   // Tabs belong to the current view, like grouping, which the default view does not allow
   const shouldShowTabFieldPicker =
@@ -234,7 +247,7 @@ export const ViewPickerListContent = () => {
           <ListItemButton
             onClick={() => setViewPickerMode('tab-field')}
             startIcon={<IconLayoutNavbar />}
-            description={recordIndexTabFieldMetadataItem?.label ?? t`None`}
+            description={recordIndexTabsDescription}
             descriptionPlacement="end"
             hasSubmenu
           >{t`Tabs`}</ListItemButton>

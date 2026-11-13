@@ -14,23 +14,21 @@ type ComputeRecordIndexTabsArgs = {
   viewTabs: ViewTab[];
 };
 
-type RecordIndexTabWithOrder = RecordIndexTab & {
-  position: number;
+type RecordIndexTabWithDefaultPosition = RecordIndexTab & {
   defaultPosition: number;
 };
 
 const sortByPosition = (
-  firstTab: RecordIndexTabWithOrder,
-  secondTab: RecordIndexTabWithOrder,
+  firstTab: RecordIndexTabWithDefaultPosition,
+  secondTab: RecordIndexTabWithDefaultPosition,
 ) =>
   firstTab.position - secondTab.position ||
   firstTab.defaultPosition - secondTab.defaultPosition;
 
-const removeOrder = ({
-  position: _position,
+const removeDefaultPosition = ({
   defaultPosition: _defaultPosition,
   ...recordIndexTab
-}: RecordIndexTabWithOrder): RecordIndexTab => recordIndexTab;
+}: RecordIndexTabWithDefaultPosition): RecordIndexTab => recordIndexTab;
 
 // Field value, No value and All rows only override their default place and visibility, so a missing row keeps the default
 export const computeRecordIndexTabs = ({
@@ -89,7 +87,7 @@ export const computeRecordIndexTabs = ({
       },
     ]
       .sort(sortByPosition)
-      .map(removeOrder);
+      .map(removeDefaultPosition);
   }
 
   const customTabs = viewTabs
@@ -121,5 +119,5 @@ export const computeRecordIndexTabs = ({
     },
   ]
     .sort(sortByPosition)
-    .map(removeOrder);
+    .map(removeDefaultPosition);
 };

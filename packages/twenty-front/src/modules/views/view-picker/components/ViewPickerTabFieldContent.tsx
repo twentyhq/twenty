@@ -1,53 +1,139 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useGetRecordIndexTabLabel } from '@/object-record/record-index-tab/hooks/useGetRecordIndexTabLabel';
+import { usePersistRecordIndexViewTabs } from '@/object-record/record-index-tab/hooks/usePersistRecordIndexViewTabs';
 import { useUpdateRecordIndexTabField } from '@/object-record/record-index-tab/hooks/useUpdateRecordIndexTabField';
-import { canDisplayRecordIndexTabsForFieldMetadataItem } from '@/object-record/record-index-tab/utils/canDisplayRecordIndexTabsForFieldMetadataItem';
+import { recordIndexTabsComponentSelector } from '@/object-record/record-index-tab/states/selectors/recordIndexTabsComponentSelector';
+import { type RecordIndexTab } from '@/object-record/record-index-tab/types/RecordIndexTab';
+import { getRecordIndexTabColorDotIcon } from '@/object-record/record-index-tab/utils/getRecordIndexTabColorDotIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DraggableListRow } from '@/ui/layout/draggable-list/components/DraggableListRow';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { LightIconButton, SegmentedControl } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import { useIcons } from 'twenty-ui/icon/provider';
+import {
+  IconChevronLeft,
+  IconEye,
+  IconEyeOff,
+  IconListSearch,
+  IconTrash,
+} from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
+
+type RecordIndexTabMode = 'field' | 'custom' | 'none';
+
+const StyledSegmentedControlContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
+`;
 
 export const ViewPickerTabFieldContent = () => {
   const { t } = useLingui();
-  const { getIcon } = useIcons();
 
-  const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { canPersistChanges } = useCanPersistViewChanges();
+
+  const { getRecordIndexTabLabel } = useGetRecordIndexTabLabel();
 
   const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
     recordIndexTabFieldMetadataItemComponentState,
   );
 
+  const recordIndexTabs = useAtomComponentSelectorValue(
+    recordIndexTabsComponentSelector,
+  );
+
   const { updateRecordIndexTabField } =
     useUpdateRecordIndexTabField(recordIndexId);
 
-  const recordIndexTabFieldMetadataItems =
-    objectMetadataItem.readableFields.filter(
-      canDisplayRecordIndexTabsForFieldMetadataItem,
-    );
+  const {
+    updateRecordIndexTab,
+    reorderRecordIndexTabs,
+    ensureAllViewTab,
+    destroyAllViewTabs,
+  } = usePersistRecordIndexViewTabs();
 
-  const handleRecordIndexTabFieldChange = (
-    fieldMetadataItem: FieldMetadataItem | undefined,
+  const visibleRecordIndexTabs = recordIndexTabs.filter(
+    ({ isVisible }) => isVisible,
+  );
+
+  const hiddenRecordIndexTabs = recordIndexTabs.filter(
+    ({ isVisible }) => !isVisible,
+  );
+
+  const recordIndexTabMode: RecordIndexTabMode = isDefined(
+    recordIndexTabFieldMetadataItem,
+  )
+    ? 'field'
+    : isNonEmptyArray(recordIndexTabs)
+      ? 'custom'
+      : 'none';
+
+  const handleRecordIndexTabModeChange = async (
+    nextRecordIndexTabMode: RecordIndexTabMode,
   ) => {
-    updateRecordIndexTabField(fieldMetadataItem);
+    if (nextRecordIndexTabMode === 'field') {
+      setViewPickerMode('tab-field-select');
+      return;
+    }
+
+    if (nextRecordIndexTabMode !== 'custom') {
+      return;
+    }
+
+    if (isDefined(recordIndexTabFieldMetadataItem)) {
+      await updateRecordIndexTabField(undefined);
+    }
+
+    await ensureAllViewTab();
+  };
+
+  const handleVisibleTabDragEnd = async (result: DraggableListDropResult) => {
+    if (!isDefined(result.destination)) {
+      return;
+    }
+
+    await reorderRecordIndexTabs([
+      ...moveArrayItem(visibleRecordIndexTabs, {
+        fromIndex: result.source.index,
+        toIndex: result.destination.index,
+      }),
+      ...hiddenRecordIndexTabs,
+    ]);
+  };
+
+  const handleRemoveTabs = async () => {
+    await updateRecordIndexTabField(undefined);
+    await destroyAllViewTabs();
     setViewPickerMode('list');
-    closeDropdown();
+  };
+
+  const getTabStartIcon = ({ color }: RecordIndexTab) => {
+    // An empty icon slot keeps No value and All aligned with the option labels
+    if (!isDefined(color)) {
+      return <svg aria-hidden />;
+    }
+
+    const ColorDotIcon = getRecordIndexTabColorDotIcon(color);
+
+    return <ColorDotIcon />;
   };
 
   return (
@@ -62,36 +148,132 @@ export const ViewPickerTabFieldContent = () => {
       >
         {t`Tabs`}
       </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <ListItemButton
-          onClick={() => handleRecordIndexTabFieldChange(undefined)}
-          role="option"
-          aria-selected={!isDefined(recordIndexTabFieldMetadataItem)}
-          selected={!isDefined(recordIndexTabFieldMetadataItem)}
-          indicator="check"
+      <StyledSegmentedControlContainer>
+        <SegmentedControl<RecordIndexTabMode>
+          aria-label={t`Tab type`}
+          fullWidth
+          size="sm"
+          value={recordIndexTabMode}
           disabled={!canPersistChanges}
-        >{t`None`}</ListItemButton>
-        {recordIndexTabFieldMetadataItems.map((fieldMetadataItem) => (
+          onValueChange={handleRecordIndexTabModeChange}
+          options={[
+            { value: 'field', label: t`By field` },
+            { value: 'custom', label: t`Custom` },
+          ]}
+        />
+      </StyledSegmentedControlContainer>
+      {isDefined(recordIndexTabFieldMetadataItem) && (
+        <DropdownMenuItemsContainer scrollable={false}>
           <ListItemButton
-            key={fieldMetadataItem.id}
-            onClick={() => handleRecordIndexTabFieldChange(fieldMetadataItem)}
-            role="option"
-            aria-selected={
-              fieldMetadataItem.id === recordIndexTabFieldMetadataItem?.id
-            }
-            selected={
-              fieldMetadataItem.id === recordIndexTabFieldMetadataItem?.id
-            }
-            indicator="check"
+            onClick={() => setViewPickerMode('tab-field-select')}
+            startIcon={<IconListSearch />}
+            description={recordIndexTabFieldMetadataItem.label}
+            descriptionPlacement="end"
             disabled={!canPersistChanges}
-            startIcon={
-              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
-            }
-          >
-            {fieldMetadataItem.label}
-          </ListItemButton>
-        ))}
-      </DropdownMenuItemsContainer>
+            hasSubmenu
+          >{t`Field`}</ListItemButton>
+        </DropdownMenuItemsContainer>
+      )}
+      {isNonEmptyArray(visibleRecordIndexTabs) && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuSectionLabel label={t`Visible tabs`} />
+          <DropdownMenuItemsContainer>
+            <DraggableList
+              onDragEnd={handleVisibleTabDragEnd}
+              draggableItems={visibleRecordIndexTabs.map(
+                (recordIndexTab, index) => {
+                  const recordIndexTabLabel =
+                    getRecordIndexTabLabel(recordIndexTab);
+
+                  return (
+                    <DraggableItem
+                      key={recordIndexTab.id}
+                      draggableId={recordIndexTab.id}
+                      index={index}
+                      isDragDisabled={!canPersistChanges}
+                      itemComponent={
+                        <DraggableListRow
+                          startIcon={getTabStartIcon(recordIndexTab)}
+                          dragHandleVisibility="always"
+                          isDragDisabled={!canPersistChanges}
+                          actionsVisibility="always"
+                          actions={
+                            canPersistChanges &&
+                            visibleRecordIndexTabs.length > 1 ? (
+                              <LightIconButton
+                                aria-label={t`Hide ${recordIndexTabLabel}`}
+                                onClick={() =>
+                                  updateRecordIndexTab(recordIndexTab, {
+                                    isVisible: false,
+                                  })
+                                }
+                              >
+                                <IconEye />
+                              </LightIconButton>
+                            ) : undefined
+                          }
+                        >
+                          {recordIndexTabLabel}
+                        </DraggableListRow>
+                      }
+                    />
+                  );
+                },
+              )}
+            />
+          </DropdownMenuItemsContainer>
+        </>
+      )}
+      {isNonEmptyArray(hiddenRecordIndexTabs) && (
+        <>
+          <DropdownMenuSectionLabel label={t`Hidden`} />
+          <DropdownMenuItemsContainer hasMaxHeight>
+            {hiddenRecordIndexTabs.map((recordIndexTab) => {
+              const recordIndexTabLabel =
+                getRecordIndexTabLabel(recordIndexTab);
+
+              return (
+                <DraggableListRow
+                  key={recordIndexTab.id}
+                  startIcon={getTabStartIcon(recordIndexTab)}
+                  isMuted
+                  actionsVisibility="always"
+                  actions={
+                    canPersistChanges ? (
+                      <LightIconButton
+                        aria-label={t`Show ${recordIndexTabLabel}`}
+                        onClick={() =>
+                          updateRecordIndexTab(recordIndexTab, {
+                            isVisible: true,
+                          })
+                        }
+                      >
+                        <IconEyeOff />
+                      </LightIconButton>
+                    ) : undefined
+                  }
+                >
+                  {recordIndexTabLabel}
+                </DraggableListRow>
+              );
+            })}
+          </DropdownMenuItemsContainer>
+        </>
+      )}
+      {recordIndexTabMode !== 'none' && canPersistChanges && (
+        <>
+          <DropdownMenuSeparator />
+          <DropdownMenuItemsContainer scrollable={false}>
+            <ListItemButton
+              onClick={handleRemoveTabs}
+              startIcon={<IconTrash />}
+            >
+              {t`Remove tabs`}
+            </ListItemButton>
+          </DropdownMenuItemsContainer>
+        </>
+      )}
     </LegacyDropdownContent>
   );
 };

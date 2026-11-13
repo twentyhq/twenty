@@ -3,4 +3,5 @@ export type ViewPickerMode =
   | 'edit'
   | 'create-empty'
   | 'create-from-current'
-  | 'tab-field';
+  | 'tab-field'
+  | 'tab-field-select';
