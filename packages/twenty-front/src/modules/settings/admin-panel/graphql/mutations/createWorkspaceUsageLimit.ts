@@ -4,8 +4,13 @@ export const CREATE_WORKSPACE_USAGE_LIMIT = gql`
   mutation CreateWorkspaceUsageLimit(
     $workspaceId: UUID!
     $payload: CreateUsageLimitInput!
+    $endsAt: DateTime
   ) {
-    createWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
+    createWorkspaceUsageLimit(
+      workspaceId: $workspaceId
+      payload: $payload
+      endsAt: $endsAt
+    ) {
       id
     }
   }

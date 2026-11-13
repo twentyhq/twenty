@@ -8,6 +8,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { billingState } from '@/client-config/states/billingState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
@@ -19,9 +20,11 @@ import { parseAdminUsageLimitValue } from '@/settings/admin-panel/utils/parseAdm
 import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
+import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type DeleteWorkspaceUsageLimitMutation } from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceUsageLimitModalProps = {
@@ -50,7 +53,9 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const { closeDialog } = useDialog();
   const { enqueueToast } = useToast();
   const apolloAdminClient = useApolloAdminClient();
+  const billing = useAtomStateValue(billingState);
 
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const inputScale = getUsageLimitInputScale(row.unit);
 
   const [limitValue, setLimitValue] = useState(
@@ -59,6 +64,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
   const [burstValue, setBurstValue] = useState(
     isDefined(row.burstValue) ? String(row.burstValue) : '',
   );
+  const [endsAt, setEndsAt] = useState<Date | undefined>(undefined);
 
   const mutationOptions = {
     client: apolloAdminClient,
@@ -89,9 +95,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isResetting;
+  const isEndsAtValid = !isDefined(endsAt) || endsAt.getTime() > Date.now();
   const isValid =
     isDefined(parsedLimitValue) &&
-    (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue));
+    (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue)) &&
+    isEndsAtValid;
 
   const handleClose = () => {
     closeDialog(dialogId);
@@ -117,7 +125,11 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
 
     try {
       await createWorkspaceUsageLimit({
-        variables: { workspaceId, payload },
+        variables: {
+          workspaceId,
+          payload,
+          endsAt: endsAt?.toISOString() ?? null,
+        },
       });
 
       enqueueToast({
@@ -217,6 +229,17 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                   onChange={setBurstValue}
                   disabled={row.isOverridden}
                   fullWidth
+                />
+              )}
+
+              {isBillingEnabled && !row.isOverridden && (
+                <SettingsDatePickerInput
+                  instanceId={`${dialogId}-ends-at`}
+                  label={t`Ends (optional)`}
+                  placeholder={t`No end date`}
+                  value={endsAt}
+                  onChange={setEndsAt}
+                  isInModal
                 />
               )}
             </StyledFields>
