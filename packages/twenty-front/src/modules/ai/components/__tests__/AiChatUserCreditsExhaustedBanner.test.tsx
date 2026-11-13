@@ -4,13 +4,16 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatUserCreditsExhaustedBanner } from '@/ai/components/AiChatUserCreditsExhaustedBanner';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   GetAiChatUsageDocument,
+  PermissionFlagType,
   UserCreditsFallback,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
@@ -24,12 +27,28 @@ i18n.activate(SOURCE_LOCALE);
 
 const PERIOD_END = new Date(Date.now() + 3 * 86400000).toISOString();
 
-const renderBanner = (
-  userCreditsFallback: UserCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
-) => {
+const FALLBACK_NOTICE =
+  'Personal AI limit reached. Now using workspace credits.';
+const ADMIN_STOP_NOTICE = 'Personal AI limit reached. Resets in 3 days.';
+const MEMBER_STOP_NOTICE =
+  'Personal AI limit reached. Ask an admin to enable workspace credits.';
+
+const renderBanner = ({
+  userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
+  hasBillingPermission = false,
+}: {
+  userCreditsFallback?: UserCreditsFallback;
+  hasBillingPermission?: boolean;
+} = {}) => {
   const store = createStore();
 
   store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
+  store.set(currentUserWorkspaceState.atom, {
+    permissionFlags: hasBillingPermission ? [PermissionFlagType.BILLING] : [],
+    twoFactorAuthenticationMethodSummary: [],
+    objectRecordsPermissions: [],
+    isImpersonating: false,
+  });
   store.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     billingCustomer: {
@@ -59,7 +78,15 @@ const renderBanner = (
         ]}
       >
         <I18nProvider i18n={i18n}>
-          <AiChatUserCreditsExhaustedBanner />
+          <MemoryRouter initialEntries={['/objects/companies']}>
+            <Routes>
+              <Route
+                path="/objects/companies"
+                element={<AiChatUserCreditsExhaustedBanner />}
+              />
+              <Route path="/settings/billing" element={<>Billing settings</>} />
+            </Routes>
+          </MemoryRouter>
         </I18nProvider>
       </MockedProvider>
     </JotaiProvider>,
@@ -71,20 +98,33 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
     localStorage.clear();
   });
 
-  it.each([
-    [
-      UserCreditsFallback.WORKSPACE_CREDITS,
-      'Using workspace credits for 3 days.',
-    ],
-    [UserCreditsFallback.STOP, 'Personal usage limit resets in 3 days.'],
-  ])(
-    'tells the member what happens until renewal with fallback %s',
-    async (userCreditsFallback, notice) => {
-      renderBanner(userCreditsFallback);
+  it('tells the member their personal limit is reached and workspace credits are used', async () => {
+    renderBanner();
 
-      expect(await screen.findByText(notice)).toBeVisible();
-    },
-  );
+    expect(await screen.findByText(FALLBACK_NOTICE)).toBeVisible();
+  });
+
+  it('sends a billing admin to settings when chats stop', async () => {
+    renderBanner({
+      userCreditsFallback: UserCreditsFallback.STOP,
+      hasBillingPermission: true,
+    });
+
+    expect(await screen.findByText(ADMIN_STOP_NOTICE)).toBeVisible();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
+
+    expect(await screen.findByText('Billing settings')).toBeVisible();
+  });
+
+  it('asks a member without billing access to contact an admin when chats stop', async () => {
+    renderBanner({ userCreditsFallback: UserCreditsFallback.STOP });
+
+    expect(await screen.findByText(MEMBER_STOP_NOTICE)).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Settings' }),
+    ).not.toBeInTheDocument();
+  });
 
   it('stays hidden for the rest of the period once dismissed', async () => {
     renderBanner();
@@ -93,9 +133,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
       await screen.findByRole('button', { name: 'Dismiss' }),
     );
 
-    expect(
-      screen.queryByText('Using workspace credits for 3 days.'),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(FALLBACK_NOTICE)).not.toBeInTheDocument();
     expect(
       JSON.parse(
         localStorage.getItem('ai/agentChatUserCreditsBannerDismissal') ??
@@ -120,9 +158,7 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
 
     renderBanner();
 
-    expect(
-      await screen.findByText('Using workspace credits for 3 days.'),
-    ).toBeVisible();
+    expect(await screen.findByText(FALLBACK_NOTICE)).toBeVisible();
   });
 
   it('shows the stop notice when chats stop after the fallback notice was dismissed', async () => {
@@ -135,10 +171,8 @@ describe('AiChatUserCreditsExhaustedBanner', () => {
       }),
     );
 
-    renderBanner(UserCreditsFallback.STOP);
+    renderBanner({ userCreditsFallback: UserCreditsFallback.STOP });
 
-    expect(
-      await screen.findByText('Personal usage limit resets in 3 days.'),
-    ).toBeVisible();
+    expect(await screen.findByText(MEMBER_STOP_NOTICE)).toBeVisible();
   });
 });
