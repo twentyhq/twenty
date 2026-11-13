@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { computeAgentChatThreadFilterStatusGqlFilter } from 'twenty-shared/ai';
+import { computeAgentChatThreadPresetFilterGqlFilter } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_CHANNEL_THREAD_LIST_PAGE_SIZE } from '@/ai/constants/AgentChatChannelThreadListPageSize';
@@ -154,8 +154,8 @@ export const useLoadAgentChatThreadList = () => {
             ? {
                 and: [
                   { deletedAt: { is: 'NULL' } },
-                  computeAgentChatThreadFilterStatusGqlFilter({
-                    filterStatus: source.presetFilter,
+                  computeAgentChatThreadPresetFilterGqlFilter({
+                    presetFilter: source.presetFilter,
                     workspaceMemberId,
                   }),
                 ],

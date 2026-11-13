@@ -6,7 +6,7 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -27,13 +27,13 @@ export const AiChatThreadChannelIcon = ({
   const channel = useAtomStateValue(agentChatChannelsState)?.find(
     ({ id }) => id === thread.channelId,
   );
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const agentChatSelectedChannelView = useAtomStateValue(
+    agentChatSelectedChannelViewSelector,
   );
 
   if (
     !isDefined(channel) ||
-    agentChatShownChannelView?.channelId === channel.id
+    agentChatSelectedChannelView?.channelId === channel.id
   ) {
     return null;
   }
