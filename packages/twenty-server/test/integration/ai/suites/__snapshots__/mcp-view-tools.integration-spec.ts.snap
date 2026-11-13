@@ -500,6 +500,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "description": "Position of the field in the view (0-based).",
           "type": "number",
         },
+        "settings": {
+          "anyOf": [
+            {
+              "description": "Per-column display settings for this view.",
+              "properties": {
+                "label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 63,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    {
+                      "type": "null",
+                    },
+                  ],
+                  "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                },
+                "recordLimit": {
+                  "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                  "type": [
+                    "integer",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+        },
         "size": {
           "default": 150,
           "description": "Column width in pixels.",
@@ -553,6 +586,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "position": {
           "description": "Position of the field.",
           "type": "number",
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "description": "Per-column display settings for this view.",
+              "properties": {
+                "label": {
+                  "anyOf": [
+                    {
+                      "maxLength": 63,
+                      "minLength": 1,
+                      "type": "string",
+                    },
+                    {
+                      "type": "null",
+                    },
+                  ],
+                  "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                },
+                "recordLimit": {
+                  "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                  "type": [
+                    "integer",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
         },
         "size": {
           "description": "Column width in pixels.",
@@ -624,6 +690,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "description": "Position of the field in the view (0-based).",
                 "type": "number",
               },
+              "settings": {
+                "anyOf": [
+                  {
+                    "description": "Per-column display settings for this view.",
+                    "properties": {
+                      "label": {
+                        "anyOf": [
+                          {
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "type": "string",
+                          },
+                          {
+                            "type": "null",
+                          },
+                        ],
+                        "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                      },
+                      "recordLimit": {
+                        "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                        "type": [
+                          "integer",
+                          "null",
+                        ],
+                      },
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+              },
               "size": {
                 "default": 150,
                 "description": "Column width in pixels.",
@@ -691,6 +790,39 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "position": {
                 "description": "Position of the field.",
                 "type": "number",
+              },
+              "settings": {
+                "anyOf": [
+                  {
+                    "description": "Per-column display settings for this view.",
+                    "properties": {
+                      "label": {
+                        "anyOf": [
+                          {
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "type": "string",
+                          },
+                          {
+                            "type": "null",
+                          },
+                        ],
+                        "description": "Column name shown in this view instead of the field label. Null restores the field label.",
+                      },
+                      "recordLimit": {
+                        "description": "Maximum number of related records shown in the cell. Only for one-to-many relation fields.",
+                        "type": [
+                          "integer",
+                          "null",
+                        ],
+                      },
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
               },
               "size": {
                 "description": "Column width in pixels.",
