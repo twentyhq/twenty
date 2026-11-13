@@ -1,6 +1,5 @@
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 
-// Change only together with the "Twenty Partner Program Terms" doc.
 export function AffiliateProgramTermsDocument() {
   return (
     <>
