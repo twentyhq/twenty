@@ -19,7 +19,7 @@ export const useSaveRecordSortsToView = () => {
       view,
       recordSorts,
     }: {
-      view: View;
+      view: Pick<View, 'id' | 'viewSorts'>;
       recordSorts: RecordSort[];
     }) => {
       const currentViewSorts = view.viewSorts ?? [];

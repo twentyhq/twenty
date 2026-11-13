@@ -47,12 +47,15 @@ export const RelationOneToManyFieldInput = () => {
   }
   const { refetchScopedRelationRecords } = useRefetchScopedRelationRecords();
 
-  const handleSubmit = () => {
-    onSubmit?.({ skipPersist: true });
-
+  const refetchScopedRecordsIfScoped = () => {
     if (isDefined(scopedRelationViewFieldId)) {
       refetchScopedRelationRecords();
     }
+  };
+
+  const handleSubmit = () => {
+    onSubmit?.({ skipPersist: true });
+    refetchScopedRecordsIfScoped();
   };
 
   const relationFieldDefinition =
@@ -173,10 +176,7 @@ export const RelationOneToManyFieldInput = () => {
           }
 
           await updateRelation(morphItem);
-
-          if (isDefined(scopedRelationViewFieldId)) {
-            refetchScopedRelationRecords();
-          }
+          refetchScopedRecordsIfScoped();
         }}
         onCreate={
           isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)

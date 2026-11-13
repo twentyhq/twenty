@@ -1,5 +1,6 @@
 import { computeScopedRelationQueryVariables } from '@/object-record/record-column-scope/utils/computeScopedRelationQueryVariables';
 import { ViewFilterOperand, ViewSortDirection } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -11,7 +12,7 @@ const getTaskFieldOrThrow = (fieldName: string) => {
     ({ name }) => name === fieldName,
   );
 
-  if (field === undefined) {
+  if (!isDefined(field)) {
     throw new Error(`Task field ${fieldName} not found`);
   }
 
