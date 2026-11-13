@@ -4,7 +4,6 @@ import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engi
 import { type MarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/types/marketplace-built-in-application.type';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-// The front end serves logoPath and fills in the MCP server URL placeholder.
 export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] =
   [
     {
@@ -18,6 +17,7 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
       author: 'Anthropic',
       category: 'Productivity',
       logoPath: '/images/oauth-clients/claude.webp',
+      coverImagePath: '/images/oauth-clients/covers/claude.webp',
       websiteUrl: 'https://claude.ai',
       connectUrl: `https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=Twenty&connectorUrl=${MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER}`,
     },
@@ -32,6 +32,7 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
       author: 'OpenAI',
       category: 'Productivity',
       logoPath: '/images/oauth-clients/chatgpt.webp',
+      coverImagePath: '/images/oauth-clients/covers/chatgpt.webp',
       websiteUrl: 'https://chatgpt.com',
       connectUrl:
         'https://chatgpt.com/apps/twenty/asdk_app_6a0ac8d7e28c8191a58ea65bb0ca3d5c',
@@ -46,6 +47,7 @@ export const MARKETPLACE_BUILT_IN_APPLICATIONS: MarketplaceBuiltInApplication[] 
       author: 'Twenty',
       category: 'Developer tools',
       logoPath: '/images/oauth-clients/twenty-cli.svg',
+      coverImagePath: '/images/oauth-clients/covers/twenty-cli.webp',
       websiteUrl:
         'https://docs.twenty.com/developers/extend/apps/getting-started/quick-start',
       connectUrl:

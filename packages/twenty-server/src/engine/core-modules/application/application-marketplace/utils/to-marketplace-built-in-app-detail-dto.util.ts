@@ -22,7 +22,9 @@ export const toMarketplaceBuiltInAppDetailDTO = ({
   websiteUrl: builtInApplication.websiteUrl,
   connectUrl: builtInApplication.connectUrl,
   screenshots: [],
-  galleryImages: [],
+  galleryImages: [
+    new URL(builtInApplication.coverImagePath, frontBaseUrl).toString(),
+  ],
   installCount: 0,
   requestedCapabilities: [],
   requestedIframeMediaPermissions: [],

@@ -6,6 +6,7 @@ export type MarketplaceBuiltInApplication = {
   author: string;
   category: string;
   logoPath: string;
+  coverImagePath: string;
   websiteUrl: string;
   connectUrl: string;
 };
