@@ -13,6 +13,7 @@ import {
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import {
+  getFieldOrSubFieldType,
   getRlsPredicateCompatibleWorkspaceMemberFieldTypes,
   isDefined,
   isNonEmptyArray,
@@ -21,7 +22,6 @@ import {
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
-import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldType';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -70,22 +70,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
     const selectedFieldType = selectedFieldMetadataItem?.type;
     const selectedSubFieldName = recordFilter?.subFieldName;
 
-    let targetFieldType: FieldMetadataType | null = null;
-
-    if (isDefined(selectedFieldType)) {
-      if (
-        isCompositeFieldType(selectedFieldType) &&
-        isDefined(selectedFieldMetadataItem) &&
-        isDefined(selectedSubFieldName)
-      ) {
-        targetFieldType = getCompositeSubFieldType(
-          selectedFieldMetadataItem,
-          selectedSubFieldName,
-        );
-      } else {
-        targetFieldType = selectedFieldType;
-      }
-    }
+    const targetFieldType = isDefined(selectedFieldType)
+      ? getFieldOrSubFieldType({
+          fieldType: selectedFieldType,
+          subFieldName: selectedSubFieldName,
+        })
+      : null;
 
     const compatibleWorkspaceMemberFieldTypes = isDefined(selectedFieldType)
       ? getRlsPredicateCompatibleWorkspaceMemberFieldTypes({
@@ -206,15 +196,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
 
           for (const subField of filterableSubFields) {
             if (isDefined(compatibleWorkspaceMemberFieldTypes)) {
-              const subFieldType = getCompositeSubFieldType(
-                field,
-                subField.subFieldName,
-              );
+              const subFieldType = getFieldOrSubFieldType({
+                fieldType: field.type,
+                subFieldName: subField.subFieldName,
+              });
 
-              if (
-                !isDefined(subFieldType) ||
-                !compatibleWorkspaceMemberFieldTypes.includes(subFieldType)
-              ) {
+              if (!compatibleWorkspaceMemberFieldTypes.includes(subFieldType)) {
                 continue;
               }
             }

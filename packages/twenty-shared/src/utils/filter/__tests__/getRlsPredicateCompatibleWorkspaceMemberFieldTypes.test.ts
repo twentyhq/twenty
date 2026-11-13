@@ -1,6 +1,5 @@
 import { FieldMetadataType } from '@/types';
 import { getRlsPredicateCompatibleWorkspaceMemberFieldTypes } from '@/utils/filter/getRlsPredicateCompatibleWorkspaceMemberFieldTypes';
-import { isWorkspaceMemberFieldCompatibleWithRlsPredicate } from '@/utils/filter/isWorkspaceMemberFieldCompatibleWithRlsPredicate';
 
 describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
   it.each([
@@ -60,25 +59,4 @@ describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
       ).toEqual(expected);
     },
   );
-});
-
-describe('isWorkspaceMemberFieldCompatibleWithRlsPredicate', () => {
-  it('should compare a text field to a text sub field of the member', () => {
-    expect(
-      isWorkspaceMemberFieldCompatibleWithRlsPredicate({
-        fieldType: FieldMetadataType.TEXT,
-        workspaceMemberFieldType: FieldMetadataType.FULL_NAME,
-        workspaceMemberSubFieldName: 'firstName',
-      }),
-    ).toBe(true);
-  });
-
-  it('should refuse a text field compared to a member list', () => {
-    expect(
-      isWorkspaceMemberFieldCompatibleWithRlsPredicate({
-        fieldType: FieldMetadataType.TEXT,
-        workspaceMemberFieldType: FieldMetadataType.ARRAY,
-      }),
-    ).toBe(false);
-  });
 });

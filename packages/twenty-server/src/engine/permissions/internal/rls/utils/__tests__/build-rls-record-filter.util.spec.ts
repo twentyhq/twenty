@@ -30,6 +30,7 @@ const STATUS_FIELD_ID = 'status-field';
 const WORKSPACE_MEMBER_LOCALE_FIELD_ID = 'workspace-member-locale-field';
 const WORKSPACE_MEMBER_TEAM_FIELD_ID = 'workspace-member-team-field';
 const WORKSPACE_MEMBER_TAGS_FIELD_ID = 'workspace-member-tags-field';
+const WORKSPACE_MEMBER_ID_FIELD_ID = 'workspace-member-id-field';
 const USER_ROLE_ID = 'user-role-1';
 const APPLICATION_ROLE_ID = 'application-role-1';
 const UNRESTRICTED_ROLE_ID = 'unrestricted-role-1';
@@ -174,6 +175,13 @@ const flatFieldMetadataMaps = buildMaps([
     universalIdentifier: WORKSPACE_MEMBER_TAGS_FIELD_ID,
     name: 'tags',
     type: FieldMetadataType.ARRAY,
+    objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
+  }),
+  getFlatFieldMetadataMock({
+    id: WORKSPACE_MEMBER_ID_FIELD_ID,
+    universalIdentifier: WORKSPACE_MEMBER_ID_FIELD_ID,
+    name: 'id',
+    type: FieldMetadataType.UUID,
     objectMetadataId: WORKSPACE_MEMBER_OBJECT_ID,
   }),
   buildOwnerMorphField({ id: OWNER_MORPH_ID, name: 'owner' }),
@@ -639,6 +647,34 @@ describe('buildRecordFilterForRule with access group member values', () => {
         memberFieldValues: { [`${WORKSPACE_MEMBER_TEAM_FIELD_ID}:`]: ['OPEN'] },
       }),
     ).toEqual({ status: { in: ['OPEN'] } });
+  });
+
+  it('should compare a relation field to the id of the member', () => {
+    expect(
+      buildRecordFilterForRule({
+        isRelationHopEnabled: false,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        rowLevelPermissionRule: {
+          predicates: [
+            buildPredicate('predicate-relation-member-id', USER_ROLE_ID, {
+              fieldMetadataId: OWNER_COMPANY_FIELD_ID,
+              operand: RowLevelPermissionPredicateOperand.IS,
+              workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_ID_FIELD_ID,
+            }),
+          ],
+          predicateGroups: [],
+        },
+        memberFieldValues: {
+          [`${WORKSPACE_MEMBER_ID_FIELD_ID}:`]: OWNER_RECORD_ID,
+        },
+      }),
+    ).toEqual({
+      or: [
+        { ownerCompanyId: { in: [OWNER_RECORD_ID] } },
+        { ownerPersonId: { in: [OWNER_RECORD_ID] } },
+      ],
+    });
   });
 
   it('should match nothing for a field compared to a member field of another type', () => {
