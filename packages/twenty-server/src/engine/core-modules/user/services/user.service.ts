@@ -10,14 +10,7 @@ import {
   isWorkspaceProvisioned,
   WorkspaceActivationStatus,
 } from 'twenty-shared/workspace';
-import {
-  type EntityManager,
-  type QueryRunner,
-  In,
-  IsNull,
-  Not,
-  Repository,
-} from 'typeorm';
+import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import {
@@ -39,6 +32,7 @@ import {
   UpdateWorkspaceMemberEmailJob,
   UpdateWorkspaceMemberEmailJobData,
 } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
+import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserExceptionCode } from 'src/engine/core-modules/user/user.exception';
@@ -83,6 +77,7 @@ export class UserService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly serverAdminLockService: ServerAdminLockService,
   ) {}
 
   async refreshWorkspaceIfPendingOrOngoingCreation<
@@ -273,15 +268,16 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await this.assertIsNotLastServerAdminOrThrow(userId);
+    await this.removeUserKeepingAServerAdmin(user, async () => {
+      for (const userWorkspace of user.userWorkspaces) {
+        await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+          userWorkspace,
+        );
+      }
 
-    for (const userWorkspace of user.userWorkspaces) {
-      await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
-        userWorkspace,
-      );
-    }
-
-    await this.softDeleteUser(userId);
+      await this.userRepository.softDelete({ id: userId });
+      await this.coreEntityCacheService.invalidate('user', userId);
+    });
 
     return await this.userRepository.findOne({
       where: {
@@ -317,61 +313,58 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
-    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+    if (user.userWorkspaces.length > 1) {
+      await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+        userWorkspace,
+        actingUserWorkspaceId,
+      );
 
-    if (isLastUserWorkspace) {
-      await this.assertIsNotLastServerAdminOrThrow(userId);
+      return userWorkspace;
     }
 
-    await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
-      userWorkspace,
-      actingUserWorkspaceId,
-    );
+    await this.removeUserKeepingAServerAdmin(user, async () => {
+      await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+        userWorkspace,
+        actingUserWorkspaceId,
+      );
 
-    if (isLastUserWorkspace) {
-      await this.softDeleteUser(userId);
-    }
+      await this.userRepository.softDelete(userId);
+      await this.coreEntityCacheService.invalidate('user', userId);
+    });
 
     return userWorkspace;
   }
 
-  private async assertIsNotLastServerAdminOrThrow(userId: string) {
-    await this.userRepository.manager.transaction((manager) =>
-      this.lockServerAdminsAndAssertIsNotLastOrThrow(userId, manager),
-    );
-  }
-
-  private async softDeleteUser(userId: string) {
-    await this.userRepository.manager.transaction(async (manager) => {
-      await this.lockServerAdminsAndAssertIsNotLastOrThrow(userId, manager);
-      await manager.softDelete(UserEntity, { id: userId });
-    });
-
-    await this.coreEntityCacheService.invalidate('user', userId);
-  }
-
-  private async lockServerAdminsAndAssertIsNotLastOrThrow(
-    userId: string,
-    manager: EntityManager,
+  private async removeUserKeepingAServerAdmin(
+    user: UserEntity,
+    removeUser: () => Promise<void>,
   ) {
-    const serverAdmins = await manager.find(UserEntity, {
-      select: { id: true },
-      where: { canAccessFullAdminPanel: true },
-      lock: { mode: 'pessimistic_write' },
-    });
+    if (!user.canAccessFullAdminPanel) {
+      await removeUser();
 
-    const isLastServerAdmin =
-      serverAdmins.length === 1 && serverAdmins[0].id === userId;
-
-    if (!isLastServerAdmin) {
       return;
     }
 
-    const hasOtherUsers = await manager.exists(UserEntity, {
+    await this.serverAdminLockService.runExclusively(async () => {
+      await this.assertIsNotLastServerAdminOrThrow(user.id);
+      await removeUser();
+    });
+  }
+
+  private async assertIsNotLastServerAdminOrThrow(userId: string) {
+    const hasOtherServerAdmin = await this.userRepository.exists({
+      where: { id: Not(userId), canAccessFullAdminPanel: true },
+    });
+
+    if (hasOtherServerAdmin) {
+      return;
+    }
+
+    const hasOtherUser = await this.userRepository.exists({
       where: { id: Not(userId) },
     });
 
-    if (!hasOtherUsers) {
+    if (!hasOtherUser) {
       return;
     }
 

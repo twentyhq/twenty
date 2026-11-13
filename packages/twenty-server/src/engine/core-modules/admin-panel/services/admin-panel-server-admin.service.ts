@@ -18,6 +18,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
@@ -33,6 +34,7 @@ export class AdminPanelServerAdminService {
     private readonly i18nService: I18nService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly serverAdminLockService: ServerAdminLockService,
   ) {}
 
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
@@ -104,29 +106,36 @@ export class AdminPanelServerAdminService {
     targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
     targetUser.canImpersonate = nextCanImpersonate;
 
-    await this.userRepository.manager.transaction(async (manager) => {
-      if (isRevokingFullAdmin) {
-        const lockedFullAdmins = await manager.find(UserEntity, {
-          where: { canAccessFullAdminPanel: true },
-          lock: { mode: 'pessimistic_write' },
-        });
+    const saveTargetUser = () =>
+      this.userRepository.manager.transaction(async (manager) => {
+        if (isRevokingFullAdmin) {
+          const lockedFullAdmins = await manager.find(UserEntity, {
+            where: { canAccessFullAdminPanel: true },
+            lock: { mode: 'pessimistic_write' },
+          });
 
-        const otherFullAdmins = lockedFullAdmins.filter(
-          (admin) => admin.id !== targetUserId,
-        );
-
-        if (otherFullAdmins.length === 0) {
-          throw new UserInputError(
-            'You cannot revoke admin panel access from the last server administrator.',
-            {
-              userFriendlyMessage: msg`You cannot revoke admin panel access from the last server administrator.`,
-            },
+          const otherFullAdmins = lockedFullAdmins.filter(
+            (admin) => admin.id !== targetUserId,
           );
-        }
-      }
 
-      await manager.save(UserEntity, targetUser);
-    });
+          if (otherFullAdmins.length === 0) {
+            throw new UserInputError(
+              'You cannot revoke admin panel access from the last server administrator.',
+              {
+                userFriendlyMessage: msg`You cannot revoke admin panel access from the last server administrator.`,
+              },
+            );
+          }
+        }
+
+        await manager.save(UserEntity, targetUser);
+      });
+
+    if (isRevokingFullAdmin) {
+      await this.serverAdminLockService.runExclusively(saveTargetUser);
+    } else {
+      await saveTargetUser();
+    }
 
     await this.coreEntityCacheService.invalidate('user', targetUserId);
 
