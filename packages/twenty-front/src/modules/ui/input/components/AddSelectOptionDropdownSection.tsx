@@ -9,12 +9,14 @@ type AddSelectOptionDropdownSectionProps = {
   searchFilter: string;
   filteredOptions: SelectOption[];
   onAddSelectOption?: (optionName: string) => void;
+  isExistingOptionName?: (optionName: string) => boolean;
 };
 
 export const AddSelectOptionDropdownSection = ({
   searchFilter,
   filteredOptions,
   onAddSelectOption,
+  isExistingOptionName,
 }: AddSelectOptionDropdownSectionProps) => {
   const { t } = useLingui();
   const optionName = searchFilter.trim();
@@ -22,7 +24,8 @@ export const AddSelectOptionDropdownSection = ({
   if (
     !isDefined(onAddSelectOption) ||
     !isNonEmptyString(optionName) ||
-    isNonEmptyArray(filteredOptions)
+    isNonEmptyArray(filteredOptions) ||
+    isExistingOptionName?.(optionName) === true
   ) {
     return null;
   }

@@ -7,6 +7,7 @@ import { useFilteredSelectOptionsFromValidationRules } from '@/object-record/rec
 import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useSelectField';
 import { FieldInputDropdown } from '@/object-record/record-field/ui/meta-types/input/components/FieldInputDropdown';
 import { SelectInput } from '@/ui/input/components/SelectInput';
+import { isSelectOptionNameTaken } from '@/object-record/record-field/ui/utils/isSelectOptionNameTaken';
 import { useContext } from 'react';
 import { isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -77,6 +78,12 @@ export const SelectFieldInput = () => {
         }
         clearLabel={fieldDefinition.label}
         onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+        isExistingOptionName={(optionName) =>
+          isSelectOptionNameTaken({
+            options: fieldDefinition.metadata.options,
+            optionName,
+          })
+        }
       />
     </FieldInputDropdown>
   );
