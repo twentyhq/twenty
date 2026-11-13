@@ -283,12 +283,26 @@ describe('View scoping a one-to-many view field', () => {
       }),
       expectedMessage: 'must be on the relation target object',
     },
+    {
+      title: 'scopes a canonical view field',
+      isCanonical: true,
+      expectedMessage: 'Only a non-canonical view field can be scoped',
+    },
+    {
+      title: 'scopes a view field that does not list related records',
+      getFieldId: () => testContext.nextStepFieldId,
+      expectedMessage:
+        'Only a view field of a one-to-many relation can be scoped',
+    },
   ])(
     'rejects a scope view that $title',
-    async ({ getScopeViewOverrides, expectedMessage }) => {
-      const viewFieldId = await createDealViewField(
-        testContext.actionItemsFieldId,
-      );
+    async ({
+      getScopeViewOverrides = () => ({}),
+      getFieldId = () => testContext.actionItemsFieldId,
+      isCanonical = false,
+      expectedMessage,
+    }) => {
+      const viewFieldId = await createDealViewField(getFieldId(), isCanonical);
 
       const response = await createScopeView({
         ownerViewFieldId: viewFieldId,
@@ -304,43 +318,4 @@ describe('View scoping a one-to-many view field', () => {
       });
     },
   );
-
-  it('rejects scoping a canonical view field', async () => {
-    const viewFieldId = await createDealViewField(
-      testContext.actionItemsFieldId,
-      true,
-    );
-
-    const response = await createScopeView({
-      ownerViewFieldId: viewFieldId,
-      expectToFail: true,
-    });
-
-    expect(JSON.stringify(response.errors)).toContain(
-      'Only a non-canonical view field can be scoped',
-    );
-
-    await destroyOneViewField({
-      expectToFail: false,
-      input: { id: viewFieldId },
-    });
-  });
-
-  it('rejects scoping a view field that does not list related records', async () => {
-    const viewFieldId = await createDealViewField(testContext.nextStepFieldId);
-
-    const response = await createScopeView({
-      ownerViewFieldId: viewFieldId,
-      expectToFail: true,
-    });
-
-    expect(JSON.stringify(response.errors)).toContain(
-      'Only a view field of a one-to-many relation can be scoped',
-    );
-
-    await destroyOneViewField({
-      expectToFail: false,
-      input: { id: viewFieldId },
-    });
-  });
 });

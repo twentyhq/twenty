@@ -82,16 +82,6 @@ describe('validateFlatViewFieldSettings', () => {
     },
   );
 
-  it('accepts null settings on a canonical column', () => {
-    expect(
-      validateFlatViewFieldSettings({
-        settings: null,
-        isCanonical: true,
-        flatFieldMetadata: TEXT_FIELD,
-      }),
-    ).toEqual([]);
-  });
-
   it('rejects settings on a canonical column', () => {
     expect(
       validateFlatViewFieldSettings({

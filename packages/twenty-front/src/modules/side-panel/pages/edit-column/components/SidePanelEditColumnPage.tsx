@@ -2,18 +2,16 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
 import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
-import { useUpdateRecordTableColumnSettings } from '@/object-record/record-table/hooks/useUpdateRecordTableColumnSettings';
+import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import {
-  type EditColumnRequest,
-  editColumnRequestComponentState,
-} from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { SidePanelEditColumnScopeSection } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnScopeSection';
+import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { scopeViewFromOwnerViewFieldIdFamilySelector } from '@/views/states/selectors/scopeViewFromOwnerViewFieldIdFamilySelector';
@@ -26,7 +24,9 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { computeViewFieldSettings } from '@/views/utils/computeViewFieldSettings';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { parseRecordLimitInput } from '@/views/utils/parseRecordLimitInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -65,21 +65,28 @@ export const SidePanelEditColumnPage = () => {
     return null;
   }
 
-  return <SidePanelEditColumnPageContent request={editColumnRequest} />;
+  return (
+    <SidePanelEditColumnPageContent
+      recordTableId={editColumnRequest.recordTableId}
+      recordFieldId={editColumnRequest.recordFieldId}
+    />
+  );
 };
 
 const SidePanelEditColumnPageContent = ({
-  request,
+  recordTableId,
+  recordFieldId,
 }: {
-  request: EditColumnRequest;
+  recordTableId: string;
+  recordFieldId: string;
 }) => {
   const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
-    request.recordTableId,
+    recordTableId,
   );
 
   const recordField = currentRecordFields.find(
-    (currentRecordField) => currentRecordField.id === request.recordFieldId,
+    (currentRecordField) => currentRecordField.id === recordFieldId,
   );
 
   if (!isDefined(recordField) || isCanonicalRecordField(recordField)) {
@@ -87,15 +94,18 @@ const SidePanelEditColumnPageContent = ({
   }
 
   return (
-    <SidePanelEditColumnForm request={request} recordField={recordField} />
+    <SidePanelEditColumnForm
+      recordTableId={recordTableId}
+      recordField={recordField}
+    />
   );
 };
 
 const SidePanelEditColumnForm = ({
-  request: { recordTableId },
+  recordTableId,
   recordField,
 }: {
-  request: EditColumnRequest;
+  recordTableId: string;
   recordField: RecordField;
 }) => {
   const { t } = useLingui();
@@ -103,8 +113,8 @@ const SidePanelEditColumnForm = ({
   const { getIcon } = useIcons();
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
   const { goBackFromSidePanel } = useSidePanelHistory();
-  const { updateRecordTableColumnSettings } =
-    useUpdateRecordTableColumnSettings();
+  const { upsertRecordField } = useUpsertRecordField(recordTableId);
+  const { saveViewFields } = useSaveCurrentViewFields();
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
@@ -126,10 +136,10 @@ const SidePanelEditColumnForm = ({
 
   const relationObjectMetadataItem =
     isDefined(fieldMetadataItem) && isScopableRelationField(fieldMetadataItem)
-      ? objectMetadataItems.find(
-          ({ id }) =>
-            id === fieldMetadataItem.relation?.targetObjectMetadata.id,
-        )
+      ? findRelationTargetObjectMetadataItem({
+          fieldMetadataItem,
+          objectMetadataItems,
+        })
       : undefined;
 
   const [columnName, setColumnName] = useState(
@@ -148,14 +158,19 @@ const SidePanelEditColumnForm = ({
       return;
     }
 
-    const areSettingsSaved = await updateRecordTableColumnSettings({
-      recordTableId,
-      recordFieldId: recordField.id,
+    const updatedRecordField = {
+      ...recordField,
       settings: computeViewFieldSettings({
         label: columnName,
         recordLimit: isDefined(relationObjectMetadataItem) ? recordLimit : '',
       }),
-    });
+    };
+
+    upsertRecordField(updatedRecordField);
+
+    const areSettingsSaved = await saveViewFields([
+      mapRecordFieldToViewField(updatedRecordField),
+    ]);
 
     if (!areSettingsSaved) {
       return;
