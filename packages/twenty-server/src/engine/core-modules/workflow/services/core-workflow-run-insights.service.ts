@@ -8,10 +8,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
-import {
-  buildRunInsightsDailySeriesQuery,
-  buildRunInsightsWindowFirstLocalDay,
-} from 'src/engine/utils/run-insights/build-run-insights-daily-series-query.util';
+import { buildRunInsightsDailySeriesQuery } from 'src/engine/utils/run-insights/build-run-insights-daily-series-query.util';
+import { buildRunInsightsWindowFirstLocalDay } from 'src/engine/utils/run-insights/build-run-insights-window-first-local-day.util';
 import { RUN_INSIGHTS_WINDOW_IN_DAYS } from 'src/engine/utils/run-insights/run-insights-window-in-days.constant';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {

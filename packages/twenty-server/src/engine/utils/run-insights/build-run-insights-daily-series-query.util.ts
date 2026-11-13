@@ -1,18 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Placeholders are passed in so the query fits both named (:timeZone) and positional ($2) parameters
-type RunInsightsDailySeriesPlaceholders = {
-  timeZone: string;
-  lastDayOffset: string;
-  completedStatus: string;
-  failedStatus: string;
-};
-
-export const buildRunInsightsWindowFirstLocalDay = ({
-  timeZone,
-  lastDayOffset,
-}: Pick<RunInsightsDailySeriesPlaceholders, 'timeZone' | 'lastDayOffset'>) =>
-  `DATE_TRUNC('day', NOW() AT TIME ZONE ${timeZone}) - MAKE_INTERVAL(days => ${lastDayOffset}::int)`;
+import { buildRunInsightsWindowFirstLocalDay } from 'src/engine/utils/run-insights/build-run-insights-window-first-local-day.util';
+import { type RunInsightsDailySeriesPlaceholders } from 'src/engine/utils/run-insights/run-insights-daily-series-placeholders.type';
 
 export const buildRunInsightsDailySeriesQuery = ({
   runsSource,
