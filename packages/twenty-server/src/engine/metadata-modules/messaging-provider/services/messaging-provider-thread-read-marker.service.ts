@@ -4,13 +4,12 @@ import { type MarkAppThreadAsReadPayload } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
-import { findApplicationFlatLogicFunction } from 'src/engine/metadata-modules/logic-function/utils/find-application-flat-logic-function.util';
 import {
   MessagingProviderException,
   MessagingProviderExceptionCode,
 } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.exception';
 import { type MessagingProviderThreadReadMarker } from 'src/engine/metadata-modules/messaging-provider/types/messaging-provider-thread-read-marker.type';
-import { findMessagingProviderOnConnectionProvider } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-on-connection-provider.util';
+import { findMessagingProviderLogicFunction } from 'src/engine/metadata-modules/messaging-provider/utils/find-messaging-provider-logic-function.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -39,31 +38,24 @@ export class MessagingProviderThreadReadMarkerService {
       'flatLogicFunctionMaps',
     ]);
 
-    const messagingProvider = findMessagingProviderOnConnectionProvider({
-      flatMessagingProviderMaps,
-      flatConnectionProviderMaps,
-      messagingProviderUniversalIdentifier,
-      connectionProviderId,
-    });
+    const { messagingProvider, logicFunction } =
+      findMessagingProviderLogicFunction({
+        flatMessagingProviderMaps,
+        flatConnectionProviderMaps,
+        flatLogicFunctionMaps,
+        messagingProviderUniversalIdentifier,
+        connectionProviderId,
+        getLogicFunctionUniversalIdentifier: (provider) =>
+          provider.markThreadAsReadLogicFunctionUniversalIdentifier,
+      });
 
-    if (!isDefined(messagingProvider)) {
-      return null;
-    }
-
-    const markThreadAsReadLogicFunction = findApplicationFlatLogicFunction({
-      flatLogicFunctionMaps,
-      universalIdentifier:
-        messagingProvider.markThreadAsReadLogicFunctionUniversalIdentifier,
-      applicationId: messagingProvider.applicationId,
-    });
-
-    if (!isDefined(markThreadAsReadLogicFunction)) {
+    if (!isDefined(messagingProvider) || !isDefined(logicFunction)) {
       return null;
     }
 
     return {
       messagingProvider,
-      markThreadAsReadLogicFunctionId: markThreadAsReadLogicFunction.id,
+      markThreadAsReadLogicFunctionId: logicFunction.id,
     };
   }
 
