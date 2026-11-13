@@ -195,7 +195,7 @@ jobs:
     # Still runs when some languages failed to download, as the others were pushed
     if: ${{ !cancelled() && needs.pull_docs_translations.outputs.pushed == 'true' }}
     permissions: {}
-    uses: ./.github/workflows/i18n-open-pull-request.yaml
+    uses: ./.github/workflows/open-pull-request.yaml
     with:
       branch: i18n-docs
       title: 'i18n - docs translations'
