@@ -1,7 +1,11 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CalendarChannelSyncStage, FeatureFlagKey } from 'twenty-shared/types';
+import {
+  CalendarChannelSyncStage,
+  ConnectedAccountProvider,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, Repository } from 'typeorm';
 
@@ -21,6 +25,7 @@ import { CALENDAR_RECURRING_EVENT_WAKE_UP_OWNER_TYPE } from 'src/modules/calenda
 import { PAUSED_OR_FAILED_CALENDAR_CHANNEL_RECHECK_DELAY_MS } from 'src/modules/calendar/calendar-event-import-manager/constants/paused-or-failed-calendar-channel-recheck-delay-ms.constant';
 import { GoogleCalendarGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/services/google-calendar-get-events.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { getCalendarEventsToImportCacheKey } from 'src/modules/calendar/common/utils/get-calendar-events-to-import-cache-key.util';
 
 @Injectable()
 export class CalendarRecurringEventWakeUpService
@@ -90,7 +95,12 @@ export class CalendarRecurringEventWakeUpService
         workspaceId,
       );
 
-    if (!isDefined(calendarChannel) || !isRecurringEventHorizonEnabled) {
+    if (
+      !isDefined(calendarChannel) ||
+      calendarChannel.connectedAccount.provider !==
+        ConnectedAccountProvider.GOOGLE ||
+      !isRecurringEventHorizonEnabled
+    ) {
       await this.pendingWakeUpService.claim({
         workspaceId,
         wakeUpId: wakeUp.id,
@@ -200,7 +210,10 @@ export class CalendarRecurringEventWakeUpService
       return;
     }
 
-    const calendarEventIdsToImportCacheKey = `calendar-events-to-import:${workspaceId}:${calendarChannelId}`;
+    const calendarEventIdsToImportCacheKey = getCalendarEventsToImportCacheKey({
+      workspaceId,
+      calendarChannelId,
+    });
 
     await this.cacheStorage.setAdd(
       calendarEventIdsToImportCacheKey,

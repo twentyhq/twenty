@@ -22,6 +22,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { getCalendarEventsToImportCacheKey } from 'src/modules/calendar/common/utils/get-calendar-events-to-import-cache-key.util';
 
 @Injectable()
 export class CalendarFetchEventsService {
@@ -118,7 +119,11 @@ export class CalendarFetchEventsService {
             },
           );
 
-          const calendarEventIdsToImportCacheKey = `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`;
+          const calendarEventIdsToImportCacheKey =
+            getCalendarEventsToImportCacheKey({
+              workspaceId,
+              calendarChannelId: calendarChannel.id,
+            });
 
           if (calendarEventIds.length > 0) {
             await this.cacheStorage.setAdd(

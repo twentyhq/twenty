@@ -202,7 +202,7 @@ describe('Google calendar recurring event horizon (integration)', () => {
 
   afterAll(async () => {
     await setRecurringEventHorizonEnabled(false);
-    await channel?.cleanup().catch(() => undefined);
+    await channel?.cleanup();
   });
 
   it('imports every instance while the flag is off and removes the ones beyond 90 days once it is on', async () => {

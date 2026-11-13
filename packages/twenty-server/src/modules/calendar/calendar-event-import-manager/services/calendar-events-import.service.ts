@@ -33,6 +33,7 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { getCalendarEventsToImportCacheKey } from 'src/modules/calendar/common/utils/get-calendar-events-to-import-cache-key.util';
 
 @Injectable()
 export class CalendarEventsImportService {
@@ -70,7 +71,10 @@ export class CalendarEventsImportService {
       async () => {
         try {
           const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
-            `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
+            getCalendarEventsToImportCacheKey({
+              workspaceId,
+              calendarChannelId: calendarChannel.id,
+            }),
             CALENDAR_EVENT_IMPORT_BATCH_SIZE,
           );
 

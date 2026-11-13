@@ -12,6 +12,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CALENDAR_EVENT_WEBHOOK_SYNC_INLINE_IMPORT_MAX_EVENTS } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/constants/calendar-event-webhook-sync-inline-import-max-events.constant';
+import { getCalendarEventsToImportCacheKey } from 'src/modules/calendar/common/utils/get-calendar-events-to-import-cache-key.util';
 
 @Injectable()
 export class CalendarEventWebhookSyncService {
@@ -112,7 +113,7 @@ export class CalendarEventWebhookSyncService {
     workspaceId: string;
   }): Promise<void> {
     const calendarEventsToImportCount = await this.cacheStorage.getSetLength(
-      `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
+      getCalendarEventsToImportCacheKey({ workspaceId, calendarChannelId }),
     );
 
     if (calendarEventsToImportCount === 0) {
