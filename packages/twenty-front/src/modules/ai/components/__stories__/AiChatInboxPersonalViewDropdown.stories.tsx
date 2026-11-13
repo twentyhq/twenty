@@ -5,12 +5,12 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -129,10 +129,10 @@ const meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    setAgentChatShownChannelView(jotaiStore, null);
+    setAgentChatSelectedChannelView(jotaiStore, null);
     jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
@@ -214,7 +214,7 @@ export const SwitchViews: Story = {
       jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
     });
 
     await userEvent.click(trigger);
@@ -245,7 +245,7 @@ export const FromSnoozed: Story = {
   beforeEach: () => {
     jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
     });
   },
   play: async ({ canvasElement }) => {
@@ -264,7 +264,7 @@ export const FromSnoozed: Story = {
       jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
-      presetFilter: AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS,
     });
   },
 };

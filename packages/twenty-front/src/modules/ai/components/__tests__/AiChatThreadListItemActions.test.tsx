@@ -6,7 +6,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
@@ -143,7 +143,7 @@ const renderThread = async ({
         agentChatChannelsState.atom,
         isDefined(channelStatus) ? [SALES_CHANNEL] : [],
       );
-      setAgentChatShownChannelView(
+      setAgentChatSelectedChannelView(
         store,
         isDefined(channelStatus)
           ? {

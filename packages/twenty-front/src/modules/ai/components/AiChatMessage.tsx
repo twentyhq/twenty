@@ -64,7 +64,14 @@ const StyledSender = styled.div`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledMessageContainer = styled.div<{ isUser?: boolean }>`
+const StyledMessageContainer = styled.div<{
+  isUser?: boolean;
+  isRightAligned: boolean;
+}>`
+  align-items: ${({ isRightAligned }) =>
+    isRightAligned ? 'flex-end' : 'flex-start'};
+  display: ${({ isUser }) => (isUser ? 'flex' : 'block')};
+  flex-direction: column;
   max-width: ${({ isUser }) =>
     isUser ? `min(100%, ${AI_CHAT_USER_MESSAGE_MAX_WIDTH})` : '100%'};
   min-width: 0;
@@ -262,7 +269,7 @@ export const AiChatMessage = ({
             })}
           </StyledSender>
         )}
-        <StyledMessageContainer isUser={isUser}>
+        <StyledMessageContainer isUser={isUser} isRightAligned={isRightAligned}>
           {isDefined(messageQuote) && (
             <AiChatMessageReplyQuote
               replyMessageId={messageId}

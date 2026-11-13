@@ -10,8 +10,8 @@ import { AiChatInboxChannelViewDropdown } from '@/ai/components/AiChatInboxChann
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
@@ -56,7 +56,7 @@ const StyledHeader = styled.div`
 
 const ChannelViewStory = () => {
   const { pathname } = useLocation();
-  const channelView = useAtomStateValue(agentChatShownChannelViewSelector);
+  const channelView = useAtomStateValue(agentChatSelectedChannelViewSelector);
   const selectedRecordIds = useAtomComponentSelectorValue(
     selectedRecordIdsComponentSelector,
   );
@@ -124,7 +124,7 @@ const meta = {
         doneCount: 0,
       },
     });
-    setAgentChatShownChannelView(jotaiStore, args.channelView);
+    setAgentChatSelectedChannelView(jotaiStore, args.channelView);
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
         instanceId: AI_CHAT_INBOX_INSTANCE_ID,
@@ -141,7 +141,7 @@ const meta = {
     );
 
     return () => {
-      setAgentChatShownChannelView(jotaiStore, null);
+      setAgentChatSelectedChannelView(jotaiStore, null);
     };
   },
 } satisfies Meta<typeof AiChatInboxChannelViewDropdown>;
@@ -206,7 +206,7 @@ export const Open: Story = {
       canvas.getByRole('region', { name: 'Inbox header' }),
     ).toHaveAttribute('data-pathname', '/inbox');
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       filter: AgentChatChannelThreadFilter.NEEDS_INPUT,
@@ -226,7 +226,7 @@ export const Open: Story = {
     );
     await expect(canvas.getByText('Assigned to me')).toBeVisible();
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       assignment: AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME,
@@ -240,7 +240,7 @@ export const Open: Story = {
     );
     await expect(canvas.getByText('Assigned')).toBeVisible();
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       assignment: AgentChatChannelAssignmentFilter.ASSIGNED,
@@ -254,7 +254,7 @@ export const Open: Story = {
     );
     await expect(canvas.getByText('Unassigned')).toBeVisible();
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       assignment: AgentChatChannelAssignmentFilter.UNASSIGNED,
@@ -290,7 +290,7 @@ export const Snoozed: Story = {
     );
     await expect(canvas.getByText('Needs input')).toBeVisible();
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       filter: AgentChatChannelThreadFilter.NEEDS_INPUT,

@@ -10,7 +10,7 @@ import { AiChatInboxTriageCommandMenuItems } from '@/ai/components/AiChatInboxTr
 import { AiChatInboxPersonalViewDropdown } from '@/ai/components/AiChatInboxPersonalViewDropdown';
 import { AiChatInboxViewHeading } from '@/ai/components/AiChatInboxViewHeading';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
@@ -29,8 +29,8 @@ export const AiChatInboxListHeader = ({
   isSecondaryPaneShown,
 }: AiChatInboxListHeaderProps) => {
   const { t } = useLingui();
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const agentChatSelectedChannelView = useAtomStateValue(
+    agentChatSelectedChannelViewSelector,
   );
   const isMobile = useIsMobile();
   const { switchToNewChat } = useSwitchToNewAiChat({
@@ -43,8 +43,10 @@ export const AiChatInboxListHeader = ({
     switchToNewChat();
   };
 
-  const viewDropdown = isDefined(agentChatShownChannelView) ? (
-    <AiChatInboxChannelViewDropdown channelView={agentChatShownChannelView} />
+  const viewDropdown = isDefined(agentChatSelectedChannelView) ? (
+    <AiChatInboxChannelViewDropdown
+      channelView={agentChatSelectedChannelView}
+    />
   ) : (
     <AiChatInboxPersonalViewDropdown />
   );
