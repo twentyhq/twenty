@@ -5,6 +5,10 @@ import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/Halfton
 // The partner hero halftone: stone dashes over the photo, going blue (#4a38f5)
 // under the cursor. The image is contained at previewDistance 3.2, and the
 // hover radii grow from the authored 6.1 framing as the image fills the frame.
+// Program pages swap the photo and keep the same halftone and blue hover.
+export const CREATORS_HERO_IMAGE_URL =
+  '/images/partners/hero/creators-hero.webp';
+
 export const PARTNER_HERO_VISUAL: Pick<
   HalftoneImageBackdropProps,
   'imageUrl' | 'settings'

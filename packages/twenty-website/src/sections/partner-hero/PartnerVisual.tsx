@@ -21,11 +21,15 @@ const VisualFrame = styled.div`
   }
 `;
 
-export function PartnerVisual() {
+export function PartnerVisual({
+  imageUrl = PARTNER_HERO_VISUAL.imageUrl,
+}: {
+  imageUrl?: string;
+}) {
   return (
     <VisualFrame data-illustration="partner-hero">
       <HalftoneImageBackdrop
-        imageUrl={PARTNER_HERO_VISUAL.imageUrl}
+        imageUrl={imageUrl}
         priority
         settings={PARTNER_HERO_VISUAL.settings}
       />

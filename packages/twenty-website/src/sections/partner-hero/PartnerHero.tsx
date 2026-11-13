@@ -69,10 +69,16 @@ type PartnerHeroProps = {
   heading: MessageDescriptor;
   body: MessageDescriptor;
   actions: ReactNode;
+  visualImageUrl?: string;
 };
 
 // Program pages (integrators, creators) share the /partners hero composition.
-export function PartnerHero({ heading, body, actions }: PartnerHeroProps) {
+export function PartnerHero({
+  heading,
+  body,
+  actions,
+  visualImageUrl,
+}: PartnerHeroProps) {
   const i18n = getServerI18n();
 
   return (
@@ -97,7 +103,7 @@ export function PartnerHero({ heading, body, actions }: PartnerHeroProps) {
         <CtaRow>{actions}</CtaRow>
       </IntroStack>
       <VisualStage>
-        <PartnerVisual />
+        <PartnerVisual imageUrl={visualImageUrl} />
       </VisualStage>
     </SectionShell>
   );
