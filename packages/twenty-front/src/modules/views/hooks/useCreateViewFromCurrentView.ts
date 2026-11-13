@@ -22,6 +22,7 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -178,6 +179,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           size: viewField.size,
           aggregateOperation: viewField.aggregateOperation,
           viewFieldGroupId: viewField.viewFieldGroupId,
+          settings: getViewFieldSettingsInput(viewField.settings),
+          relationTargetFieldMetadataId:
+            viewField.relationTargetFieldMetadataId,
           viewId: newViewId,
         })),
       });

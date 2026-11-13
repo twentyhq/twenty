@@ -115,11 +115,14 @@ export const RecordTableAggregateFooterCell = ({
     return null;
   }
 
+  // A total over a lookup counts a related record once per row that links to it
+  const isLookupColumn = isDefined(recordField.relationTargetFieldMetadataId);
+
   return (
     <StyledColumnFooterCell
       columnWidth={recordField.size + 1}
       isFirstCell={isFirstCell}
-      isReadOnly={isFooterReadOnly}
+      isReadOnly={isFooterReadOnly || isLookupColumn}
       className={cx(
         'footer-cell',
         getRecordTableColumnFieldWidthClassName(columnIndex),
@@ -128,7 +131,7 @@ export const RecordTableAggregateFooterCell = ({
       <StyledColumnFootContainer
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
-        {isFooterReadOnly ? (
+        {isLookupColumn ? null : isFooterReadOnly ? (
           hasAggregateOperationForViewField ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}

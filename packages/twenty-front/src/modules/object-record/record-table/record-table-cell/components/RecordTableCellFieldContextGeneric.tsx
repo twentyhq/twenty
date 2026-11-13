@@ -1,6 +1,8 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
 import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
 import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -68,6 +70,21 @@ export const RecordTableCellFieldContextGeneric = ({
 
   if (!isDefined(fieldMetadataItem)) {
     return null;
+  }
+
+  if (
+    isColumnSettingsEnabled &&
+    isDefined(recordField.relationTargetFieldMetadataId) &&
+    isManyToOneRelationField(fieldMetadataItem)
+  ) {
+    return (
+      <RecordTableCellLookupFieldContext
+        recordField={recordField}
+        fieldMetadataItem={fieldMetadataItem}
+      >
+        {children}
+      </RecordTableCellLookupFieldContext>
+    );
   }
 
   let hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({

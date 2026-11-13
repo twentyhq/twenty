@@ -4,6 +4,7 @@ import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMet
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -106,10 +107,15 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
+  const filterableAndSortable = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
+
+  // Filter and sort would act on the relation itself, not on the looked-up field
+  const isLookupColumn = isDefined(recordField.relationTargetFieldMetadataId);
+  const isFilterable = filterableAndSortable.isFilterable && !isLookupColumn;
+  const isSortable = filterableAndSortable.isSortable && !isLookupColumn;
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
@@ -124,7 +130,8 @@ export const RecordTableColumnHeadDropdownMenu = ({
     canConfigureColumns &&
     isCanonical &&
     isDefined(fieldMetadataItem) &&
-    isScopableRelationField(fieldMetadataItem);
+    (isScopableRelationField(fieldMetadataItem) ||
+      isManyToOneRelationField(fieldMetadataItem));
   const canEditColumn = canConfigureColumns && !isCanonical;
   const canDeleteColumn = canPersistChanges && !isCanonical;
   const canHide = isLabelIdentifier !== true && isCanonical;

@@ -1,6 +1,9 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/useSaveColumnScope';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { findRecordFieldLookupTargetFieldMetadataItem } from '@/object-record/record-column-lookup/utils/findRecordFieldLookupTargetFieldMetadataItem';
+import { getRecordFieldColumnLabel } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnLabel';
 import { isScopableRelationField } from '@/object-record/record-column-scope/utils/isScopableRelationField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
@@ -10,6 +13,7 @@ import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/uti
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { SidePanelEditColumnLookupSelect } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnLookupSelect';
 import { SidePanelEditColumnScopeSection } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnScopeSection';
 import { editColumnRequestComponentState } from '@/side-panel/pages/edit-column/states/editColumnRequestComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -142,9 +146,19 @@ const SidePanelEditColumnForm = ({
         })
       : undefined;
 
+  const lookupRelationObjectMetadataItem =
+    isDefined(fieldMetadataItem) && isManyToOneRelationField(fieldMetadataItem)
+      ? findRelationTargetObjectMetadataItem({
+          fieldMetadataItem,
+          objectMetadataItems,
+        })
+      : undefined;
+
   const [columnName, setColumnName] = useState(
     recordField.settings?.label ?? '',
   );
+  const [relationTargetFieldMetadataId, setRelationTargetFieldMetadataId] =
+    useState(recordField.relationTargetFieldMetadataId ?? null);
   const [recordLimit, setRecordLimit] = useState(
     recordField.settings?.recordLimit?.toString() ?? '',
   );
@@ -160,6 +174,7 @@ const SidePanelEditColumnForm = ({
 
     const updatedRecordField = {
       ...recordField,
+      relationTargetFieldMetadataId,
       settings: computeViewFieldSettings({
         label: columnName,
         recordLimit: isDefined(relationObjectMetadataItem) ? recordLimit : '',
@@ -201,6 +216,18 @@ const SidePanelEditColumnForm = ({
 
   const FieldIcon = getIcon(fieldMetadataItem?.icon);
 
+  const columnNamePlaceholder = getRecordFieldColumnLabel({
+    recordField: {},
+    fieldMetadataItem,
+    lookupTargetFieldMetadataItem: isDefined(fieldMetadataItem)
+      ? findRecordFieldLookupTargetFieldMetadataItem({
+          recordField: { relationTargetFieldMetadataId },
+          fieldMetadataItem,
+          objectMetadataItems,
+        })
+      : undefined,
+  });
+
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
       <PageCardHeader
@@ -217,11 +244,20 @@ const SidePanelEditColumnForm = ({
         }
       />
       <StyledContent>
+        {isDefined(fieldMetadataItem) &&
+          isDefined(lookupRelationObjectMetadataItem) && (
+            <SidePanelEditColumnLookupSelect
+              fieldMetadataItem={fieldMetadataItem}
+              relationObjectMetadataItem={lookupRelationObjectMetadataItem}
+              relationTargetFieldMetadataId={relationTargetFieldMetadataId}
+              onChange={setRelationTargetFieldMetadataId}
+            />
+          )}
         <TextInput
           label={t`Column name`}
           value={columnName}
           onChange={setColumnName}
-          placeholder={fieldMetadataItem?.label}
+          placeholder={columnNamePlaceholder}
           fullWidth
         />
         {isDefined(relationObjectMetadataItem) && (
