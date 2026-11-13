@@ -22,7 +22,7 @@ export const computeFieldMetadataOptionOperationsForFieldMetadatas = ({
   existingFlatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   applicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier?: string;
-  // For callers whose field targets list only their own options; a deleted field still drops them all.
+  // Set when field targets list only this application's options, so other applications' rows survive.
   shouldLeaveOtherApplicationOptions?: boolean;
 }): FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> => {
   const operations: FlatEntityToCreateDeleteUpdate<'fieldMetadataOption'> = {

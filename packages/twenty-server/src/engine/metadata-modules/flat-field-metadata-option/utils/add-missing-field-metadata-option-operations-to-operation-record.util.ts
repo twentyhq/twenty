@@ -5,7 +5,7 @@ import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-m
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 
-// Pre-option-row upgrade commands and app syncs that leave options unchanged send field operations only.
+// Upgrade commands written before option rows, and app syncs that leave options unchanged, pass field operations without option operations: derive those.
 export const addMissingFieldMetadataOptionOperationsToOperationRecord = ({
   allFlatEntityOperationRecordByMetadataName,
   existingFlatFieldMetadataOptionMaps,
