@@ -1558,6 +1558,13 @@ type CompleteApplicationFileUploadsResult {
   files: [File!]!
 }
 
+input ConnectApplicationWithApiKeyInput {
+  apiKey: String!
+  applicationId: UUID!
+  providerName: String!
+  reconnectingConnectedAccountId: UUID
+}
+
 type ConnectedAccountPublicDTO {
   applicationId: UUID
   archivedAt: DateTime
@@ -1956,6 +1963,7 @@ input CreateViewFieldInput {
   aggregateOperation: AggregateOperations
   fieldMetadataId: UUID!
   id: UUID
+  isCanonical: Boolean = true
   isVisible: Boolean = true
   position: Float = 0
   size: Float = 0
@@ -2503,10 +2511,12 @@ enum FeatureFlagKey {
   IS_AI_DATA_POLICY_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_GETTING_STARTED_ENABLED
   IS_HTTP_EGRESS_LAMBDA_ENABLED
+  IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
   IS_PERMISSION_TABLES_ENABLED
@@ -3554,6 +3564,7 @@ type Mutation {
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
   completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
+  connectApplicationWithApiKey(input: ConnectApplicationWithApiKeyInput!): UUID!
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
@@ -5898,6 +5909,7 @@ input UpdateWorkspaceInput {
   isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
+  isInternalImportEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean
   isMicrosoftAuthBypassEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
@@ -6406,6 +6418,7 @@ type ViewField {
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
+  isCanonical: Boolean!
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
@@ -6693,7 +6706,8 @@ type Workspace {
   isCustomDomainEnabled: Boolean!
   isGoogleAuthBypassEnabled: Boolean!
   isGoogleAuthEnabled: Boolean!
-  isInternalMessagesImportEnabled: Boolean!
+  isInternalImportEnabled: Boolean!
+  isInternalMessagesImportEnabled: Boolean! @deprecated(reason: "Use isInternalImportEnabled")
   isMicrosoftAuthBypassEnabled: Boolean!
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!

@@ -1,2 +1,2 @@
 export const ADD_START_CONVERSATION_LOGIC_FUNCTION_TO_MESSAGING_PROVIDER_UPGRADE_COMMAND_NAME =
-  '2.59.0_AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand_1794570409813';
+  '2.59.0_AddStartConversationLogicFunctionToMessagingProviderFastInstanceCommand_1794594645988';

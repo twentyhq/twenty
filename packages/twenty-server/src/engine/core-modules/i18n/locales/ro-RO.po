@@ -277,6 +277,11 @@ msgstr "Un link urmărit într-o campanie"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "Un e-mail de marketing poate fi trimis unui singur destinatar odată, astfel încât fiecare persoană primește propriul link de dezabonare."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "Un mesaj are nevoie de text sau de cel puțin un atașament."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -318,6 +323,11 @@ msgstr "Un widget de relație îmbricată trebuie să folosească aspectul de ta
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
 msgstr "A apărut o eroare de rețea la accesarea calendarului."
+
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr ""
 
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1207,6 +1217,11 @@ msgstr "Un export rulează deja în acest spațiu de lucru. Vă rugăm să aște
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "An external service took too long to respond."
 msgstr "Un serviciu extern a răspuns prea târziu."
+
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr ""
 
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
@@ -2716,6 +2731,11 @@ msgstr "Nu se poate modifica predicatul pentru a-i schimba rolul din {existingRo
 #: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Nu se poate elimina ultimul administrator din spațiul de lucru."
+
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr ""
 
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
@@ -5085,6 +5105,11 @@ msgstr "Îmbogățire"
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "Introduceți un nume cu între 1 și {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} caractere și opțiuni de aspect acceptate pentru asistent."
 
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr ""
+
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter an HTTPS origin without a path or wildcard"
@@ -5353,6 +5378,11 @@ msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "ID extern al înregistrării"
 
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr ""
+
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -5488,6 +5518,11 @@ msgstr "Configurația funcționalității nu a fost găsită."
 msgid "February"
 msgstr "Februarie"
 
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
+
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
@@ -5497,11 +5532,6 @@ msgstr "Câmpul \"{fieldName}\" nu aparține obiectului accesat prin relația \"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Câmpul \"{fieldName}\" nu este o relație de tip many-to-one, nu are nicio coloană de îmbinare cu care să fie comparat"
-
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "Câmpul \"{fieldName}\" acceptă o singură valoare cu operatorul \"{operand}\", nu poate fi comparat cu lista deținută de câmpul de membru al spațiului de lucru \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -8484,7 +8514,7 @@ msgstr "Marchează ca necitit"
 #. js-lingui-id: pnNfW0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
-msgstr ""
+msgstr "Funcția logică de marcare a firului ca citit \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" nu a fost găsită în această aplicație"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8677,6 +8707,11 @@ msgstr "Mesaj"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "Mesaj"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "Atașamentele mesajului nu au putut fi salvate. Vă rugăm să reîncercați."
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9522,6 +9557,11 @@ msgstr "Nu au fost specificați destinatari valizi"
 msgid "No verified sending domain matches this from address."
 msgstr "Niciun domeniu de trimitere verificat nu corespunde acestei adrese a expeditorului."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr ""
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -10013,6 +10053,11 @@ msgstr "Doar o campanie programată sau în curs de trimitere poate fi anulată.
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Numai un administrator de server poate gestiona codurile de recuperare pentru acest membru."
 
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr ""
+
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Only administrators can impersonate users with admin privileges."
@@ -10055,7 +10100,7 @@ msgid "Only the application that owns this agent can change its triggers"
 msgstr "Numai aplicația care deține acest agent îi poate modifica declanșatoarele"
 
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Doar persoana care a creat acest flux de lucru poate schimba cine îl vede"
 
@@ -14088,7 +14133,7 @@ msgstr "Funcția logică ce inițiază conexiunea nu a fost găsită."
 #. js-lingui-id: F49vqQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider marks threads as read with was not found in its application."
-msgstr ""
+msgstr "Funcția logică cu care acest furnizor de mesagerie marchează firele ca citite nu a fost găsită în aplicația sa."
 
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
@@ -14823,10 +14868,10 @@ msgstr "Această funcționalitate este gratuită pentru până la {MAX_SEATS_WIT
 msgid "This feature is not enabled."
 msgstr "Această funcționalitate nu este activată."
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "Acest câmp nu poate fi comparat cu o listă de valori"
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17076,7 +17121,7 @@ msgstr "Nu am putut identifica contul pe care l-ați autorizat. Încercați din 
 #. js-lingui-id: tNDg4g
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not mark this conversation as read."
-msgstr ""
+msgstr "Nu am putut marca această conversație ca citită."
 
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
@@ -17087,6 +17132,11 @@ msgstr "Nu am putut trimite mesajul dvs. Vă rugăm să încercați din nou."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "Nu am putut iniția conexiunea. Vă rugăm să încercați din nou."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr ""
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

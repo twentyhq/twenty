@@ -7,27 +7,27 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 export const buildAgentRunTurnCreatedBy = ({
-  actorContext,
+  actorMetadata,
   callerApplication,
   authContext,
 }: {
-  actorContext: ActorMetadata | undefined;
+  actorMetadata: ActorMetadata | undefined;
   callerApplication: FlatApplication | undefined;
   authContext: WorkspaceAuthContext;
 }): ActorMetadata => {
-  if (!isDefined(actorContext)) {
+  if (!isDefined(actorMetadata)) {
     return isDefined(callerApplication)
       ? buildCreatedByFromApplication({ application: callerApplication })
       : buildActorMetadataFromAuthContext(authContext);
   }
 
   if (!isDefined(callerApplication)) {
-    return actorContext;
+    return actorMetadata;
   }
 
   // the application is kept on a turn it runs as a member, so it can read that turn back
   return {
-    ...actorContext,
-    context: { ...actorContext.context, applicationId: callerApplication.id },
+    ...actorMetadata,
+    context: { ...actorMetadata.context, applicationId: callerApplication.id },
   };
 };

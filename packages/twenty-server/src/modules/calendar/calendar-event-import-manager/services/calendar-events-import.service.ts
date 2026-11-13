@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -46,6 +49,8 @@ export class CalendarEventsImportService {
     private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workspaceInternalImportService: WorkspaceInternalImportService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async processCalendarEventsImport(
@@ -127,15 +132,29 @@ export class CalendarEventsImportService {
             );
           }
 
+          const isInternalImportEnabled =
+            await this.workspaceInternalImportService.isInternalImportEnabled({
+              workspaceId,
+            });
+
+          const isInternalEventsFilterEnabled =
+            await this.featureFlagService.isFeatureEnabled(
+              FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED,
+              workspaceId,
+            );
+
           const { filteredEvents, eventsToRemove } =
-            filterEventsAndReturnEventsToRemove(
-              [calendarChannel.handle, ...connectedAccount.handleAliases],
-              calendarEvents,
-              blocklist
+            filterEventsAndReturnEventsToRemove({
+              primaryHandle: calendarChannel.handle,
+              handleAliases: connectedAccount.handleAliases,
+              events: calendarEvents,
+              blocklist: blocklist
                 .map((blocklistItem) => blocklistItem.handle)
                 .filter(isDefined),
-              calendarChannel.excludePrivateEvents,
-            );
+              excludePrivateEvents: calendarChannel.excludePrivateEvents,
+              isInternalEventsFilterEnabled,
+              isInternalMessagesImportEnabled: isInternalImportEnabled,
+            });
 
           const eventExternalIdsToRemove = eventsToRemove.map(
             (event) => event.id,

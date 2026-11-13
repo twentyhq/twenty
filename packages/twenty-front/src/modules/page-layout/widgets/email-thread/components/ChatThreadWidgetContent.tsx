@@ -108,6 +108,7 @@ export const ChatThreadWidgetContent = ({
           <ChatThreadDisconnectedBanner
             applicationId={connectedAccount.applicationId}
             connectionProviderName={connectionProvider.name}
+            connectionProviderType={connectionProvider.type}
             channelName={connectionProvider.displayName}
             connectedAccountId={connectedAccount.id}
             canReconnect={canReconnect}

@@ -1,8 +1,8 @@
-import { AgentChatThreadListFetchMoreTrigger } from '@/ai/components/AgentChatThreadListFetchMoreTrigger';
+import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -16,16 +16,14 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useAgentChatThreadList(
-    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
-  );
+  const { threads } = useInboxThreadList(INBOX_RECENT_THREAD_LIST_SOURCE);
 
   // Earlier pages can hold only chats filtered out of this list, so an empty
   // list keeps fetching until it finds some or runs out
   if (threads.length === 0) {
     return (
-      <AgentChatThreadListFetchMoreTrigger
-        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
       />
     );
   }
@@ -39,8 +37,8 @@ export const MobileHomeAiChatSection = () => {
         currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
-      <AgentChatThreadListFetchMoreTrigger
-        source={AGENT_CHAT_RECENT_THREAD_LIST_SOURCE}
+      <InboxThreadListFetchMoreTrigger
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
       />
     </>
   );

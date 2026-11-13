@@ -80,7 +80,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       aiAgentModelTier: AiModelTier.fast,
       isAutoModelSelectionEnabled: true,
       aiModelIdByTier: {},
-      isInternalMessagesImportEnabled: false,
+      isInternalImportEnabled: false,
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
