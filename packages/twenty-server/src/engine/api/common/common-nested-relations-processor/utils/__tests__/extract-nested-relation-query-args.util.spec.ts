@@ -7,21 +7,11 @@ describe('extractNestedRelationQueryArgs', () => {
 
   it('extracts filter, orderBy and first', () => {
     expect(
-      extractNestedRelationQueryArgs([
-        {
-          filter: {
-            kind: 'ObjectValue',
-            value: { status: { eq: 'OPEN' } },
-          },
-        },
-        {
-          orderBy: {
-            kind: 'ListValue',
-            value: [{ dueAt: 'AscNullsLast' }],
-          },
-        },
-        { first: { kind: 'IntValue', value: 1 } },
-      ]),
+      extractNestedRelationQueryArgs({
+        filter: { status: { eq: 'OPEN' } },
+        orderBy: [{ dueAt: 'AscNullsLast' }],
+        first: 1,
+      }),
     ).toEqual({
       filter: { status: { eq: 'OPEN' } },
       orderBy: [{ dueAt: 'AscNullsLast' }],
@@ -31,32 +21,23 @@ describe('extractNestedRelationQueryArgs', () => {
 
   it('wraps a single orderBy object in a list', () => {
     expect(
-      extractNestedRelationQueryArgs([
-        {
-          orderBy: {
-            kind: 'ObjectValue',
-            value: { dueAt: 'DescNullsLast' },
-          },
-        },
-      ]),
+      extractNestedRelationQueryArgs({ orderBy: { dueAt: 'DescNullsLast' } }),
     ).toEqual({ orderBy: [{ dueAt: 'DescNullsLast' }] });
   });
 
-  it('ignores an argument bound to an unset variable', () => {
-    expect(
-      extractNestedRelationQueryArgs([
-        { filter: { kind: 'Variable', value: undefined } },
-      ]),
-    ).toEqual({});
+  it('accepts first: 0', () => {
+    expect(extractNestedRelationQueryArgs({ first: 0 })).toEqual({ first: 0 });
   });
 
-  it.each([
-    [{ offset: { kind: 'IntValue', value: 1 } }],
-    [{ after: { kind: 'StringValue', value: 'cursor' } }],
-    [{ first: { kind: 'IntValue', value: 0 } }],
-  ])('rejects an argument it cannot apply: %j', (graphqlArgument) => {
-    expect(() => extractNestedRelationQueryArgs([graphqlArgument])).toThrow(
-      'is not supported on a nested relation',
-    );
+  it('ignores cursor, offset and unset arguments', () => {
+    expect(
+      extractNestedRelationQueryArgs({
+        after: 'cursor',
+        before: 'cursor',
+        last: 2,
+        offset: 1,
+        filter: undefined,
+      }),
+    ).toEqual({});
   });
 });
