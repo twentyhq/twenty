@@ -14090,6 +14090,7 @@ msgid "Formats"
 msgstr "قالب‌ها"
 
 #. js-lingui-id: CjVkbV
+#: src/modules/ai/components/AiChatDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAgentChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
