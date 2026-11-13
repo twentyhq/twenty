@@ -1,3 +1,4 @@
+import { NetworkStatus } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
@@ -156,16 +157,48 @@ describe('useCustomResolver', () => {
 
   it('starts over from the second page after the list is refetched', async () => {
     const fetchMore = mockLoadedThreads({
-      count: 4,
+      count: 2,
       loading: false,
       fetchedCount: 2,
     });
     const { result, rerender } = renderTimelineResolver();
 
     await act(() => result.current.fetchMoreRecords());
-    expectRequestedPage(fetchMore, 3);
+    expectRequestedPage(fetchMore, 2);
+
+    mockLoadedThreads({ count: 2, loading: true });
+    useQueryMock.mockReturnValue({
+      ...useQueryMock(),
+      networkStatus: NetworkStatus.refetch,
+    });
+    rerender();
 
     const refetchedFetchMore = mockLoadedThreads({ count: 2, loading: false });
+    rerender();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(refetchedFetchMore, 2);
+  });
+
+  it('resumes paginating after a refetch that follows the last page', async () => {
+    const fetchMore = mockLoadedThreads({ count: 2, loading: false });
+    const { result, rerender } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+    expectRequestedPage(fetchMore, 2);
+
+    mockLoadedThreads({ count: 2, loading: true });
+    useQueryMock.mockReturnValue({
+      ...useQueryMock(),
+      networkStatus: NetworkStatus.refetch,
+    });
+    rerender();
+
+    const refetchedFetchMore = mockLoadedThreads({
+      count: 2,
+      loading: false,
+      fetchedCount: 1,
+    });
     rerender();
 
     await act(() => result.current.fetchMoreRecords());

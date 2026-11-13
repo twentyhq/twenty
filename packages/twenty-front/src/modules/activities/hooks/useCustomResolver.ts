@@ -1,6 +1,7 @@
 import {
   type DocumentNode,
   type ErrorLike,
+  NetworkStatus,
   type OperationVariables,
   type TypedDocumentNode,
 } from '@apollo/client';
@@ -58,7 +59,7 @@ export const useCustomResolver = <
     ...variables,
   };
 
-  const { data, loading, fetchMore, refetch, error } = useQuery<
+  const { data, loading, networkStatus, fetchMore, refetch, error } = useQuery<
     CustomResolverQueryResult<T>
   >(query, {
     client: apolloCoreClient,
@@ -67,24 +68,26 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
-  const loadedRecordsCount = data?.[queryName]?.[objectName]?.length ?? 0;
-
   const [lastLoadedPage, setLastLoadedPage] = useState(() => ({
-    pageNumber: Math.max(1, Math.ceil(loadedRecordsCount / pageSize)),
-    recordsCount: loadedRecordsCount,
+    pageNumber: Math.max(
+      1,
+      Math.ceil((data?.[queryName]?.[objectName]?.length ?? 0) / pageSize),
+    ),
     hasNextPage: true,
   }));
 
-  const pagination =
-    loadedRecordsCount < lastLoadedPage.recordsCount
-      ? { pageNumber: 1, recordsCount: loadedRecordsCount, hasNextPage: true }
-      : lastLoadedPage;
+  if (
+    networkStatus === NetworkStatus.refetch &&
+    (lastLoadedPage.pageNumber !== 1 || !lastLoadedPage.hasNextPage)
+  ) {
+    setLastLoadedPage({ pageNumber: 1, hasNextPage: true });
+  }
 
   const fetchMoreRecords = async () => {
-    if (pagination.hasNextPage && !isFetchingMore && !loading) {
+    if (lastLoadedPage.hasNextPage && !isFetchingMore && !loading) {
       setIsFetchingMore(true);
 
-      const nextPageNumber = pagination.pageNumber + 1;
+      const nextPageNumber = lastLoadedPage.pageNumber + 1;
 
       await fetchMore({
         variables: {
@@ -98,7 +101,6 @@ export const useCustomResolver = <
 
           setLastLoadedPage({
             pageNumber: nextPageNumber,
-            recordsCount: previousRecords.length + fetchedRecords.length,
             hasNextPage: fetchedRecords.length > 0,
           });
 
