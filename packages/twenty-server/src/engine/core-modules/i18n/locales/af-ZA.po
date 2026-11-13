@@ -3463,7 +3463,7 @@ msgstr "Verbindingsverskaffer met tipe 'custom' moet na ’n authorize- en ’n 
 #. js-lingui-id: 4l+vBP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl"
-msgstr ""
+msgstr "Verbindingsverskaffer met tipe 'oauth-discovery' benodig 'n HTTP- of HTTPS-oauthDiscoveryConfig.resourceUrl"
 
 #. js-lingui-id: YQTVfF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
@@ -5497,6 +5497,11 @@ msgstr "Veld \"{fieldName}\" behoort nie aan die voorwerp wat deur relasie \"{re
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Veld \"{fieldName}\" is nie 'n baie-tot-een-relasie nie; dit het geen aansluitkolom om mee te vergelyk nie"
+
+#. js-lingui-id: pxJKic
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
+msgstr "Veld \"{fieldName}\" neem 'n enkele waarde met operand \"{operand}\"; dit kan nie vergelyk word met die lys wat deur werkruimteledeveld \"{workspaceMemberFieldName}\" gehou word nie"
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -9762,7 +9767,7 @@ msgstr "Die OAuth-verbindingsverskaffer se oauth-konfigurasieblok ontbreek"
 #. js-lingui-id: c5inG4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
 msgid "OAuth discovery connection provider needs the URL of the resource it signs in to"
-msgstr ""
+msgstr "OAuth-ontdekkingsverbindingsverskaffer benodig die URL van die hulpbron waarby dit aanmeld"
 
 #. js-lingui-id: xodh4N
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14808,6 +14813,11 @@ msgstr "Hierdie funksie is gratis vir tot {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} sit
 msgid "This feature is not enabled."
 msgstr "Hierdie kenmerk is nie geaktiveer nie."
 
+#. js-lingui-id: 2DYjsy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field cannot be compared to a list of values"
+msgstr "Hierdie veld kan nie met 'n lys waardes vergelyk word nie"
+
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
@@ -14944,6 +14954,21 @@ msgstr "Hierdie logtabel is nie geldig nie."
 #: src/engine/api/mcp/exceptions/mcp.exception.ts
 msgid "This MCP method is not supported."
 msgstr "Hierdie MCP-metode word nie ondersteun nie."
+
+#. js-lingui-id: KiQGlB
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server belongs to another application, so this workflow cannot use it."
+msgstr "Hierdie MCP-bediener behoort aan 'n ander toepassing, dus kan hierdie werkvloei dit nie gebruik nie."
+
+#. js-lingui-id: zNa23j
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is inactive. Activate it before testing its tools."
+msgstr "Hierdie MCP-bediener is onaktief. Aktiveer dit voordat jy sy nutsmiddels toets."
+
+#. js-lingui-id: RA2ec2
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This MCP server is not available to this workflow."
+msgstr "Hierdie MCP-bediener is nie vir hierdie werkvloei beskikbaar nie."
 
 #. js-lingui-id: 7Ecb3M
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -15235,6 +15260,16 @@ msgstr "Hierdie SVG is te groot om verwerk te word."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "This timeline activity action is not supported"
 msgstr "Hierdie tydlynaktiwiteitsaksie word nie ondersteun nie"
+
+#. js-lingui-id: Sypv2k
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool is no longer offered by its MCP server."
+msgstr "Hierdie nutsmiddel word nie meer deur sy MCP-bediener aangebied nie."
+
+#. js-lingui-id: 3BMm2X
+#: src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/services/mcp-tool-step-test.service.ts
+msgid "This tool may change data. Confirm the test before running it."
+msgstr "Hierdie nutsmiddel kan data verander. Bevestig die toets voordat jy dit uitvoer."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
