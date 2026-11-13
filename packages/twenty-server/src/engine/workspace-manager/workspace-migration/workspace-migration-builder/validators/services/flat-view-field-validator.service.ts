@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { ViewType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
@@ -264,11 +264,11 @@ export class FlatViewFieldValidatorService {
 
     if (
       !flatViewFieldToValidate.isCanonical &&
-      flatView.type === ViewType.FIELDS_WIDGET
+      isWidgetViewType(flatView.type)
     ) {
       validationResult.errors.push({
         code: ViewExceptionCode.INVALID_VIEW_DATA,
-        message: t`Non-canonical view fields are not supported in fields widget views`,
+        message: t`Non-canonical view fields are not supported in widget views`,
         userFriendlyMessage: msg`Extra columns are not supported here`,
       });
     }

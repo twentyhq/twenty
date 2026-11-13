@@ -8,6 +8,8 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { createOneViewField } from 'test/integration/metadata/suites/view-field/utils/create-one-view-field.util';
 import { destroyOneViewField } from 'test/integration/metadata/suites/view-field/utils/destroy-one-view-field.util';
 import { updateOneViewField } from 'test/integration/metadata/suites/view-field/utils/update-one-view-field.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS = `
@@ -98,6 +100,37 @@ describe('Non-canonical view fields', () => {
 
     expect(JSON.stringify(response.errors)).toContain(
       'View field with same fieldMetadataUniversalIdentifier and viewUniversalIdentifier already exists',
+    );
+  });
+
+  it('rejects a non-canonical column in a widget view', async () => {
+    const {
+      data: {
+        createView: { id: widgetViewId },
+      },
+    } = await createOneView({
+      expectToFail: false,
+      input: {
+        icon: 'IconTable',
+        name: 'Widget view with extra column',
+        objectMetadataId: testSetup.testObjectMetadataId,
+        type: ViewType.TABLE_WIDGET,
+      },
+    });
+
+    const response = await createOneViewField({
+      expectToFail: true,
+      gqlFields: VIEW_FIELD_WITH_CANONICAL_GQL_FIELDS,
+      input: {
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: widgetViewId,
+        isCanonical: false,
+        position: 10,
+      },
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'Non-canonical view fields are not supported in widget views',
     );
   });
 
