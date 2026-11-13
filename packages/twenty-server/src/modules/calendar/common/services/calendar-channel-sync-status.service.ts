@@ -19,7 +19,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
-import { getCalendarEventsToImportCacheKey } from 'src/modules/calendar/common/utils/get-calendar-events-to-import-cache-key.util';
 @Injectable()
 export class CalendarChannelSyncStatusService {
   private readonly logger = new Logger(CalendarChannelSyncStatusService.name);
@@ -104,7 +103,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        getCalendarEventsToImportCacheKey({ workspaceId, calendarChannelId }),
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -262,7 +261,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        getCalendarEventsToImportCacheKey({ workspaceId, calendarChannelId }),
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
@@ -302,7 +301,7 @@ export class CalendarChannelSyncStatusService {
 
     for (const calendarChannelId of calendarChannelIds) {
       await this.cacheStorage.del(
-        getCalendarEventsToImportCacheKey({ workspaceId, calendarChannelId }),
+        `calendar-events-to-import:${workspaceId}:${calendarChannelId}`,
       );
     }
 
