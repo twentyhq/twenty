@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { captureException } from '@sentry/react';
 import { useCallback, useState } from 'react';
 import { fetchComponentSource } from 'twenty-front-component-renderer';
+import { type FrontComponentSelectedObjectMetadata } from 'twenty-sdk/front-component';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type PageLayoutType } from 'twenty-shared/types';
@@ -20,6 +21,8 @@ type FrontComponentPreview = {
   applicationId: string;
   sharedDependenciesChecksum?: string | null;
   mockQueryResult: Record<string, unknown>;
+  selectedRecordIds?: string[];
+  selectedObjectMetadata?: FrontComponentSelectedObjectMetadata | null;
 };
 
 type LoadedFrontComponentPreview = FrontComponentPreview & {

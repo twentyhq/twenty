@@ -6,6 +6,44 @@ const typeReferences = encodeFrontComponentTypeReferencesOrThrow(
   getFrontComponentCompilerTypeReferences(),
 ).toString('base64');
 
+it('checks the real SDK record context signatures without an app SDK dependency', () => {
+  const source = `import { useSelectedRecordIds, useSelectedObjectMetadata } from 'twenty-sdk/front-component';
+    export const Component = () => {
+      const recordId: string | undefined = useSelectedRecordIds()[0];
+      const name: string | undefined = useSelectedObjectMetadata()?.nameSingular;
+      return <div>{name}: {recordId}</div>;
+    };`;
+
+  expect(() =>
+    validateFrontComponentTypesOrThrow({ typeReferences, source }),
+  ).not.toThrow();
+  expect(() =>
+    validateFrontComponentTypesOrThrow({
+      typeReferences,
+      source: source.replace(
+        'recordId: string | undefined',
+        'recordId: number',
+      ),
+    }),
+  ).toThrow('TS2322');
+});
+
+it('rejects SDK exports outside record context even when app references declare them', () => {
+  expect(() =>
+    validateFrontComponentTypesOrThrow({
+      typeReferences: encodeFrontComponentTypeReferencesOrThrow({
+        ...getFrontComponentCompilerTypeReferences(),
+        '/node_modules/twenty-sdk/package.json': JSON.stringify({
+          exports: { './front-component': './old.d.ts' },
+        }),
+        '/node_modules/twenty-sdk/old.d.ts':
+          'export declare function navigate(path: string): void;',
+      }).toString('base64'),
+      source: `import { navigate } from 'twenty-sdk/front-component'; export const Component = () => <div />;`,
+    }),
+  ).toThrow('TS2305');
+});
+
 it('returns a source location and TypeScript error through the existing build failure', () => {
   expect(() =>
     validateFrontComponentTypesOrThrow({
