@@ -5,8 +5,8 @@ import { RecordFormFieldInput } from '@/object-record/record-form/components/Rec
 import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type UpdateMultipleRecordsState } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
+import { getFieldsEditableInMultiEditForm } from '@/object-record/record-update-multiple/utils/getFieldsEditableInMultiEditForm';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
-import { shouldDisplayFormMultiEditField } from '@/object-record/record-update-multiple/utils/shouldDisplayFormMultiEditField';
 import { css } from '@linaria/core';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeRelationGqlFieldJoinColumnName } from 'twenty-shared/utils';
@@ -39,9 +39,7 @@ export const UpdateMultipleRecordsForm = ({
     objectNameSingular,
   });
 
-  const editableFields = objectMetadataItem.fields
-    .filter(shouldDisplayFormMultiEditField)
-    .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name));
+  const editableFields = getFieldsEditableInMultiEditForm(objectMetadataItem);
 
   const fieldsWithDefinitions = editableFields.map((fieldMetadataItem) => ({
     fieldMetadataItem,
