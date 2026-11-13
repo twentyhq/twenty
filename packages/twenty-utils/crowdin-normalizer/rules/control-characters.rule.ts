@@ -20,7 +20,9 @@ function hasInventedControlCharacter(
   text: string,
   sourceText?: string,
 ): boolean {
-  if (sourceText === undefined) return false;
+  if (sourceText === undefined) {
+    return false;
+  }
 
   return controlCharactersIn(text).some(
     (character) => !sourceText.includes(character),

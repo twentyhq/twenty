@@ -10,8 +10,8 @@ import { WORDLESS_TRANSLATION_RULE } from '../rules/wordless-translation.rule';
 import { type NormalizationRule } from '../types/normalization-rule.type';
 
 export const NORMALIZATION_RULES: NormalizationRule[] = [
-  CONTROL_CHARACTERS_RULE,
   ESCAPED_UNICODE_RULE,
+  CONTROL_CHARACTERS_RULE,
   ESCAPED_EVERY_CHARACTER_RULE,
   ESCAPED_INLINE_CODE_TAGS_RULE,
   CORRUPTED_MODEL_OUTPUT_RULE,
