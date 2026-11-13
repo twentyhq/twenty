@@ -11,6 +11,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -261,15 +262,23 @@ describe('Sync application keeps the option edits a workspace made on its fields
       expectToFail: false,
     });
 
-    const { flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps, flatFieldMetadataOptionMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
-      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatFieldMetadataMaps']);
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatFieldMetadataMaps',
+        'flatFieldMetadataOptionMaps',
+      ]);
+    const selectFlatFieldMetadata =
+      flatFieldMetadataMaps.byUniversalIdentifier[SELECT_FIELD_ID];
 
     expect(
-      (
-        flatFieldMetadataMaps.byUniversalIdentifier[SELECT_FIELD_ID]?.options ??
-        []
+      (isDefined(selectFlatFieldMetadata)
+        ? (resolveFlatFieldMetadataOptions({
+            flatFieldMetadata: selectFlatFieldMetadata,
+            flatFieldMetadataOptionMaps,
+          }) ?? [])
+        : []
       ).map(({ applicationId: _applicationId, ...option }) => ({
         ...option,
         id: undefined,
