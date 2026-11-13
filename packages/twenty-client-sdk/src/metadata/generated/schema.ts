@@ -2484,6 +2484,7 @@ export interface Mutation {
     completeNewWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceLogoUpload: FileWithSignedUrl
     completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl
+    connectApplicationWithApiKey: Scalars['UUID']
     createAgentChatChannel: AgentChatChannel
     createApiKey: ApiKey
     createAppMessageChannel: MessageChannel
@@ -6042,6 +6043,8 @@ export interface CompleteApplicationFileUploadsResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ConnectApplicationWithApiKeyInput {apiKey: Scalars['String'],applicationId: Scalars['UUID'],providerName: Scalars['String'],reconnectingConnectedAccountId?: (Scalars['UUID'] | null)}
+
 export interface ConnectedAccountPublicDTOGenqlSelection{
     applicationId?: boolean | number
     archivedAt?: boolean | number
@@ -7362,6 +7365,7 @@ export interface MutationGenqlSelection{
     completeNewWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String'], workspaceId: Scalars['String']} })
     completeWorkspaceLogoUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
     completeWorkspaceMemberProfilePictureUpload?: (FileWithSignedUrlGenqlSelection & { __args: {fileId: Scalars['String']} })
+    connectApplicationWithApiKey?: { __args: {input: ConnectApplicationWithApiKeyInput} }
     createAgentChatChannel?: (AgentChatChannelGenqlSelection & { __args: {input: CreateAgentChatChannelInput} })
     createApiKey?: (ApiKeyGenqlSelection & { __args: {input: CreateApiKeyInput} })
     createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })

@@ -310,6 +310,14 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationConnectWithApiKey = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationConnectWithApiKey').then(
+    (module) => ({
+      default: module.SettingsApplicationConnectWithApiKey,
+    }),
+  ),
+);
+
 const SettingsApplicationConnectionDetail = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationConnectionDetail').then(
     (module) => ({
@@ -833,6 +841,11 @@ const createSettingsRouteElements = ({
       element={<SettingsTwoFactorAuthenticationMethod />}
     />
     <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
+    {/* Reached from both the Applications and Accounts settings; the mutation checks the caller per provider scope */}
+    <Route
+      path={SettingsPath.ApplicationConnectWithApiKey}
+      element={<SettingsApplicationConnectWithApiKey />}
+    />
     <Route
       element={
         <SettingsProtectedRouteWrapper
