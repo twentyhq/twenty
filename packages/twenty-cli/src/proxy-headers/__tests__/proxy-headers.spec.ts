@@ -22,6 +22,7 @@ import { sendJson, startTestServer } from '@/__tests__/utils/start-test-server';
 import { createAppWorkerEnvironment } from '@/app/create-app-worker-environment';
 import { putUploadFile } from '@/app/deployment/put-upload-file';
 import { createProxyHeaders } from '@/proxy-headers/create-proxy-headers';
+import { runProxyHeaderCommandOrThrow } from '@/proxy-headers/run-proxy-header-command-or-throw';
 import { createBoundedFetch } from '@/transport/create-target-fetch';
 import { subscribeGraphql } from '@/transport/graphql/subscribe-graphql';
 
@@ -513,6 +514,35 @@ describe('proxy headers', () => {
       await vi.waitFor(async () => {
         expect(await isProcessRunning(grandchildPid)).toBe(false);
       });
+    },
+  );
+
+  it.skipIf(process.platform === 'win32')(
+    'settles a cancelled header command even when an escaped process holds its output open',
+    async () => {
+      const pidPath = join(home, 'escaped-pid');
+      const abortController = new AbortController();
+      const run = runProxyHeaderCommandOrThrow({
+        command: `setsid sh -c 'echo $$ > ${pidPath}; exec sleep 30' >&2 & sleep 30`,
+        signal: abortController.signal,
+      });
+
+      try {
+        await vi.waitFor(async () => {
+          expect((await readFile(pidPath, 'utf8')).trim()).not.toBe('');
+        });
+        abortController.abort();
+
+        await expect(run).rejects.toMatchObject({ code: 'CANCELLED' });
+      } finally {
+        const escapedPid = Number(
+          (await readFile(pidPath, 'utf8').catch(() => '')).trim(),
+        );
+
+        if (escapedPid > 0) {
+          process.kill(escapedPid, 'SIGKILL');
+        }
+      }
     },
   );
 

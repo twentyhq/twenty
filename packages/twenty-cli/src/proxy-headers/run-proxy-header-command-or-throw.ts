@@ -24,20 +24,29 @@ const signalProcessGroup = ({
   }
 };
 
+const STOP_GRACE_PERIOD_MILLISECONDS = 1000;
+
 const stopProcessTree = (subprocess: execa.ExecaChildProcess) => {
   const processId = subprocess.pid;
+  const canSignalGroup = !IS_WINDOWS && isNumber(processId);
 
-  if (IS_WINDOWS || !isNumber(processId)) {
-    subprocess.kill('SIGTERM', { forceKillAfterTimeout: 1000 });
-
-    return;
+  if (canSignalGroup) {
+    signalProcessGroup({ processId, signalName: 'SIGTERM' });
+  } else {
+    subprocess.kill('SIGTERM');
   }
 
-  signalProcessGroup({ processId, signalName: 'SIGTERM' });
-  setTimeout(
-    () => signalProcessGroup({ processId, signalName: 'SIGKILL' }),
-    1000,
-  ).unref();
+  setTimeout(() => {
+    if (canSignalGroup) {
+      signalProcessGroup({ processId, signalName: 'SIGKILL' });
+    } else {
+      subprocess.kill('SIGKILL');
+    }
+
+    // A process that left the group may still hold the pipes open.
+    subprocess.stdout?.destroy();
+    subprocess.stderr?.destroy();
+  }, STOP_GRACE_PERIOD_MILLISECONDS).unref();
 };
 
 const describeFailure = ({
