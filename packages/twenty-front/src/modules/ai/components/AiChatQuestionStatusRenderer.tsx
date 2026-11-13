@@ -10,6 +10,7 @@ import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskStatusRow } from '@/ai/components/AiChatAskStatusRow';
+import { useIsAiChatToolCallAskedInComposer } from '@/ai/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai/utils/getAskedQuestionEntries';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
@@ -48,6 +49,9 @@ export const AiChatQuestionStatusRenderer = ({
   isStreaming: boolean;
 }) => {
   const { t } = useLingui();
+  const isAskedInComposer = useIsAiChatToolCallAskedInComposer(
+    toolPart.toolCallId,
+  );
 
   const result = (
     toolPart.output as {
@@ -56,6 +60,10 @@ export const AiChatQuestionStatusRenderer = ({
   )?.result;
   const status = result?.status ?? 'pending';
   const entries = getAskedQuestionEntries(result);
+
+  if (isAskedInComposer) {
+    return null;
+  }
 
   if (status === 'pending') {
     if (entries.length !== 1) {

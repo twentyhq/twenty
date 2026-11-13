@@ -916,6 +916,14 @@ describe('reconstructPageLayoutsManifest', () => {
             position: null,
           }),
           buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'unconfigured-widget',
+            ),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+            universalConfiguration:
+              null as unknown as FlatPageLayoutWidget['universalConfiguration'],
+          }),
+          buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('grid-widget'),
               position: {
@@ -1037,6 +1045,9 @@ describe('reconstructPageLayoutsManifest', () => {
     );
     expect(reasonOf(coverage, 'unpositioned-widget')).toBe(
       'page layout widget without a position',
+    );
+    expect(reasonOf(coverage, 'unconfigured-widget')).toBe(
+      'page layout widget without a configuration',
     );
     expect(reasonOf(coverage, 'grid-widget')).toBe(
       'page layout widget positioned for another layout mode than its tab',

@@ -36,6 +36,7 @@ export const buildCompanyStandardFlatIndexMetadatas = ({
       indexName: 'domainNameUniqueIndex',
       relatedFieldNames: ['domainName'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
       hasDeterministicUniversalIdentifier: true,
     },
     standardObjectMetadataRelatedEntityIds,

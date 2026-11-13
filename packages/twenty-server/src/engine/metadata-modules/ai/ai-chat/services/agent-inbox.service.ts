@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AgentChatInboxDeliveryReason } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-delivery-reason.enum';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatInboxDeliveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-delivery.service';
+import { AgentChatInboxParticipantWriterService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox-participant-writer.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-delivery.type';
@@ -17,9 +19,11 @@ import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
+import { extractInboxMessageMentionedWorkspaceMemberIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-inbox-message-mentioned-workspace-member-ids.util';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
-import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { isUniqueViolationError } from 'src/engine/workspace-query-executor/utils/is-unique-violation-error.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -43,6 +47,8 @@ const findNewWorkspaceMemberIds = (
 
 @Injectable()
 export class AgentInboxService {
+  private readonly logger = new Logger(AgentInboxService.name);
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
@@ -55,6 +61,7 @@ export class AgentInboxService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly inboxDeliveryService: AgentChatInboxDeliveryService,
+    private readonly inboxParticipantWriterService: AgentChatInboxParticipantWriterService,
   ) {}
 
   // Every record has an id derived from the keys: the thread key picks the
@@ -185,6 +192,14 @@ export class AgentInboxService {
         threadId,
         text: input.text,
         threadBefore: thread,
+      });
+      await this.mentionParticipants({
+        workspaceId,
+        thread,
+        messageId,
+        workspaceMemberIds: extractInboxMessageMentionedWorkspaceMemberIds(
+          input.text,
+        ),
       });
     }
 
@@ -337,6 +352,53 @@ export class AgentInboxService {
 
     if (deliveredWorkspaceMemberIds.length !== newWorkspaceMemberIds.length) {
       throwAgentChatThreadNotFound();
+    }
+  }
+
+  private async mentionParticipants({
+    workspaceId,
+    thread,
+    messageId,
+    workspaceMemberIds,
+  }: {
+    workspaceId: string;
+    thread: Pick<AgentChatThreadWorkspaceEntity, 'id' | 'workspaceMemberId'>;
+    messageId: string;
+    workspaceMemberIds: string[];
+  }): Promise<void> {
+    if (
+      !isNonEmptyArray(workspaceMemberIds) ||
+      !isDefined(thread.workspaceMemberId)
+    ) {
+      return;
+    }
+
+    const access = {
+      workspaceId,
+      threadId: thread.id,
+      workspaceMemberId: thread.workspaceMemberId,
+    };
+
+    try {
+      await this.inboxDeliveryService.deliverThreadToMemberInboxes({
+        ...access,
+        workspaceMemberIds,
+        reason: AgentChatInboxDeliveryReason.MENTION,
+      });
+
+      if (workspaceMemberIds.includes(thread.workspaceMemberId)) {
+        await this.inboxParticipantWriterService.writeParticipantInboxState({
+          ...access,
+          workspaceMemberIds: [thread.workspaceMemberId],
+          reason: AgentChatInboxDeliveryReason.MENTION,
+        });
+      }
+    } catch (error) {
+      this.logger.warn(
+        doNotTranslate(
+          `Could not deliver mentions for inbox message ${messageId} in thread ${thread.id} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
     }
   }
 

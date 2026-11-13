@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 
 import { RecordPermissionReadRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-permission-read.repository';
-import { RecordSharingReadService } from 'src/engine/permissions/internal/record-share/services/record-sharing-read.service';
+import { RecordSharingReadService } from 'src/engine/permissions/record-share/services/record-sharing-read.service';
 import { type RecordSharingDTO } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 

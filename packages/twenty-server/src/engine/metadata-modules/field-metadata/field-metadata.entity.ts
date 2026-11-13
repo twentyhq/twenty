@@ -38,6 +38,7 @@ import { RENAME_IS_UI_READ_ONLY_TO_IS_UI_EDITABLE_UPGRADE_COMMAND_NAME } from 's
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 import { FieldMetadataOptionEntity } from 'src/engine/metadata-modules/field-metadata-option/entities/field-metadata-option.entity';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -125,6 +126,7 @@ export class FieldMetadataEntity<
   @Column({ type: 'jsonb', nullable: true })
   standardOverrides: WasRemovedInUpgrade<JsonbProperty<FieldMetadataOverrides> | null>;
 
+  // TODO: drop once 2.59 has run on every workspace; read options through resolveFlatFieldMetadataOptions.
   @Column('jsonb', { nullable: true })
   options: JsonbProperty<FieldMetadataOptions<TFieldMetadataType>>;
 
@@ -291,4 +293,28 @@ export class FieldMetadataEntity<
     (fieldMetadataOption) => fieldMetadataOption.fieldMetadata,
   )
   fieldMetadataOptions: Relation<FieldMetadataOptionEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) => rowLevelPermissionPredicate.fieldMetadata,
+  )
+  rowLevelPermissionPredicates: Relation<RowLevelPermissionPredicateEntity[]>;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) =>
+      rowLevelPermissionPredicate.relationFieldMetadata,
+  )
+  relationRowLevelPermissionPredicates: Relation<
+    RowLevelPermissionPredicateEntity[]
+  >;
+
+  @OneToMany(
+    () => RowLevelPermissionPredicateEntity,
+    (rowLevelPermissionPredicate) =>
+      rowLevelPermissionPredicate.workspaceMemberFieldMetadata,
+  )
+  workspaceMemberRowLevelPermissionPredicates: Relation<
+    RowLevelPermissionPredicateEntity[]
+  >;
 }

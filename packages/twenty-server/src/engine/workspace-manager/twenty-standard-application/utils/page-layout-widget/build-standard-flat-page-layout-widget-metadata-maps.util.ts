@@ -102,7 +102,6 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   opportunity: 'opportunityRecordPageFields',
   person: 'personRecordPageFields',
   task: 'taskRecordPageFields',
-  workflowAutomatedTrigger: 'workflowAutomatedTriggerRecordPageFields',
   workflowRun: 'workflowRunRecordPageFields',
   workflowVersion: 'workflowVersionRecordPageFields',
   workspaceMember: 'workspaceMemberRecordPageFields',

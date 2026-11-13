@@ -10,10 +10,12 @@ export const findOneView = async ({
   viewId,
   gqlFields,
   expectToFail,
+  token,
 }: {
   viewId: string;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   getView: ViewDTO;
 }> => {
@@ -22,7 +24,7 @@ export const findOneView = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

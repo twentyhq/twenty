@@ -65,6 +65,7 @@ export enum SettingsPath {
   Applications = 'applications',
   ApplicationDetail = 'applications/:applicationId',
   ApplicationConnectionDetail = 'applications/:applicationId/connections/:connectedAccountId',
+  ApplicationConnectWithApiKey = 'applications/:applicationId/connect/:connectionProviderName',
   ApplicationPublicDomainNew = 'applications/:applicationId/public-domain/new',
   ApplicationPublicDomainDetail = 'applications/:applicationId/public-domain/:publicDomainId',
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',

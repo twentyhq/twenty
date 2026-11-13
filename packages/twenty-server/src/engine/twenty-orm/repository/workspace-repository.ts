@@ -22,7 +22,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RelatedRecords } from 'src/engine/permissions/internal/access-group/types/related-records.type';
+import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -31,7 +31,7 @@ import {
 import uniqBy from 'lodash.uniqby';
 import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 import { NO_RECORD_READ_RESTRICTIONS } from 'src/engine/permissions/constants/no-record-read-restrictions.constant';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
@@ -1909,13 +1909,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         continue;
       }
 
-      const principals = this.resolvePermissionsPrincipalsOrThrow();
-      const rlsRuleUnreadableFieldsByRole =
-        await this.options.internalContext.recordPermissionsOnlyRls.findRlsRuleUnreadableFieldsByRole(
-          { principals, objectMetadataId: tableShape.objectMetadataId },
+      const unreadableFieldsSQLConditions =
+        await this.options.internalContext.recordFieldPermissions.buildUnreadableFieldsSQLConditions(
+          {
+            principals: this.resolvePermissionsPrincipalsOrThrow(),
+            objectMetadataId: tableShape.objectMetadataId,
+            tableAlias: alias,
+          },
         );
 
-      if (!isNonEmptyArray(rlsRuleUnreadableFieldsByRole)) {
+      if (!isNonEmptyArray(unreadableFieldsSQLConditions)) {
         continue;
       }
 
@@ -1929,9 +1932,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
 
       for (const {
-        roleId,
         fieldMetadataIds,
-      } of rlsRuleUnreadableFieldsByRole) {
+        sqlCondition,
+      } of unreadableFieldsSQLConditions) {
         queryBuilder.nullifyColumnsWhen({
           alias,
           columnNames: columnEntries
@@ -1939,15 +1942,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               fieldMetadataIds.includes(fieldMetadataId),
             )
             .map(([columnName]) => columnName),
-          condition:
-            await this.options.internalContext.recordPermissionsOnlyRls.buildRlsRuleSqlConditionOrThrow(
-              {
-                principals,
-                objectMetadataId: tableShape.objectMetadataId,
-                roleId,
-                tableAlias: alias,
-              },
-            ),
+          condition: sqlCondition,
         });
       }
     }
@@ -2079,7 +2074,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     isMainAlias: boolean;
     flatObjectMetadata: FlatObjectMetadata;
     operationType: ObjectRecordsOperationType;
-  }): Promise<SqlCondition | boolean> {
+  }): Promise<SQLCondition | boolean> {
     if (isMainAlias) {
       await this.options.internalContext.recordPermissions.assertCanRunOperationOrThrow(
         {
@@ -2091,14 +2086,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
-    return this.options.internalContext.recordPermissions.buildManyRecordsAccessCondition(
-      {
-        principals: this.resolvePermissionsPrincipalsOrThrow(),
+    const { recordPermissions } = this.options.internalContext;
+    const principals = this.resolvePermissionsPrincipalsOrThrow();
+
+    if (operationType === 'read') {
+      return recordPermissions.buildReadRecordsAccessSQLCondition({
+        principals,
         objectMetadataId: flatObjectMetadata.id,
-        operationType,
         tableAlias: alias,
-      },
-    );
+      });
+    }
+
+    return recordPermissions.buildWriteRecordsAccessSQLCondition({
+      principals,
+      objectMetadataId: flatObjectMetadata.id,
+      operationType,
+      tableAlias: alias,
+    });
   }
 
   async isReadDisabled(): Promise<boolean> {

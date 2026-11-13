@@ -225,6 +225,37 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             transactionScope,
           });
 
+          await this.messageAttachmentService.saveMessageRemoteAttachments({
+            messageAttachments: messagesToSave.flatMap((message) => {
+              const messageId = messageExternalIdsAndIdsMap.get(
+                message.externalId,
+              );
+
+              const messageChannelMessageAssociationId =
+                messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                  message.externalId,
+                );
+
+              if (
+                !isDefined(messageId) ||
+                !isDefined(messageChannelMessageAssociationId) ||
+                !isNonEmptyArray(message.attachments)
+              ) {
+                return [];
+              }
+
+              return [
+                {
+                  messageId,
+                  messageChannelMessageAssociationId,
+                  attachments: message.attachments,
+                },
+              ];
+            }),
+            workspaceId,
+            transactionScope,
+          });
+
           return {
             participantsWithMessageId,
             savedMessageParticipants,

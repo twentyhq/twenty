@@ -2,9 +2,9 @@ import { appendFile, copyFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { build } from 'esbuild';
-import { DEFAULT_API_URL_NAME } from 'twenty-shared/application-runtime';
 
 import { buildClientWrapperSource } from './client-wrapper';
+import { buildDefaultApiUrlExpression } from './build-default-api-url-expression';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
@@ -44,7 +44,7 @@ export const generateCoreClientFromSchema = async ({
 
     const clientContent = buildClientWrapperSource(templateSource, {
       apiClientName: 'CoreApiClient',
-      defaultUrl: `\`\${process.env.${DEFAULT_API_URL_NAME}}/graphql\``,
+      defaultUrl: buildDefaultApiUrlExpression('/graphql'),
       includeUploadFile: true,
     });
 

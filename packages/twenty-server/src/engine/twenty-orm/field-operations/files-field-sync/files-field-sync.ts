@@ -534,7 +534,7 @@ export class FilesFieldSync {
           // Direct uploads stay PENDING until the client confirms the bytes
           // landed in storage (completeFileUpload): only confirmed files can
           // be attached to a record.
-          if (fileEntity.status !== FILE_STATUS.UPLOADED) {
+          if (fileEntity.status === FILE_STATUS.PENDING) {
             const fileId = file.fileId;
 
             throw new TwentyOrmException(

@@ -71,6 +71,7 @@ const buildFlatAgent = (
   id: `${universalIdentifier}-id`,
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
+  navigationMenuItemIds: [],
   ...overrides,
 });
 
@@ -83,7 +84,11 @@ const buildFlatRole = ({
 }): FlatRole =>
   ({
     ...fromRoleManifestToUniversalFlatRole({
-      roleManifest: { universalIdentifier, label: 'Role' },
+      roleManifest: {
+        universalIdentifier,
+        label: 'Role',
+        recordsPermissions: { objects: [] },
+      },
       applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
       now: NOW,
     }),

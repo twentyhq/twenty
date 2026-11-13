@@ -1,4 +1,8 @@
+import { createHash } from 'node:crypto';
+
 import { Logger } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   createMemoryHarness,
@@ -11,6 +15,7 @@ import {
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { computeJobSizeBytes } from 'src/engine/core-modules/message-queue/utils/compute-job-size-bytes.util';
 
 // Default harness: maxmemory 100_000 minus a 0.1 reserve, workspace share 0.1, application share 0.4
 const CAPACITY_BYTES = 90_000;
@@ -719,5 +724,169 @@ describe('BullMQDriver job memory scenarios', () => {
         jobs: [expect.anything()],
       });
     });
+  });
+
+  describe('S18: an administrator deletes one of the waiting jobs of A', () => {
+    const buildDeletedJob = (
+      harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    ) =>
+      harness.buildApplicationJob({
+        label: 'A1',
+        workspaceId: 'A',
+        payloadBytes: 2_000,
+        jobId: 'deleted-id',
+      });
+
+    it('the job is removed and its workspace and application charges are released', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      await expect(harness.removeJob('deleted-id')).resolves.toBe(true);
+
+      expect(harness.storedJobIds()).toEqual([]);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+
+    it('a locked job is kept with its charges', async () => {
+      const harness = await createMemoryHarness();
+      const {
+        jobs: [lockedJob],
+      } = await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      harness.lockJob('deleted-id');
+
+      await expect(harness.removeJob('deleted-id')).rejects.toThrow(
+        'Job deleted-id is locked',
+      );
+      expect(harness.storedJobIds()).toEqual(['deleted-id']);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        lockedJob.sizeBytes,
+      );
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(
+        lockedJob.sizeBytes,
+      );
+    });
+
+    it('a locked job that finishes during the deletion is not charged back', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+      harness.lockJob('deleted-id');
+      harness.onBeforeRemove(() => harness.markFinished('deleted-id'));
+
+      await expect(harness.removeJob('deleted-id')).rejects.toThrow(
+        'Job deleted-id is locked',
+      );
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+      expect(await harness.readUsedBytes(APPLICATION)).toBe(0);
+    });
+
+    it('an unknown job is reported as not removed', async () => {
+      const harness = await createMemoryHarness();
+
+      await expect(harness.removeJob('unknown-id')).resolves.toBe(false);
+    });
+
+    it('the same id enqueued again during the deletion is charged once it is added back', async () => {
+      const harness = await createMemoryHarness();
+
+      await harness.enqueueBulk([buildDeletedJob(harness)]);
+      harness.onBeforeRemove(async () => {
+        await harness.enqueueBulk([buildDeletedJob(harness)]);
+      });
+
+      await harness.removeJob('deleted-id');
+      harness.onBeforeRemove(async () => undefined);
+
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(0);
+
+      const {
+        jobs: [replacementJob],
+      } = await harness.enqueueBulk([buildDeletedJob(harness)]);
+
+      expect(harness.storedJobIds()).toEqual(['deleted-id']);
+      expect(await harness.readUsedBytes(WORKSPACE_A)).toBe(
+        replacementJob.sizeBytes,
+      );
+    });
+  });
+});
+
+describe('retained job payloads', () => {
+  beforeAll(silenceDriverLogs);
+
+  const enqueueOrThrow = async (
+    harness: Awaited<ReturnType<typeof createMemoryHarness>>,
+    payloadBytes: number,
+  ) => {
+    const jobId = await harness.enqueue({
+      label: 'retained',
+      payloadBytes,
+      options: { workspaceId: 'A', isWorkspaceJob: true },
+    });
+
+    if (!isDefined(jobId)) {
+      throw new Error('Expected an enqueued job');
+    }
+
+    return jobId;
+  };
+
+  it('replaces oversized successful job data with its size and hash', async () => {
+    const harness = await createMemoryHarness({
+      isEnabled: false,
+      maxJobSizeBytes: 1_000,
+    });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+    const storedJob = harness.storedJob(jobId);
+    const expectedData = {
+      memorySizeBytes: computeJobSizeBytes({
+        data: storedJob?.data,
+        options: storedJob?.opts,
+      }),
+      hash: createHash('sha256')
+        .update(JSON.stringify(storedJob?.data))
+        .digest('hex'),
+    };
+    const handler = jest.fn(
+      async ({ data }: { data: { payload?: string } }) => {
+        expect(data.payload).toHaveLength(2_000);
+      },
+    );
+
+    await harness.processJobOrThrow({ jobId, handler });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(harness.storedJob(jobId)?.data).toEqual(expectedData);
+    expect(expectedData.memorySizeBytes).toBeGreaterThan(1_000);
+  });
+
+  it('keeps successful job data under the maximum job size', async () => {
+    const harness = await createMemoryHarness({ maxJobSizeBytes: 10_000 });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+
+    await harness.processJobOrThrow({ jobId });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
+    expect(await harness.readUsedBytes('workspace:A')).toBe(0);
+  });
+
+  it('keeps oversized failed job data for a manual retry', async () => {
+    const harness = await createMemoryHarness({
+      isEnabled: false,
+      maxJobSizeBytes: 1_000,
+    });
+    const jobId = await enqueueOrThrow(harness, 2_000);
+
+    await harness.processJobOrThrow({
+      jobId,
+      handler: async () => {
+        throw new Error('transient failure');
+      },
+    });
+
+    expect(harness.storedJob(jobId)?.data.payload).toHaveLength(2_000);
   });
 });

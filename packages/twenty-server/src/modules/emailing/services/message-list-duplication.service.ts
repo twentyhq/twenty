@@ -11,7 +11,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { RecordPermissionsOnlyRoleReadService } from 'src/engine/permissions/record-permissions-only-role-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -33,7 +33,7 @@ export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
-    private readonly recordPermissionsOnlyRoleReadService: RecordPermissionsOnlyRoleReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -93,12 +93,12 @@ export class MessageListDuplicationService {
       (
         await Promise.all(
           duplicatedObjects.flatMap(({ id: objectMetadataId }) => [
-            this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords({
+            this.recordPermissionsReadService.canAccessSomeRecords({
               operationType: 'read',
               principals,
               objectMetadataId,
             }),
-            this.recordPermissionsOnlyRoleReadService.canRoleAccessSomeRecords({
+            this.recordPermissionsReadService.canAccessSomeRecords({
               operationType: 'create',
               principals,
               objectMetadataId,

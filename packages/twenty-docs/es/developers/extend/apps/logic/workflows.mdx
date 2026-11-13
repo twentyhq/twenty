@@ -107,7 +107,7 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
 
 * Los pasos de registro usan `objectUniversalIdentifier` en lugar de un nombre de objeto.
 * Los filtros y las ordenaciones apuntan a campos con `fieldMetadataUniversalIdentifier`.
-* Los operandos de filtro toman valores de `ViewFilterOperand`, exportados por `twenty-sdk/define`. Los operadores de grupo de filtros toman valores de cadena como `'AND'` u `'OR'`.
+* Los operandos de filtro aceptan valores `ViewFilterOperand`. Los operadores de grupo de filtros aceptan valores `StepLogicalOperator` en los filtros de pasos y valores `RecordFilterGroupLogicalOperator` en los filtros de registros, ambos `AND` u `OR`. `twenty-sdk/define` exporta los tres, junto con `ViewFilterOperandDeprecated` para los operandos que los flujos de trabajo más antiguos aún almacenan.
 * Los campos de formulario de tipo `RECORD` nombran su objeto con `settings.objectUniversalIdentifier`. Los campos de tipo `SELECT` y `MULTI_SELECT` ofrecen las opciones de un campo existente del mismo tipo, denominado con `settings.selectedFieldUniversalIdentifier`.
 * Un paso `CODE` contiene su código fuente de TypeScript en `input.code`: un módulo que exporta una función `main`, que recibe `input.logicFunctionInput`. Para compartir código entre workflows, usa un paso `LOGIC_FUNCTION` en su lugar.
 
@@ -137,7 +137,7 @@ Sus entradas coinciden con los pasos del [generador de flujos de trabajo](/es/us
   * `connectedAccountId`: una variable, como `{{trigger.properties.after.connectedAccountId}}`. Los pasos de correo electrónico también aceptan un id de miembro del espacio de trabajo, como `{{trigger.properties.after.assigneeId}}`, que se resuelve en la primera cuenta de ese miembro que puede enviar.
 
   Establece exactamente uno de los dos.
-* `SEND_CHAT_MESSAGE` publica en la bandeja de entrada de un miembro del espacio de trabajo, configurado con `workspaceMemberId`. Los ID de miembro también son locales para cada espacio de trabajo, por lo que una aplicación pasa una variable, como `{{trigger.properties.after.assigneeId}}`.
+* `SEND_CHAT_MESSAGE` publica en la bandeja de entrada de un miembro del espacio de trabajo, configurado con `workspaceMemberId`. Los ID de miembro también son locales para cada espacio de trabajo, por lo que una aplicación pasa una variable, como `{{trigger.properties.after.assigneeId}}`. Los miembros mencionados en su `text`, como los de un cuerpo de nota pasado como `{{trigger.properties.after.bodyV2.markdown}}`, reciben una notificación, al igual que con los [mensajes de la bandeja de entrada](/es/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## Después de la instalación
 

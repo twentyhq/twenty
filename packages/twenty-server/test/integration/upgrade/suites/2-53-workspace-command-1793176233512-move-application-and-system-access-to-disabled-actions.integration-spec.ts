@@ -16,7 +16,7 @@ const RUN_ON_WORKSPACE_ARGS = {
 const APPLICATION_WRITABLE_OBJECT = 'rocket';
 const APPLICATION_READABLE_OBJECT = 'pet';
 const SYSTEM_OBJECT = 'shortLink';
-const SYSTEM_WRITABLE_OBJECT = 'workflowAutomatedTrigger';
+const SYSTEM_WRITABLE_OBJECT = 'workflowVersion';
 
 const ALL_ACTIONS = [
   'canDestroyObjectRecords',
@@ -140,6 +140,7 @@ describe('2-53 workspace command - move application and system access to disable
     for (const nameSingular of [
       APPLICATION_WRITABLE_OBJECT,
       APPLICATION_READABLE_OBJECT,
+      SYSTEM_WRITABLE_OBJECT,
     ]) {
       await setObjectAccess({
         nameSingular,
@@ -156,14 +157,6 @@ describe('2-53 workspace command - move application and system access to disable
         writability: 'SYSTEM',
         readability: 'SYSTEM',
         disabledObjectPermissionActions: ALL_ACTIONS,
-      },
-    });
-    await setObjectAccess({
-      nameSingular: SYSTEM_WRITABLE_OBJECT,
-      access: {
-        writability: 'SYSTEM',
-        readability: 'OPEN',
-        disabledObjectPermissionActions: WRITE_ACTIONS,
       },
     });
   });

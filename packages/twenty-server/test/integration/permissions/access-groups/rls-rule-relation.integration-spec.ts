@@ -5,6 +5,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -109,11 +110,15 @@ describe('RLS rules through a relation (integration)', () => {
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['rolesPermissions']);
+    await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     await upsertRowLevelPermissionPredicates({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
+        canCreateRecords: true,
+        canReadRecords: true,
+        canUpdateRecords: true,
         predicateGroups: [
           {
             id: ruleId,
@@ -150,6 +155,7 @@ describe('RLS rules through a relation (integration)', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
     });
+    await waitForAllJobsToFinish();
   };
 
   const assignPersonRuleThroughCompanyName = async () => {
@@ -461,6 +467,8 @@ describe('RLS rules through a relation (integration)', () => {
     };
 
     await assignPersonRuleThroughCompanyName();
+    // Assigning the rule recomputes people in the background, which would refill the column cleared below
+    await waitForAllJobsToFinish();
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = $1`,
       [person.id],

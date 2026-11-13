@@ -24,6 +24,7 @@ const buildFlatAgent = (universalIdentifier: string): FlatAgent => ({
   id: `${universalIdentifier}-id`,
   workspaceId: 'workspace-id',
   applicationId: 'application-id',
+  navigationMenuItemIds: [],
 });
 
 describe('buildWorkflowManifestExportReferences', () => {

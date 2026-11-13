@@ -1,5 +1,4 @@
 import { GettingStartedKeepPlanButton } from '@/getting-started/components/GettingStartedKeepPlanButton';
-import { GettingStartedSidebarTrialCountdown } from '@/getting-started/components/GettingStartedSidebarTrialCountdown';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
 import { getGettingStartedRemainingSteps } from '@/getting-started/utils/getGettingStartedRemainingSteps';
@@ -51,13 +50,6 @@ const StyledHeader = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[6]};
   white-space: nowrap;
-
-  &[data-countdown] {
-    color: ${themeCssVariables.font.color.secondary};
-    font-weight: ${themeCssVariables.font.weight.regular};
-    height: ${themeCssVariables.spacing[8]};
-    padding: 0 ${themeCssVariables.spacing[1]};
-  }
 `;
 
 const StyledStepCount = styled.span`
@@ -66,11 +58,29 @@ const StyledStepCount = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
   text-align: end;
+`;
 
-  &[data-countdown] {
-    color: ${themeCssVariables.font.color.light};
-    font-size: ${themeCssVariables.font.size.md};
-  }
+const StyledTrialProgress = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[1]} 0;
+`;
+
+const StyledTrialHeader = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  height: ${themeCssVariables.spacing[4]};
+  justify-content: space-between;
+  white-space: nowrap;
+`;
+
+const StyledTrialProgressBar = styled.div`
+  border-radius: ${themeCssVariables.border.radius.pill};
+  margin: ${themeCssVariables.spacing[1]} 0;
+  overflow: hidden;
 `;
 
 export const GettingStartedSidebarCard = () => {
@@ -78,8 +88,7 @@ export const GettingStartedSidebarCard = () => {
   const theme = useTheme();
   const isTrialing = useSubscriptionStatus() === SubscriptionStatus.Trialing;
   const { progress } = useGettingStartedProgress({ isEnabled: isTrialing });
-  const { isCountdownVisible, daysLeft, trialDays, canKeepPlan } =
-    useGettingStartedTrial();
+  const { isCountdownVisible, canKeepPlan } = useGettingStartedTrial();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const isGettingStartedPageOpen = isDefined(useMatch(AppPath.GettingStarted));
@@ -102,48 +111,61 @@ export const GettingStartedSidebarCard = () => {
     return null;
   }
 
+  const completedStepCount = progress.completedStepActionKeys.length;
+  const stepCount = progress.steps.length;
+
   return (
     <NavigationDrawerSection>
       <StyledContainer>
         <Card.Root backgroundColor={themeCssVariables.background.primary}>
           <StyledCardBody>
-            <StyledHeader data-countdown={isCountdownVisible || undefined}>
-              <IconRocket
-                size={theme.icon.size.md}
-                color={
-                  isCountdownVisible
-                    ? theme.font.color.secondary
-                    : theme.tag.text.purple
-                }
-              />
-              {t`Getting started`}
-              <StyledStepCount data-countdown={isCountdownVisible || undefined}>
-                {`${progress.completedStepActionKeys.length}/${progress.steps.length}`}
-              </StyledStepCount>
-              {isCountdownVisible && !isGettingStartedPageOpen && (
-                <IconChevronRight
-                  size={theme.icon.size.md}
-                  color={theme.font.color.tertiary}
-                />
-              )}
-            </StyledHeader>
             {isCountdownVisible ? (
-              <GettingStartedSidebarTrialCountdown
-                daysLeft={daysLeft}
-                trialDays={trialDays}
-              />
+              <StyledTrialProgress>
+                <StyledTrialHeader>
+                  {t`Getting started`}
+                  {!isGettingStartedPageOpen && (
+                    <IconChevronRight
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                      color={theme.font.color.tertiary}
+                    />
+                  )}
+                </StyledTrialHeader>
+                <StyledTrialProgressBar>
+                  <ProgressBar
+                    aria-label={t`Getting started progress`}
+                    value={completedStepCount}
+                    max={stepCount}
+                    size="sm"
+                    backgroundColor={themeCssVariables.border.color.medium}
+                    barColor={themeCssVariables.color.green9}
+                  />
+                </StyledTrialProgressBar>
+              </StyledTrialProgress>
             ) : (
-              <ProgressBar
-                aria-label={t`Getting started progress`}
-                value={progress.completedStepActionKeys.length}
-                max={progress.steps.length}
-                size="xs"
-                backgroundColor={
-                  themeCssVariables.background.transparent.medium
-                }
-                barColor={themeCssVariables.color.blue}
-                withBorderRadius
-              />
+              <>
+                <StyledHeader>
+                  <IconRocket
+                    size={theme.icon.size.md}
+                    color={theme.tag.text.purple}
+                  />
+                  {t`Getting started`}
+                  <StyledStepCount>
+                    {`${completedStepCount}/${stepCount}`}
+                  </StyledStepCount>
+                </StyledHeader>
+                <ProgressBar
+                  aria-label={t`Getting started progress`}
+                  value={completedStepCount}
+                  max={stepCount}
+                  size="xs"
+                  backgroundColor={
+                    themeCssVariables.background.transparent.medium
+                  }
+                  barColor={themeCssVariables.color.blue}
+                  withBorderRadius
+                />
+              </>
             )}
             <StyledButtonLayer>
               {canKeepPlan ? (

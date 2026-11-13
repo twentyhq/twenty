@@ -253,7 +253,7 @@ await createMessageChannel({
 
 Il provider di messaggistica deve appartenere alla tua app e utilizzare il provider di connessione dell'account del canale; il relativo provider di connessione non può cambiare dopo la prima sincronizzazione. La modifica della funzione di invio in una versione successiva si applica a ogni canale associato al provider.
 
-Le risposte vengono inviate con la mutazione `sendAppChannelMessage`, che accetta il canale, il thread, il testo e un `idempotencyKey` (un UUID generato dal client per ogni risposta e riutilizzato quando la ritenta) ed esegue la funzione del provider:
+Le risposte vengono inviate con la mutation `sendAppChannelMessage`, che accetta il canale, il thread, `text` oppure, per i provider il cui `conversationStyle` è `'email'`, un blocco `email` (`to`, `cc`, `bcc`, `subject`, `body` in rich text, `inReplyTo`), e un `idempotencyKey` (un UUID che il client genera per ogni risposta e riutilizza quando la ritenta), ed esegue la funzione del provider:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -277,11 +277,56 @@ export const linkedinSendMessageHandler = async ({
 
 Il payload contiene `messagingProviderName`, il `threadExternalId` della conversazione così come è stato importato, il `text`, l'`idempotencyKey` e i `recipients`: i partecipanti all'ultimo messaggio del thread diversi dall'identificativo del canale stesso, in modo che non venga inviato alcun messaggio a chi ha partecipato solo a uno scambio precedente. Preferisci la conversazione del provider ai `recipients` quando la sua API invia a un ID conversazione. Restituisce l'ID del provider per il messaggio inviato come `externalId`.
 
-Twenty registra quindi la risposta nel thread come messaggio in uscita dal canale, con gli stessi destinatari, così viene visualizzata immediatamente. Quando il tuo webhook recapita in seguito lo stesso messaggio, la sua importazione con quell'`externalId` non cambia nulla.
+Il `conversationStyle` del payload corrisponde a quello del provider (`'chat'` quando non ne dichiara alcuno). Con `'email'` (ad esempio un'app che sincronizza Outlook o Gmail), i membri rispondono invece con il compositore di email e il payload contiene anche un blocco `email`: l'`subject`, il corpo in rich text compilato in `html`, i destinatari `cc` e `bcc` e `inReplyToExternalId`, l'`externalId` del messaggio a cui si sta rispondendo quando Twenty lo conosce. `recipients` sono quindi gli indirizzi `To` scelti dal membro e `text` è la versione in testo normale del corpo. Richiede `"engines": { "twenty": ">=2.58.0" }`.
+
+Quando nell'area di lavoro sono abilitati gli allegati ai messaggi, un membro può allegare file a una risposta e la risposta potrebbe quindi avere un `text` vuoto. La mutazione accetta quindi anche `attachments`, al massimo 20, ciascuno con l'`id` di un file caricato come allegato email e il relativo `name`. Il `payload` elenca tali elementi in `attachments` e contiene un array vuoto per una risposta con solo testo. Ciascuno ha un `filename`, un `contentType`, una `size` in byte e un `downloadUrl`: un link firmato che la funzione recupera per ottenere il file, in modo che i byte non transitino mai nel payload. Verifica `size` rispetto al limite del provider prima di scaricare e genera un errore quando il provider non può consegnare un file anziché inviare solo il testo, in modo che il membro veda che la risposta non riesce:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+`attachments` richiede `"engines": { "twenty": ">=2.59.0" }`.
+
+Twenty registra quindi la risposta nella conversazione come messaggio in uscita dal canale, con gli stessi destinatari e i relativi allegati, così viene visualizzata immediatamente. Quando il tuo webhook recapita in seguito lo stesso messaggio, la sua importazione con quell'`externalId` non cambia nulla.
 
 La funzione viene eseguita all'interno della richiesta `sendAppChannelMessage`. Se genera un'eccezione o non restituisce alcun `externalId`, la mutazione non riesce e non viene registrato nulla.
 
 Una volta che la funzione restituisce un valore, Twenty conserva la consegna per 24 ore per il membro, il canale, il thread e l'`idempotencyKey`. Se la registrazione della risposta non riesce, la mutazione non riesce e ritentandola con la stessa chiave viene registrata la risposta recapitata senza richiamare la funzione; un nuovo tentativo di una risposta già registrata la restituisce. Un nuovo tentativo mentre la prima chiamata sta ancora inviando attende che termini. Una nuova chiave corrisponde a una nuova risposta. La tua funzione può comunque essere chiamata due volte per una risposta se il client ritenta con una nuova chiave o dopo queste 24 ore, oppure se la funzione stessa non riesce dopo che il provider ha accettato il messaggio; inoltra quindi `idempotencyKey` al provider quando la sua API supporta invii idempotenti. Un canale con `isSyncEnabled: false` rifiuta le risposte senza chiamare la tua funzione. Un canale senza provider di messaggistica, o il cui provider non dispone di `sendMessageLogicFunction` o non esiste più, non può inviare; le sue conversazioni rimangono invariate. Richiede `"engines": { "twenty": ">=2.52.0" }`.
+
+## Contrassegnare le conversazioni come lette
+
+Twenty non mantiene alcuno stato di lettura per i messaggi dell'app, ma può informare il provider quando un membro legge una conversazione in Twenty, affinché il provider la contrassegni come letta a monte. Dichiara una `markThreadAsReadLogicFunction` sul provider di messaggistica:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-mark-thread-as-read-handler.ts
+import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinMarkThreadAsReadHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+}: MarkAppThreadAsReadPayload) => {
+  await markLinkedinConversationAsRead({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+  });
+};
+```
+
+Quando il proprietario dell'account del canale apre una delle sue conversazioni, Twenty chiama la mutation `markAppChannelThreadAsRead`, che esegue la tua funzione con `messagingProviderName`, `connectedAccountId`, `messageChannelId` e `threadExternalId` della conversazione. Il relativo valore restituito viene ignorato. I membri con cui l'account è condiviso non lo attivano mai e le chiamate per lo stesso membro e thread vengono ignorate per 30 secondi, quindi riaprire una conversazione non richiama il provider. La chiamata viene eseguita al meglio: il thread si apre indipendentemente da ciò che fa la funzione. Un provider senza `markThreadAsReadLogicFunction` non viene mai chiamato. Richiede `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Elenco e aggiornamento dei canali
 

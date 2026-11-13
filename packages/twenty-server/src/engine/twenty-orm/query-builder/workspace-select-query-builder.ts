@@ -50,7 +50,7 @@ import {
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import { type SqlCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -720,7 +720,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   }: {
     alias: string;
     columnNames: string[];
-    condition: SqlCondition;
+    condition: SQLCondition;
   }): this {
     const columnNullifyConditionsOfAlias = (this.columnNullifyConditions[
       alias

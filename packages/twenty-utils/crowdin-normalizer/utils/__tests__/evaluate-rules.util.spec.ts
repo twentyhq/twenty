@@ -16,6 +16,17 @@ describe('evaluateRules', () => {
     ]);
   });
 
+  it('drops a control character that unescaping produced', () => {
+    const result = evaluateRules({
+      rules: NORMALIZATION_RULES,
+      sourceText: 'Suggested',
+      translationText: 'Navrženo\\u0000',
+    });
+
+    expect(result.fixedText).toBe('');
+    expect(result.ruleNames).toEqual(['escaped-unicode', 'control-characters']);
+  });
+
   it('skips source-filtered rules when the source string is unknown', () => {
     const result = evaluateRules({
       rules: NORMALIZATION_RULES,

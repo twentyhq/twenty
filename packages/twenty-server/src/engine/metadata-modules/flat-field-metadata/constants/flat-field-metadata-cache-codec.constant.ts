@@ -11,6 +11,12 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   fieldPermissionIds: '$9',
   fieldMetadataOptionIds: '$P',
   fieldMetadataOptionUniversalIdentifiers: '$Q',
+  rowLevelPermissionPredicateIds: '$R',
+  rowLevelPermissionPredicateUniversalIdentifiers: '$S',
+  relationRowLevelPermissionPredicateIds: '$T',
+  relationRowLevelPermissionPredicateUniversalIdentifiers: '$U',
+  workspaceMemberRowLevelPermissionPredicateIds: '$V',
+  workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: '$W',
   fieldPermissionUniversalIdentifiers: '$a',
   icon: '$b',
   id: '$c',
@@ -85,6 +91,12 @@ export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS = [
   'fieldPermissionUniversalIdentifiers',
   'fieldMetadataOptionIds',
   'fieldMetadataOptionUniversalIdentifiers',
+  'rowLevelPermissionPredicateIds',
+  'rowLevelPermissionPredicateUniversalIdentifiers',
+  'relationRowLevelPermissionPredicateIds',
+  'relationRowLevelPermissionPredicateUniversalIdentifiers',
+  'workspaceMemberRowLevelPermissionPredicateIds',
+  'workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers',
 ] as const satisfies readonly (keyof typeof FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY)[];
 
 export const FLAT_FIELD_METADATA_EMPTY_ARRAY_KEY_SET: ReadonlySet<string> =

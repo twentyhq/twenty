@@ -28,7 +28,7 @@ import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
-import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
+import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.constant';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
@@ -155,9 +155,11 @@ export class AgentRunnerService {
   // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
   async runInRequest({
     streamChannelId,
+    abortSignal,
     ...input
   }: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'> & {
     streamChannelId?: string;
+    abortSignal?: AbortSignal;
   }): Promise<InRequestAgentRun> {
     const persona = await this.agentRunPersonaService.resolveOrThrow({
       workspaceId: input.workspaceId,
@@ -183,6 +185,7 @@ export class AgentRunnerService {
           suspension: null,
           stream: null,
           streamChannelId,
+          abortSignal,
           openedTurn,
         }).then(
           (result): AgentRunnerOutcome => result.outcome,
@@ -1080,6 +1083,8 @@ export class AgentRunnerService {
     suspension,
     stream,
     streamChannelId,
+    // a claimed run is stopped through its thread; an unclaimed one only by the signal its caller passes
+    abortSignal = stream?.abortSignal,
     continuationWakeUpId,
     openedTurn: { turnId, priorMessages },
   }: {
@@ -1087,11 +1092,11 @@ export class AgentRunnerService {
     suspension: AgentRunSuspension | null;
     stream: AgentRunStream | null;
     streamChannelId?: string;
+    abortSignal?: AbortSignal;
     continuationWakeUpId?: string;
     openedTurn: OpenedAgentRunTurn;
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
-    const abortSignal = stream?.abortSignal;
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();

@@ -46,6 +46,10 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import {
+  type FlatFieldMetadataOptionMapsForOptions,
+  resolveFlatFieldMetadataOptions,
+} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -70,33 +74,67 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-export const isRecordMatchingFilter = ({
-  record,
-  filter,
-  flatObjectMetadata,
-  flatFieldMetadataMaps,
-  shouldIgnoreSoftDeleteDefaultFilter,
-}: {
+type RecordFilterEvaluationArgs = {
   // oxlint-disable-next-line typescript/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
   shouldIgnoreSoftDeleteDefaultFilter?: boolean;
-}): boolean => {
+};
+
+type RecordFilterEvaluation = boolean | null;
+
+const combineEvaluationsWithAnd = (
+  evaluations: RecordFilterEvaluation[],
+): RecordFilterEvaluation => {
+  if (evaluations.includes(false)) {
+    return false;
+  }
+
+  return evaluations.includes(null) ? null : true;
+};
+
+const combineEvaluationsWithOr = (
+  evaluations: RecordFilterEvaluation[],
+): RecordFilterEvaluation => {
+  if (evaluations.includes(true)) {
+    return true;
+  }
+
+  return evaluations.includes(null) ? null : false;
+};
+
+export const isRecordMatchingFilter = (
+  args: RecordFilterEvaluationArgs,
+): boolean => evaluateRecordFilter(args) === true;
+
+// null is SQL's unknown: a comparison with a null value, which stays unknown under "not"
+const evaluateRecordFilter = ({
+  record,
+  filter,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
+  shouldIgnoreSoftDeleteDefaultFilter,
+}: RecordFilterEvaluationArgs): RecordFilterEvaluation => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
     return true;
   }
 
   if (isImplicitAndFilter(filter)) {
-    return Object.entries(filter).every(([filterKey, value]) =>
-      isRecordMatchingFilter({
-        record,
-        filter: { [filterKey]: value },
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      }),
+    return combineEvaluationsWithAnd(
+      Object.entries(filter).map(([filterKey, value]) =>
+        evaluateRecordFilter({
+          record,
+          filter: { [filterKey]: value },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+          shouldIgnoreSoftDeleteDefaultFilter,
+        }),
+      ),
     );
   }
 
@@ -109,17 +147,17 @@ export const isRecordMatchingFilter = ({
       );
     }
 
-    return (
-      filterValue.length === 0 ||
-      filterValue.every((andFilter) =>
-        isRecordMatchingFilter({
+    return combineEvaluationsWithAnd(
+      filterValue.map((andFilter) =>
+        evaluateRecordFilter({
           record,
           filter: andFilter,
           flatObjectMetadata,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           shouldIgnoreSoftDeleteDefaultFilter,
         }),
-      )
+      ),
     );
   }
 
@@ -129,25 +167,29 @@ export const isRecordMatchingFilter = ({
     if (Array.isArray(filterValue)) {
       return (
         filterValue.length === 0 ||
-        filterValue.some((orFilter) =>
-          isRecordMatchingFilter({
-            record,
-            filter: orFilter,
-            flatObjectMetadata,
-            flatFieldMetadataMaps,
-            shouldIgnoreSoftDeleteDefaultFilter,
-          }),
+        combineEvaluationsWithOr(
+          filterValue.map((orFilter) =>
+            evaluateRecordFilter({
+              record,
+              filter: orFilter,
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+              flatFieldMetadataOptionMaps,
+              shouldIgnoreSoftDeleteDefaultFilter,
+            }),
+          ),
         )
       );
     }
 
     if (isObject(filterValue)) {
       // The API considers "or" with an object as an "and"
-      return isRecordMatchingFilter({
+      return evaluateRecordFilter({
         record,
         filter: filterValue,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
         shouldIgnoreSoftDeleteDefaultFilter,
       });
     }
@@ -162,16 +204,20 @@ export const isRecordMatchingFilter = ({
       throw new Error('Unexpected value for "not" filter : ' + filterValue);
     }
 
-    return (
-      isEmptyObject(filterValue) ||
-      !isRecordMatchingFilter({
-        record,
-        filter: filterValue,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      })
-    );
+    if (isEmptyObject(filterValue)) {
+      return true;
+    }
+
+    const negatedEvaluation = evaluateRecordFilter({
+      record,
+      filter: filterValue,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+      shouldIgnoreSoftDeleteDefaultFilter,
+    });
+
+    return negatedEvaluation === null ? null : !negatedEvaluation;
   }
 
   const shouldTakeDeletedAtIntoAccount =
@@ -191,7 +237,10 @@ export const isRecordMatchingFilter = ({
     flatFieldMetadataMaps,
   );
 
-  return Object.entries(filter).every(([filterKey, filterValue]) => {
+  const evaluateField = ([filterKey, filterValue]: [
+    string,
+    unknown,
+  ]): RecordFilterEvaluation => {
     if (!isDefined(filterValue)) {
       throw new Error(
         'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
@@ -235,11 +284,11 @@ export const isRecordMatchingFilter = ({
     const recordFieldValue = record[filterKey];
 
     if (!isDefined(recordFieldValue)) {
-      if (isObject(filterValue)) {
-        return (filterValue as { is?: IsFilter })?.is === 'NULL';
-      }
+      const nullCheck = isObject(filterValue)
+        ? (filterValue as { is?: IsFilter }).is
+        : undefined;
 
-      return false;
+      return isDefined(nullCheck) ? nullCheck === 'NULL' : null;
     }
 
     switch (objectMetadataField.type) {
@@ -247,7 +296,10 @@ export const isRecordMatchingFilter = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: recordFieldValue,
-          options: objectMetadataField.options,
+          options: resolveFlatFieldMetadataOptions({
+            flatFieldMetadata: objectMetadataField,
+            flatFieldMetadataOptionMaps,
+          }),
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -265,7 +317,10 @@ export const isRecordMatchingFilter = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: recordFieldValue,
-          options: objectMetadataField.options,
+          options: resolveFlatFieldMetadataOptions({
+            flatFieldMetadata: objectMetadataField,
+            flatFieldMetadataOptionMaps,
+          }),
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
@@ -347,5 +402,7 @@ export const isRecordMatchingFilter = ({
         );
       }
     }
-  });
+  };
+
+  return combineEvaluationsWithAnd(Object.entries(filter).map(evaluateField));
 };

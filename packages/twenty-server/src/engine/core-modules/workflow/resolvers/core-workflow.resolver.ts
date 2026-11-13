@@ -9,6 +9,8 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { CoreWorkflowRunInsightsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.dto';
+import { CoreWorkflowRunInsightsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-run-insights.input';
 import { CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import { CoreWorkflowsWithCurrentVersionsInput } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-current-versions.input';
 import { CreateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow.input';
@@ -29,6 +31,7 @@ import { UpdateCoreWorkflowVisibilityInput } from 'src/engine/core-modules/workf
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { CoreWorkflowRunInsightsService } from 'src/engine/core-modules/workflow/services/core-workflow-run-insights.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -92,6 +95,7 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly coreWorkflowRunInsightsService: CoreWorkflowRunInsightsService,
   ) {}
 
   private assertWorkflowActorOrThrow(principal: {
@@ -131,18 +135,17 @@ export class CoreWorkflowResolver {
     });
   }
 
-  @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  @Mutation(() => CoreWorkflowDTO, {
+    nullable: true,
+    deprecationReason: 'Use updateCoreWorkflow with a visibility instead',
+  })
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async updateCoreWorkflowVisibility(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('input') input: UpdateCoreWorkflowVisibilityInput,
   ): Promise<CoreWorkflowDTO | null> {
-    return this.coreWorkflowMutationWorkspaceService.updateWorkflowVisibility({
-      workspaceId,
-      userWorkspaceId,
-      ...input,
-    });
+    return this.updateCoreWorkflow(workspace, userWorkspaceId, input);
   }
 
   @Mutation(() => CoreWorkflowDTO)
@@ -273,6 +276,35 @@ export class CoreWorkflowResolver {
       callerApplication,
       workspaceCustomApplicationId,
       coreWorkflowId,
+    });
+  }
+
+  @Query(() => CoreWorkflowRunInsightsDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_READ_ACCESS_POLICY))
+  async coreWorkflowRunInsights(
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
+    @Args() { coreWorkflowId, timeZone }: CoreWorkflowRunInsightsArgs,
+  ): Promise<CoreWorkflowRunInsightsDTO | null> {
+    const coreWorkflow = await this.coreWorkflowListService.findOneById({
+      workspaceId,
+      userWorkspaceId,
+      callerApplication,
+      workspaceCustomApplicationId,
+      coreWorkflowId,
+    });
+
+    if (!isDefined(coreWorkflow)) {
+      return null;
+    }
+
+    return this.coreWorkflowRunInsightsService.findOneByCoreWorkflowId({
+      coreWorkflowId: coreWorkflow.id,
+      timeZone,
     });
   }
 

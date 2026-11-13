@@ -48,6 +48,15 @@ export class AccessGroupSyncListener {
     );
   }
 
+  @OnEvent('metadata.relatedRecordPath.*')
+  async handleRelatedRecordPathEvent({
+    workspaceId,
+  }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
+    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+      workspaceId,
+    );
+  }
+
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
   async handleFeatureFlagEnabled(
     batch: Pick<
@@ -82,6 +91,9 @@ export class AccessGroupSyncListener {
       await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
         workspaceId,
       );
+      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+        workspaceId,
+      );
     }
   }
 
@@ -99,9 +111,9 @@ export class AccessGroupSyncListener {
       return;
     }
 
-    const { flatRowLevelPermissionPredicateMaps, flatFieldMetadataMaps } =
+    const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatRowLevelPermissionPredicateMaps',
+        'rolesPermissions',
         'flatFieldMetadataMaps',
       ]);
 
@@ -110,7 +122,7 @@ export class AccessGroupSyncListener {
         updatedFields: events.flatMap(
           ({ properties }) => properties.updatedFields,
         ),
-        flatRowLevelPermissionPredicateMaps,
+        rolesPermissions,
         flatFieldMetadataMaps,
       })
     ) {

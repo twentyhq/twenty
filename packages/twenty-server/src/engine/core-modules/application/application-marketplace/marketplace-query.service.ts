@@ -4,13 +4,21 @@ import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
+  getReachableObjectPermissionsFromRoleManifest,
+  getRecordsPermissionsFromRoleManifest,
+  normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { buildApplicationContentFromManifest } from 'src/engine/core-modules/application/application-content/utils/build-application-content-from-manifest.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { MARKETPLACE_BUILT_IN_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-applications.constant';
+import { findMarketplaceBuiltInApplication } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-built-in-application.util';
+import { toMarketplaceBuiltInAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-detail-dto.util';
+import { toMarketplaceBuiltInAppDTO } from 'src/engine/core-modules/application/application-marketplace/utils/to-marketplace-built-in-app-dto.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
@@ -34,14 +42,17 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   async findManyMarketplaceApps({
     universalIdentifiers,
     isListed,
+    shouldIncludeBuiltInApplications = false,
   }: {
     universalIdentifiers?: string[];
     isListed?: boolean;
+    shouldIncludeBuiltInApplications?: boolean;
   } = {}): Promise<MarketplaceAppDTO[]> {
     const appsByUniversalIdentifier =
       (await this.coreEntityCacheService.get(
@@ -49,7 +60,7 @@ export class MarketplaceQueryService {
         MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
       )) ?? {};
 
-    const apps = isNonEmptyArray(universalIdentifiers)
+    const catalogApps = isNonEmptyArray(universalIdentifiers)
       ? universalIdentifiers
           .map(
             (universalIdentifier) =>
@@ -58,6 +69,10 @@ export class MarketplaceQueryService {
           .filter(isDefined)
       : Object.values(appsByUniversalIdentifier);
 
+    const apps = shouldIncludeBuiltInApplications
+      ? [...this.findBuiltInApps(universalIdentifiers), ...catalogApps]
+      : catalogApps;
+
     if (!isDefined(isListed)) {
       return apps;
     }
@@ -65,9 +80,39 @@ export class MarketplaceQueryService {
     return apps.filter((app) => app.isListed === isListed);
   }
 
-  async findMarketplaceAppDetail(
-    universalIdentifier: string,
-  ): Promise<MarketplaceAppDetailDTO> {
+  private findBuiltInApps(
+    universalIdentifiers?: string[],
+  ): MarketplaceAppDTO[] {
+    const frontBaseUrl = this.domainServerConfigService.getBaseUrl();
+    const builtInApplications = isNonEmptyArray(universalIdentifiers)
+      ? universalIdentifiers
+          .map(findMarketplaceBuiltInApplication)
+          .filter(isDefined)
+      : MARKETPLACE_BUILT_IN_APPLICATIONS;
+
+    return builtInApplications.map((builtInApplication) =>
+      toMarketplaceBuiltInAppDTO({ builtInApplication, frontBaseUrl }),
+    );
+  }
+
+  async findMarketplaceAppDetail({
+    universalIdentifier,
+    shouldIncludeBuiltInApplications = false,
+  }: {
+    universalIdentifier: string;
+    shouldIncludeBuiltInApplications?: boolean;
+  }): Promise<MarketplaceAppDetailDTO> {
+    const builtInApplication = shouldIncludeBuiltInApplications
+      ? findMarketplaceBuiltInApplication(universalIdentifier)
+      : undefined;
+
+    if (isDefined(builtInApplication)) {
+      return toMarketplaceBuiltInAppDetailDTO({
+        builtInApplication,
+        frontBaseUrl: this.domainServerConfigService.getBaseUrl(),
+      });
+    }
+
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
@@ -195,9 +240,22 @@ export class MarketplaceQueryService {
     role,
     applicationUniversalIdentifier,
   }: {
-    role: RoleManifest;
+    role: LegacyCompliantRoleManifest;
     applicationUniversalIdentifier: string;
   }): MarketplaceAppRoleDTO {
+    const normalizedRole = normalizeLegacyCompliantRoleManifest({
+      role,
+      applicationUniversalIdentifier,
+    });
+    const recordsPermissions = getRecordsPermissionsFromRoleManifest({
+      role: normalizedRole,
+    });
+    const objectUniversalIdentifiersWithRules = new Set(
+      recordsPermissions.rowLevelPermissionRules.map(
+        (rule) => rule.objectUniversalIdentifier,
+      ),
+    );
+
     return {
       universalIdentifier: role.universalIdentifier,
       label: role.label,
@@ -205,39 +263,65 @@ export class MarketplaceQueryService {
       icon: role.icon,
       canUpdateAllSettings: role.canUpdateAllSettings,
       canAccessAllTools: role.canAccessAllTools,
-      canReadAllObjectRecords: role.canReadAllObjectRecords,
-      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
-      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
-      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+      canReadAllObjectRecords: recordsPermissions.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: recordsPermissions.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords:
+        recordsPermissions.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: recordsPermissions.canDestroyAllObjectRecords,
       permissionFlagUniversalIdentifiers:
         role.permissionFlagUniversalIdentifiers,
-      objectPermissions: role.objectPermissions?.map((permission) => ({
-        universalIdentifier:
-          permission.universalIdentifier ??
-          getObjectPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: role.universalIdentifier,
-            objectUniversalIdentifier: permission.objectUniversalIdentifier,
-          }),
-        objectUniversalIdentifier: permission.objectUniversalIdentifier,
-        canReadObjectRecords: permission.canReadObjectRecords,
-        canUpdateObjectRecords: permission.canUpdateObjectRecords,
-        canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
-        canDestroyObjectRecords: permission.canDestroyObjectRecords,
-      })),
-      fieldPermissions: role.fieldPermissions?.map((permission) => ({
-        universalIdentifier:
-          permission.universalIdentifier ??
-          getFieldPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: role.universalIdentifier,
-            fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
-          }),
-        objectUniversalIdentifier: permission.objectUniversalIdentifier,
-        fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
-        canReadFieldValue: permission.canReadFieldValue,
-        canUpdateFieldValue: permission.canUpdateFieldValue,
-      })),
+      objectPermissions: recordsPermissions.objectPermissions.map(
+        (permission) => {
+          const { objectUniversalIdentifier } = permission;
+          // The listing has no rules yet, so an object reached through rules shows what they grant
+          const reachablePermissions = objectUniversalIdentifiersWithRules.has(
+            objectUniversalIdentifier,
+          )
+            ? getReachableObjectPermissionsFromRoleManifest({
+                role: normalizedRole,
+                objectUniversalIdentifier,
+              })
+            : undefined;
+
+          return {
+            universalIdentifier:
+              permission.universalIdentifier ??
+              getObjectPermissionUniversalIdentifier({
+                applicationUniversalIdentifier,
+                roleUniversalIdentifier: role.universalIdentifier,
+                objectUniversalIdentifier,
+              }),
+            objectUniversalIdentifier,
+            canReadObjectRecords:
+              reachablePermissions?.canReadObjectRecords ??
+              permission.canReadObjectRecords,
+            canUpdateObjectRecords:
+              reachablePermissions?.canUpdateObjectRecords ??
+              permission.canUpdateObjectRecords,
+            canSoftDeleteObjectRecords:
+              reachablePermissions?.canSoftDeleteObjectRecords ??
+              permission.canSoftDeleteObjectRecords,
+            canDestroyObjectRecords:
+              reachablePermissions?.canDestroyObjectRecords ??
+              permission.canDestroyObjectRecords,
+          };
+        },
+      ),
+      fieldPermissions: recordsPermissions.fieldPermissions.map(
+        (permission) => ({
+          universalIdentifier:
+            permission.universalIdentifier ??
+            getFieldPermissionUniversalIdentifier({
+              applicationUniversalIdentifier,
+              roleUniversalIdentifier: role.universalIdentifier,
+              fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+            }),
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          canReadFieldValue: permission.canReadFieldValue,
+          canUpdateFieldValue: permission.canUpdateFieldValue,
+        }),
+      ),
     };
   }
 }

@@ -235,6 +235,50 @@ describe('gettingStarted (e2e)', () => {
         );
       }
     });
+
+    it('leaves the mailbox step open when the only account comes from an SSO sign-in', async () => {
+      const activeAccounts: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `SELECT "id" FROM core."connectedAccount" WHERE "userWorkspaceId" = $1 AND "archivedAt" IS NULL`,
+          [USER_WORKSPACE_DATA_SEED_IDS.JANE],
+        );
+      const activeAccountIds = activeAccounts.map(({ id }) => id);
+
+      await globalThis.testDataSource.query(
+        `UPDATE core."connectedAccount" SET "archivedAt" = NOW() WHERE "id" = ANY($1)`,
+        [activeAccountIds],
+      );
+
+      const [ssoAccount]: { id: string }[] =
+        await globalThis.testDataSource.query(
+          `INSERT INTO core."connectedAccount" ("workspaceId", "userWorkspaceId", "handle", "provider", "scopes", "lastSignedInAt") VALUES ($1, $2, 'jane.sso@apple.dev', 'google', $3, NOW()) RETURNING "id"`,
+          [
+            SEED_APPLE_WORKSPACE_ID,
+            USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            ['email', 'profile'],
+          ],
+        );
+
+      await globalThis.testDataSource.query(
+        `DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND "userId" = $2 AND "key" = 'GETTING_STARTED_COMPLETED_CONNECT_MAILBOX'`,
+        [SEED_APPLE_WORKSPACE_ID, USER_DATA_SEED_IDS.JANE],
+      );
+
+      try {
+        expect(await findCompletedStepActionKeys()).not.toContain(
+          'CONNECT_MAILBOX',
+        );
+      } finally {
+        await globalThis.testDataSource.query(
+          `DELETE FROM core."connectedAccount" WHERE "id" = $1`,
+          [ssoAccount.id],
+        );
+        await globalThis.testDataSource.query(
+          `UPDATE core."connectedAccount" SET "archivedAt" = NULL WHERE "id" = ANY($1)`,
+          [activeAccountIds],
+        );
+      }
+    });
   });
 
   describe('assigned step action keys', () => {

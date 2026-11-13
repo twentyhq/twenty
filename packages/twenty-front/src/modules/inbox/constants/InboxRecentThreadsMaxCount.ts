@@ -1,0 +1,1 @@
+export const INBOX_RECENT_THREADS_MAX_COUNT = 5;

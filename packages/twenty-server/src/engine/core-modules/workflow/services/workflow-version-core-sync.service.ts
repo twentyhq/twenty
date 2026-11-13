@@ -34,7 +34,6 @@ import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/au
 import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
@@ -93,7 +92,12 @@ export class WorkflowVersionCoreSyncService {
 
   async upsertToCore(
     workspaceId: string,
-    workflowVersions: WorkflowVersionWorkspaceEntity[],
+    workflowVersions: (Pick<
+      WorkflowVersionWorkspaceEntity,
+      'id' | 'coreWorkflowVersionId' | 'trigger' | 'steps' | 'status'
+    > & {
+      workflowId: string;
+    })[],
   ): Promise<void> {
     if (workflowVersions.length === 0) {
       return;
@@ -277,7 +281,10 @@ export class WorkflowVersionCoreSyncService {
   // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
   private async resolveOwnedCoreVersions(
     workspaceId: string,
-    workflowVersions: WorkflowVersionWorkspaceEntity[],
+    workflowVersions: Pick<
+      WorkflowVersionWorkspaceEntity,
+      'coreWorkflowVersionId'
+    >[],
   ): Promise<Map<string, string | null>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
@@ -319,6 +326,33 @@ export class WorkflowVersionCoreSyncService {
     return this.coreWorkflowVersionRepository.findOne(workspaceId, {
       where: { id: coreWorkflowVersionId },
     });
+  }
+
+  async resolveDispatchedCoreVersionId({
+    workspaceId,
+    coreWorkflowVersionId,
+    workspaceWorkflowVersionId,
+    lastPublishedCoreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId?: string | null;
+    workspaceWorkflowVersionId?: string | null;
+    lastPublishedCoreWorkflowVersionId?: string | null;
+  }): Promise<string | undefined> {
+    if (isDefined(coreWorkflowVersionId)) {
+      return coreWorkflowVersionId;
+    }
+
+    if (isDefined(workspaceWorkflowVersionId)) {
+      return (
+        await this.findCoreVersionByWorkspaceVersionId(
+          workspaceId,
+          workspaceWorkflowVersionId,
+        )
+      )?.id;
+    }
+
+    return lastPublishedCoreWorkflowVersionId ?? undefined;
   }
 
   async findCoreVersionByWorkspaceVersionId(
@@ -388,52 +422,12 @@ export class WorkflowVersionCoreSyncService {
       return new Map();
     }
 
-    const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>(
-            'workflow',
-          );
-
-        return workflowRepository.find({
-          where: { id: In(distinctWorkflowIds) },
-          withDeleted: true,
-        });
-      },
-      buildSystemAuthContext(workspaceId),
-    );
-
-    const coreWorkflowIdByWorkflowId = new Map<string, string>();
-
-    for (const workflow of workflows) {
-      if (isNonEmptyString(workflow.coreWorkflowId)) {
-        coreWorkflowIdByWorkflowId.set(workflow.id, workflow.coreWorkflowId);
-      }
-    }
-
-    const unresolvedWorkflowIds = distinctWorkflowIds.filter(
-      (candidateWorkflowId) =>
-        !coreWorkflowIdByWorkflowId.has(candidateWorkflowId),
-    );
-
-    const reverseMappedCoreWorkflowIds =
-      await resolveCoreWorkflowIdsByWorkspaceWorkflowId({
-        executeQuery: (query, parameters) =>
-          this.workspaceRepository.manager.query(query, parameters),
-        workspaceId,
-        workspaceWorkflowIds: unresolvedWorkflowIds,
-      });
-
-    for (const [
-      workspaceWorkflowId,
-      coreWorkflowId,
-    ] of reverseMappedCoreWorkflowIds) {
-      if (!coreWorkflowIdByWorkflowId.has(workspaceWorkflowId)) {
-        coreWorkflowIdByWorkflowId.set(workspaceWorkflowId, coreWorkflowId);
-      }
-    }
-
-    return coreWorkflowIdByWorkflowId;
+    return resolveCoreWorkflowIdsByWorkspaceWorkflowId({
+      executeQuery: (query, parameters) =>
+        this.workspaceRepository.manager.query(query, parameters),
+      workspaceId,
+      workspaceWorkflowIds: distinctWorkflowIds,
+    });
   }
 
   private async writeBackCoreVersionIds(

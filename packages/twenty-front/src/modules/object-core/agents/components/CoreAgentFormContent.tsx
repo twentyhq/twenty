@@ -1,218 +1,236 @@
-import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
-import { IconBolt, IconLock, IconSettings, IconTerminal } from 'twenty-ui/icon';
-import { useIcons } from 'twenty-ui/icon/provider';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo } from 'react';
+import {
+  IconCancel,
+  IconDeviceFloppy,
+  IconLayoutDashboard,
+  IconSettings,
+  IconTerminal,
+  IconTrash,
+} from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 
+import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
+import { CoreObjectShowPageTabList } from '@/object-core/components/CoreObjectShowPageTabList';
+import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
+import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
+import { CoreAgentPinnedCommandMenuItems } from '@/object-core/commands/components/CoreAgentPinnedCommandMenuItems';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
   type FindOneAgentQuery,
 } from '~/generated-metadata/graphql';
-import { CoreAgentRoleTab } from '@/object-core/agents/components/CoreAgentRoleTab';
-import { CoreAgentRunsTab } from '@/object-core/agents/components/CoreAgentRunsTab';
-import { CoreAgentSettingsTab } from '@/object-core/agents/components/CoreAgentSettingsTab';
-import { CoreAgentTriggersTab } from '@/object-core/agents/components/CoreAgentTriggersTab';
-import { CORE_AGENT_DETAIL_TABS } from '@/object-core/agents/constants/CoreAgentDetailTabs';
-import { useCoreAgentFormState } from '@/object-core/agents/hooks/useCoreAgentFormState';
-import { useCoreAgentSave } from '@/object-core/agents/hooks/useCoreAgentSave';
+import { CoreAgentDeleteConfirmationModal } from '@/object-core/agents/components/CoreAgentDeleteConfirmationModal';
+import { CoreAgentAvatarPicker } from '@/object-core/agents/components/CoreAgentAvatarPicker';
+import { CoreAgentOverviewTab } from '@/object-core/agents/components/CoreAgentOverviewTab';
+import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/CoreAgentNewRoleDraftEffect';
+import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
+import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
+import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
+import { CoreAgentSettingsContent } from '@/object-core/agents/components/CoreAgentSettingsContent';
+import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
+import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
+import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
+import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
+import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
+import { useRenameCoreAgent } from '@/object-core/agents/hooks/useRenameCoreAgent';
+import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
+import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
+import { useCoreAgentShowPageActiveTab } from '@/object-core/agents/hooks/useCoreAgentShowPageActiveTab';
+import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
+import { getCoreAgentShowPageTabListComponentInstanceId } from '@/object-core/agents/utils/getCoreAgentShowPageTabListComponentInstanceId';
+import { type CoreAgentRunInsights } from '@/object-core/agents/types/CoreAgentRunInsights';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
-import { getCoreAgentInitialFormValues } from '@/object-core/agents/utils/getCoreAgentInitialFormValues';
-import { isCoreAgentRoleDirty } from '@/object-core/agents/utils/isCoreAgentRoleDirty';
-import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
-import { getIsMetadataItemCustom } from '@/object-metadata/utils/getIsMetadataItemCustom';
-import { useLingui } from '@lingui/react/macro';
-
-const StyledContentContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
 
 type CoreAgentFormContentProps = {
   agent: FindOneAgentQuery['findOneAgent'];
+  runInsights: CoreAgentRunInsights | null;
+  hasRuns: boolean;
+  isLoadingRunInsights: boolean;
+  hasRunInsightsError: boolean;
 };
 
-export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
+export const CoreAgentFormContent = ({
+  agent,
+  runInsights,
+  hasRuns,
+  isLoadingRunInsights,
+  hasRunInsightsError,
+}: CoreAgentFormContentProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const { getIcon } = useIcons();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const { openDialog } = useDialog();
 
-  const isReadonlyMode = isOwnedByInstalledApplication({
-    applicationId: agent.applicationId,
-    workspaceCustomApplicationId:
-      currentWorkspace?.workspaceCustomApplication?.id,
-  });
-  const agentId = agent.id;
-
-  const [initialFormValues] = useState(() =>
-    getCoreAgentInitialFormValues(agent),
-  );
-
-  const tabListComponentId = `${CORE_AGENT_DETAIL_TABS.COMPONENT_INSTANCE_ID}-${agentId}`;
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    tabListComponentId,
-  );
-
-  const { formValues, setFieldValue, validateForm } =
-    useCoreAgentFormState(initialFormValues);
-
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    formValues.role || '',
-  );
-  const settingsPersistedRole = useAtomFamilyStateValue(
-    settingsPersistedRoleFamilyState,
-    formValues.role || '',
-  );
-
-  const isRoleDirty = isCoreAgentRoleDirty({
-    roleId: formValues.role,
-    draftRole: settingsDraftRole,
-    persistedRole: settingsPersistedRole,
+  const isReadOnly = useIsCoreAgentReadOnly(agent);
+  const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
+  const activeTabId = useCoreAgentShowPageActiveTab({
+    agentId: agent.id,
+    hasRuns,
   });
 
-  const { scheduleAutoSave } = useCoreAgentSave({
-    agent,
-    formValues,
-    initialFormValues,
-    isReadonlyMode,
-    isRoleDirty,
-    validateForm,
-  });
+  const { draft, updateDraft } = useCoreAgentDraft(agent);
+  const { isDirty } = useCoreAgentDirtyState(agent);
+  const { isSaving, saveCoreAgent, discardCoreAgentChanges } =
+    useSaveCoreAgent(agent);
+
+  const { renameCoreAgent } = useRenameCoreAgent(agent);
 
   const handleFieldChange = (
     field: keyof CoreAgentFormValues,
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
-  ) => {
-    setFieldValue(field, value);
-    scheduleAutoSave();
-  };
+  ) => updateDraft((currentDraft) => ({ ...currentDraft, [field]: value }));
 
-  const tabs = [
-    {
-      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS,
-      title: t`Settings`,
-      Icon: IconSettings,
-    },
-    {
-      id: CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE,
-      title: t`Role`,
-      Icon: IconLock,
-    },
-    ...(isAiChatInboxEnabled
-      ? [
-          {
-            id: CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS,
-            title: t`Triggers`,
-            Icon: IconBolt,
-          },
-          {
-            id: CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS,
-            title: t`Runs`,
-            Icon: IconTerminal,
-          },
-        ]
-      : []),
-  ];
+  const agentRecord = useMemo(
+    () => ({
+      __typename: 'Agent',
+      id: agent.id,
+      name: agent.label,
+      createdAt: agent.createdAt,
+    }),
+    [agent.id, agent.label, agent.createdAt],
+  );
 
-  const title = agent.label;
-  const AgentIcon = getIcon(getAgentIcon(formValues.icon));
-
-  const isRoleTab = activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.ROLE;
-  const isSettingsTab =
-    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.SETTINGS;
-  const isTriggersTab =
-    isAiChatInboxEnabled &&
-    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.TRIGGERS;
-  const isRunsTab =
-    isAiChatInboxEnabled &&
-    activeTabId === CORE_AGENT_DETAIL_TABS.TABS_IDS.RUNS;
-
-  const isFormDisabled =
-    isReadonlyMode ||
-    !getIsMetadataItemCustom(
-      agent,
-      currentWorkspace?.workspaceCustomApplication?.id,
-    );
+  const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
 
   return (
     <>
       <SettingsRolesQueryEffect />
-      {isDefined(formValues.role) && (
-        <SettingsRoleDraftSyncEffect roleId={formValues.role} />
+      {isNonEmptyString(agent.roleId) ? (
+        <SettingsRoleDraftSyncEffect roleId={agent.roleId} />
+      ) : (
+        <CoreAgentNewRoleDraftEffect agent={agent} />
       )}
-      <SettingsPageLayout
-        title={title}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
-        links={getCoreAgentBreadcrumbLinks([{ children: title }])}
-        secondaryBar={
-          <SettingsTabBar
-            aria-label={t`Agent settings`}
-            tabs={tabs}
-            componentInstanceId={tabListComponentId}
+      <RecordShowPageResourceEffect
+        loading={false}
+        record={agentRecord}
+        recordId={agent.id}
+      />
+      <PageTitle title={title} />
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            links={getCoreAgentBreadcrumbLinks([{ children: title }])}
+            actionButton={
+              <>
+                {!isReadOnly && isDirty && (
+                  <>
+                    <CommandMenuButton
+                      command={{
+                        key: CORE_AGENT_SAVE_COMMAND_ID,
+                        label: t`Save Agent`,
+                        shortLabel: t`Save`,
+                        Icon: IconDeviceFloppy,
+                      }}
+                      onClick={saveCoreAgent}
+                      loading={isSaving}
+                    />
+                    <CommandMenuButton
+                      command={{
+                        key: CORE_AGENT_CANCEL_EDITION_COMMAND_ID,
+                        label: t`Cancel Edition`,
+                        shortLabel: t`Cancel`,
+                        Icon: IconCancel,
+                      }}
+                      onClick={discardCoreAgentChanges}
+                    />
+                  </>
+                )}
+                {!isReadOnly && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    startIcon={<IconTrash />}
+                    onClick={() => openDialog(CORE_AGENT_DELETE_DIALOG_ID)}
+                  >{t`Delete`}</Button>
+                )}
+                <CoreAgentPinnedCommandMenuItems
+                  commandMenuInstanceId={`core-agent-${agent.id}`}
+                  containerType={CommandMenuItemContainerType.ShowPageHeader}
+                />
+                <SidePanelToggleButton />
+              </>
+            }
           />
         }
       >
-        <SettingsPageContainer>
-          <Section.Root>
-            <StyledContentContainer>
-              {isRoleTab && (
-                <CoreAgentRoleTab
-                  formValues={formValues}
-                  onFieldChange={handleFieldChange}
-                  disabled={isFormDisabled}
-                  agentId={agentId}
-                  agentLabel={formValues.label}
-                />
+        <CoreObjectIdentifierBar
+          recordId={agent.id}
+          name={agent.label}
+          namePlaceholder={t`Untitled`}
+          onRename={renameCoreAgent}
+          isReadOnly={isReadOnly}
+          avatar={
+            <CoreAgentAvatarPicker
+              agent={agent}
+              isReadOnly={isReadOnly}
+              size={24}
+            />
+          }
+          tabList={
+            <CoreObjectShowPageTabList
+              aria-label={t`Agent sections`}
+              activeTabId={activeTabId}
+              componentInstanceId={getCoreAgentShowPageTabListComponentInstanceId(
+                agent.id,
               )}
-              {isSettingsTab && (
-                <CoreAgentSettingsTab
-                  formValues={formValues}
-                  onFieldChange={handleFieldChange}
-                  disabled={isFormDisabled}
-                  agent={agent}
-                />
-              )}
-              {isTriggersTab && (
-                <CoreAgentTriggersTab
-                  triggers={formValues.triggers}
-                  onTriggersChange={(triggers) =>
-                    handleFieldChange('triggers', triggers)
-                  }
-                  disabled={isFormDisabled}
-                />
-              )}
-              {isRunsTab && <CoreAgentRunsTab agentId={agentId} />}
-            </StyledContentContainer>
-          </Section.Root>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
+              tabs={[
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW,
+                  title: t`Overview`,
+                  Icon: IconLayoutDashboard,
+                  hide: !canReadCoreAgentRuns,
+                },
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS,
+                  title: t`Settings`,
+                  Icon: IconSettings,
+                },
+                {
+                  id: CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS,
+                  title: t`Turns`,
+                  Icon: IconTerminal,
+                  hide: !isAiChatInboxEnabled,
+                },
+              ]}
+            />
+          }
+        />
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW && (
+          <CoreAgentOverviewTab
+            agentId={agent.id}
+            insights={runInsights}
+            isLoading={isLoadingRunInsights}
+            hasError={hasRunInsightsError}
+          />
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS && (
+          <CoreAgentRunsContent agentId={agent.id} />
+        )}
+        {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS && (
+          <SettingsPageContainer>
+            <CoreAgentSettingsContent
+              agent={agent}
+              formValues={draft}
+              onFieldChange={handleFieldChange}
+              isReadOnly={isReadOnly}
+              areTriggersEnabled={isAiChatInboxEnabled}
+            />
+          </SettingsPageContainer>
+        )}
+      </PageCardLayout>
+      {!isReadOnly && <CoreAgentDeleteConfirmationModal agentId={agent.id} />}
     </>
   );
 };

@@ -24,10 +24,12 @@ const validateOptionColor = ({
   type,
   colorProperties,
   update,
+  additionalOptions = [],
 }: {
   type: EnumFieldMetadataType;
   colorProperties: { color?: unknown };
   update?: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>['update'];
+  additionalOptions?: (typeof OPTION_WITHOUT_COLOR)[];
 }) => {
   const flatFieldMetadata = getFlatFieldMetadataMock({
     type,
@@ -50,6 +52,7 @@ const validateOptionColor = ({
           ...OPTION_WITHOUT_COLOR,
           ...colorProperties,
         },
+        ...additionalOptions,
       ],
     },
     additionalCacheDataMaps: {
@@ -139,6 +142,39 @@ describe('validateEnumSelectFlatFieldMetadata', () => {
           update: { label: 'Updated category' },
         }),
       ).toEqual([]);
+    });
+  });
+
+  describe('option positions', () => {
+    const optionAtSamePosition = {
+      id: '7a2f1c3e-58b4-4d6e-9f0a-1b2c3d4e5f60',
+      label: 'Fuel',
+      value: 'FUEL',
+      position: OPTION_WITHOUT_COLOR.position,
+    };
+
+    it('allows an unrelated update to a field whose options of different applications share a position', () => {
+      expect(
+        validateOptionColor({
+          type: FieldMetadataType.SELECT,
+          colorProperties: {},
+          additionalOptions: [optionAtSamePosition],
+          update: { label: 'Updated category' },
+        }),
+      ).toEqual([]);
+    });
+
+    it('rejects writing options that share a position', () => {
+      expect(
+        validateOptionColor({
+          type: FieldMetadataType.SELECT,
+          colorProperties: {},
+          additionalOptions: [optionAtSamePosition],
+          update: { options: [OPTION_WITHOUT_COLOR, optionAtSamePosition] },
+        }),
+      ).toEqual([
+        expect.objectContaining({ message: 'Duplicated option position' }),
+      ]);
     });
   });
 

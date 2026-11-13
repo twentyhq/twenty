@@ -6,7 +6,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type PermissionsMetadataMaps,
   type RowAccessEvaluationContext,
-} from 'src/engine/permissions/internal/combine/types/row-access-policy.type';
+} from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { resolveRelationsInRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-relations-in-record-filter.util';
 import { isRecordMatchingFilter } from 'src/engine/permissions/utils/is-record-matching-filter.util';
 
@@ -39,6 +39,7 @@ export const findRecordsMatchingRecordFilter = async <TRecord extends object>({
       filter: resolvedRecordFilter,
       flatObjectMetadata,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
       shouldIgnoreSoftDeleteDefaultFilter,
     }),
   );

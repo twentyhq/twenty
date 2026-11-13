@@ -248,6 +248,41 @@ exports[`Row Level Permission Predicate upsert should fail when the operand is n
 }
 `;
 
+exports[`Row Level Permission Predicate upsert should fail when the predicate compares a field to a workspace member field of another type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Field "name" cannot be compared to workspace member field "calendarStartDay", their types are not compatible",
+              "userFriendlyMessage": "This field cannot be compared to this workspace member field",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field cannot be compared to this workspace member field",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when the relation hop does not belong to the restricted object 1`] = `
 {
   "extensions": {

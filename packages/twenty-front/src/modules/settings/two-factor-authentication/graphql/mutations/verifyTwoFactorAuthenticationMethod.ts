@@ -6,6 +6,7 @@ export const VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER = gq
   ) {
     verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: $otp) {
       success
+      backupCodes
     }
   }
 `;

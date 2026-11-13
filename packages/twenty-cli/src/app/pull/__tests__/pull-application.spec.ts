@@ -23,6 +23,7 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { buildAndValidateManifest } from '@/app/manifest/build-and-validate-manifest';
+import { buildManifest } from '@/app/manifest/manifest-build';
 import { buildApplication } from '@/app/bundles/build-application';
 import { manifestUpdateChecksums } from '@/app/manifest/manifest-update-checksums';
 import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
@@ -283,6 +284,60 @@ export default defineField({
   afterEach(async () => {
     vi.restoreAllMocks();
     await rm(appPath, { recursive: true, force: true });
+  });
+
+  const createAssetExport = (content = Buffer.from([0, 255, 128, 254])) => {
+    const exported = createExport({ includeObject: false });
+    return {
+      ...exported,
+      files: [
+        {
+          folder: 'public-asset',
+          path: 'public/fonts/example.woff2',
+          content: content.toString('base64'),
+        },
+      ],
+    };
+  };
+  it('pulls binary assets exactly and keeps local edits until the remote changes', async () => {
+    const assetPath = 'public/fonts/example.woff2';
+    const remote = Buffer.from([0, 255, 128, 254]);
+    const first = requireSuccess(await pull(createAssetExport(remote)));
+    expect(first.writes).toContainEqual(
+      expect.objectContaining({ kind: 'publicAsset', relativePath: assetPath }),
+    );
+    expect(await readFile(join(appPath, assetPath))).toEqual(remote);
+    const local = Buffer.from([129, 0, 1]);
+    await writeFile(join(appPath, assetPath), local);
+    expect(
+      requireSuccess(await pull(createAssetExport(remote))).writes,
+    ).toEqual([]);
+    expect(await readFile(join(appPath, assetPath))).toEqual(local);
+    const updated = Buffer.from([0, 253, 1]);
+    const next = requireSuccess(await pull(createAssetExport(updated)));
+    expect(next.overwrittenLocalChanges).toContainEqual({
+      universalIdentifier: `public-asset/${assetPath}`,
+      relativePath: assetPath,
+    });
+    expect(await readFile(join(appPath, assetPath))).toEqual(updated);
+  });
+  it('does not remove local public assets absent from the export', async () => {
+    requireSuccess(await pull(createAssetExport()));
+    requireSuccess(await pull(createExport({ includeObject: false })));
+    expect(await readFile(join(appPath, 'public/fonts/example.woff2'))).toEqual(
+      Buffer.from([0, 255, 128, 254]),
+    );
+  });
+  it('refuses a public asset through a symlink before reading or writing it', async () => {
+    const outside = await mkdtemp(join(tmpdir(), 'twenty-public-assets-'));
+    try {
+      await symlink(outside, join(appPath, 'public'), 'dir');
+      const result = await pull(createAssetExport());
+      expect(result.success).toBe(false);
+      expect(await readdir(outside)).toEqual([]);
+    } finally {
+      await rm(outside, { recursive: true, force: true });
+    }
   });
 
   const componentIdentifier = 'fefefefe-fefe-4efe-8efe-fefefefefefe';
@@ -1122,6 +1177,52 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     ]);
     await expect(read(workflowPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
+
+  it.each(['pull', 'build'])(
+    'does not execute workspace code steps during a later %s',
+    async (operation) => {
+      const markerPath = join(appPath, 'code-step-executed');
+      const source = `import { writeFileSync } from 'node:fs';
+writeFileSync(${JSON.stringify(markerPath)}, 'executed');
+const defineSkill = (config) => ({ success: true, config, errors: [] });
+export default defineSkill({ universalIdentifier: '${SKILL_IDENTIFIER}', name: 'Not a local skill' });
+export const main = async () => ({});
+`;
+      const withCodeStep = createWorkflowExport({
+        name: 'Format name',
+        ...createCodeStep(source),
+      });
+      const codeStepPath = 'src/workflows/greet-new-pets/format-name.code.ts';
+      requireSuccess(await pull(withCodeStep));
+      expect(await read(codeStepPath)).toBe(source);
+      await expect(readFile(markerPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+
+      if (operation === 'pull') {
+        requireSuccess(await pull(withCodeStep));
+      } else {
+        const result = await buildManifest(appPath);
+        await expect(readFile(markerPath)).rejects.toMatchObject({
+          code: 'ENOENT',
+        });
+        expect(result.errors).toEqual([]);
+        expect(result.manifest?.skills).toEqual([]);
+        expect(
+          result.manifest?.workflows?.[0].version.steps[0].input,
+        ).toMatchObject({
+          code: source,
+        });
+      }
+      await expect(readFile(markerPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+      requireSuccess(await pull(createExport()));
+      await expect(read(codeStepPath)).rejects.toMatchObject({
+        code: 'ENOENT',
+      });
+    },
+  );
 
   it('writes the source of a code step next to its workflow, which reads it back', async () => {
     const workflowPath = 'src/workflows/greet-new-pets.workflow.ts';

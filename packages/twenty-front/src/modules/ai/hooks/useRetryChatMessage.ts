@@ -3,11 +3,11 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AiChatRefetchMessagesEventName';
+import { useAiChatModelId } from '@/ai/hooks/useAiChatModelId';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -20,18 +20,18 @@ import { RetryChatMessageDocument } from '~/generated-metadata/graphql';
 export const useRetryChatMessage = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { modelIdForRequest } = useAgentChatModelId();
+  const { modelIdForRequest } = useAiChatModelId();
 
   const retryChatMessage = useCallback(async () => {
-    const threadId = store.get(agentChatDisplayedThreadState.atom);
+    const threadId = store.get(aiChatDisplayedThreadState.atom);
 
     if (!isDefined(threadId)) {
       return;
     }
 
-    const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
+    const errorAtom = aiChatErrorFamilyState.atomFamily({ threadId });
     const isAwaitingFirstChunkAtom =
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
+      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({ threadId });
     const previousError = store.get(errorAtom);
 
     store.set(errorAtom, null);
@@ -43,12 +43,12 @@ export const useRetryChatMessage = () => {
         variables: { threadId, modelId: modelIdForRequest },
       });
 
-      // Same guard as useAgentChat: the stream may already have set a newer credits-exhausted error.
+      // Same guard as useAiChat: the stream may already have set a newer credits-exhausted error.
       if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
 
-      dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+      dispatchBrowserEvent(AI_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (retryError) {
       store.set(isAwaitingFirstChunkAtom, false);
       store.set(

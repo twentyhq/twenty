@@ -18,6 +18,8 @@ const AGENT_MANIFEST: Required<AgentManifest> = {
   name: 'lead-scorer',
   label: 'Lead Scorer',
   icon: 'IconRobot',
+  avatarColor: 'pink',
+  avatarShape: 'pill',
   description: 'Scores new leads',
   prompt: 'Score the lead and explain your reasoning.',
   modelId: 'gpt-4o',

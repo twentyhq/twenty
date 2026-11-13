@@ -107,7 +107,7 @@ export default defineWorkflow({
 
 * تأخذ خطوات السجل `objectUniversalIdentifier` بدلًا من اسم كائن.
 * تشير عوامل التصفية والفرز إلى الحقول باستخدام `fieldMetadataUniversalIdentifier`.
-* تأخذ معاملات عامل التصفية قيم `ViewFilterOperand`، المُصدَّرة بواسطة `twenty-sdk/define`. تأخذ عوامل مجموعات التصفية قيماً نصية مثل `'AND'` أو `'OR'`.
+* تأخذ معاملات التصفية قيم `ViewFilterOperand`. تأخذ عوامل مجموعة التصفية قيم `StepLogicalOperator` في عوامل تصفية الخطوات وقيم `RecordFilterGroupLogicalOperator` في عوامل تصفية السجلات، وكلاهما `AND` أو `OR`. يُصدِّر `twenty-sdk/define` العناصر الثلاثة كلها، إلى جانب `ViewFilterOperandDeprecated` للمعاملات التي لا تزال Workflows الأقدم تخزنها.
 * تسمي حقول النموذج من النوع `RECORD` كائنها باستخدام `settings.objectUniversalIdentifier`. توفّر الحقول من النوعين `SELECT` و`MULTI_SELECT` خيارات حقل موجود من النوع نفسه، تمت تسميته باستخدام `settings.selectedFieldUniversalIdentifier`.
 * تحمل خطوة `CODE` مصدر TypeScript الخاص بها في `input.code`: وحدة تصدّر دالة `main` تتلقى `input.logicFunctionInput`. لمشاركة التعليمات البرمجية عبر تدفقات العمل، استخدم خطوة `LOGIC_FUNCTION` بدلاً من ذلك.
 
@@ -137,7 +137,7 @@ export default defineWorkflow({
   * `connectedAccountId`: متغير، مثل `{{trigger.properties.after.connectedAccountId}}`. تتطلب خطوات البريد الإلكتروني أيضًا معرّف عضو مساحة العمل، مثل `{{trigger.properties.after.assigneeId}}`، والذي يُحل إلى أول حساب لذلك العضو قادر على الإرسال.
 
   عيّن واحدًا فقط من الاثنين.
-* ينشر `SEND_CHAT_MESSAGE` في صندوق الوارد لعضو مساحة العمل، والذي يُحدَّد باستخدام `workspaceMemberId`. تكون معرّفات الأعضاء محلية لكل مساحة عمل أيضًا، لذا يمرر التطبيق متغيرًا، مثل `{{trigger.properties.after.assigneeId}}`.
+* ينشر `SEND_CHAT_MESSAGE` في صندوق الوارد لعضو مساحة العمل، والذي يُحدَّد باستخدام `workspaceMemberId`. تكون معرّفات الأعضاء محلية لكل مساحة عمل أيضًا، لذا يمرر التطبيق متغيرًا، مثل `{{trigger.properties.after.assigneeId}}`. يتم إخطار الأعضاء المذكورين في `text`، مثل المذكورين في نص ملاحظة تم تمريره كـ `{{trigger.properties.after.bodyV2.markdown}}`، كما هو الحال مع [رسائل البريد الوارد](/ar/developers/extend/apps/logic/inbox#mentions-and-record-references).
 
 ## بعد التثبيت
 

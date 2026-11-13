@@ -60,7 +60,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
   let companyNameFieldId: string;
   let apiSortedWorkflow: SortedWorkflow;
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowIds: string[] = [];
+  const workspaceWorkflowVersionIds: string[] = [];
   const companyIds: string[] = [];
 
   const runCommand = (options: { dryRun?: boolean } = {}) =>
@@ -137,14 +137,13 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     );
 
     const {
-      workspaceWorkflowId,
       workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
     } = await linkCoreWorkflowToLegacyWorkspaceIds({
       coreWorkflowId,
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowIds.push(workspaceWorkflowId);
+    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
 
     const [step] = await readSteps({
       schema: 'core',
@@ -180,9 +179,7 @@ describe('2-57 workspace command - move find records sorts to record sorts (inte
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    for (const workspaceWorkflowId of workspaceWorkflowIds) {
-      await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-    }
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
 
     for (const companyId of companyIds) {
       await makeGraphqlApiRequest(

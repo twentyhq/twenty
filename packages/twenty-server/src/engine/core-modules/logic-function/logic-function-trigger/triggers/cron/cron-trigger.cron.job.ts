@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -147,6 +148,10 @@ export class CronTriggerCronJob {
               {
                 retryLimit: 10,
                 backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+                limiter: buildLogicFunctionJobLimiter({
+                  logicFunctionId: logicFunction.id,
+                  limiter: logicFunction.jobConfig?.limiter,
+                }),
                 workspaceId: activeWorkspace.id,
                 applicationUniversalIdentifier: application.universalIdentifier,
               },

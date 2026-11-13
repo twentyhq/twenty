@@ -193,7 +193,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   let conversationalWorkflow: LegacyAiStepWorkflow;
   let seededSystemAgentIds: string[];
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowIds: string[] = [];
+  const workspaceWorkflowVersionIds: string[] = [];
   const agentIds: string[] = [];
 
   const runCommand = () =>
@@ -318,7 +318,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowIds.push(workspaceWorkflowId);
+    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
 
     const [step] = await readCoreSteps(coreWorkflowVersionId);
 
@@ -441,9 +441,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    for (const workspaceWorkflowId of workspaceWorkflowIds) {
-      await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-    }
+    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
 
     const remainingAgents: { id: string }[] = await global.testDataSource.query(
       `SELECT id FROM core."agent" WHERE id = ANY($1::uuid[])`,

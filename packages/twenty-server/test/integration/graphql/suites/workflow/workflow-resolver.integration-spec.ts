@@ -18,7 +18,6 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 describe('workflowResolver', () => {
   let coreWorkflowId: string;
-  let workspaceWorkflowId: string;
   let workspaceWorkflowVersionId: string;
 
   beforeAll(async () => {
@@ -33,46 +32,17 @@ describe('workflowResolver', () => {
       withWorkspaceRecords: true,
     });
 
-    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
     workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
   });
 
   afterAll(async () => {
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
+    await deleteLegacyWorkspaceWorkflowRecords({
+      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
+    });
   });
 
   it.each([
-    {
-      operation: 'createWorkflow',
-      buildQuery: () =>
-        'mutation { createWorkflow(data: { name: "Records API Workflow" }) { id } }',
-    },
-    {
-      operation: 'createWorkflows',
-      buildQuery: () =>
-        'mutation { createWorkflows(data: [{ name: "Records API Workflow" }]) { id } }',
-    },
-    {
-      operation: 'updateWorkflow',
-      buildQuery: () =>
-        `mutation { updateWorkflow(id: "${workspaceWorkflowId}", data: { name: "Renamed" }) { id } }`,
-    },
-    {
-      operation: 'deleteWorkflow',
-      buildQuery: () =>
-        `mutation { deleteWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'destroyWorkflow',
-      buildQuery: () =>
-        `mutation { destroyWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'restoreWorkflow',
-      buildQuery: () =>
-        `mutation { restoreWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
     {
       operation: 'updateWorkflowVersion',
       buildQuery: () =>

@@ -18,6 +18,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     flatViewMaps,
     flatPageLayoutMaps,
     flatAgentChatChannelMaps,
+    flatWorkflowMaps,
+    flatAgentMaps,
   }: {
     createNavigationMenuItemInput: CreateNavigationMenuItemInput;
     workspaceId: string;
@@ -29,6 +31,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
     | 'flatViewMaps'
     | 'flatPageLayoutMaps'
     | 'flatAgentChatChannelMaps'
+    | 'flatWorkflowMaps'
+    | 'flatAgentMaps'
   >): FlatNavigationMenuItem => {
     const id = createNavigationMenuItemInput.id ?? uuidv4();
     const now = new Date().toISOString();
@@ -59,6 +63,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       folderUniversalIdentifier,
       pageLayoutUniversalIdentifier,
       agentChatChannelUniversalIdentifier,
+      workflowUniversalIdentifier,
+      agentUniversalIdentifier,
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'navigationMenuItem',
       foreignKeyValues: {
@@ -68,6 +74,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         folderId: createNavigationMenuItemInput.folderId,
         pageLayoutId: createNavigationMenuItemInput.pageLayoutId,
         agentChatChannelId: createNavigationMenuItemInput.agentChatChannelId,
+        workflowId: createNavigationMenuItemInput.workflowId,
+        agentId: createNavigationMenuItemInput.agentId,
       },
       flatEntityMaps: {
         flatObjectMetadataMaps,
@@ -75,6 +83,8 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
         flatNavigationMenuItemMaps,
         flatPageLayoutMaps,
         flatAgentChatChannelMaps,
+        flatWorkflowMaps,
+        flatAgentMaps,
       },
     });
 
@@ -96,6 +106,10 @@ export const fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate =
       agentChatChannelId:
         createNavigationMenuItemInput.agentChatChannelId ?? null,
       agentChatChannelUniversalIdentifier,
+      workflowId: createNavigationMenuItemInput.workflowId ?? null,
+      workflowUniversalIdentifier,
+      agentId: createNavigationMenuItemInput.agentId ?? null,
+      agentUniversalIdentifier,
       name: createNavigationMenuItemInput.name ?? null,
       link: createNavigationMenuItemInput.link ?? null,
       nativePageKey: createNavigationMenuItemInput.nativePageKey ?? null,

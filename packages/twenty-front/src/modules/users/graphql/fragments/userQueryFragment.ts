@@ -48,8 +48,8 @@ export const USER_QUERY_FRAGMENT = gql`
         canDestroyAllRecords
         unreadableFields
         uneditableFields
-        restrictedFields
         rowLevelRecordsPermissions {
+          ruleId
           canCreateRecords
           canReadRecords
           canUpdateRecords
@@ -61,6 +61,8 @@ export const USER_QUERY_FRAGMENT = gql`
           predicateGroups {
             ...RowLevelPermissionPredicateGroupFragment
           }
+          unreadableFields
+          uneditableFields
         }
       }
       twoFactorAuthenticationMethodSummary {
@@ -157,7 +159,7 @@ export const USER_QUERY_FRAGMENT = gql`
       trashRetentionDays
       eventLogRetentionDays
       editableProfileFields
-      isInternalMessagesImportEnabled
+      isInternalImportEnabled
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

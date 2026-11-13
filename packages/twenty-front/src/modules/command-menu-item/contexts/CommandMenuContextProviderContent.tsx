@@ -10,6 +10,7 @@ import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/util
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
+import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
@@ -103,7 +104,7 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    const isAiChatInboxHeader =
+    const isInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
         StandardObjectNameSingular.AgentChatThread &&
@@ -135,6 +136,9 @@ export const CommandMenuContextProviderContent = ({
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
       )
       .filter(
+        doesCommandMenuItemMatchObjectContext(currentObjectMetadataItemId),
+      )
+      .filter(
         doesCommandMenuItemMatchCoreObjectName(
           commandMenuContextApi.coreObjectName,
         ),
@@ -154,7 +158,7 @@ export const CommandMenuContextProviderContent = ({
             ...item,
             isPinned:
               item.isPinned ||
-              (isAiChatInboxHeader &&
+              (isInboxHeader &&
                 item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
           },
           commandMenuContextApiForAvailability,

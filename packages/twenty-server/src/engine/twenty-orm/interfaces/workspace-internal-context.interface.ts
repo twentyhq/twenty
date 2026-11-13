@@ -1,5 +1,5 @@
 import { type RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
-import { type RecordPermissionsOnlyRLSReadService } from 'src/engine/permissions/record-permissions-only-rls-read.service';
+import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type DataSource } from 'typeorm';
@@ -31,13 +31,14 @@ export interface WorkspaceInternalContext {
     RecordPermissionsReadService,
     | 'isReadDisabled'
     | 'assertCanRunOperationOrThrow'
-    | 'buildManyRecordsAccessCondition'
+    | 'buildReadRecordsAccessSQLCondition'
+    | 'buildWriteRecordsAccessSQLCondition'
     | 'assertCreatedRecordsMatchRowLevelPermissionsOrThrow'
     | 'assertUpdatesKeepRecordAccessOrThrow'
   >;
-  recordPermissionsOnlyRls: Pick<
-    RecordPermissionsOnlyRLSReadService,
-    'findRlsRuleUnreadableFieldsByRole' | 'buildRlsRuleSqlConditionOrThrow'
+  recordFieldPermissions: Pick<
+    RecordFieldPermissionsReadService,
+    'buildUnreadableFieldsSQLConditions'
   >;
   recordAccessGroupWrite: Pick<
     RecordAccessGroupWriteService,
