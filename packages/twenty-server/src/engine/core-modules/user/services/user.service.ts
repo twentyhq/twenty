@@ -268,15 +268,18 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
-    await this.removeUserKeepingAServerAdmin(user, async () => {
-      for (const userWorkspace of user.userWorkspaces) {
-        await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
-          userWorkspace,
-        );
-      }
+    await this.removeUserKeepingAServerAdmin({
+      user,
+      removeUser: async () => {
+        for (const userWorkspace of user.userWorkspaces) {
+          await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+            userWorkspace,
+          );
+        }
 
-      await this.userRepository.softDelete({ id: userId });
-      await this.coreEntityCacheService.invalidate('user', userId);
+        await this.userRepository.softDelete({ id: userId });
+        await this.coreEntityCacheService.invalidate('user', userId);
+      },
     });
 
     return await this.userRepository.findOne({
@@ -322,23 +325,29 @@ export class UserService {
       return userWorkspace;
     }
 
-    await this.removeUserKeepingAServerAdmin(user, async () => {
-      await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
-        userWorkspace,
-        actingUserWorkspaceId,
-      );
+    await this.removeUserKeepingAServerAdmin({
+      user,
+      removeUser: async () => {
+        await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
+          userWorkspace,
+          actingUserWorkspaceId,
+        );
 
-      await this.userRepository.softDelete(userId);
-      await this.coreEntityCacheService.invalidate('user', userId);
+        await this.userRepository.softDelete(userId);
+        await this.coreEntityCacheService.invalidate('user', userId);
+      },
     });
 
     return userWorkspace;
   }
 
-  private async removeUserKeepingAServerAdmin(
-    user: UserEntity,
-    removeUser: () => Promise<void>,
-  ) {
+  private async removeUserKeepingAServerAdmin({
+    user,
+    removeUser,
+  }: {
+    user: Pick<UserEntity, 'id' | 'canAccessFullAdminPanel'>;
+    removeUser: () => Promise<void>;
+  }) {
     if (!user.canAccessFullAdminPanel) {
       await removeUser();
 
