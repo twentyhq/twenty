@@ -20,10 +20,9 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { LightIconButton, SegmentedControl } from 'twenty-ui/components/input';
+import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import {
   IconChevronLeft,
@@ -32,14 +31,9 @@ import {
   IconListSearch,
   IconTrash,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 type RecordIndexTabMode = 'field' | 'custom' | 'none';
-
-const StyledSegmentedControlContainer = styled.div`
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 export const ViewPickerTabFieldContent = () => {
   const { t } = useLingui();
@@ -63,12 +57,8 @@ export const ViewPickerTabFieldContent = () => {
   const { updateRecordIndexTabField } =
     useUpdateRecordIndexTabField(recordIndexId);
 
-  const {
-    updateRecordIndexTab,
-    reorderRecordIndexTabs,
-    ensureAllViewTab,
-    destroyAllViewTabs,
-  } = usePersistRecordIndexViewTabs();
+  const { updateRecordIndexTab, reorderRecordIndexTabs, destroyAllViewTabs } =
+    usePersistRecordIndexViewTabs();
 
   const visibleRecordIndexTabs = recordIndexTabs.filter(
     ({ isVisible }) => isVisible,
@@ -86,24 +76,12 @@ export const ViewPickerTabFieldContent = () => {
       ? 'custom'
       : 'none';
 
-  const handleRecordIndexTabModeChange = async (
-    nextRecordIndexTabMode: RecordIndexTabMode,
-  ) => {
-    if (nextRecordIndexTabMode === 'field') {
-      setViewPickerMode('tab-field-select');
-      return;
-    }
-
-    if (nextRecordIndexTabMode !== 'custom') {
-      return;
-    }
-
-    if (isDefined(recordIndexTabFieldMetadataItem)) {
-      await updateRecordIndexTabField(undefined);
-    }
-
-    await ensureAllViewTab();
-  };
+  const recordIndexTabSourceLabel =
+    recordIndexTabMode === 'field'
+      ? recordIndexTabFieldMetadataItem?.label
+      : recordIndexTabMode === 'custom'
+        ? t`Custom filters`
+        : t`None`;
 
   const handleVisibleTabDragEnd = async (result: DraggableListDropResult) => {
     if (!isDefined(result.destination)) {
@@ -148,32 +126,16 @@ export const ViewPickerTabFieldContent = () => {
       >
         {t`Tabs`}
       </DropdownMenuHeader>
-      <StyledSegmentedControlContainer>
-        <SegmentedControl<RecordIndexTabMode>
-          aria-label={t`Tab type`}
-          fullWidth
-          size="sm"
-          value={recordIndexTabMode}
+      <DropdownMenuItemsContainer scrollable={false}>
+        <ListItemButton
+          onClick={() => setViewPickerMode('tab-field-select')}
+          startIcon={<IconListSearch />}
+          description={recordIndexTabSourceLabel}
+          descriptionPlacement="end"
           disabled={!canPersistChanges}
-          onValueChange={handleRecordIndexTabModeChange}
-          options={[
-            { value: 'field', label: t`By field` },
-            { value: 'custom', label: t`Custom` },
-          ]}
-        />
-      </StyledSegmentedControlContainer>
-      {isDefined(recordIndexTabFieldMetadataItem) && (
-        <DropdownMenuItemsContainer scrollable={false}>
-          <ListItemButton
-            onClick={() => setViewPickerMode('tab-field-select')}
-            startIcon={<IconListSearch />}
-            description={recordIndexTabFieldMetadataItem.label}
-            descriptionPlacement="end"
-            disabled={!canPersistChanges}
-            hasSubmenu
-          >{t`Field`}</ListItemButton>
-        </DropdownMenuItemsContainer>
-      )}
+          hasSubmenu
+        >{t`Tabs by`}</ListItemButton>
+      </DropdownMenuItemsContainer>
       {isNonEmptyArray(visibleRecordIndexTabs) && (
         <>
           <DropdownMenuSeparator />
