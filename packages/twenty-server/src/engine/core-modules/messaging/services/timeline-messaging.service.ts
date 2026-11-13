@@ -11,6 +11,7 @@ import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type Repository } from 'typeorm';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
@@ -314,17 +315,29 @@ export class TimelineMessagingService {
       return [];
     }
 
-    const threadChannelRows =
+    const messageChannelIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const messageThreadRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
+          this.workspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
             'messageThread',
           );
 
+        const { permissionsPrincipals, objectIdByNameSingular } =
+          getWorkspaceContext();
+
+        if (
+          !(await this.recordPermissionsReadService.canAccessSomeRecords({
+            operationType: 'read',
+            principals: permissionsPrincipals,
+            objectMetadataId: objectIdByNameSingular.messageThread,
+          }))
+        ) {
+          return [];
+        }
+
         const queryBuilder = messageThreadRepository
           .createQueryBuilder('messageThread')
-          .select('messageThread.id', 'messageThreadId')
-          .addSelect(
+          .select(
             'messageChannelMessageAssociations.messageChannelId',
             'messageChannelId',
           )
@@ -336,37 +349,14 @@ export class TimelineMessagingService {
 
         this.applyRecordFilter(queryBuilder, { targetFilter, personIds });
 
-        return queryBuilder
-          .groupBy('messageThread.id')
-          .addGroupBy('messageChannelMessageAssociations.messageChannelId')
+        const rows = await queryBuilder
+          .groupBy('messageChannelMessageAssociations.messageChannelId')
           .getRawMany<{
-            messageThreadId: string;
             messageChannelId: string;
           }>();
-      }, buildSystemAuthContext(workspaceId));
 
-    if (threadChannelRows.length === 0) {
-      return [];
-    }
-
-    const messageThreadPermissions =
-      await this.recordPermissionsReadService.findRecordsActions({
-        authContext,
-        objectNameSingular: 'messageThread',
-        recordIds: [
-          ...new Set(threadChannelRows.map((row) => row.messageThreadId)),
-        ],
-      });
-
-    const messageChannelIds = [
-      ...new Set(
-        threadChannelRows
-          .filter(
-            (row) => messageThreadPermissions.get(row.messageThreadId)?.canRead,
-          )
-          .map((row) => row.messageChannelId),
-      ),
-    ];
+        return rows.map((row) => row.messageChannelId);
+      }, authContext);
 
     if (messageChannelIds.length === 0) {
       return [];
