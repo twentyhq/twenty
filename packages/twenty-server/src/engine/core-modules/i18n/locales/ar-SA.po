@@ -5498,6 +5498,11 @@ msgstr "إعداد الميزة غير موجود."
 msgid "February"
 msgstr "فبراير"
 
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr ""
+
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
@@ -5507,11 +5512,6 @@ msgstr "الحقل \"{fieldName}\" لا ينتمي إلى الكائن الذي 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "الحقل \"{fieldName}\" ليس علاقة متعدد إلى واحد، ولا يحتوي على عمود ربط للمقارنة به"
-
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "يأخذ الحقل \"{fieldName}\" قيمة واحدة مع المعامل \"{operand}\"، ولا يمكن مقارنته بالقائمة التي يحتفظ بها حقل عضو مساحة العمل \"{workspaceMemberFieldName}\""
 
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14838,10 +14838,10 @@ msgstr "هذه الميزة مجانية لما يصل إلى {MAX_SEATS_WITHOUT
 msgid "This feature is not enabled."
 msgstr "هذه الميزة غير مُمكَّنة."
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "لا يمكن مقارنة هذا الحقل بقائمة من القيم"
+msgid "This field cannot be compared to this workspace member field"
+msgstr ""
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
