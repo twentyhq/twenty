@@ -89,53 +89,35 @@ describe('View field settings', () => {
     expect(clearedViewField.settings).toBeNull();
   });
 
-  it('rejects a record limit on a field that does not list related records', async () => {
+  it.each([
+    {
+      title: 'a record limit on a field that does not list related records',
+      input: { isCanonical: false, settings: { recordLimit: 1 } },
+      expectedMessage:
+        'View field record limit is only supported on one-to-many relation fields',
+    },
+    {
+      title: 'an empty column label',
+      input: { isCanonical: false, settings: { label: '   ' } },
+      expectedMessage: 'View field label must be a non-empty string',
+    },
+    {
+      title: 'settings on a canonical column',
+      input: { settings: { label: 'Next step' } },
+      expectedMessage: 'Only non-canonical view fields can have settings',
+    },
+  ])('rejects $title', async ({ input, expectedMessage }) => {
     const response = await createOneViewField({
       expectToFail: true,
       gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
-        isCanonical: false,
-        settings: { recordLimit: 1 },
+        ...input,
       },
     });
 
-    expect(response.errors).toBeDefined();
-    expect(JSON.stringify(response.errors)).toContain(
-      'View field record limit is only supported on one-to-many relation fields',
-    );
-  });
-
-  it('rejects an empty column label', async () => {
-    const response = await createOneViewField({
-      expectToFail: true,
-      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
-      input: {
-        fieldMetadataId: testSetup.testFieldMetadataId,
-        viewId: testSetup.testViewId,
-        isCanonical: false,
-        settings: { label: '   ' },
-      },
-    });
-
-    expect(response.errors).toBeDefined();
-  });
-
-  it('rejects settings on a canonical column', async () => {
-    const response = await createOneViewField({
-      expectToFail: true,
-      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
-      input: {
-        fieldMetadataId: testSetup.testFieldMetadataId,
-        viewId: testSetup.testViewId,
-        settings: { label: 'Next step' },
-      },
-    });
-
-    expect(JSON.stringify(response.errors)).toContain(
-      'Only non-canonical view fields can have settings',
-    );
+    expect(JSON.stringify(response.errors)).toContain(expectedMessage);
   });
 
   it('rejects adding settings to an existing canonical column', async () => {
