@@ -25,10 +25,6 @@ export const normalizeUpdatedFieldMetadataOptions = <
       .map((option) => [option.value, option]),
   );
 
-  const existingOptionById = new Map(
-    existingOptions.map((option) => [option.id, option]),
-  );
-
   return updatedOptions.map((updatedOption) => {
     const {
       id: updatedOptionId,
@@ -47,13 +43,11 @@ export const normalizeUpdatedFieldMetadataOptions = <
       updatedOptionId === undefined
         ? (existingOption?.id ?? v4())
         : updatedOptionId;
-    const applicationId = existingOptionById.get(id)?.applicationId;
 
     return {
       id,
       ...optionProperties,
       ...(isFieldMetadataOptionActive({ isActive }) ? {} : { isActive: false }),
-      ...(isDefined(applicationId) ? { applicationId } : {}),
     } as TOption;
   });
 };
