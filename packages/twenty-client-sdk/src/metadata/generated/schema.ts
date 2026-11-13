@@ -415,7 +415,9 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
+    marketplaceAppUniversalIdentifier?: Scalars['String']
     scopes?: Scalars['String'][]
+    userId: Scalars['UUID']
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -2144,6 +2146,7 @@ export interface LoginToken {
 export interface MarketplaceApp {
     author: Scalars['String']
     category: Scalars['String']
+    connectUrl?: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
@@ -2158,6 +2161,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    connectUrl?: Scalars['String']
     content?: ApplicationContent
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
@@ -2603,6 +2607,7 @@ export interface Mutation {
     revokeApplicationAuthorization: Scalars['Boolean']
     revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     revokeUserSession: Scalars['Boolean']
+    revokeWorkspaceApplicationAuthorization: Scalars['Boolean']
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
@@ -3335,6 +3340,7 @@ export interface Query {
     validationRulesReadingField: ValidationRule[]
     webhook?: Webhook
     webhooks: Webhook[]
+    workspaceApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
 
@@ -4939,7 +4945,9 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
+    marketplaceAppUniversalIdentifier?: boolean | number
     scopes?: boolean | number
+    userId?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6971,6 +6979,7 @@ export interface LoginTokenGenqlSelection{
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
@@ -6986,6 +6995,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     content?: ApplicationContentGenqlSelection
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
@@ -7422,6 +7432,7 @@ export interface MutationGenqlSelection{
     revokeApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     revokeUserSession?: { __args: {userSessionId: Scalars['UUID']} }
+    revokeWorkspaceApplicationAuthorization?: { __args: {applicationAuthorizationId: Scalars['UUID']} }
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -8207,6 +8218,7 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
+    workspaceApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }

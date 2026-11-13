@@ -577,7 +577,9 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  marketplaceAppUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -3318,6 +3320,7 @@ export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
   author: Scalars['String']['output'];
   category: Scalars['String']['output'];
+  connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
@@ -3332,6 +3335,7 @@ export type MarketplaceAppDetail = {
   author?: Maybe<Scalars['String']['output']>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
+  connectUrl?: Maybe<Scalars['String']['output']>;
   content?: Maybe<ApplicationContent>;
   defaultRoleUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
@@ -3854,6 +3858,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationAuthorization: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4894,6 +4899,11 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationAuthorizationArgs = {
+  applicationAuthorizationId: Scalars['UUID']['input'];
 };
 
 
@@ -6260,6 +6270,7 @@ export type Query = {
   validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
