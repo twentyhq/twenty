@@ -24,24 +24,6 @@ const NO_ALL_RECORDS_PERMISSIONS = {
 };
 
 describe('normalizeRoleManifestRecordsPermissions', () => {
-  it('should leave a role already written with recordsPermissions as it is', () => {
-    const recordsPermissions = {
-      canReadAllRecords: true,
-      objects: [
-        {
-          objectUniversalIdentifier: 'company',
-          canUpdateAllRecords: true,
-          unreadableFields: ['secret'],
-        },
-      ],
-    };
-
-    expect(normalize({ recordsPermissions })).toStrictEqual({
-      ...ROLE,
-      recordsPermissions,
-    });
-  });
-
   it('should move the deprecated grants on all objects, object permissions and field permissions into recordsPermissions', () => {
     expect(
       normalize({

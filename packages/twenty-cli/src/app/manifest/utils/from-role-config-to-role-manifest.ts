@@ -1,8 +1,8 @@
 import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import {
+  getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  normalizeRoleManifestRecordsPermissions,
-  type NormalizedRoleManifest,
+  type RoleManifest,
 } from 'twenty-shared/application';
 
 export const fromRoleConfigToRoleManifest = ({
@@ -11,29 +11,37 @@ export const fromRoleConfigToRoleManifest = ({
 }: {
   roleConfig: RoleConfig;
   applicationUniversalIdentifier: string;
-}): NormalizedRoleManifest => {
-  const { recordsPermissions, ...role } =
-    normalizeRoleManifestRecordsPermissions({
-      role: roleConfig,
-      applicationUniversalIdentifier,
-    });
-
+}): RoleManifest => {
   return {
-    ...role,
-    recordsPermissions: {
-      ...recordsPermissions,
-      objects: recordsPermissions.objects.map((objectRecordsPermissions) => ({
-        ...objectRecordsPermissions,
+    ...roleConfig,
+    objectPermissions: (roleConfig.objectPermissions ?? []).map(
+      (objectPermission) => ({
+        ...objectPermission,
         universalIdentifier:
-          objectRecordsPermissions.universalIdentifier ??
+          objectPermission.universalIdentifier ??
           getObjectPermissionUniversalIdentifier({
             applicationUniversalIdentifier,
             roleUniversalIdentifier: roleConfig.universalIdentifier,
             objectUniversalIdentifier:
-              objectRecordsPermissions.objectUniversalIdentifier,
+              objectPermission.objectUniversalIdentifier,
           }),
-      })),
-    },
+      }),
+    ),
+    fieldPermissions: (roleConfig.fieldPermissions ?? []).map(
+      (fieldPermission) => ({
+        ...fieldPermission,
+        universalIdentifier:
+          fieldPermission.universalIdentifier ??
+          getFieldPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: roleConfig.universalIdentifier,
+            fieldUniversalIdentifier: fieldPermission.fieldUniversalIdentifier,
+          }),
+      }),
+    ),
+    rowLevelPermissionPredicateGroups:
+      roleConfig.rowLevelPermissionPredicateGroups ?? [],
+    rowLevelPermissionPredicates: roleConfig.rowLevelPermissionPredicates ?? [],
     permissionFlagUniversalIdentifiers:
       roleConfig.permissionFlagUniversalIdentifiers ?? [],
   };

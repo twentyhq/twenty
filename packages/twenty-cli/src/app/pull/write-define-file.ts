@@ -80,51 +80,9 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
-const ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH = 5;
-
-const buildRowLevelRecordsPermissionsPath = (predicateGroupDepth: number) => [
-  'recordsPermissions',
-  'objects',
-  '[]',
-  'rowLevelRecordsPermissions',
-  '[]',
-  ...Array.from({ length: predicateGroupDepth }, () => [
-    'predicateGroups',
-    '[]',
-  ]).flat(),
-];
-
-const buildRowLevelRecordsPermissionsEnumBindings = (): EnumBinding[] => [
-  ...Array.from(
-    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH + 1 },
-    (_, predicateGroupDepth) => ({
-      path: [
-        ...buildRowLevelRecordsPermissionsPath(predicateGroupDepth),
-        'predicates',
-        '[]',
-        'operand',
-      ],
-      symbol: 'RowLevelPermissionPredicateOperand',
-      members: RowLevelPermissionPredicateOperand,
-    }),
-  ),
-  ...Array.from(
-    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH },
-    (_, index) => ({
-      path: [
-        ...buildRowLevelRecordsPermissionsPath(index + 1),
-        'logicalOperator',
-      ],
-      symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
-      members: RowLevelPermissionPredicateGroupLogicalOperator,
-    }),
-  ),
-];
-
 export const buildRoleEnumBindings = (
   systemPermissionFlag: Record<string, string>,
 ): EnumBinding[] => [
-  ...buildRowLevelRecordsPermissionsEnumBindings(),
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',

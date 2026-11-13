@@ -58,7 +58,8 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
-  type NormalizedRoleManifest,
+  type RoleManifest,
+  normalizeRoleManifestRecordsPermissions,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -113,7 +114,7 @@ export const buildManifest = async (
   const indexes: IndexManifest[] = [];
   const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
-  const roles: NormalizedRoleManifest[] = [];
+  const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];
@@ -703,7 +704,13 @@ export const buildManifest = async (
     errors.push(
       ...validateAgentRolesWithinApplicationRole({
         agents,
-        roles,
+        roles: roles.map((role) =>
+          normalizeRoleManifestRecordsPermissions({
+            role,
+            applicationUniversalIdentifier:
+              applicationConfig.universalIdentifier,
+          }),
+        ),
         objects,
         permissionFlags,
         defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,

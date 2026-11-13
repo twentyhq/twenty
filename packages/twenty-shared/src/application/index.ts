@@ -270,7 +270,6 @@ export type {
   NormalizedRoleManifest,
   RoleManifest,
 } from './roleManifestType';
-export { DEPRECATED_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS } from './roleManifestType';
 export type {
   ObjectPermissionGrant,
   FieldPermissionGrant,

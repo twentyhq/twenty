@@ -96,7 +96,7 @@ const addFieldPermissionToObject = ({
   };
 };
 
-// TODO(@charlesBochet): remove with the deprecated role properties once applications declare recordsPermissions
+// TODO(@charlesBochet): remove with the deprecated role properties once applications declare the normalized shape
 export const normalizeRoleManifestRecordsPermissions = ({
   role,
   applicationUniversalIdentifier,
@@ -105,7 +105,6 @@ export const normalizeRoleManifestRecordsPermissions = ({
   applicationUniversalIdentifier: string;
 }): NormalizedRoleManifest => {
   const {
-    recordsPermissions = {},
     canReadAllObjectRecords,
     canUpdateAllObjectRecords,
     canSoftDeleteAllObjectRecords,
@@ -117,25 +116,18 @@ export const normalizeRoleManifestRecordsPermissions = ({
     ...roleWithoutRecordsPermissions
   } = role;
   const allRecordsPermissions = pickDefinedAllRecordsPermissions({
-    canReadAllRecords:
-      recordsPermissions.canReadAllRecords ?? canReadAllObjectRecords,
-    canCreateAllRecords: recordsPermissions.canCreateAllRecords,
-    canUpdateAllRecords:
-      recordsPermissions.canUpdateAllRecords ?? canUpdateAllObjectRecords,
-    canSoftDeleteAllRecords:
-      recordsPermissions.canSoftDeleteAllRecords ??
-      canSoftDeleteAllObjectRecords,
-    canDestroyAllRecords:
-      recordsPermissions.canDestroyAllRecords ?? canDestroyAllObjectRecords,
+    canReadAllRecords: canReadAllObjectRecords,
+    canUpdateAllRecords: canUpdateAllObjectRecords,
+    canSoftDeleteAllRecords: canSoftDeleteAllObjectRecords,
+    canDestroyAllRecords: canDestroyAllObjectRecords,
   });
 
   const objectByUniversalIdentifier = new Map<
     string,
     ObjectRecordsPermissionsManifest
   >(
-    [
-      ...(recordsPermissions.objects ?? []),
-      ...objectPermissions.map(
+    objectPermissions
+      .map(
         ({
           universalIdentifier,
           objectUniversalIdentifier,
@@ -153,8 +145,8 @@ export const normalizeRoleManifestRecordsPermissions = ({
             canDestroyAllRecords: canDestroyObjectRecords,
           }),
         }),
-      ),
-    ].map((object) => [object.objectUniversalIdentifier, object]),
+      )
+      .map((object) => [object.objectUniversalIdentifier, object]),
   );
   const findOrCreateObject = (
     objectUniversalIdentifier: string,

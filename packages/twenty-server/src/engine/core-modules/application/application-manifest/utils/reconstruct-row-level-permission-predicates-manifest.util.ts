@@ -1,20 +1,16 @@
 import {
-  nestRowLevelPermissionRuleManifests,
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
   type DeprecatedRowLevelPermissionPredicateManifest,
-  type RowLevelPermissionRuleManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-group-to-row-level-permission-predicate-group-manifest.util';
 import { fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-predicate-to-row-level-permission-predicate-manifest.util';
-import { fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-rule-to-row-level-permission-rule-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import {
   type ChildMetadataName,
   type ParentStatus,
 } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
-import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { computeExportedRowLevelPermissionPredicateGroupUniversalIdentifiers } from 'src/engine/core-modules/application/application-manifest/utils/compute-exported-row-level-permission-predicate-group-universal-identifiers.util';
 import { createChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
 import { MANIFEST_ENTITY_REGISTRY } from 'src/engine/core-modules/application/application-manifest/utils/find-manifest-entity-descriptor-by-universal-identifier.util';
@@ -27,10 +23,6 @@ import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/a
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate-group.type';
 import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-row-level-permission-predicate.type';
-
-type RowLevelPermissionRuleLink = {
-  rowLevelPermissionRuleUniversalIdentifier: string | null;
-};
 
 type RowLevelPermissionMetadataName = Extract<
   ChildMetadataName,
@@ -66,19 +58,18 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
   parentRoleStatusByUniversalIdentifier: ReadonlyMap<string, ParentStatus>;
 }): {
-  rowLevelPermissionsByRoleUniversalIdentifier: Map<
+  predicateGroupsByRoleUniversalIdentifier: Map<
     string,
-    {
-      rules: RowLevelPermissionRuleManifest[];
-      predicateGroups: DeprecatedRowLevelPermissionPredicateGroupManifest[];
-      predicates: DeprecatedRowLevelPermissionPredicateManifest[];
-    }
+    DeprecatedRowLevelPermissionPredicateGroupManifest[]
+  >;
+  predicatesByRoleUniversalIdentifier: Map<
+    string,
+    DeprecatedRowLevelPermissionPredicateManifest[]
   >;
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const coverage: ApplicationExportCoverageEntry[] = [];
   const {
-    flatRowLevelPermissionRuleMaps,
     flatRowLevelPermissionPredicateGroupMaps,
     flatRowLevelPermissionPredicateMaps,
   } = applicationAllFlatEntityMaps;
@@ -172,24 +163,12 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
 
   const predicateGroupsByRoleUniversalIdentifier = new Map<
     string,
-    (DeprecatedRowLevelPermissionPredicateGroupManifest &
-      RowLevelPermissionRuleLink)[]
+    DeprecatedRowLevelPermissionPredicateGroupManifest[]
   >();
   const predicatesByRoleUniversalIdentifier = new Map<
     string,
-    (DeprecatedRowLevelPermissionPredicateManifest &
-      RowLevelPermissionRuleLink)[]
+    DeprecatedRowLevelPermissionPredicateManifest[]
   >();
-  const exportedRuleUniversalIdentifiers = new Set<string>();
-  const addExportedRuleUniversalIdentifier = ({
-    rowLevelPermissionRuleUniversalIdentifier,
-  }: RowLevelPermissionRuleLink): void => {
-    if (isDefined(rowLevelPermissionRuleUniversalIdentifier)) {
-      exportedRuleUniversalIdentifiers.add(
-        rowLevelPermissionRuleUniversalIdentifier,
-      );
-    }
-  };
 
   for (const flatRowLevelPermissionPredicateGroup of sortFlatEntitiesByUniversalIdentifier(
     flatRowLevelPermissionPredicateGroupMaps,
@@ -216,19 +195,15 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
           }),
       }) === 'nested'
     ) {
-      addExportedRuleUniversalIdentifier(flatRowLevelPermissionPredicateGroup);
       appendByRole({
         manifestsByRoleUniversalIdentifier:
           predicateGroupsByRoleUniversalIdentifier,
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
-        manifest: {
-          ...fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+        manifest:
+          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
             { flatRowLevelPermissionPredicateGroup },
           ),
-          rowLevelPermissionRuleUniversalIdentifier:
-            flatRowLevelPermissionPredicateGroup.rowLevelPermissionRuleUniversalIdentifier,
-        },
       });
     }
   }
@@ -266,76 +241,21 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
           }),
       }) === 'nested'
     ) {
-      addExportedRuleUniversalIdentifier(flatRowLevelPermissionPredicate);
       appendByRole({
         manifestsByRoleUniversalIdentifier: predicatesByRoleUniversalIdentifier,
         roleUniversalIdentifier:
           flatRowLevelPermissionPredicate.roleUniversalIdentifier,
-        manifest: {
-          ...fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
+        manifest:
+          fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
             { flatRowLevelPermissionPredicate },
           ),
-          rowLevelPermissionRuleUniversalIdentifier:
-            flatRowLevelPermissionPredicate.rowLevelPermissionRuleUniversalIdentifier,
-        },
       });
     }
   }
 
-  const flatRulesByRoleUniversalIdentifier = new Map<
-    string,
-    Omit<RowLevelPermissionRuleManifest, 'predicates' | 'predicateGroups'>[]
-  >();
-
-  for (const flatRowLevelPermissionRule of sortFlatEntitiesByUniversalIdentifier(
-    flatRowLevelPermissionRuleMaps,
-  )) {
-    if (
-      !exportedRuleUniversalIdentifiers.has(
-        flatRowLevelPermissionRule.universalIdentifier,
-      )
-    ) {
-      continue;
-    }
-
-    coverage.push(
-      buildExportedCoverageEntry({
-        metadataName: 'rowLevelPermissionRule',
-        flatEntity: flatRowLevelPermissionRule,
-      }),
-    );
-    appendByRole({
-      manifestsByRoleUniversalIdentifier: flatRulesByRoleUniversalIdentifier,
-      roleUniversalIdentifier:
-        flatRowLevelPermissionRule.roleUniversalIdentifier,
-      manifest: fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest({
-        flatRowLevelPermissionRule,
-      }),
-    });
-  }
-
-  const rowLevelPermissionsByRoleUniversalIdentifier = new Map(
-    [
-      ...new Set([
-        ...flatRulesByRoleUniversalIdentifier.keys(),
-        ...predicateGroupsByRoleUniversalIdentifier.keys(),
-        ...predicatesByRoleUniversalIdentifier.keys(),
-      ]),
-    ].map((roleUniversalIdentifier) => [
-      roleUniversalIdentifier,
-      nestRowLevelPermissionRuleManifests({
-        rules:
-          flatRulesByRoleUniversalIdentifier.get(roleUniversalIdentifier) ?? [],
-        predicateGroups:
-          predicateGroupsByRoleUniversalIdentifier.get(
-            roleUniversalIdentifier,
-          ) ?? [],
-        predicates:
-          predicatesByRoleUniversalIdentifier.get(roleUniversalIdentifier) ??
-          [],
-      }),
-    ]),
-  );
-
-  return { rowLevelPermissionsByRoleUniversalIdentifier, coverage };
+  return {
+    predicateGroupsByRoleUniversalIdentifier,
+    predicatesByRoleUniversalIdentifier,
+    coverage,
+  };
 };

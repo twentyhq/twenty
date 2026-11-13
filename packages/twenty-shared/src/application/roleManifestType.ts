@@ -94,34 +94,15 @@ export type RowLevelPermissionRuleManifest =
   };
 
 export type DeprecatedRoleRecordsPermissionsManifest = {
-  /** @deprecated Use recordsPermissions.canReadAllRecords */
   canReadAllObjectRecords?: boolean;
-  /** @deprecated Use recordsPermissions.canUpdateAllRecords */
   canUpdateAllObjectRecords?: boolean;
-  /** @deprecated Use recordsPermissions.canSoftDeleteAllRecords */
   canSoftDeleteAllObjectRecords?: boolean;
-  /** @deprecated Use recordsPermissions.canDestroyAllRecords */
   canDestroyAllObjectRecords?: boolean;
-  /** @deprecated Use recordsPermissions.objects */
   objectPermissions?: DeprecatedObjectPermissionManifest[];
-  /** @deprecated Use unreadableFields and uneditableFields in recordsPermissions.objects */
   fieldPermissions?: DeprecatedFieldPermissionManifest[];
-  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
   rowLevelPermissionPredicates?: DeprecatedRowLevelPermissionPredicateManifest[];
-  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
   rowLevelPermissionPredicateGroups?: DeprecatedRowLevelPermissionPredicateGroupManifest[];
 };
-
-export const DEPRECATED_ROLE_RECORDS_PERMISSIONS_MANIFEST_KEYS = [
-  'canReadAllObjectRecords',
-  'canUpdateAllObjectRecords',
-  'canSoftDeleteAllObjectRecords',
-  'canDestroyAllObjectRecords',
-  'objectPermissions',
-  'fieldPermissions',
-  'rowLevelPermissionPredicates',
-  'rowLevelPermissionPredicateGroups',
-] as const satisfies (keyof DeprecatedRoleRecordsPermissionsManifest)[];
 
 type RoleManifestBase = SyncableEntityOptions &
   Pick<
@@ -145,8 +126,5 @@ export type NormalizedRoleManifest = RoleManifestBase & {
   };
 };
 
-// The deprecated properties are read for manifests built before recordsPermissions
 export type RoleManifest = RoleManifestBase &
-  DeprecatedRoleRecordsPermissionsManifest & {
-    recordsPermissions?: RoleRecordsPermissionsManifest;
-  };
+  DeprecatedRoleRecordsPermissionsManifest;

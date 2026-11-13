@@ -1,4 +1,5 @@
 import {
+  type NormalizedRoleManifest,
   normalizeRoleManifestRecordsPermissions,
   type RoleManifest,
 } from 'twenty-shared/application';
@@ -17,17 +18,26 @@ const PREDICATE = {
   operand: RowLevelPermissionPredicateOperand.IS,
 };
 
-const convert = (
-  roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
-) =>
+const ROLE = { universalIdentifier: 'role', label: 'Role' };
+
+const convert = ({
+  recordsPermissions,
+}: Pick<NormalizedRoleManifest, 'recordsPermissions'>) =>
   fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
-    roleManifest: normalizeRoleManifestRecordsPermissions({
-      role: { universalIdentifier: 'role', label: 'Role', ...roleManifest },
-      applicationUniversalIdentifier: APPLICATION,
-    }),
+    roleManifest: { ...ROLE, recordsPermissions },
     applicationUniversalIdentifier: APPLICATION,
     now: NOW,
   });
+
+const convertDeprecated = (
+  roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
+) =>
+  convert(
+    normalizeRoleManifestRecordsPermissions({
+      role: { ...ROLE, ...roleManifest },
+      applicationUniversalIdentifier: APPLICATION,
+    }),
+  );
 
 describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
   it('should write the all records permissions, field restrictions and rules of an object', () => {
@@ -157,29 +167,30 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
   });
 
   it('should convert the deprecated properties before writing them', () => {
-    const { objectPermissions, fieldPermissions, rules, predicates } = convert({
-      objectPermissions: [
-        {
-          objectUniversalIdentifier: 'company',
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-        },
-      ],
-      fieldPermissions: [
-        {
-          objectUniversalIdentifier: 'company',
-          fieldUniversalIdentifier: 'secret',
-          canReadFieldValue: false,
-        },
-      ],
-      rowLevelPermissionPredicates: [
-        {
-          ...PREDICATE,
-          universalIdentifier: 'predicate',
-          objectUniversalIdentifier: 'company',
-        },
-      ],
-    });
+    const { objectPermissions, fieldPermissions, rules, predicates } =
+      convertDeprecated({
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: 'company',
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: true,
+          },
+        ],
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'company',
+            fieldUniversalIdentifier: 'secret',
+            canReadFieldValue: false,
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            ...PREDICATE,
+            universalIdentifier: 'predicate',
+            objectUniversalIdentifier: 'company',
+          },
+        ],
+      });
 
     expect(rules).toMatchObject([
       {

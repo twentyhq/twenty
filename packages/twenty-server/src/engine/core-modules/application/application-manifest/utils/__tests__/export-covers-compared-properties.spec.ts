@@ -1,7 +1,6 @@
 import {
   type AgentManifest,
   type NavigationMenuItemManifest,
-  type ObjectRecordsPermissionsManifest,
   type PermissionFlagManifest,
   type RoleManifest,
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
@@ -41,8 +40,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-row-level-permission-rule-to-row-level-permission-rule-manifest.util';
-import { fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-rule-manifest-to-universal-flat-row-level-permission-rule.util';
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
 import { fromFlatRelatedRecordPathToRelatedRecordPathManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-related-record-path-to-related-record-path-manifest.util';
 import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
@@ -50,10 +47,11 @@ import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/applicatio
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { fromFlatFieldMetadataToFieldManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-metadata-to-field-manifest.util';
+import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-navigation-menu-item-to-navigation-menu-item-manifest.util';
 import { fromFlatObjectMetadataToObjectManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-metadata-to-object-manifest.util';
-import { fromFlatObjectPermissionToObjectRecordsPermissionsManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-records-permissions-manifest.util';
+import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-object-permission-to-object-permission-manifest.util';
 import { fromFlatPageLayoutTabToPageLayoutTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-tab-to-page-layout-tab-manifest.util';
 import { fromFlatPageLayoutToPageLayoutManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-to-page-layout-manifest.util';
 import { fromFlatPageLayoutWidgetToStandalonePageLayoutWidgetManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-page-layout-widget-to-standalone-page-layout-widget-manifest.util';
@@ -257,17 +255,8 @@ const NESTED_VIEW_CHILD_GAPS = {
 
 const ROLE_UID = 'abababab-abab-4bab-8bab-abababababab';
 const OBJECT_PERMISSION_UID = 'acacacac-acac-4cac-8cac-acacacacacac';
+const FIELD_PERMISSION_UID = 'adadadad-adad-4dad-8dad-adadadadadad';
 const PERMISSION_FLAG_UID = 'aeaeaeae-aeae-4eae-8eae-aeaeaeaeaeae';
-
-const OBJECT_RECORDS_PERMISSIONS_MANIFEST: ObjectRecordsPermissionsManifest = {
-  universalIdentifier: OBJECT_PERMISSION_UID,
-  objectUniversalIdentifier: OBJECT_UID,
-  canReadAllRecords: true,
-  canCreateAllRecords: false,
-  canUpdateAllRecords: false,
-  canSoftDeleteAllRecords: false,
-  canDestroyAllRecords: false,
-};
 
 const PERMISSION_FLAG_MANIFEST: PermissionFlagManifest = {
   universalIdentifier: PERMISSION_FLAG_UID,
@@ -285,7 +274,10 @@ const ROLE_MANIFEST: RoleManifest = {
   icon: 'IconHeadset',
   canUpdateAllSettings: false,
   canAccessAllTools: true,
-  recordsPermissions: { canReadAllRecords: true },
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: false,
   canBeAssignedToApiKeys: true,
@@ -307,7 +299,6 @@ const PARENT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_UID =
   'babababa-baba-4aba-8aba-babababababa';
 const ROW_LEVEL_PERMISSION_PREDICATE_UID =
   'bcbcbcbc-bcbc-4cbc-8cbc-bcbcbcbcbcbc';
-const ROW_LEVEL_PERMISSION_RULE_UID = 'bdbdbdbd-bdbd-4dbd-8dbd-bdbdbdbdbdbd';
 
 const ROW_LEVEL_PERMISSION_PREDICATE_GROUP_MANIFEST: DeprecatedRowLevelPermissionPredicateGroupManifest =
   {
@@ -333,13 +324,11 @@ const ROW_LEVEL_PERMISSION_PREDICATE_MANIFEST: DeprecatedRowLevelPermissionPredi
     position: 0,
   };
 
-const ALL_RECORDS_UNDER_RECORDS_PERMISSIONS =
-  'written as can…AllRecords under recordsPermissions';
-const FIELD_RESTRICTION_LISTS =
-  'written as unreadableFields and uneditableFields under its object or rule';
+const CREATE_PERMISSION_DERIVED_ON_IMPORT =
+  'Not in the manifest yet: importing derives it from the update permission';
 
-const NESTED_IN_RULE =
-  'a predicate and a predicate group are written under their rule';
+const RULE_DERIVED_ON_IMPORT =
+  'rules are derived on import from the predicate groups and predicates';
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
@@ -738,50 +727,65 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {},
     workspaceLocalProperties: [],
     knownGaps: {
-      canReadAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
-      canCreateAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
-      canUpdateAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
-      canSoftDeleteAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
-      canDestroyAllObjectRecords: ALL_RECORDS_UNDER_RECORDS_PERMISSIONS,
+      canCreateAllObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
     },
   },
   {
     metadataName: 'objectPermission',
     emittedProperties: Object.keys(
-      fromFlatObjectPermissionToObjectRecordsPermissionsManifest({
+      fromFlatObjectPermissionToObjectPermissionManifest({
         flatObjectPermission:
           fromObjectRecordsPermissionsManifestToUniversalFlatObjectPermission({
-            objectRecordsPermissionsManifest:
-              OBJECT_RECORDS_PERMISSIONS_MANIFEST,
+            objectRecordsPermissionsManifest: {
+              universalIdentifier: OBJECT_PERMISSION_UID,
+              objectUniversalIdentifier: OBJECT_UID,
+              canReadAllRecords: true,
+              canUpdateAllRecords: false,
+              canSoftDeleteAllRecords: false,
+              canDestroyAllRecords: false,
+            },
             ...ROLE_CHILD_CONVERSION_CONTEXT,
           }),
       }),
     ),
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
-      canReadObjectRecords: 'canReadAllRecords',
-      canCreateObjectRecords: 'canCreateAllRecords',
-      canUpdateObjectRecords: 'canUpdateAllRecords',
-      canSoftDeleteObjectRecords: 'canSoftDeleteAllRecords',
-      canDestroyObjectRecords: 'canDestroyAllRecords',
     },
     workspaceLocalProperties: [],
-    knownGaps: NESTED_ROLE_CHILD_GAPS,
+    knownGaps: {
+      ...NESTED_ROLE_CHILD_GAPS,
+      canCreateObjectRecords: CREATE_PERMISSION_DERIVED_ON_IMPORT,
+    },
   },
   {
     metadataName: 'fieldPermission',
-    emittedProperties: [],
-    renamedProperties: {},
+    emittedProperties: Object.keys(
+      fromFlatFieldPermissionToFieldPermissionManifest({
+        flatFieldPermission: {
+          universalIdentifier: FIELD_PERMISSION_UID,
+          applicationUniversalIdentifier: APP_UID,
+          roleUniversalIdentifier: ROLE_UID,
+          objectMetadataUniversalIdentifier: OBJECT_UID,
+          fieldMetadataUniversalIdentifier: FIELD_UID,
+          rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+          rowLevelPermissionRuleUniversalIdentifier: null,
+          canReadFieldValue: true,
+          canUpdateFieldValue: false,
+          createdAt: NOW,
+          updatedAt: NOW,
+        },
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+      fieldMetadataUniversalIdentifier: 'fieldUniversalIdentifier',
+    },
     workspaceLocalProperties: [],
     knownGaps: {
-      roleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
-      objectMetadataUniversalIdentifier: FIELD_RESTRICTION_LISTS,
-      fieldMetadataUniversalIdentifier: FIELD_RESTRICTION_LISTS,
-      canReadFieldValue: FIELD_RESTRICTION_LISTS,
-      canUpdateFieldValue: FIELD_RESTRICTION_LISTS,
+      ...NESTED_ROLE_CHILD_GAPS,
       rowLevelPermissionPredicateGroupUniversalIdentifier:
-        FIELD_RESTRICTION_LISTS,
-      rowLevelPermissionRuleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+        'manifests do not declare field permissions on a row level permission rule yet',
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -836,7 +840,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       canUpdateRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canSoftDeleteRecords: PREDICATE_GROUP_OPERATIONS_GAP,
       canDestroyRecords: PREDICATE_GROUP_OPERATIONS_GAP,
-      rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
   },
   {
@@ -866,28 +870,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
-      rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
+      rowLevelPermissionRuleUniversalIdentifier: RULE_DERIVED_ON_IMPORT,
     },
-  },
-  {
-    metadataName: 'rowLevelPermissionRule',
-    emittedProperties: Object.keys(
-      fromFlatRowLevelPermissionRuleToRowLevelPermissionRuleManifest({
-        flatRowLevelPermissionRule:
-          fromRowLevelPermissionRuleManifestToUniversalFlatRowLevelPermissionRule(
-            {
-              rowLevelPermissionRuleManifest: {
-                universalIdentifier: ROW_LEVEL_PERMISSION_RULE_UID,
-                objectUniversalIdentifier: OBJECT_UID,
-              },
-              ...ROLE_CHILD_CONVERSION_CONTEXT,
-            },
-          ),
-      }),
-    ),
-    renamedProperties: {},
-    workspaceLocalProperties: [],
-    knownGaps: {},
   },
   {
     metadataName: 'permissionFlag',

@@ -196,11 +196,8 @@ export type { PermissionFlagPermissionType } from 'twenty-shared/application';
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
 export type {
-  DeprecatedRowLevelPermissionPredicateManifest,
-  DeprecatedRowLevelPermissionPredicateGroupManifest,
-  RoleRecordsPermissionsManifest,
-  ObjectRecordsPermissionsManifest,
-  RowLevelRecordsPermissionsManifest,
+  RowLevelPermissionPredicateManifest,
+  RowLevelPermissionPredicateGroupManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 export {
   RowLevelPermissionPredicateGroupLogicalOperator,

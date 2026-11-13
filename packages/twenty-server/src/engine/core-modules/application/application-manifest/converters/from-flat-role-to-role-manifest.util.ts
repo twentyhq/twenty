@@ -1,26 +1,40 @@
-import {
-  type ObjectRecordsPermissionsManifest,
-  type RoleManifest,
-} from 'twenty-shared/application';
+import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
 export type RoleChildrenManifests = Pick<
   RoleManifest,
+  | 'objectPermissions'
+  | 'fieldPermissions'
   | 'rowLevelPermissionPredicateGroups'
   | 'rowLevelPermissionPredicates'
   | 'permissionFlagUniversalIdentifiers'
-> & { objectsRecordsPermissions?: ObjectRecordsPermissionsManifest[] };
+>;
+
+const withoutEmptyCollections = ({
+  objectPermissions,
+  fieldPermissions,
+  rowLevelPermissionPredicateGroups,
+  rowLevelPermissionPredicates,
+  permissionFlagUniversalIdentifiers,
+}: RoleChildrenManifests): RoleChildrenManifests => ({
+  ...(isNonEmptyArray(objectPermissions) ? { objectPermissions } : {}),
+  ...(isNonEmptyArray(fieldPermissions) ? { fieldPermissions } : {}),
+  ...(isNonEmptyArray(rowLevelPermissionPredicateGroups)
+    ? { rowLevelPermissionPredicateGroups }
+    : {}),
+  ...(isNonEmptyArray(rowLevelPermissionPredicates)
+    ? { rowLevelPermissionPredicates }
+    : {}),
+  ...(isNonEmptyArray(permissionFlagUniversalIdentifiers)
+    ? { permissionFlagUniversalIdentifiers }
+    : {}),
+});
 
 export const fromFlatRoleToRoleManifest = ({
   flatRole,
-  children: {
-    objectsRecordsPermissions,
-    rowLevelPermissionPredicateGroups,
-    rowLevelPermissionPredicates,
-    permissionFlagUniversalIdentifiers,
-  } = {},
+  children = {},
 }: {
   flatRole: UniversalFlatRole;
   children?: RoleChildrenManifests;
@@ -34,26 +48,12 @@ export const fromFlatRoleToRoleManifest = ({
   canUpdateAllSettings: flatRole.canUpdateAllSettings,
   canAccessAllTools: flatRole.canAccessAllTools,
   canAccessAllAgentChatChannels: flatRole.canAccessAllAgentChatChannels,
+  canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
+  canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
+  canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,
+  canDestroyAllObjectRecords: flatRole.canDestroyAllObjectRecords,
   canBeAssignedToUsers: flatRole.canBeAssignedToUsers,
   canBeAssignedToAgents: flatRole.canBeAssignedToAgents,
   canBeAssignedToApiKeys: flatRole.canBeAssignedToApiKeys,
-  recordsPermissions: {
-    canReadAllRecords: flatRole.canReadAllObjectRecords,
-    canCreateAllRecords: flatRole.canCreateAllObjectRecords,
-    canUpdateAllRecords: flatRole.canUpdateAllObjectRecords,
-    canSoftDeleteAllRecords: flatRole.canSoftDeleteAllObjectRecords,
-    canDestroyAllRecords: flatRole.canDestroyAllObjectRecords,
-    ...(isNonEmptyArray(objectsRecordsPermissions)
-      ? { objects: objectsRecordsPermissions }
-      : {}),
-  },
-  ...(isNonEmptyArray(rowLevelPermissionPredicateGroups)
-    ? { rowLevelPermissionPredicateGroups }
-    : {}),
-  ...(isNonEmptyArray(rowLevelPermissionPredicates)
-    ? { rowLevelPermissionPredicates }
-    : {}),
-  ...(isNonEmptyArray(permissionFlagUniversalIdentifiers)
-    ? { permissionFlagUniversalIdentifiers }
-    : {}),
+  ...withoutEmptyCollections(children),
 });
