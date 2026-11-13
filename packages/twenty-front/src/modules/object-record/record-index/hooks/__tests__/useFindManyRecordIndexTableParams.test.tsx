@@ -9,6 +9,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { RECORD_INDEX_ALL_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexAllTabId';
+import { RECORD_INDEX_NO_VALUE_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexNoValueTabId';
 import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
@@ -130,6 +131,20 @@ describe('useFindManyRecordIndexTableParams', () => {
     );
 
     expect(result.current.filter).toEqual({ stage: { in: ['MEETING'] } });
+  });
+
+  it('should narrow the query to records without a value on the No value tab', () => {
+    const { result } = renderHook(
+      () => useFindManyRecordIndexTableParams('opportunity', INSTANCE_ID),
+      {
+        wrapper: getWrapper({
+          recordGroupId: 'unknown-record-group-id',
+          selectedRecordIndexTabId: RECORD_INDEX_NO_VALUE_TAB_ID,
+        }),
+      },
+    );
+
+    expect(result.current.filter).toEqual({ stage: { is: 'NULL' } });
   });
 
   it('should not narrow the query on the All tab', () => {

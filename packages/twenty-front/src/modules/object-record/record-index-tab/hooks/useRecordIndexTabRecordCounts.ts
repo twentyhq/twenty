@@ -6,6 +6,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RECORD_INDEX_NO_VALUE_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexNoValueTabId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue } from '@/object-record/record-index/utils/turnRecordIndexGroupByAggregateQueryResultIntoRecordAggregateValueByGroupValue';
 import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/buildGroupByFieldObject';
@@ -110,7 +111,7 @@ export const useRecordIndexTabRecordCounts = (
     return Object.fromEntries(
       recordAggregateValueByGroupValueArray.map(
         ({ recordGroupValue, recordAggregateValue }) => [
-          recordGroupValue,
+          recordGroupValue ?? RECORD_INDEX_NO_VALUE_TAB_ID,
           Number(recordAggregateValue ?? 0),
         ],
       ),

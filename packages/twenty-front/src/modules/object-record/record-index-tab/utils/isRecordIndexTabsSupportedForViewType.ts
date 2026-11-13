@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 const VIEW_TYPES_WITH_RECORD_INDEX_TABS: ViewType[] = [
   ViewType.TABLE,
   ViewType.LIST,
+  ViewType.KANBAN,
 ];
 
 export const isRecordIndexTabsSupportedForViewType = (

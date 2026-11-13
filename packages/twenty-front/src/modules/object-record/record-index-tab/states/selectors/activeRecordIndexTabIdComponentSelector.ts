@@ -1,3 +1,4 @@
+import { RECORD_INDEX_NO_VALUE_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexNoValueTabId';
 import { RECORD_INDEX_ALL_TAB_ID } from '@/object-record/record-index-tab/constants/RecordIndexAllTabId';
 import { selectedRecordIndexTabIdComponentState } from '@/object-record/record-index-tab/states/selectedRecordIndexTabIdComponentState';
 import { isRecordIndexTabsDisplayedComponentSelector } from '@/object-record/record-index-tab/states/selectors/isRecordIndexTabsDisplayedComponentSelector';
@@ -22,9 +23,12 @@ export const activeRecordIndexTabIdComponentSelector =
             selectedRecordIndexTabIdComponentState,
             { instanceId },
           ),
-          recordIndexTabIds: get(recordIndexTabsComponentSelector, {
-            instanceId,
-          }).map(({ id }) => id),
+          recordIndexTabIds: [
+            ...get(recordIndexTabsComponentSelector, { instanceId }).map(
+              ({ id }) => id,
+            ),
+            RECORD_INDEX_NO_VALUE_TAB_ID,
+          ],
         });
       },
   });
