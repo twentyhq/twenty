@@ -12,6 +12,7 @@ import {
 import { type ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { type ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
+import { type ApplicationThreadLatestMessagesService } from 'src/engine/metadata-modules/message-channel/services/application-thread-latest-messages.service';
 import { type MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -81,6 +82,7 @@ describe('ApplicationMessageSendService', () => {
         recipients: [{ handle: 'ada' }],
       }),
     } as unknown as WorkspaceOrmManager,
+    {} as unknown as ApplicationThreadLatestMessagesService,
     {
       getOrRecompute: async () => ({
         flatWorkspaceMemberMaps: { idByUserWorkspaceId: {} },

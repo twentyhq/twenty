@@ -15,13 +15,16 @@ import { MessageChannelMetadataService } from 'src/engine/metadata-modules/messa
 import { ApplicationMessageChannelsResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-channels.resolver';
 import { ApplicationMessageFoldersResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-folders.resolver';
 import { ApplicationMessageIngestionResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-ingestion.resolver';
+import { ApplicationMessageReadResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-read.resolver';
 import { ApplicationMessageSendResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-send.resolver';
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageReadService } from 'src/engine/metadata-modules/message-channel/services/application-message-read.service';
 import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
+import { ApplicationThreadLatestMessagesService } from 'src/engine/metadata-modules/message-channel/services/application-thread-latest-messages.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProviderModule } from 'src/engine/metadata-modules/messaging-provider/messaging-provider.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
@@ -62,8 +65,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationMessageFoldersResolver,
     ApplicationMessageIngestionService,
     ApplicationMessageIngestionResolver,
+    ApplicationMessageReadService,
+    ApplicationMessageReadResolver,
     ApplicationMessageSendService,
     ApplicationMessageSendAttachmentsService,
+    ApplicationThreadLatestMessagesService,
     ApplicationMessageSendResolver,
     provideWorkspaceScopedRepository(MessageFolderEntity),
     provideWorkspaceScopedRepository(FileEntity),
