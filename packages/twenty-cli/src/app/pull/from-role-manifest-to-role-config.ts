@@ -1,7 +1,7 @@
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,9 +26,9 @@ export const fromRoleManifestToRoleConfig = ({
   roleManifest,
   applicationUniversalIdentifier,
 }: {
-  roleManifest: RoleManifest;
+  roleManifest: LegacyCompliantRoleManifest;
   applicationUniversalIdentifier: string;
-}): RoleManifest => {
+}): LegacyCompliantRoleManifest => {
   const {
     universalIdentifier: roleUniversalIdentifier,
     objectPermissions,

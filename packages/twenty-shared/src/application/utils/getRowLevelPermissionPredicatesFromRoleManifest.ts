@@ -1,7 +1,7 @@
 import {
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
   type DeprecatedRowLevelPermissionPredicateManifest,
-  type NormalizedRoleManifest,
+  type RoleManifest,
 } from '@/application/roleManifestType';
 import { flattenRowLevelPermissionRuleManifests } from '@/application/utils/flattenRowLevelPermissionRuleManifests';
 import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
@@ -9,7 +9,7 @@ import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRe
 export const getRowLevelPermissionPredicatesFromRoleManifest = ({
   role,
 }: {
-  role: Pick<NormalizedRoleManifest, 'recordsPermissions'>;
+  role: Pick<RoleManifest, 'recordsPermissions'>;
 }): {
   predicateGroups: DeprecatedRowLevelPermissionPredicateGroupManifest[];
   predicates: DeprecatedRowLevelPermissionPredicateManifest[];

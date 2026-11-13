@@ -3,7 +3,7 @@ import {
   getRecordsPermissionsFromRoleManifest,
   getRowLevelPermissionPredicatesFromRoleManifest,
   type Manifest,
-  type NormalizedRoleManifest,
+  type RoleManifest,
   normalizeRoleManifestRecordsPermissions,
 } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
@@ -26,7 +26,7 @@ type ManifestEntityRegistryEntry = {
 
 const NO_MANIFEST_CANDIDATES: ManifestEntityCandidate[] = [];
 
-const getNormalizedRoles = (manifest: Manifest): NormalizedRoleManifest[] =>
+const getNormalizedRoles = (manifest: Manifest): RoleManifest[] =>
   (manifest.roles ?? []).map((role) =>
     normalizeRoleManifestRecordsPermissions({
       role,

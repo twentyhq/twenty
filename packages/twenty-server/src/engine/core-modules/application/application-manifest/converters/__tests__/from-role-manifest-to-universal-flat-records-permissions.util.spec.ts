@@ -1,7 +1,7 @@
 import {
-  type NormalizedRoleManifest,
-  normalizeRoleManifestRecordsPermissions,
   type RoleManifest,
+  normalizeRoleManifestRecordsPermissions,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -22,7 +22,7 @@ const ROLE = { universalIdentifier: 'role', label: 'Role' };
 
 const convert = ({
   recordsPermissions,
-}: Pick<NormalizedRoleManifest, 'recordsPermissions'>) =>
+}: Pick<RoleManifest, 'recordsPermissions'>) =>
   fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
     roleManifest: { ...ROLE, recordsPermissions },
     applicationUniversalIdentifier: APPLICATION,
@@ -30,7 +30,10 @@ const convert = ({
   });
 
 const convertDeprecated = (
-  roleManifest: Omit<RoleManifest, 'universalIdentifier' | 'label'>,
+  roleManifest: Omit<
+    LegacyCompliantRoleManifest,
+    'universalIdentifier' | 'label'
+  >,
 ) =>
   convert(
     normalizeRoleManifestRecordsPermissions({

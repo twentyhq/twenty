@@ -1,5 +1,5 @@
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
-import { type RoleManifest } from '@/application/roleManifestType';
+import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
 import { normalizeRoleManifestRecordsPermissions } from '@/application/utils/normalizeRoleManifestRecordsPermissions';
 import {
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -9,7 +9,9 @@ import {
 const APPLICATION = '20202020-0000-4000-8000-000000000001';
 const ROLE = { universalIdentifier: 'role', label: 'Role' };
 
-const normalize = (role: Omit<RoleManifest, 'universalIdentifier' | 'label'>) =>
+const normalize = (
+  role: Omit<LegacyCompliantRoleManifest, 'universalIdentifier' | 'label'>,
+) =>
   normalizeRoleManifestRecordsPermissions({
     role: { ...ROLE, ...role },
     applicationUniversalIdentifier: APPLICATION,

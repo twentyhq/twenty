@@ -3,7 +3,7 @@ import {
   getRoleManifestGrantsNotCoveredBy,
   type ObjectManifest,
   type PermissionFlagManifest,
-  type NormalizedRoleManifest,
+  type RoleManifest,
   type RoleManifestGrant,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -137,7 +137,7 @@ const validateAgentRolesAreDefined = ({
   roles,
 }: {
   agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
-  roles: NormalizedRoleManifest[];
+  roles: RoleManifest[];
 }): string[] =>
   [...agentNamesByRoleUniversalIdentifier]
     .filter(
@@ -160,8 +160,8 @@ const validateAgentRolesAreCoveredByApplicationRole = ({
   systemPermissionFlagNameByUniversalIdentifier,
 }: {
   agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
-  applicationRole: NormalizedRoleManifest;
-  roles: NormalizedRoleManifest[];
+  applicationRole: RoleManifest;
+  roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
   systemPermissionFlagNameByUniversalIdentifier: Map<string, string>;
@@ -217,7 +217,7 @@ export const validateAgentRolesWithinApplicationRole = ({
   systemPermissionFlag = SystemPermissionFlag,
 }: {
   agents: AgentManifest[];
-  roles: NormalizedRoleManifest[];
+  roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
   defaultRoleUniversalIdentifier: string;

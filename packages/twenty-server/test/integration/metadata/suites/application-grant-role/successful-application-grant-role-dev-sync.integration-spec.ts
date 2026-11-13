@@ -17,7 +17,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type FieldManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -48,7 +48,7 @@ const scopingFieldManifest: FieldManifest = {
   objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
 };
 
-const INITIAL_REQUESTED_ROLE: RoleManifest = {
+const INITIAL_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
   universalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Grant test requested role',
   canAccessAllTools: false,
@@ -78,7 +78,7 @@ const INITIAL_REQUESTED_ROLE: RoleManifest = {
   ],
 };
 
-const CHANGED_REQUESTED_ROLE: RoleManifest = {
+const CHANGED_REQUESTED_ROLE: LegacyCompliantRoleManifest = {
   ...INITIAL_REQUESTED_ROLE,
   canAccessAllTools: true,
   permissionFlagUniversalIdentifiers: [],
@@ -101,7 +101,9 @@ const CHANGED_REQUESTED_ROLE: RoleManifest = {
   ],
 };
 
-const syncRequestedRole = async (requestedRole: RoleManifest) => {
+const syncRequestedRole = async (
+  requestedRole: LegacyCompliantRoleManifest,
+) => {
   const { errors } = await syncApplication({
     manifest: buildBaseManifest({
       appId: APPLICATION_UNIVERSAL_IDENTIFIER,

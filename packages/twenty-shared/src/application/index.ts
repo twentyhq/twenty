@@ -267,8 +267,8 @@ export type {
   RoleRecordsPermissionsManifest,
   RowLevelPermissionRuleManifest,
   DeprecatedRoleRecordsPermissionsManifest,
-  NormalizedRoleManifest,
   RoleManifest,
+  LegacyCompliantRoleManifest,
 } from './roleManifestType';
 export type {
   ObjectPermissionGrant,

@@ -1,5 +1,5 @@
 import {
-  type NormalizedRoleManifest,
+  type RoleManifest,
   type RowLevelPermissionRuleManifest,
 } from '@/application/roleManifestType';
 import {
@@ -12,7 +12,7 @@ import { type ObjectRecordsPermissionGrants } from '@/application/utils/getEffec
 export const getRecordsPermissionsFromRoleManifest = ({
   role,
 }: {
-  role: Pick<NormalizedRoleManifest, 'recordsPermissions'>;
+  role: Pick<RoleManifest, 'recordsPermissions'>;
 }): Omit<Required<ObjectRecordsPermissionGrants>, 'objectPermissions'> & {
   objectPermissions: (Partial<SyncableEntityOptions> & ObjectPermissionGrant)[];
   fieldPermissions: (Partial<SyncableEntityOptions> & FieldPermissionGrant)[];

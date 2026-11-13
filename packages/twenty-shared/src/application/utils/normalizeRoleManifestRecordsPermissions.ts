@@ -2,9 +2,9 @@ import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/dete
 import {
   type AllRecordsPermissionsManifest,
   type DeprecatedFieldPermissionManifest,
-  type NormalizedRoleManifest,
-  type ObjectRecordsPermissionsManifest,
   type RoleManifest,
+  type ObjectRecordsPermissionsManifest,
+  type LegacyCompliantRoleManifest,
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
   type RowLevelPermissionRuleManifest,
 } from '@/application/roleManifestType';
@@ -101,9 +101,9 @@ export const normalizeRoleManifestRecordsPermissions = ({
   role,
   applicationUniversalIdentifier,
 }: {
-  role: RoleManifest;
+  role: LegacyCompliantRoleManifest;
   applicationUniversalIdentifier: string;
-}): NormalizedRoleManifest => {
+}): RoleManifest => {
   const {
     canReadAllObjectRecords,
     canUpdateAllObjectRecords,

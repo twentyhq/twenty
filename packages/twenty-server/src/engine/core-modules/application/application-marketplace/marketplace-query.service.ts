@@ -4,7 +4,7 @@ import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
   getReachableObjectPermissionsFromRoleManifest,
   getRecordsPermissionsFromRoleManifest,
   normalizeRoleManifestRecordsPermissions,
@@ -198,7 +198,7 @@ export class MarketplaceQueryService {
     role,
     applicationUniversalIdentifier,
   }: {
-    role: RoleManifest;
+    role: LegacyCompliantRoleManifest;
     applicationUniversalIdentifier: string;
   }): MarketplaceAppRoleDTO {
     const normalizedRole = normalizeRoleManifestRecordsPermissions({

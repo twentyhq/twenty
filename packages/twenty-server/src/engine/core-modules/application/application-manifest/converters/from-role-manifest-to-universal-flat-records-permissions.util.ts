@@ -3,7 +3,7 @@ import {
   type FieldRestrictionsManifest,
   flattenRowLevelPermissionRuleManifests,
   getFieldPermissionUniversalIdentifier,
-  type NormalizedRoleManifest,
+  type RoleManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -34,7 +34,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  roleManifest: NormalizedRoleManifest;
+  roleManifest: RoleManifest;
   applicationUniversalIdentifier: string;
   now: string;
 }): {

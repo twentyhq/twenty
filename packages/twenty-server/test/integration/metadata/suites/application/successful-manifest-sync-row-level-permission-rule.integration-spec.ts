@@ -2,7 +2,10 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { type Manifest, type RoleManifest } from 'twenty-shared/application';
+import {
+  type Manifest,
+  type LegacyCompliantRoleManifest,
+} from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -27,7 +30,7 @@ const companyNamePredicate = {
 
 const buildManifest = (
   role: Pick<
-    RoleManifest,
+    LegacyCompliantRoleManifest,
     'objectPermissions' | 'rowLevelPermissionPredicates'
   >,
 ): Manifest =>

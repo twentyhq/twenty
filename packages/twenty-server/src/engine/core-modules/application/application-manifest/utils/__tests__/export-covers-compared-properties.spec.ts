@@ -2,7 +2,7 @@ import {
   type AgentManifest,
   type NavigationMenuItemManifest,
   type PermissionFlagManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
   type DeprecatedRowLevelPermissionPredicateManifest,
   type PageLayoutManifest,
@@ -267,7 +267,7 @@ const PERMISSION_FLAG_MANIFEST: PermissionFlagManifest = {
   permissionType: 'settings',
 };
 
-const ROLE_MANIFEST: RoleManifest = {
+const ROLE_MANIFEST: LegacyCompliantRoleManifest = {
   universalIdentifier: ROLE_UID,
   label: 'Support',
   description: 'Handles tickets',

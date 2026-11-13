@@ -1,4 +1,4 @@
-import { type NormalizedRoleManifest } from 'twenty-shared/application';
+import { type RoleManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
@@ -7,7 +7,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  roleManifest: NormalizedRoleManifest;
+  roleManifest: RoleManifest;
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatRole => {

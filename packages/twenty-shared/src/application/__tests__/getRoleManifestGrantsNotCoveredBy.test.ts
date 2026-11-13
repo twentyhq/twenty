@@ -1,6 +1,6 @@
 import {
-  type NormalizedRoleManifest,
   type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from '@/application/roleManifestType';
 import { normalizeRoleManifestRecordsPermissions } from '@/application/utils/normalizeRoleManifestRecordsPermissions';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
@@ -15,8 +15,8 @@ const COMPANY = 'object-company';
 const EMAIL_FIELD = 'field-email';
 
 const buildRole = (
-  overrides: Partial<RoleManifest> = {},
-): NormalizedRoleManifest =>
+  overrides: Partial<LegacyCompliantRoleManifest> = {},
+): RoleManifest =>
   normalizeRoleManifestRecordsPermissions({
     role: { universalIdentifier: 'role', label: 'Role', ...overrides },
     applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',

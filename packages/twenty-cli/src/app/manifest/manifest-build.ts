@@ -58,7 +58,7 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
   normalizeRoleManifestRecordsPermissions,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
@@ -114,7 +114,7 @@ export const buildManifest = async (
   const indexes: IndexManifest[] = [];
   const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
-  const roles: RoleManifest[] = [];
+  const roles: LegacyCompliantRoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];

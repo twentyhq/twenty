@@ -3,7 +3,7 @@ import {
   type DeprecatedFieldPermissionManifest,
   type DeprecatedObjectPermissionManifest,
   type PermissionFlagManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
 import { fromFlatFieldPermissionToFieldPermissionManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-field-permission-to-field-permission-manifest.util';
@@ -50,7 +50,7 @@ export const reconstructRolesManifest = ({
   resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
 }): {
   permissionFlags: PermissionFlagManifest[];
-  roles: RoleManifest[];
+  roles: LegacyCompliantRoleManifest[];
   coverage: ApplicationExportCoverageEntry[];
 } => {
   const coverage: ApplicationExportCoverageEntry[] = [];

@@ -120,11 +120,11 @@ type RoleManifestBase = SyncableEntityOptions &
     canBeAssignedToApiKeys?: boolean;
   };
 
-export type NormalizedRoleManifest = RoleManifestBase & {
+export type RoleManifest = RoleManifestBase & {
   recordsPermissions: RoleRecordsPermissionsManifest & {
     objects: ObjectRecordsPermissionsManifest[];
   };
 };
 
-export type RoleManifest = RoleManifestBase &
+export type LegacyCompliantRoleManifest = RoleManifestBase &
   DeprecatedRoleRecordsPermissionsManifest;

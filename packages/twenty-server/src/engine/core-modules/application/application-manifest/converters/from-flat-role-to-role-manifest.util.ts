@@ -1,10 +1,10 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 
 export type RoleChildrenManifests = Pick<
-  RoleManifest,
+  LegacyCompliantRoleManifest,
   | 'objectPermissions'
   | 'fieldPermissions'
   | 'rowLevelPermissionPredicateGroups'
@@ -38,7 +38,7 @@ export const fromFlatRoleToRoleManifest = ({
 }: {
   flatRole: UniversalFlatRole;
   children?: RoleChildrenManifests;
-}): RoleManifest => ({
+}): LegacyCompliantRoleManifest => ({
   universalIdentifier: flatRole.universalIdentifier,
   label: flatRole.label,
   ...(isDefined(flatRole.description)

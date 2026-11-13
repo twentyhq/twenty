@@ -1,5 +1,5 @@
 import {
-  type NormalizedRoleManifest,
+  type RoleManifest,
   type DeprecatedRowLevelPermissionPredicateGroupManifest,
 } from '@/application/roleManifestType';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
@@ -57,7 +57,7 @@ export const getRowLevelRestrictionSignature = ({
   role,
   objectUniversalIdentifier,
 }: {
-  role: NormalizedRoleManifest;
+  role: RoleManifest;
   objectUniversalIdentifier: string;
 }): string[] => {
   const { predicateGroups, predicates } =
