@@ -1,7 +1,10 @@
+import { getDataSourceToken } from '@nestjs/typeorm';
+
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type DataSource } from 'typeorm';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -25,7 +28,7 @@ describe('workspace:rebuild-object command (integration)', () => {
       options: { objectNameSingular: [OBJECT_NAME_SINGULAR], ...options },
       index: 0,
       total: 1,
-      dataSource: global.testDataSource,
+      dataSource: global.app.get<DataSource>(getDataSourceToken()),
     });
 
   const readColumnSlots = async (): Promise<{

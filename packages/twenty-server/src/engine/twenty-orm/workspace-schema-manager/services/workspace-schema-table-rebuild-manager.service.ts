@@ -1,4 +1,5 @@
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { WORKSPACE_SCHEMA_TABLE_REBUILD_LOCK_TIMEOUT } from 'src/engine/twenty-orm/workspace-schema-manager/constants/workspace-schema-table-rebuild-lock-timeout.constant';
@@ -28,7 +29,7 @@ type WorkspaceSchemaTableRebuildPlan = {
 };
 
 export class WorkspaceSchemaTableRebuildManagerService {
-  findColumnSlotUsages({
+  async findColumnSlotUsages({
     queryRunner,
     schemaName,
     tableNames,
@@ -37,21 +38,43 @@ export class WorkspaceSchemaTableRebuildManagerService {
     schemaName: string;
     tableNames: string[];
   }): Promise<WorkspaceSchemaTableColumnSlotUsage[]> {
-    return queryRunner.query(
-      `SELECT c.relname AS "tableName",
-              COALESCE(MAX(a.attnum), 0)::int AS "usedColumnSlotCount",
-              (COUNT(*) FILTER (WHERE a.attisdropped))::int AS "droppedColumnCount",
-              c.reltuples::float8 AS "estimatedRowCount"
-         FROM pg_class c
-         JOIN pg_namespace n ON n.oid = c.relnamespace
-         LEFT JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0
-        WHERE n.nspname = $1
-          AND c.relname = ANY($2)
-          AND c.relkind = 'r'
-        GROUP BY c.relname, c.reltuples
-        ORDER BY c.relname`,
-      [schemaName, tableNames],
+    const columnSlotUsages: WorkspaceSchemaTableColumnSlotUsage[] =
+      await queryRunner.query(
+        `SELECT c.relname AS "tableName",
+                COALESCE(MAX(a.attnum), 0)::int AS "usedColumnSlotCount",
+                (COUNT(*) FILTER (WHERE a.attisdropped))::int AS "droppedColumnCount",
+                c.reltuples::float8 AS "estimatedRowCount"
+           FROM pg_class c
+           JOIN pg_namespace n ON n.oid = c.relnamespace
+           LEFT JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum > 0
+          WHERE n.nspname = $1
+            AND c.relname = ANY($2)
+            AND c.relkind = 'r'
+          GROUP BY c.relname, c.reltuples`,
+        [
+          schemaName,
+          tableNames.map((tableName) =>
+            tableName.slice(0, IDENTIFIER_MAX_CHAR_LENGTH),
+          ),
+        ],
+      );
+
+    const columnSlotUsageByStoredTableName = new Map(
+      columnSlotUsages.map((columnSlotUsage) => [
+        columnSlotUsage.tableName,
+        columnSlotUsage,
+      ]),
     );
+
+    return tableNames.flatMap((tableName) => {
+      const columnSlotUsage = columnSlotUsageByStoredTableName.get(
+        tableName.slice(0, IDENTIFIER_MAX_CHAR_LENGTH),
+      );
+
+      return isDefined(columnSlotUsage)
+        ? [{ ...columnSlotUsage, tableName }]
+        : [];
+    });
   }
 
   async rebuildTable({
