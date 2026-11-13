@@ -35,8 +35,14 @@ export type FieldMetadataOptionRowToUpdate = FieldMetadataOptionRowColumns & {
 
 const COMPARED_COLUMNS = ['value', 'label', 'color', 'position'] as const;
 
-// Stored options are what every reader used so far, so the rows are brought to them. A stored option
-// reuses the row holding its id, else the row holding its value, since a field cannot hold a value twice.
+const isLowercaseUniversalIdentifier = (
+  optionId: unknown,
+): optionId is string =>
+  isString(optionId) &&
+  isValidUniversalIdentifier(optionId) &&
+  optionId === optionId.toLowerCase();
+
+// Readers used stored options so far, so rows follow them, matched by id then by value (unique per field).
 export const computeFieldMetadataOptionRowsAlignment = ({
   enumFields,
   existingOptionRows,
@@ -119,9 +125,7 @@ export const computeFieldMetadataOptionRowsAlignment = ({
       }
 
       const universalIdentifier =
-        isString(option.id) &&
-        isValidUniversalIdentifier(option.id) &&
-        option.id === option.id.toLowerCase() &&
+        isLowercaseUniversalIdentifier(option.id) &&
         !claimedUniversalIdentifiers.has(option.id)
           ? option.id
           : generateUniversalIdentifier();

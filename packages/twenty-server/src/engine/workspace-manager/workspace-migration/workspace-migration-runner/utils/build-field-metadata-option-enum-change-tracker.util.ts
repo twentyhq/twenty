@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { type FlatFieldMetadataOption } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option.type';
 import { type FieldMetadataOptionRowForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-field-metadata-options-from-rows.util';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 import {
@@ -8,14 +8,23 @@ import {
   type FieldMetadataOptionEnumChangeTracker,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 
-// The Postgres enum of a field follows its option rows: one change per field, from the rows before the
-// migration to the rows after it.
+// One enum change per field, from its option rows before the migration to those after it.
 export const buildFieldMetadataOptionEnumChangeTracker = ({
   actions,
   flatFieldMetadataOptionMaps,
 }: {
   actions: AllUniversalWorkspaceMigrationAction[];
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps | undefined;
+  flatFieldMetadataOptionMaps:
+    | {
+        byUniversalIdentifier: Partial<
+          Record<
+            string,
+            FieldMetadataOptionRowForOptions &
+              Pick<FlatFieldMetadataOption, 'fieldMetadataUniversalIdentifier'>
+          >
+        >;
+      }
+    | undefined;
 }): FieldMetadataOptionEnumChangeTracker => {
   const optionRowsByFieldMetadataUniversalIdentifier = new Map<
     string,

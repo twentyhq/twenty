@@ -339,22 +339,12 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       })
   > {
     const allFlatEntityOperationRecordByMetadataName =
-      isDefined(callerFlatEntityOperationRecordByMetadataName.fieldMetadata) &&
-      !isDefined(
-        callerFlatEntityOperationRecordByMetadataName.fieldMetadataOption,
-      ) &&
-      isFieldMetadataOptionEntityAvailable()
-        ? addMissingFieldMetadataOptionOperationsToOperationRecord({
-            allFlatEntityOperationRecordByMetadataName:
-              callerFlatEntityOperationRecordByMetadataName,
-            existingFlatFieldMetadataOptionMaps: (
-              await this.workspaceCacheService.getOrRecompute(workspaceId, [
-                'flatFieldMetadataOptionMaps',
-              ])
-            ).flatFieldMetadataOptionMaps,
-            applicationUniversalIdentifier,
-          })
-        : callerFlatEntityOperationRecordByMetadataName;
+      await this.addMissingFieldMetadataOptionOperations({
+        allFlatEntityOperationRecordByMetadataName:
+          callerFlatEntityOperationRecordByMetadataName,
+        workspaceId,
+        applicationUniversalIdentifier,
+      });
 
     const callerMetadataNames = Object.keys(
       allFlatEntityOperationRecordByMetadataName,
@@ -407,6 +397,37 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       flatApplicationMaps,
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
+    });
+  }
+
+  private async addMissingFieldMetadataOptionOperations({
+    allFlatEntityOperationRecordByMetadataName,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<AllFlatEntityOperationRecordByMetadataName> {
+    if (
+      !isDefined(allFlatEntityOperationRecordByMetadataName.fieldMetadata) ||
+      isDefined(
+        allFlatEntityOperationRecordByMetadataName.fieldMetadataOption,
+      ) ||
+      !isFieldMetadataOptionEntityAvailable()
+    ) {
+      return allFlatEntityOperationRecordByMetadataName;
+    }
+
+    const { flatFieldMetadataOptionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataOptionMaps',
+      ]);
+
+    return addMissingFieldMetadataOptionOperationsToOperationRecord({
+      allFlatEntityOperationRecordByMetadataName,
+      existingFlatFieldMetadataOptionMaps: flatFieldMetadataOptionMaps,
+      applicationUniversalIdentifier,
     });
   }
 

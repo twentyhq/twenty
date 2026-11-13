@@ -5,8 +5,7 @@ import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-m
 import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
 
-// A caller that only declares field operations, such as an upgrade command written before option rows
-// or an app sync that left the options unchanged, still gets the option rows its fields imply.
+// Pre-option-row upgrade commands and app syncs that leave options unchanged send field operations only.
 export const addMissingFieldMetadataOptionOperationsToOperationRecord = ({
   allFlatEntityOperationRecordByMetadataName,
   existingFlatFieldMetadataOptionMaps,
