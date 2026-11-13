@@ -9,6 +9,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { resolveIsInternalImportEnabled } from 'src/engine/core-modules/workspace/utils/resolve-is-internal-import-enabled.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
+// TODO(@neo773): remove with IS_INTERNAL_IMPORT_COLUMN_ENABLED, callers can then read isInternalImportEnabled from the workspace directly
 @Injectable()
 export class WorkspaceInternalImportService {
   constructor(
