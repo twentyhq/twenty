@@ -10,9 +10,7 @@ import { generateFindScopedRelationRecordsQuery } from '@/object-record/record-c
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { useQuery } from '@apollo/client/react';
@@ -25,22 +23,24 @@ type ScopedRelationRecordsQueryResult = Record<
   { edges: { node: RecordGqlNode }[] }
 >;
 
-type RecordTableColumnScopeEffectProps = {
+type RecordTableColumnScopePageEffectProps = {
+  parentRecordIds: string[];
   recordField: RecordField;
   relationFieldName: string;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   scopeView: ViewWithRelations | undefined;
 };
 
-export const RecordTableColumnScopeEffect = ({
+export const RecordTableColumnScopePageEffect = ({
+  parentRecordIds,
   recordField,
   relationFieldName,
   relationObjectMetadataItem,
   scopeView,
-}: RecordTableColumnScopeEffectProps) => {
+}: RecordTableColumnScopePageEffectProps) => {
   const store = useStore();
   const apolloCoreClient = useApolloCoreClient();
-  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -48,11 +48,6 @@ export const RecordTableColumnScopeEffect = ({
     flattenedFieldMetadataItemsSelector,
   );
   const { filterValueDependencies } = useFilterValueDependencies();
-
-  const parentRecordIds = useAtomComponentSelectorValue(
-    recordIndexAllRecordIdsComponentSelector,
-    recordTableId,
-  );
 
   // A new document identity would make Apollo treat every render as a new query
   const scopedRelationRecordsQuery = useMemo(
@@ -77,7 +72,6 @@ export const RecordTableColumnScopeEffect = ({
     scopedRelationRecordsQuery,
     {
       client: apolloCoreClient,
-      skip: parentRecordIds.length === 0,
       fetchPolicy: 'cache-and-network',
       variables: computeScopedRelationQueryVariables({
         parentRecordIds,

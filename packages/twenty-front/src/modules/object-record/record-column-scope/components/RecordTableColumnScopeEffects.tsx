@@ -1,5 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { RecordTableColumnScopeEffect } from '@/object-record/record-column-scope/components/RecordTableColumnScopeEffect';
+import { RecordTableColumnScopePageEffects } from '@/object-record/record-column-scope/components/RecordTableColumnScopePageEffects';
 import { isRecordFieldScoped } from '@/object-record/record-column-scope/utils/isRecordFieldScoped';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -44,7 +44,7 @@ const RecordTableColumnScopeEffectHost = ({
   }
 
   return (
-    <RecordTableColumnScopeEffect
+    <RecordTableColumnScopePageEffects
       recordField={recordField}
       relationFieldName={fieldMetadataItem.name}
       relationObjectMetadataItem={relationObjectMetadataItem}
