@@ -6,7 +6,7 @@ import { AiChatLastMessageWithStreamingState } from '@/ai/components/AiChatLastM
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
-import { InboxThreadStatusNotice } from '@/ai/components/InboxThreadStatusNotice';
+import { InboxThreadStatusNotice } from '@/inbox/components/InboxThreadStatusNotice';
 import { AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
 import { AiChatStreamingAutoScrollEffect } from '@/ai/components/AiChatStreamingAutoScrollEffect';
 import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';

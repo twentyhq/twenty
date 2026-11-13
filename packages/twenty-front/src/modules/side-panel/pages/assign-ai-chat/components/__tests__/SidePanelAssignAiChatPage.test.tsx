@@ -12,7 +12,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   jotaiStore,
   resetJotaiStore,

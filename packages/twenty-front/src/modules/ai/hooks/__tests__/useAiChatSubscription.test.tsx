@@ -27,7 +27,7 @@ jest.mock('@/ai/hooks/useRefreshAiChatThreadPermissions', () => ({
 }));
 const subscribe = jest.fn();
 const disconnect = jest.fn();
-jest.mock('@/ai/hooks/useLoadInboxThreadList', () => ({
+jest.mock('@/inbox/hooks/useLoadInboxThreadList', () => ({
   useLoadInboxThreadList: () => ({
     loadInboxThreadList,
   }),

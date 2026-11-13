@@ -7,8 +7,8 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
-import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
-import { type InboxThreadListItemData } from '@/ai/types/InboxThreadListItemData';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
+import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -47,7 +47,7 @@ const mockFavoriteThreadsAtom = atom<InboxThreadListItemData[]>([]);
 const mockFavoriteChannelsAtom = atom<AgentChatChannel[]>([]);
 let mockThreads: AiChatThreadRecord[] = [];
 
-jest.mock('@/ai/states/selectors/inboxFavoriteThreadsSelector', () => ({
+jest.mock('@/inbox/states/selectors/inboxFavoriteThreadsSelector', () => ({
   inboxFavoriteThreadsSelector: {
     type: 'Selector',
     key: 'inboxFavoriteThreadsSelector',
@@ -57,7 +57,7 @@ jest.mock('@/ai/states/selectors/inboxFavoriteThreadsSelector', () => ({
   },
 }));
 
-jest.mock('@/ai/states/selectors/inboxFavoriteChannelsSelector', () => ({
+jest.mock('@/inbox/states/selectors/inboxFavoriteChannelsSelector', () => ({
   inboxFavoriteChannelsSelector: {
     type: 'Selector',
     key: 'inboxFavoriteChannelsSelector',
@@ -71,7 +71,7 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
   useHasPermissionFlag: () => false,
 }));
 
-jest.mock('@/ai/components/NavigationDrawerInboxChannelItem', () => ({
+jest.mock('@/inbox/components/NavigationDrawerInboxChannelItem', () => ({
   NavigationDrawerInboxChannelItem: ({
     channel,
   }: {
@@ -112,7 +112,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/hooks/useInboxThreadList', () => ({
+jest.mock('@/inbox/hooks/useInboxThreadList', () => ({
   useInboxThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
@@ -127,7 +127,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/components/NavigationDrawerInboxTriageSection', () => ({
+jest.mock('@/inbox/components/NavigationDrawerInboxTriageSection', () => ({
   NavigationDrawerInboxTriageSection: () => <nav aria-label="Triage" />,
 }));
 
@@ -143,11 +143,11 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
       : mockIsInboxEnabled,
 }));
 
-jest.mock('@/ai/components/NavigationDrawerInboxChannelsSection', () => ({
+jest.mock('@/inbox/components/NavigationDrawerInboxChannelsSection', () => ({
   NavigationDrawerInboxChannelsSection: () => null,
 }));
 
-jest.mock('@/ai/components/InboxThreadListFetchMoreTrigger', () => ({
+jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
   InboxThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 

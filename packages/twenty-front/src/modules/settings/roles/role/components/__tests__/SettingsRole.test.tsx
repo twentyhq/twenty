@@ -33,14 +33,14 @@ jest.mock('@/settings/roles/role/hooks/useSaveDraftRoleToDB', () => ({
 }));
 
 jest.mock(
-  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleInboxChannelAccessDirty',
+  '@/settings/roles/role-permissions/inbox-channels/hooks/useIsRoleInboxChannelAccessDirty',
   () => ({
     useIsRoleInboxChannelAccessDirty: () => false,
   }),
 );
 
 jest.mock(
-  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleInboxChannelAccess',
+  '@/settings/roles/role-permissions/inbox-channels/hooks/useSaveRoleInboxChannelAccess',
   () => ({
     useSaveRoleInboxChannelAccess: () => ({
       saveRoleInboxChannelAccess: jest.fn(),
@@ -49,7 +49,7 @@ jest.mock(
 );
 
 jest.mock(
-  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleInboxChannelAccess',
+  '@/settings/roles/role-permissions/inbox-channels/hooks/useResetRoleInboxChannelAccess',
   () => ({
     useResetRoleInboxChannelAccess: () => ({
       resetRoleInboxChannelAccess: jest.fn(),
@@ -57,7 +57,7 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/hooks/useRefreshInboxChannels', () => ({
+jest.mock('@/inbox/hooks/useRefreshInboxChannels', () => ({
   useRefreshInboxChannels: () => ({ refreshInboxChannels: jest.fn() }),
 }));
 

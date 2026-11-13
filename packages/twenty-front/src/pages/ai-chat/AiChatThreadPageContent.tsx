@@ -1,9 +1,9 @@
 import { type ReactNode } from 'react';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 
-import { InboxDirectMessageTitle } from '@/ai/components/InboxDirectMessageTitle';
+import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/inboxThreadIsDirectMessageFamilySelector';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/inbox/states/selectors/inboxThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 

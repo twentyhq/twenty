@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatThreadDateGroup } from '@/ai/types/AiChatThreadDateGroup';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
+import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
 import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 
 const RECENT_THREAD_DAY_COUNT = 7;
