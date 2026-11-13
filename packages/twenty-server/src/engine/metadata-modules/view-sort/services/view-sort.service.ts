@@ -10,6 +10,13 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
 import { fromUpdateViewSortInputToFlatViewSortToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-update-view-sort-input-to-flat-view-sort-to-update-or-throw.util';
+import {
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { DeleteViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/delete-view-sort.input';
 import { DestroyViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/destroy-view-sort.input';
@@ -295,7 +302,7 @@ export class ViewSortService {
     );
   }
 
-  async findById({
+  async findByIdOrThrow({
     id,
     workspaceId,
     userWorkspaceId,
@@ -303,7 +310,7 @@ export class ViewSortService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewSortEntity | null> {
+  }): Promise<ViewSortEntity> {
     const viewSort = await this.viewSortRepository.findOne(workspaceId, {
       where: {
         id,
@@ -317,7 +324,18 @@ export class ViewSortService {
       !isDefined(viewSort.view) ||
       !isViewVisibleToUser(viewSort.view, userWorkspaceId)
     ) {
-      return null;
+      throw new ViewSortException(
+        generateViewSortExceptionMessage(
+          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          id,
+        ),
+        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
+            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
+          ),
+        },
+      );
     }
 
     return viewSort;

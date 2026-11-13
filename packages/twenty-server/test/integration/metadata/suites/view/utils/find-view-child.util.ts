@@ -9,7 +9,7 @@ export const findViewChild = async ({
   oneQueryName: string;
   childId: string;
   token?: string;
-}): Promise<{ id: string } | null> => {
+}): Promise<{ child: { id: string } | null; errorCode?: string }> => {
   const response = await makeMetadataApiRequest(
     {
       query: gql`
@@ -24,7 +24,8 @@ export const findViewChild = async ({
     token,
   );
 
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data[oneQueryName];
+  return {
+    child: response.body.data?.[oneQueryName] ?? null,
+    errorCode: response.body.errors?.[0]?.extensions?.code,
+  };
 };

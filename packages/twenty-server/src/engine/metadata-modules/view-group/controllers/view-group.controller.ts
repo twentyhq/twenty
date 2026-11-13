@@ -25,13 +25,6 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/
 import { CreateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/create-view-group.input';
 import { UpdateViewGroupInput } from 'src/engine/metadata-modules/view-group/dtos/inputs/update-view-group.input';
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import {
-  generateViewGroupExceptionMessage,
-  generateViewGroupUserFriendlyExceptionMessage,
-  ViewGroupException,
-  ViewGroupExceptionCode,
-  ViewGroupExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-group/filters/view-group-rest-api-exception.filter';
 import { ViewGroupService } from 'src/engine/metadata-modules/view-group/services/view-group.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -82,28 +75,11 @@ export class ViewGroupController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewGroupDTO> {
-    const viewGroup = await this.viewGroupService.findById({
+    return this.viewGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
-
-    if (!isDefined(viewGroup)) {
-      throw new ViewGroupException(
-        generateViewGroupExceptionMessage(
-          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
-            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewGroup;
   }
 
   @Post()

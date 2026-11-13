@@ -14,6 +14,13 @@ import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/en
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
 import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
+import {
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -375,7 +382,7 @@ export class ViewFilterService {
     );
   }
 
-  async findById({
+  async findByIdOrThrow({
     id,
     workspaceId,
     userWorkspaceId,
@@ -383,7 +390,7 @@ export class ViewFilterService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterEntity | null> {
+  }): Promise<ViewFilterEntity> {
     const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
         id,
@@ -397,7 +404,18 @@ export class ViewFilterService {
       !isDefined(viewFilter.view) ||
       !isViewVisibleToUser(viewFilter.view, userWorkspaceId)
     ) {
-      return null;
+      throw new ViewFilterException(
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          id,
+        ),
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          ),
+        },
+      );
     }
 
     return viewFilter;

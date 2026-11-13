@@ -54,8 +54,8 @@ export class ViewFilterGroupResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewFilterGroupDTO | null> {
-    return this.viewFilterGroupService.findById({
+  ): Promise<ViewFilterGroupDTO> {
+    return this.viewFilterGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,

@@ -25,13 +25,6 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { type UpdateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/update-view-filter-group.input';
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
-import {
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter-group/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -84,29 +77,11 @@ export class ViewFilterGroupController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterGroupDTO> {
-    const viewFilterGroup = await this.viewFilterGroupService.findById({
+    return this.viewFilterGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
-
-    if (!isDefined(viewFilterGroup)) {
-      throw new ViewFilterGroupException(
-        generateViewFilterGroupExceptionMessage(
-          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-          id,
-        ),
-        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
-        {
-          userFriendlyMessage:
-            generateViewFilterGroupUserFriendlyExceptionMessage(
-              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
-            ),
-        },
-      );
-    }
-
-    return viewFilterGroup;
   }
 
   @Post()

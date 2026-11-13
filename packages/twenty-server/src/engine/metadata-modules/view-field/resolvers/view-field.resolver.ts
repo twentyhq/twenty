@@ -44,8 +44,8 @@ export class ViewFieldResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldDTO | null> {
-    return this.viewFieldService.findById({
+  ): Promise<ViewFieldDTO> {
+    return this.viewFieldService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,

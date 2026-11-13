@@ -21,6 +21,9 @@ import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
@@ -372,7 +375,7 @@ export class ViewGroupService {
     );
   }
 
-  async findById({
+  async findByIdOrThrow({
     id,
     workspaceId,
     userWorkspaceId,
@@ -380,7 +383,7 @@ export class ViewGroupService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewGroupEntity | null> {
+  }): Promise<ViewGroupEntity> {
     const viewGroup = await this.viewGroupRepository.findOne(workspaceId, {
       where: {
         id,
@@ -394,7 +397,18 @@ export class ViewGroupService {
       !isDefined(viewGroup.view) ||
       !isViewVisibleToUser(viewGroup.view, userWorkspaceId)
     ) {
-      return null;
+      throw new ViewGroupException(
+        generateViewGroupExceptionMessage(
+          ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewGroupExceptionCode.VIEW_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewGroupUserFriendlyExceptionMessage(
+            ViewGroupExceptionMessageKey.VIEW_GROUP_NOT_FOUND,
+          ),
+        },
+      );
     }
 
     return viewGroup;

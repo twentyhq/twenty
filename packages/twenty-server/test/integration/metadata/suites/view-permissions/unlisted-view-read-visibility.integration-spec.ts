@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { getViewNonCreatorCallers } from 'test/integration/metadata/suites/view-permissions/utils/get-view-non-creator-callers.util';
 import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
 import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
@@ -14,22 +16,28 @@ import {
   ViewVisibility,
 } from 'twenty-shared/types';
 
-const findViewId = async ({
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
+const findViewOrErrorCode = async ({
   viewId,
   token,
 }: {
   viewId: string;
   token: string;
 }) => {
-  const { data } = await findOneView({
+  const { data, errors } = await findOneView({
     viewId,
     gqlFields: 'id',
-    expectToFail: false,
     token,
   });
 
-  return data.getView?.id ?? null;
+  return {
+    viewId: data?.getView?.id ?? null,
+    errorCode: errors?.[0]?.extensions?.code,
+  };
 };
+
+const NOT_FOUND_RESULT = { viewId: null, errorCode: ErrorCode.NOT_FOUND };
 
 const findViewIds = async (token: string) => {
   const { data } = await findViews({
@@ -112,9 +120,9 @@ describe('unlisted view read visibility (integration)', () => {
   it('should return an unlisted view to its creator', async () => {
     const token = APPLE_PHIL_GUEST_ACCESS_TOKEN;
 
-    expect(await findViewId({ viewId: unlistedViewId, token })).toBe(
-      unlistedViewId,
-    );
+    expect(
+      await findViewOrErrorCode({ viewId: unlistedViewId, token }),
+    ).toEqual({ viewId: unlistedViewId, errorCode: undefined });
     expect(await findViewIds(token)).toContain(unlistedViewId);
     expect(
       await findViewStatusWithRestApi({ viewId: unlistedViewId, token }),
@@ -124,7 +132,12 @@ describe('unlisted view read visibility (integration)', () => {
   it.each(getViewNonCreatorCallers())(
     'should behave as a missing view for $caller',
     async ({ token }) => {
-      expect(await findViewId({ viewId: unlistedViewId, token })).toBeNull();
+      expect(
+        await findViewOrErrorCode({ viewId: unlistedViewId, token }),
+      ).toEqual(NOT_FOUND_RESULT);
+      expect(
+        await findViewOrErrorCode({ viewId: randomUUID(), token }),
+      ).toEqual(NOT_FOUND_RESULT);
       expect(await findViewIds(token)).not.toContain(unlistedViewId);
       expect(
         await findViewStatusWithRestApi({ viewId: unlistedViewId, token }),
@@ -142,7 +155,9 @@ describe('unlisted view read visibility (integration)', () => {
         visibility: ViewVisibility.UNLISTED,
         createdByUserWorkspaceId: null,
       });
-      expect(await findViewId({ viewId: ownerlessViewId, token })).toBeNull();
+      expect(
+        await findViewOrErrorCode({ viewId: ownerlessViewId, token }),
+      ).toEqual(NOT_FOUND_RESULT);
       expect(await findViewIds(token)).not.toContain(ownerlessViewId);
       expect(
         await findViewStatusWithRestApi({ viewId: ownerlessViewId, token }),
@@ -160,7 +175,7 @@ describe('unlisted view read visibility (integration)', () => {
           childId: ownerlessViewFilterGroupId,
           token,
         }),
-      ).toBeNull();
+      ).toEqual({ child: null, errorCode: ErrorCode.NOT_FOUND });
     },
   );
 });

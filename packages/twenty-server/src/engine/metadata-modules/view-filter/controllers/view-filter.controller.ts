@@ -25,13 +25,6 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/update-view-filter.input';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
-import {
-  generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
-  ViewFilterException,
-  ViewFilterExceptionCode,
-  ViewFilterExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewFilterRestApiExceptionFilter } from 'src/engine/metadata-modules/view-filter/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -82,28 +75,11 @@ export class ViewFilterController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFilterDTO> {
-    const viewFilter = await this.viewFilterService.findById({
+    return this.viewFilterService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
-
-    if (!isDefined(viewFilter)) {
-      throw new ViewFilterException(
-        generateViewFilterExceptionMessage(
-          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
-          id,
-        ),
-        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
-            ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewFilter;
   }
 
   @Post()

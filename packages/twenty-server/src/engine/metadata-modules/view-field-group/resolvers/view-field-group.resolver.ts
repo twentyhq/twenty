@@ -109,8 +109,8 @@ export class ViewFieldGroupResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewFieldGroupDTO | null> {
-    return this.viewFieldGroupService.findById({
+  ): Promise<ViewFieldGroupDTO> {
+    return this.viewFieldGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,

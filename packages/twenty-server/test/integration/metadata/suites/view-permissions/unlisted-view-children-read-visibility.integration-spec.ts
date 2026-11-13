@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import {
   VIEW_CHILD_LIST_ALL_READS,
   VIEW_CHILD_READS,
@@ -14,6 +16,8 @@ import { findViewChild } from 'test/integration/metadata/suites/view/utils/find-
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { ViewVisibility } from 'twenty-shared/types';
+
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 describe('unlisted view children read visibility (integration)', () => {
   let unlistedViewId: string;
@@ -75,7 +79,8 @@ describe('unlisted view children read visibility (integration)', () => {
           }),
         ).toContain(childId);
         expect(await findViewChild({ oneQueryName, childId, token })).toEqual({
-          id: childId,
+          child: { id: childId },
+          errorCode: undefined,
         });
       });
 
@@ -95,7 +100,16 @@ describe('unlisted view children read visibility (integration)', () => {
               childId: childIdByChildName[childName],
               token,
             }),
-          ).toBeNull();
+          ).toEqual(
+            await findViewChild({ oneQueryName, childId: randomUUID(), token }),
+          );
+          expect(
+            await findViewChild({
+              oneQueryName,
+              childId: childIdByChildName[childName],
+              token,
+            }),
+          ).toEqual({ child: null, errorCode: ErrorCode.NOT_FOUND });
         },
       );
     },

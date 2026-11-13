@@ -52,8 +52,8 @@ export class ViewGroupResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewGroupDTO | null> {
-    return this.viewGroupService.findById({
+  ): Promise<ViewGroupDTO> {
+    return this.viewGroupService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,

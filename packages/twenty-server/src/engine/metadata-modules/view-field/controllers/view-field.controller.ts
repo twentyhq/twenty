@@ -25,13 +25,6 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
-import {
-  generateViewFieldExceptionMessage,
-  generateViewFieldUserFriendlyExceptionMessage,
-  ViewFieldException,
-  ViewFieldExceptionCode,
-  ViewFieldExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/metadata-modules/view-field/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -82,28 +75,11 @@ export class ViewFieldController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewFieldDTO> {
-    const viewField = await this.viewFieldService.findById({
+    return this.viewFieldService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
-
-    if (!isDefined(viewField)) {
-      throw new ViewFieldException(
-        generateViewFieldExceptionMessage(
-          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          id,
-        ),
-        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
-            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewField;
   }
 
   @Patch(':id')

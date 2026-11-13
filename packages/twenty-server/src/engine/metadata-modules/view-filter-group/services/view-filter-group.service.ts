@@ -10,6 +10,13 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
 import { fromUpdateViewFilterGroupInputToFlatViewFilterGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-update-view-filter-group-input-to-flat-view-filter-group-to-update-or-throw.util';
+import {
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
+} from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
 import { type CreateViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/create-view-filter-group.input';
 import { type DeleteViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/delete-view-filter-group.input';
 import { type DestroyViewFilterGroupInput } from 'src/engine/metadata-modules/view-filter-group/dtos/inputs/destroy-view-filter-group.input';
@@ -319,7 +326,7 @@ export class ViewFilterGroupService {
     );
   }
 
-  async findById({
+  async findByIdOrThrow({
     id,
     workspaceId,
     userWorkspaceId,
@@ -327,7 +334,7 @@ export class ViewFilterGroupService {
     id: string;
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<ViewFilterGroupEntity | null> {
+  }): Promise<ViewFilterGroupEntity> {
     const viewFilterGroup = await this.viewFilterGroupRepository.findOne(
       workspaceId,
       {
@@ -350,7 +357,19 @@ export class ViewFilterGroupService {
       !isDefined(viewFilterGroup.view) ||
       !isViewVisibleToUser(viewFilterGroup.view, userWorkspaceId)
     ) {
-      return null;
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+            ),
+        },
+      );
     }
 
     return viewFilterGroup;

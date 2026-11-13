@@ -52,8 +52,8 @@ export class ViewFilterResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewFilterDTO | null> {
-    return this.viewFilterService.findById({
+  ): Promise<ViewFilterDTO> {
+    return this.viewFilterService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,

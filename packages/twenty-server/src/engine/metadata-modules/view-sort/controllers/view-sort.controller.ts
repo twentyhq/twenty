@@ -24,13 +24,6 @@ import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-module
 import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { CreateViewSortInput } from 'src/engine/metadata-modules/view-sort/dtos/inputs/create-view-sort.input';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import {
-  generateViewSortExceptionMessage,
-  generateViewSortUserFriendlyExceptionMessage,
-  ViewSortException,
-  ViewSortExceptionCode,
-  ViewSortExceptionMessageKey,
-} from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
@@ -81,28 +74,11 @@ export class ViewSortController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewSortDTO> {
-    const viewSort = await this.viewSortService.findById({
+    return this.viewSortService.findByIdOrThrow({
       id,
       workspaceId: workspace.id,
       userWorkspaceId,
     });
-
-    if (!isDefined(viewSort)) {
-      throw new ViewSortException(
-        generateViewSortExceptionMessage(
-          ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          id,
-        ),
-        ViewSortExceptionCode.VIEW_SORT_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewSortUserFriendlyExceptionMessage(
-            ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return viewSort;
   }
 
   @Post()

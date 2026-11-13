@@ -54,8 +54,12 @@ export class ViewSortResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-  ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById({ id, workspaceId, userWorkspaceId });
+  ): Promise<ViewSortDTO> {
+    return this.viewSortService.findByIdOrThrow({
+      id,
+      workspaceId,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewSortDTO)
