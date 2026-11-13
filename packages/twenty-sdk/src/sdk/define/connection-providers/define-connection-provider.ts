@@ -9,7 +9,12 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
-const SUPPORTED_TYPES = ['oauth', 'oauth-discovery', 'custom'] as const;
+const SUPPORTED_TYPES = [
+  'oauth',
+  'oauth-discovery',
+  'custom',
+  'api-key',
+] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,
@@ -164,6 +169,18 @@ export const defineConnectionProvider: DefineEntity<
 
   if (config.type === 'custom') {
     errors.push(...getCustomConfigErrors(config.custom));
+  }
+
+  if (config.type === 'api-key') {
+    const misplacedConfigKeys = (
+      ['oauth', 'oauthDiscovery', 'custom'] as const
+    ).filter((configKey) => configKey in config);
+
+    if (misplacedConfigKeys.length > 0) {
+      errors.push(
+        `Connection provider with type 'api-key' takes no config block, but declares ${misplacedConfigKeys.join(', ')}`,
+      );
+    }
   }
 
   return createValidationResult({ config, errors });

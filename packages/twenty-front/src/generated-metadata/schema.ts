@@ -1675,6 +1675,13 @@ export type CompleteApplicationFileUploadsResult = {
   files: Array<File>;
 };
 
+export type ConnectApplicationWithApiKeyInput = {
+  apiKey: Scalars['String']['input'];
+  applicationId: Scalars['UUID']['input'];
+  providerName: Scalars['String']['input'];
+  reconnectingConnectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type ConnectedAccountPublicDto = {
   __typename?: 'ConnectedAccountPublicDTO';
   applicationId?: Maybe<Scalars['UUID']['output']>;
@@ -3740,6 +3747,7 @@ export type Mutation = {
   completeNewWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceLogoUpload: FileWithSignedUrl;
   completeWorkspaceMemberProfilePictureUpload: FileWithSignedUrl;
+  connectApplicationWithApiKey: Scalars['UUID']['output'];
   createAgentChatChannel: AgentChatChannel;
   createApiKey: ApiKey;
   createAppMessageChannel: MessageChannel;
@@ -4157,6 +4165,11 @@ export type MutationCompleteWorkspaceLogoUploadArgs = {
 
 export type MutationCompleteWorkspaceMemberProfilePictureUploadArgs = {
   fileId: Scalars['String']['input'];
+};
+
+
+export type MutationConnectApplicationWithApiKeyArgs = {
+  input: ConnectApplicationWithApiKeyInput;
 };
 
 

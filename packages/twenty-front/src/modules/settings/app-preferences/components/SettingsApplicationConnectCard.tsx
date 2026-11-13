@@ -1,13 +1,13 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 
 type SettingsApplicationConnectCardProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'logoUrl'
+    'name' | 'displayName' | 'type' | 'logoUrl'
   >;
   title: string;
   redirectLocation: string;
@@ -19,7 +19,7 @@ export const SettingsApplicationConnectCard = ({
   title,
   redirectLocation,
 }: SettingsApplicationConnectCardProps) => {
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startAppConnection } = useStartAppConnection();
 
   return (
     <SettingsCard
@@ -33,9 +33,9 @@ export const SettingsApplicationConnectCard = ({
       }
       title={title}
       onClick={() =>
-        triggerAppOAuth({
+        startAppConnection({
           applicationId,
-          providerName: connectionProvider.name,
+          connectionProvider,
           redirectLocation,
         })
       }

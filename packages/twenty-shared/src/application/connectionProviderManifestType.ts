@@ -22,4 +22,6 @@ export type ConnectionProviderManifest = ConnectionProviderManifestBase &
         oauthDiscovery: OAuthDiscoveryConnectionProviderConfig;
       }
     | { type: 'custom'; custom: CustomConnectionProviderConfig }
+    // The member pastes a key at connect time; identifyAccountLogicFunction can check it
+    | { type: 'api-key' }
   );

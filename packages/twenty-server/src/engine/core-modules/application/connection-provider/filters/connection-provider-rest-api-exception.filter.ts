@@ -33,6 +33,7 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
     case ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
     case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
+    case ConnectionProviderExceptionCode.API_KEY_REJECTED:
       return 400;
     case ConnectionProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED:
     case ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED:

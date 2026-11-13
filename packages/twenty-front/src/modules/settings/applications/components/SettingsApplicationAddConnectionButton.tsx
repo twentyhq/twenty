@@ -1,4 +1,5 @@
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
+import { type ConnectableConnectionProvider } from '@/settings/applications/types/ConnectableConnectionProvider';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
@@ -13,17 +14,17 @@ const StyledFooter = styled.div`
 
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
-  providerName: string;
+  connectionProvider: ConnectableConnectionProvider;
   redirectLocation?: string;
 };
 
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
-  providerName,
+  connectionProvider,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
   const { t } = useLingui();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
+  const { startAppConnection } = useStartAppConnection();
 
   return (
     <StyledFooter>
@@ -31,9 +32,9 @@ export const SettingsApplicationAddConnectionButton = ({
         startIcon={<IconPlus />}
         size="sm"
         onClick={() =>
-          triggerAppOAuth({
+          startAppConnection({
             applicationId,
-            providerName,
+            connectionProvider,
             redirectLocation,
           })
         }
