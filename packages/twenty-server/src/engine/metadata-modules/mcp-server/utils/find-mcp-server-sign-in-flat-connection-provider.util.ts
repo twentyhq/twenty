@@ -22,11 +22,14 @@ export const findMcpServerSignInFlatConnectionProvider = ({
     flatEntityMaps: flatConnectionProviderMaps,
   });
 
-  return isDefined(flatConnectionProvider) &&
-    isMcpServerSignInConnectionProvider({
-      flatConnectionProvider,
-      flatMcpServer,
-    })
+  if (!isDefined(flatConnectionProvider)) {
+    return null;
+  }
+
+  return isMcpServerSignInConnectionProvider({
+    flatConnectionProvider,
+    flatMcpServer,
+  })
     ? flatConnectionProvider
     : null;
 };

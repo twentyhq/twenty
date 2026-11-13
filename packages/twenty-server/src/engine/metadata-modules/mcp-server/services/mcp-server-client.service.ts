@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import {
@@ -40,6 +40,8 @@ const buildSignInRequiredException = (): McpServerException =>
 
 @Injectable()
 export class McpServerClientService {
+  private readonly logger = new Logger(McpServerClientService.name);
+
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly mcpServerConnectedAccountService: McpServerConnectedAccountService,
@@ -238,7 +240,11 @@ export class McpServerClientService {
       });
 
       return isSignInRequired;
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        `Sign-in probe of MCP server ${url} in workspace ${workspaceId} failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
       return false;
     }
   }

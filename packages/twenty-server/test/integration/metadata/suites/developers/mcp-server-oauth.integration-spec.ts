@@ -68,6 +68,14 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
     return mcpServer.connectionProviderId;
   };
 
+  const expireAccessToken = ({
+    shouldClearAuthFailure = false,
+  }: { shouldClearAuthFailure?: boolean } = {}) =>
+    globalThis.testDataSource.query(
+      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours'${shouldClearAuthFailure ? ', "authFailedAt" = NULL, "authFailedReason" = NULL' : ''} WHERE "connectionProviderId" = $1`,
+      [getConnectionProviderId()],
+    );
+
   let browserCookie: string | undefined;
 
   const requestAuthorization = async ({
@@ -267,10 +275,7 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
   });
 
   it('refreshes an expired access token with the resource indicator', async () => {
-    await globalThis.testDataSource.query(
-      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
-      [getConnectionProviderId()],
-    );
+    await expireAccessToken();
     const tokenRequestCount = fakeMcpServer.oauth.tokenRequests.length;
 
     const syncResponse = await syncMcpServerTools(mcpServer.id);
@@ -286,11 +291,6 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
   });
 
   it('asks to sign in again once the authorization server rejects the refresh token', async () => {
-    const expireAccessToken = () =>
-      globalThis.testDataSource.query(
-        `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
-        [getConnectionProviderId()],
-      );
     const [{ refreshToken: consumedRefreshToken }] =
       await readConnectedAccounts(getConnectionProviderId());
 
@@ -358,19 +358,13 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
   });
 
   it('keeps a valid account when concurrent calls refresh the same token', async () => {
-    await globalThis.testDataSource.query(
-      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours', "authFailedAt" = NULL, "authFailedReason" = NULL WHERE "connectionProviderId" = $1`,
-      [getConnectionProviderId()],
-    );
+    await expireAccessToken({ shouldClearAuthFailure: true });
     const [connectedAccount] = await readConnectedAccounts(
       getConnectionProviderId(),
     );
 
     await signIn({ reconnectingConnectedAccountId: connectedAccount.id });
-    await globalThis.testDataSource.query(
-      `UPDATE core."connectedAccount" SET "accessTokenExpiresAt" = now() - interval '1 hour', "lastCredentialsRefreshedAt" = now() - interval '2 hours' WHERE "connectionProviderId" = $1`,
-      [getConnectionProviderId()],
-    );
+    await expireAccessToken();
 
     const syncResponses = await Promise.all([
       syncMcpServerTools(mcpServer.id),
