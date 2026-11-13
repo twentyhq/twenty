@@ -443,6 +443,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
         fromToAllFlatEntityMaps.flatFieldMetadataMaps?.from,
       fromFlatFieldMetadataOptionMaps:
         fromToAllFlatEntityMaps.flatFieldMetadataOptionMaps?.from,
+      buildOptions,
     });
 
     mergeOrchestratorFailureReports({
