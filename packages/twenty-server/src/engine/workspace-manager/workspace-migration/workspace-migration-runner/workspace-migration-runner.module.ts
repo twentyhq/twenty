@@ -11,6 +11,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
+import { RebuildWorkspaceTableCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/rebuild-workspace-table.command';
 import { RetryFailedDeferredWorkspaceOperationsCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/retry-failed-deferred-workspace-operations.command';
 import { DeferredWorkspaceOperationRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-operation-recovery.cron.command';
 import { DeferredWorkspaceOperationHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-operation-handler-registry.service';
@@ -42,6 +43,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     provideWorkspaceScopedRepository(DeferredWorkspaceOperationEntity),
     DeferredWorkspaceOperationGaugeService,
     FlatCacheInvalidateCommand,
+    RebuildWorkspaceTableCommand,
     RetryFailedDeferredWorkspaceOperationsCommand,
     DeferredWorkspaceOperationRecoveryCronCommand,
   ],

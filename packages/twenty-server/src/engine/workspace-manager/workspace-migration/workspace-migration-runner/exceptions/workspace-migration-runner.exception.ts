@@ -13,6 +13,8 @@ export const WorkspaceMigrationRunnerExceptionCode = {
   DDL_LOCKED: 'DDL_LOCKED',
   DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
     'DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS',
+  TABLE_REBUILD_NOT_SUPPORTED: 'TABLE_REBUILD_NOT_SUPPORTED',
+  TABLE_NOT_FOUND: 'TABLE_NOT_FOUND',
 } as const;
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -29,6 +31,10 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`Workspace schema changes are temporarily locked.`;
     case WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
       return msg`A previous data model change is still being applied in the background. Please try again in a moment.`;
+    case WorkspaceMigrationRunnerExceptionCode.TABLE_REBUILD_NOT_SUPPORTED:
+      return msg`This table cannot be rebuilt.`;
+    case WorkspaceMigrationRunnerExceptionCode.TABLE_NOT_FOUND:
+      return msg`Table not found.`;
     default:
       assertUnreachable(code);
   }
