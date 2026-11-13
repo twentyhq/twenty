@@ -6,7 +6,7 @@ import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/servic
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-const BUILT_IN_NAMES = ['Claude', 'ChatGPT', 'Twenty CLI'];
+const BUILT_IN_NAMES = ['Twenty CLI'];
 
 const findManyMarketplaceAppsQuery = gql`
   query FindManyMarketplaceApps {
@@ -48,7 +48,7 @@ describe('Built-in marketplace applications', () => {
     ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
   });
 
-  it('should list Claude, ChatGPT and the Twenty CLI first, each with a connect link', async () => {
+  it('should list the Twenty CLI first, with a connect link', async () => {
     const response = await makeMetadataApiRequest({
       query: findManyMarketplaceAppsQuery,
     });
@@ -96,7 +96,7 @@ describe('Built-in marketplace applications', () => {
     });
   });
 
-  it('should keep them out of the public marketplace', async () => {
+  it('should keep it out of the public marketplace', async () => {
     const response = await makeMetadataApiRequest(
       { query: publicMarketplaceAppsQuery },
       null,

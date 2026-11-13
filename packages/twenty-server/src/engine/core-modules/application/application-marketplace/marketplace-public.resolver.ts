@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import {
@@ -23,9 +25,14 @@ export class MarketplacePublicResolver {
   @Query(() => [MarketplaceAppDTO], { name: 'publicMarketplaceApps' })
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async findManyPublicMarketplaceApps(): Promise<MarketplaceAppDTO[]> {
-    return this.marketplaceQueryService.findManyMarketplaceApps({
-      isListed: true,
-    });
+    const listedApps =
+      await this.marketplaceQueryService.findManyMarketplaceApps({
+        isListed: true,
+      });
+
+    return listedApps.filter(
+      (marketplaceApp) => !isDefined(marketplaceApp.connectUrl),
+    );
   }
 
   @Query(() => MarketplaceAppDetailDTO, { name: 'publicMarketplaceAppDetail' })
@@ -37,7 +44,7 @@ export class MarketplacePublicResolver {
       universalIdentifier,
     });
 
-    if (!detail.isListed) {
+    if (!detail.isListed || isDefined(detail.connectUrl)) {
       throw new ApplicationRegistrationException(
         `No listed marketplace application found for identifier "${universalIdentifier}"`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,

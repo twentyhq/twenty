@@ -102,9 +102,15 @@ jobs:
                 .map((name) => {
                   const appPath = path.join(root, name);
                   const scripts = JSON.parse(fs.readFileSync(path.join(appPath, 'package.json'), 'utf8')).scripts || {};
+                  const applicationConfigPath = path.join(appPath, 'src', 'application.config.ts');
+                  const isInstallable = !(
+                    fs.existsSync(applicationConfigPath) &&
+                    /\boAuthClient\s*:/.test(fs.readFileSync(applicationConfigPath, 'utf8'))
+                  );
                   return {
                     name,
                     path: appPath,
+                    isInstallable,
                     hasTypecheck: Boolean(scripts.typecheck),
                     hasUnit: Boolean(scripts['test:unit']),
                     hasIntegration: Boolean(scripts.test),

@@ -321,11 +321,13 @@ jobs:
           fetch-depth: 10
       - name: Spawn Twenty server from monorepo
         id: twenty
+        if: matrix.app.isInstallable
         uses: ./.github/actions/spawn-twenty-server
         with:
           source: local
           server-build-cache-key: ${{ env.SERVER_BUILD_CACHE_KEY }}
       - name: Install app against server
+        if: matrix.app.isInstallable
         uses: ./.github/actions/test-twenty-app
         with:
           api-url: ${{ steps.twenty.outputs.server-url }}
