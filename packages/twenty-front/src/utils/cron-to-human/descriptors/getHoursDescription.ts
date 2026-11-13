@@ -84,6 +84,12 @@ export const getHoursDescription = (
       }),
     );
 
+    // Non-numeric minutes (*, */N, a range) cannot be formatted as a time;
+    // the caller composes the minutes pattern description instead
+    if (formattedTimes.some((formattedTime) => formattedTime === '')) {
+      return '';
+    }
+
     if (formattedTimes.length === 2) {
       const firstTime = formattedTimes[0];
       const secondTime = formattedTimes[1];
@@ -102,6 +108,11 @@ export const getHoursDescription = (
       use24HourFormat: use24Hour,
       appendUTC: true,
     });
+
+    if (formattedTime === '') {
+      return '';
+    }
+
     return t`at ${formattedTime}`;
   }
 
