@@ -1186,8 +1186,14 @@ export default {
             "lastUsedAt": [
                 223
             ],
+            "marketplaceAppUniversalIdentifier": [
+                4
+            ],
             "scopes": [
                 4
+            ],
+            "userId": [
+                557
             ],
             "workspaceId": [
                 557
@@ -8937,6 +8943,15 @@ export default {
                     ]
                 }
             ],
+            "revokeWorkspaceApplicationAuthorization": [
+                1,
+                {
+                    "applicationAuthorizationId": [
+                        557,
+                        "UUID!"
+                    ]
+                }
+            ],
             "rotateApplicationRegistrationClientSecret": [
                 476,
                 {
@@ -12441,6 +12456,9 @@ export default {
             ],
             "webhooks": [
                 685
+            ],
+            "workspaceApplicationAuthorizations": [
+                55
             ],
             "__typename": [
                 4

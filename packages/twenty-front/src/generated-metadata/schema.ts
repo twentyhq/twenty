@@ -577,7 +577,9 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  marketplaceAppUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -3855,6 +3857,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationAuthorization: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4895,6 +4898,11 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationAuthorizationArgs = {
+  applicationAuthorizationId: Scalars['UUID']['input'];
 };
 
 
@@ -6261,6 +6269,7 @@ export type Query = {
   validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
