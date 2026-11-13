@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CORE_AGENT_SHOW_PAGE_TABS } from '@/object-core/agents/constants/CoreAgentShowPageTabs';
 import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
 import { type CoreAgentShowPageTabId } from '@/object-core/agents/types/CoreAgentShowPageTabId';
+import { getCoreAgentShowPageTabs } from '@/object-core/agents/utils/getCoreAgentShowPageTabs';
 import { getCoreAgentShowPageTabListComponentInstanceId } from '@/object-core/agents/utils/getCoreAgentShowPageTabListComponentInstanceId';
 import { useTabListActiveTabId } from '@/ui/layout/tab-list/hooks/useTabListActiveTabId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -31,18 +32,11 @@ export const useCoreAgentShowPageActiveTab = ({
   );
   const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
 
-  const visibleTabIds: CoreAgentShowPageTabId[] = [
-    ...(canReadCoreAgentRuns
-      ? [CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW]
-      : []),
-    CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS,
-    ...(isTurnsTabAvailable ? [CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS] : []),
-  ];
-
-  const defaultTabId =
-    hasRunsOnLoad && canReadCoreAgentRuns
-      ? CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.OVERVIEW
-      : CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS;
+  const { visibleTabIds, defaultTabId } = getCoreAgentShowPageTabs({
+    canReadCoreAgentRuns,
+    isTurnsTabAvailable,
+    hasRuns: hasRunsOnLoad,
+  });
 
   return (
     useTabListActiveTabId({

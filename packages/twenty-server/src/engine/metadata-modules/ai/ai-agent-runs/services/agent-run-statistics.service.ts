@@ -3,13 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import { AGENT_RUN_COUNT_WINDOW_IN_DAYS } from 'src/engine/metadata-modules/ai/ai-agent-runs/constants/agent-run-count-window-in-days.constant';
 import { type AgentRunInsightsDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run-insights.dto';
 import { type AgentRunSummaryDTO } from 'src/engine/metadata-modules/ai/ai-agent-runs/dtos/agent-run-summary.dto';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { buildRunInsightsDailySeriesQuery } from 'src/engine/utils/run-insights/build-run-insights-daily-series-query.util';
+import { RUN_INSIGHTS_WINDOW_IN_DAYS } from 'src/engine/utils/run-insights/run-insights-window-in-days.constant';
 
 const RECENT_RUNS_LIMIT = 10;
 
@@ -34,7 +35,8 @@ type DailyRunCountRow = {
   internalCredits: string | number;
 };
 
-const INTERNAL_CREDITS_SQL = `COALESCE(SUM(COALESCE("agentTurn"."inputCredits", 0) + COALESCE("agentTurn"."outputCredits", 0)), 0)`;
+const buildInternalCreditsSql = (alias: string) =>
+  `COALESCE(SUM(COALESCE("${alias}"."inputCredits", 0) + COALESCE("${alias}"."outputCredits", 0)), 0)`;
 
 @Injectable()
 export class AgentRunStatisticsService {
@@ -90,7 +92,7 @@ export class AgentRunStatisticsService {
               LIMIT $3::int
             ) AS "recentRun"
           ) AS "recentRuns"`,
-          [agentIds, AGENT_RUN_COUNT_WINDOW_IN_DAYS, RECENT_RUNS_LIMIT],
+          [agentIds, RUN_INSIGHTS_WINDOW_IN_DAYS, RECENT_RUNS_LIMIT],
         ),
     );
 
@@ -120,7 +122,6 @@ export class AgentRunStatisticsService {
     timeZone: string;
   }): Promise<AgentRunInsightsDTO> {
     // Totals share the list's rolling window; the bars need local calendar days
-    const windowFirstLocalDay = `DATE_TRUNC('day', NOW() AT TIME ZONE $2) - MAKE_INTERVAL(days => $3::int)`;
 
     const [[totals], dailyRunCounts] = await this.turnRepository.query(
       workspaceId,
@@ -131,41 +132,32 @@ export class AgentRunStatisticsService {
             SELECT
               COUNT(*) AS "runCount",
               COALESCE(SUM(COALESCE("agentTurn"."inputTokens", 0) + COALESCE("agentTurn"."outputTokens", 0)), 0) AS "tokenCount",
-              ${INTERNAL_CREDITS_SQL} AS "internalCredits",
+              ${buildInternalCreditsSql('agentTurn')} AS "internalCredits",
               AVG(EXTRACT(EPOCH FROM ("agentTurn"."endedAt" - "agentTurn"."startedAt")) * 1000)
                 FILTER (WHERE "agentTurn"."status" = $3) AS "averageDurationInMs"
             FROM ${table('agentTurn')} AS "agentTurn"
             WHERE "agentTurn"."agentId" = $1
               AND "agentTurn"."createdAt" >= NOW() - MAKE_INTERVAL(days => $2::int)`,
-            [
-              agentId,
-              AGENT_RUN_COUNT_WINDOW_IN_DAYS,
-              AgentTurnStatus.COMPLETED,
-            ],
+            [agentId, RUN_INSIGHTS_WINDOW_IN_DAYS, AgentTurnStatus.COMPLETED],
           ),
           manager.query<DailyRunCountRow[]>(
-            `
-            SELECT
-              TO_CHAR("calendarDay"."day", 'YYYY-MM-DD') AS "day",
-              COUNT("agentTurn"."id") FILTER (WHERE "agentTurn"."status" = $4) AS "completedRunCount",
-              COUNT("agentTurn"."id") FILTER (WHERE "agentTurn"."status" = $5) AS "failedRunCount",
-              COUNT("agentTurn"."id") FILTER (WHERE "agentTurn"."status" NOT IN ($4, $5)) AS "otherRunCount",
-              ${INTERNAL_CREDITS_SQL} AS "internalCredits"
-            FROM GENERATE_SERIES(
-              ${windowFirstLocalDay},
-              DATE_TRUNC('day', NOW() AT TIME ZONE $2),
-              INTERVAL '1 day'
-            ) AS "calendarDay"("day")
-            LEFT JOIN ${table('agentTurn')} AS "agentTurn"
-              ON "agentTurn"."agentId" = $1
-              AND "agentTurn"."createdAt" >= (${windowFirstLocalDay}) AT TIME ZONE $2
-              AND DATE_TRUNC('day', "agentTurn"."createdAt" AT TIME ZONE $2) = "calendarDay"."day"
-            GROUP BY "calendarDay"."day"
-            ORDER BY "calendarDay"."day"`,
+            buildRunInsightsDailySeriesQuery({
+              runsSource: table('agentTurn'),
+              runsSourceCondition: '"run"."agentId" = $1',
+              additionalSelects: [
+                `${buildInternalCreditsSql('run')} AS "internalCredits"`,
+              ],
+              placeholders: {
+                timeZone: '$2',
+                lastDayOffset: '$3',
+                completedStatus: '$4',
+                failedStatus: '$5',
+              },
+            }),
             [
               agentId,
               timeZone,
-              AGENT_RUN_COUNT_WINDOW_IN_DAYS - 1,
+              RUN_INSIGHTS_WINDOW_IN_DAYS - 1,
               AgentTurnStatus.COMPLETED,
               AgentTurnStatus.FAILED,
             ],

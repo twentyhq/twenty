@@ -46,11 +46,10 @@ export const AgentCoreShowPage = () => {
     return null;
   }
 
-  // The default tab depends on whether the agent has runs
-  if (
-    !isDefined(agent) ||
-    (runInsights.loading && !isDefined(runInsights.insights))
-  ) {
+  const isDefaultTabUnknown =
+    runInsights.loading && !isDefined(runInsights.insights);
+
+  if (!isDefined(agent) || isDefaultTabUnknown) {
     return <PageContentSkeletonLoader />;
   }
 

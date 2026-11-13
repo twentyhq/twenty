@@ -1,1 +1,0 @@
-export const AGENT_RUN_COUNT_WINDOW_IN_DAYS = 14;

@@ -1,8 +1,11 @@
+import { Test } from '@nestjs/testing';
+
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AgentRunStatisticsService } from 'src/engine/metadata-modules/ai/ai-agent-runs/services/agent-run-statistics.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 
-const buildService = (queryResults: unknown[][]) => {
+const buildService = async (queryResults: Record<string, unknown>[][]) => {
   const manager = { query: jest.fn() };
 
   queryResults.forEach((queryResult) =>
@@ -21,8 +24,18 @@ const buildService = (queryResults: unknown[][]) => {
     ),
   };
 
+  const module = await Test.createTestingModule({
+    providers: [
+      AgentRunStatisticsService,
+      {
+        provide: getAgentHistoryRepositoryToken('agentTurn'),
+        useValue: turnRepository,
+      },
+    ],
+  }).compile();
+
   return {
-    service: new AgentRunStatisticsService(turnRepository as never),
+    service: module.get(AgentRunStatisticsService),
     manager,
     turnRepository,
   };
@@ -31,7 +44,7 @@ const buildService = (queryResults: unknown[][]) => {
 describe('AgentRunStatisticsService', () => {
   describe('findRunSummaries', () => {
     it('does not query when no agent is requested', async () => {
-      const { service, manager } = buildService([]);
+      const { service, manager } = await buildService([]);
 
       await expect(
         service.findRunSummaries({ workspaceId: 'workspace', agentIds: [] }),
@@ -40,7 +53,7 @@ describe('AgentRunStatisticsService', () => {
     });
 
     it('returns one summary per requested agent, in the requested order', async () => {
-      const { service, manager, turnRepository } = buildService([
+      const { service, manager, turnRepository } = await buildService([
         [
           {
             agentId: 'agent-b',
@@ -91,7 +104,7 @@ describe('AgentRunStatisticsService', () => {
 
   describe('findRunInsights', () => {
     it('converts database aggregates to numbers', async () => {
-      const { service, manager, turnRepository } = buildService([
+      const { service, manager, turnRepository } = await buildService([
         [
           {
             runCount: '12',
@@ -155,7 +168,7 @@ describe('AgentRunStatisticsService', () => {
     });
 
     it('has no average duration when no run completed', async () => {
-      const { service } = buildService([
+      const { service } = await buildService([
         [
           {
             runCount: '0',
