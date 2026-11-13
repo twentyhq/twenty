@@ -14,9 +14,9 @@ export function AffiliateProgramTermsDocument() {
         These terms are an agreement between Twenty.com PBC, a public benefit
         corporation incorporated in Delaware, United States
         (&ldquo;Twenty&rdquo;, &ldquo;we&rdquo;), and you, the person or company
-        accepted into the Twenty Affiliate Program (&ldquo;you&rdquo;,
+        accepted into the Twenty Partner Program (&ldquo;you&rdquo;,
         &ldquo;Partner&rdquo;). You accept them when you tick &ldquo;I agree to
-        the affiliate program terms&rdquo; in the application form.
+        the Partner Program Terms&rdquo; in the application form.
       </p>
       <p>
         In short: you share Twenty, and you earn{' '}

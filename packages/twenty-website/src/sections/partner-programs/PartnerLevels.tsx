@@ -83,7 +83,7 @@ export function PartnerLevels() {
     <SectionShell rhythm="section" scheme="light">
       <SectionStack>
         <SectionIntro>
-          <Eyebrow>{i18n._(msg`How it works`)}</Eyebrow>
+          <Eyebrow>{i18n._(msg`Levels`)}</Eyebrow>
           <HeadingMeasure>
             <Heading as="h2" size="lg" weight="light">
               {i18n._(msg`Start as an integrator, *grow into a lead*`)}

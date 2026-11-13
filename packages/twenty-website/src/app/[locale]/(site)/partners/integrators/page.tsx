@@ -1,28 +1,37 @@
 import { msg } from '@lingui/core/macro';
-import { PartnerApplicationModalRoot } from '@/partner-application';
+
+import {
+  BecomePartnerButton,
+  PartnerApplicationModalRoot,
+} from '@/partner-application';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
+import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
   JsonLd,
 } from '@/platform/seo';
-import { CaseStudyPromo } from '@/sections/case-study-promo';
 import { BecomePartnerFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 import { PartnerHero } from '@/sections/partner-hero';
-import { PartnerLevels, ProgramSwitchStrip } from '@/sections/partner-programs';
-import { PartnerSignoff } from '@/sections/partner-signoff';
-import { PartnerTestimonials } from '@/sections/testimonials';
-import { TrustedBy } from '@/sections/trusted-by';
+import {
+  INTEGRATOR_STEPS,
+  PartnerLevels,
+  ProgramExplainer,
+  ProgramStrip,
+} from '@/sections/partner-programs';
+import { Button } from '@/ui';
 
 export const generateMetadata = buildRouteMetadata('partnersIntegrators');
 
-export default async function BecomePartnerPage({
+const HOW_IT_WORKS_ANCHOR_ID = 'how-it-works';
+
+export default async function IntegratorProgramPage({
   params,
 }: {
   params: Promise<LocaleRouteParams>;
@@ -31,6 +40,7 @@ export default async function BecomePartnerPage({
     getRouteI18n(params),
     getCommunityStats(),
   ]);
+  const i18n = getServerI18n();
   const locale = resolveLocaleParam((await params).locale);
 
   return (
@@ -47,22 +57,50 @@ export default async function BecomePartnerPage({
       />
       <Menu communityStats={communityStats} />
       <main>
-        <PartnerHero />
+        <PartnerHero
+          heading={msg`Become a\n*Twenty integrator*`}
+          body={msg`You implement Twenty for your clients. Earn 20% on every client you bring, get help from our team and other partners, and grow into a Lead Integrator to receive client briefs.`}
+          actions={
+            <>
+              <BecomePartnerButton label={msg`Apply as an integrator`} />
+              <Button
+                href={`#${HOW_IT_WORKS_ANCHOR_ID}`}
+                label={i18n._(msg`How it works`)}
+                variant="outlined"
+              />
+            </>
+          }
+        />
         <PartnerLevels />
-        <PartnerTestimonials />
-        {/* TrustedBy + CaseStudyPromo form one continuous frame: the promo
-            `connectsUp` into the band, so this adjacency is load-bearing —
-            don't separate or reorder them. */}
-        <TrustedBy />
-        <CaseStudyPromo />
-        <PartnerSignoff />
-        <ProgramSwitchStrip
+        <ProgramExplainer
+          anchorId={HOW_IT_WORKS_ANCHOR_ID}
+          eyebrow={msg`How it works`}
+          heading={msg`From application *to clients*`}
+          body={msg`Four steps, and no fee to join. You set your own rates and keep what you bill.`}
+          steps={INTEGRATOR_STEPS}
+        />
+        <ProgramStrip
           heading={msg`You create content, *not implementations?*`}
           body={msg`Creators, communities and tech partners earn 20% on every team they bring to Twenty.`}
-          label={msg`See the creator program`}
-          href="/partners/creators"
+          action={
+            <Button
+              href="/partners/creators"
+              label={i18n._(msg`See the creator program`)}
+              variant="outlined"
+            />
+          }
         />
         <BecomePartnerFaq />
+        <ProgramStrip
+          heading={msg`Ready to *apply?*`}
+          body={msg`It takes a few minutes. We review every application by hand.`}
+          action={
+            <BecomePartnerButton
+              label={msg`Apply as an integrator`}
+              variant="outlined"
+            />
+          }
+        />
       </main>
     </PartnerApplicationModalRoot>
   );

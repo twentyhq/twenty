@@ -327,10 +327,8 @@ export function AffiliateApplicationForm() {
               <span id={ACCEPTS_TERMS_LABEL_ID}>
                 <Trans>
                   I agree to the{' '}
-                  <TermsLink
-                    href={localizeHref(locale, '/partners/terms')}
-                  >
-                    Affiliate Program Terms
+                  <TermsLink href={localizeHref(locale, '/partners/terms')}>
+                    Partner Program Terms
                   </TermsLink>
                 </Trans>
               </span>
