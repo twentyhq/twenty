@@ -20,6 +20,7 @@ const TURN_SELECT = ['id', 'agentId', 'threadId', 'status'];
 const buildService = async (turns: TurnFixture[] = []) => {
   const turnRepository = { find: jest.fn().mockResolvedValue(turns) };
   const workspaceEventBroadcaster = {
+    hasActiveStreams: jest.fn().mockResolvedValue(true),
     broadcast: jest.fn().mockResolvedValue(undefined),
   };
 
@@ -170,6 +171,25 @@ describe('AgentTurnEventPublisherService', () => {
       turnIds: [],
     });
 
+    expect(turnRepository.find).not.toHaveBeenCalled();
+    expect(workspaceEventBroadcaster.broadcast).not.toHaveBeenCalled();
+  });
+
+  it('skips reading turns when no event stream is open', async () => {
+    const { service, turnRepository, workspaceEventBroadcaster } =
+      await buildService([RUNNING_TURN]);
+
+    workspaceEventBroadcaster.hasActiveStreams.mockResolvedValue(false);
+
+    await service.publish({
+      workspaceId: 'workspace-id',
+      type: 'updated',
+      turnIds: ['turn-id'],
+    });
+
+    expect(workspaceEventBroadcaster.hasActiveStreams).toHaveBeenCalledWith(
+      'workspace-id',
+    );
     expect(turnRepository.find).not.toHaveBeenCalled();
     expect(workspaceEventBroadcaster.broadcast).not.toHaveBeenCalled();
   });
