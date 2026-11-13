@@ -123,6 +123,13 @@ export class AgentTurnEventPublisherService {
     buildEvents: () => Promise<WorkspaceBroadcastEvent[]>;
   }): Promise<void> {
     try {
+      // Building the events reads the turns, which is wasted when nobody listens
+      if (
+        !(await this.workspaceEventBroadcaster.hasActiveStreams(workspaceId))
+      ) {
+        return;
+      }
+
       await this.workspaceEventBroadcaster.broadcast({
         workspaceId,
         events: await buildEvents(),
