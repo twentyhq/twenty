@@ -55,7 +55,7 @@ const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
 
 const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
 
-const APP_MESSAGE_DELIVERY_LOCK_OPTIONS = { ms: 500, maxRetries: 60 };
+const APP_MESSAGE_DELIVERY_LOCK_OPTIONS = { ms: 500, maxRetries: 180 };
 
 type SendArgs = {
   workspaceId: string;
