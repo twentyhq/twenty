@@ -3,12 +3,14 @@ import { isDefined } from 'twenty-shared/utils';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { createHttpStatusError } from '@/transport/create-http-status-error';
+import { createRequestHeaders } from '@/transport/create-request-headers';
 import {
   createRedirectError,
   toTransportError,
 } from '@/transport/create-target-fetch';
 import { fetchWithProxy } from '@/transport/fetch-with-proxy';
 import { resolveRequestUrl } from '@/transport/resolve-request-url';
+import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const DOWNLOAD_TIMEOUT_MILLISECONDS = 15 * 60 * 1000;
 
@@ -43,20 +45,32 @@ export const downloadRecordExport = async ({
   ]);
   let response: Response | undefined;
   try {
-    response = await fetchWithProxy(
-      url,
-      {
-        headers: {
-          Authorization: `Bearer ${target.bearerToken}`,
-          Accept: 'text/csv',
-        },
-        redirect: 'manual',
-        signal: downloadSignal,
-      },
-      DOWNLOAD_TIMEOUT_MILLISECONDS,
-    );
+    response = await sendWithProxyHeaderRenewal({
+      proxyHeaders: target.proxyHeaders,
+      requestUrl: url,
+      canReplay: true,
+      signal: downloadSignal,
+      send: (proxyHeaderValues) =>
+        fetchWithProxy(
+          url,
+          {
+            headers: createRequestHeaders({
+              initHeaders: { Accept: 'text/csv' },
+              bearerToken: target.bearerToken,
+              proxyHeaderValues,
+            }),
+            redirect: 'manual',
+            signal: downloadSignal,
+          },
+          DOWNLOAD_TIMEOUT_MILLISECONDS,
+        ),
+    });
     if (response.status >= 300 && response.status < 400) {
-      throw createRedirectError(response, url);
+      throw createRedirectError({
+        response,
+        url,
+        proxyHeaders: target.proxyHeaders,
+      });
     }
     if (!response.ok) {
       throw createHttpStatusError({

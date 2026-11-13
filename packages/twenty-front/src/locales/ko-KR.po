@@ -7375,6 +7375,11 @@ msgstr "업그레이드 확인"
 msgid "Confirming your payment"
 msgstr "결제를 확인하는 중"
 
+#. js-lingui-id: iSLIjg
+#: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
+msgid "Connect"
+msgstr ""
+
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
 msgid "Connect {appName} to {workspaceName}"

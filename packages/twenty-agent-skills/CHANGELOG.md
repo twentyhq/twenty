@@ -11,6 +11,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 ### Changed
 
 - `publish-app`: documented `oAuthClient` in `defineApplication()` for apps that list an external OAuth client members connect themselves; the marketplace page then shows Connect in place of Install.
+- `manage-app`: covered CLI connections through authenticating proxies (`--proxy-header`, `--proxy-header-command`, `TWENTY_PROXY_HEADERS`, `TWENTY_PROXY_HEADER_COMMAND`, `PROXY_AUTH_REQUIRED`).
 - `develop-app`: documented `oauth-discovery` connection providers for services that publish their OAuth settings, such as remote MCP servers.
 - `use-twenty-mcp`: the Twenty MCP server now lists record tools that take the object as an argument by default (`find_records`, `create_records`); `/mcp?mode=direct` lists one tool per object and `learn_tools -> execute_tool` applies to `/mcp?mode=meta`.
 - Made Twenty UI the default for visible front components in `develop-app` and both app bootstrap instruction files, with essential renderer rules and links to current component APIs.
