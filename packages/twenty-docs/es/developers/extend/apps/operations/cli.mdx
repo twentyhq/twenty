@@ -29,7 +29,7 @@ Los ejemplos siguientes usan `twenty`. Sustituye `twenty` por `npx twenty@latest
 | `autenticación` | Iniciar sesión, comprobar y eliminar credenciales                                               |
 | `remote`        | Enumera, selecciona, cambia el nombre y elimina las conexiones guardadas del espacio de trabajo |
 | `metadatos`     | Inspecciona objetos y campos                                                                    |
-| `data`          | Enumera y lee registros                                                                         |
+| `data`          | Enumera, lee y exporta registros                                                                |
 | `api`           | Envía solicitudes REST o GraphQL sin procesar                                                   |
 | `open`          | Abre el espacio de trabajo en tu navegador                                                      |
 | `aplicación`    | Crea, compila, sincroniza, depura y desinstala aplicaciones                                     |
@@ -112,18 +112,18 @@ npx twenty@latest app dev
 
 Otros comandos de la aplicación:
 
-| Comando                       | Qué hace                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad                        |
-| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                                          |
-| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación                  |
-| `app apply`                   | Compila, carga y sincroniza la aplicación                                                         |
-| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                                 |
-| `app pull`                    | Restaura los metadatos, las traducciones, las dependencias y la fuente de componentes compatibles |
-| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                                            |
-| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                                   |
-| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo                           |
-| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                                  |
+| Comando                       | Qué hace                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| `app add`                     | Genera la estructura de un objeto, campo, función de lógica u otra entidad                 |
+| `app build` / `app typecheck` | Compila o verifica los tipos de la aplicación localmente                                   |
+| `app plan`                    | Obtén una vista previa de los cambios de metadatos que realizaría una aplicación           |
+| `app apply`                   | Compila, carga y sincroniza la aplicación                                                  |
+| `app generate-client`         | Regenera el cliente de API tipado sin sincronizar                                          |
+| `app pull`                    | Restore metadata, translations, dependencies, public assets and supported component source |
+| `app translations extract`    | Extraer cadenas traducibles en catálogos de `locales/`                                     |
+| `app publish`                 | Publica la aplicación en npm o en un registro privado de Twenty                            |
+| `app install`                 | Instala un paquete de aplicación ya registrado en el espacio de trabajo                    |
+| `app uninstall`               | Elimina la aplicación y todo lo que posee del espacio de trabajo                           |
 
 Las definiciones que faltan en tu código fuente se eliminan del espacio de trabajo de forma predeterminada. Pasa `--no-prune` para conservarlos. La aplicación personalizada del espacio de trabajo los conserva a menos que pases `--prune`. Eliminar objetos o campos también elimina sus datos, por lo que requiere confirmación. Consulta [Sincronización y recuperación](/es/developers/extend/apps/operations/sync-and-recovery) para obtener más detalles.
 
@@ -181,3 +181,14 @@ La salida de compilación pertenece a la CLI. No lea `.twenty/output/manifest.js
 La [referencia de comandos](https://github.com/twentyhq/twenty/blob/main/packages/twenty-cli/docs/commands.md) abarca todas las opciones, permisos, formatos de salida y códigos de salida.
 
 <PageBanner illustration="card-page-cli" />
+
+## Exporta registros del espacio de trabajo
+
+```bash
+twenty data export companies --output companies.csv
+twenty data export companies --fields name,domainName,employees --filter 'employees[gte]:5000' --output large-companies.csv
+```
+
+`data export` requiere el permiso **Exportar CSV** del espacio de trabajo. Sigue el progreso de exportación del servidor y, a continuación, transmite el CSV a `--output`. El servidor aplica los permisos de registros y campos. No se requiere un proyecto de aplicación; selecciona una conexión guardada con `--remote` o usa las credenciales de entorno habituales.
+
+El archivo de salida aparece solo después de una descarga correcta. Los archivos existentes se conservan a menos que pases `--force`. Las descargas están limitadas a 1 GiB y 15 minutos. Si se interrumpe, vuelve a ejecutar la exportación; el enlace de descarga no se puede reutilizar. `--json` informa el ID de exportación, la ruta, el tamaño y la duración; `--format ndjson` también transmite el progreso. El propio CSV se escribe solo en el archivo especificado.
