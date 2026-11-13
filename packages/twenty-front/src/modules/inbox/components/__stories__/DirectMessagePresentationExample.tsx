@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
 import { aiChatOnlineWorkspaceMemberIdsState } from '@/ai/states/aiChatOnlineWorkspaceMemberIdsState';
 import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
-import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/ai/components/__stories__/directMessagePresentationFixture';
+import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/inbox/components/__stories__/directMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
