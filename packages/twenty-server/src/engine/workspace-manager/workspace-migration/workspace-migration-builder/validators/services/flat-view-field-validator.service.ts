@@ -68,29 +68,30 @@ export class FlatViewFieldValidatorService {
         updatedFlatViewField.fieldMetadataUniversalIdentifier,
     };
 
-    if (
+    const isSettingsUpdate =
       isDefined(flatEntityUpdate.settings) ||
-      isDefined(flatEntityUpdate.universalOverrides)
-    ) {
-      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          updatedFlatViewField.fieldMetadataUniversalIdentifier,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
+      isDefined(flatEntityUpdate.universalOverrides);
 
-      if (isDefined(flatFieldMetadata)) {
-        validationResult.errors.push(
-          ...validateFlatViewFieldSettings({
-            settings: resolveEffectiveUniversalFlatEntityProperty({
-              metadataName: 'viewField',
-              universalFlatEntity: updatedFlatViewField,
-              property: 'settings',
-            }),
-            isCanonical: updatedFlatViewField.isCanonical,
-            flatFieldMetadata,
+    const settingsFlatFieldMetadata = isSettingsUpdate
+      ? findFlatEntityByUniversalIdentifier({
+          universalIdentifier:
+            updatedFlatViewField.fieldMetadataUniversalIdentifier,
+          flatEntityMaps: flatFieldMetadataMaps,
+        })
+      : undefined;
+
+    if (isDefined(settingsFlatFieldMetadata)) {
+      validationResult.errors.push(
+        ...validateFlatViewFieldSettings({
+          settings: resolveEffectiveUniversalFlatEntityProperty({
+            metadataName: 'viewField',
+            universalFlatEntity: updatedFlatViewField,
+            property: 'settings',
           }),
-        );
-      }
+          isCanonical: updatedFlatViewField.isCanonical,
+          flatFieldMetadata: settingsFlatFieldMetadata,
+        }),
+      );
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
