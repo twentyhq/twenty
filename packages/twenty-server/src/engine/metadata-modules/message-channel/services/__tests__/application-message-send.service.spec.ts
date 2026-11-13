@@ -96,6 +96,15 @@ describe('ApplicationMessageSendService', () => {
       set: async (key: string, value: unknown) => {
         cache.set(key, value);
       },
+      setIfAbsent: async (key: string, value: unknown) => {
+        if (cache.has(key)) {
+          return false;
+        }
+
+        cache.set(key, value);
+
+        return true;
+      },
     } as unknown as CacheStorageService,
   );
 
@@ -129,6 +138,17 @@ describe('ApplicationMessageSendService', () => {
       fileIds: ['upload-1'],
       workspaceId: 'workspace-1',
     });
+  });
+
+  it('should refuse an upload already sent by another message without delivering it', async () => {
+    await service.send(SEND_ARGS);
+
+    await expect(
+      service.send({ ...SEND_ARGS, idempotencyKey: 'idempotency-key-2' }),
+    ).rejects.toThrow(MessageChannelException);
+
+    expect(sendOrThrow).toHaveBeenCalledTimes(1);
+    expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledTimes(1);
   });
 
   it('should return the saved reply on retry without needing the deleted uploads', async () => {

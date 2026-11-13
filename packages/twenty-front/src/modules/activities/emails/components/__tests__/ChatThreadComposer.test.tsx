@@ -17,6 +17,16 @@ jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
   AgentChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
 }));
 
+const getComposerFileInputOrThrow = (container: HTMLElement) => {
+  const fileInput = container.querySelector('input[type="file"]');
+
+  if (!(fileInput instanceof HTMLInputElement)) {
+    throw new Error('The composer file input is missing');
+  }
+
+  return fileInput;
+};
+
 describe('ChatThreadComposer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -112,11 +122,7 @@ describe('ChatThreadComposer', () => {
 
     expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
 
-    const fileInput = container.querySelector('input[type="file"]');
-
-    if (!(fileInput instanceof HTMLInputElement)) {
-      throw new Error('The composer file input is missing');
-    }
+    const fileInput = getComposerFileInputOrThrow(container);
 
     await userEvent.upload(fileInput, deck);
 
@@ -150,11 +156,7 @@ describe('ChatThreadComposer', () => {
       </I18nProvider>,
     );
 
-    const fileInput = container.querySelector('input[type="file"]');
-
-    if (!(fileInput instanceof HTMLInputElement)) {
-      throw new Error('The composer file input is missing');
-    }
+    const fileInput = getComposerFileInputOrThrow(container);
 
     await userEvent.upload(
       fileInput,

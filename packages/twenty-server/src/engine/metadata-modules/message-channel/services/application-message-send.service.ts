@@ -294,6 +294,36 @@ export class ApplicationMessageSendService {
     );
   }
 
+  private async claimAttachmentsOrThrow({
+    attachments,
+    workspaceId,
+    deliveryKey,
+  }: {
+    attachments: SendAppChannelMessageAttachmentInput[];
+    workspaceId: string;
+    deliveryKey: string;
+  }): Promise<void> {
+    for (const { id, name } of attachments) {
+      const claimKey = `app-message-attachment-claim:${workspaceId}:${id}`;
+
+      const hasClaimed = await this.cacheStorageService.setIfAbsent(
+        claimKey,
+        deliveryKey,
+        APP_MESSAGE_DELIVERY_TTL_MS,
+      );
+
+      if (
+        !hasClaimed &&
+        (await this.cacheStorageService.get<string>(claimKey)) !== deliveryKey
+      ) {
+        throw new MessageChannelException(
+          `Attachment file ${name} (${id}) is already sent in another message`,
+          MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+        );
+      }
+    }
+  }
+
   private async deliver({
     workspaceId,
     messageChannel,
@@ -319,6 +349,12 @@ export class ApplicationMessageSendService {
       await this.applicationMessageSendAttachmentsService.buildAttachmentsToSendOrThrow(
         { attachments, workspaceId },
       );
+
+    await this.claimAttachmentsOrThrow({
+      attachments,
+      workspaceId,
+      deliveryKey,
+    });
 
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
