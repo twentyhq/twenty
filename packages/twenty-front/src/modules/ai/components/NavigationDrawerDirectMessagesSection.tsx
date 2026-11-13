@@ -1,6 +1,6 @@
 import { NavigationDrawerDirectMessageItem } from '@/ai/components/NavigationDrawerDirectMessageItem';
-import { AI_CHAT_INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesCollapsedMaxCount';
-import { AI_CHAT_INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/ai/constants/AiChatInboxDirectMessagesExpandedMaxCount';
+import { INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT } from '@/ai/constants/InboxDirectMessagesCollapsedMaxCount';
+import { INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT } from '@/ai/constants/InboxDirectMessagesExpandedMaxCount';
 import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
 import { getVisibleDirectMessageSidebarItems } from '@/ai/utils/getVisibleDirectMessageSidebarItems';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
-const AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
+const INBOX_DIRECT_MESSAGES_NAVIGATION_SECTION_ID = 'AiChatDirectMessages';
 
 type NavigationDrawerDirectMessagesSectionProps = {
   directMessages: readonly DirectMessageSidebarItem[];
@@ -33,12 +33,12 @@ export const NavigationDrawerDirectMessagesSection = ({
   const collapsedDirectMessages = getVisibleDirectMessageSidebarItems({
     directMessages,
     currentThreadId,
-    maxCount: AI_CHAT_INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT,
+    maxCount: INBOX_DIRECT_MESSAGES_COLLAPSED_MAX_COUNT,
   });
   const expandedDirectMessages = getVisibleDirectMessageSidebarItems({
     directMessages,
     currentThreadId,
-    maxCount: AI_CHAT_INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT,
+    maxCount: INBOX_DIRECT_MESSAGES_EXPANDED_MAX_COUNT,
   });
   const hasMoreDirectMessages =
     expandedDirectMessages.length > collapsedDirectMessages.length;
@@ -48,7 +48,7 @@ export const NavigationDrawerDirectMessagesSection = ({
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={AI_CHAT_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
+      sectionId={INBOX_DIRECT_MESSAGES_NAVIGATION_SECTION_ID}
       label={t`Direct messages`}
       rightIcon={memberPicker}
       alwaysShowRightIcon

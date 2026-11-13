@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { AiChatNewThreadInboxListToggle } from '@/ai/components/AiChatNewThreadInboxListToggle';
+import { InboxNewThreadListToggle } from '@/ai/components/InboxNewThreadListToggle';
 import { AiChatNewThreadPageActions } from '@/ai/components/AiChatNewThreadPageActions';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 
@@ -19,7 +19,7 @@ export const AiChatPageHeader = ({
 
   return (
     <PageCardHeader
-      icon={<AiChatNewThreadInboxListToggle />}
+      icon={<InboxNewThreadListToggle />}
       title={t`New chat`}
       actionButton={
         actionButton ??

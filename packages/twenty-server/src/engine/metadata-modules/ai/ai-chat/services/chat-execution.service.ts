@@ -166,7 +166,7 @@ export class ChatExecutionService {
         resolveExecutionContext: undefined,
       };
     };
-    const { actorContext, userId, userContext } =
+    const { actorMetadata, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspace.id,
@@ -176,7 +176,7 @@ export class ChatExecutionService {
 
     const toolContext: ToolContext = {
       workspaceId: workspace.id,
-      actorContext,
+      actorMetadata,
       userId,
       userWorkspaceId,
       threadId,

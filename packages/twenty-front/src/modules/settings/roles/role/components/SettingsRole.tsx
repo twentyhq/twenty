@@ -5,9 +5,9 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
-import { useIsRoleAgentChatChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty';
-import { useResetRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
-import { useSaveRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess';
+import { useIsRoleInboxChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleInboxChannelAccessDirty';
+import { useResetRoleInboxChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleInboxChannelAccess';
+import { useSaveRoleInboxChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleInboxChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
@@ -21,7 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
+import { useRefreshInboxChannels } from '@/ai/hooks/useRefreshInboxChannels';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -67,13 +67,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   );
 
   const { loadCurrentUser } = useLoadCurrentUser();
-  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
-  const isRoleAgentChatChannelAccessDirty =
-    useIsRoleAgentChatChannelAccessDirty(roleId);
-  const { saveRoleAgentChatChannelAccess } =
-    useSaveRoleAgentChatChannelAccess(roleId);
-  const { resetRoleAgentChatChannelAccess } =
-    useResetRoleAgentChatChannelAccess(roleId);
+  const { refreshInboxChannels } = useRefreshInboxChannels();
+  const isRoleInboxChannelAccessDirty =
+    useIsRoleInboxChannelAccessDirty(roleId);
+  const { saveRoleInboxChannelAccess } = useSaveRoleInboxChannelAccess(roleId);
+  const { resetRoleInboxChannelAccess } =
+    useResetRoleInboxChannelAccess(roleId);
 
   const { enqueueToast } = useToast();
 
@@ -112,10 +111,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsPersistedRole,
   );
   const isRoleDirty = Object.keys(dirtyFields).length > 0;
-  const isDirty = isRoleDirty || isRoleAgentChatChannelAccessDirty;
+  const isDirty = isRoleDirty || isRoleInboxChannelAccessDirty;
 
   const handleCancel = () => {
-    resetRoleAgentChatChannelAccess();
+    resetRoleInboxChannelAccess();
 
     if (isCreateMode) {
       setSettingsDraftRole(DEFAULT_SETTINGS_DRAFT_ROLE);
@@ -144,10 +143,10 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
         await saveDraftRoleToDB();
         await loadCurrentUser();
       }
-      if (isRoleAgentChatChannelAccessDirty) {
-        await saveRoleAgentChatChannelAccess();
+      if (isRoleInboxChannelAccessDirty) {
+        await saveRoleInboxChannelAccess();
       } else if (isDefined(dirtyFields.canAccessAllAgentChatChannels)) {
-        await refreshAgentChatChannels();
+        await refreshInboxChannels();
       }
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
