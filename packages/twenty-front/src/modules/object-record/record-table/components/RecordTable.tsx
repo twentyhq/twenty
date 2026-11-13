@@ -12,7 +12,7 @@ import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-tab
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { RecordTableColumnScopeEffects } from '@/object-record/record-column-scope/components/RecordTableColumnScopeEffects';
+import { RecordTableScopedRelationsRefreshEffect } from '@/object-record/record-column-scope/components/RecordTableScopedRelationsRefreshEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
@@ -103,7 +103,9 @@ export const RecordTable = () => {
           />
           <RecordTableScrollToFocusedCellEffect />
           <RecordTableScrollToFocusedRowEffect />
-          {isColumnSettingsEnabled && <RecordTableColumnScopeEffects />}
+          {isColumnSettingsEnabled && (
+            <RecordTableScopedRelationsRefreshEffect />
+          )}
         </>
       )}
       {isRecordTableInitialLoading &&
