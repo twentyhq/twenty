@@ -4,6 +4,9 @@ const buildService = () => {
   const threadRecordEventService = {
     emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
   };
+  const turnEventPublisherService = {
+    publish: jest.fn().mockResolvedValue(undefined),
+  };
   const messagePartRepository = {
     writePart: jest.fn(),
     query: jest.fn(),
@@ -20,9 +23,15 @@ const buildService = () => {
     messagePartRepository as never,
     threadRecordEventService as never,
     {} as never,
+    turnEventPublisherService as never,
   );
 
-  return { service, messagePartRepository, threadRecordEventService };
+  return {
+    service,
+    messagePartRepository,
+    threadRecordEventService,
+    turnEventPublisherService,
+  };
 };
 
 describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
@@ -36,12 +45,17 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
   };
 
   it('tells open chat lists once the last answer stops the wait', async () => {
-    const { service, messagePartRepository, threadRecordEventService } =
-      buildService();
+    const {
+      service,
+      messagePartRepository,
+      threadRecordEventService,
+      turnEventPublisherService,
+    } = buildService();
 
     messagePartRepository.writePart
       .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce([{ id: 'thread-id' }]);
+      .mockResolvedValueOnce([{ id: 'thread-id' }])
+      .mockResolvedValueOnce([{ id: 'turn-id' }]);
 
     await service.recordToolCallAnswer({
       ...answerArguments,
@@ -51,6 +65,12 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
     expect(
       threadRecordEventService.emitPendingQuestionCleared,
     ).toHaveBeenCalledTimes(1);
+    expect(turnEventPublisherService.publish).toHaveBeenCalledTimes(1);
+    expect(turnEventPublisherService.publish).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      type: 'updated',
+      turnIds: ['turn-id'],
+    });
   });
 
   it('stays quiet when another caller already stopped the wait', async () => {

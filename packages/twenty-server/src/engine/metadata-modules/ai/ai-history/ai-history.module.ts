@@ -7,6 +7,7 @@ import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.mo
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -37,6 +38,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
     AgentChatDirectMessageConversationPrivacyService,
     AgentConversationReaderService,
     AgentConversationWriterService,
+    AgentTurnEventPublisherService,
     AgentTurnRecorderService,
     ...REPOSITORY_PROVIDERS,
   ],
@@ -45,6 +47,7 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
     AgentHistoryWorkspaceStorageService,
     AgentConversationReaderService,
     AgentConversationWriterService,
+    AgentTurnEventPublisherService,
     AgentTurnRecorderService,
     ...REPOSITORY_PROVIDERS,
   ],

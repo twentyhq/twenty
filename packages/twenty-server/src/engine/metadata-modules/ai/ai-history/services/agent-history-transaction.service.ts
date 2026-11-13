@@ -6,10 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { AgentChatDirectMessageConversationPrivacyService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-chat-direct-message-conversation-privacy.service';
+import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { deleteAgentHistoryRecordsWithShares } from 'src/engine/metadata-modules/ai/ai-history/utils/delete-agent-history-records-with-shares.util';
 import { validateAgentHistoryConversationRecordsOrThrow } from 'src/engine/metadata-modules/ai/ai-history/utils/validate-agent-history-conversation-records-or-throw.util';
+import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -23,6 +25,11 @@ export class AgentHistoryTransactionService {
       | 'findDirectMessagePairOfThread'
       | 'makeConversationRecordsPrivateToPair'
       | 'deletePairSharesOfConversationRecords'
+    >,
+    @Inject(AgentTurnEventPublisherService)
+    private readonly turnEventPublisherService: Pick<
+      AgentTurnEventPublisherService,
+      'publish'
     >,
   ) {}
 
@@ -41,6 +48,33 @@ export class AgentHistoryTransactionService {
           transactionScope.getRepositoryWithoutPermissionChecks(name, {
             shouldSkipEventEmission: true,
           });
+
+        const publishTurnsAfterCommit = ({
+          name,
+          type,
+          records,
+        }: {
+          name: AgentHistoryObjectName;
+          type: WorkspaceBroadcastEvent['type'];
+          records: ObjectLiteral[];
+        }) => {
+          const turnIds =
+            name === 'agentTurn'
+              ? records.map(({ id }) => id).filter(isString)
+              : [];
+
+          if (turnIds.length === 0) {
+            return;
+          }
+
+          transactionScope.afterCommit(() =>
+            this.turnEventPublisherService.publish({
+              workspaceId,
+              type,
+              turnIds,
+            }),
+          );
+        };
 
         const writtenMessageIds = new Set<string>();
         let directMessagePair: Promise<readonly [string, string] | null>;
@@ -112,9 +146,20 @@ export class AgentHistoryTransactionService {
             const { identifiers } = await getRepository(name).insert(values);
 
             await shareInsertedRecords({ name, identifiers });
+            publishTurnsAfterCommit({
+              name,
+              type: 'created',
+              records: identifiers,
+            });
           },
           update: async ({ name, where, values }) => {
             const result = await getRepository(name).update(where, values);
+
+            publishTurnsAfterCommit({
+              name,
+              type: 'updated',
+              records: result.generatedMaps,
+            });
 
             return result.generatedMaps.length;
           },
@@ -149,12 +194,19 @@ export class AgentHistoryTransactionService {
             );
 
             await shareInsertedRecords({ name, identifiers });
+            publishTurnsAfterCommit({
+              name,
+              type: 'updated',
+              records: identifiers,
+            });
           },
           delete: async ({ name, where }) => {
             const pair = await resolveDirectMessagePair();
 
             if (!isDefined(pair)) {
               const { raw } = await getRepository(name).delete(where);
+
+              publishTurnsAfterCommit({ name, type: 'deleted', records: raw });
 
               return raw.length;
             }
@@ -164,10 +216,17 @@ export class AgentHistoryTransactionService {
               transactionScope,
               name,
               where,
-              deleteShares: (records) =>
-                this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
+              deleteShares: (records) => {
+                publishTurnsAfterCommit({
+                  name: records.conversationObjectName,
+                  type: 'deleted',
+                  records: records.conversationRecordIds.map((id) => ({ id })),
+                });
+
+                return this.directMessageConversationPrivacyService.deletePairSharesOfConversationRecords(
                   { workspaceId, transactionScope, ...records },
-                ),
+                );
+              },
             });
           },
           afterCommit: transactionScope.afterCommit,

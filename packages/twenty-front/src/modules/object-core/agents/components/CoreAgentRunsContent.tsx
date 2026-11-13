@@ -16,6 +16,7 @@ import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
+import { useListenToCoreAgentRunEvents } from '@/object-core/agents/hooks/useListenToCoreAgentRunEvents';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -27,8 +28,7 @@ import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GetAgentRunsDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-
-const RUNS_POLL_INTERVAL_MS = 10000;
+import { logError } from '~/utils/logError';
 
 const StyledTurnsContainer = styled.div`
   flex: 1;
@@ -65,11 +65,16 @@ export const CoreAgentRunsContent = ({
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const { openAskAiThread } = useOpenAskAiThread();
 
-  // runs start and settle outside this page, so the list refreshes while it is visible
-  const { data, loading, error } = useQuery(GetAgentRunsDocument, {
+  const { data, loading, error, refetch } = useQuery(GetAgentRunsDocument, {
     variables: { agentId },
-    pollInterval: RUNS_POLL_INTERVAL_MS,
-    skipPollAttempt: () => document.hidden,
+    fetchPolicy: 'cache-and-network',
+  });
+
+  useListenToCoreAgentRunEvents({
+    agentId,
+    onRunsChanged: () => {
+      void refetch().catch(logError);
+    },
   });
 
   const runs = data?.agentRuns ?? [];
