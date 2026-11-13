@@ -6,6 +6,8 @@ import { currentUserApplicationAuthorizationsMarketplaceAppQuery } from 'test/in
 import { findManyMarketplaceAppsConnectUrlQuery } from 'test/integration/metadata/suites/application/utils/find-many-marketplace-apps-connect-url-query.util';
 import { findMarketplaceAppDetailConnectUrlQuery } from 'test/integration/metadata/suites/application/utils/find-marketplace-app-detail-connect-url-query.util';
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
+import { publicMarketplaceAppDetailIdQuery } from 'test/integration/metadata/suites/application/utils/public-marketplace-app-detail-id-query.util';
+import { publicMarketplaceAppsIdQuery } from 'test/integration/metadata/suites/application/utils/public-marketplace-apps-id-query.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -173,6 +175,29 @@ describe('Marketplace application that declares an OAuth client', () => {
       universalIdentifier: marketplaceAppUniversalIdentifier,
       connectUrl: CONNECT_URL,
     });
+  });
+
+  it('should keep the application out of the public marketplace', async () => {
+    const listResponse = await makeMetadataApiRequest(
+      { query: publicMarketplaceAppsIdQuery },
+      null,
+    );
+
+    expect(listResponse.body.errors).toBeUndefined();
+    expect(listResponse.body.data.publicMarketplaceApps).not.toContainEqual({
+      id: marketplaceAppUniversalIdentifier,
+    });
+
+    const detailResponse = await makeMetadataApiRequest(
+      {
+        query: publicMarketplaceAppDetailIdQuery,
+        variables: { universalIdentifier: marketplaceAppUniversalIdentifier },
+      },
+      null,
+    );
+
+    expect(detailResponse.body.data).toBeNull();
+    expect(detailResponse.body.errors).toHaveLength(1);
   });
 
   it('should refuse to install the application in a workspace', async () => {

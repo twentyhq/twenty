@@ -1,3 +1,5 @@
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+
 import { MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-built-in-application-universal-identifiers.constant';
 import { findVerifiedOAuthClientForRegistration } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-registration.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -32,7 +34,7 @@ describe('findVerifiedOAuthClientForRegistration', () => {
         universalIdentifier: '2b1f0d5e-6f0f-4f0e-9a43-0f6b3c1f2a10',
         oAuthClientId,
       })?.marketplaceAppUniversalIdentifier,
-    ).toBe(MARKETPLACE_BUILT_IN_APPLICATION_UNIVERSAL_IDENTIFIERS.CLAUDE);
+    ).toBe(TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CLAUDE);
   });
 
   it('should find nothing for a registration that only carries the CLI identifier', () => {
