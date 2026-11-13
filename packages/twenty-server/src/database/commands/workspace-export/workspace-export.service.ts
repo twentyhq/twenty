@@ -114,8 +114,6 @@ export class WorkspaceExportService {
           fieldMetadataOptionRows: fieldMetadataOptionRows.filter(
             ({ fieldMetadataId }) => fieldMetadataId === fieldMetadata.id,
           ),
-          // TODO: remove the stored options fallback once 2.59 has run on every workspace, together with the options column drop.
-          shouldRowsCoverStoredOptions: true,
         }),
       }),
     );

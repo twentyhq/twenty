@@ -12,7 +12,6 @@ import {
 } from 'twenty-shared/types';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 type StoredOption = FieldMetadataComplexOption & { id: string };
@@ -463,86 +462,6 @@ describe('field metadata option rows follow field options', () => {
         applicationId: stageField.applicationId,
       }),
     );
-  });
-
-  it('keeps the options and records of a field with a missing row, and recreates the row on its next edit', async () => {
-    const { data } = await createOneFieldMetadata<
-      FieldMetadataType.SELECT,
-      { id: string; options: StoredOption[] }
-    >({
-      expectToFail: false,
-      input: {
-        objectMetadataId,
-        type: FieldMetadataType.SELECT,
-        name: 'missingRowsField',
-        label: 'Missing Rows Field',
-        isLabelSyncedWithName: false,
-        options: [
-          { label: 'Open', value: 'OPEN', color: 'green', position: 0 },
-          { label: 'Closed', value: 'CLOSED', color: 'red', position: 1 },
-        ],
-      },
-      gqlFields: 'id options',
-    });
-    const fieldMetadataId: string = data.createOneField.id;
-    const options = data.createOneField.options;
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."fieldMetadataOption"
-        WHERE "fieldMetadataId" = $1 AND value = 'CLOSED'`,
-      [fieldMetadataId],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-      'flatFieldMetadataMaps',
-      'flatFieldMetadataOptionMaps',
-    ]);
-
-    const workspaceSchema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-    const [{ id: recordId }] = await globalThis.testDataSource.query(
-      `INSERT INTO "${workspaceSchema}"."_optionRowsSync" ("missingRowsField", "createdByName", "updatedByName")
-        VALUES ('CLOSED', 'Test', 'Test') RETURNING id`,
-    );
-
-    try {
-      const { data: updateData } = await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: fieldMetadataId,
-          updatePayload: { label: 'Missing Rows Field Renamed' },
-        },
-        gqlFields: 'id options',
-      });
-
-      expect(updateData.updateOneField.options).toEqual(options);
-
-      const [{ missingRowsField }] = await globalThis.testDataSource.query(
-        `SELECT "missingRowsField" FROM "${workspaceSchema}"."_optionRowsSync" WHERE id = $1`,
-        [recordId],
-      );
-
-      expect(missingRowsField).toBe('CLOSED');
-
-      expect(await findOptionRows(fieldMetadataId)).toEqual(
-        toExpectedRows({
-          options,
-          applicationId: await findFieldApplicationId(fieldMetadataId),
-        }),
-      );
-    } finally {
-      await updateOneFieldMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: fieldMetadataId,
-          updatePayload: { isActive: false },
-        },
-      });
-      await deleteOneFieldMetadata({
-        expectToFail: false,
-        input: { idToDelete: fieldMetadataId },
-      });
-    }
   });
 
   it('rejects an option id that is not a universal identifier', async () => {

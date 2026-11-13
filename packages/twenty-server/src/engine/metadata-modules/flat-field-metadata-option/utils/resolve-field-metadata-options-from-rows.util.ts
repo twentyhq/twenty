@@ -12,28 +12,16 @@ export type FieldMetadataOptionRowForOptions = Pick<
 export const resolveFieldMetadataOptionsFromRows = ({
   fieldMetadataEntity,
   fieldMetadataOptionRows,
-  shouldRowsCoverStoredOptions = false,
 }: {
-  fieldMetadataEntity: Pick<FieldMetadataEntity, 'type' | 'options'>;
+  fieldMetadataEntity: Pick<FieldMetadataEntity, 'type'> &
+    Partial<Pick<FieldMetadataEntity, 'options'>>;
   fieldMetadataOptionRows: FieldMetadataOptionRowForOptions[] | undefined;
-  shouldRowsCoverStoredOptions?: boolean;
 }): FieldMetadataEntity['options'] => {
   if (
     !isEnumFieldMetadataType(fieldMetadataEntity.type) ||
     !isNonEmptyArray(fieldMetadataOptionRows)
   ) {
-    return fieldMetadataEntity.options;
-  }
-
-  const rowValues = new Set(fieldMetadataOptionRows.map(({ value }) => value));
-
-  if (
-    shouldRowsCoverStoredOptions &&
-    (fieldMetadataEntity.options ?? []).some(
-      ({ value }) => !rowValues.has(value),
-    )
-  ) {
-    return fieldMetadataEntity.options;
+    return fieldMetadataEntity.options ?? null;
   }
 
   return [...fieldMetadataOptionRows]
