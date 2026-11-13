@@ -115,7 +115,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     changeFrequency: 'monthly',
     description: msg`Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud. The creator program is for content creators, communities and tech partners.`,
     id: 'partnersCreators',
-    indexed: false,
+    indexed: true,
     path: '/partners/creators',
     priority: 0.6,
     title: msg`Twenty Creator Program — Earn 20% on Every Referral`,

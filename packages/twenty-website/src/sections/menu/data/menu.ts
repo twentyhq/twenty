@@ -7,6 +7,7 @@ import {
   IconBulb,
   IconCode,
   IconHeartHandshake,
+  IconMovie,
   IconTag,
   IconUsers,
 } from '@tabler/icons-react';
@@ -115,6 +116,20 @@ export const MENU: {
             imageScale: PREVIEW_DRAWING_SCALE,
             title: msg`Grow your practice with Twenty`,
             description: msg`Earn 20% on every client you bring, every month for a year.`,
+          },
+        },
+        {
+          label: msg`Become a creator`,
+          description: msg`Earn by sharing Twenty`,
+          href: '/partners/creators',
+          icon: IconMovie,
+          preview: {
+            image: '/images/menu/creators.webp',
+            imageAlt: msg`Blue film camera illustration`,
+            imagePosition: 'center',
+            imageScale: PREVIEW_DRAWING_SCALE,
+            title: msg`Get paid to share Twenty`,
+            description: msg`Earn 20% on every team you bring, every month for a year.`,
           },
         },
         {
