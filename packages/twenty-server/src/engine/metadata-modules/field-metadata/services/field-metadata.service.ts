@@ -373,10 +373,17 @@ export class FieldMetadataService {
             fieldMetadataOption:
               computeFieldMetadataOptionOperationsForFieldMetadatas({
                 flatFieldMetadatasToCreate,
-                // Without options in the input, a field only carries its stale stored copy.
+                // Without options in the input, the target is the resolved options, so rows missing a stored option heal.
                 flatFieldMetadatasToUpdate: isDefined(updateFieldInput.options)
                   ? flatFieldMetadatasToUpdate
-                  : [],
+                  : flatFieldMetadatasToUpdate.map((flatFieldMetadata) => ({
+                      ...flatFieldMetadata,
+                      options: resolveFlatFieldMetadataOptions({
+                        flatFieldMetadata,
+                        flatFieldMetadataOptionMaps:
+                          existingFlatFieldMetadataOptionMaps,
+                      }),
+                    })),
                 existingFlatFieldMetadataOptionMaps,
                 applicationUniversalIdentifier:
                   resolvedOwnerFlatApplication.universalIdentifier,
