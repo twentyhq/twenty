@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type KeyboardEvent, useEffect, useState } from 'react';
 import { useTranslate } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { TeamsUserLinkTextInput } from 'src/features/chat/front-components/TeamsUserLinkTextInput';
@@ -27,8 +28,11 @@ const StyledDropdown = styled.div`
   z-index: 1;
 `;
 
-const StyledOption = styled.button`
-  background: transparent;
+const StyledOption = styled.button<{ $isHighlighted: boolean }>`
+  background: ${({ $isHighlighted }) =>
+    $isHighlighted
+      ? themeCssVariables.background.secondary
+      : themeCssVariables.background.primary};
   border: none;
   cursor: pointer;
   display: flex;
@@ -93,13 +97,49 @@ export const SearchDropdownPicker = <TOption,>({
 }: SearchDropdownPickerProps<TOption>) => {
   const { t } = useTranslate();
   const [isFocused, setIsFocused] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());
   const isDropdownOpen = isFocused && hasSearchTerm;
 
+  useEffect(() => {
+    setHighlightedIndex(0);
+  }, [searchTerm, options.length]);
+
   const handleSelect = (option: TOption) => {
     onSearchTermChange('');
     onSelect(option);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (options.length === 0) {
+      return;
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setHighlightedIndex((index) => (index + 1) % options.length);
+
+      return;
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setHighlightedIndex(
+        (index) => (index - 1 + options.length) % options.length,
+      );
+
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const highlightedOption = options[highlightedIndex];
+
+      if (isDefined(highlightedOption)) {
+        handleSelect(highlightedOption);
+      }
+    }
   };
 
   return (
@@ -109,17 +149,7 @@ export const SearchDropdownPicker = <TOption,>({
         onChange={(event) => onSearchTermChange(event.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        onKeyDown={(event) => {
-          if (event.key !== 'Enter') {
-            return;
-          }
-
-          event.preventDefault();
-
-          if (options.length > 0) {
-            handleSelect(options[0]);
-          }
-        }}
+        onKeyDown={handleKeyDown}
         placeholder={searchLabel}
         disabled={disabled}
         autoFocus={autoFocus}
@@ -127,14 +157,16 @@ export const SearchDropdownPicker = <TOption,>({
       />
       {isDropdownOpen && (
         <StyledDropdown onMouseDown={(event) => event.preventDefault()}>
-          {options.map((option) => {
+          {options.map((option, index) => {
             const meta = getOptionMeta(option);
 
             return (
               <StyledOption
                 key={getOptionKey(option)}
                 type="button"
-                onMouseDown={() => handleSelect(option)}
+                $isHighlighted={index === highlightedIndex}
+                onMouseEnter={() => setHighlightedIndex(index)}
+                onClick={() => handleSelect(option)}
               >
                 <StyledOptionName>{getOptionName(option)}</StyledOptionName>
                 {isNonEmptyString(meta) && (

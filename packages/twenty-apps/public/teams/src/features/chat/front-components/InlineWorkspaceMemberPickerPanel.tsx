@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useTranslate } from 'twenty-sdk/front-component';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -145,7 +145,7 @@ export const InlineWorkspaceMemberPickerPanel = ({
             if (event.key === 'Enter') {
               event.preventDefault();
 
-              if (options.length > 0) {
+              if (isNonEmptyArray(options)) {
                 onSelect(options[0]);
               }
             }
@@ -179,7 +179,7 @@ export const InlineWorkspaceMemberPickerPanel = ({
               </StyledOptionText>
             </StyledOption>
           ))}
-          {options.length === 0 && (
+          {!isNonEmptyArray(options) && (
             <StyledEmptyState>{emptyStateText}</StyledEmptyState>
           )}
         </StyledOptions>
