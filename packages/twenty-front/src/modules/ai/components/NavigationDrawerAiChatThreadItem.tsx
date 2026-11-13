@@ -12,7 +12,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { type InboxThreadListItemData } from '@/ai/types/InboxThreadListItemData';
+import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 
 type NavigationDrawerAiChatThreadItemProps = {
   thread: InboxThreadListItemData;

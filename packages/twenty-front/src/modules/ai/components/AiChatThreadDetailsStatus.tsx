@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatThreadStatusField } from '@/ai/components/AiChatThreadStatusField';
 import { useAiChatThreadDetailsStatus } from '@/ai/hooks/useAiChatThreadDetailsStatus';
-import { type InboxThreadTriageStatus } from '@/ai/types/InboxThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/inbox/types/InboxThreadTriageStatus';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 type AiChatThreadDetailsStatusProps = {

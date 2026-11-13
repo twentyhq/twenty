@@ -6,7 +6,7 @@ import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadSta
 import { aiChatReopenedThreadActivityState } from '@/ai/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
-import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
+import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
   type CurrentWorkspaceMember,
   currentWorkspaceMemberState,
@@ -19,7 +19,7 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 
 const updateAgentChatThreadInboxState = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateInboxThreadStatus', () => ({
+jest.mock('@/inbox/hooks/useUpdateInboxThreadStatus', () => ({
   useUpdateInboxThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),

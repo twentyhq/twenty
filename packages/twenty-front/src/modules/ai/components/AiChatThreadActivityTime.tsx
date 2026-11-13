@@ -4,9 +4,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 
 import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
 import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
-import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/inboxThreadMemberStateFamilySelector';
+import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
+import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
 import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';

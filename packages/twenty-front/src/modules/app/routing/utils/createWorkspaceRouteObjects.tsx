@@ -67,7 +67,7 @@ const AiChatPage = lazy(() =>
 );
 
 const InboxPage = lazy(() =>
-  import('~/pages/ai-chat/InboxPage').then((module) => ({
+  import('~/pages/inbox/InboxPage').then((module) => ({
     default: module.InboxPage,
   })),
 );

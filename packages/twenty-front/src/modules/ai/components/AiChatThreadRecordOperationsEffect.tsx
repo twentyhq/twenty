@@ -6,11 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
-import { useRefreshInboxOpenThreadsSummary } from '@/ai/hooks/useRefreshInboxOpenThreadsSummary';
-import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/InboxRecentThreadListSource';
-import { useLoadInboxThreadList } from '@/ai/hooks/useLoadInboxThreadList';
-import { inboxThreadListFamilyState } from '@/ai/states/inboxThreadListFamilyState';
-import { getInboxThreadListSourceKey } from '@/ai/utils/getInboxThreadListSourceKey';
+import { useRefreshInboxOpenThreadsSummary } from '@/inbox/hooks/useRefreshInboxOpenThreadsSummary';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
+import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';

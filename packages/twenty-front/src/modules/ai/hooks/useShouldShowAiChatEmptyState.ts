@@ -4,7 +4,7 @@ import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
-import { inboxRecentThreadsLoadingSelector } from '@/ai/states/selectors/inboxRecentThreadsLoadingSelector';
+import { inboxRecentThreadsLoadingSelector } from '@/inbox/states/selectors/inboxRecentThreadsLoadingSelector';
 import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useIsMobile } from 'twenty-ui/utilities';

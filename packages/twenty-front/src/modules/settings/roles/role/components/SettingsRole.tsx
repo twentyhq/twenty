@@ -5,9 +5,9 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
-import { useIsRoleInboxChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleInboxChannelAccessDirty';
-import { useResetRoleInboxChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleInboxChannelAccess';
-import { useSaveRoleInboxChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleInboxChannelAccess';
+import { useIsRoleInboxChannelAccessDirty } from '@/settings/roles/role-permissions/inbox-channels/hooks/useIsRoleInboxChannelAccessDirty';
+import { useResetRoleInboxChannelAccess } from '@/settings/roles/role-permissions/inbox-channels/hooks/useResetRoleInboxChannelAccess';
+import { useSaveRoleInboxChannelAccess } from '@/settings/roles/role-permissions/inbox-channels/hooks/useSaveRoleInboxChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
@@ -21,7 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useRefreshInboxChannels } from '@/ai/hooks/useRefreshInboxChannels';
+import { useRefreshInboxChannels } from '@/inbox/hooks/useRefreshInboxChannels';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';

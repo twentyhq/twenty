@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/inboxThreadMemberStateFamilySelector';
+import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
