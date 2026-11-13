@@ -19,6 +19,9 @@ import {
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Injectable()
 export class ApplicationMessageSendAttachmentsService {
@@ -32,6 +35,7 @@ export class ApplicationMessageSendAttachmentsService {
     private readonly filesFieldService: FilesFieldService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async buildAttachmentsToSendOrThrow({
@@ -146,7 +150,10 @@ export class ApplicationMessageSendAttachmentsService {
     );
 
     if (isNonEmptyArray(copyFailures)) {
-      await this.deleteUnclaimedCopies({ copiedAttachments, workspaceId });
+      await this.deleteCopiedFiles({
+        fileIds: copiedAttachments.map(({ fileId }) => fileId),
+        workspaceId,
+      });
 
       throw new MessageChannelException(
         `Failed to store sent app message attachment(s) in workspace ${workspaceId}: ${copyFailures.join(', ')}`,
@@ -157,20 +164,7 @@ export class ApplicationMessageSendAttachmentsService {
     return copiedAttachments;
   }
 
-  async deleteCopies({
-    copiedAttachments,
-    workspaceId,
-  }: {
-    copiedAttachments: AppMessageAttachmentInput[];
-    workspaceId: string;
-  }): Promise<void> {
-    await this.deleteCopiedFiles({
-      fileIds: copiedAttachments.map(({ fileId }) => fileId),
-      workspaceId,
-    });
-  }
-
-  async deleteUnclaimedCopies({
+  async deleteUnreferencedCopies({
     copiedAttachments,
     workspaceId,
   }: {
@@ -182,15 +176,17 @@ export class ApplicationMessageSendAttachmentsService {
     }
 
     try {
-      const files = await this.fileRepository.find(workspaceId, {
-        where: { id: In(copiedAttachments.map(({ fileId }) => fileId)) },
-        select: { id: true, settings: true },
+      const copiedFileIds = copiedAttachments.map(({ fileId }) => fileId);
+
+      const referencedFileIds = await this.findFileIdsReferencedByAttachments({
+        fileIds: copiedFileIds,
+        workspaceId,
       });
 
       await this.deleteCopiedFiles({
-        fileIds: files
-          .filter((file) => file.settings?.isTemporaryFile)
-          .map((file) => file.id),
+        fileIds: copiedFileIds.filter(
+          (fileId) => !referencedFileIds.has(fileId),
+        ),
         workspaceId,
       });
     } catch (error) {
@@ -198,6 +194,38 @@ export class ApplicationMessageSendAttachmentsService {
         `Failed to clean up sent app message attachment copies in workspace ${workspaceId}: ${error}`,
       );
     }
+  }
+
+  // a rolled back ingestion can leave a copy claimed but unreferenced, so only attachment rows prove a copy is in use
+  private async findFileIdsReferencedByAttachments({
+    fileIds,
+    workspaceId,
+  }: {
+    fileIds: string[];
+    workspaceId: string;
+  }): Promise<Set<string>> {
+    const attachments: Pick<AttachmentWorkspaceEntity, 'file'>[] =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepositoryWithoutPermissionChecks<AttachmentWorkspaceEntity>(
+              'attachment',
+            )
+            .createQueryBuilder('attachment')
+            .where(
+              `EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("attachment"."file") = 'array' THEN "attachment"."file" ELSE '[]'::jsonb END) AS "attachedFile"("value") WHERE "attachedFile"."value" ->> 'fileId' = ANY(:fileIds))`,
+              { fileIds },
+            )
+            .getMany(),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
+
+    return new Set(
+      attachments.flatMap((attachment) =>
+        (attachment.file ?? []).map(({ fileId }) => fileId),
+      ),
+    );
   }
 
   private async deleteCopiedFiles({

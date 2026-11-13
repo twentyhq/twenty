@@ -39,8 +39,7 @@ describe('ApplicationMessageSendService', () => {
   const ingest = jest.fn();
   const buildAttachmentsToSendOrThrow = jest.fn();
   const copyIntoAttachmentFileFieldOrThrow = jest.fn();
-  const deleteUnclaimedCopies = jest.fn();
-  const deleteCopies = jest.fn();
+  const deleteUnreferencedCopies = jest.fn();
   const CONVERSATION = {
     threadExternalId: 'thread-external-1',
     recipients: [{ handle: 'ada' }],
@@ -79,8 +78,7 @@ describe('ApplicationMessageSendService', () => {
     {
       buildAttachmentsToSendOrThrow,
       copyIntoAttachmentFileFieldOrThrow,
-      deleteUnclaimedCopies,
-      deleteCopies,
+      deleteUnreferencedCopies,
     } as unknown as ApplicationMessageSendAttachmentsService,
     { deleteFiles } as unknown as FileEmailAttachmentService,
     { executeInWorkspaceContext } as unknown as WorkspaceOrmManager,
@@ -193,33 +191,17 @@ describe('ApplicationMessageSendService', () => {
     expect(sendOrThrow).not.toHaveBeenCalled();
   });
 
-  it('should delete every copy, claimed or not, when the ingestion saved nothing', async () => {
+  it('should clean up the unreferenced copies when the ingestion fails', async () => {
     ingest.mockRejectedValueOnce(new Error('Ingestion rolled back'));
-    executeInWorkspaceContext
-      .mockResolvedValueOnce(CONVERSATION)
-      .mockResolvedValueOnce(false);
 
     await expect(service.send(SEND_ARGS)).rejects.toThrow(
       'Ingestion rolled back',
     );
 
-    expect(deleteCopies).toHaveBeenCalledWith({
+    expect(deleteUnreferencedCopies).toHaveBeenCalledWith({
       copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
       workspaceId: 'workspace-1',
     });
-  });
-
-  it('should keep the copies when the ingestion failed after saving the message', async () => {
-    ingest.mockRejectedValueOnce(new Error('Lookup after commit failed'));
-    executeInWorkspaceContext
-      .mockResolvedValueOnce(CONVERSATION)
-      .mockResolvedValueOnce(true);
-
-    await expect(service.send(SEND_ARGS)).rejects.toThrow(
-      'Lookup after commit failed',
-    );
-
-    expect(deleteCopies).not.toHaveBeenCalled();
   });
 
   it('should return the saved reply on retry without needing the deleted uploads', async () => {

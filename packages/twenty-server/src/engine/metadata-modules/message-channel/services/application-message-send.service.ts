@@ -18,10 +18,7 @@ import {
 } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import {
-  type AppMessageAttachmentInput,
-  MAX_APP_MESSAGE_TEXT_LENGTH,
-} from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
+import { MAX_APP_MESSAGE_TEXT_LENGTH } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -247,51 +244,44 @@ export class ApplicationMessageSendService {
         try {
           const {
             messages: [ingestedMessage],
-          } = await this.ingestOrDeleteCopies({
-            copiedAttachments,
+          } = await this.applicationMessageIngestionService.ingest({
+            applicationId,
             workspaceId,
+            requestUserWorkspaceId: userWorkspaceId,
             messageChannelId,
-            messageExternalId: delivery.externalId,
-            ingest: () =>
-              this.applicationMessageIngestionService.ingest({
-                applicationId,
-                workspaceId,
-                requestUserWorkspaceId: userWorkspaceId,
-                messageChannelId,
-                messages: [
+            messages: [
+              {
+                externalId: delivery.externalId,
+                threadExternalId: delivery.threadExternalId,
+                subject: delivery.subject ?? undefined,
+                text: delivery.text,
+                receivedAt: new Date(delivery.sentAt),
+                attachments: copiedAttachments,
+                participants: [
                   {
-                    externalId: delivery.externalId,
-                    threadExternalId: delivery.threadExternalId,
-                    subject: delivery.subject ?? undefined,
-                    text: delivery.text,
-                    receivedAt: new Date(delivery.sentAt),
-                    attachments: copiedAttachments,
-                    participants: [
-                      {
-                        role: MessageParticipantRole.FROM,
-                        handle: messageChannel.handle,
-                        displayName: messageChannel.displayName ?? undefined,
-                        workspaceMemberId:
-                          flatWorkspaceMemberMaps.idByUserWorkspaceId[
-                            userWorkspaceId
-                          ],
-                      },
-                      ...delivery.recipients.map((recipient) => ({
-                        role: MessageParticipantRole.TO,
-                        ...recipient,
-                      })),
-                      ...(delivery.cc ?? []).map((recipient) => ({
-                        role: MessageParticipantRole.CC,
-                        ...recipient,
-                      })),
-                      ...(delivery.bcc ?? []).map((recipient) => ({
-                        role: MessageParticipantRole.BCC,
-                        ...recipient,
-                      })),
-                    ],
+                    role: MessageParticipantRole.FROM,
+                    handle: messageChannel.handle,
+                    displayName: messageChannel.displayName ?? undefined,
+                    workspaceMemberId:
+                      flatWorkspaceMemberMaps.idByUserWorkspaceId[
+                        userWorkspaceId
+                      ],
                   },
+                  ...delivery.recipients.map((recipient) => ({
+                    role: MessageParticipantRole.TO,
+                    ...recipient,
+                  })),
+                  ...(delivery.cc ?? []).map((recipient) => ({
+                    role: MessageParticipantRole.CC,
+                    ...recipient,
+                  })),
+                  ...(delivery.bcc ?? []).map((recipient) => ({
+                    role: MessageParticipantRole.BCC,
+                    ...recipient,
+                  })),
                 ],
-              }),
+              },
+            ],
           });
 
           const ingestedSentMessage = {
@@ -312,67 +302,13 @@ export class ApplicationMessageSendService {
 
           return ingestedSentMessage;
         } finally {
-          await this.applicationMessageSendAttachmentsService.deleteUnclaimedCopies(
+          await this.applicationMessageSendAttachmentsService.deleteUnreferencedCopies(
             { copiedAttachments, workspaceId },
           );
         }
       },
       deliveryKey,
       APP_MESSAGE_DELIVERY_LOCK_OPTIONS,
-    );
-  }
-
-  private async ingestOrDeleteCopies<TIngestResult>({
-    copiedAttachments,
-    workspaceId,
-    messageChannelId,
-    messageExternalId,
-    ingest,
-  }: {
-    copiedAttachments: AppMessageAttachmentInput[];
-    workspaceId: string;
-    messageChannelId: string;
-    messageExternalId: string;
-    ingest: () => Promise<TIngestResult>;
-  }): Promise<TIngestResult> {
-    try {
-      return await ingest();
-    } catch (error) {
-      const isMessageSaved = await this.isMessageSaved({
-        workspaceId,
-        messageChannelId,
-        messageExternalId,
-      });
-
-      if (!isMessageSaved) {
-        await this.applicationMessageSendAttachmentsService.deleteCopies({
-          copiedAttachments,
-          workspaceId,
-        });
-      }
-
-      throw error;
-    }
-  }
-
-  private async isMessageSaved({
-    workspaceId,
-    messageChannelId,
-    messageExternalId,
-  }: {
-    workspaceId: string;
-    messageChannelId: string;
-    messageExternalId: string;
-  }): Promise<boolean> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
-            'messageChannelMessageAssociation',
-          )
-          .exists({ where: { messageChannelId, messageExternalId } }),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
     );
   }
 

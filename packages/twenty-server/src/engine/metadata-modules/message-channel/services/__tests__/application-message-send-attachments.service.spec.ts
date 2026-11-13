@@ -9,6 +9,7 @@ import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-
 import { type FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { MessageChannelException } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const ATTACHMENTS = [
@@ -22,6 +23,7 @@ describe('ApplicationMessageSendAttachmentsService', () => {
   const copyFileIntoFilesField = jest.fn();
   const deleteFilesFieldFile = jest.fn();
   const findFiles = jest.fn();
+  const executeInWorkspaceContext = jest.fn();
 
   const service = new ApplicationMessageSendAttachmentsService(
     { isFeatureEnabled } as unknown as FeatureFlagService,
@@ -31,6 +33,7 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       deleteFilesFieldFile,
     } as unknown as FilesFieldService,
     { find: findFiles } as unknown as WorkspaceScopedRepository<FileEntity>,
+    { executeInWorkspaceContext } as unknown as WorkspaceOrmManager,
   );
 
   beforeEach(() => {
@@ -155,10 +158,6 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       copyFileIntoFilesField
         .mockResolvedValueOnce({ id: 'copy-1' })
         .mockRejectedValueOnce(new Error('Storage unavailable'));
-      findFiles.mockResolvedValue([
-        { id: 'copy-1', settings: { isTemporaryFile: true } },
-      ]);
-
       await expect(
         service.copyIntoAttachmentFileFieldOrThrow({
           attachments: ATTACHMENTS,
@@ -174,14 +173,13 @@ describe('ApplicationMessageSendAttachmentsService', () => {
     });
   });
 
-  describe('deleteUnclaimedCopies', () => {
-    it('should delete only the copies no attachment record claimed', async () => {
-      findFiles.mockResolvedValue([
-        { id: 'copy-1', settings: { isTemporaryFile: false } },
-        { id: 'copy-2', settings: { isTemporaryFile: true } },
+  describe('deleteUnreferencedCopies', () => {
+    it('should delete only the copies no attachment record references', async () => {
+      executeInWorkspaceContext.mockResolvedValue([
+        { file: [{ fileId: 'copy-1', label: 'deck.pdf', extension: 'pdf' }] },
       ]);
 
-      await service.deleteUnclaimedCopies({
+      await service.deleteUnreferencedCopies({
         copiedAttachments: [
           { fileId: 'copy-1', label: 'deck.pdf' },
           { fileId: 'copy-2', label: 'photo.png' },
@@ -201,16 +199,13 @@ describe('ApplicationMessageSendAttachmentsService', () => {
         .spyOn(Logger.prototype, 'warn')
         .mockImplementation(() => undefined);
 
-      findFiles.mockResolvedValue([
-        { id: 'copy-1', settings: { isTemporaryFile: true } },
-        { id: 'copy-2', settings: { isTemporaryFile: true } },
-      ]);
+      executeInWorkspaceContext.mockResolvedValue([]);
       deleteFilesFieldFile
         .mockResolvedValueOnce(undefined)
         .mockRejectedValueOnce(new Error('Storage unavailable'));
 
       await expect(
-        service.deleteUnclaimedCopies({
+        service.deleteUnreferencedCopies({
           copiedAttachments: [
             { fileId: 'copy-1', label: 'deck.pdf' },
             { fileId: 'copy-2', label: 'photo.png' },
@@ -227,11 +222,13 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       warn.mockRestore();
     });
 
-    it('should not throw when looking up the copies fails', async () => {
-      findFiles.mockRejectedValue(new Error('Database unavailable'));
+    it('should keep every copy when looking up the attachments fails', async () => {
+      executeInWorkspaceContext.mockRejectedValue(
+        new Error('Database unavailable'),
+      );
 
       await expect(
-        service.deleteUnclaimedCopies({
+        service.deleteUnreferencedCopies({
           copiedAttachments: [{ fileId: 'copy-1', label: 'deck.pdf' }],
           workspaceId: 'workspace-1',
         }),
