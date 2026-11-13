@@ -1,9 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@/utils/validation/isDefined';
 
 import {
   type FilterQuoteCharacter,
   getOpenQuoteAfterCharacter,
-} from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/get-open-quote-after-character.util';
+} from '@/utils/filter/get-open-quote-after-character';
 
 export const splitFilterArrayItems = (arrayContent: string): string[] => {
   const items: string[] = [];

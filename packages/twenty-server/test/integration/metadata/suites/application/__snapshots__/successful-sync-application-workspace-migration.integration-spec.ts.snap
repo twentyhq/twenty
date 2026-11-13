@@ -1736,6 +1736,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "type": "create",
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "aggregateOperation": null,
           "applicationUniversalIdentifier": Any<String>,
@@ -1758,6 +1759,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "universalIdentifier": Any<String>,
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "aggregateOperation": null,
           "applicationUniversalIdentifier": Any<String>,
@@ -1824,6 +1826,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "type": "create",
       },
       {
+        "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
           "conditionalAvailabilityExpression": null,
