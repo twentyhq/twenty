@@ -52,6 +52,7 @@ export const FOOTER: {
         { label: msg`Pricing`, href: '/pricing' },
         { label: msg`Customers`, href: '/customers' },
         { label: msg`Partners`, href: '/partners' },
+        { label: msg`Become an integrator`, href: '/partners/integrators' },
         { label: msg`Why Twenty`, href: '/why-twenty' },
       ],
     },
