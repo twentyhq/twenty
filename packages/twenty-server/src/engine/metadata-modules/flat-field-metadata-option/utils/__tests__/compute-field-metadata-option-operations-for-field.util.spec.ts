@@ -226,6 +226,63 @@ describe('computeFieldMetadataOptionOperationsForField', () => {
     expect(operations.flatEntityToUpdate).not.toHaveProperty(OPEN_OPTION_ID);
   });
 
+  it("overrides another app's tied position when the workspace reorders around it", () => {
+    const workspaceOptionId = '20202020-0000-4000-8000-000000000103';
+    const workspaceOptionRow = {
+      ...closedOptionRow,
+      universalIdentifier: workspaceOptionId,
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      value: 'PENDING',
+      label: 'Pending',
+      position: 3,
+    };
+
+    const operations = computeOperations({
+      existingOptions: [
+        { ...openOptionRow, position: 2 },
+        { ...closedOptionRow, position: 2 },
+        workspaceOptionRow,
+      ],
+      applicationUniversalIdentifier: CALLER_APPLICATION_UNIVERSAL_IDENTIFIER,
+      targetUniversalFlatFieldMetadata: getFlatFieldMetadataMock({
+        ...targetField,
+        options: [
+          {
+            id: OPEN_OPTION_ID,
+            value: 'OPEN',
+            label: 'Open',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: workspaceOptionId,
+            value: 'PENDING',
+            label: 'Pending',
+            color: 'red',
+            position: 1,
+          },
+          {
+            id: CLOSED_OPTION_ID,
+            value: 'CLOSED',
+            label: 'Closed',
+            color: 'red',
+            position: 2,
+          },
+        ],
+      }),
+    });
+
+    expect(operations.flatEntityToUpdate).toMatchObject({
+      [workspaceOptionId]: { position: 1 },
+      [OPEN_OPTION_ID]: {
+        overrides: {
+          [CALLER_APPLICATION_UNIVERSAL_IDENTIFIER]: { position: 0 },
+        },
+      },
+    });
+    expect(operations.flatEntityToUpdate).not.toHaveProperty(CLOSED_OPTION_ID);
+  });
+
   it('drops the overrides once the workspace is back on the app values', () => {
     const operations = computeOperations({
       existingOptions: [

@@ -70,6 +70,11 @@ export const computeFieldMetadataOptionOperationsForField = ({
       : []
     ).map(({ id, position }) => [id, position]),
   );
+  const isReorderRequested = [...targetOptionColumnsByUniversalIdentifier].some(
+    ([universalIdentifier, { position }]) =>
+      readPositionByUniversalIdentifier.has(universalIdentifier) &&
+      readPositionByUniversalIdentifier.get(universalIdentifier) !== position,
+  );
 
   for (const existingOption of existingOptions) {
     const targetOptionColumns = targetOptionColumnsByUniversalIdentifier.get(
@@ -85,9 +90,11 @@ export const computeFieldMetadataOptionOperationsForField = ({
     const isOwnedByCaller =
       existingOption.applicationUniversalIdentifier ===
       applicationUniversalIdentifier;
-    // Sending back a position re-indexed on read does not reorder another application's option.
+    // Sending back a position re-indexed on read does not reorder another application's option,
+    // unless the caller reordered: then tied stored positions must be overridden to keep the new order.
     const isReadPositionSentBack =
       !isOwnedByCaller &&
+      !isReorderRequested &&
       targetOptionColumns.position ===
         readPositionByUniversalIdentifier.get(
           existingOption.universalIdentifier,
