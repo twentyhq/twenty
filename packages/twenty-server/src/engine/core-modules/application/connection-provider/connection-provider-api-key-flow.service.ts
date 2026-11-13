@@ -23,7 +23,6 @@ type ConnectWithApiKeyArgs = {
   reconnectingConnectedAccountId: string | null;
 };
 
-// No redirect: the member submits the key from Twenty itself, so the flow is a single request
 @Injectable()
 export class ConnectionProviderApiKeyFlowService {
   constructor(
