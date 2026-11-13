@@ -77,10 +77,13 @@ const validateDuplicates = ({
 };
 
 // Positions of different applications' options can tie, so only options being written must have distinct positions.
-export const validateFieldMetadataInputOptions = (
-  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>,
-  { isWritingOptions = true }: { isWritingOptions?: boolean } = {},
-): FlatFieldMetadataValidationError[] => {
+export const validateFieldMetadataInputOptions = ({
+  universalFlatFieldMetadata,
+  isWritingOptions = true,
+}: {
+  universalFlatFieldMetadata: UniversalFlatFieldMetadata<EnumFieldMetadataType>;
+  isWritingOptions?: boolean;
+}): FlatFieldMetadataValidationError[] => {
   const { options } = universalFlatFieldMetadata;
 
   if (!isDefined(options) || options.length === 0) {

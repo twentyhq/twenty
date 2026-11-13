@@ -10,4 +10,4 @@ export const isFieldMetadataOptionSyncSkipped = (
 ): boolean =>
   isDefined(universalFlatFieldMetadata) &&
   isEnumUniversalFlatFieldMetadata(universalFlatFieldMetadata) &&
-  validateFieldMetadataInputOptions(universalFlatFieldMetadata).length > 0;
+  validateFieldMetadataInputOptions({ universalFlatFieldMetadata }).length > 0;
