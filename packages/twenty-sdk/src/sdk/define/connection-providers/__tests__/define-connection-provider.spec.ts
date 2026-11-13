@@ -249,16 +249,5 @@ describe('defineConnectionProvider', () => {
       expect(result.success).toBe(true);
       expect(result.errors).toEqual([]);
     });
-
-    it('rejects a config block meant for another type', () => {
-      const result = defineConnectionProvider(
-        Object.assign({}, baseApiKeyConfig, { oauth: baseValidConfig.oauth }),
-      );
-
-      expect(result.success).toBe(false);
-      expect(result.errors).toContain(
-        "Connection provider with type 'api-key' takes no config block, but declares oauth",
-      );
-    });
   });
 });
