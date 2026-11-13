@@ -206,44 +206,23 @@ export const InboxNewChat: Story = {
     await expect(
       within(recipients).queryByText('Jane Doe'),
     ).not.toBeInTheDocument();
-    const removeAda = await focusRecipientRemoval({
-      recipients,
-      label: 'Ada',
-    });
-
-    await userEvent.click(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    );
-    const pendingPopup = await within(
-      canvasElement.ownerDocument.body,
-    ).findByRole('dialog', { name: 'Select recipients' });
     const isSendingMessageAtom =
       agentChatIsSendingMessageFamilyState.atomFamily({
         threadId: jotaiStore.get(newAiChatThreadIdState.atom),
       });
 
     jotaiStore.set(isSendingMessageAtom, true);
-    await waitFor(() => expect(removeAda).toBeDisabled());
-    await expect(
-      within(recipients).getByRole('button', {
-        name: 'Add people or a channel',
-      }),
-    ).toBeDisabled();
-    await expect(
-      within(pendingPopup).getByRole('searchbox', {
-        name: 'Search recipients',
-      }),
-    ).toBeDisabled();
-
-    for (const option of within(pendingPopup).getAllByRole('button')) {
-      await expect(option).toBeDisabled();
-    }
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole('group', { name: 'Recipients' }),
+      ).not.toBeInTheDocument(),
+    );
 
     jotaiStore.set(isSendingMessageAtom, false);
-    await waitFor(() => expect(removeAda).toBeEnabled());
-    await userEvent.keyboard('{Escape}');
+    await focusRecipientRemoval({
+      recipients: await canvas.findByRole('group', { name: 'Recipients' }),
+      label: 'Ada',
+    });
   },
 };
 

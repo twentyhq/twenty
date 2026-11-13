@@ -481,6 +481,7 @@ export type Mutation = {
   stopWorkflowRun: WorkflowRun;
   submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
+  testMcpToolStep: TestMcpToolStep;
   testWorkflowCodeStep: LogicFunctionExecutionResult;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
@@ -593,6 +594,11 @@ export type MutationSubmitFormStepArgs = {
 
 export type MutationTestHttpRequestArgs = {
   input: TestHttpRequestInput;
+};
+
+
+export type MutationTestMcpToolStepArgs = {
+  input: TestMcpToolStepInput;
 };
 
 
@@ -902,6 +908,24 @@ export type TestHttpRequestInput = {
   method: Scalars['String']['input'];
   /** URL to make the request to */
   url: Scalars['String']['input'];
+};
+
+export type TestMcpToolStep = {
+  __typename?: 'TestMcpToolStep';
+  error?: Maybe<Scalars['String']['output']>;
+  /** What the tool returned, saved as the step output sample */
+  result?: Maybe<Scalars['JSON']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type TestMcpToolStepInput = {
+  /** Must be true to run a tool that may change data, after the author confirmed it */
+  isDestructiveToolConfirmed?: InputMaybe<Scalars['Boolean']['input']>;
+  mcpServerId: Scalars['UUID']['input'];
+  /** Tool arguments with workflow variables already replaced */
+  toolArguments?: InputMaybe<Scalars['JSON']['input']>;
+  toolName: Scalars['String']['input'];
+  workflowVersionId: Scalars['UUID']['input'];
 };
 
 export type TestWorkflowCodeStepInput = {

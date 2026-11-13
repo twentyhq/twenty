@@ -26,12 +26,12 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
-import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
+import { InFlightDeferredWorkspaceOperationsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-operations.service';
 import { SCHEMA_AFFECTING_WORKSPACE_MIGRATION_METADATA_NAMES } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/schema-affecting-workspace-migration-metadata-names.constant';
 import { isSchemaAffectingWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-schema-affecting-workspace-migration.util';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
-import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
-import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
+import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
+import { type DeferredWorkspaceOperation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import { getDerivedCacheTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-derived-cache-triggers.util';
 import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-flat-entity-maps-keys-to-invalidate-for-workspace-migration.util';
@@ -50,8 +50,8 @@ export class WorkspaceMigrationRunnerService {
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly deferredWorkspaceMigrationActionRunnerService: DeferredWorkspaceMigrationActionRunnerService,
-    private readonly inFlightDeferredWorkspaceMigrationActionsService: InFlightDeferredWorkspaceMigrationActionsService,
+    private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
+    private readonly inFlightDeferredWorkspaceOperationsService: InFlightDeferredWorkspaceOperationsService,
   ) {}
 
   async invalidateCache({
@@ -182,9 +182,9 @@ export class WorkspaceMigrationRunnerService {
 
     const shouldDeferActions = args.shouldDeferActions ?? true;
 
-    // Inline callers (upgrades, seeding) may run before the deferred actions table exists.
+    // Inline callers (upgrades, seeding) may run before the deferred operations table exists.
     if (shouldDeferActions) {
-      await this.throwIfSchemaAffectingDeferredActionsAreInProgress(args);
+      await this.throwIfSchemaAffectingDeferredOperationsAreInProgress(args);
     }
 
     try {
@@ -212,7 +212,7 @@ export class WorkspaceMigrationRunnerService {
     }
   };
 
-  private throwIfSchemaAffectingDeferredActionsAreInProgress = async ({
+  private throwIfSchemaAffectingDeferredOperationsAreInProgress = async ({
     workspaceMigration: { actions },
     workspaceId,
   }: {
@@ -223,7 +223,7 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
-    await this.inFlightDeferredWorkspaceMigrationActionsService.throwIfSchemaAffectingActionsAreInProgress(
+    await this.inFlightDeferredWorkspaceOperationsService.throwIfSchemaAffectingOperationsAreInProgress(
       workspaceId,
     );
   };
@@ -371,7 +371,7 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
-    const allDeferredActions: DeferredWorkspaceMigrationAction[] = [];
+    const allDeferredOperations: DeferredWorkspaceOperation[] = [];
 
     const transactionStart = performance.now();
     let slowestActionMs = 0;
@@ -388,7 +388,7 @@ export class WorkspaceMigrationRunnerService {
 
       for (const action of actions) {
         const actionStart = performance.now();
-        const { partialOptimisticCache, metadataEvents, deferredActions } =
+        const { partialOptimisticCache, metadataEvents, deferredOperations } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
             {
               action,
@@ -432,12 +432,12 @@ export class WorkspaceMigrationRunnerService {
         }
 
         allMetadataEvents.push(...metadataEvents);
-        allDeferredActions.push(...deferredActions);
+        allDeferredOperations.push(...deferredOperations);
       }
 
       if (shouldDeferActions) {
-        await this.deferredWorkspaceMigrationActionRunnerService.persist({
-          deferredActions: allDeferredActions,
+        await this.deferredWorkspaceOperationRunnerService.persist({
+          deferredOperations: allDeferredOperations,
           workspaceId,
           applicationUniversalIdentifier,
           queryRunner,
@@ -600,15 +600,13 @@ export class WorkspaceMigrationRunnerService {
       'Runner',
     );
 
-    await this.deferredWorkspaceMigrationActionRunnerService.dispatchAfterCommit(
-      {
-        deferredActions: allDeferredActions,
-        hasPersistedDeferredActions: shouldDeferActions,
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityMaps,
-      },
-    );
+    await this.deferredWorkspaceOperationRunnerService.dispatchAfterCommit({
+      deferredOperations: allDeferredOperations,
+      hasPersistedDeferredOperations: shouldDeferActions,
+      workspaceId,
+      applicationUniversalIdentifier,
+      allFlatEntityMaps,
+    });
 
     this.logger.perfTimeEnd('Runner', 'Total execution');
 

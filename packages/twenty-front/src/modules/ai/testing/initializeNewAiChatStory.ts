@@ -1,6 +1,8 @@
 import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
@@ -50,11 +52,17 @@ export const initializeNewAiChatStory = ({
   ]);
   jotaiStore.set(currentAiChatThreadState.atom, NEW_CHAT_THREAD_ID);
   jotaiStore.set(agentChatDisplayedThreadState.atom, NEW_CHAT_THREAD_ID);
-  jotaiStore.set(agentChatThreadListState.atom, {
-    threadIds: [],
-    hasNextPage: false,
-    endCursor: null,
-  });
+  jotaiStore.set(
+    agentChatThreadListFamilyState.atomFamily(
+      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+    ),
+    {
+      threadIds: [],
+      hasNextPage: false,
+      endCursor: null,
+      lastLoadedActivityAt: null,
+    },
+  );
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
     featureFlags: [

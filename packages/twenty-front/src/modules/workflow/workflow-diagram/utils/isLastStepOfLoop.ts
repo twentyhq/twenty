@@ -35,7 +35,7 @@ export const isLastStepOfLoop = ({
 
     if (
       currentId === stepId &&
-      currentStep.nextStepIds?.includes(iterator.id) === true
+      currentStep.nextStepIds?.includes(iterator.id)
     ) {
       return true;
     }

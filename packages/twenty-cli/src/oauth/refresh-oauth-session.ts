@@ -10,6 +10,7 @@ import { isAccessTokenExpiring } from '@/oauth/is-access-token-expiring';
 import { requestOAuthTokens } from '@/oauth/request-oauth-tokens';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { parseApiUrl } from '@/target/parse-api-url';
 
 const createSessionExpiredError = (remoteName: string, details?: unknown) =>
@@ -74,11 +75,13 @@ export const refreshOAuthSession = ({
   configPath,
   remoteName,
   apiUrl,
+  proxyHeaders,
   signal,
 }: {
   configPath: string;
   remoteName: string;
   apiUrl: string;
+  proxyHeaders?: ProxyHeaders;
   signal: AbortSignal;
 }) =>
   withConfigLock({
@@ -104,9 +107,14 @@ export const refreshOAuthSession = ({
         throw createSessionExpiredError(remoteName);
       }
 
-      const { tokenEndpoint } = await discoverOAuthServer({ apiUrl, signal });
+      const { tokenEndpoint } = await discoverOAuthServer({
+        apiUrl,
+        proxyHeaders,
+        signal,
+      });
       const tokens = await requestOAuthTokens({
         apiUrl,
+        proxyHeaders,
         tokenEndpoint,
         parameters: {
           grant_type: 'refresh_token',

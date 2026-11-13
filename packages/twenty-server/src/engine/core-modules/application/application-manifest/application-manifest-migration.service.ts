@@ -29,7 +29,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -192,10 +192,7 @@ export class ApplicationManifestMigrationService {
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
     shouldDeferActions?: boolean;
-  }): Promise<{
-    workspaceMigration: WorkspaceMigration;
-    hasSchemaMetadataChanged: boolean;
-  }> {
+  }): Promise<ApplicationManifestSyncResult> {
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();
@@ -366,6 +363,8 @@ export class ApplicationManifestMigrationService {
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+      cascadeDeletionParentByUniversalIdentifier:
+        validateAndBuildResult.cascadeDeletionParentByUniversalIdentifier,
     };
   }
 
