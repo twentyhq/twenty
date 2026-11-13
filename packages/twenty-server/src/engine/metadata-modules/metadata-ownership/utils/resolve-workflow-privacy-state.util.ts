@@ -2,10 +2,14 @@ import { isNonEmptyString, isString } from '@sniptt/guards';
 import { WorkflowVisibility } from 'twenty-shared/types';
 
 import { type OwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-privacy-state.type';
-import { type OwnableRootRow } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-row.type';
+
+type WorkflowPrivacyRow = {
+  visibility?: unknown;
+  createdByUserWorkspaceId?: unknown;
+};
 
 export const resolveWorkflowPrivacyState = (
-  workflow: OwnableRootRow,
+  workflow: WorkflowPrivacyRow,
 ): OwnableRootPrivacyState => ({
   isPrivate:
     !isString(workflow.visibility) ||

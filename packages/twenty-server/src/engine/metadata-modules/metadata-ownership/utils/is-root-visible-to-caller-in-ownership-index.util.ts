@@ -9,7 +9,10 @@ export const isRootVisibleToCallerInOwnershipIndex = ({
   rootId,
   caller,
 }: {
-  metadataOwnershipIndex: MetadataOwnershipIndex;
+  metadataOwnershipIndex: Pick<
+    MetadataOwnershipIndex,
+    'ownerUserWorkspaceIdByPrivateRootId'
+  >;
   rootId: string;
   caller: MetadataCaller;
 }): boolean => {

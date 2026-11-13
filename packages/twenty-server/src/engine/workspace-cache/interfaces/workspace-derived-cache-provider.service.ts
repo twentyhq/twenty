@@ -38,8 +38,9 @@ export abstract class WorkspaceDerivedCacheProvider<
   getFromSource(
     source: WorkspaceCacheDataMap[TSourceKeyName],
   ): WorkspaceDerivedCacheDataMap[TDerivedKeyName] {
-    return this.getOrComputeFromOrderedSources([source], () =>
-      this.computeFromSource(source),
-    );
+    return this.getOrComputeFromOrderedSources({
+      orderedSources: [source],
+      compute: () => this.computeFromSource(source),
+    });
   }
 }

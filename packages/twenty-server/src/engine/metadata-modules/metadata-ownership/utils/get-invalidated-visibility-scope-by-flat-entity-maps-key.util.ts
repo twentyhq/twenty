@@ -16,28 +16,31 @@ import { isOwnableRootMetadataName } from 'src/engine/metadata-modules/metadata-
 import { resolveOwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/utils/resolve-ownable-root-privacy-state.util';
 import { type WorkspaceCacheInvalidatedVisibilityScope } from 'src/engine/workspace-cache/types/workspace-cache-invalidated-visibility-scope.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 
 type InvalidatedVisibilityScopeByFlatEntityMapsKey = Partial<
   Record<keyof AllFlatEntityMaps, WorkspaceCacheInvalidatedVisibilityScope>
 >;
+
+export type PrivacyScopedMetadataEvent = {
+  metadataName: AllMetadataName;
+  type: MetadataEvent['type'];
+  properties: {
+    before?: OwnableRootRow;
+    after?: OwnableRootRow;
+  };
+};
 
 type OwnableRootFlatEntityMaps = Partial<
   Pick<AllFlatEntityMaps, MetadataToFlatEntityMapsKey<OwnableRootMetadataName>>
 >;
 
 const getMetadataEventRows = (
-  metadataEvent: MetadataEvent,
-): Record<string, unknown>[] => {
-  if (metadataEvent.type === 'created') {
-    return [metadataEvent.properties.after];
-  }
-
-  if (metadataEvent.type === 'deleted') {
-    return [metadataEvent.properties.before];
-  }
-
-  return [metadataEvent.properties.before, metadataEvent.properties.after];
-};
+  metadataEvent: PrivacyScopedMetadataEvent,
+): OwnableRootRow[] =>
+  [metadataEvent.properties.before, metadataEvent.properties.after].filter(
+    isDefined,
+  );
 
 type TouchedRootPrivacyScope = 'private' | 'workspace' | 'unknown';
 
@@ -46,7 +49,7 @@ const getTouchedRootPrivacyScopes = ({
   rootMetadataName,
   loadedRootFlatEntityMaps,
 }: {
-  metadataEvent: MetadataEvent;
+  metadataEvent: PrivacyScopedMetadataEvent;
   rootMetadataName: OwnableRootMetadataName;
   loadedRootFlatEntityMaps: FlatEntityMaps<
     MetadataFlatEntity<OwnableRootMetadataName>
@@ -113,7 +116,7 @@ export const getInvalidatedVisibilityScopeByFlatEntityMapsKey = ({
   fromAllFlatEntityMaps,
   toAllFlatEntityMaps,
 }: {
-  metadataEvents: MetadataEvent[];
+  metadataEvents: PrivacyScopedMetadataEvent[];
   fromAllFlatEntityMaps: OwnableRootFlatEntityMaps;
   toAllFlatEntityMaps: OwnableRootFlatEntityMaps;
 }): InvalidatedVisibilityScopeByFlatEntityMapsKey => {

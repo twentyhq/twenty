@@ -37,16 +37,21 @@ export abstract class WorkspaceMultiSourceDerivedCacheProvider<
   getFromSources(
     sources: Pick<WorkspaceCacheDataMap, TSourceKeyName>,
   ): WorkspaceDerivedCacheDataMap[TDerivedKeyName] {
-    return this.getOrComputeFromOrderedSources(
-      this.sourceKeyNames.map((sourceKeyName) => sources[sourceKeyName]),
-      () => this.computeFromSources(sources),
-    );
+    return this.getOrComputeFromOrderedSources({
+      orderedSources: this.sourceKeyNames.map(
+        (sourceKeyName) => sources[sourceKeyName],
+      ),
+      compute: () => this.computeFromSources(sources),
+    });
   }
 
-  protected getOrComputeFromOrderedSources(
-    orderedSources: readonly object[],
-    compute: () => WorkspaceDerivedCacheDataMap[TDerivedKeyName],
-  ): WorkspaceDerivedCacheDataMap[TDerivedKeyName] {
+  protected getOrComputeFromOrderedSources({
+    orderedSources,
+    compute,
+  }: {
+    orderedSources: readonly object[];
+    compute: () => WorkspaceDerivedCacheDataMap[TDerivedKeyName];
+  }): WorkspaceDerivedCacheDataMap[TDerivedKeyName] {
     let node = this.derivedDataBySources;
 
     for (const source of orderedSources) {

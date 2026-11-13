@@ -3,10 +3,16 @@ import { ViewVisibility } from 'twenty-shared/types';
 
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { type OwnableRootPrivacyState } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-privacy-state.type';
-import { type OwnableRootRow } from 'src/engine/metadata-modules/metadata-ownership/types/ownable-root-row.type';
+
+type ViewPrivacyRow = {
+  visibility?: unknown;
+  overrides?: unknown;
+  applicationUniversalIdentifier?: unknown;
+  createdByUserWorkspaceId?: unknown;
+};
 
 export const resolveViewPrivacyState = (
-  view: OwnableRootRow,
+  view: ViewPrivacyRow,
 ): OwnableRootPrivacyState => {
   const effectiveVisibility = resolveEffectiveFlatEntityProperty({
     metadataName: 'view',

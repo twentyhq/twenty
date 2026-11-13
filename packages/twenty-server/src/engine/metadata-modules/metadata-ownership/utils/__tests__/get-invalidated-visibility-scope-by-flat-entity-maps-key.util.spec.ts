@@ -1,10 +1,11 @@
-import { type AllMetadataName } from 'twenty-shared/metadata';
 import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { getInvalidatedVisibilityScopeByFlatEntityMapsKey } from 'src/engine/metadata-modules/metadata-ownership/utils/get-invalidated-visibility-scope-by-flat-entity-maps-key.util';
-import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import {
+  getInvalidatedVisibilityScopeByFlatEntityMapsKey,
+  type PrivacyScopedMetadataEvent,
+} from 'src/engine/metadata-modules/metadata-ownership/utils/get-invalidated-visibility-scope-by-flat-entity-maps-key.util';
 
 const buildFlatView = ({
   id,
@@ -32,18 +33,9 @@ const buildFlatViewMaps = (
   universalIdentifiersByApplicationId: {},
 });
 
-const buildMetadataEvent = (metadataEvent: {
-  metadataName: AllMetadataName;
-  type: MetadataEvent['type'];
-  properties: {
-    before?: Record<string, unknown>;
-    after?: Record<string, unknown>;
-  };
-}) =>
-  ({
-    ...metadataEvent,
-    recordId: 'record-id',
-  }) as unknown as MetadataEvent;
+const buildMetadataEvent = (
+  metadataEvent: PrivacyScopedMetadataEvent,
+): PrivacyScopedMetadataEvent => metadataEvent;
 
 const privateView = buildFlatView({
   id: 'private-view',
@@ -67,7 +59,7 @@ const VIEW_FAMILY_FLAT_ENTITY_MAPS_KEYS = [
   'flatViewFieldGroupMaps',
 ] as const;
 
-const getScopes = (metadataEvents: MetadataEvent[]) =>
+const getScopes = (metadataEvents: PrivacyScopedMetadataEvent[]) =>
   getInvalidatedVisibilityScopeByFlatEntityMapsKey({
     metadataEvents,
     fromAllFlatEntityMaps: allFlatEntityMaps,

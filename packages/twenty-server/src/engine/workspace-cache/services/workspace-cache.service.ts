@@ -282,10 +282,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           providerEntries.data,
         ),
       });
-      result.hashes[cacheKeyName] = this.getDerivedCacheHash(
+      result.hashes[cacheKeyName] = this.getDerivedCacheHash({
         sourceKeyNames,
-        providerEntries.hashes,
-      );
+        sourceHashes: providerEntries.hashes,
+      });
     }
 
     return result as WorkspaceCacheResultWithHashes<K>;
@@ -305,13 +305,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     ];
   }
 
-  private getDerivedCacheHash(
+  private getDerivedCacheHash({
+    sourceKeyNames,
+    sourceHashes,
+  }: {
     sourceKeyNames: readonly [
       WorkspaceCacheKeyName,
       ...WorkspaceCacheKeyName[],
-    ],
-    sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>,
-  ): string | undefined {
+    ];
+    sourceHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
+  }): string | undefined {
     const [firstSourceKeyName, ...otherSourceKeyNames] = sourceKeyNames;
 
     return otherSourceKeyNames.length === 0
@@ -425,10 +428,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     for (const cacheKeyName of cacheKeyNames) {
       if (isWorkspaceDerivedCacheKeyName(cacheKeyName)) {
-        cacheOrDerivedCacheHashes[cacheKeyName] = this.getDerivedCacheHash(
-          this.getDerivedCacheProviderOrThrow(cacheKeyName).sourceKeyNames,
+        cacheOrDerivedCacheHashes[cacheKeyName] = this.getDerivedCacheHash({
+          sourceKeyNames:
+            this.getDerivedCacheProviderOrThrow(cacheKeyName).sourceKeyNames,
           sourceHashes,
-        );
+        });
       }
     }
 

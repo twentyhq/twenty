@@ -9,7 +9,10 @@ export const isChildVisibleToCallerInOwnershipIndex = ({
   childId,
   caller,
 }: {
-  metadataOwnershipIndex: MetadataOwnershipIndex;
+  metadataOwnershipIndex: Pick<
+    MetadataOwnershipIndex,
+    'ownerUserWorkspaceIdByPrivateChildId'
+  >;
   childId: string;
   caller: MetadataCaller;
 }): boolean => {

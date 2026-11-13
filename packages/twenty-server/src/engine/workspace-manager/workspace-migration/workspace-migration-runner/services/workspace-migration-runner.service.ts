@@ -569,16 +569,6 @@ export class WorkspaceMigrationRunnerService {
         status: 'success',
         value: performance.now() - postCommitInvalidateStart,
       });
-
-      this.workspaceCacheService.recordInvalidatedVisibilityScopes({
-        cacheKeyNames: flatEntityMapsKeysToInvalidate,
-        visibilityScopeByCacheKeyName:
-          getInvalidatedVisibilityScopeByFlatEntityMapsKey({
-            metadataEvents: allMetadataEvents,
-            fromAllFlatEntityMaps: cachedAllFlatEntityMaps,
-            toAllFlatEntityMaps: allFlatEntityMaps,
-          }),
-      });
     } catch (cacheError) {
       this.recordRunPhaseMetric({
         phase: 'cache-invalidation',
@@ -588,6 +578,23 @@ export class WorkspaceMigrationRunnerService {
 
       this.logger.error(
         `Cache invalidation failed after committed transaction: ${cacheError}`,
+        'Runner',
+      );
+    }
+
+    try {
+      this.workspaceCacheService.recordInvalidatedVisibilityScopes({
+        cacheKeyNames: flatEntityMapsKeysToInvalidate,
+        visibilityScopeByCacheKeyName:
+          getInvalidatedVisibilityScopeByFlatEntityMapsKey({
+            metadataEvents: allMetadataEvents,
+            fromAllFlatEntityMaps: cachedAllFlatEntityMaps,
+            toAllFlatEntityMaps: allFlatEntityMaps,
+          }),
+      });
+    } catch (visibilityScopeError) {
+      this.logger.error(
+        `Failed to record invalidated visibility scopes: ${visibilityScopeError}`,
         'Runner',
       );
     }

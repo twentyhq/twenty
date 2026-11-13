@@ -1,4 +1,5 @@
 import { WorkflowVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataCaller } from 'src/engine/metadata-modules/metadata-ownership/types/metadata-caller.type';
 import { buildVisibleToCallerSqlPredicate } from 'src/engine/metadata-modules/metadata-ownership/utils/build-visible-to-caller-sql-predicate.util';
@@ -61,7 +62,7 @@ const findVisibleWorkflowIdsWithSqlPredicate = async (
     caller,
   });
 
-  if (visibleToCallerSqlPredicate === undefined) {
+  if (!isDefined(visibleToCallerSqlPredicate)) {
     throw new Error('Expected a predicate for a caller that does not bypass');
   }
 
