@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
@@ -41,7 +42,9 @@ describe('addLookupTargetsToRecordGqlFields', () => {
   });
 
   it('leaves the selection unchanged for a column without a lookup', () => {
-    const recordGqlFields = { company: { id: true, name: true } };
+    const recordGqlFields: RecordGqlFields = {
+      company: { id: true, name: true },
+    };
 
     expect(
       addLookupTargetsToRecordGqlFields({
