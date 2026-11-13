@@ -124,7 +124,15 @@ const SidePanelEditColumnForm = ({
     };
 
     upsertRecordField(updatedRecordField);
-    await saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
+
+    const isSaved = await saveViewFields([
+      mapRecordFieldToViewField(updatedRecordField),
+    ]);
+
+    if (!isSaved) {
+      upsertRecordField(recordField);
+      return;
+    }
 
     goBackFromSidePanel();
   };
