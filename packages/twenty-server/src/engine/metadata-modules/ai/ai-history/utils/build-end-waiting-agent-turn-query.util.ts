@@ -7,9 +7,6 @@ export const buildEndWaitingAgentTurnQuery = ({
 }: {
   table: (name: AgentHistoryObjectName) => string;
 }): string =>
-  `WITH ended AS (
-     UPDATE ${table('agentTurn')} turn SET "status" = $2, "endedAt" = now(), "updatedAt" = now()
-     FROM ${table('agentMessage')} message
-     WHERE message.id = $1 AND turn.id = message."turnId" AND turn."status" = '${AgentTurnStatus.WAITING_FOR_INPUT}'
-     RETURNING turn.id
-   ) SELECT id FROM ended`;
+  `UPDATE ${table('agentTurn')} turn SET "status" = $2, "endedAt" = now(), "updatedAt" = now()
+   FROM ${table('agentMessage')} message
+   WHERE message.id = $1 AND turn.id = message."turnId" AND turn."status" = '${AgentTurnStatus.WAITING_FOR_INPUT}'`;

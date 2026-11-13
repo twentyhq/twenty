@@ -2,10 +2,10 @@ import { useQuery } from '@apollo/client/react';
 import { useCallback, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS } from '@/object-core/agents/constants/CoreAgentRunsPollIntervalInMs';
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
 import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
-import { useListenToCoreAgentRunEvents } from '@/object-core/agents/hooks/useListenToCoreAgentRunEvents';
 import { type CoreAgentTableRow } from '@/object-core/agents/types/CoreAgentTableRow';
 import { buildCoreAgentTableRows } from '@/object-core/agents/utils/buildCoreAgentTableRows';
 import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
@@ -47,20 +47,12 @@ export const useCoreAgents = ({
 
   const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
 
-  const { data: runSummariesData, refetch: refetchRunSummaries } = useQuery(
-    GetAgentRunSummariesDocument,
-    {
-      fetchPolicy: 'cache-and-network',
-      skip: !canReadCoreAgentRuns,
-    },
-  );
-
-  useListenToCoreAgentRunEvents({
-    onRunsChanged: () => {
-      if (canReadCoreAgentRuns) {
-        void refetchRunSummaries().catch(logError);
-      }
-    },
+  // Runs start and settle outside this page, so the summaries refresh while it is visible
+  const { data: runSummariesData } = useQuery(GetAgentRunSummariesDocument, {
+    fetchPolicy: 'cache-and-network',
+    skip: !canReadCoreAgentRuns,
+    pollInterval: CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS,
+    skipPollAttempt: () => document.hidden,
   });
 
   const refetchCoreAgents = useCallback(() => {

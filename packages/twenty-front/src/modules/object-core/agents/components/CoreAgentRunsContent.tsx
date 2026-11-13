@@ -16,19 +16,18 @@ import { useOpenAskAiThread } from '@/ai/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
-import { useListenToCoreAgentRunEvents } from '@/object-core/agents/hooks/useListenToCoreAgentRunEvents';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { Table } from '@/ui/layout/table/components/Table';
+import { CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS } from '@/object-core/agents/constants/CoreAgentRunsPollIntervalInMs';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GetAgentRunsDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-import { logError } from '~/utils/logError';
 
 const StyledTurnsContainer = styled.div`
   flex: 1;
@@ -65,16 +64,11 @@ export const CoreAgentRunsContent = ({
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const { openAskAiThread } = useOpenAskAiThread();
 
-  const { data, loading, error, refetch } = useQuery(GetAgentRunsDocument, {
+  // runs start and settle outside this page, so the list refreshes while it is visible
+  const { data, loading, error } = useQuery(GetAgentRunsDocument, {
     variables: { agentId },
-    fetchPolicy: 'cache-and-network',
-  });
-
-  useListenToCoreAgentRunEvents({
-    agentId,
-    onRunsChanged: () => {
-      void refetch().catch(logError);
-    },
+    pollInterval: CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS,
+    skipPollAttempt: () => document.hidden,
   });
 
   const runs = data?.agentRuns ?? [];

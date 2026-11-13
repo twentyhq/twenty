@@ -1,17 +1,8 @@
-import { Test } from '@nestjs/testing';
-
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
-import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
-import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 
-const buildService = async () => {
+const buildService = () => {
   const threadRecordEventService = {
     emitPendingQuestionCleared: jest.fn().mockResolvedValue(undefined),
-  };
-  const turnEventPublisherService = {
-    publish: jest.fn().mockResolvedValue(undefined),
   };
   const messagePartRepository = {
     writePart: jest.fn(),
@@ -25,33 +16,13 @@ const buildService = async () => {
     }),
   );
 
-  const module = await Test.createTestingModule({
-    providers: [
-      ToolCallAnswerRecorderService,
-      {
-        provide: getAgentHistoryRepositoryToken('agentMessagePart'),
-        useValue: messagePartRepository,
-      },
-      {
-        provide: AgentChatThreadRecordEventService,
-        useValue: threadRecordEventService,
-      },
-      { provide: AgentChatThreadParticipantService, useValue: {} },
-      {
-        provide: AgentTurnEventPublisherService,
-        useValue: turnEventPublisherService,
-      },
-    ],
-  }).compile();
+  const service = new ToolCallAnswerRecorderService(
+    messagePartRepository as never,
+    threadRecordEventService as never,
+    {} as never,
+  );
 
-  const service = module.get(ToolCallAnswerRecorderService);
-
-  return {
-    service,
-    messagePartRepository,
-    threadRecordEventService,
-    turnEventPublisherService,
-  };
+  return { service, messagePartRepository, threadRecordEventService };
 };
 
 describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
@@ -65,17 +36,12 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
   };
 
   it('tells open chat lists once the last answer stops the wait', async () => {
-    const {
-      service,
-      messagePartRepository,
-      threadRecordEventService,
-      turnEventPublisherService,
-    } = await buildService();
+    const { service, messagePartRepository, threadRecordEventService } =
+      buildService();
 
     messagePartRepository.writePart
       .mockResolvedValueOnce(undefined)
-      .mockResolvedValueOnce([{ id: 'thread-id' }])
-      .mockResolvedValueOnce([{ id: 'turn-id' }]);
+      .mockResolvedValueOnce([{ id: 'thread-id' }]);
 
     await service.recordToolCallAnswer({
       ...answerArguments,
@@ -85,17 +51,11 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
     expect(
       threadRecordEventService.emitPendingQuestionCleared,
     ).toHaveBeenCalledTimes(1);
-    expect(turnEventPublisherService.publish).toHaveBeenCalledTimes(1);
-    expect(turnEventPublisherService.publish).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      type: 'updated',
-      turnIds: ['turn-id'],
-    });
   });
 
   it('stays quiet when another caller already stopped the wait', async () => {
     const { service, messagePartRepository, threadRecordEventService } =
-      await buildService();
+      buildService();
 
     messagePartRepository.writePart
       .mockResolvedValueOnce(undefined)
@@ -112,7 +72,7 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
   });
 
   it('stays quiet while other calls still wait on an answer', async () => {
-    const { service, threadRecordEventService } = await buildService();
+    const { service, threadRecordEventService } = buildService();
 
     await service.recordToolCallAnswer({
       ...answerArguments,

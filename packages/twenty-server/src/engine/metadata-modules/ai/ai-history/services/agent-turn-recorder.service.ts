@@ -8,7 +8,6 @@ import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/uti
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
-import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
@@ -49,23 +48,7 @@ export class AgentTurnRecorderService {
   constructor(
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
-    private readonly turnEventPublisherService: AgentTurnEventPublisherService,
   ) {}
-
-  // Updates return ids through a CTE: the driver turns a bare UPDATE ... RETURNING into [rows, rowCount]
-  private publishUpdatedTurns({
-    workspaceId,
-    turnIds,
-  }: {
-    workspaceId: string;
-    turnIds: string[];
-  }) {
-    return this.turnEventPublisherService.publish({
-      workspaceId,
-      type: 'updated',
-      turnIds,
-    });
-  }
 
   // A resumed or retried turn runs again, so it keeps its first start. Its
   // creator is whoever first ran it: chat turns are inserted before their
@@ -85,14 +68,13 @@ export class AgentTurnRecorderService {
     isBuiltInAssistant?: boolean;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
-    const runningTurns = await this.turnRepository.query(
+    return this.turnRepository.query(
       workspaceId,
-      ({ manager, table }) => {
+      async ({ manager, table }) => {
         const isDefaultCreator = `"createdBySource" = '${FieldActorSource.SYSTEM}' AND $3::boolean`;
 
-        return manager.query<{ id: string }[]>(
-          `WITH running AS (
-           UPDATE ${table('agentTurn')} SET
+        const runningTurns = await manager.query<{ id: string }[]>(
+          `UPDATE ${table('agentTurn')} SET
            "status" = '${AgentTurnStatus.RUNNING}',
            "startedAt" = COALESCE("startedAt", now()),
            "endedAt" = NULL,
@@ -105,8 +87,7 @@ export class AgentTurnRecorderService {
            "createdBySource" = CASE WHEN ${isDefaultCreator} THEN $4 ELSE "createdBySource" END,
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 9 })}
-         RETURNING id
-         ) SELECT id FROM running`,
+         RETURNING id`,
           [
             turnId,
             modelId ?? null,
@@ -119,15 +100,10 @@ export class AgentTurnRecorderService {
             ...buildStreamClaimParameters(streamClaim),
           ],
         );
+
+        return runningTurns.length > 0;
       },
     );
-
-    await this.publishUpdatedTurns({
-      workspaceId,
-      turnIds: runningTurns.map(({ id }) => id),
-    });
-
-    return runningTurns.length > 0;
   }
 
   // A stream that lost its claim leaves the turn to whoever took the claim
@@ -146,20 +122,18 @@ export class AgentTurnRecorderService {
     modelId?: string;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
-    const finishedTurns = await this.turnRepository.query(
+    return this.turnRepository.query(
       workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
-          `WITH finished AS (
-           UPDATE ${table('agentTurn')} SET
+      async ({ manager, table }) => {
+        const finishedTurns = await manager.query<{ id: string }[]>(
+          `UPDATE ${table('agentTurn')} SET
            "status" = $2,
            "error" = $3::jsonb,
            "endedAt" = $4,
            "modelId" = COALESCE($5, "modelId"),
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 6 })}
-         RETURNING id
-         ) SELECT id FROM finished`,
+         RETURNING id`,
           [
             turnId,
             status,
@@ -168,15 +142,11 @@ export class AgentTurnRecorderService {
             modelId ?? null,
             ...buildStreamClaimParameters(streamClaim),
           ],
-        ),
+        );
+
+        return finishedTurns.length > 0;
+      },
     );
-
-    await this.publishUpdatedTurns({
-      workspaceId,
-      turnIds: finishedTurns.map(({ id }) => id),
-    });
-
-    return finishedTurns.length > 0;
   }
 
   // Credits were spent whatever became of the turn, so usage is never guarded by a stream claim, and a
@@ -194,9 +164,9 @@ export class AgentTurnRecorderService {
     usage: AgentTurnUsage;
   }): Promise<void> {
     await this.turnRepository
-      .query(workspaceId, ({ manager, table }) =>
+      .query(workspaceId, async ({ manager, table }) => {
         // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
-        manager.query(
+        await manager.query(
           `WITH turn AS (
            UPDATE ${table('agentTurn')} SET
              "inputTokens" = COALESCE("inputTokens", 0) + $3,
@@ -227,9 +197,8 @@ export class AgentTurnRecorderService {
             usage.inputCredits,
             usage.outputCredits,
           ],
-        ),
-      )
-      .then(() => this.publishUpdatedTurns({ workspaceId, turnIds: [turnId] }))
+        );
+      })
       .catch((error: unknown) =>
         this.logger.warn(
           `Could not record the usage of turn ${turnId}: ${formatErrorWithCause(error)}`,
@@ -247,18 +216,11 @@ export class AgentTurnRecorderService {
     messageId: string;
     status: AgentTurnStatus.COMPLETED | AgentTurnStatus.CANCELLED;
   }): Promise<void> {
-    const endedTurns = await this.turnRepository.query(
-      workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
-          buildEndWaitingAgentTurnQuery({ table }),
-          [messageId, status],
-        ),
-    );
-
-    await this.publishUpdatedTurns({
-      workspaceId,
-      turnIds: endedTurns.map(({ id }) => id),
+    await this.turnRepository.query(workspaceId, async ({ manager, table }) => {
+      await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+        messageId,
+        status,
+      ]);
     });
   }
 
@@ -275,10 +237,10 @@ export class AgentTurnRecorderService {
       error?: StreamErrorPayload | null;
     };
   }): Promise<boolean> {
-    const releasedThreads = await this.turnRepository.query(
+    return this.turnRepository.query(
       workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string; endedTurnIds: string[] }[]>(
+      async ({ manager, table }) => {
+        const releasedThreads = await manager.query<{ id: string }[]>(
           buildReleaseStreamClaimQuery({ table }),
           [
             threadId,
@@ -288,15 +250,11 @@ export class AgentTurnRecorderService {
               ? JSON.stringify(endRunningTurn.error)
               : null,
           ],
-        ),
+        );
+
+        return releasedThreads.length > 0;
+      },
     );
-
-    await this.publishUpdatedTurns({
-      workspaceId,
-      turnIds: releasedThreads.flatMap(({ endedTurnIds }) => endedTurnIds),
-    });
-
-    return releasedThreads.length > 0;
   }
 
   async findUsageOrThrow({

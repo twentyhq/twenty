@@ -97,13 +97,6 @@ export class WorkspaceEventBroadcaster {
     });
   }
 
-  async hasActiveStreams(workspaceId: string): Promise<boolean> {
-    const activeStreamIds =
-      await this.eventStreamService.getActiveStreamIds(workspaceId);
-
-    return activeStreamIds.length > 0;
-  }
-
   async broadcastQueueJobEvent({
     workspaceId,
     userWorkspaceId,

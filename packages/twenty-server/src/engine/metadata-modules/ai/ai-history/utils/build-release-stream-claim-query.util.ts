@@ -17,4 +17,4 @@ export const buildReleaseStreamClaimQuery = ({
      UPDATE ${table('agentTurn')} SET "status" = $3, "error" = $4::jsonb, "endedAt" = now(), "updatedAt" = now()
      WHERE $3::text IS NOT NULL AND "threadId" IN (SELECT id FROM released) AND "status" = '${AgentTurnStatus.RUNNING}'
      RETURNING id
-   ) SELECT id, ARRAY(SELECT id FROM ended) AS "endedTurnIds" FROM released`;
+   ) SELECT id FROM released`;

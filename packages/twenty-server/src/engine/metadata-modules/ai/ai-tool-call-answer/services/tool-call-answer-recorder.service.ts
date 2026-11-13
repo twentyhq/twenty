@@ -8,7 +8,6 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
@@ -21,7 +20,6 @@ export class ToolCallAnswerRecorderService {
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
-    private readonly turnEventPublisherService: AgentTurnEventPublisherService,
   ) {}
 
   async findAwaitingToolParts({
@@ -92,7 +90,6 @@ export class ToolCallAnswerRecorderService {
     resolveMentionForWorkspaceMemberId: string | null;
   }): Promise<void> {
     let isPendingQuestionCleared = false;
-    let endedTurnIds: string[] = [];
 
     const writeResponse = async ({
       manager,
@@ -120,12 +117,10 @@ export class ToolCallAnswerRecorderService {
         return;
       }
 
-      const endedTurns = await manager.query<{ id: string }[]>(
-        buildEndWaitingAgentTurnQuery({ table }),
-        [messageId, AgentTurnStatus.COMPLETED],
-      );
-
-      endedTurnIds = endedTurns.map(({ id }) => id);
+      await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
+        messageId,
+        AgentTurnStatus.COMPLETED,
+      ]);
 
       isPendingQuestionCleared = true;
     };
@@ -140,12 +135,6 @@ export class ToolCallAnswerRecorderService {
     } else {
       await this.messagePartRepository.query(workspaceId, writeResponse);
     }
-
-    await this.turnEventPublisherService.publish({
-      workspaceId,
-      type: 'updated',
-      turnIds: endedTurnIds,
-    });
 
     if (isPendingQuestionCleared) {
       await this.threadRecordEventService.emitPendingQuestionCleared({
