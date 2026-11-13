@@ -7,7 +7,7 @@ import { PARTNER_TEAM_TYPE_OPTIONS } from './data/partner-team-type-options';
 import { PARTNER_TWENTY_EXPERIENCE_OPTIONS } from './data/partner-twenty-experience-options';
 import { TWENTY_EXPERIENCE_NOTES_MIN_LENGTH } from './data/twenty-experience-notes-min-length';
 import { emailFieldSchema } from './email-field-schema';
-import { httpUrlFieldSchema } from './http-url-field-schema';
+import { lenientHttpUrlFieldSchema } from './lenient-http-url-field-schema';
 
 const countryValues = PARTNER_COUNTRY_OPTIONS.map((option) => option.value);
 const languageValues = PARTNER_LANGUAGE_OPTIONS.map((option) => option.value);
@@ -17,13 +17,13 @@ const twentyExperienceValues = PARTNER_TWENTY_EXPERIENCE_OPTIONS.map(
   (option) => option.value,
 );
 
-const optionalUrl = httpUrlFieldSchema.optional();
+const optionalUrl = lenientHttpUrlFieldSchema.optional();
 
 export const partnerApplicationRequestSchema = z.strictObject({
   name: z.string().trim().min(1, { error: 'Name is required.' }),
   email: emailFieldSchema,
   company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: httpUrlFieldSchema,
+  website: lenientHttpUrlFieldSchema,
   linkedin: optionalUrl,
   city: z.string().trim().min(1, { error: 'City is required.' }),
   country: z.enum(countryValues).optional(),
@@ -40,8 +40,11 @@ export const partnerApplicationRequestSchema = z.strictObject({
     .min(TWENTY_EXPERIENCE_NOTES_MIN_LENGTH, {
       error: `Describe the implementation in at least ${TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters.`,
     }),
-  twentyExperienceProofLink: httpUrlFieldSchema,
+  twentyExperienceProofLink: lenientHttpUrlFieldSchema,
   hourlyRate: z.number({ error: 'Hourly rate is required.' }).nonnegative(),
+  acceptsTerms: z
+    .boolean()
+    .refine((value) => value, { error: 'The program terms must be accepted.' }),
   projectBudgetMin: z
     .number({ error: 'Minimum project budget is required.' })
     .nonnegative(),

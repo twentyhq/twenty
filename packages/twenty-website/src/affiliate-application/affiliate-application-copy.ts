@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
 
 export const AFFILIATE_APPLICATION_COPY = {
+  title: msg`Apply as a\n*Twenty creator*`,
+  subtitle: msg`We review every application within 5 business days and send your link once you're approved.`,
   fields: {
     name: msg`Full name`,
     email: msg`Email`,
@@ -16,7 +18,6 @@ export const AFFILIATE_APPLICATION_COPY = {
     countrySearchEmpty: msg`No matching country.`,
     promotionPlan: msg`How you plan to promote Twenty`,
     promotionPlanPlaceholder: msg`Reviews, tutorials, migration guides, client recommendations…`,
-    isIntegrationPartner: msg`I'm already a Twenty integration partner`,
   },
   errors: {
     name: msg`Please enter your full name.`,

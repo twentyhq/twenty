@@ -1,11 +1,12 @@
-import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { color, mediaUp, radius, semanticColor, spacing } from '@/tokens';
-import { Body, Button, Heading, SectionShell } from '@/ui';
+import { Body, Heading, SectionShell } from '@/ui';
 
-const IntegratorRow = styled.div`
+const SwitchRow = styled.div`
   align-items: center;
   background-color: ${color('white')};
   border: 1px solid ${semanticColor.line};
@@ -22,7 +23,7 @@ const IntegratorRow = styled.div`
   }
 `;
 
-const IntegratorCopy = styled.div`
+const SwitchCopy = styled.div`
   max-width: 520px;
 
   & > * + * {
@@ -30,28 +31,28 @@ const IntegratorCopy = styled.div`
   }
 `;
 
-export function AffiliateIntegratorStrip() {
+type ProgramStripProps = {
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
+  action: ReactNode;
+};
+
+export function ProgramStrip({ heading, body, action }: ProgramStripProps) {
   const i18n = getServerI18n();
 
   return (
     <SectionShell rhythm="section" scheme="muted">
-      <IntegratorRow>
-        <IntegratorCopy>
+      <SwitchRow>
+        <SwitchCopy>
           <Heading as="h2" size="xs" weight="regular">
-            {i18n._(msg`Already a Twenty *integration partner?*`)}
+            {i18n._(heading)}
           </Heading>
           <Body muted size="sm">
-            {i18n._(
-              msg`Tick the box in the form and we link your application to your existing partner record, so you can be in both programs.`,
-            )}
+            {i18n._(body)}
           </Body>
-        </IntegratorCopy>
-        <Button
-          href="#apply"
-          label={i18n._(msg`Join the program`)}
-          variant="outlined"
-        />
-      </IntegratorRow>
+        </SwitchCopy>
+        {action}
+      </SwitchRow>
     </SectionShell>
   );
 }
