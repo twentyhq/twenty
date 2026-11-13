@@ -15,10 +15,10 @@ type ViewFieldSettingsFlatFieldMetadata = Pick<
   'type' | 'universalSettings'
 >;
 
-const VIEW_FIELD_SETTINGS_KEYS: (keyof ViewFieldSettings)[] = [
+const VIEW_FIELD_SETTINGS_KEYS = new Set<string>([
   'label',
   'recordLimit',
-];
+] satisfies (keyof ViewFieldSettings)[]);
 
 const isOneToManyRelationField = ({
   type,
@@ -53,7 +53,7 @@ export const validateFlatViewFieldSettings = ({
   const errors: FlatEntityValidationError<ViewExceptionCode>[] = [];
 
   const unknownKeys = Object.keys(settings).filter(
-    (key) => !VIEW_FIELD_SETTINGS_KEYS.includes(key as keyof ViewFieldSettings),
+    (key) => !VIEW_FIELD_SETTINGS_KEYS.has(key),
   );
 
   if (unknownKeys.length > 0) {
