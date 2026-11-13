@@ -9,17 +9,20 @@ import { recordIndexViewTabsComponentState } from '@/object-record/record-index-
 import { type RecordIndexTab } from '@/object-record/record-index-tab/types/RecordIndexTab';
 import { RecordIndexCustomTabCount } from '@/object-record/record-index-tab/components/RecordIndexCustomTabCount';
 import { useGetRecordIndexTabLabel } from '@/object-record/record-index-tab/hooks/useGetRecordIndexTabLabel';
+import { useSelectRecordIndexTab } from '@/object-record/record-index-tab/hooks/useSelectRecordIndexTab';
+import { useRecordIndexCustomTabsState } from '@/object-record/record-index-tab/hooks/useRecordIndexCustomTabsState';
+import { RecordIndexCustomTabMenu } from '@/object-record/record-index-tab/components/RecordIndexCustomTabMenu';
+import { RecordIndexAddTabDropdown } from '@/object-record/record-index-tab/components/RecordIndexAddTabDropdown';
+import { getRecordIndexTabListInstanceId } from '@/object-record/record-index-tab/utils/getRecordIndexTabListInstanceId';
 import { getRecordIndexTabColorDotIcon } from '@/object-record/record-index-tab/utils/getRecordIndexTabColorDotIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
-import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -53,6 +56,13 @@ const StyledTabList = styled(TabList)`
   }
 `;
 
+const StyledTabListActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[1]};
+`;
+
 const RecordIndexTabsContent = () => {
   const { t } = useLingui();
 
@@ -78,8 +88,14 @@ const RecordIndexTabsContent = () => {
     activeRecordIndexTabIdComponentSelector,
   );
 
-  const [selectedRecordIndexTabId, setSelectedRecordIndexTabId] =
-    useAtomComponentState(selectedRecordIndexTabIdComponentState);
+  const selectedRecordIndexTabId = useAtomComponentStateValue(
+    selectedRecordIndexTabIdComponentState,
+  );
+
+  const { selectRecordIndexTab } = useSelectRecordIndexTab();
+
+  const { canEditCustomTabs, activeCustomViewTab } =
+    useRecordIndexCustomTabsState();
 
   const { recordCountByRecordIndexTabId } = useRecordIndexTabRecordCounts(
     recordIndexTabFieldMetadataItem,
@@ -87,9 +103,7 @@ const RecordIndexTabsContent = () => {
 
   const { totalCount } = useGetRecordIndexTotalCount();
 
-  const { resetRecordSelection } = useResetRecordSelection(recordIndexId);
-
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const formatRecordCount = (recordCount: number | undefined) =>
     isDefined(recordCount) ? formatNumber(recordCount) : undefined;
@@ -148,30 +162,27 @@ const RecordIndexTabsContent = () => {
       ? (tabIdFromQueryParams ?? activeRecordIndexTabId)
       : activeRecordIndexTabId;
 
-  // A fresh instance per field keeps a stale option from staying selected
-  const tabListInstanceId = `record-index-tabs-${recordIndexId}-${recordIndexTabFieldMetadataItem?.id ?? 'custom'}`;
+  const tabListInstanceId = getRecordIndexTabListInstanceId({
+    recordIndexId,
+    recordIndexTabFieldMetadataId: recordIndexTabFieldMetadataItem?.id,
+  });
 
   const handleChangeTab = (recordIndexTabId: string) => {
     if (recordIndexTabId === activeRecordIndexTabId) {
       return;
     }
 
-    resetRecordSelection();
-    setSelectedRecordIndexTabId(recordIndexTabId);
-    setSearchParams(
-      (previousSearchParams) => {
-        const nextSearchParams = new URLSearchParams(previousSearchParams);
-
-        nextSearchParams.set(
-          RECORD_INDEX_TAB_QUERY_PARAM_KEY,
-          recordIndexTabId,
-        );
-
-        return nextSearchParams;
-      },
-      { replace: true },
-    );
+    selectRecordIndexTab(recordIndexTabId);
   };
+
+  const tabListActions = canEditCustomTabs ? (
+    <StyledTabListActions>
+      {isDefined(activeCustomViewTab) && (
+        <RecordIndexCustomTabMenu viewTab={activeCustomViewTab} />
+      )}
+      <RecordIndexAddTabDropdown />
+    </StyledTabListActions>
+  ) : undefined;
 
   return (
     <StyledContainer>
@@ -184,6 +195,7 @@ const RecordIndexTabsContent = () => {
           componentInstanceId={tabListInstanceId}
           defaultActiveTabId={defaultActiveTabId}
           onChangeTab={handleChangeTab}
+          rightComponent={tabListActions}
         />
       </TabListRoot>
     </StyledContainer>

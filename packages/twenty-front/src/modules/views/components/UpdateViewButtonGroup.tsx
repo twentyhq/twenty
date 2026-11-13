@@ -23,10 +23,22 @@ import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPicker
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
+import {
+  IconChevronDown,
+  IconLayoutNavbar,
+  IconPlus,
+  IconRefresh,
+} from 'twenty-ui/icon';
+import { isNonEmptyString } from '@sniptt/guards';
+import { TextInputDropdownForm } from '@/advanced-text-editor/components/TextInputDropdownForm';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useRecordIndexCustomTabsState } from '@/object-record/record-index-tab/hooks/useRecordIndexCustomTabsState';
+import { useSaveCurrentRecordFiltersAsRecordIndexTab } from '@/object-record/record-index-tab/hooks/useSaveCurrentRecordFiltersAsRecordIndexTab';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
+
+const SAVE_AS_TAB_DROPDOWN_PAGE_ID = 'save-as-tab';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -86,6 +98,29 @@ export const UpdateViewButtonGroup = () => {
     await saveCurrentViewFilterAndSorts();
   };
 
+  const { canEditCustomTabs, activeCustomViewTab } =
+    useRecordIndexCustomTabsState();
+
+  const activeCustomViewTabName = activeCustomViewTab?.name ?? '';
+
+  const {
+    saveCurrentRecordFiltersAsNewRecordIndexTab,
+    saveCurrentRecordFiltersToRecordIndexTab,
+  } = useSaveCurrentRecordFiltersAsRecordIndexTab();
+
+  const { closeDropdown } = useCloseDropdown();
+
+  const handleSaveAsTabSubmit = async (name: string) => {
+    const trimmedName = name.trim();
+
+    if (!isNonEmptyString(trimmedName)) {
+      return;
+    }
+
+    closeDropdown(updateViewButtonDropdownId);
+    await saveCurrentRecordFiltersAsNewRecordIndexTab(trimmedName);
+  };
+
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
 
   const { viewFilterGroupsAreDifferentFromRecordFilterGroups } =
@@ -128,12 +163,43 @@ export const UpdateViewButtonGroup = () => {
               }
             />
             <DropdownContent align="end" finalFocus={() => !isDropdownOpen}>
-              <Dropdown.Section>
-                <Dropdown.ActionItem
-                  onClick={handleCreateViewClick}
-                  startIcon={<IconPlus />}
-                >{t`Create view`}</Dropdown.ActionItem>
-              </Dropdown.Section>
+              <Dropdown.Page id="root">
+                <Dropdown.Section>
+                  <Dropdown.ActionItem
+                    onClick={handleCreateViewClick}
+                    startIcon={<IconPlus />}
+                  >{t`Create view`}</Dropdown.ActionItem>
+                  {canEditCustomTabs && (
+                    <Dropdown.ActionItem
+                      page={SAVE_AS_TAB_DROPDOWN_PAGE_ID}
+                      startIcon={<IconLayoutNavbar />}
+                    >{t`Save as tab`}</Dropdown.ActionItem>
+                  )}
+                  {canEditCustomTabs && isDefined(activeCustomViewTab) && (
+                    <Dropdown.ActionItem
+                      onClick={() =>
+                        saveCurrentRecordFiltersToRecordIndexTab(
+                          activeCustomViewTab,
+                        )
+                      }
+                      startIcon={<IconRefresh />}
+                    >{t`Update “${activeCustomViewTabName}”`}</Dropdown.ActionItem>
+                  )}
+                </Dropdown.Section>
+              </Dropdown.Page>
+              <Dropdown.Page id={SAVE_AS_TAB_DROPDOWN_PAGE_ID} type="panel">
+                {/* A back button would take the focus that the name input needs */}
+                <Dropdown.Header>
+                  <Dropdown.Title>{t`Save as tab`}</Dropdown.Title>
+                </Dropdown.Header>
+                <Dropdown.Section>
+                  <TextInputDropdownForm
+                    defaultValue=""
+                    label={t`Tab name`}
+                    onSubmit={handleSaveAsTabSubmit}
+                  />
+                </Dropdown.Section>
+              </Dropdown.Page>
             </DropdownContent>
           </DropdownRoot>
         </ButtonGroup>

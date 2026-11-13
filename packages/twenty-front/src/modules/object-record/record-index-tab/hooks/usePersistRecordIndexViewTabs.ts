@@ -6,10 +6,12 @@ import { usePerformViewFilterApiPersist } from '@/views/hooks/internal/usePerfor
 import { usePerformViewTabApiPersist } from '@/views/hooks/internal/usePerformViewTabApiPersist';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { type View } from '@/views/types/View';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import { type ViewTab } from '@/views/types/ViewTab';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { ViewTabType } from '~/generated-metadata/graphql';
 
 type RecordIndexTabUpdate = Partial<Pick<ViewTab, 'isVisible' | 'position'>>;
@@ -38,7 +40,8 @@ export const usePersistRecordIndexViewTabs = () => {
     performViewTabApiDestroy,
   } = usePerformViewTabApiPersist();
 
-  const { performViewFilterApiDestroy } = usePerformViewFilterApiPersist();
+  const { performViewFilterApiCreate, performViewFilterApiDestroy } =
+    usePerformViewFilterApiPersist();
 
   const getCurrentView = useCallback(
     (): View | undefined =>
@@ -148,6 +151,98 @@ export const usePersistRecordIndexViewTabs = () => {
     [destroyViewTabs, getCurrentView],
   );
 
+  const createViewTabFilters = useCallback(
+    (viewId: string, viewTabId: string, viewFilters: ViewFilter[]) =>
+      performViewFilterApiCreate(
+        viewFilters.map((viewFilter) => ({
+          input: {
+            id: viewFilter.id,
+            fieldMetadataId: viewFilter.fieldMetadataId,
+            viewId,
+            viewTabId,
+            value: viewFilter.value,
+            operand: viewFilter.operand,
+            subFieldName: viewFilter.subFieldName ?? null,
+            relationTargetFieldMetadataId:
+              viewFilter.relationTargetFieldMetadataId ?? null,
+          },
+        })),
+      ),
+    [performViewFilterApiCreate],
+  );
+
+  const createCustomViewTab = useCallback(
+    async (name: string, viewFilters: ViewFilter[]) => {
+      const currentView = getCurrentView();
+
+      if (!isDefined(currentView)) {
+        return undefined;
+      }
+
+      const customViewTabPositions = (currentView.viewTabs ?? [])
+        .filter(({ type }) => type === ViewTabType.CUSTOM)
+        .map(({ position }) => position);
+
+      const viewTabId = v4();
+
+      const createResult = await performViewTabApiCreate({
+        id: viewTabId,
+        viewId: currentView.id,
+        type: ViewTabType.CUSTOM,
+        name,
+        position: isNonEmptyArray(customViewTabPositions)
+          ? Math.max(...customViewTabPositions) + 1
+          : 0,
+        isVisible: true,
+      });
+
+      if (createResult.status === 'failed') {
+        return undefined;
+      }
+
+      await createViewTabFilters(currentView.id, viewTabId, viewFilters);
+      syncRecordIndexViewTabs();
+
+      return viewTabId;
+    },
+    [
+      createViewTabFilters,
+      getCurrentView,
+      performViewTabApiCreate,
+      syncRecordIndexViewTabs,
+    ],
+  );
+
+  const replaceViewTabFilters = useCallback(
+    async (viewTab: ViewTab, viewFilters: ViewFilter[]) => {
+      const currentView = getCurrentView();
+
+      if (!isDefined(currentView)) {
+        return;
+      }
+
+      await performViewFilterApiDestroy(
+        (viewTab.viewFilters ?? []).map(({ id }) => ({ input: { id } })),
+      );
+      await createViewTabFilters(currentView.id, viewTab.id, viewFilters);
+      syncRecordIndexViewTabs();
+    },
+    [
+      createViewTabFilters,
+      getCurrentView,
+      performViewFilterApiDestroy,
+      syncRecordIndexViewTabs,
+    ],
+  );
+
+  const renameViewTab = useCallback(
+    async (viewTabId: string, name: string) => {
+      await performViewTabApiUpdate({ id: viewTabId, update: { name } });
+      syncRecordIndexViewTabs();
+    },
+    [performViewTabApiUpdate, syncRecordIndexViewTabs],
+  );
+
   return {
     getCurrentView,
     syncRecordIndexViewTabs,
@@ -156,5 +251,8 @@ export const usePersistRecordIndexViewTabs = () => {
     ensureAllViewTab,
     destroyViewTabs,
     destroyAllViewTabs,
+    createCustomViewTab,
+    replaceViewTabFilters,
+    renameViewTab,
   };
 };
