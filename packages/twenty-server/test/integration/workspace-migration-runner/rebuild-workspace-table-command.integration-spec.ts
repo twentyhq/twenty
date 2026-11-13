@@ -1,3 +1,5 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -11,6 +13,7 @@ const DROPPED_COLUMN_COUNT = 3;
 
 describe('workspace:rebuild-table command (integration)', () => {
   let command: RebuildWorkspaceTableCommand;
+  let personId: string;
 
   const runOnWorkspace = (
     options: { dryRun?: boolean; tableName?: string[] } = {},
@@ -85,7 +88,21 @@ describe('workspace:rebuild-table command (integration)', () => {
       'RebuildWorkspaceTableCommand',
     );
 
+    const { data } = await createOneOperation({
+      objectMetadataSingularName: 'person',
+      input: { name: { firstName: 'Rebuild', lastName: 'Table' } },
+    });
+
+    personId = data.createOneResponse.id;
+
     await addDroppedColumns();
+  });
+
+  afterAll(async () => {
+    await destroyOneOperation({
+      objectMetadataSingularName: 'person',
+      recordId: personId,
+    });
   });
 
   it('should leave the table untouched on a dry run', async () => {
