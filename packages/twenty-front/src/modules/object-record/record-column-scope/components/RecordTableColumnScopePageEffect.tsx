@@ -1,3 +1,4 @@
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
@@ -15,7 +16,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { useQuery } from '@apollo/client/react';
 import { useStore } from 'jotai';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type ScopedRelationRecordsQueryResult = Record<
@@ -68,11 +69,12 @@ export const RecordTableColumnScopePageEffect = ({
     ],
   );
 
-  const { data } = useQuery<ScopedRelationRecordsQueryResult>(
+  // Kept out of the cache: optimistic relation effects append records to it without checking the scope filter
+  const { data, refetch } = useQuery<ScopedRelationRecordsQueryResult>(
     scopedRelationRecordsQuery,
     {
       client: apolloCoreClient,
-      fetchPolicy: 'cache-and-network',
+      fetchPolicy: 'no-cache',
       variables: computeScopedRelationQueryVariables({
         parentRecordIds,
         scopeView,
@@ -84,6 +86,15 @@ export const RecordTableColumnScopePageEffect = ({
       }),
     },
   );
+
+  const handleRelationRecordOperation = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    objectMetadataItemId: relationObjectMetadataItem.id,
+    onObjectRecordOperationBrowserEvent: handleRelationRecordOperation,
+  });
 
   useEffect(() => {
     const parentConnection = data?.[objectMetadataItem.namePlural];

@@ -4,7 +4,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { useRefetchScopedRelationRecords } from '@/object-record/record-column-scope/hooks/useRefetchScopedRelationRecords';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useCreateJunctionRecordWithNestedTarget } from '@/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget';
@@ -45,17 +44,8 @@ export const RelationOneToManyFieldInput = () => {
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
-  const { refetchScopedRelationRecords } = useRefetchScopedRelationRecords();
-
-  const refetchScopedRecordsIfScoped = () => {
-    if (isDefined(scopedRelationViewFieldId)) {
-      refetchScopedRelationRecords();
-    }
-  };
-
   const handleSubmit = () => {
     onSubmit?.({ skipPersist: true });
-    refetchScopedRecordsIfScoped();
   };
 
   const relationFieldDefinition =
@@ -169,14 +159,13 @@ export const RelationOneToManyFieldInput = () => {
     >
       <MultipleRecordPicker
         componentInstanceId={instanceId}
-        onChange={async (morphItem) => {
+        onChange={(morphItem) => {
           if (isJunctionRelation) {
             updateJunctionRelationFromCell({ morphItem });
             return;
           }
 
-          await updateRelation(morphItem);
-          refetchScopedRecordsIfScoped();
+          updateRelation(morphItem);
         }}
         onCreate={
           isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
