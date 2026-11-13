@@ -24,6 +24,7 @@ import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/comp
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
+import { useRecordTableSettingsDescriptions } from '@/side-panel/pages/page-layout/hooks/useRecordTableSettingsDescriptions';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
@@ -37,6 +38,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconArrowsSort,
+  IconFilter,
   IconLayoutSidebarRight,
   IconListDetails,
   IconPencil,
@@ -119,6 +122,12 @@ export const SidePanelRecordPageFieldSettings = () => {
     });
   };
 
+  const { filterDescription, sortDescription } =
+    useRecordTableSettingsDescriptions({
+      objectMetadataId: targetObjectMetadataId,
+      viewId: currentViewId,
+    });
+
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
     viewId: currentViewId ?? '',
     widgetId: widgetInEditMode?.id ?? '',
@@ -157,6 +166,14 @@ export const SidePanelRecordPageFieldSettings = () => {
     );
   };
 
+  const handleNavigateToFilter = () => {
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutRecordTableFilter);
+  };
+
+  const handleNavigateToSort = () => {
+    navigateToSidePanelSubPage(SidePanelSubPages.PageLayoutRecordTableSort);
+  };
+
   const baseFieldLabel = currentFieldMetadataItem?.label ?? '';
   const fieldLabel = isDefined(resolvedNestedRelation)
     ? `${baseFieldLabel} → ${resolvedNestedRelation.nestedRelationFieldMetadataItem.label}`
@@ -193,6 +210,7 @@ export const SidePanelRecordPageFieldSettings = () => {
         })
       : []),
     ...(isTableDisplayMode ? ['fields'] : []),
+    ...(showViewLayoutRows ? ['filter', 'sort'] : []),
     ...(isTableDisplayMode && isWidgetContentEditingSupported
       ? ['field-allow-editing']
       : []),
@@ -280,6 +298,38 @@ export const SidePanelRecordPageFieldSettings = () => {
                   contextualTextPosition="right"
                 />
               </SelectableListItem>
+            )}
+            {showViewLayoutRows && (
+              <>
+                <SelectableListItem
+                  itemId="filter"
+                  onEnter={handleNavigateToFilter}
+                >
+                  <CommandMenuItem
+                    id="filter"
+                    label={t`Filter`}
+                    Icon={IconFilter}
+                    hasSubMenu
+                    onClick={handleNavigateToFilter}
+                    description={filterDescription}
+                    contextualTextPosition="right"
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="sort"
+                  onEnter={handleNavigateToSort}
+                >
+                  <CommandMenuItem
+                    id="sort"
+                    label={t`Sort`}
+                    Icon={IconArrowsSort}
+                    hasSubMenu
+                    onClick={handleNavigateToSort}
+                    description={sortDescription}
+                    contextualTextPosition="right"
+                  />
+                </SelectableListItem>
+              </>
             )}
             {isTableDisplayMode && isWidgetContentEditingSupported && (
               <SelectableListItem itemId="field-allow-editing">

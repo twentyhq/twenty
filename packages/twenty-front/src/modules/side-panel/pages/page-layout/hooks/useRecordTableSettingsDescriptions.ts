@@ -5,6 +5,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
 import { useViewById } from '@/views/hooks/useViewById';
 import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
@@ -66,12 +67,14 @@ export const useRecordTableSettingsDescriptions = ({
   const activeFilterLabels: Array<string | undefined> =
     currentRecordFilters.length > 0
       ? currentRecordFilters.map((filter) => filter.label)
-      : (view?.viewFilters ?? []).map(
-          (filter) =>
-            sourceObjectMetadataItem?.fields.find(
-              (field) => field.id === filter.fieldMetadataId,
-            )?.label,
-        );
+      : (view?.viewFilters ?? [])
+          .filter((filter) => !isCurrentRecordViewFilter(filter))
+          .map(
+            (filter) =>
+              sourceObjectMetadataItem?.fields.find(
+                (field) => field.id === filter.fieldMetadataId,
+              )?.label,
+          );
 
   const activeSortLabels: Array<string | undefined> = (
     currentRecordSorts.length > 0 ? currentRecordSorts : (view?.viewSorts ?? [])

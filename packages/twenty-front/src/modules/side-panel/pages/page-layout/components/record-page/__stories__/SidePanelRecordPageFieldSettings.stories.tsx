@@ -184,3 +184,27 @@ export const DisabledEmbeddedLayout: Story = {
     });
   },
 };
+
+export const TableFilterAndSort: Story = {
+  beforeEach: () =>
+    initializeFieldWidgetSettingsStory({
+      fieldName: 'people',
+      fieldDisplayMode: FieldDisplayMode.CARD,
+    }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(canvas.queryByRole('button', { name: /^Filter/ })).toBeNull();
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /^Layout/ }),
+    );
+    await userEvent.click(await body.findByRole('option', { name: 'List' }));
+
+    expect(
+      await canvas.findByRole('button', { name: /^Filter/ }),
+    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: /^Sort/ })).toBeVisible();
+  },
+};

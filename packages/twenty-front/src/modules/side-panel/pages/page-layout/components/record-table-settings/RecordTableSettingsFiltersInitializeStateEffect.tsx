@@ -1,4 +1,5 @@
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -57,7 +58,9 @@ export const RecordTableSettingsFiltersInitializeStateEffect = ({
     }
 
     const recordFilters = mapViewFiltersToFilters(
-      view.viewFilters,
+      view.viewFilters.filter(
+        (viewFilter) => !isCurrentRecordViewFilter(viewFilter),
+      ),
       flattenedFieldMetadataItems,
     );
 
