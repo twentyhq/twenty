@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { agentChatThreadInboxStatusByThreadIdFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusByThreadIdFamilySelector';
 import { getAiChatThreadTriageStatus } from '@/ai/utils/getAiChatThreadTriageStatus';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -30,11 +30,11 @@ export const useAiChatThreadTriage = ({
     agentChatThreadParticipantsState,
   );
   const location = useLocation();
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const agentChatSelectedChannelView = useAtomStateValue(
+    agentChatSelectedChannelViewSelector,
   );
   const channelId = isAiChatInboxPath(location.pathname)
-    ? (agentChatShownChannelView?.channelId ?? null)
+    ? (agentChatSelectedChannelView?.channelId ?? null)
     : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusByThreadIdFamilySelector,

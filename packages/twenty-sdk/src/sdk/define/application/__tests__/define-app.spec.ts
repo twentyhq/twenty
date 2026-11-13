@@ -602,8 +602,7 @@ describe('defineApplication', () => {
   });
 
   it('should return error when an OAuth client application sets an install option', () => {
-    // @ts-expect-error an application that declares an OAuth client has no role
-    const result = defineApplication({
+    const config = {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
@@ -614,7 +613,9 @@ describe('defineApplication', () => {
         ],
         connectUrl: 'https://client.example.com/connect',
       },
-    });
+    };
+
+    const result = defineApplication(config as any);
 
     expect(result.success).toBe(false);
     expect(result.errors).toContain(

@@ -33,7 +33,7 @@ import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
 import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
 import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
@@ -119,8 +119,8 @@ const AiChatInboxPageContent = () => {
   const isNewThreadRoute = threadId === AI_CHAT_NEW_THREAD_PATH_SEGMENT;
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const agentChatShownChannelView = useAtomStateValue(
-    agentChatShownChannelViewSelector,
+  const agentChatSelectedChannelView = useAtomStateValue(
+    agentChatSelectedChannelViewSelector,
   );
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const agentChatSelectedThreadListSource = useAtomStateValue(
@@ -316,7 +316,7 @@ const AiChatInboxPageContent = () => {
                         <EmptyState.Content>
                           <EmptyState.Title>{t`No conversations`}</EmptyState.Title>
                           <EmptyState.Description>
-                            {isDefined(agentChatShownChannelView)
+                            {isDefined(agentChatSelectedChannelView)
                               ? t`Conversations in this channel will appear here.`
                               : t`Conversations you can open will appear here.`}
                           </EmptyState.Description>

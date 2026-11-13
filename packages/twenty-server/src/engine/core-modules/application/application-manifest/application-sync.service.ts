@@ -45,6 +45,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -80,10 +81,7 @@ export class ApplicationSyncService {
     inferDeletionFromMissingEntities?: boolean;
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
-  }): Promise<{
-    workspaceMigration: WorkspaceMigration;
-    hasSchemaMetadataChanged: boolean;
-  }> {
+  }): Promise<ApplicationManifestSyncResult> {
     if (isOAuthClientApplication(manifest.application)) {
       throw new ApplicationException(
         'An application that declares an OAuth client installs nothing: members connect it themselves',
@@ -115,10 +113,7 @@ export class ApplicationSyncService {
           persistVersion,
         });
 
-    let syncResult: {
-      workspaceMigration: WorkspaceMigration;
-      hasSchemaMetadataChanged: boolean;
-    };
+    let syncResult: ApplicationManifestSyncResult;
 
     try {
       syncResult =

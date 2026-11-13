@@ -91,6 +91,7 @@ export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
+export { APPLICATION_SOURCE_FILE_EXTENSIONS } from './constants/application-source-file-extensions';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_PACKAGE_YARN_LOCK_PATH } from './constants/ApplicationPackageYarnLockPath';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -308,6 +309,7 @@ export {
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
+export type { SourceFileManifest } from './sourceFileManifestType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';

@@ -539,6 +539,7 @@ export interface ApplicationExportCoverageEntry {
 export type ApplicationExportCoverageStatus = 'ENGINE_DERIVED' | 'EXCLUDED' | 'EXPORTED' | 'FOREIGN_OWNED' | 'UNSUPPORTED'
 
 export interface ApplicationExportFile {
+    /** Base64 for public-asset files, UTF-8 text for other folders. */
     content: Scalars['String']
     folder: Scalars['String']
     path: Scalars['String']
@@ -5076,6 +5077,7 @@ export interface ApplicationExportCoverageEntryGenqlSelection{
 }
 
 export interface ApplicationExportFileGenqlSelection{
+    /** Base64 for public-asset files, UTF-8 text for other folders. */
     content?: boolean | number
     folder?: boolean | number
     path?: boolean | number
@@ -8087,7 +8089,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
-    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
+    exportApplication?: (ApplicationExportGenqlSelection & { __args: {shouldIncludeDependencies?: (Scalars['Boolean'] | null), shouldIncludePublicAssets?: (Scalars['Boolean'] | null), shouldIncludeSourceFiles?: (Scalars['Boolean'] | null), universalIdentifier: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
