@@ -112,6 +112,7 @@ export class UsageLimitResolver {
     const usageLimit = await this.usageLimitService.update({
       workspaceId: workspace.id,
       input,
+      isOperator: false,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);

@@ -125,9 +125,11 @@ export class UsageLimitService {
   async update({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
@@ -142,25 +144,18 @@ export class UsageLimitService {
 
     const authorizedScope = buildUsageLimitScope(usageLimit);
 
-    assertUsageLimitInstanceOverrideIsAllowed({
-      usageLimit,
-      isOperator: false,
-    });
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
 
     assertUsageLimitDefaultOverrideIsAllowed({
       scope: authorizedScope,
-      isOperator: false,
+      isOperator,
     });
 
-    await this.validateInput({
-      workspaceId,
-      input: input.payload,
-      isOperator: false,
-    });
+    await this.validateInput({ workspaceId, input: input.payload, isOperator });
 
     const scope = buildUsageLimitScope(input.payload);
 
-    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator: false });
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({
       workspaceId,
@@ -179,6 +174,7 @@ export class UsageLimitService {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
+        isInstanceOverride: isOperator,
       },
     );
 
@@ -198,7 +194,10 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    if (!isEqual(authorizedScope, scope)) {
+    if (
+      usageLimit.isInstanceOverride !== isOperator ||
+      !isEqual(authorizedScope, scope)
+    ) {
       await this.dropCounter(usageLimit);
       await this.dropCounter(updatedUsageLimit);
     }
