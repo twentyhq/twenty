@@ -136,6 +136,10 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const handleAddColumnClick = async () => {
     const addedRecordField = await addRecordTableColumn(recordField);
 
+    if (!isDefined(addedRecordField)) {
+      return;
+    }
+
     openEditColumnInSidePanel({
       recordTableId,
       recordFieldId: addedRecordField.id,

@@ -15,11 +15,12 @@ export const useAddRecordTableColumn = (recordTableId: string) => {
 
   const addRecordTableColumn = useCallback(
     async (sourceRecordField: RecordField) => {
-      const currentRecordFields = store.get(
+      const currentRecordFieldsAtom =
         currentRecordFieldsComponentState.atomFamily({
           instanceId: recordTableId,
-        }),
-      );
+        });
+
+      const currentRecordFields = store.get(currentRecordFieldsAtom);
 
       const recordFieldToCreate: RecordField = {
         id: v4(),
@@ -35,7 +36,19 @@ export const useAddRecordTableColumn = (recordTableId: string) => {
 
       upsertRecordField(recordFieldToCreate);
 
-      await saveViewFields([mapRecordFieldToViewField(recordFieldToCreate)]);
+      const isSaved = await saveViewFields([
+        mapRecordFieldToViewField(recordFieldToCreate),
+      ]);
+
+      if (!isSaved) {
+        store.set(currentRecordFieldsAtom, (previousRecordFields) =>
+          previousRecordFields.filter(
+            (recordField) => recordField.id !== recordFieldToCreate.id,
+          ),
+        );
+
+        return undefined;
+      }
 
       return recordFieldToCreate;
     },

@@ -31,19 +31,19 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useCallback(
     async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
       if (!canPersistChanges) {
-        return;
+        return false;
       }
 
       const currentViewId = store.get(currentViewIdCallbackState);
 
       if (!currentViewId) {
-        return;
+        return false;
       }
 
       const view = getViewFromState(currentViewId);
 
       if (!isDefined(view)) {
-        return;
+        return false;
       }
 
       const currentViewFields = view.viewFields;
@@ -135,10 +135,15 @@ export const useSaveCurrentViewFields = () => {
           },
         );
 
-      await Promise.all([
+      const [createResult, updateResult] = await Promise.all([
         performViewFieldApiCreate({ inputs: viewFieldsToCreate }),
         performViewFieldApiUpdate(viewFieldsToUpdate),
       ]);
+
+      return (
+        createResult.status === 'successful' &&
+        updateResult.status === 'successful'
+      );
     },
     [
       store,
