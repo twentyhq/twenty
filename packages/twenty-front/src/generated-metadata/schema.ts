@@ -3495,6 +3495,7 @@ export type MessageCampaignSendBlockerDto = {
 
 export type MessageChannel = {
   __typename?: 'MessageChannel';
+  canStartConversation: Scalars['Boolean']['output'];
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
   connectedAccountId: Scalars['UUID']['output'];
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy;
@@ -3931,6 +3932,7 @@ export type Mutation = {
   signUpInWorkspace: SignUp;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   snoozeAgentChatThreadInChannel: Scalars['Boolean']['output'];
+  startAppChannelConversation: SendAppChannelMessageOutput;
   startChannelSync: ChannelSyncSuccess;
   startWorkspaceSetupChat: StartWorkspaceSetupChatResult;
   stopAgentChatStream: Scalars['Boolean']['output'];
@@ -5115,6 +5117,11 @@ export type MutationSkipSyncEmailOnboardingStepArgs = {
 export type MutationSnoozeAgentChatThreadInChannelArgs = {
   snoozedUntil: Scalars['DateTime']['input'];
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationStartAppChannelConversationArgs = {
+  input: StartAppChannelConversationInput;
 };
 
 
@@ -7474,6 +7481,13 @@ export type StandaloneRichTextConfiguration = {
   __typename?: 'StandaloneRichTextConfiguration';
   body: RichTextBody;
   configurationType: WidgetConfigurationType;
+};
+
+export type StartAppChannelConversationInput = {
+  idempotencyKey: Scalars['UUID']['input'];
+  messageChannelId: Scalars['UUID']['input'];
+  personId: Scalars['UUID']['input'];
+  text: Scalars['String']['input'];
 };
 
 export type StartWorkspaceSetupChatResult = {

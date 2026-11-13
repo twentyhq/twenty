@@ -308,6 +308,12 @@ export {
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
 export type { SourceFileManifest } from './sourceFileManifestType';
+export type {
+  StartAppConversationRecipient,
+  StartAppConversationPayload,
+  StartAppConversationResultRecipient,
+  StartAppConversationResult,
+} from './startAppConversationType';
 export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { StoredOAuthDiscoveryConnectionProviderConfig } from './storedOAuthDiscoveryConnectionProviderConfigType';

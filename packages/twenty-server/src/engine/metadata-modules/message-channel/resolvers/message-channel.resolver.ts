@@ -39,6 +39,7 @@ import {
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -93,6 +94,7 @@ export class MessageChannelResolver {
     @InjectWorkspaceScopedRepository(MessageFolderEntity)
     private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
+    private readonly applicationMessageSendService: ApplicationMessageSendService,
   ) {}
 
   @ResolveField('importProgress', () => Int, { nullable: true })
@@ -102,6 +104,17 @@ export class MessageChannelResolver {
   ): Promise<number | null> {
     return this.messageChannelMetadataService.getImportProgress({
       messageChannelId: messageChannel.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField('canStartConversation', () => Boolean)
+  async canStartConversation(
+    @Parent() messageChannel: MessageChannelDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    return this.applicationMessageSendService.canStartConversation({
+      messageChannel,
       workspaceId: workspace.id,
     });
   }

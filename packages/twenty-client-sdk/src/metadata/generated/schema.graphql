@@ -3315,6 +3315,7 @@ type MessageCampaignSendBlockerDTO {
 }
 
 type MessageChannel {
+  canStartConversation: Boolean!
   connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy!
@@ -3742,6 +3743,7 @@ type Mutation {
   signUpInWorkspace(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String): SignUp!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   snoozeAgentChatThreadInChannel(snoozedUntil: DateTime!, threadId: UUID!): Boolean!
+  startAppChannelConversation(input: StartAppChannelConversationInput!): SendAppChannelMessageOutput!
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -5110,6 +5112,13 @@ type Skill {
 type StandaloneRichTextConfiguration {
   body: RichTextBody!
   configurationType: WidgetConfigurationType!
+}
+
+input StartAppChannelConversationInput {
+  idempotencyKey: UUID!
+  messageChannelId: UUID!
+  personId: UUID!
+  text: String!
 }
 
 type StartWorkspaceSetupChatResult {

@@ -39,6 +39,7 @@ LinkedIn accounts are connected through [Unipile](https://www.unipile.com) (API 
 | Webhook | `linkedin-webhook-resolver` | Checks the `unipile-signature` header and dispatches the event to the workspace that connected the account |
 | New message | `linkedin-handle-webhook-event` | Ingests the message into the member's channel; flags the connection when LinkedIn signs the account out |
 | Reply | `linkedin-send-message` | Sends a reply written in Twenty to the conversation's Unipile chat; the `message.new` webhook that follows is de-duplicated on the returned message id |
+| New conversation | `linkedin-start-conversation` | Starts a Unipile chat with the Person's LinkedIn profile (its known handle, else its **LinkedIn** field) by sending the first message written in Twenty |
 | Install, upgrade | `linkedin-post-install` | Binds channels connected before replies existed to the `linkedin-messaging` provider |
 | Disconnect, uninstall | `linkedin-on-disconnect`, `linkedin-uninstall` | Deletes the channel and the Unipile account, which Unipile bills per connected account |
 
