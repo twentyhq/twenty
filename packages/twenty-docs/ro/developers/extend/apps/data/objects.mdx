@@ -110,6 +110,7 @@ export default defineObject({
 * `isSearchable: true`, aplicat unui câmp, include valorile acestuia în căutarea text integrală a obiectului (căutarea globală și meniul de comenzi). Necesită ca obiectul în sine să fie căutabil și un tip de câmp compatibil cu textul. O valoare omisă înseamnă că nu poate fi căutat, cu excepția câmpului de identificare a etichetei obiectului, care poate fi căutat întotdeauna și nu poate fi exclus. Fiecare sincronizare impune starea declarată, astfel încât un câmp a cărui căutare este activată din Setări revine la starea anterioară la următoarea sincronizare a aplicației dvs., cu excepția cazului în care manifestul o declară.
 * `isAuditLogged: false`, pe un câmp, împiedică apariția modificărilor sale în cronologia înregistrării. Valoarea implicită este `true`, cu excepția unui câmp `POSITION`, ale cărui modificări sunt afișate necompletate în cronologie și nu sunt niciodată înregistrate în jurnal. Setați această opțiune pe câmpurile pe care aplicația dvs. le rescrie conform unui program, cum ar fi un marcaj temporal al ultimului contact sau o relație de agregare, astfel încât fiecare sincronizare să nu adauge un rând de activitate la fiecare înregistrare pe care o modifică. O actualizare al cărei diff complet este format din câmpuri neînregistrate în jurnalul de audit nu produce deloc activitate în cronologie. La fel ca `isSearchable`, fiecare sincronizare impune starea declarată.
 * `disabledFieldPermissionActions`, pe un câmp, enumeră permisiunile de câmp care nu pot fi acordate pe acesta: `'canReadFieldValue'`, `'canUpdateFieldValue'` sau ambele, aceleași indicatori pe care îi setează un rol pentru fiecare câmp. Utilizatorii, cheile API, agenții și alte aplicații nu primesc niciodată aceste acțiuni pe câmp, indiferent ce acordă rolul lor, iar salvarea unei permisiuni de câmp care acordă una dintre ele eșuează. Funcțiile de logică proprii ale aplicației dvs. le păstrează. De exemplu, `['canUpdateFieldValue']` păstrează doar pentru citire pentru toți ceilalți o valoare pe care aplicația dvs. o calculează sau o sincronizează, cum ar fi o stare sau un scor. Funcționează și pe câmpurile pe care le adăugați la obiecte pe care nu le dețineți cu `defineField()`.
+* O opțiune de selectare sau de selecție multiplă poate avea propriul `id`. Când este setat, trebuie să fie un UUID cu litere mici (versiunea 4 sau ulterioară) și să aparțină unei singure opțiuni: o sincronizare eșuează dacă două câmpuri partajează un `id` de opțiune.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
 * Puteți genera obiecte noi cu `twenty app add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/ro/developers/extend/apps/getting-started/scaffolding).
 
@@ -144,6 +145,17 @@ Pentru `SELECT` și `MULTI_SELECT`, furnizați o matrice `options` nevidă de ob
 Când este furnizată, `color` trebuie să fie una dintre: `red`, `ruby`, `crimson`, `tomato`, `orange`, `amber`, `yellow`, `lime`, `grass`, `green`, `jade`, `mint`, `turquoise`, `cyan`, `sky`, `blue`, `iris`, `violet`, `purple`, `plum`, `pink`, `bronze`, `gold`, `brown`, `gray`.
 
 Atât `defineObject()`, cât și `defineField()` returnează erori de validare pentru culori neacceptate sau intrări de opțiuni care sunt nule, primitive sau matrice.
+
+#### Modificările spațiului de lucru asupra opțiunilor tale
+
+Un spațiu de lucru poate redenumi, recolora, reordona și dezactiva opțiunile cu care este livrată aplicația ta și poate adăuga propriile opțiuni. Nu poate elimina opțiunile tale și nici modifica `value`-ul acestora.
+
+Aceste modificări sunt păstrate când aplicația ta este sincronizată din nou. Schimbarea `label`, `color` sau `position` ale unei opțiuni în aplicația dvs. modifică valoarea implicită, nu ceea ce un spațiu de lucru a suprascris deja. Opțiunile pe care spațiul de lucru le-a adăugat și opțiunile pe care le-a dezactivat rămân neschimbate.
+
+Când citiți `options` ale unui câmp din API-ul de metadate, două proprietăți descriu starea acelui spațiu de lucru. Twenty le setează; aplicația dvs. nu le declară:
+
+* `isActive: false` marchează o opțiune pe care spațiul de lucru a dezactivat-o. Înregistrările păstrează valoarea, dar aceasta nu mai este oferită la alegerea unei valori.
+* `applicationId` este prezent pe o opțiune care aparține unei alte aplicații decât cea căreia îi aparține câmpul, cum ar fi o opțiune pe care spațiul de lucru a adăugat-o câmpului dvs. Este doar pentru citire și este ignorat când scrieți opțiuni.
 
 ## Valori implicite
 
