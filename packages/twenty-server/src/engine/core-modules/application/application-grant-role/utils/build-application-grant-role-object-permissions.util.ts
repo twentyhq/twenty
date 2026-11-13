@@ -76,33 +76,28 @@ export const buildApplicationGrantRoleObjectPermissions = <
     );
   }
 
-  const mergeGrants = ({
+  const addRuleGrants = ({
     objectRecordsGrants,
     ruleGrants,
   }: {
-    objectRecordsGrants: ObjectRecordsGrants | undefined;
+    objectRecordsGrants: ObjectRecordsGrants;
     ruleGrants: Record<keyof ObjectRecordsGrants, boolean>;
   }): ObjectRecordsGrants => ({
     canReadObjectRecords:
-      (objectRecordsGrants?.canReadObjectRecords ??
-        requestedFlatRole.canReadAllObjectRecords) ||
-      ruleGrants.canReadObjectRecords,
+      ruleGrants.canReadObjectRecords ||
+      objectRecordsGrants.canReadObjectRecords,
     canCreateObjectRecords:
-      (objectRecordsGrants?.canCreateObjectRecords ??
-        requestedFlatRole.canCreateAllObjectRecords) ||
-      ruleGrants.canCreateObjectRecords,
+      ruleGrants.canCreateObjectRecords ||
+      objectRecordsGrants.canCreateObjectRecords,
     canUpdateObjectRecords:
-      (objectRecordsGrants?.canUpdateObjectRecords ??
-        requestedFlatRole.canUpdateAllObjectRecords) ||
-      ruleGrants.canUpdateObjectRecords,
+      ruleGrants.canUpdateObjectRecords ||
+      objectRecordsGrants.canUpdateObjectRecords,
     canSoftDeleteObjectRecords:
-      (objectRecordsGrants?.canSoftDeleteObjectRecords ??
-        requestedFlatRole.canSoftDeleteAllObjectRecords) ||
-      ruleGrants.canSoftDeleteObjectRecords,
+      ruleGrants.canSoftDeleteObjectRecords ||
+      objectRecordsGrants.canSoftDeleteObjectRecords,
     canDestroyObjectRecords:
-      (objectRecordsGrants?.canDestroyObjectRecords ??
-        requestedFlatRole.canDestroyAllObjectRecords) ||
-      ruleGrants.canDestroyObjectRecords,
+      ruleGrants.canDestroyObjectRecords ||
+      objectRecordsGrants.canDestroyObjectRecords,
   });
 
   const objectUniversalIdentifiersWithObjectPermission = new Set(
@@ -121,7 +116,7 @@ export const buildApplicationGrantRoleObjectPermissions = <
       return isDefined(ruleGrants)
         ? {
             ...objectPermission,
-            ...mergeGrants({
+            ...addRuleGrants({
               objectRecordsGrants: objectPermission,
               ruleGrants,
             }),
@@ -138,7 +133,20 @@ export const buildApplicationGrantRoleObjectPermissions = <
       .map(([objectMetadataUniversalIdentifier, ruleGrants]) =>
         buildGrantRoleFlatObjectPermission({
           objectMetadataUniversalIdentifier,
-          grants: mergeGrants({ objectRecordsGrants: undefined, ruleGrants }),
+          grants: addRuleGrants({
+            objectRecordsGrants: {
+              canReadObjectRecords: requestedFlatRole.canReadAllObjectRecords,
+              canCreateObjectRecords:
+                requestedFlatRole.canCreateAllObjectRecords,
+              canUpdateObjectRecords:
+                requestedFlatRole.canUpdateAllObjectRecords,
+              canSoftDeleteObjectRecords:
+                requestedFlatRole.canSoftDeleteAllObjectRecords,
+              canDestroyObjectRecords:
+                requestedFlatRole.canDestroyAllObjectRecords,
+            },
+            ruleGrants,
+          }),
         }),
       ),
   ];
