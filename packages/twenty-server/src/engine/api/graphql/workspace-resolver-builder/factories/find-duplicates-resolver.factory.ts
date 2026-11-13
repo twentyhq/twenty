@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
 import { OrderByDirection } from 'twenty-shared/types';
 
 import { type WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
@@ -14,6 +13,7 @@ import { CommonFindDuplicatesQueryRunnerService } from 'src/engine/api/common/co
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
+import { getResolverSelectedFields } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-resolver-selected-fields.util';
 import { createQueryRunnerContext } from 'src/engine/api/graphql/workspace-resolver-builder/utils/create-query-runner-context.util';
 
 @Injectable()
@@ -30,11 +30,7 @@ export class FindDuplicatesResolverFactory implements WorkspaceResolverBuilderFa
     const internalContext = context;
 
     return async (_source, args, _requestContext, info) => {
-      const selectedFields = graphqlFields(
-        info,
-        {},
-        { processArguments: true },
-      );
+      const selectedFields = getResolverSelectedFields(info);
 
       const resolverContext = createQueryRunnerContext({
         workspaceSchemaBuilderContext: internalContext,
