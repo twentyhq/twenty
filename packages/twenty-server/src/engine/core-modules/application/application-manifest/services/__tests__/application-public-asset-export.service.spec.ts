@@ -96,7 +96,7 @@ describe('ApplicationPublicAssetExportService', () => {
     ]);
     expect(result.coverage).toEqual([
       {
-        metadataName: 'publicAsset',
+        metadataName: 'file',
         universalIdentifier: 'second',
         status: 'UNSUPPORTED',
         reason: expect.stringContaining('8 MiB total'),

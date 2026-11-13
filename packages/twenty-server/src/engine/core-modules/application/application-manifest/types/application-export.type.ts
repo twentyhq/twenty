@@ -4,6 +4,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
 
+export type ApplicationExportCoverageName = AllMetadataName | 'file';
+
 export type ApplicationExportCoverageEntry = {
   metadataName: AllMetadataName;
   universalIdentifier: string;
@@ -14,7 +16,7 @@ export type ApplicationExportCoverageEntry = {
 export type ApplicationExportFileCoverageEntry = Omit<
   ApplicationExportCoverageEntry,
   'metadataName'
-> & { metadataName: 'publicAsset' };
+> & { metadataName: 'file' };
 
 export type ApplicationExportFile = {
   folder: string;

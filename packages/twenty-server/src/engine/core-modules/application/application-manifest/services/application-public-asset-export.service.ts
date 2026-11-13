@@ -75,7 +75,7 @@ export class ApplicationPublicAssetExportService {
           throw error;
         }
         coverage.push({
-          metadataName: 'publicAsset',
+          metadataName: 'file',
           universalIdentifier: storedFile.id,
           status: ApplicationExportCoverageStatus.UNSUPPORTED,
           reason: `${path} exceeds the remaining public asset export budget (8 MiB total).`,
