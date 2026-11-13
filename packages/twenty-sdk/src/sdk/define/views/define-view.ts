@@ -57,6 +57,14 @@ export const defineView: DefineEntity<ViewConfig> = (config) => {
     }
   }
 
+  if (config.tabs) {
+    for (const tab of config.tabs) {
+      if (!tab.universalIdentifier) {
+        errors.push('ViewTab must have a universalIdentifier');
+      }
+    }
+  }
+
   if (config.fieldGroups) {
     for (const fieldGroup of config.fieldGroups) {
       if (!fieldGroup.universalIdentifier) {

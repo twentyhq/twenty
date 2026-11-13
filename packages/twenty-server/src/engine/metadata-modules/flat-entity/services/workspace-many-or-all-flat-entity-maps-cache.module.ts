@@ -23,6 +23,7 @@ import { WorkspaceFlatViewFieldMapCacheService } from 'src/engine/metadata-modul
 import { WorkspaceFlatViewFilterGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-filter-group/services/workspace-flat-view-filter-group-map-cache.service';
 import { WorkspaceFlatViewFilterMapCacheService } from 'src/engine/metadata-modules/flat-view-filter/services/workspace-flat-view-filter-map-cache.service';
 import { WorkspaceFlatViewGroupMapCacheService } from 'src/engine/metadata-modules/flat-view-group/services/workspace-flat-view-group-map-cache.service';
+import { WorkspaceFlatViewTabMapCacheService } from 'src/engine/metadata-modules/flat-view-tab/services/workspace-flat-view-tab-map-cache.service';
 import { WorkspaceFlatSearchFieldMetadataMapCacheService } from 'src/engine/metadata-modules/flat-search-field-metadata/services/workspace-flat-search-field-metadata-map-cache.service';
 import { WorkspaceFlatTimelineActivityTypeMapCacheService } from 'src/engine/metadata-modules/flat-timeline-activity-type/services/workspace-flat-timeline-activity-type-map-cache.service';
 import { WorkspaceFlatAgentChatChannelMapCacheService } from 'src/engine/metadata-modules/flat-agent-chat-channel/services/workspace-flat-agent-chat-channel-map-cache.service';
@@ -51,6 +52,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatFieldMetadataMapCacheService,
     WorkspaceOrmFlatFieldMetadataMapCacheService,
     WorkspaceFlatViewGroupMapCacheService,
+    WorkspaceFlatViewTabMapCacheService,
     WorkspaceFlatObjectPermissionMapCacheService,
     WorkspaceFlatFieldPermissionMapCacheService,
     WorkspaceFlatRolePermissionFlagMapCacheService,

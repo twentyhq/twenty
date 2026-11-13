@@ -22,6 +22,7 @@ import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-f
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { ViewTabDTO } from 'src/engine/metadata-modules/view-tab/dtos/view-tab.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { VIEW_OPEN_RECORD_IN_DEPRECATION } from 'src/engine/metadata-modules/view/constants/view-open-record-in-deprecation.constant';
 
@@ -137,6 +138,9 @@ export class ViewDTO {
 
   @Field(() => [ViewGroupDTO])
   viewGroups?: ViewGroupDTO[];
+
+  @Field(() => [ViewTabDTO])
+  viewTabs?: ViewTabDTO[];
 
   @Field(() => [ViewFieldGroupDTO])
   viewFieldGroups?: ViewFieldGroupDTO[];

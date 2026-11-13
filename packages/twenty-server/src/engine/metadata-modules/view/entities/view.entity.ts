@@ -43,6 +43,7 @@ import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
+import { ViewTabEntity } from 'src/engine/metadata-modules/view-tab/entities/view-tab.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type ViewOverrides = {
@@ -322,6 +323,9 @@ export class ViewEntity
 
   @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.view)
   viewGroups: Relation<ViewGroupEntity[]>;
+
+  @OneToMany(() => ViewTabEntity, (viewTab) => viewTab.view)
+  viewTabs: Relation<ViewTabEntity[]>;
 
   @OneToMany(
     () => ViewFilterGroupEntity,

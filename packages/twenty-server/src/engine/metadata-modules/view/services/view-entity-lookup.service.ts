@@ -86,6 +86,20 @@ export class ViewEntityLookupService {
         );
       }
 
+      case 'viewTab': {
+        const { flatViewTabMaps } =
+          await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+            { workspaceId, flatMapsKeys: ['flatViewTabMaps'] },
+          );
+
+        return (
+          findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: entityId,
+            flatEntityMaps: flatViewTabMaps,
+          })?.viewId ?? null
+        );
+      }
+
       case 'viewSort': {
         const { flatViewSortMaps } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(

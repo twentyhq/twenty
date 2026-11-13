@@ -174,6 +174,8 @@ export const createStandardViewFlatMetadata = <
     viewFilterUniversalIdentifiers: [],
     viewGroupIds: [],
     viewGroupUniversalIdentifiers: [],
+    viewTabIds: [],
+    viewTabUniversalIdentifiers: [],
     viewFilterGroupIds: [],
     viewFilterGroupUniversalIdentifiers: [],
     navigationMenuItemIds: [],

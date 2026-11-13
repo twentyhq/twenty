@@ -362,6 +362,7 @@ export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
 export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';
+export { ViewTabType } from './ViewTabType';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';
 export { WebhookSubscriptionChannelType } from './WebhookSubscriptionChannelType';

@@ -74,6 +74,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         viewFieldIds: [],
         viewFieldGroupIds: [],
         viewGroupIds: [],
+        viewTabIds: [],
         viewFilterIds: [],
         viewFilterGroupIds: [],
         navigationMenuItemIds: [],

@@ -42,6 +42,7 @@ export const fromViewEntityToFlatView = (
     viewFieldGroupIds: viewEntity.viewFieldGroups?.map(({ id }) => id) ?? [],
     viewFilterIds: viewEntity.viewFilters.map(({ id }) => id),
     viewGroupIds: viewEntity.viewGroups.map(({ id }) => id),
+    viewTabIds: viewEntity.viewTabs?.map(({ id }) => id) ?? [],
     viewFilterGroupIds: viewEntity.viewFilterGroups?.map(({ id }) => id) ?? [],
     viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
       ({ universalIdentifier }) => universalIdentifier,
@@ -56,6 +57,10 @@ export const fromViewEntityToFlatView = (
     viewGroupUniversalIdentifiers: viewEntity.viewGroups.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    viewTabUniversalIdentifiers:
+      viewEntity.viewTabs?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
     viewFilterGroupUniversalIdentifiers:
       viewEntity.viewFilterGroups?.map(
         ({ universalIdentifier }) => universalIdentifier,

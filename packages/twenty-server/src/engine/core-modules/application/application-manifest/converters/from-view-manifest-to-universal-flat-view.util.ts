@@ -85,6 +85,7 @@ export const fromViewManifestToUniversalFlatView = ({
     viewFilterUniversalIdentifiers: [],
     viewFilterGroupUniversalIdentifiers: [],
     viewGroupUniversalIdentifiers: [],
+    viewTabUniversalIdentifiers: [],
     viewFieldGroupUniversalIdentifiers: [],
     navigationMenuItemUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],

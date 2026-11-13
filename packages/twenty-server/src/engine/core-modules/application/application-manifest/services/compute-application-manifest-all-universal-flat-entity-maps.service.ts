@@ -45,6 +45,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { fromViewTabManifestToUniversalFlatViewTab } from 'src/engine/core-modules/application/application-manifest/converters/from-view-tab-manifest-to-universal-flat-view-tab.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import {
@@ -626,6 +627,19 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatViewGroupMaps,
+        });
+      }
+
+      for (const viewTabManifest of viewManifest.tabs ?? []) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: fromViewTabManifestToUniversalFlatViewTab({
+            viewTabManifest,
+            viewUniversalIdentifier: viewManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatViewTabMaps,
         });
       }
 

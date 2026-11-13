@@ -26,6 +26,9 @@ export class ViewFilterDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   viewFilterGroupId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewTabId?: string | null;
+
   @Field(() => Number, { nullable: true })
   positionInViewFilterGroup?: number | null;
 

@@ -73,6 +73,8 @@ import { type FlatViewFilterMaps } from 'src/engine/metadata-modules/flat-view-f
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewGroupMaps } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group-maps.type';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
+import { type FlatViewTabMaps } from 'src/engine/metadata-modules/flat-view-tab/types/flat-view-tab-maps.type';
+import { type FlatViewTab } from 'src/engine/metadata-modules/flat-view-tab/types/flat-view-tab.type';
 import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
@@ -138,6 +140,7 @@ import { type UniversalFlatViewField } from 'src/engine/workspace-manager/worksp
 import { type UniversalFlatViewFilterGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter-group.type';
 import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-filter.type';
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
+import { type UniversalFlatViewTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-tab.type';
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -393,6 +396,14 @@ import {
   type UniversalUpdateViewGroupAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/types/workspace-migration-view-group-action.type';
 import {
+  type FlatCreateViewTabAction,
+  type FlatDeleteViewTabAction,
+  type FlatUpdateViewTabAction,
+  type UniversalCreateViewTabAction,
+  type UniversalDeleteViewTabAction,
+  type UniversalUpdateViewTabAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-tab/types/workspace-migration-view-tab-action.type';
+import {
   type FlatCreateViewSortAction,
   type FlatDeleteViewSortAction,
   type FlatUpdateViewSortAction,
@@ -570,6 +581,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatViewGroup;
     universalFlatEntity: UniversalFlatViewGroup;
     entity: MetadataEntity<'viewGroup'>;
+  };
+  viewTab: {
+    flatEntityMaps: FlatViewTabMaps;
+    universalActions: {
+      create: UniversalCreateViewTabAction;
+      update: UniversalUpdateViewTabAction;
+      delete: UniversalDeleteViewTabAction;
+    };
+    flatActions: {
+      create: FlatCreateViewTabAction;
+      update: FlatUpdateViewTabAction;
+      delete: FlatDeleteViewTabAction;
+    };
+    flatEntity: FlatViewTab;
+    universalFlatEntity: UniversalFlatViewTab;
+    entity: MetadataEntity<'viewTab'>;
   };
   viewSort: {
     flatEntityMaps: FlatViewSortMaps;

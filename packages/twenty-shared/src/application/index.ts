@@ -355,6 +355,7 @@ export type {
   ViewFilterManifest,
   ViewFilterGroupManifest,
   ViewGroupManifest,
+  ViewTabManifest,
   ViewFieldGroupManifest,
   ViewSortManifest,
   ViewManifest,

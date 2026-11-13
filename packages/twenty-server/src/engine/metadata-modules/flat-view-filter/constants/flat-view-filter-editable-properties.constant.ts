@@ -8,4 +8,5 @@ export const FLAT_VIEW_FILTER_EDITABLE_PROPERTIES = [
   'positionInViewFilterGroup',
   'subFieldName',
   'relationTargetFieldMetadataId',
+  'viewTabId',
 ] as const satisfies MetadataEntityPropertyName<'viewFilter'>[];

@@ -31,6 +31,7 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
       viewId,
       viewFilterGroupId,
       relationTargetFieldMetadataId,
+      viewTabId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -50,6 +51,7 @@ export class CreateViewFilterActionHandlerService extends WorkspaceMigrationRunn
         viewId,
         viewFilterGroupId,
         relationTargetFieldMetadataId,
+        viewTabId,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,
         workspaceId,

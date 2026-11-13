@@ -569,6 +569,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "positionInViewFilterGroup",
       "subFieldName",
       "relationTargetFieldMetadataUniversalIdentifier",
+      "viewTabUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "value",
@@ -601,6 +602,18 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "fieldMetadataUniversalIdentifier",
       "viewUniversalIdentifier",
       "deletedAt",
+    ],
+    "propertiesToStringify": [],
+  },
+  "viewTab": {
+    "propertiesToCompare": [
+      "type",
+      "fieldValue",
+      "name",
+      "position",
+      "isVisible",
+      "deletedAt",
+      "viewUniversalIdentifier",
     ],
     "propertiesToStringify": [],
   },

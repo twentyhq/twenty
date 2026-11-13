@@ -11,6 +11,7 @@ import { ViewFilterGroupException } from 'src/engine/metadata-modules/view-filte
 import { ViewFilterException } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { ViewGroupException } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewSortException } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
+import { ViewTabException } from 'src/engine/metadata-modules/view-tab/exceptions/view-tab.exception';
 import { ViewException } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception-handler.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -22,6 +23,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
   ViewFilterGroupException,
   ViewGroupException,
   ViewSortException,
+  ViewTabException,
   WorkspaceMigrationBuilderException,
 )
 @Injectable()
@@ -35,6 +37,7 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
       | ViewFilterGroupException
       | ViewGroupException
       | ViewSortException
+      | ViewTabException
       | WorkspaceMigrationBuilderException,
     _host: ExecutionContext,
   ) {

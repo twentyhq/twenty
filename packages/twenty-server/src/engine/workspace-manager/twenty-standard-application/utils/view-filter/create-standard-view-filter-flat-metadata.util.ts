@@ -127,6 +127,8 @@ export const createStandardViewFilterFlatMetadata = <
     fieldMetadataUniversalIdentifier: fieldDefinition.universalIdentifier,
     viewFilterGroupId,
     viewFilterGroupUniversalIdentifier: null,
+    viewTabId: null,
+    viewTabUniversalIdentifier: null,
     operand,
     value,
     subFieldName,

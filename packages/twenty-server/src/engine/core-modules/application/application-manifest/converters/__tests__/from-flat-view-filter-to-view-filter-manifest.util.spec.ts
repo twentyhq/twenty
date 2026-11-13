@@ -12,6 +12,7 @@ const VIEW_FILTER_UID = '33333333-3333-4333-8333-333333333333';
 const FIELD_UID = '44444444-4444-4444-8444-444444444444';
 const RELATION_TARGET_FIELD_UID = '55555555-5555-4555-8555-555555555555';
 const VIEW_FILTER_GROUP_UID = '66666666-6666-4666-8666-666666666666';
+const VIEW_TAB_UID = '99999999-9999-4999-8999-999999999999';
 const NOW = '2026-09-03T10:00:00.000Z';
 
 const VIEW_FILTER_MANIFEST: Required<ViewFilterManifest> = {
@@ -23,6 +24,7 @@ const VIEW_FILTER_MANIFEST: Required<ViewFilterManifest> = {
   relationTargetFieldMetadataUniversalIdentifier: RELATION_TARGET_FIELD_UID,
   viewFilterGroupUniversalIdentifier: VIEW_FILTER_GROUP_UID,
   positionInViewFilterGroup: 2,
+  viewTabUniversalIdentifier: VIEW_TAB_UID,
 };
 
 const MINIMAL_VIEW_FILTER_MANIFEST: ViewFilterManifest = {
@@ -73,6 +75,7 @@ describe('fromFlatViewFilterToViewFilterManifest', () => {
       relationTargetFieldMetadataUniversalIdentifier: RELATION_TARGET_FIELD_UID,
       viewFilterGroupUniversalIdentifier: null,
       positionInViewFilterGroup: 1.5,
+      viewTabUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
       deletedAt: null,

@@ -124,6 +124,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
+      viewTabUniversalIdentifiers: [],
       applicationUniversalIdentifier,
       calendarFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,

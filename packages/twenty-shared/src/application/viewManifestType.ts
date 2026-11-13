@@ -7,6 +7,7 @@ import {
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewSortDirection,
+  type ViewTabType,
   type ViewType,
   type ViewVisibility,
 } from '@/types';
@@ -39,6 +40,7 @@ export type ViewFilterManifest = SyncableEntityOptions & {
   relationTargetFieldMetadataUniversalIdentifier?: string;
   viewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;
+  viewTabUniversalIdentifier?: string;
 };
 
 export type ViewFilterGroupManifest = SyncableEntityOptions & {
@@ -49,6 +51,14 @@ export type ViewFilterGroupManifest = SyncableEntityOptions & {
 
 export type ViewGroupManifest = SyncableEntityOptions & {
   fieldValue: string;
+  isVisible?: boolean;
+  position: number;
+};
+
+export type ViewTabManifest = SyncableEntityOptions & {
+  type: ViewTabType;
+  fieldValue?: string;
+  name?: string;
   isVisible?: boolean;
   position: number;
 };
@@ -97,6 +107,7 @@ export type ViewManifest = SyncableEntityOptions & {
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];
   groups?: ViewGroupManifest[];
+  tabs?: ViewTabManifest[];
   fieldGroups?: ViewFieldGroupManifest[];
   sorts?: ViewSortManifest[];
 };

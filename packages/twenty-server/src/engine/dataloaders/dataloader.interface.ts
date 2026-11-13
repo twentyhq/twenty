@@ -25,6 +25,7 @@ import {
   type ViewFiltersByViewIdLoaderPayload,
   type ViewGroupsByViewIdLoaderPayload,
   type ViewSortsByViewIdLoaderPayload,
+  type ViewTabsByViewIdLoaderPayload,
   type WorkspaceMembersByRoleIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
 import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
@@ -52,6 +53,7 @@ import { type ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/v
 import { type ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { type ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { type ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { type ViewTabDTO } from 'src/engine/metadata-modules/view-tab/dtos/view-tab.dto';
 import { type ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 
 export interface IDataloaders {
@@ -125,6 +127,11 @@ export interface IDataloaders {
   viewGroupsByViewIdLoader: DataLoader<
     ViewGroupsByViewIdLoaderPayload,
     ViewGroupDTO[]
+  >;
+
+  viewTabsByViewIdLoader: DataLoader<
+    ViewTabsByViewIdLoaderPayload,
+    ViewTabDTO[]
   >;
 
   viewFilterGroupsByViewIdLoader: DataLoader<

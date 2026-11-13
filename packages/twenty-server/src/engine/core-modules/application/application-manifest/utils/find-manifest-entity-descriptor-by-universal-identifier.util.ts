@@ -204,6 +204,13 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
         toCandidates(view.groups, () => undefined),
       ),
   },
+  viewTab: {
+    entityKind: 'view tab',
+    getCandidates: (manifest) =>
+      (manifest.views ?? []).flatMap((view) =>
+        toCandidates(view.tabs, (tab) => tab.name ?? undefined),
+      ),
+  },
   viewSort: {
     entityKind: 'view sort',
     getCandidates: (manifest) =>

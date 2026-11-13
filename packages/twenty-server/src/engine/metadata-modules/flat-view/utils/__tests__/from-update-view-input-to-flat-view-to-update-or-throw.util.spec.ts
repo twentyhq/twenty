@@ -142,6 +142,8 @@ const buildExistingFlatView = ({
     viewGroupUniversalIdentifiers: existingViewGroups.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
+    viewTabIds: [],
+    viewTabUniversalIdentifiers: [],
     viewFieldIds: [],
     viewFieldUniversalIdentifiers: [],
     viewFieldGroupIds: [],

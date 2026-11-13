@@ -31,4 +31,7 @@ export const fromFlatViewFilterToViewFilterManifest = ({
   ...(isDefined(flatViewFilter.positionInViewFilterGroup)
     ? { positionInViewFilterGroup: flatViewFilter.positionInViewFilterGroup }
     : {}),
+  ...(isDefined(flatViewFilter.viewTabUniversalIdentifier)
+    ? { viewTabUniversalIdentifier: flatViewFilter.viewTabUniversalIdentifier }
+    : {}),
 });

@@ -32,11 +32,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewField.update,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
+    ...aggregatedOrchestratorActionsReport.viewTab.create,
+    ...aggregatedOrchestratorActionsReport.viewTab.update,
     ...aggregatedOrchestratorActionsReport.viewFilter.delete,
     ...aggregatedOrchestratorActionsReport.viewFilter.create,
     ...aggregatedOrchestratorActionsReport.viewFilter.update,
     // Filters and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
+    // Filters CASCADE on their tab too, so the same repoint-before-drop applies
+    ...aggregatedOrchestratorActionsReport.viewTab.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.create,
     ...aggregatedOrchestratorActionsReport.viewGroup.update,

@@ -140,6 +140,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "viewFilterGroup": [],
   "viewGroup": [],
   "viewSort": [],
+  "viewTab": [],
   "webhook": [],
   "workflow": [],
   "workflowVersion": [],

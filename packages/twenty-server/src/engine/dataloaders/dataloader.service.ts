@@ -46,6 +46,7 @@ import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/vie
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { fromFlatViewTabToViewTabDto } from 'src/engine/metadata-modules/view-tab/utils/from-flat-view-tab-to-view-tab-dto.util';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
@@ -139,6 +140,11 @@ export type ViewGroupsByViewIdLoaderPayload = {
   viewId: string;
 };
 
+export type ViewTabsByViewIdLoaderPayload = {
+  workspaceId: string;
+  viewId: string;
+};
+
 export type ViewFilterGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
@@ -220,6 +226,7 @@ export class DataloaderService {
     const viewFiltersByViewIdLoader = this.createViewFiltersByViewIdLoader();
     const viewSortsByViewIdLoader = this.createViewSortsByViewIdLoader();
     const viewGroupsByViewIdLoader = this.createViewGroupsByViewIdLoader();
+    const viewTabsByViewIdLoader = this.createViewTabsByViewIdLoader();
     const viewFilterGroupsByViewIdLoader =
       this.createViewFilterGroupsByViewIdLoader();
     const agentsByApplicationIdLoader =
@@ -359,6 +366,7 @@ export class DataloaderService {
       viewFiltersByViewIdLoader,
       viewSortsByViewIdLoader,
       viewGroupsByViewIdLoader,
+      viewTabsByViewIdLoader,
       viewFilterGroupsByViewIdLoader,
       agentsByApplicationIdLoader,
       frontComponentsByApplicationIdLoader,
@@ -941,6 +949,41 @@ export class DataloaderService {
         })
           .filter((flatViewGroup) => flatViewGroup.deletedAt === null)
           .map(fromFlatViewGroupToViewGroupDto);
+      });
+    });
+  }
+
+  private createViewTabsByViewIdLoader() {
+    return new DataLoader<
+      ViewTabsByViewIdLoaderPayload,
+      ReturnType<typeof fromFlatViewTabToViewTabDto>[]
+    >(async (dataLoaderParams: ViewTabsByViewIdLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+
+      const { flatViewMaps, flatViewTabMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          {
+            workspaceId,
+            flatMapsKeys: ['flatViewMaps', 'flatViewTabMaps'],
+          },
+        );
+
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: viewId,
+          flatEntityMaps: flatViewMaps,
+        });
+
+        if (!isDefined(flatView)) {
+          return [];
+        }
+
+        return findManyFlatEntityByIdInFlatEntityMaps({
+          flatEntityIds: flatView.viewTabIds,
+          flatEntityMaps: flatViewTabMaps,
+        })
+          .filter((flatViewTab) => flatViewTab.deletedAt === null)
+          .map(fromFlatViewTabToViewTabDto);
       });
     });
   }

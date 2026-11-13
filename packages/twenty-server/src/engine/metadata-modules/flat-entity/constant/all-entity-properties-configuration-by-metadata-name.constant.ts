@@ -662,6 +662,53 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'viewUniversalIdentifier',
     },
   },
+  viewTab: {
+    type: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    fieldValue: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    position: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isVisible: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    viewId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'viewUniversalIdentifier',
+    },
+  },
   index: {
     isSystemSideEffect: {
       toCompare: false,
@@ -839,6 +886,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       toStringify: false,
       universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
+    },
+    viewTabId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'viewTabUniversalIdentifier',
     },
     createdAt: {
       toCompare: false,

@@ -251,7 +251,9 @@ export class ViewWidgetUpsertService {
       flatViewFilterMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((filter) => filter.viewId === viewId);
+      .filter(
+        (filter) => filter.viewId === viewId && !isDefined(filter.viewTabId),
+      );
 
     const existingViewFilterGroups = Object.values(
       flatViewFilterGroupMaps.byUniversalIdentifier,
@@ -847,6 +849,8 @@ export class ViewWidgetUpsertService {
           relationTargetFieldMetadataId:
             inputFilter.relationTargetFieldMetadataId ?? null,
           relationTargetFieldMetadataUniversalIdentifier,
+          viewTabId: null,
+          viewTabUniversalIdentifier: null,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,

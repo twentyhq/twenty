@@ -141,6 +141,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFilterGroupMaps,
+      flatViewTabMaps: createEmptyFlatEntityMaps(),
     },
     now,
     standardObjectMetadataRelatedEntityIds,

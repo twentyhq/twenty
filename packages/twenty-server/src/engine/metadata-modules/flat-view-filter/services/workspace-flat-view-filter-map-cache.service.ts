@@ -15,6 +15,7 @@ const FLAT_VIEW_FILTER_ROWS_REQUIREMENT = {
   application: ['id', 'universalIdentifier'],
   fieldMetadata: ['id', 'universalIdentifier'],
   viewFilterGroup: ['id', 'universalIdentifier'],
+  viewTab: ['id', 'universalIdentifier'],
   view: ['id', 'universalIdentifier'],
 } as const;
 
@@ -33,6 +34,7 @@ export class WorkspaceFlatViewFilterMapCacheService extends MetadataFlatEntityMa
       application: applications,
       fieldMetadata: fieldMetadatas,
       viewFilterGroup: viewFilterGroups,
+      viewTab: viewTabs,
       view: views,
     } = rows;
 
@@ -42,6 +44,8 @@ export class WorkspaceFlatViewFilterMapCacheService extends MetadataFlatEntityMa
       createIdToUniversalIdentifierMap(fieldMetadatas);
     const viewFilterGroupIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(viewFilterGroups);
+    const viewTabIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(viewTabs);
     const viewIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(views);
 
@@ -53,6 +57,7 @@ export class WorkspaceFlatViewFilterMapCacheService extends MetadataFlatEntityMa
         applicationIdToUniversalIdentifierMap,
         fieldMetadataIdToUniversalIdentifierMap,
         viewFilterGroupIdToUniversalIdentifierMap,
+        viewTabIdToUniversalIdentifierMap,
         viewIdToUniversalIdentifierMap,
       });
 

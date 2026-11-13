@@ -31,6 +31,10 @@ import {
   ViewSortExceptionCode,
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import {
+  ViewTabException,
+  ViewTabExceptionCode,
+} from 'src/engine/metadata-modules/view-tab/exceptions/view-tab.exception';
+import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -171,6 +175,22 @@ export const viewGraphqlApiExceptionHandler = (error: Error) => {
       case ViewSortExceptionCode.VIEW_NOT_FOUND:
         throw new NotFoundError(error.message);
       case ViewSortExceptionCode.INVALID_VIEW_SORT_DATA:
+        throw new UserInputError(error.message, {
+          userFriendlyMessage: error.userFriendlyMessage,
+        });
+      default: {
+        return assertUnreachable(error.code);
+      }
+    }
+  }
+
+  if (error instanceof ViewTabException) {
+    switch (error.code) {
+      case ViewTabExceptionCode.VIEW_TAB_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewTabExceptionCode.VIEW_NOT_FOUND:
+        throw new NotFoundError(error.message);
+      case ViewTabExceptionCode.INVALID_VIEW_TAB_DATA:
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });

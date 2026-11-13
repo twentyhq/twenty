@@ -19,6 +19,7 @@ import { fromFlatViewFieldToViewFieldDto } from 'src/engine/metadata-modules/vie
 import { fromFlatViewFilterGroupToViewFilterGroupDto } from 'src/engine/metadata-modules/view-filter-group/utils/from-flat-view-filter-group-to-view-filter-group-dto.util';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
 import { fromFlatViewGroupToViewGroupDto } from 'src/engine/metadata-modules/view-group/utils/from-flat-view-group-to-view-group-dto.util';
+import { fromFlatViewTabToViewTabDto } from 'src/engine/metadata-modules/view-tab/utils/from-flat-view-tab-to-view-tab-dto.util';
 import { fromFlatViewSortToViewSortDto } from 'src/engine/metadata-modules/view-sort/utils/from-flat-view-sort-to-view-sort-dto.util';
 import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
 import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
@@ -423,6 +424,7 @@ export class ViewService {
       flatViewFilterGroupMaps,
       flatViewSortMaps,
       flatViewGroupMaps,
+      flatViewTabMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -434,6 +436,7 @@ export class ViewService {
             'flatViewFilterGroupMaps',
             'flatViewSortMaps',
             'flatViewGroupMaps',
+            'flatViewTabMaps',
           ],
         },
       );
@@ -482,6 +485,13 @@ export class ViewService {
       })
         .filter((flatEntity) => flatEntity.deletedAt === null)
         .map(fromFlatViewGroupToViewGroupDto);
+
+      viewDto.viewTabs = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatView.viewTabIds,
+        flatEntityMaps: flatViewTabMaps,
+      })
+        .filter((flatEntity) => flatEntity.deletedAt === null)
+        .map(fromFlatViewTabToViewTabDto);
 
       return viewDto;
     });

@@ -230,6 +230,7 @@ export type {
   ViewFilterManifest,
   ViewGroupManifest,
   ViewSortManifest,
+  ViewTabManifest,
 } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { ViewManifestFilterValue } from 'twenty-shared/application';
 
@@ -255,6 +256,7 @@ export {
   ViewFilterOperandDeprecated,
   ViewOpenRecordIn,
   ViewSortDirection,
+  ViewTabType,
   ViewType,
   ViewVisibility,
   WidgetType,

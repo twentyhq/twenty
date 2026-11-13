@@ -8,6 +8,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   viewField: true,
   viewFieldGroup: true,
   viewGroup: true,
+  viewTab: true,
   viewFilter: true,
   viewFilterGroup: true,
   role: true,

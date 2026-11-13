@@ -237,6 +237,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewFilter",
   "viewFilterGroup",
   "viewGroup",
+  "viewTab",
   "viewFieldGroup",
   "viewSort",
   "navigationMenuItem",
@@ -263,6 +264,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldMetadata",
   "view",
   "viewFilterGroup",
+  "viewTab",
 ]
 `;
 
@@ -284,6 +286,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "fieldMetadata",
   "view",
+]
+`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for viewTab 1`] = `
+[
+  "view",
+  "viewFilter",
 ]
 `;
 

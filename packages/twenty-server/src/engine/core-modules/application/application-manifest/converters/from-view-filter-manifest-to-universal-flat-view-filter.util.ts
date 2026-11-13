@@ -28,6 +28,8 @@ export const fromViewFilterManifestToUniversalFlatViewFilter = ({
       viewFilterManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     positionInViewFilterGroup:
       viewFilterManifest.positionInViewFilterGroup ?? null,
+    viewTabUniversalIdentifier:
+      viewFilterManifest.viewTabUniversalIdentifier ?? null,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

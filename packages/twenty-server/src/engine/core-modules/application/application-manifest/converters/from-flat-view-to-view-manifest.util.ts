@@ -5,7 +5,13 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 
 export type ViewChildrenManifests = Pick<
   ViewManifest,
-  'fields' | 'filters' | 'filterGroups' | 'groups' | 'fieldGroups' | 'sorts'
+  | 'fields'
+  | 'filters'
+  | 'filterGroups'
+  | 'groups'
+  | 'tabs'
+  | 'fieldGroups'
+  | 'sorts'
 >;
 
 const withoutEmptyCollections = ({
@@ -13,6 +19,7 @@ const withoutEmptyCollections = ({
   filters,
   filterGroups,
   groups,
+  tabs,
   fieldGroups,
   sorts,
 }: ViewChildrenManifests): ViewChildrenManifests => ({
@@ -20,6 +27,7 @@ const withoutEmptyCollections = ({
   ...(isNonEmptyArray(filters) ? { filters } : {}),
   ...(isNonEmptyArray(filterGroups) ? { filterGroups } : {}),
   ...(isNonEmptyArray(groups) ? { groups } : {}),
+  ...(isNonEmptyArray(tabs) ? { tabs } : {}),
   ...(isNonEmptyArray(fieldGroups) ? { fieldGroups } : {}),
   ...(isNonEmptyArray(sorts) ? { sorts } : {}),
 });

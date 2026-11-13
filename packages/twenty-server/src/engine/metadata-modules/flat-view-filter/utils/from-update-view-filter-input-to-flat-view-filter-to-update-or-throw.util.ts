@@ -23,12 +23,13 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
   flatViewFilterMaps,
   flatFieldMetadataMaps,
   flatViewFilterGroupMaps,
+  flatViewTabMaps,
 }: {
   updateViewFilterInput: UpdateViewFilterInput;
   flatViewFilterMaps: FlatViewFilterMaps;
 } & Pick<
   AllFlatEntityMaps,
-  'flatFieldMetadataMaps' | 'flatViewFilterGroupMaps'
+  'flatFieldMetadataMaps' | 'flatViewFilterGroupMaps' | 'flatViewTabMaps'
 >): UniversalFlatViewFilter => {
   const { id: viewFilterToUpdateId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -85,6 +86,20 @@ export const fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow = ({
 
     flatViewFilterToUpdate.viewFilterGroupUniversalIdentifier =
       viewFilterGroupUniversalIdentifier;
+  }
+
+  if (updatedEditableFieldProperties.viewTabId !== undefined) {
+    const { viewTabUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'viewFilter',
+        foreignKeyValues: {
+          viewTabId: flatViewFilterToUpdate.viewTabId,
+        },
+        flatEntityMaps: { flatViewTabMaps },
+      });
+
+    flatViewFilterToUpdate.viewTabUniversalIdentifier =
+      viewTabUniversalIdentifier;
   }
 
   if (

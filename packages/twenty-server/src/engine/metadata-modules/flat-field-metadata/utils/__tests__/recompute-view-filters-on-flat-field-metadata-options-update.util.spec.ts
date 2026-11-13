@@ -52,6 +52,8 @@ const buildViewFilter = ({
   subFieldName: null,
   viewFilterGroupId: null,
   viewFilterGroupUniversalIdentifier: null,
+  viewTabId: null,
+  viewTabUniversalIdentifier: null,
   positionInViewFilterGroup: null,
   relationTargetFieldMetadataId: null,
   relationTargetFieldMetadataUniversalIdentifier: null,

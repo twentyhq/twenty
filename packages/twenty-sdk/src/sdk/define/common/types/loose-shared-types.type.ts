@@ -92,5 +92,7 @@ export type ViewGroupManifest =
   LooseEnumValues<SharedApplication.ViewGroupManifest>;
 export type ViewSortManifest =
   LooseEnumValues<SharedApplication.ViewSortManifest>;
+export type ViewTabManifest =
+  LooseEnumValues<SharedApplication.ViewTabManifest>;
 export type WorkflowManifest =
   LooseEnumValues<SharedApplication.WorkflowManifest>;

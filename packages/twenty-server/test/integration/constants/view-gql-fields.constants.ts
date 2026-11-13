@@ -65,6 +65,19 @@ export const VIEW_GROUP_GQL_FIELDS = `
     deletedAt
 `;
 
+export const VIEW_TAB_GQL_FIELDS = `
+    id
+    type
+    fieldValue
+    name
+    isVisible
+    position
+    viewId
+    createdAt
+    updatedAt
+    deletedAt
+`;
+
 export const VIEW_FILTER_GROUP_GQL_FIELDS = `
     id
     logicalOperator

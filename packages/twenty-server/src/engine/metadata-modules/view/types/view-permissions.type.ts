@@ -6,7 +6,8 @@ export type ViewChildEntityKind =
   | 'viewFilter'
   | 'viewFilterGroup'
   | 'viewGroup'
-  | 'viewSort';
+  | 'viewSort'
+  | 'viewTab';
 
 export type ViewAccessContext = {
   workspaceId: string;

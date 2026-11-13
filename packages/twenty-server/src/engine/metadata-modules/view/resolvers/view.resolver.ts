@@ -32,6 +32,7 @@ import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-f
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
+import { ViewTabDTO } from 'src/engine/metadata-modules/view-tab/dtos/view-tab.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
@@ -339,6 +340,18 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
     return context.loaders.viewGroupsByViewIdLoader.load({
+      workspaceId: workspace.id,
+      viewId: view.id,
+    });
+  }
+
+  @ResolveField(() => [ViewTabDTO])
+  async viewTabs(
+    @Parent() view: ViewDTO,
+    @Context() context: { loaders: IDataloaders },
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ) {
+    return context.loaders.viewTabsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
     });

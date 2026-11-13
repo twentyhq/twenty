@@ -13,6 +13,7 @@ export type ChildMetadataName = Extract<
   | 'viewFilter'
   | 'viewFilterGroup'
   | 'viewGroup'
+  | 'viewTab'
   | 'viewSort'
   | 'pageLayoutTab'
   | 'pageLayoutWidget'

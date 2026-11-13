@@ -19,12 +19,16 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
   flatFieldMetadataMaps,
   flatViewMaps,
   flatViewFilterGroupMaps,
+  flatViewTabMaps,
 }: {
   createViewFilterInput: CreateViewFilterInput;
   flatApplication: FlatApplication;
 } & Pick<
   AllFlatEntityMaps,
-  'flatFieldMetadataMaps' | 'flatViewMaps' | 'flatViewFilterGroupMaps'
+  | 'flatFieldMetadataMaps'
+  | 'flatViewMaps'
+  | 'flatViewFilterGroupMaps'
+  | 'flatViewTabMaps'
 >): UniversalFlatViewFilter & { id: string } => {
   const { fieldMetadataId, viewId, value, ...createViewFilterInput } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -34,6 +38,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
         'id',
         'viewId',
         'viewFilterGroupId',
+        'viewTabId',
         'operand',
         'subFieldName',
         'relationTargetFieldMetadataId',
@@ -48,6 +53,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
     viewUniversalIdentifier,
     viewFilterGroupUniversalIdentifier,
     relationTargetFieldMetadataUniversalIdentifier,
+    viewTabUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'viewFilter',
     foreignKeyValues: {
@@ -56,11 +62,13 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
       viewFilterGroupId: createViewFilterInput.viewFilterGroupId,
       relationTargetFieldMetadataId:
         createViewFilterInput.relationTargetFieldMetadataId,
+      viewTabId: createViewFilterInput.viewTabId,
     },
     flatEntityMaps: {
       flatFieldMetadataMaps,
       flatViewMaps,
       flatViewFilterGroupMaps,
+      flatViewTabMaps,
     },
   });
 
@@ -102,6 +110,7 @@ export const fromCreateViewFilterInputToFlatViewFilterToCreate = ({
       createViewFilterInput.positionInViewFilterGroup ?? null,
     subFieldName: createViewFilterInput.subFieldName ?? null,
     relationTargetFieldMetadataUniversalIdentifier,
+    viewTabUniversalIdentifier,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

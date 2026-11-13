@@ -210,6 +210,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       flatEntityForeignKeyAggregator: 'viewGroupIds',
       universalFlatEntityForeignKeyAggregator: 'viewGroupUniversalIdentifiers',
     },
+    viewTabs: {
+      metadataName: 'viewTab',
+      flatEntityForeignKeyAggregator: 'viewTabIds',
+      universalFlatEntityForeignKeyAggregator: 'viewTabUniversalIdentifiers',
+    },
     viewFieldGroups: {
       metadataName: 'viewFieldGroup',
       flatEntityForeignKeyAggregator: 'viewFieldGroupIds',
@@ -238,6 +243,13 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   viewFilter: {},
   viewGroup: {},
+  viewTab: {
+    viewFilters: {
+      metadataName: 'viewFilter',
+      flatEntityForeignKeyAggregator: 'viewFilterIds',
+      universalFlatEntityForeignKeyAggregator: 'viewFilterUniversalIdentifiers',
+    },
+  },
   index: {
     indexFieldMetadatas: null,
   },

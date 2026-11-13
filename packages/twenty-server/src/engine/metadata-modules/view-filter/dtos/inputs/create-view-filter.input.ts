@@ -40,6 +40,11 @@ export class CreateViewFilterInput {
   viewFilterGroupId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewTabId?: string;
+
+  @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
   positionInViewFilterGroup?: number;

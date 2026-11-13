@@ -7,6 +7,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ViewFieldGroupModule } from 'src/engine/metadata-modules/view-field-group/view-field-group.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewTabModule } from 'src/engine/metadata-modules/view-tab/view-tab.module';
 import { ViewPermissionsModule } from 'src/engine/metadata-modules/view/view-permissions.module';
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
@@ -24,6 +25,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewPermissionsModule,
     ViewFieldGroupModule,
     ViewFieldModule,
+    ViewTabModule,
     ApplicationModule,
     PermissionsModule,
     WorkspaceMigrationModule,

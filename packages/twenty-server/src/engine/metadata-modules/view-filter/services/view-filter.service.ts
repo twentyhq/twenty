@@ -49,7 +49,12 @@ export class ViewFilterService {
         },
       );
 
-    const { flatFieldMetadataMaps, flatViewMaps, flatViewFilterGroupMaps } =
+    const {
+      flatFieldMetadataMaps,
+      flatViewMaps,
+      flatViewFilterGroupMaps,
+      flatViewTabMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
@@ -57,6 +62,7 @@ export class ViewFilterService {
             'flatFieldMetadataMaps',
             'flatViewMaps',
             'flatViewFilterGroupMaps',
+            'flatViewTabMaps',
           ],
         },
       );
@@ -68,6 +74,7 @@ export class ViewFilterService {
         flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFilterGroupMaps,
+        flatViewTabMaps,
       });
 
     const buildAndRunResult =
@@ -128,6 +135,7 @@ export class ViewFilterService {
       flatViewFilterMaps: existingFlatViewFilterMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+      flatViewTabMaps: existingFlatViewTabMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -135,6 +143,7 @@ export class ViewFilterService {
           'flatViewFilterMaps',
           'flatFieldMetadataMaps',
           'flatViewFilterGroupMaps',
+          'flatViewTabMaps',
         ],
       },
     );
@@ -145,6 +154,7 @@ export class ViewFilterService {
         updateViewFilterInput,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatViewFilterGroupMaps: existingFlatViewFilterGroupMaps,
+        flatViewTabMaps: existingFlatViewTabMaps,
       });
 
     const validateAndBuildResult =

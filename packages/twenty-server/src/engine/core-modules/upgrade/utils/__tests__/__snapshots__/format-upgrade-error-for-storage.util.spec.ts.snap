@@ -40,6 +40,7 @@ Report: {
   "viewFieldGroup": [],
   "viewGroup": [],
   "viewSort": [],
+  "viewTab": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
   "rowLevelPermissionRule": [],

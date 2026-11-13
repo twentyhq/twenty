@@ -86,6 +86,9 @@ import { UpdateViewFilterActionHandlerService } from 'src/engine/workspace-manag
 import { CreateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/create-view-group-action-handler.service';
 import { DeleteViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/delete-view-group-action-handler.service';
 import { UpdateViewGroupActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-group/services/update-view-group-action-handler.service';
+import { CreateViewTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-tab/services/create-view-tab-action-handler.service';
+import { DeleteViewTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-tab/services/delete-view-tab-action-handler.service';
+import { UpdateViewTabActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-tab/services/update-view-tab-action-handler.service';
 import { CreateViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/create-view-sort-action-handler.service';
 import { DeleteViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/delete-view-sort-action-handler.service';
 import { UpdateViewSortActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/view-sort/services/update-view-sort-action-handler.service';
@@ -192,6 +195,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CreateViewGroupActionHandlerService,
     UpdateViewGroupActionHandlerService,
     DeleteViewGroupActionHandlerService,
+    CreateViewTabActionHandlerService,
+    UpdateViewTabActionHandlerService,
+    DeleteViewTabActionHandlerService,
 
     CreateViewFieldGroupActionHandlerService,
     UpdateViewFieldGroupActionHandlerService,

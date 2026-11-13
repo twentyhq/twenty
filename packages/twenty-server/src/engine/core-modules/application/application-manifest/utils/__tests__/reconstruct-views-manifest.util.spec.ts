@@ -197,6 +197,7 @@ const buildFlatView = ({
   viewFieldGroupIds: [],
   viewFilterIds: [],
   viewGroupIds: [],
+  viewTabIds: [],
   viewFilterGroupIds: [],
   navigationMenuItemIds: [],
   viewSortIds: [],
@@ -270,6 +271,7 @@ const buildFlatViewFilter = ({
   viewId: `${viewUniversalIdentifier}-id`,
   viewFilterGroupId: null,
   relationTargetFieldMetadataId: null,
+  viewTabId: null,
   ...flatViewFilterProperties,
 });
 

@@ -20,6 +20,7 @@ import {
   type RelatedRecordPathManifest,
   type SkillManifest,
   type ViewSortManifest,
+  type ViewTabManifest,
   type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
@@ -35,6 +36,7 @@ import {
   ViewFilterOperand,
   ViewOpenRecordIn,
   ViewSortDirection,
+  ViewTabType,
   ViewType,
   ViewVisibility,
   WidgetType,
@@ -72,6 +74,7 @@ import { fromFlatViewFilterGroupToViewFilterGroupManifest } from 'src/engine/cor
 import { fromFlatViewFilterToViewFilterManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-filter-to-view-filter-manifest.util';
 import { fromFlatViewGroupToViewGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-group-to-view-group-manifest.util';
 import { fromFlatViewSortToViewSortManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-sort-to-view-sort-manifest.util';
+import { fromFlatViewTabToViewTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-tab-to-view-tab-manifest.util';
 import { fromFlatViewToViewManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-to-view-manifest.util';
 import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
@@ -86,6 +89,7 @@ import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/app
 import { fromFlatWorkflowToWorkflowManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-workflow-to-workflow-manifest.util';
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
+import { fromViewTabManifestToUniversalFlatViewTab } from 'src/engine/core-modules/application/application-manifest/converters/from-view-tab-manifest-to-universal-flat-view-tab.util';
 import { ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY } from 'src/engine/metadata-modules/flat-entity/constant/all-universal-flat-entity-properties-to-compare-and-stringify.constant';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
@@ -103,6 +107,7 @@ const PARENT_VIEW_FILTER_GROUP_UID = '99999999-9999-4999-8999-999999999999';
 const VIEW_GROUP_UID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const VIEW_FIELD_GROUP_UID = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 const VIEW_SORT_UID = 'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+const VIEW_TAB_UID = 'cdcdcdcd-cdcd-4dcd-8dcd-cdcdcdcdcdcd';
 const NOW = '2026-09-08T00:00:00.000Z';
 
 const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
@@ -129,6 +134,7 @@ const VIEW_FILTER_MANIFEST: ViewFilterManifest = {
   relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
   viewFilterGroupUniversalIdentifier: VIEW_FILTER_GROUP_UID,
   positionInViewFilterGroup: 0,
+  viewTabUniversalIdentifier: VIEW_TAB_UID,
 };
 
 const VIEW_FILTER_GROUP_MANIFEST: ViewFilterGroupManifest = {
@@ -141,6 +147,15 @@ const VIEW_FILTER_GROUP_MANIFEST: ViewFilterGroupManifest = {
 const VIEW_GROUP_MANIFEST: ViewGroupManifest = {
   universalIdentifier: VIEW_GROUP_UID,
   fieldValue: 'won',
+  isVisible: true,
+  position: 0,
+};
+
+const VIEW_TAB_MANIFEST: ViewTabManifest = {
+  universalIdentifier: VIEW_TAB_UID,
+  type: ViewTabType.FIELD_VALUE,
+  fieldValue: 'won',
+  name: 'Won',
   isVisible: true,
   position: 0,
 };
@@ -551,6 +566,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           filters: [VIEW_FILTER_MANIFEST],
           filterGroups: [VIEW_FILTER_GROUP_MANIFEST],
           groups: [VIEW_GROUP_MANIFEST],
+          tabs: [VIEW_TAB_MANIFEST],
           fieldGroups: [VIEW_FIELD_GROUP_MANIFEST],
           sorts: [VIEW_SORT_MANIFEST],
         },
@@ -613,6 +629,20 @@ const EXPORTED_KINDS: ExportedKind[] = [
       fromFlatViewGroupToViewGroupManifest({
         flatViewGroup: fromViewGroupManifestToUniversalFlatViewGroup({
           viewGroupManifest: VIEW_GROUP_MANIFEST,
+          ...VIEW_CHILD_CONVERSION_CONTEXT,
+        }),
+      }),
+    ),
+    renamedProperties: {},
+    workspaceLocalProperties: [],
+    knownGaps: NESTED_VIEW_CHILD_GAPS,
+  },
+  {
+    metadataName: 'viewTab',
+    emittedProperties: Object.keys(
+      fromFlatViewTabToViewTabManifest({
+        flatViewTab: fromViewTabManifestToUniversalFlatViewTab({
+          viewTabManifest: VIEW_TAB_MANIFEST,
           ...VIEW_CHILD_CONVERSION_CONTEXT,
         }),
       }),

@@ -13,10 +13,12 @@ import {
 } from 'typeorm';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { ADD_VIEW_TAB_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-tab-upgrade-command-name.constant';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
+import { ViewTabEntity } from 'src/engine/metadata-modules/view-tab/entities/view-tab.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -29,6 +31,9 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   ['relationTargetFieldMetadataId'],
   { where: '"relationTargetFieldMetadataId" IS NOT NULL' },
 )
+@Index('IDX_VIEW_FILTER_VIEW_TAB_ID', ['viewTabId'], {
+  where: '"viewTabId" IS NOT NULL',
+})
 export class ViewFilterEntity
   extends SyncableEntity
   implements Required<ViewFilterEntity>
@@ -79,6 +84,12 @@ export class ViewFilterEntity
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
   relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_TAB_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', default: null })
+  viewTabId: string | null;
+
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
 
@@ -106,4 +117,10 @@ export class ViewFilterEntity
   )
   @JoinColumn({ name: 'viewFilterGroupId' })
   viewFilterGroup: Relation<ViewFilterGroupEntity> | null;
+
+  @ManyToOne(() => ViewTabEntity, (viewTab) => viewTab.viewFilters, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'viewTabId' })
+  viewTab: Relation<ViewTabEntity> | null;
 }

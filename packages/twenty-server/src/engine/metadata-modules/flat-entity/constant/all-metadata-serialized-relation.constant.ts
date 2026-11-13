@@ -29,6 +29,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   viewFieldGroup: {},
   viewFilter: {},
   viewGroup: {},
+  viewTab: {},
   index: {},
   logicFunction: {},
   role: {},

@@ -63,6 +63,7 @@ import { WorkspaceMigrationViewFieldActionsBuilderService } from 'src/engine/wor
 import { WorkspaceMigrationViewFilterGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter-group/workspace-migration-view-filter-group-actions-builder.service';
 import { WorkspaceMigrationViewFilterActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-filter/workspace-migration-view-filter-actions-builder.service';
 import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-group/workspace-migration-view-group-actions-builder.service';
+import { WorkspaceMigrationViewTabActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-tab/workspace-migration-view-tab-actions-builder.service';
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationMcpServerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/workspace-migration-mcp-server-actions-builder.service';
@@ -143,6 +144,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationViewFilterActionsBuilderService: WorkspaceMigrationViewFilterActionsBuilderService,
     workspaceMigrationViewFilterGroupActionsBuilderService: WorkspaceMigrationViewFilterGroupActionsBuilderService,
     workspaceMigrationViewGroupActionsBuilderService: WorkspaceMigrationViewGroupActionsBuilderService,
+    workspaceMigrationViewTabActionsBuilderService: WorkspaceMigrationViewTabActionsBuilderService,
     workspaceMigrationViewFieldGroupActionsBuilderService: WorkspaceMigrationViewFieldGroupActionsBuilderService,
     workspaceMigrationViewSortActionsBuilderService: WorkspaceMigrationViewSortActionsBuilderService,
     workspaceMigrationFieldPermissionActionsBuilderService: WorkspaceMigrationFieldPermissionActionsBuilderService,
@@ -209,6 +211,10 @@ export class WorkspaceMigrationBuildOrchestratorService {
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.viewFilterGroup,
         workspaceMigrationViewFilterGroupActionsBuilderService,
+      ),
+      createEntityActionsBuilderTask(
+        ALL_METADATA_NAME.viewTab,
+        workspaceMigrationViewTabActionsBuilderService,
       ),
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.viewFilter,

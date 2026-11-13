@@ -46,6 +46,7 @@ type BuildCompleteViewChildrenFlatOperationsArgs = {
   | 'flatViewSortMaps'
   | 'flatViewFieldGroupMaps'
   | 'flatViewFilterGroupMaps'
+  | 'flatViewTabMaps'
 >;
 
 type CompleteViewChildrenFlatOperations = {
@@ -64,6 +65,7 @@ export const buildCompleteViewChildrenFlatOperations = ({
   flatViewSortMaps,
   flatViewFieldGroupMaps,
   flatViewFilterGroupMaps,
+  flatViewTabMaps,
   fields,
   filters,
   sorts,
@@ -105,7 +107,12 @@ export const buildCompleteViewChildrenFlatOperations = ({
       flatViewFilterMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((flatViewFilter) => flatViewFilter.viewId === viewId);
+      // Custom tab filters belong to their tab, not to the view's own filters
+      .filter(
+        (flatViewFilter) =>
+          flatViewFilter.viewId === viewId &&
+          !isDefined(flatViewFilter.viewTabId),
+      );
 
     const flatViewFiltersToCreate = filters.map((filter) =>
       fromCreateViewFilterInputToFlatViewFilterToCreate({
@@ -120,6 +127,7 @@ export const buildCompleteViewChildrenFlatOperations = ({
         flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFilterGroupMaps,
+        flatViewTabMaps,
       }),
     );
 

@@ -158,10 +158,20 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     viewFilterGroup: {
       foreignKey: 'viewFilterGroupId',
     },
+    viewTab: {
+      foreignKey: 'viewTabId',
+    },
     workspace: null,
     application: null,
   },
   viewGroup: {
+    view: {
+      foreignKey: 'viewId',
+    },
+    workspace: null,
+    application: null,
+  },
+  viewTab: {
     view: {
       foreignKey: 'viewId',
     },

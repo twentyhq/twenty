@@ -154,6 +154,7 @@ const allPetsView: FlatView = {
   viewFieldGroupIds: [],
   viewFilterIds: [],
   viewGroupIds: [],
+  viewTabIds: [],
   viewFilterGroupIds: [],
   navigationMenuItemIds: [],
   viewSortIds: [],

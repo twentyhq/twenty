@@ -128,6 +128,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
+      viewTabUniversalIdentifiers: [],
       applicationUniversalIdentifier,
       calendarFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
@@ -242,6 +243,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
+      viewTabUniversalIdentifiers: [],
       applicationUniversalIdentifier,
       calendarFieldMetadataUniversalIdentifier: null,
       createdAt: '2024-01-01T00:00:00.000Z',

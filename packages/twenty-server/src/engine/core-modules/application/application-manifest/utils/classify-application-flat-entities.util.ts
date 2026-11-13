@@ -273,6 +273,13 @@ const CONTAINED_FLAT_ENTITY_SCANS: ContainedFlatEntityScan[] = [
     containerUniversalForeignKey: 'viewUniversalIdentifier',
   }),
   buildContainedFlatEntityScan({
+    metadataName: 'viewTab',
+    selectFlatEntityMaps: (allFlatEntityMaps) =>
+      allFlatEntityMaps.flatViewTabMaps,
+    containerMetadataName: 'view',
+    containerUniversalForeignKey: 'viewUniversalIdentifier',
+  }),
+  buildContainedFlatEntityScan({
     metadataName: 'viewSort',
     selectFlatEntityMaps: (allFlatEntityMaps) =>
       allFlatEntityMaps.flatViewSortMaps,

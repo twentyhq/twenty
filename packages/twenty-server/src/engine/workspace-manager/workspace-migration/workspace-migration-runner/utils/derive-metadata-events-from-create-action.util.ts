@@ -75,6 +75,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'view':
     case 'viewField':
     case 'viewGroup':
+    case 'viewTab':
     case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':

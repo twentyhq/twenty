@@ -38,6 +38,11 @@ class UpdateViewFilterInputUpdates {
   viewFilterGroupId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  viewTabId?: string | null;
+
+  @IsOptional()
   @IsNumber()
   @Field({ nullable: true })
   positionInViewFilterGroup?: number;

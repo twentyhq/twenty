@@ -9,6 +9,7 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getFlatViewFilterViewTabErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-flat-view-filter-view-tab-errors.util';
 import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
 import { getInvalidViewFilterValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util';
 import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
@@ -20,6 +21,7 @@ export const validateFlatViewFilterCreation = ({
     flatViewMaps,
     flatFieldMetadataMaps,
     flatViewFilterGroupMaps,
+    flatViewTabMaps,
   },
 }: UniversalFlatEntityValidationArgs<
   typeof ALL_METADATA_NAME.viewFilter
@@ -147,6 +149,13 @@ export const validateFlatViewFilterCreation = ({
       });
     }
   }
+
+  validationResult.errors.push(
+    ...getFlatViewFilterViewTabErrors({
+      viewFilter: flatViewFilterToValidate,
+      flatViewTabMaps,
+    }),
+  );
 
   return validationResult;
 };

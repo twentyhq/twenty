@@ -28,6 +28,10 @@ const FLAT_VIEW_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
   },
+  viewTab: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['viewId'],
+  },
   viewFilterGroup: {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
@@ -64,6 +68,7 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
       viewField: viewFields,
       viewFilter: viewFilters,
       viewGroup: viewGroups,
+      viewTab: viewTabs,
       viewFilterGroup: viewFilterGroups,
       viewSort: viewSorts,
       viewFieldGroup: viewFieldGroups,
@@ -89,6 +94,7 @@ export class WorkspaceFlatViewMapCacheService extends MetadataFlatEntityMapsCach
           viewFields: viewFields.byViewId.get(viewEntity.id) || [],
           viewFilters: viewFilters.byViewId.get(viewEntity.id) || [],
           viewGroups: viewGroups.byViewId.get(viewEntity.id) || [],
+          viewTabs: viewTabs.byViewId.get(viewEntity.id) || [],
           viewFilterGroups: viewFilterGroups.byViewId.get(viewEntity.id) || [],
           viewSorts: sortViewSortsByCreation(
             viewSorts.byViewId.get(viewEntity.id) || [],

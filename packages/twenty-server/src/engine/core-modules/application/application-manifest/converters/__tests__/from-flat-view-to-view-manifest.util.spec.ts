@@ -48,6 +48,7 @@ const VIEW_MANIFEST: Required<
     | 'filters'
     | 'filterGroups'
     | 'groups'
+    | 'tabs'
     | 'fieldGroups'
     | 'sorts'
   >
@@ -188,6 +189,7 @@ describe('fromFlatViewToViewManifest', () => {
       viewFilterUniversalIdentifiers: [],
       viewFilterGroupUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
+      viewTabUniversalIdentifiers: [],
       viewFieldGroupUniversalIdentifiers: [],
       navigationMenuItemUniversalIdentifiers: [],
       viewSortUniversalIdentifiers: [],
@@ -229,6 +231,7 @@ describe('fromFlatViewToViewManifest', () => {
         filters: [],
         filterGroups: [],
         groups: [],
+        tabs: [],
         fieldGroups: [],
         sorts: [],
       },

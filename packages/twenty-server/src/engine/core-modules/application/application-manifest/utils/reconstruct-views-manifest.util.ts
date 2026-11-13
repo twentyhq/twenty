@@ -10,6 +10,7 @@ import { fromFlatViewFieldToViewFieldManifest } from 'src/engine/core-modules/ap
 import { fromFlatViewFilterGroupToViewFilterGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-filter-group-to-view-filter-group-manifest.util';
 import { fromFlatViewFilterToViewFilterManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-filter-to-view-filter-manifest.util';
 import { fromFlatViewGroupToViewGroupManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-group-to-view-group-manifest.util';
+import { fromFlatViewTabToViewTabManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-tab-to-view-tab-manifest.util';
 import { fromFlatViewSortToViewSortManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-view-sort-to-view-sort-manifest.util';
 import {
   fromFlatViewToViewManifest,
@@ -105,6 +106,7 @@ export const reconstructViewsManifest = ({
         filters: [],
         filterGroups: [],
         groups: [],
+        tabs: [],
         fieldGroups: [],
         sorts: [],
       },
@@ -222,6 +224,21 @@ export const reconstructViewsManifest = ({
     ) {
       childrenOf(flatViewGroup.viewUniversalIdentifier)?.groups.push(
         fromFlatViewGroupToViewGroupManifest({ flatViewGroup }),
+      );
+    }
+  }
+
+  for (const flatViewTab of sortFlatEntitiesByUniversalIdentifier(
+    applicationAllFlatEntityMaps.flatViewTabMaps,
+  )) {
+    if (
+      decideViewChild({
+        metadataName: 'viewTab',
+        flatEntity: flatViewTab,
+      }) === 'nested'
+    ) {
+      childrenOf(flatViewTab.viewUniversalIdentifier)?.tabs.push(
+        fromFlatViewTabToViewTabManifest({ flatViewTab }),
       );
     }
   }
