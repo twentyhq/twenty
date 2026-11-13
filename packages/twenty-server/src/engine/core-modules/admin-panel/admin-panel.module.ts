@@ -29,7 +29,6 @@ import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { BillingLimitOverrideModule } from 'src/engine/core-modules/billing/limit-override/billing-limit-override.module';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
@@ -44,6 +43,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { UsageLimitInstanceOverrideModule } from 'src/engine/core-modules/usage-limit/instance-override/usage-limit-instance-override.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -66,7 +66,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       BillingPriceEntity,
     ]),
     BillingModule,
-    BillingLimitOverrideModule,
+    UsageLimitInstanceOverrideModule,
     FileModule,
     WorkspaceDomainsModule,
     TerminusModule,

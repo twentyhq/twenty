@@ -3,17 +3,11 @@
 import groupBy from 'lodash.groupby';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN } from 'src/engine/core-modules/billing/limit-override/constants/billing-limit-override-expiry.cron-pattern.constant';
-import {
-  BillingLimitOverrideExpiryJob,
-  type BillingLimitOverrideExpiryJobData,
-} from 'src/engine/core-modules/billing/limit-override/jobs/billing-limit-override-expiry.job';
+import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -21,64 +15,62 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { USAGE_LIMIT_INSTANCE_OVERRIDE_EXPIRY_CRON_PATTERN } from 'src/engine/core-modules/usage-limit/instance-override/constants/usage-limit-instance-override-expiry.cron-pattern.constant';
+import {
+  UsageLimitInstanceOverrideExpiryJob,
+  type UsageLimitInstanceOverrideExpiryJobData,
+} from 'src/engine/core-modules/usage-limit/instance-override/jobs/usage-limit-instance-override-expiry.job';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 
 @Processor(MessageQueue.cronQueue)
-export class BillingLimitOverrideExpiryCronJob {
+export class UsageLimitInstanceOverrideExpiryCronJob {
   constructor(
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingArrangementEntity)
-    private readonly billingArrangementRepository: Repository<BillingArrangementEntity>,
+    @InjectRepository(UsageLimitEntity)
+    private readonly usageLimitRepository: Repository<UsageLimitEntity>,
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @Process(BillingLimitOverrideExpiryCronJob.name)
+  @Process(UsageLimitInstanceOverrideExpiryCronJob.name)
   @SentryCronMonitor(
-    BillingLimitOverrideExpiryCronJob.name,
-    BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN,
+    UsageLimitInstanceOverrideExpiryCronJob.name,
+    USAGE_LIMIT_INSTANCE_OVERRIDE_EXPIRY_CRON_PATTERN,
   )
   async handle(): Promise<void> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return;
     }
 
-    const expiredLimitOverrides = await this.billingArrangementRepository
-      .createQueryBuilder('billingArrangement')
+    const expiredUsageLimits = await this.usageLimitRepository
+      .createQueryBuilder('usageLimit')
       .innerJoin(
-        UsageLimitEntity,
-        'usageLimit',
-        '"usageLimit"."id" = "billingArrangement"."usageLimitId"',
+        BillingArrangementEntity,
+        'billingArrangement',
+        '"billingArrangement"."usageLimitId" = "usageLimit"."id" AND "billingArrangement"."type" = :type AND "billingArrangement"."endsAt" <= :now',
+        { type: BillingArrangementType.LIMIT_OVERRIDE, now: new Date() },
       )
-      .select([
-        'billingArrangement.id',
-        'billingArrangement.workspaceId',
-        'billingArrangement.usageLimitId',
-      ])
-      .where({
-        type: BillingArrangementType.LIMIT_OVERRIDE,
-        endsAt: LessThanOrEqual(new Date()),
-      })
+      .select(['usageLimit.id', 'usageLimit.workspaceId'])
+      .where({ isInstanceOverride: true })
       .getMany();
 
-    const expiredLimitOverridesByWorkspaceId = groupBy(
-      expiredLimitOverrides,
+    const expiredUsageLimitsByWorkspaceId = groupBy(
+      expiredUsageLimits,
       'workspaceId',
     );
 
-    for (const [workspaceId, workspaceLimitOverrides] of Object.entries(
-      expiredLimitOverridesByWorkspaceId,
+    for (const [workspaceId, workspaceUsageLimits] of Object.entries(
+      expiredUsageLimitsByWorkspaceId,
     )) {
-      const usageLimitIds = workspaceLimitOverrides
-        .map(({ usageLimitId }) => usageLimitId)
-        .filter(isDefined);
-
       try {
-        await this.messageQueueService.add<BillingLimitOverrideExpiryJobData>(
-          BillingLimitOverrideExpiryJob.name,
-          { workspaceId, usageLimitIds },
+        await this.messageQueueService.add<UsageLimitInstanceOverrideExpiryJobData>(
+          UsageLimitInstanceOverrideExpiryJob.name,
+          {
+            workspaceId,
+            usageLimitIds: workspaceUsageLimits.map(({ id }) => id),
+          },
           { workspaceId, isWorkspaceJob: true },
         );
       } catch (error) {

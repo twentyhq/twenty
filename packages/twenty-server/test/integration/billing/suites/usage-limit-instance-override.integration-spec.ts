@@ -9,8 +9,8 @@ import { type Repository } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitInstanceOverrideExpiryCronJob } from 'src/engine/core-modules/usage-limit/instance-override/crons/usage-limit-instance-override-expiry.cron.job';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -61,7 +61,7 @@ const STORAGE_STOCK_PAYLOAD = {
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-describe('Billing limit overrides', () => {
+describe('Usage limit instance overrides', () => {
   const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
     'TwentyConfigService',
   );
@@ -190,7 +190,7 @@ describe('Billing limit overrides', () => {
       },
     );
 
-    await runSyncCron(BillingLimitOverrideExpiryCronJob);
+    await runSyncCron(UsageLimitInstanceOverrideExpiryCronJob);
 
     expect(await usageLimitRepository.existsBy({ id: usageLimitId })).toBe(
       false,
