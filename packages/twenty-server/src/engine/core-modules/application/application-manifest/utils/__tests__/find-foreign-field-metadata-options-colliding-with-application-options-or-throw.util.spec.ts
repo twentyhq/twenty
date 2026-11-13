@@ -46,7 +46,7 @@ const toByUniversalIdentifier = (options: FlatFieldMetadataOption[]) => ({
   ),
 });
 
-const appOpenOption = buildFlatFieldMetadataOption({
+const applicationOpenOption = buildFlatFieldMetadataOption({
   universalIdentifier: '20202020-0000-4000-8000-000000000101',
   applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   value: 'OPEN',
@@ -66,7 +66,9 @@ describe('findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow'
         existingFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
           rekeyedOpenOption,
         ]),
-        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([appOpenOption]),
+        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
+          applicationOpenOption,
+        ]),
         toFlatFieldMetadataMaps: { byUniversalIdentifier: {} },
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceCustomApplicationUniversalIdentifier:
@@ -93,11 +95,13 @@ describe('findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow'
     expect(
       findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow({
         existingFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
-          appOpenOption,
+          applicationOpenOption,
           workspaceAddedOption,
           otherFieldOpenOption,
         ]),
-        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([appOpenOption]),
+        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
+          applicationOpenOption,
+        ]),
         toFlatFieldMetadataMaps: { byUniversalIdentifier: {} },
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceCustomApplicationUniversalIdentifier:
@@ -118,7 +122,9 @@ describe('findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow'
         existingFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
           otherApplicationOpenOption,
         ]),
-        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([appOpenOption]),
+        toFlatFieldMetadataOptionMaps: toByUniversalIdentifier([
+          applicationOpenOption,
+        ]),
         toFlatFieldMetadataMaps: {
           byUniversalIdentifier: {
             [APP_FIELD_UNIVERSAL_IDENTIFIER]: getFlatFieldMetadataMock({
