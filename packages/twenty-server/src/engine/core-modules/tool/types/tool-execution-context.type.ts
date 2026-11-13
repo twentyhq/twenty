@@ -6,7 +6,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 
 export type ToolExecutionContext = {
   workspaceId: string;
-  actorContext?: ActorMetadata;
+  actorMetadata?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
   workspaceMemberId?: string;
