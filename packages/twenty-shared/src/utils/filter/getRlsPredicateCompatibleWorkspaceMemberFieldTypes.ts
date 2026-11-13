@@ -1,6 +1,11 @@
 import { compositeTypeDefinitions, FieldMetadataType } from '@/types';
 import { getFieldOrSubFieldType } from '@/utils/filter/getFieldOrSubFieldType';
 
+const TEXT_WORKSPACE_MEMBER_FIELD_TYPES = [
+  FieldMetadataType.TEXT,
+  FieldMetadataType.UUID,
+];
+
 export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
   fieldType,
   subFieldName,
@@ -12,6 +17,8 @@ export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
 
   switch (comparedFieldType) {
     case FieldMetadataType.TEXT:
+    case FieldMetadataType.ARRAY:
+      return TEXT_WORKSPACE_MEMBER_FIELD_TYPES;
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME:
@@ -30,11 +37,9 @@ export const getRlsPredicateCompatibleWorkspaceMemberFieldTypes = ({
         FieldMetadataType.UUID,
         FieldMetadataType.ARRAY,
       ];
-    case FieldMetadataType.ARRAY:
-      return [FieldMetadataType.TEXT];
     default:
       return compositeTypeDefinitions.has(comparedFieldType)
-        ? [FieldMetadataType.TEXT]
+        ? TEXT_WORKSPACE_MEMBER_FIELD_TYPES
         : [];
   }
 };

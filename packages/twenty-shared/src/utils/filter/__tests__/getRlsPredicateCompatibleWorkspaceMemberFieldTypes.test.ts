@@ -3,7 +3,11 @@ import { getRlsPredicateCompatibleWorkspaceMemberFieldTypes } from '@/utils/filt
 
 describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
   it.each([
-    [FieldMetadataType.TEXT, undefined, [FieldMetadataType.TEXT]],
+    [
+      FieldMetadataType.TEXT,
+      undefined,
+      [FieldMetadataType.TEXT, FieldMetadataType.UUID],
+    ],
     [FieldMetadataType.BOOLEAN, undefined, [FieldMetadataType.BOOLEAN]],
     [FieldMetadataType.DATE, undefined, [FieldMetadataType.DATE]],
     [
@@ -39,9 +43,21 @@ describe('getRlsPredicateCompatibleWorkspaceMemberFieldTypes', () => {
         FieldMetadataType.ARRAY,
       ],
     ],
-    [FieldMetadataType.ARRAY, undefined, [FieldMetadataType.TEXT]],
-    [FieldMetadataType.EMAILS, undefined, [FieldMetadataType.TEXT]],
-    [FieldMetadataType.EMAILS, 'primaryEmail', [FieldMetadataType.TEXT]],
+    [
+      FieldMetadataType.ARRAY,
+      undefined,
+      [FieldMetadataType.TEXT, FieldMetadataType.UUID],
+    ],
+    [
+      FieldMetadataType.EMAILS,
+      undefined,
+      [FieldMetadataType.TEXT, FieldMetadataType.UUID],
+    ],
+    [
+      FieldMetadataType.EMAILS,
+      'primaryEmail',
+      [FieldMetadataType.TEXT, FieldMetadataType.UUID],
+    ],
     [
       FieldMetadataType.ACTOR,
       'source',
