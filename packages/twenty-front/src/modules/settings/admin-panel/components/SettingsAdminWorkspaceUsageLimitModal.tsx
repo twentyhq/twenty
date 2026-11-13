@@ -18,9 +18,9 @@ import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/w
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
-import { parseAdminUsageLimitValue } from '@/settings/admin-panel/utils/parseAdminUsageLimitValue';
 import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
+import { parseUsageLimitValue } from '@/settings/billing/utils/parseUsageLimitValue';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { Select } from '@/ui/input/components/Select';
@@ -96,14 +96,14 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     );
 
   const minimumLimitValue = row.limitKind === 'quota' ? 0 : 1;
-  const parsedLimitValue = parseAdminUsageLimitValue({
+  const parsedLimitValue = parseUsageLimitValue({
     value: limitValue,
     min: minimumLimitValue,
     scale: inputScale,
   });
   const hasBurstValue = isNonEmptyString(burstValue.trim());
   const parsedBurstValue = hasBurstValue
-    ? parseAdminUsageLimitValue({ value: burstValue, min: 1, scale: 1 })
+    ? parseUsageLimitValue({ value: burstValue, min: 1, scale: 1 })
     : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isResetting;

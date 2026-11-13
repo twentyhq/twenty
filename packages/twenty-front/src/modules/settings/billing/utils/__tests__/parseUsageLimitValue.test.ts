@@ -1,11 +1,11 @@
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 
-import { parseAdminUsageLimitValue } from '@/settings/admin-panel/utils/parseAdminUsageLimitValue';
+import { parseUsageLimitValue } from '@/settings/billing/utils/parseUsageLimitValue';
 
-describe('parseAdminUsageLimitValue', () => {
-  it('converts credits typed by an operator to micro-credits', () => {
+describe('parseUsageLimitValue', () => {
+  it('converts typed credits to micro-credits', () => {
     expect(
-      parseAdminUsageLimitValue({
+      parseUsageLimitValue({
         value: '0.83',
         min: 0,
         scale: INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
@@ -14,14 +14,12 @@ describe('parseAdminUsageLimitValue', () => {
   });
 
   it('keeps a count as typed', () => {
-    expect(parseAdminUsageLimitValue({ value: '200', min: 1, scale: 1 })).toBe(
-      200,
-    );
+    expect(parseUsageLimitValue({ value: '200', min: 1, scale: 1 })).toBe(200);
   });
 
   it('accepts zero when the minimum allows it', () => {
     expect(
-      parseAdminUsageLimitValue({
+      parseUsageLimitValue({
         value: '0',
         min: 0,
         scale: INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
@@ -30,23 +28,17 @@ describe('parseAdminUsageLimitValue', () => {
   });
 
   it('refuses a blank value instead of reading it as zero', () => {
-    expect(
-      parseAdminUsageLimitValue({ value: ' ', min: 0, scale: 1 }),
-    ).toBeNull();
+    expect(parseUsageLimitValue({ value: ' ', min: 0, scale: 1 })).toBeNull();
   });
 
   it('refuses a value below the minimum', () => {
-    expect(
-      parseAdminUsageLimitValue({ value: '0', min: 1, scale: 1 }),
-    ).toBeNull();
-    expect(
-      parseAdminUsageLimitValue({ value: '-1', min: 0, scale: 1 }),
-    ).toBeNull();
+    expect(parseUsageLimitValue({ value: '0', min: 1, scale: 1 })).toBeNull();
+    expect(parseUsageLimitValue({ value: '-1', min: 0, scale: 1 })).toBeNull();
   });
 
   it('refuses a positive value too small to store', () => {
     expect(
-      parseAdminUsageLimitValue({
+      parseUsageLimitValue({
         value: '0.0000001',
         min: 0,
         scale: INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
@@ -55,8 +47,6 @@ describe('parseAdminUsageLimitValue', () => {
   });
 
   it('refuses a value that is not a number', () => {
-    expect(
-      parseAdminUsageLimitValue({ value: 'abc', min: 0, scale: 1 }),
-    ).toBeNull();
+    expect(parseUsageLimitValue({ value: 'abc', min: 0, scale: 1 })).toBeNull();
   });
 });

@@ -1,4 +1,3 @@
-import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
 import { buildUsageLimitDefaultScopes } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-default-scopes.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -11,8 +10,7 @@ const buildDefaultScopes = (
   >,
 ) =>
   buildUsageLimitDefaultScopes({
-    getConfigValue: <TKey extends OptionalNumericConfigVariableKey>() =>
-      1000 as ConfigVariables[TKey],
+    getConfigValue: () => 1000,
     getDefaultLimitValue: (limitValueConfigVariable) =>
       limitValueConfigVariable in defaultLimitValues
         ? (defaultLimitValues[limitValueConfigVariable] ?? null)
@@ -50,6 +48,16 @@ describe('buildUsageLimitDefaultScopes', () => {
         { resourceType: UsageResourceType.STORAGE, limitValue: 10 },
       ]),
     );
+  });
+
+  it('reads speed defaults from their config variable, which no plan sets', () => {
+    const speedLimitValues = buildDefaultScopes({
+      API_RATE_LIMITING_SHORT_LIMIT: 5,
+    })
+      .filter((scope) => scope.limitKind === 'speed')
+      .map(({ limitValue }) => limitValue);
+
+    expect([...new Set(speedLimitValues)]).toEqual([1000]);
   });
 
   it('keeps the per-member AI credit default without a value, so an operator can still override it', () => {

@@ -1,6 +1,6 @@
 import { isNonEmptyString } from 'twenty-shared/utils';
 
-export const parseAdminUsageLimitValue = ({
+export const parseUsageLimitValue = ({
   value,
   min,
   scale,

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
 import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
 import { type UsageLimitDefaultDefinition } from 'src/engine/core-modules/usage-limit/types/usage-limit-default-definition.type';
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
@@ -14,9 +14,7 @@ export type UsageLimitDefaultScope = UsageLimitScope & {
   limitValue: number | null;
 };
 
-type GetConfigValue = <TKey extends OptionalNumericConfigVariableKey>(
-  key: TKey,
-) => ConfigVariables[TKey];
+type GetConfigValue = (key: NumericConfigVariableKey) => number;
 
 type GetDefaultLimitValue = (
   limitValueConfigVariable: OptionalNumericConfigVariableKey,
@@ -49,9 +47,10 @@ export const buildUsageLimitDefaultScopes = ({
 }): UsageLimitDefaultScope[] =>
   Object.values(UsageResourceType).flatMap((resourceType) =>
     findUsageLimitDefaults({ resourceType }).flatMap((usageLimitDefault) => {
-      const limitValue = getDefaultLimitValue(
-        usageLimitDefault.limitValueConfigVariable,
-      );
+      const limitValue =
+        usageLimitDefault.limitKind === 'speed'
+          ? getConfigValue(usageLimitDefault.limitValueConfigVariable)
+          : getDefaultLimitValue(usageLimitDefault.limitValueConfigVariable);
       const operationType = getUsageLimitDefaultOverrideOperationType(
         getUsageLimitDefaultOperationTypes(usageLimitDefault),
       );

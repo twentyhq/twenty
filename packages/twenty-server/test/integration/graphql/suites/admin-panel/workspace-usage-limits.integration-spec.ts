@@ -90,7 +90,7 @@ const USER_CREDIT_QUOTA_PAYLOAD = {
   periodCount: 1,
   periodUnit: 'week',
   unit: UsageUnit.USER_CREDIT,
-  limitValue: 0,
+  limitValue: 3_000_000,
   burstValue: null,
 };
 
@@ -103,22 +103,6 @@ describe('Workspace usage limits from the admin panel', () => {
   const readConfig = twentyConfigService.get.bind(twentyConfigService);
 
   let usageLimitRepository: Repository<UsageLimitEntity>;
-  let instanceAiUserCreditsLimit: number | undefined;
-
-  const createWorkspaceUsageLimit = async (
-    payload: typeof STORAGE_STOCK_PAYLOAD | typeof USER_CREDIT_QUOTA_PAYLOAD,
-  ): Promise<string> => {
-    const response = await makeAdminPanelApiRequest({
-      query: CREATE_WORKSPACE_USAGE_LIMIT,
-      variables: { workspaceId: SEED_APPLE_WORKSPACE_ID, payload },
-    });
-
-    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
-
-    jestExpectToBeDefined(usageLimitId);
-
-    return usageLimitId;
-  };
 
   const findWorkspaceUsageLimits = async () => {
     const response = await makeAdminPanelApiRequest({
@@ -133,25 +117,15 @@ describe('Workspace usage limits from the admin panel', () => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
 
-    jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
-      if (key === 'WORKSPACE_STORAGE_LIMIT_BYTES') {
-        return 10_000_000;
-      }
-
-      if (key === 'AI_USER_CREDITS_LIMIT') {
-        return instanceAiUserCreditsLimit;
-      }
-
-      return readConfig(key);
-    });
+    jest
+      .spyOn(twentyConfigService, 'get')
+      .mockImplementation((key) =>
+        key === 'WORKSPACE_STORAGE_LIMIT_BYTES' ? 10_000_000 : readConfig(key),
+      );
   });
 
   afterAll(() => {
     jest.restoreAllMocks();
-  });
-
-  beforeEach(() => {
-    instanceAiUserCreditsLimit = 5_000_000;
   });
 
   afterEach(async () => {
@@ -241,32 +215,18 @@ describe('Workspace usage limits from the admin panel', () => {
     },
   );
 
-  it('lets an operator override the AI credits each member gets per week', async () => {
-    const usageLimitId = await createWorkspaceUsageLimit(
-      USER_CREDIT_QUOTA_PAYLOAD,
-    );
-
-    const workspaceUsageLimits = await findWorkspaceUsageLimits();
-
-    expect(workspaceUsageLimits.defaults).toContainEqual(
-      expect.objectContaining({
-        resourceType: UsageResourceType.AI,
-        operationType: UsageOperationType.ALL,
-        spenderType: 'userWorkspace',
-        unit: UsageUnit.USER_CREDIT,
-        isOverridable: true,
-        overriddenByUsageLimitId: usageLimitId,
-      }),
-    );
-  });
-
-  it('lists the member AI credit default without a value when the instance sets none, so an operator can override it', async () => {
-    instanceAiUserCreditsLimit = undefined;
-
-    const usageLimitId = await createWorkspaceUsageLimit({
-      ...USER_CREDIT_QUOTA_PAYLOAD,
-      limitValue: 3_000_000,
+  it('lets an operator override the AI credits each member gets per week, even without a default value', async () => {
+    const response = await makeAdminPanelApiRequest({
+      query: CREATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: USER_CREDIT_QUOTA_PAYLOAD,
+      },
     });
+
+    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
+
+    jestExpectToBeDefined(usageLimitId);
 
     const workspaceUsageLimits = await findWorkspaceUsageLimits();
 

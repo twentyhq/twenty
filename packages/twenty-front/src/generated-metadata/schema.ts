@@ -3357,6 +3357,11 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
+export type MarkAppChannelThreadAsReadInput = {
+  messageChannelId: Scalars['UUID']['input'];
+  messageThreadId: Scalars['UUID']['input'];
+};
+
 export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
   author: Scalars['String']['output'];
@@ -3872,6 +3877,7 @@ export type Mutation = {
   /** @deprecated Use installApplication instead */
   installMarketplaceApp: Scalars['Boolean']['output'];
   markAgentChatThreadAsDoneInChannel: Scalars['Boolean']['output'];
+  markAppChannelThreadAsRead: Scalars['Boolean']['output'];
   moveAgentChatThreadToChannel: Scalars['Boolean']['output'];
   openDirectMessage: Scalars['UUID']['output'];
   prepareGettingStartedWorkflow: GettingStartedWorkflow;
@@ -4819,6 +4825,11 @@ export type MutationInstallMarketplaceAppArgs = {
 
 export type MutationMarkAgentChatThreadAsDoneInChannelArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type MutationMarkAppChannelThreadAsReadArgs = {
+  input: MarkAppChannelThreadAsReadInput;
 };
 
 
