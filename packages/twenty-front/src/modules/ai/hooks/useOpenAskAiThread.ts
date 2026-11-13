@@ -1,7 +1,7 @@
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/inboxSelectedThreadListSourceState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/inboxThreadListThreadsFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

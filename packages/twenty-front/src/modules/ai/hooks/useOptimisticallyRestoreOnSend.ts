@@ -2,11 +2,11 @@ import { useStore } from 'jotai';
 import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
-import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { aiChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { AI_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AiChatThreadParticipantUnsavedUpdatedAt';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAiChatThreadUpdate';
+import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
+import { aiChatThreadVisitState } from '@/ai/states/aiChatThreadVisitState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 
 // Mirrors what the server records when the member sends a message: the
 // thread leaves the trash, moves to the top of their inbox and is caught up,

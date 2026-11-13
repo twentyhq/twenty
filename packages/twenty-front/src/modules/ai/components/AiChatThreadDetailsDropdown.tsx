@@ -17,18 +17,18 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
-import { InboxThreadChannelPicker } from '@/ai/components/AiChatThreadChannelPicker';
+import { InboxChannelIcon } from '@/ai/components/InboxChannelIcon';
+import { InboxThreadChannelPicker } from '@/ai/components/InboxThreadChannelPicker';
 import { AiChatThreadDetailsFollowing } from '@/ai/components/AiChatThreadDetailsFollowing';
 import { AiChatThreadDetailsStatus } from '@/ai/components/AiChatThreadDetailsStatus';
 import { AiChatThreadLabelsField } from '@/ai/components/AiChatThreadLabelsField';
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
-import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxChannelsState } from '@/ai/states/inboxChannelsState';
 import { useAiChatThreadRecordTargets } from '@/ai/hooks/useAiChatThreadRecordTargets';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';

@@ -46,7 +46,7 @@ jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
 jest.mock('@/ai/components/AiChatPendingResponseIndicator', () => ({
   AiChatPendingResponseIndicator: () => null,
 }));
-jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+jest.mock('@/ai/components/InboxThreadStatusNotice', () => ({
   InboxThreadStatusNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
@@ -56,12 +56,12 @@ jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
   AiChatScrollToBottomButton: () => null,
 }));
 jest.mock(
-  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
+  '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => ({
     AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => null,
   }),
 );
-jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
+jest.mock('@/ai/components/AiChatStreamingAutoScrollEffect', () => ({
   AiChatStreamingAutoScrollEffect: () => null,
 }));
 

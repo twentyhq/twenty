@@ -15,7 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
-import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/ai/types/InboxThreadTriageStatus';
 
 const StyledScope = styled.span`
   color: ${themeCssVariables.font.color.tertiary};

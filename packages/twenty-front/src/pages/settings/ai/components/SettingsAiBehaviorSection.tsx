@@ -1,4 +1,4 @@
-import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
+import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AiChatAssistantName';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { styled } from '@linaria/react';

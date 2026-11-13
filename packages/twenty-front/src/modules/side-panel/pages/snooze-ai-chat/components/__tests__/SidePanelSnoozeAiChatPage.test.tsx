@@ -6,7 +6,7 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
-import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -18,13 +18,13 @@ const updateAgentChatThreadInboxState = jest.fn();
 const snoozeInboxThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
+jest.mock('@/ai/hooks/useUpdateInboxThreadStatus', () => ({
   useUpdateInboxThreadStatus: () => ({
     updateAgentChatThreadInboxState,
   }),
 }));
 
-jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+jest.mock('@/ai/hooks/useSnoozeInboxThreadsInChannel', () => ({
   useSnoozeInboxThreadsInChannel: () => ({
     snoozeInboxThreadsInChannel,
   }),

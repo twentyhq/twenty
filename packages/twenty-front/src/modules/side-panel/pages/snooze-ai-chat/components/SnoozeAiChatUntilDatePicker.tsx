@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
 import { useSnoozeAiChatThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';

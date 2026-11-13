@@ -11,7 +11,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeAdvancedTextEditorDocument';
 import { AiChatParticipantMentionBar } from '@/ai/components/AiChatParticipantMentionBar';
-import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';

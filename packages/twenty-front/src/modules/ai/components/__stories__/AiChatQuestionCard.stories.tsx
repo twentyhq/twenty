@@ -5,9 +5,9 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { type AiChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { type AiChatPendingQuestion } from '@/ai/types/AiChatPendingQuestion';
 
 import { styled } from '@linaria/react';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
 import { createWebSpeechDictationEngine } from '@/ai/dictation/engines/createWebSpeechDictationEngine';
 import { useDictationAvailability } from '@/ai/dictation/hooks/useDictationAvailability';
 import { dictationEngineState } from '@/ai/dictation/states/dictationEngineState';

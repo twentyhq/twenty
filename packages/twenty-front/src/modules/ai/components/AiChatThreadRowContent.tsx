@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadCompactContent } from '@/ai/components/AiChatThreadCompactContent';
-import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { type InboxThreadListVariant } from '@/ai/types/InboxThreadListVariant';
 
 const StyledHeading = styled.div`
   align-items: center;

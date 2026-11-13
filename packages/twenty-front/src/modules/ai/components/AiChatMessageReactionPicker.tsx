@@ -5,7 +5,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconMoodSmile } from 'twenty-ui/icon';
 
 import { AiChatMessageReactionPickerContent } from '@/ai/components/AiChatMessageReactionPickerContent';
-import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAgentChatMessageReaction';
+import { useToggleAiChatMessageReaction } from '@/ai/hooks/useToggleAiChatMessageReaction';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';

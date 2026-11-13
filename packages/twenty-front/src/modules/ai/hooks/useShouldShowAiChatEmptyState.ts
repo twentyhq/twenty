@@ -1,11 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { inboxRecentThreadsLoadingSelector } from '@/ai/states/selectors/agentChatRecentThreadsLoadingSelector';
-import { aiChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
+import { aiChatErrorFamilyState } from '@/ai/states/aiChatErrorFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
+import { inboxRecentThreadsLoadingSelector } from '@/ai/states/selectors/inboxRecentThreadsLoadingSelector';
+import { aiChatHasMessageSelector } from '@/ai/states/selectors/aiChatHasMessageSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

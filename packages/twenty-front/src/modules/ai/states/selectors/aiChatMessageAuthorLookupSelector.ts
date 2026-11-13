@@ -1,0 +1,15 @@
+import { aiChatAssistantProfileSelector } from '@/ai/states/selectors/aiChatAssistantProfileSelector';
+import { type AiChatMessageAuthorLookup } from '@/ai/types/AiChatMessageAuthorLookup';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+
+export const aiChatMessageAuthorLookupSelector =
+  createAtomSelector<AiChatMessageAuthorLookup>({
+    key: 'aiChatMessageAuthorLookupSelector',
+    get: ({ get }) => ({
+      workspaceMembers: get(currentWorkspaceMembersState),
+      assistantDisplayName: get(aiChatAssistantProfileSelector).displayName,
+      currentWorkspace: get(currentWorkspaceState),
+    }),
+  });

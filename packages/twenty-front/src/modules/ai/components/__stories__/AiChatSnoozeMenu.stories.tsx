@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatSnoozeMenu } from '@/ai/components/AiChatSnoozeMenu';
-import { getAiChatThreadSnoozeOptions } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+import { getAiChatThreadSnoozeOptions } from '@/ai/utils/getAiChatThreadSnoozeOptions';
 
 const SNOOZE_PREVIEW_TIME_ZONE = 'UTC';
 const SNOOZE_PREVIEW_DATE = new Date('2026-10-21T15:00:00Z');

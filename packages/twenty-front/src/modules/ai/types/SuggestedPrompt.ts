@@ -1,7 +1,7 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { type IconComponent } from 'twenty-ui/icon';
 
-import { type AiChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
+import { type AiChatPrepromptMode } from '@/ai/states/aiChatPrepromptState';
 
 export type SuggestedPrompt = {
   id: string;

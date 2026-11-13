@@ -12,7 +12,7 @@ jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
 }));
 
 const answerAiChatToolCall = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
+jest.mock('@/ai/hooks/useAnswerAiChatToolCall', () => ({
   useAnswerAiChatToolCall: () => ({ answerAiChatToolCall }),
 }));
 

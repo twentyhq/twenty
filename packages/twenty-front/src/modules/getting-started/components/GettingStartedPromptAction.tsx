@@ -1,6 +1,6 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
-import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { useCanSendAiChatMessage } from '@/ai/hooks/useCanSendAiChatMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { GETTING_STARTED_STEP_PREVIEWS } from '@/getting-started/constants/GettingStartedStepPreviews';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
