@@ -12231,6 +12231,11 @@ msgstr "Թարմացման ենթակա տողի մակարդակի թույլտ
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Այս ունիվերսալ նույնացուցիչով տողի մակարդակի թույլտվության կանոնն արդեն գոյություն ունի"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr ""
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

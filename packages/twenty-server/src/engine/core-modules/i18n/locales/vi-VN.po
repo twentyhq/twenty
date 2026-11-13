@@ -12231,6 +12231,11 @@ msgstr "Không tìm thấy quy tắc phân quyền cấp hàng cần cập nhậ
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "Quy tắc phân quyền cấp hàng với định danh phổ quát này đã tồn tại"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr ""
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

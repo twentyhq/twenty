@@ -12231,6 +12231,11 @@ msgstr "כלל ההרשאה ברמת השורה לעדכון לא נמצא"
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "כלל הרשאה ברמת השורה עם מזהה אוניברסלי זה כבר קיים"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr ""
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
