@@ -52,14 +52,21 @@ export class TimelineMessagingService {
     private readonly recordPermissionsReadService: RecordPermissionsReadService,
   ) {}
 
-  public async getAndCountMessageThreads(
-    personIds: string[],
-    workspaceId: string,
-    offset: number,
-    pageSize: number,
-    targetFilter?: TargetFilter,
-    messageChannelIds?: string[],
-  ): Promise<{
+  public async getAndCountMessageThreads({
+    personIds,
+    workspaceId,
+    offset,
+    pageSize,
+    targetFilter,
+    messageChannelIds,
+  }: {
+    personIds: string[];
+    workspaceId: string;
+    offset: number;
+    pageSize: number;
+    targetFilter?: TargetFilter;
+    messageChannelIds?: string[];
+  }): Promise<{
     messageThreads: TimelineMessageThread[];
     totalNumberOfThreads: number;
   }> {

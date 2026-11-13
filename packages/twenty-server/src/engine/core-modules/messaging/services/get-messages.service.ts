@@ -49,14 +49,14 @@ export class GetMessagesService {
       : undefined;
 
     const { messageThreads, totalNumberOfThreads } =
-      await this.timelineMessagingService.getAndCountMessageThreads(
+      await this.timelineMessagingService.getAndCountMessageThreads({
         personIds,
         workspaceId,
         offset,
         pageSize,
         targetFilter,
         messageChannelIds,
-      );
+      });
 
     if (!messageThreads) {
       return {

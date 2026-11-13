@@ -97,10 +97,13 @@ const GOOGLE_EMAIL_CHANNEL = {
   applicationId: null,
 };
 
-const createRecord = async (
-  objectMetadataSingularName: string,
-  data: object,
-) => {
+const createRecord = async ({
+  objectMetadataSingularName,
+  data,
+}: {
+  objectMetadataSingularName: string;
+  data: object;
+}) => {
   const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName,
@@ -112,7 +115,15 @@ const createRecord = async (
   expect(response.body.errors).toBeUndefined();
 };
 
-const requestThreads = (channel?: object, page = 1, pageSize = 1) =>
+const requestThreads = ({
+  channel,
+  page = 1,
+  pageSize = 1,
+}: {
+  channel?: object;
+  page?: number;
+  pageSize?: number;
+}) =>
   makeGraphqlApiRequest({
     query: GET_TIMELINE_THREADS,
     variables: {
@@ -126,9 +137,12 @@ const requestThreads = (channel?: object, page = 1, pageSize = 1) =>
 
 describe('timeline thread channel filter (integration)', () => {
   beforeAll(async () => {
-    await createRecord('company', {
-      id: COMPANY_ID,
-      name: 'Channel Filter Co',
+    await createRecord({
+      objectMetadataSingularName: 'company',
+      data: {
+        id: COMPANY_ID,
+        name: 'Channel Filter Co',
+      },
     });
 
     for (const [threadId, messageId, targetId, participantId, receivedAt] of [
@@ -147,34 +161,49 @@ describe('timeline thread channel filter (integration)', () => {
         60_000,
       ],
     ] as const) {
-      await createRecord('messageThread', { id: threadId });
-      await createRecord('message', {
-        id: messageId,
-        messageThreadId: threadId,
-        subject: 'Channel filter thread',
-        text: 'Channel filter body',
-        receivedAt: new Date(Date.now() + receivedAt).toISOString(),
+      await createRecord({
+        objectMetadataSingularName: 'messageThread',
+        data: { id: threadId },
       });
-      await createRecord('messageParticipant', {
-        id: participantId,
-        messageId,
-        role: 'FROM',
-        handle: 'channel.filter@example.com',
-        displayName: 'Channel Filter',
+      await createRecord({
+        objectMetadataSingularName: 'message',
+        data: {
+          id: messageId,
+          messageThreadId: threadId,
+          subject: 'Channel filter thread',
+          text: 'Channel filter body',
+          receivedAt: new Date(Date.now() + receivedAt).toISOString(),
+        },
       });
-      await createRecord('messageThreadTarget', {
-        id: targetId,
-        messageThreadId: threadId,
-        targetCompanyId: COMPANY_ID,
+      await createRecord({
+        objectMetadataSingularName: 'messageParticipant',
+        data: {
+          id: participantId,
+          messageId,
+          role: 'FROM',
+          handle: 'channel.filter@example.com',
+          displayName: 'Channel Filter',
+        },
+      });
+      await createRecord({
+        objectMetadataSingularName: 'messageThreadTarget',
+        data: {
+          id: targetId,
+          messageThreadId: threadId,
+          targetCompanyId: COMPANY_ID,
+        },
       });
     }
 
-    await createRecord('message', {
-      id: SYNCED_REPLY_MESSAGE_ID,
-      messageThreadId: SYNCED_THREAD_ID,
-      subject: 'Channel filter thread',
-      text: 'Channel filter reply',
-      receivedAt: new Date(Date.now() + 120_000).toISOString(),
+    await createRecord({
+      objectMetadataSingularName: 'message',
+      data: {
+        id: SYNCED_REPLY_MESSAGE_ID,
+        messageThreadId: SYNCED_THREAD_ID,
+        subject: 'Channel filter thread',
+        text: 'Channel filter reply',
+        receivedAt: new Date(Date.now() + 120_000).toISOString(),
+      },
     });
 
     for (const [associationId, messageId] of [
@@ -226,7 +255,7 @@ describe('timeline thread channel filter (integration)', () => {
   });
 
   it('keeps every conversation without a channel filter', async () => {
-    const response = await requestThreads(undefined, 1, 10);
+    const response = await requestThreads({ pageSize: 10 });
 
     expect(response.body.errors).toBeUndefined();
     expect(
@@ -236,7 +265,7 @@ describe('timeline thread channel filter (integration)', () => {
   });
 
   it('counts and pages only the conversations of the selected channel', async () => {
-    const response = await requestThreads(GOOGLE_EMAIL_CHANNEL);
+    const response = await requestThreads({ channel: GOOGLE_EMAIL_CHANNEL });
 
     expect(response.body.errors).toBeUndefined();
 
@@ -248,7 +277,10 @@ describe('timeline thread channel filter (integration)', () => {
       { id: SYNCED_THREAD_ID, channel: GOOGLE_EMAIL_CHANNEL },
     ]);
 
-    const nextPageResponse = await requestThreads(GOOGLE_EMAIL_CHANNEL, 2);
+    const nextPageResponse = await requestThreads({
+      channel: GOOGLE_EMAIL_CHANNEL,
+      page: 2,
+    });
 
     expect(
       nextPageResponse.body.data.getTimelineThreadsFromObjectRecord
@@ -258,9 +290,11 @@ describe('timeline thread channel filter (integration)', () => {
 
   it('returns nothing for a channel no conversation uses', async () => {
     const response = await requestThreads({
-      type: 'EMAIL',
-      provider: 'microsoft',
-      applicationId: null,
+      channel: {
+        type: 'EMAIL',
+        provider: 'microsoft',
+        applicationId: null,
+      },
     });
 
     expect(response.body.errors).toBeUndefined();
