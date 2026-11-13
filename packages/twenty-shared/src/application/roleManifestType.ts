@@ -94,13 +94,21 @@ export type RowLevelPermissionRuleManifest =
   };
 
 export type LegacyRoleRecordsPermissionsManifest = {
+  /** @deprecated Use recordsPermissions.canReadAllRecords */
   canReadAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canUpdateAllRecords */
   canUpdateAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canSoftDeleteAllRecords */
   canSoftDeleteAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.canDestroyAllRecords */
   canDestroyAllObjectRecords?: boolean;
+  /** @deprecated Use recordsPermissions.objects */
   objectPermissions?: LegacyObjectPermissionManifest[];
+  /** @deprecated Use unreadableFields and uneditableFields in recordsPermissions.objects */
   fieldPermissions?: LegacyFieldPermissionManifest[];
+  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
   rowLevelPermissionPredicates?: LegacyRowLevelPermissionPredicateManifest[];
+  /** @deprecated Use rowLevelRecordsPermissions in recordsPermissions.objects */
   rowLevelPermissionPredicateGroups?: LegacyRowLevelPermissionPredicateGroupManifest[];
 };
 

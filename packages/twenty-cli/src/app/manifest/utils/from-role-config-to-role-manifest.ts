@@ -4,6 +4,7 @@ import {
   getObjectPermissionUniversalIdentifier,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 export const fromRoleConfigToRoleManifest = ({
   roleConfig,
@@ -12,6 +13,36 @@ export const fromRoleConfigToRoleManifest = ({
   roleConfig: RoleConfig;
   applicationUniversalIdentifier: string;
 }): LegacyCompliantRoleManifest => {
+  const { recordsPermissions } = roleConfig;
+
+  if (isDefined(recordsPermissions)) {
+    return {
+      ...roleConfig,
+      recordsPermissions: {
+        ...recordsPermissions,
+        ...(isDefined(recordsPermissions.objects)
+          ? {
+              objects: recordsPermissions.objects.map(
+                (objectRecordsPermissions) => ({
+                  ...objectRecordsPermissions,
+                  universalIdentifier:
+                    objectRecordsPermissions.universalIdentifier ??
+                    getObjectPermissionUniversalIdentifier({
+                      applicationUniversalIdentifier,
+                      roleUniversalIdentifier: roleConfig.universalIdentifier,
+                      objectUniversalIdentifier:
+                        objectRecordsPermissions.objectUniversalIdentifier,
+                    }),
+                }),
+              ),
+            }
+          : {}),
+      },
+      permissionFlagUniversalIdentifiers:
+        roleConfig.permissionFlagUniversalIdentifiers ?? [],
+    };
+  }
+
   return {
     ...roleConfig,
     objectPermissions: (roleConfig.objectPermissions ?? []).map(
