@@ -195,6 +195,46 @@ describe('fromFlatFieldMetadataToFieldManifest', () => {
     expect(roundTripFlatFieldMetadata(flatFieldMetadata)).toBeUndefined();
   });
 
+  it('should export the base values of an option a workspace overrides', () => {
+    const optionUniversalIdentifier = '77777777-7777-4777-8777-777777777777';
+    const flatFieldMetadata = getFlatFieldMetadataMock({
+      universalIdentifier: FIELD_UID,
+      objectMetadataId: 'object-metadata-id',
+      type: FieldMetadataType.SELECT,
+      fieldMetadataOptionUniversalIdentifiers: [optionUniversalIdentifier],
+    });
+
+    const fieldManifest = fromFlatFieldMetadataToFieldManifest({
+      flatFieldMetadata,
+      flatFieldMetadataOptionMaps: {
+        ...createEmptyFlatEntityMaps(),
+        byUniversalIdentifier: {
+          [optionUniversalIdentifier]: getFlatFieldMetadataOptionMock({
+            universalIdentifier: optionUniversalIdentifier,
+            value: 'SCREENING',
+            label: 'Screening',
+            color: 'blue',
+            position: 0,
+            applicationId: flatFieldMetadata.applicationId,
+            overrides: {
+              [APP_UID]: { label: 'Workspace screening', color: 'red' },
+            },
+          }),
+        },
+      },
+    });
+
+    expect(fieldManifest.options).toEqual([
+      {
+        id: optionUniversalIdentifier,
+        value: 'SCREENING',
+        label: 'Screening',
+        color: 'blue',
+        position: 0,
+      },
+    ]);
+  });
+
   it('should copy the universal settings of a junction relation', () => {
     const flatFieldMetadata = getFlatFieldMetadataMock({
       universalIdentifier: FIELD_UID,

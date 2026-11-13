@@ -104,9 +104,11 @@ export const fromFlatFieldMetadataToFieldManifest = ({
   flatFieldMetadata: UniversalFlatFieldMetadata;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
 }): FieldManifest => {
+  // Reapplying an export writes the app's base rows, so workspace overrides stay out of it.
   const options = resolveFlatFieldMetadataOptions({
     flatFieldMetadata,
     flatFieldMetadataOptionMaps,
+    shouldApplyOverrides: false,
   });
 
   const fieldManifest = {

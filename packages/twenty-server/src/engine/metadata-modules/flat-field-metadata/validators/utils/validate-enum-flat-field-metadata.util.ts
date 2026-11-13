@@ -111,11 +111,12 @@ export const validateEnumSelectFlatFieldMetadata = ({
   flatEntityToValidate: universalFlatFieldMetadataToValidate,
   update,
 }: FlatFieldMetadataTypeValidationArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
-  const optionsValidationErrors = validateFieldMetadataInputOptions(
-    universalFlatFieldMetadataToValidate,
-  );
-
   const isWritingOptions = !isDefined(update) || isDefined(update.options);
+
+  const optionsValidationErrors = validateFieldMetadataInputOptions({
+    universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
+    isWritingOptions,
+  });
 
   const optionColorValidationErrors = isWritingOptions
     ? validateSelectOptionColors(universalFlatFieldMetadataToValidate)

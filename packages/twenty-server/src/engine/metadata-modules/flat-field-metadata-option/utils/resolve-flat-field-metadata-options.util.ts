@@ -9,7 +9,7 @@ export type FlatFieldMetadataForOptions = Pick<FlatFieldMetadata, 'type'> &
   Partial<
     Pick<
       FlatFieldMetadata,
-      'fieldMetadataOptionUniversalIdentifiers' | 'options'
+      'applicationId' | 'fieldMetadataOptionUniversalIdentifiers' | 'options'
     >
   >;
 
@@ -21,13 +21,16 @@ export type FlatFieldMetadataOptionMapsForOptions = Pick<
 export const resolveFlatFieldMetadataOptions = ({
   flatFieldMetadata,
   flatFieldMetadataOptionMaps,
+  shouldApplyOverrides,
 }: {
   flatFieldMetadata: FlatFieldMetadataForOptions;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
+  shouldApplyOverrides?: boolean;
 }): FlatFieldMetadata['options'] => {
   return resolveFieldMetadataOptionsFromRows({
     fieldMetadataEntity: {
       type: flatFieldMetadata.type,
+      applicationId: flatFieldMetadata.applicationId,
       options: flatFieldMetadata.options,
     },
     fieldMetadataOptionRows: (
@@ -40,5 +43,6 @@ export const resolveFlatFieldMetadataOptions = ({
           ],
       )
       .filter(isDefined),
+    shouldApplyOverrides,
   });
 };

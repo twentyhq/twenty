@@ -1,9 +1,10 @@
 import { msg, t } from '@lingui/core/macro';
-import { isString } from '@sniptt/guards';
+import { isBoolean, isString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
 import { isEnumUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import {
   type OrchestratorActionsReport,
@@ -13,6 +14,67 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 
+const unquoteDefaultValue = (defaultValue: string): string =>
+  defaultValue.replace(QUOTED_STRING_REGEX, '$1');
+
+const groupInactiveOptionValuesByFieldMetadataUniversalIdentifier = ({
+  flatFieldMetadataOptionMaps,
+  isWorkspaceCaller,
+}: {
+  flatFieldMetadataOptionMaps:
+    | Pick<
+        MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>,
+        'byUniversalIdentifier'
+      >
+    | undefined;
+  isWorkspaceCaller: boolean;
+}): Map<string, Set<string>> => {
+  const inactiveOptionValuesByFieldMetadataUniversalIdentifier = new Map<
+    string,
+    Set<string>
+  >();
+
+  for (const flatFieldMetadataOption of Object.values(
+    flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
+  )) {
+    if (!isDefined(flatFieldMetadataOption)) {
+      continue;
+    }
+
+    const isActiveOverride = isWorkspaceCaller
+      ? readAuthoredOverrideProperty({
+          metadataName: 'fieldMetadataOption',
+          overrides: flatFieldMetadataOption.overrides,
+          path: ['isActive'],
+          authorContext: { ownerApplicationUniversalIdentifier: undefined },
+        })
+      : undefined;
+
+    if (
+      isFieldMetadataOptionActive({
+        isActive: isBoolean(isActiveOverride)
+          ? isActiveOverride
+          : flatFieldMetadataOption.isActive,
+      })
+    ) {
+      continue;
+    }
+
+    const inactiveOptionValues =
+      inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
+        flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
+      ) ?? new Set<string>();
+
+    inactiveOptionValues.add(flatFieldMetadataOption.value);
+    inactiveOptionValuesByFieldMetadataUniversalIdentifier.set(
+      flatFieldMetadataOption.fieldMetadataUniversalIdentifier,
+      inactiveOptionValues,
+    );
+  }
+
+  return inactiveOptionValuesByFieldMetadataUniversalIdentifier;
+};
+
 // The default value and its options can change through different entities of one migration, so check the final state.
 export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
   fromFlatFieldMetadataOptionMaps,
@@ -21,7 +83,10 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
     flatFieldMetadataOptionMaps,
   },
   orchestratorActionsReport,
+  isWorkspaceCaller,
 }: {
+  // A workspace deactivation must not fail another application's sync, so only the workspace is held to it.
+  isWorkspaceCaller: boolean;
   fromFlatFieldMetadataOptionMaps:
     | MetadataUniversalFlatEntityMaps<'fieldMetadataOption'>
     | undefined;
@@ -76,6 +141,39 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
     string,
     Set<string>
   >();
+  const inactiveOptionValuesByFieldMetadataUniversalIdentifier =
+    groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
+      flatFieldMetadataOptionMaps,
+      isWorkspaceCaller,
+    });
+  const createdOptionUniversalIdentifiers = new Set(
+    orchestratorActionsReport.fieldMetadataOption.create.map(
+      ({ flatEntity }) => flatEntity.universalIdentifier,
+    ),
+  );
+  const fromInactiveOptionValuesByFieldMetadataUniversalIdentifier =
+    groupInactiveOptionValuesByFieldMetadataUniversalIdentifier({
+      // The before-state only holds the rows the migration touches; the others are unchanged, and created ones didn't exist.
+      flatFieldMetadataOptionMaps: {
+        byUniversalIdentifier: {
+          ...Object.fromEntries(
+            Object.entries(
+              flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
+            ).filter(
+              ([universalIdentifier]) =>
+                !createdOptionUniversalIdentifiers.has(universalIdentifier),
+            ),
+          ),
+          ...fromFlatFieldMetadataOptionMaps?.byUniversalIdentifier,
+        },
+      },
+      isWorkspaceCaller,
+    });
+  const fieldMetadataUniversalIdentifiersWithDefaultValueUpdate = new Set(
+    orchestratorActionsReport.fieldMetadata.update
+      .filter(({ update }) => 'defaultValue' in update)
+      .map(({ universalIdentifier }) => universalIdentifier),
+  );
 
   for (const flatFieldMetadataOption of Object.values(
     flatFieldMetadataOptionMaps?.byUniversalIdentifier ?? {},
@@ -124,14 +222,37 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       ? universalFlatFieldMetadata.defaultValue
       : [universalFlatFieldMetadata.defaultValue];
 
-    const defaultValuesWithoutOption = defaultValues
-      .filter(isString)
-      .filter(
-        (defaultValue) =>
-          !optionValues.has(defaultValue.replace(QUOTED_STRING_REGEX, '$1')),
+    const stringDefaultValues = defaultValues.filter(isString);
+
+    const defaultValuesWithoutOption = stringDefaultValues.filter(
+      (defaultValue) => !optionValues.has(unquoteDefaultValue(defaultValue)),
+    );
+
+    const inactiveOptionValues =
+      inactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      );
+    const fromInactiveOptionValues =
+      fromInactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
+        fieldMetadataUniversalIdentifier,
+      );
+    const isDefaultValueSet =
+      createdFieldMetadataUniversalIdentifiers.has(
+        fieldMetadataUniversalIdentifier,
+      ) ||
+      fieldMetadataUniversalIdentifiersWithDefaultValueUpdate.has(
+        fieldMetadataUniversalIdentifier,
+      );
+    const hasInactiveDefaultOption = stringDefaultValues
+      .map(unquoteDefaultValue)
+      .some(
+        (defaultOptionValue) =>
+          inactiveOptionValues?.has(defaultOptionValue) === true &&
+          (isDefaultValueSet ||
+            fromInactiveOptionValues?.has(defaultOptionValue) !== true),
       );
 
-    if (defaultValuesWithoutOption.length === 0) {
+    if (defaultValuesWithoutOption.length === 0 && !hasInactiveDefaultOption) {
       continue;
     }
 
@@ -156,6 +277,15 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
         message: t`Default value "${defaultValue}" must be one of the option values`,
         userFriendlyMessage: msg`Default value "${defaultValue}" must be one of the option values`,
         value: defaultValue,
+      });
+    }
+
+    if (hasInactiveDefaultOption) {
+      failedValidation.errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`The default option cannot be deactivated`,
+        userFriendlyMessage: msg`The default option cannot be deactivated`,
+        value: universalFlatFieldMetadata.defaultValue,
       });
     }
 

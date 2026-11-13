@@ -380,6 +380,8 @@ export class FieldMetadataService {
                 existingFlatFieldMetadataOptionMaps,
                 applicationUniversalIdentifier:
                   resolvedOwnerFlatApplication.universalIdentifier,
+                workspaceCustomApplicationUniversalIdentifier:
+                  workspaceCustomFlatApplication.universalIdentifier,
               }),
             index: {
               flatEntityToCreate: flatIndexMetadatasToCreate,

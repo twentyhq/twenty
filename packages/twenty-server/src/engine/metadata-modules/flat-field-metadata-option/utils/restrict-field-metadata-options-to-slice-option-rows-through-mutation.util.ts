@@ -66,8 +66,19 @@ export const restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation = ({
     ] = {
       ...flatFieldMetadata,
       options: resolveFieldMetadataOptionsFromRows({
-        fieldMetadataEntity: flatFieldMetadata,
-        fieldMetadataOptionRows,
+        fieldMetadataEntity: {
+          type: flatFieldMetadata.type,
+          options: flatFieldMetadata.options,
+        },
+        fieldMetadataOptionRows: fieldMetadataOptionRows.map(
+          ({ universalIdentifier, value, label, color, position }) => ({
+            universalIdentifier,
+            value,
+            label,
+            color,
+            position,
+          }),
+        ),
       }),
     };
   }

@@ -58,4 +58,20 @@ describe('normalizeUpdatedFieldMetadataOptions', () => {
     expect(normalizedOptions[1].id).toBe(CLOSED_OPTION_ID);
     expect(normalizedOptions[2].id).not.toBe(CLOSED_OPTION_ID);
   });
+
+  it('only stores isActive when an option is inactive and never stores the option owner', () => {
+    expect(
+      normalizeUpdatedFieldMetadataOptions({
+        updatedOptions: [
+          { ...openOption, isActive: true },
+          {
+            ...closedOption,
+            isActive: false,
+            applicationId: '20202020-0000-4000-8000-0000000000bb',
+          },
+        ],
+        existingOptions,
+      }),
+    ).toEqual([openOption, { ...closedOption, isActive: false }]);
+  });
 });
