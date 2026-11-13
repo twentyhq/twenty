@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,6 +6,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { APPLICATION_UNINSTALL_STEPS } from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
@@ -20,8 +21,11 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 
 @Injectable()
 export class ApplicationUninstallRunnerService {
+  private readonly logger = new Logger(ApplicationUninstallRunnerService.name);
+
   constructor(
     private readonly applicationLookupService: ApplicationLookupService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationService: ApplicationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly metricsService: MetricsService,
@@ -69,14 +73,31 @@ export class ApplicationUninstallRunnerService {
         APPLICATION_LIFECYCLE_LOCK_OPTIONS,
       );
     } catch (error) {
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.AppUninstallFailed,
-        amount: 1,
-        attributes: {
-          ...this.buildMetricsAttributes({ universalIdentifier, application }),
-          error_code: getApplicationErrorCode(error),
-        },
-      });
+      const applicationRegistration =
+        await this.applicationRegistrationLookupService
+          .findOneByUniversalIdentifierGlobal(universalIdentifier)
+          .catch((lookupError: unknown) => {
+            this.logger.warn(
+              `Skipping uninstall failure metric: registration lookup failed for ${universalIdentifier} in workspace ${workspaceId}`,
+              lookupError,
+            );
+
+            return null;
+          });
+
+      if (applicationRegistration?.isListed) {
+        this.metricsService.incrementCounterBy({
+          key: MetricsKeys.AppUninstallFailed,
+          amount: 1,
+          attributes: {
+            ...this.buildMetricsAttributes({
+              universalIdentifier,
+              application,
+            }),
+            error_code: getApplicationErrorCode(error),
+          },
+        });
+      }
 
       await this.recordUninstallLog({ application, workspaceId, error });
 
