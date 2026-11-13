@@ -105,6 +105,7 @@ const explainWithoutSequentialScan = async (sql: string): Promise<string> => {
 describe('Custom index direction', () => {
   let objectMetadataId: string;
   let occurredOnFieldMetadataId: string;
+  let tagsFieldMetadataId: string;
 
   beforeAll(async () => {
     const {
@@ -139,6 +140,21 @@ describe('Custom index direction', () => {
     });
 
     occurredOnFieldMetadataId = createOneField.id;
+
+    const {
+      data: { createOneField: tagsField },
+    } = await createOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        objectMetadataId,
+        name: 'tags',
+        label: 'Tags',
+        type: FieldMetadataType.ARRAY,
+        isLabelSyncedWithName: false,
+      },
+    });
+
+    tagsFieldMetadataId = tagsField.id;
   });
 
   afterAll(async () => {
@@ -201,16 +217,21 @@ describe('Custom index direction', () => {
     );
   });
 
-  it('refuses a direction on an index type that cannot sort', async () => {
-    const { createdIndex, errors } = await createOneIndex({
-      objectMetadataId,
-      fieldMetadataId: occurredOnFieldMetadataId,
-      direction: OrderByDirection.DescNullsLast,
-      indexType: IndexType.GIN,
-    });
+  it.each([OrderByDirection.DescNullsLast, OrderByDirection.AscNullsLast])(
+    'refuses the %s direction on an index type that cannot sort',
+    async (direction) => {
+      const { createdIndex, errors } = await createOneIndex({
+        objectMetadataId,
+        fieldMetadataId: tagsFieldMetadataId,
+        direction,
+        indexType: IndexType.GIN,
+      });
 
-    expect(createdIndex).toBeUndefined();
-    expect(errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
-    expect(errors?.[0]?.message).toContain('does not support a sort direction');
-  });
+      expect(createdIndex).toBeUndefined();
+      expect(errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+      expect(errors?.[0]?.message).toContain(
+        'does not support a sort direction',
+      );
+    },
+  );
 });

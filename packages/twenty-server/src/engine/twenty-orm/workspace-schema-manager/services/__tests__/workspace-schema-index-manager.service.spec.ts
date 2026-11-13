@@ -24,6 +24,8 @@ describe('WorkspaceSchemaIndexManagerService', () => {
       concurrently,
     });
 
+    expect(query).toHaveBeenCalledTimes(1);
+
     return query.mock.calls[0][0];
   };
 

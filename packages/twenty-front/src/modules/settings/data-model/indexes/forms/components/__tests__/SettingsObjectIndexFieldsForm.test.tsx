@@ -88,6 +88,7 @@ describe('SettingsObjectIndexFieldsForm', () => {
     await userEvent.click(await screen.findByText('Descending'));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
+    expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith(
       {
         indexType: IndexType.BTREE,
@@ -119,6 +120,7 @@ describe('SettingsObjectIndexFieldsForm', () => {
     await userEvent.click(await screen.findByText('Summary'));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
 
+    expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenCalledWith(
       expect.objectContaining({
         fields: [

@@ -307,33 +307,36 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     );
   });
 
-  it('throws when a GIN index sets a field direction', () => {
-    const tsVectorField = {
-      universalIdentifier: 'field-uuid-tsvector',
-      name: 'searchVector',
-      type: FieldMetadataType.TS_VECTOR,
-    } as UniversalFlatFieldMetadata;
+  it.each(Object.values(OrderByDirection))(
+    'throws when a GIN index sets the %s direction',
+    (direction) => {
+      const tsVectorField = {
+        universalIdentifier: 'field-uuid-tsvector',
+        name: 'searchVector',
+        type: FieldMetadataType.TS_VECTOR,
+      } as UniversalFlatFieldMetadata;
 
-    expect(() =>
-      fromIndexManifestToUniversalFlatIndex({
-        indexManifest: {
-          ...baseManifest,
-          indexType: IndexType.GIN,
-          fields: [
-            {
-              universalIdentifier: 'field-entry-1',
-              fieldUniversalIdentifier: tsVectorField.universalIdentifier,
-              direction: OrderByDirection.DescNullsLast,
-            },
-          ],
-        },
-        flatObjectMetadata,
-        objectFlatFieldMetadatas: [tsVectorField],
-        applicationUniversalIdentifier,
-        now,
-      }),
-    ).toThrow(/does not support a sort direction/);
-  });
+      expect(() =>
+        fromIndexManifestToUniversalFlatIndex({
+          indexManifest: {
+            ...baseManifest,
+            indexType: IndexType.GIN,
+            fields: [
+              {
+                universalIdentifier: 'field-entry-1',
+                fieldUniversalIdentifier: tsVectorField.universalIdentifier,
+                direction,
+              },
+            ],
+          },
+          flatObjectMetadata,
+          objectFlatFieldMetadatas: [tsVectorField],
+          applicationUniversalIdentifier,
+          now,
+        }),
+      ).toThrow(/does not support a sort direction/);
+    },
+  );
 
   it('throws when fields is empty', () => {
     expect(() =>

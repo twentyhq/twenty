@@ -173,7 +173,7 @@ export class IndexMetadataService {
       return {
         flatField,
         subFieldName: isComposite ? (input.subFieldName ?? null) : null,
-        direction: normalizeIndexFieldDirection(input.direction),
+        direction: input.direction ?? null,
       };
     });
 
@@ -258,7 +258,7 @@ export class IndexMetadataService {
               updatedAt: createdAt,
               order,
               subFieldName,
-              direction,
+              direction: normalizeIndexFieldDirection(direction),
               fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
               indexMetadataUniversalIdentifier,
             }),

@@ -102,14 +102,13 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       }
 
       const subFieldName = isComposite ? (entry.subFieldName ?? null) : null;
-      const direction = normalizeIndexFieldDirection(entry.direction);
 
       resolvedFieldsForValidation.push({
         type: flatField.type,
         name: flatField.name,
         label: flatField.label,
         subFieldName,
-        direction,
+        direction: entry.direction ?? null,
       });
 
       return {
@@ -117,7 +116,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
         updatedAt: now,
         order,
         subFieldName,
-        direction,
+        direction: normalizeIndexFieldDirection(entry.direction),
         fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
         indexMetadataUniversalIdentifier: indexManifest.universalIdentifier,
       };
