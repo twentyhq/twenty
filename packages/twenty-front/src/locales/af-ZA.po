@@ -1653,6 +1653,11 @@ msgstr "’n Vorm maak oop vir die persoon wat die werkvloei begin en word onmid
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "'n Vorm maak oop vir die persoon wat die werksvloei begin en word dadelik ingevul. Met hierdie sneller wys dit slegs in die werksvloei-uitvoering. Om iemand vir 'n antwoord of goedkeuring in hul inkassie te vra, gebruik eerder 'n Stuur na inkassie-stap."
 
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr ""
+
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "A new one each time the step runs"

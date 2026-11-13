@@ -277,6 +277,11 @@ msgstr "캠페인에서 추적되는 링크"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "마케팅 이메일은 한 번에 한 명의 수신자에게만 보낼 수 있으므로, 각 수신자는 자신만의 구독 취소 링크를 받습니다."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr ""
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -8677,6 +8682,11 @@ msgstr "메시지"
 msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "메시지"
+
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr ""
 
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
