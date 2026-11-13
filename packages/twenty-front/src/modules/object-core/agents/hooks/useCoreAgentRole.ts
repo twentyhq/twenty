@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { coreAgentNewRoleIdFamilyState } from '@/object-core/agents/states/coreAgentNewRoleIdFamilyState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
-import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -30,8 +30,8 @@ export const useCoreAgentRole = (
     settingsDraftRoleFamilyState,
     roleId,
   );
-  const settingsDraftRoleBase = useAtomFamilyStateValue(
-    settingsDraftRoleBaseFamilyState,
+  const settingsInitialDraftRole = useAtomFamilyStateValue(
+    settingsInitialDraftRoleFamilyState,
     roleId,
   );
   const setSettingsDraftRole = useSetAtomFamilyState(
@@ -42,7 +42,7 @@ export const useCoreAgentRole = (
   const isDraftRoleReady =
     isNonEmptyString(roleId) &&
     settingsDraftRole.id === roleId &&
-    settingsDraftRoleBase?.id === roleId;
+    settingsInitialDraftRole?.id === roleId;
 
   const isRoleExclusiveToAgent =
     isDefined(settingsPersistedRole) &&
@@ -70,7 +70,8 @@ export const useCoreAgentRole = (
     canEditRole,
     isRoleDirty:
       isDraftRoleReady &&
-      Object.keys(getRoleDirtyFields(settingsDraftRole, settingsDraftRoleBase))
-        .length > 0,
+      Object.keys(
+        getRoleDirtyFields(settingsDraftRole, settingsInitialDraftRole),
+      ).length > 0,
   };
 };

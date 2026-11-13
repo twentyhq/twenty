@@ -9,7 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -56,7 +57,7 @@ const ChannelNavigationStory = ({
   ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>,
   'channel' | 'summary' | 'isExpandable' | 'rightOptions'
 >) => {
-  const channelView = useAtomStateValue(agentChatChannelViewState);
+  const channelView = useAtomStateValue(agentChatSelectedChannelViewSelector);
 
   return (
     <StyledNavigation>
@@ -79,11 +80,11 @@ const meta = {
   render: ChannelNavigationStory,
   beforeEach: ({ args }) => {
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
-    jotaiStore.set(agentChatChannelViewState.atom, args.channelView);
+    setAgentChatSelectedChannelView(jotaiStore, args.channelView);
 
     return () => {
       jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
-      jotaiStore.set(agentChatChannelViewState.atom, null);
+      setAgentChatSelectedChannelView(jotaiStore, null);
     };
   },
   args: {
@@ -127,12 +128,16 @@ export const Open: Story = {
       canvas.queryByRole('button', { name: /^Assigned\b/ }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.SNOOZED,
     });
     await userEvent.click(canvas.getByRole('button', { name: 'Done' }));
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.DONE,
     });
@@ -145,7 +150,9 @@ export const Open: Story = {
       'aria-current',
       'true',
     );
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual({
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.DONE,
     });
@@ -160,9 +167,9 @@ export const Collapsed: Story = {
 
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(channel);
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
-      OPEN_VIEW,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual(OPEN_VIEW);
     await expect(channel).toHaveAttribute('aria-expanded', 'true');
   },
 };
@@ -188,9 +195,9 @@ export const KeyboardAndOptions: Story = {
     await userEvent.keyboard(' ');
     await expect(onOptions).toHaveBeenCalledTimes(1);
     await expect(channel).toHaveAttribute('aria-expanded', 'true');
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
-      OPEN_VIEW,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual(OPEN_VIEW);
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
@@ -213,9 +220,9 @@ export const NeedsInput: Story = {
 
     await expect(openItem).toHaveAttribute('aria-current', 'true');
     await userEvent.click(openItem);
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
-      OPEN_VIEW,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual(OPEN_VIEW);
   },
 };
 
@@ -244,9 +251,9 @@ export const Favorite: Story = {
     await expect(channel).toHaveAttribute('aria-current', 'true');
     await expect(channel).not.toHaveAttribute('aria-expanded');
     await userEvent.click(channel);
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toEqual(
-      OPEN_VIEW,
-    );
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toEqual(OPEN_VIEW);
     await expect(
       canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
     ).not.toBeInTheDocument();
@@ -259,7 +266,7 @@ export const SameViewKeepsCollapsed: Story = {
       <ChannelNavigationStory channel={args.channel} summary={args.summary} />
       <Button
         onClick={() =>
-          jotaiStore.set(agentChatChannelViewState.atom, { ...OPEN_VIEW })
+          setAgentChatSelectedChannelView(jotaiStore, { ...OPEN_VIEW })
         }
       >
         Reselect view
@@ -324,7 +331,9 @@ export const Inaccessible: Story = {
       }),
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByText(/Not open to you/));
-    await expect(jotaiStore.get(agentChatChannelViewState.atom)).toBeNull();
+    await expect(
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
+    ).toBeNull();
     await userEvent.tab();
     await expect(
       canvas.getByRole('button', { name: 'Channel options' }),
@@ -340,9 +349,7 @@ export const ReturnToTriage: Story = {
   render: (args) => (
     <>
       <ChannelNavigationStory channel={args.channel} summary={args.summary} />
-      <Button
-        onClick={() => jotaiStore.set(agentChatChannelViewState.atom, null)}
-      >
+      <Button onClick={() => setAgentChatSelectedChannelView(jotaiStore, null)}>
         Open triage
       </Button>
     </>

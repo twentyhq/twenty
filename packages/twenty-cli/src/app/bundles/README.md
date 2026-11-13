@@ -19,7 +19,14 @@ named exports must be statically detectable; packages that compute export names
 at runtime can be consumed through their default export.
 
 The bundler collects source and dependency files, public and generated assets,
-and the README, and updates the manifest's artifact checksums. Snapshot copies
+and the README, and updates the manifest's artifact checksums. `manifest.sourceFiles`
+records each retained source path and checksum, including local runtime imports,
+type-only imports, local TypeScript configuration, nested CSS and imported assets.
+Node modules, unrelated files and imports outside the app (including symlink
+targets) are excluded from the inventory without rejecting existing builds.
+Retained paths and file bytes are preserved. A fresh build
+replaces the inventory. Direct apply uploads these artifacts, and package installs
+require all inventoried sources while accepting older packages without an inventory. Snapshot copies
 dereference symlinks. Each upload artifact records its role, byte size and
 SHA-256 hash. README and source maps are included in the snapshot but are not
 upload artifacts. The content hash combines the sorted artifact paths, roles and

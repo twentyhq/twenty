@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
 import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
 import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
@@ -18,15 +18,15 @@ export const NavigationDrawerAiChatTriageSection = () => {
       label={t`Triage`}
     >
       <NavigationDrawerAiChatTriageItem
-        filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE}
+        presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.OPEN}
         count={openThreadCount}
         isUnread={hasUnreadOpenThread}
       />
       <NavigationDrawerAiChatTriageItem
-        filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED}
+        presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED}
       />
       <NavigationDrawerAiChatTriageItem
-        filterStatus={AGENT_CHAT_THREAD_FILTER_STATUS.DONE}
+        presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.DONE}
       />
     </CollapsibleNavigationDrawerSection>
   );

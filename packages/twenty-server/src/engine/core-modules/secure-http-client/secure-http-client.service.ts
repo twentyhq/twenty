@@ -13,6 +13,7 @@ import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
+import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { type OutboundRequestOutcomeDetails } from 'src/engine/core-modules/secure-http-client/outbound-request-outcome-details.type';
@@ -109,9 +110,13 @@ export class SecureHttpClientService {
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
   ): AxiosInstance {
+    const { shouldRestrictToPublicHosts, ...clientConfig } = config ?? {};
+
     const client = createSsrfSafeAxiosClient({
-      config,
-      allowedInternalHosts: this.getAllowedInternalHosts(),
+      config: clientConfig,
+      allowedInternalHosts: shouldRestrictToPublicHosts
+        ? []
+        : this.getAllowedInternalHosts(),
     });
 
     if (isDefined(context)) {
@@ -249,6 +254,22 @@ export class SecureHttpClientService {
     }
 
     return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
+  }
+
+  createFetchLike({
+    context,
+    timeoutMs,
+  }: {
+    context: OutboundRequestContext;
+    timeoutMs: number;
+  }): FetchLike {
+    const axiosFetch = buildAxiosFetch(
+      this.getHttpClient({ timeout: timeoutMs }, context),
+      (config, _input, init) =>
+        init?.redirect === 'manual' ? { ...config, maxRedirects: 0 } : config,
+    );
+
+    return (url, init) => axiosFetch(url.toString(), init);
   }
 
   // For libraries that only accept an agent (openid-client); undefined means no restriction.
