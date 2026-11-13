@@ -10379,7 +10379,7 @@ msgid "Direct messages"
 msgstr "直接訊息"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "直接訊息不支援附件。"
 
@@ -18245,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "已標示為完成 {eventTime}"
 
@@ -27710,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "暫停已結束"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "暫停已於 {eventTime} 結束"
 
@@ -27733,7 +27733,7 @@ msgid "Snoozed"
 msgstr "已暫停"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "已暫停至 {eventTime}"
 
@@ -31440,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "已退訂"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "已於 {eventTime} 取消訂閱。除非有人提及您，否則新訊息不會出現在您的收件匣中。"
 

@@ -10379,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Mensagens diretas"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "As mensagens diretas não aceitam anexos."
 
@@ -18245,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marcado como concluído {eventTime}"
 
@@ -27710,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Adiamento encerrado"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Adiamento encerrado {eventTime}"
 
@@ -27733,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Adiado"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Adiado até {eventTime}"
 
@@ -31440,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "Inscrição cancelada"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Inscrição cancelada {eventTime}. Novas mensagens ficam fora da sua caixa de entrada, a menos que você seja mencionado."
 

@@ -10379,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Wiadomości bezpośrednie"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Wiadomości bezpośrednie nie obsługują załączników."
 
@@ -18245,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Oznaczono jako ukończone {eventTime}"
 
@@ -27710,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Odroczenie zakończone"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Odroczenie zakończone {eventTime}"
 
@@ -27733,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Odłożone"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Odłożone do {eventTime}"
 
@@ -31440,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "Wypisany"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Subskrypcja anulowana {eventTime}. Nowe wiadomości nie będą trafiać do skrzynki odbiorczej, chyba że ktoś Cię oznaczy."
 

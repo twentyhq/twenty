@@ -10379,7 +10379,7 @@ msgid "Direct messages"
 msgstr "Mensajes directos"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Los mensajes directos no admiten archivos adjuntos."
 
@@ -18245,7 +18245,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marcado como hecho {eventTime}"
 
@@ -27710,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "Posposición finalizada"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Posposición finalizada {eventTime}"
 
@@ -27733,7 +27733,7 @@ msgid "Snoozed"
 msgstr "Pospuesto"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Pospuesto hasta {eventTime}"
 
@@ -31442,7 +31442,7 @@ msgid "Unsubscribed"
 msgstr "Dado de baja"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Cancelaste la suscripción {eventTime}. Los nuevos mensajes no aparecerán en tu bandeja de entrada a menos que te mencionen."
 

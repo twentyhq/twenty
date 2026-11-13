@@ -10379,7 +10379,7 @@ msgid "Direct messages"
 msgstr "پیام‌های مستقیم"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "پیام‌های مستقیم از پیوست‌ها پشتیبانی نمی‌کنند."
 
@@ -18245,7 +18245,7 @@ msgid "Markdown"
 msgstr "مارک داون"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "به‌عنوان انجام‌شده علامت‌گذاری شد {eventTime}"
 
@@ -27710,7 +27710,7 @@ msgid "Snooze ended"
 msgstr "تعویق پایان یافت"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "تعویق در {eventTime} پایان یافت"
 
@@ -27733,7 +27733,7 @@ msgid "Snoozed"
 msgstr "به‌تعویق‌افتاده"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "به‌تعویق‌افتاده تا {eventTime}"
 
@@ -31440,7 +31440,7 @@ msgid "Unsubscribed"
 msgstr "اشتراک لغو شد"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "لغو اشتراک در {eventTime}. پیام‌های جدید تا زمانی که از شما نام برده نشود، خارج از صندوق ورودی شما می‌مانند."
 

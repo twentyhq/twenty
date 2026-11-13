@@ -10374,7 +10374,7 @@ msgid "Direct messages"
 msgstr "Direct messages"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/ai/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direct messages don't support attachments."
 
@@ -18240,7 +18240,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Marked as done {eventTime}"
 
@@ -27705,7 +27705,7 @@ msgid "Snooze ended"
 msgstr "Snooze ended"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snooze ended {eventTime}"
 
@@ -27728,7 +27728,7 @@ msgid "Snoozed"
 msgstr "Snoozed"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Snoozed until {eventTime}"
 
@@ -31437,7 +31437,7 @@ msgid "Unsubscribed"
 msgstr "Unsubscribed"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
+#: src/modules/ai/components/AiChatThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 
