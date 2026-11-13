@@ -60,7 +60,7 @@ export default async function IntegratorProgramPage({
       <main>
         <PartnerHero
           heading={msg`Become a\n*Twenty integrator*`}
-          body={msg`You implement Twenty for your clients. Earn 20% on every client you bring, get help from our team and other partners, and grow into a Lead Integrator to receive client briefs.`}
+          body={msg`You implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           actions={
             <>
               <BecomePartnerButton label={msg`Apply as an integrator`} />
