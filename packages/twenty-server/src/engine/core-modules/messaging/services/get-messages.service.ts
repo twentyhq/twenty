@@ -10,7 +10,10 @@ import { type TimelineThreadSearchResultDTO } from 'src/engine/core-modules/mess
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
-import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
+import {
+  type FormattableTimelineThread,
+  formatThreads,
+} from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
@@ -168,7 +171,7 @@ export class GetMessagesService {
     userWorkspaceId,
     workspaceId,
   }: {
-    messageThreads: Parameters<typeof formatThreads>[0];
+    messageThreads: FormattableTimelineThread[];
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<TimelineThreadDTO[]> {
@@ -202,13 +205,13 @@ export class GetMessagesService {
       }),
     ]);
 
-    return formatThreads(
-      messageThreads,
+    return formatThreads({
+      threads: messageThreads,
       threadParticipantsByThreadId,
       threadVisibilityByThreadId,
       threadChannelByThreadId,
       unreadMessageThreadIds,
-    );
+    });
   }
 
   async getMessagesFromObjectRecord({

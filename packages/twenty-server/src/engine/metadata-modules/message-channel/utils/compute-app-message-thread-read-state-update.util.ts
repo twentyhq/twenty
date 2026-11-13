@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
 type ThreadMessageReadState = {
@@ -33,5 +35,7 @@ export const computeAppMessageThreadReadStateUpdate = ({
       (right.receivedAt?.getTime() ?? 0) - (left.receivedAt?.getTime() ?? 0),
   );
 
-  return latestIncomingMessage ? [latestIncomingMessage.associationId] : [];
+  return isDefined(latestIncomingMessage)
+    ? [latestIncomingMessage.associationId]
+    : [];
 };

@@ -109,7 +109,7 @@ export class AddMessageChannelMessageAssociationIsReadFieldCommand extends Provi
 
     if (result.status === 'fail') {
       this.logger.error(
-        `Failed to add the messageChannelMessageAssociation isRead field:\n${JSON.stringify(result, null, 2)}`,
+        `Failed to add the messageChannelMessageAssociation isRead field for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
       );
 
       throw new Error(

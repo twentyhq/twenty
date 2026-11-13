@@ -386,6 +386,8 @@ export class TimelineMessagingService {
     });
 
     return ownedMessageChannels.map(({ id }) => id);
+  }
+
   public async findMessageChannelIdsMatchingChannel({
     workspaceId,
     channel,

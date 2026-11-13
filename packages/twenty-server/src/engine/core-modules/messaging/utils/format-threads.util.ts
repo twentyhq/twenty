@@ -7,23 +7,31 @@ import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/t
 import { extractParticipantSummary } from 'src/engine/core-modules/messaging/utils/extract-participant-summary.util';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
-export const formatThreads = (
-  threads: Omit<
-    TimelineThreadDTO,
-    | 'firstParticipant'
-    | 'lastTwoParticipants'
-    | 'participantCount'
-    | 'read'
-    | 'visibility'
-    | 'channel'
-  >[],
+export type FormattableTimelineThread = Omit<
+  TimelineThreadDTO,
+  | 'firstParticipant'
+  | 'lastTwoParticipants'
+  | 'participantCount'
+  | 'read'
+  | 'visibility'
+  | 'channel'
+>;
+
+export const formatThreads = ({
+  threads,
+  threadParticipantsByThreadId,
+  threadVisibilityByThreadId,
+  threadChannelByThreadId,
+  unreadMessageThreadIds,
+}: {
+  threads: FormattableTimelineThread[];
   threadParticipantsByThreadId: {
     [key: string]: MessageParticipantWorkspaceEntity[];
-  },
-  threadVisibilityByThreadId: Record<string, MessageChannelVisibility>,
-  threadChannelByThreadId: Record<string, TimelineThreadChannelDTO>,
-  unreadMessageThreadIds: Set<string> = new Set(),
-): TimelineThreadDTO[] => {
+  };
+  threadVisibilityByThreadId: Record<string, MessageChannelVisibility>;
+  threadChannelByThreadId: Record<string, TimelineThreadChannelDTO>;
+  unreadMessageThreadIds: Set<string>;
+}): TimelineThreadDTO[] => {
   return threads
     .filter((thread) => isDefined(threadParticipantsByThreadId[thread.id]))
     .map((thread) => {

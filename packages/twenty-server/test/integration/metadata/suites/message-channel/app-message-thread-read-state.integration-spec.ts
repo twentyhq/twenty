@@ -78,6 +78,21 @@ const GET_TIMELINE_THREADS_QUERY = gql`
   }
 `;
 
+const FIND_ASSOCIATIONS_QUERY = gql`
+  query MessageChannelMessageAssociations($messageChannelId: UUID!) {
+    messageChannelMessageAssociations(
+      filter: { messageChannelId: { eq: $messageChannelId } }
+    ) {
+      edges {
+        node {
+          messageExternalId
+          isRead
+        }
+      }
+    }
+  }
+`;
+
 const MARK_THREAD_AS_READ_MUTATION = gql`
   mutation MarkMessageThreadAsRead($messageThreadId: UUID!) {
     markMessageThreadAsRead(messageThreadId: $messageThreadId)
@@ -178,6 +193,24 @@ describe('app message thread read state (e2e)', () => {
     ).find(({ id }) => id === messageThreadId);
 
     return timelineThread?.read;
+  };
+
+  const readStateThroughApi = async (
+    token?: string,
+  ): Promise<Record<string, boolean>> => {
+    const response = await makeGraphqlApiRequest(
+      { query: FIND_ASSOCIATIONS_QUERY, variables: { messageChannelId } },
+      token,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const edges: { node: { messageExternalId: string; isRead: boolean } }[] =
+      response.body.data.messageChannelMessageAssociations.edges;
+
+    return Object.fromEntries(
+      edges.map(({ node }) => [node.messageExternalId, node.isRead]),
+    );
   };
 
   const findReadStateByExternalId = async (): Promise<
@@ -401,6 +434,18 @@ describe('app message thread read state (e2e)', () => {
       'incoming-read': true,
       outgoing: true,
       'incoming-unread': false,
+    });
+  });
+
+  it('shows read state through the API to the channel owner only', async () => {
+    expect((await readStateThroughApi())['incoming-unread']).toBe(false);
+    expect(
+      (await readStateThroughApi(applicationToken))['incoming-unread'],
+    ).toBe(false);
+    expect(await readStateThroughApi(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual({
+      'incoming-read': true,
+      outgoing: true,
+      'incoming-unread': true,
     });
   });
 
