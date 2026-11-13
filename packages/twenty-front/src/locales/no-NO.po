@@ -228,13 +228,13 @@ msgstr "{0, plural, one {{years} år} other {{years} år}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {# chat valgt} other {# chatter valgt}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# chat} other {# chatter}}"
 
@@ -469,7 +469,7 @@ msgstr "{0} forsøk"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/InboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1169,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} poster valgt · {skippedCount} poster hoppet over"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} valgt"
 
@@ -2241,7 +2241,7 @@ msgid "Add CC"
 msgstr "Legg til CC"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Legg til kanal"
 
@@ -2642,7 +2642,7 @@ msgid "Add to Favorite"
 msgstr "Legg til i Favoritter"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Legg til i favoritter"
 
@@ -3299,7 +3299,7 @@ msgid "All {objectLabelPlural}"
 msgstr "Alle {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "Alle handlinger"
 
@@ -3329,8 +3329,8 @@ msgid "All applications"
 msgstr "Alle applikasjoner"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "Alle kanaler"
 
@@ -4459,7 +4459,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Tildelt"
 
@@ -4474,7 +4474,7 @@ msgid "Assigned to"
 msgstr "Tilordnet til"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Tilordnet til meg"
 
@@ -4930,7 +4930,7 @@ msgid "Back to customization"
 msgstr "Tilbake til tilpasning"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Tilbake til innboks"
 
@@ -5969,7 +5969,7 @@ msgid "Cell controls"
 msgstr "Cellekontroller"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Endre"
 
@@ -6070,13 +6070,13 @@ msgid "Channel"
 msgstr "Kanal"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Kanalnavn"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Kanalalternativer"
 
@@ -6086,8 +6086,8 @@ msgid "channel role"
 msgstr "kanalrolle"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Kanaler"
@@ -6110,7 +6110,7 @@ msgid "Chat actions"
 msgstr "Chathandlinger"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Chatkanaler som denne rollen leser og svarer i"
 
@@ -6366,7 +6366,7 @@ msgid "Choose icon"
 msgstr "Velg ikon"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Velg ikon og farge"
@@ -6571,8 +6571,8 @@ msgid "Clear search, go back, or close"
 msgstr "Tøm søket, gå tilbake eller lukk"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Fjern markering"
@@ -6708,7 +6708,7 @@ msgstr "Utklippstavlen krever en sikker tilkobling (HTTPS). Åpne denne appen ov
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Lukk"
@@ -7718,8 +7718,8 @@ msgstr "Kontroller hvilke typer enheter denne rollen kan tildeles til"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7736,7 +7736,7 @@ msgid "Conversation key"
 msgstr "Samtalenøkkel"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Samtaleliste"
 
@@ -7751,7 +7751,7 @@ msgid "Conversations"
 msgstr "Samtaler"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Samtaler i denne kanalen vises her."
 
@@ -7761,7 +7761,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Samtaler knyttet til denne posten vises her."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Samtaler du kan åpne, vises her."
 
@@ -9726,7 +9726,7 @@ msgid "Delete"
 msgstr "Slett"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "Slett {channelName}?"
 
@@ -9860,9 +9860,9 @@ msgid "Delete app"
 msgstr "Slett app"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Slett kanal"
 
@@ -10363,7 +10363,7 @@ msgid "Direct messages"
 msgstr "Direktemeldinger"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Direktemeldinger støtter ikke vedlegg."
 
@@ -10623,10 +10623,10 @@ msgstr "Ikke importer hendelser merket som private"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12377,7 +12377,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "hver {stepNumStr} måneder, mellom {startMonth} og {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Alle kanaler, inkludert de som opprettes senere"
 
@@ -13447,7 +13447,7 @@ msgid "Fast"
 msgstr "Rask"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Favoritter"
@@ -13804,8 +13804,8 @@ msgid "Filter by record ID"
 msgstr "Filtrer etter oppførings-ID"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/InboxFilterDropdown.tsx
-#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filtrer chatter"
 
@@ -14128,10 +14128,10 @@ msgid "Formats"
 msgstr "Formater"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 msgid "Former member"
 msgstr "Tidligere medlem"
 
@@ -15150,7 +15150,7 @@ msgid "Hide hidden groups"
 msgstr "Skjul skjulte grupper"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Skjul innboks"
 
@@ -15392,7 +15392,7 @@ msgid "Icon"
 msgstr "Ikon"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Ikon og farge"
 
@@ -15703,7 +15703,7 @@ msgid "Importing Data ..."
 msgstr "Importerer data ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/InboxThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "Om {channelName}"
 
@@ -16514,7 +16514,7 @@ msgid "Iterator"
 msgstr "Iterator"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Chattene flyttes til {destinationChannelName}. Dette kan ikke angres."
 
@@ -17719,7 +17719,7 @@ msgid "Loading retention configuration..."
 msgstr "Laster inn beholdningskonfigurasjon..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Laster inn roller"
 
@@ -18203,7 +18203,7 @@ msgid "Margin"
 msgstr "Marg"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Marker alle som utført"
 
@@ -18223,7 +18223,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Markert som ferdig {eventTime}"
 
@@ -18472,7 +18472,7 @@ msgid "Mentioned you"
 msgstr "Nevnte deg"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Omtaler"
 
@@ -19014,8 +19014,8 @@ msgid "Move Down"
 msgstr "Flytt ned"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Flytt chattene til"
 
@@ -19046,9 +19046,9 @@ msgid "Move to another tab"
 msgstr "Flytt til en annen fane"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Flytt til kanal"
 
@@ -19192,7 +19192,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19336,7 +19336,7 @@ msgstr "Trenger et nedtrekksfelt"
 
 #. js-lingui-id: k3/EHQ
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Trenger inndata"
 
@@ -19439,14 +19439,14 @@ msgid "New calendar event"
 msgstr "Ny kalenderhendelse"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "Ny kanal"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Ny chat"
@@ -19676,7 +19676,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Neste belastning {totalRenewDate}. Faktureringsbeløpet kan variere hvis du legger til medlemmer eller kreditter mellom perioder"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Neste chat"
 
@@ -19961,7 +19961,7 @@ msgid "No calling code"
 msgstr "Ingen landskode"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "Ingen kanal"
 
@@ -20008,7 +20008,7 @@ msgstr "Ingen samtale bruker denne kanalen."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Ingen samtaler"
 
@@ -20551,7 +20551,7 @@ msgid "No role assigned to this member"
 msgstr "Ingen rolle er tildelt dette medlemmet"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "Ingen roller"
 
@@ -20965,7 +20965,7 @@ msgid "Not now"
 msgstr "Ikke nå"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Ikke åpen for deg"
 
@@ -21566,8 +21566,8 @@ msgstr "Bare du vil kunne se e-postene og hendelsene dine"
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21613,9 +21613,9 @@ msgid "Open chat"
 msgstr "Åpne chat"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Åpne chatter i"
 
@@ -23072,7 +23072,7 @@ msgid "Previous approval"
 msgstr "Forrige godkjenning"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Forrige chat"
 
@@ -23934,7 +23934,7 @@ msgid "Record label"
 msgstr "Opptak etikett"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Oppføringsside"
@@ -24405,7 +24405,7 @@ msgid "Remove from blocklist"
 msgstr "Fjern fra blokkeringslisten"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24557,13 +24557,13 @@ msgstr "Fjern widget"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Gi nytt navn"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Endre navn på chat"
 
@@ -24593,7 +24593,7 @@ msgid "Renews on"
 msgstr "Fornyes den"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Åpne igjen"
 
@@ -25132,7 +25132,7 @@ msgid "Role updated successfully"
 msgstr "Rolle oppdatert vellykket"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25145,8 +25145,8 @@ msgid "Roles"
 msgstr "Roller"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Roller i denne kanalen"
 
@@ -26637,7 +26637,7 @@ msgid "Selected"
 msgstr "Valgt"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Valgte chatter"
 
@@ -27297,7 +27297,7 @@ msgid "Show hidden objects"
 msgstr "Vis skjulte objekter"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Vis innboks"
 
@@ -27665,9 +27665,9 @@ msgstr "utdrag"
 
 #. js-lingui-id: 7+i6oV
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Utsett"
@@ -27683,7 +27683,7 @@ msgid "Snooze ended"
 msgstr "Utsettelsen er avsluttet"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Utsettelsen ble avsluttet {eventTime}"
 
@@ -27700,13 +27700,13 @@ msgstr "Utsett til {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Utsatt"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Utsatt til {eventTime}"
 
@@ -27947,7 +27947,7 @@ msgid "Split multiple values"
 msgstr "Del opp flere verdier"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Delt visning"
 
@@ -30555,7 +30555,7 @@ msgid "Translations"
 msgstr "Oversettelser"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Prioritering"
 
@@ -31005,7 +31005,7 @@ msgid "Unanswered"
 msgstr "Ubesvart"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Ikke tildelt"
 
@@ -31413,7 +31413,7 @@ msgid "Unsubscribed"
 msgstr "Avmeldt"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Avmeldt {eventTime}. Nye meldinger holdes utenfor innboksen din med mindre du blir nevnt."
 
@@ -31439,7 +31439,7 @@ msgstr "Til {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32730,7 +32730,7 @@ msgid "Waiting for your approval"
 msgstr "Venter på godkjenningen din"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Vekk nå"
 
@@ -33297,7 +33297,7 @@ msgid "Wink"
 msgstr "Blunk"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "Når det ikke finnes noen annen kanal å flytte chattene til, kan bare en tom kanal slettes. Dette kan ikke angres."
 

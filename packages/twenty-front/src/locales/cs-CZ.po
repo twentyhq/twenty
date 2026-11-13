@@ -228,13 +228,13 @@ msgstr "{0, plural, one {{years} rok} few {{years} roky} many {{years} let} othe
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {# chat vybrán} few {# chaty vybrány} many {# chatů vybráno} other {# chatů vybráno}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# chat} few {# chaty} many {# chatů} other {# chatů}}"
 
@@ -469,7 +469,7 @@ msgstr "{0} opakování"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/InboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1169,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "Vybráno záznamů: {selectedCount} · Přeskočeno záznamů: {skippedCount}"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} vybráno"
 
@@ -2241,7 +2241,7 @@ msgid "Add CC"
 msgstr "Přidat CC"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Přidat kanál"
 
@@ -2642,7 +2642,7 @@ msgid "Add to Favorite"
 msgstr "Přidat do oblíbených"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Přidat do oblíbených"
 
@@ -3299,7 +3299,7 @@ msgid "All {objectLabelPlural}"
 msgstr "Všechny {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "Všechny akce"
 
@@ -3329,8 +3329,8 @@ msgid "All applications"
 msgstr "Všechny aplikace"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "Všechny kanály"
 
@@ -4459,7 +4459,7 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Přiřazeno"
 
@@ -4474,7 +4474,7 @@ msgid "Assigned to"
 msgstr "Přiřazeno"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Přiřazeno mně"
 
@@ -4930,7 +4930,7 @@ msgid "Back to customization"
 msgstr "Zpět k přizpůsobení"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Zpět do doručené pošty"
 
@@ -5969,7 +5969,7 @@ msgid "Cell controls"
 msgstr "Ovládací prvky buňky"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Změnit"
 
@@ -6070,13 +6070,13 @@ msgid "Channel"
 msgstr "Kanál"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Název kanálu"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Možnosti kanálu"
 
@@ -6086,8 +6086,8 @@ msgid "channel role"
 msgstr "role kanálu"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Kanály"
@@ -6110,7 +6110,7 @@ msgid "Chat actions"
 msgstr "Akce chatu"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Chatové kanály, ve kterých tato role čte a odpovídá"
 
@@ -6366,7 +6366,7 @@ msgid "Choose icon"
 msgstr "Vybrat ikonu"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Vybrat ikonu a barvu"
@@ -6571,8 +6571,8 @@ msgid "Clear search, go back, or close"
 msgstr "Vymažte vyhledávání, vraťte se zpět nebo zavřete"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Vymazat výběr"
@@ -6708,7 +6708,7 @@ msgstr "Schránka vyžaduje zabezpečené připojení (HTTPS). Pro povolení kop
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Zavřít"
@@ -7718,8 +7718,8 @@ msgstr "Ovládat, ke kterým typům entit může být tato role přiřazena"
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7736,7 +7736,7 @@ msgid "Conversation key"
 msgstr "Klíč konverzace"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Seznam konverzací"
 
@@ -7751,7 +7751,7 @@ msgid "Conversations"
 msgstr "Konverzace"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Konverzace v tomto kanálu se zobrazí zde."
 
@@ -7761,7 +7761,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Zde se zobrazí konverzace propojené s tímto záznamem."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Zde se zobrazí konverzace, které můžete otevřít."
 
@@ -9726,7 +9726,7 @@ msgid "Delete"
 msgstr "Smazat"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "Smazat {channelName}?"
 
@@ -9860,9 +9860,9 @@ msgid "Delete app"
 msgstr "Smazat aplikaci"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Smazat kanál"
 
@@ -10363,7 +10363,7 @@ msgid "Direct messages"
 msgstr "Přímé zprávy"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Přímé zprávy nepodporují přílohy."
 
@@ -10623,10 +10623,10 @@ msgstr "Neimportovat události označené jako soukromé"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12377,7 +12377,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "každý {stepNumStr} měsíc, mezi {startMonth} a {endMonth}"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Všechny kanály včetně těch vytvořených později"
 
@@ -13447,7 +13447,7 @@ msgid "Fast"
 msgstr "Rychlý"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Oblíbené"
@@ -13804,8 +13804,8 @@ msgid "Filter by record ID"
 msgstr "Filtrovat podle ID záznamu"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/InboxFilterDropdown.tsx
-#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Filtrovat chaty"
 
@@ -14128,10 +14128,10 @@ msgid "Formats"
 msgstr "Formáty"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 msgid "Former member"
 msgstr "Bývalý člen"
 
@@ -15150,7 +15150,7 @@ msgid "Hide hidden groups"
 msgstr "Skrýt skryté skupiny"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Skrýt doručenou poštu"
 
@@ -15392,7 +15392,7 @@ msgid "Icon"
 msgstr "Ikona"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Ikona a barva"
 
@@ -15703,7 +15703,7 @@ msgid "Importing Data ..."
 msgstr "Importování dat ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/InboxThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "Za {channelName}"
 
@@ -16514,7 +16514,7 @@ msgid "Iterator"
 msgstr "Iterátor"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "Jeho chaty se přesunou do {destinationChannelName}. Tuto akci nelze vrátit zpět."
 
@@ -17719,7 +17719,7 @@ msgid "Loading retention configuration..."
 msgstr "Načítám konfiguraci uložení..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Načítání rolí"
 
@@ -18203,7 +18203,7 @@ msgid "Margin"
 msgstr "Okraj"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Označit vše jako hotové"
 
@@ -18223,7 +18223,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Označeno jako hotové {eventTime}"
 
@@ -18472,7 +18472,7 @@ msgid "Mentioned you"
 msgstr "Zmínil(a) vás"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Zmínky"
 
@@ -19014,8 +19014,8 @@ msgid "Move Down"
 msgstr "Přesunout dolů"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Přesunout jeho chaty do"
 
@@ -19046,9 +19046,9 @@ msgid "Move to another tab"
 msgstr "Přesunout na jinou kartu"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Přesunout do kanálu"
 
@@ -19192,7 +19192,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19336,7 +19336,7 @@ msgstr "Vyžaduje výběrové pole"
 
 #. js-lingui-id: k3/EHQ
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Vyžaduje vstup"
 
@@ -19439,14 +19439,14 @@ msgid "New calendar event"
 msgstr "Nová událost v kalendáři"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "Nový kanál"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Nový chat"
@@ -19676,7 +19676,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Další platba {totalRenewDate}. Částka na faktuře se může lišit, pokud mezi obdobími přidáte členy nebo kredity"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Další chat"
 
@@ -19961,7 +19961,7 @@ msgid "No calling code"
 msgstr "Bez předvolby"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "Žádný kanál"
 
@@ -20008,7 +20008,7 @@ msgstr "Žádná konverzace nepoužívá tento kanál."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Žádné konverzace"
 
@@ -20551,7 +20551,7 @@ msgid "No role assigned to this member"
 msgstr "Tomuto členovi není přiřazena žádná role."
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "Žádné role"
 
@@ -20965,7 +20965,7 @@ msgid "Not now"
 msgstr "Teď ne"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Není vám otevřený"
 
@@ -21566,8 +21566,8 @@ msgstr "Vaše e-maily a události budete moci vidět pouze vy"
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21613,9 +21613,9 @@ msgid "Open chat"
 msgstr "Otevřít chat"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Otevřít chaty v"
 
@@ -23072,7 +23072,7 @@ msgid "Previous approval"
 msgstr "Předchozí schválení"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Předchozí chat"
 
@@ -23934,7 +23934,7 @@ msgid "Record label"
 msgstr "Záznamový popisek"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Stránka záznamu"
@@ -24405,7 +24405,7 @@ msgid "Remove from blocklist"
 msgstr "Odebrat z blokovaného seznamu"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24557,13 +24557,13 @@ msgstr "Odebrat widget"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Přejmenovat"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Přejmenovat chat"
 
@@ -24593,7 +24593,7 @@ msgid "Renews on"
 msgstr "Obnoví se dne"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Znovu otevřít"
 
@@ -25132,7 +25132,7 @@ msgid "Role updated successfully"
 msgstr "Role byla úspěšně aktualizována"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25145,8 +25145,8 @@ msgid "Roles"
 msgstr "Role"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Role v tomto kanálu"
 
@@ -26637,7 +26637,7 @@ msgid "Selected"
 msgstr "Vybráno"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Vybrané chaty"
 
@@ -27297,7 +27297,7 @@ msgid "Show hidden objects"
 msgstr "Zobrazit skryté objekty"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Zobrazit doručenou poštu"
 
@@ -27665,9 +27665,9 @@ msgstr "úryvek"
 
 #. js-lingui-id: 7+i6oV
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Odložit"
@@ -27683,7 +27683,7 @@ msgid "Snooze ended"
 msgstr "Odložení skončilo"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Odložení skončilo {eventTime}"
 
@@ -27700,13 +27700,13 @@ msgstr "Odložit do {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Odloženo"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Odloženo do {eventTime}"
 
@@ -27947,7 +27947,7 @@ msgid "Split multiple values"
 msgstr "Rozdělit více hodnot"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Rozdělené zobrazení"
 
@@ -30555,7 +30555,7 @@ msgid "Translations"
 msgstr "Překlady"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Třídění"
 
@@ -31005,7 +31005,7 @@ msgid "Unanswered"
 msgstr "Nezodpovězené"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Nepřiřazeno"
 
@@ -31413,7 +31413,7 @@ msgid "Unsubscribed"
 msgstr "Odhlášeno z odběru"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Odběr zrušen {eventTime}. Nové zprávy zůstanou mimo vaši schránku, pokud v nich nebudete zmíněni."
 
@@ -31439,7 +31439,7 @@ msgstr "Do {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32730,7 +32730,7 @@ msgid "Waiting for your approval"
 msgstr "Čeká na vaše schválení"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Probudit nyní"
 
@@ -33297,7 +33297,7 @@ msgid "Wink"
 msgstr "Mrkající"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "Pokud neexistuje jiný kanál, do kterého by se daly přesunout jeho chaty, lze odstranit pouze prázdný kanál. Tuto akci nelze vrátit zpět."
 

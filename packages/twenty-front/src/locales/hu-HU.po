@@ -228,13 +228,13 @@ msgstr "{0, plural, one {{years} év} other {{years} év}}"
 
 #. js-lingui-id: rsUtpS
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat selected} other {# chats selected}}"
 msgstr "{0, plural, one {# kiválasztott csevegés} other {# kiválasztott csevegés}}"
 
 #. js-lingui-id: iwKytO
 #. placeholder {0}: selectedThreads.length
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "{0, plural, one {# chat} other {# chats}}"
 msgstr "{0, plural, one {# csevegés} other {# csevegés}}"
 
@@ -469,7 +469,7 @@ msgstr "{0} újrapróbálkozás"
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
-#: src/modules/ai/components/InboxViewHeading.tsx
+#: src/modules/inbox/components/InboxViewHeading.tsx
 #: src/modules/object-record/record-index/components/RecordIndexPageHeaderTitle.tsx
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{0} selected"
@@ -1169,7 +1169,7 @@ msgid "{selectedCount} records selected · {skippedCount} records skipped"
 msgstr "{selectedCount} rekord kiválasztva · {skippedCount} rekord kihagyva"
 
 #. js-lingui-id: saqVE2
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "{selectedCount} selected"
 msgstr "{selectedCount} kiválasztva"
 
@@ -2241,7 +2241,7 @@ msgid "Add CC"
 msgstr "Másolat hozzáadása"
 
 #. js-lingui-id: PKjhUq
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Add channel"
 msgstr "Csatorna hozzáadása"
 
@@ -2642,7 +2642,7 @@ msgid "Add to Favorite"
 msgstr "Hozzáadás a Kedvencekhez"
 
 #. js-lingui-id: pBsoKL
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Add to favorites"
 msgstr "Hozzáadás a kedvencekhez"
 
@@ -3299,7 +3299,7 @@ msgid "All {objectLabelPlural}"
 msgstr "Minden {objectLabelPlural}"
 
 #. js-lingui-id: cF7bEt
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 msgid "All actions"
 msgstr "Minden művelet"
 
@@ -3329,8 +3329,8 @@ msgid "All applications"
 msgstr "Összes alkalmazás"
 
 #. js-lingui-id: QWgUv2
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "All channels"
 msgstr "Minden csatorna"
 
@@ -4459,7 +4459,7 @@ msgid "Assignable to Workspace Members"
 msgstr "Munkaterületi tagoknak hozzárendelhető"
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned"
 msgstr "Hozzárendelve"
 
@@ -4474,7 +4474,7 @@ msgid "Assigned to"
 msgstr "Hozzárendelve"
 
 #. js-lingui-id: iU3XRS
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Assigned to me"
 msgstr "Hozzám rendelve"
 
@@ -4930,7 +4930,7 @@ msgid "Back to customization"
 msgstr "Vissza a testreszabáshoz"
 
 #. js-lingui-id: dGEega
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Back to inbox"
 msgstr "Vissza a beérkező üzenetekhez"
 
@@ -5969,7 +5969,7 @@ msgid "Cell controls"
 msgstr "Cellavezérlők"
 
 #. js-lingui-id: o+XJ9D
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Change"
 msgstr "Módosítás"
 
@@ -6070,13 +6070,13 @@ msgid "Channel"
 msgstr "Csatorna"
 
 #. js-lingui-id: CXcvq4
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "Channel name"
 msgstr "Csatorna neve"
 
 #. js-lingui-id: XnhSY1
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Channel options"
 msgstr "Csatornabeállítások"
 
@@ -6086,8 +6086,8 @@ msgid "channel role"
 msgstr "csatornaszerepkör"
 
 #. js-lingui-id: lfFsZ4
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Channels"
 msgstr "Csatornák"
@@ -6110,7 +6110,7 @@ msgid "Chat actions"
 msgstr "Beszélgetés műveletei"
 
 #. js-lingui-id: eNENNb
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Chat channels this role reads and replies in"
 msgstr "Azok a csevegési csatornák, amelyekben ez a szerepkör olvas és válaszol"
 
@@ -6366,7 +6366,7 @@ msgid "Choose icon"
 msgstr "Ikon kiválasztása"
 
 #. js-lingui-id: SJ1Aum
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor.tsx
 msgid "Choose icon and color"
 msgstr "Válasszon ikont és színt"
@@ -6571,8 +6571,8 @@ msgid "Clear search, go back, or close"
 msgstr "Keresés törlése, visszalépés vagy bezárás"
 
 #. js-lingui-id: FBIuPX
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxSelectionPane.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxSelectionPane.tsx
 #: src/modules/keyboard-shortcut-menu/constants/KeyboardShortcutsTable.ts
 msgid "Clear selection"
 msgstr "Kijelölés törlése"
@@ -6708,7 +6708,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems.tsx
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Close"
 msgstr "Bezár"
@@ -7718,8 +7718,8 @@ msgstr "Szabályozza, hogy milyen típusú entitásokhoz rendelhető ez a szerep
 
 #. js-lingui-id: YyNOE7
 #: src/modules/activities/emails/utils/getTimelineThreadLabel.ts
-#: src/modules/ai/components/InboxConversationPane.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
+#: src/modules/inbox/components/InboxConversationPane.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
 msgid "Conversation"
@@ -7736,7 +7736,7 @@ msgid "Conversation key"
 msgstr "Beszélgetéskulcs"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversation list"
 msgstr "Beszélgetéslista"
 
@@ -7751,7 +7751,7 @@ msgid "Conversations"
 msgstr "Beszélgetések"
 
 #. js-lingui-id: gM204O
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Az ebben a csatornában lévő beszélgetések itt jelennek meg."
 
@@ -7761,7 +7761,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Az ehhez a rekordhoz kapcsolt beszélgetések itt jelennek meg."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Az Ön által megnyitható beszélgetések itt jelennek meg."
 
@@ -9726,7 +9726,7 @@ msgid "Delete"
 msgstr "Törlés"
 
 #. js-lingui-id: KocE4m
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete {channelName}?"
 msgstr "{channelName} törlése?"
 
@@ -9860,9 +9860,9 @@ msgid "Delete app"
 msgstr "Alkalmazás törlése"
 
 #. js-lingui-id: hH3f+k
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Delete channel"
 msgstr "Csatorna törlése"
 
@@ -10363,7 +10363,7 @@ msgid "Direct messages"
 msgstr "Közvetlen üzenetek"
 
 #. js-lingui-id: Rz4s9r
-#: src/modules/ai/hooks/useOpenNewInboxAsDirectMessage.ts
+#: src/modules/inbox/hooks/useOpenNewInboxAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "A közvetlen üzenetek nem támogatják a mellékleteket."
 
@@ -10623,10 +10623,10 @@ msgstr "Ne importálja a privátként megjelölt eseményeket"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
 msgid "Done"
@@ -12377,7 +12377,7 @@ msgid "every {stepNumStr} months, between {startMonth} and {endMonth}"
 msgstr "minden {stepNumStr} hónapban, {startMonth} és {endMonth} között"
 
 #. js-lingui-id: AdpwiL
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 msgid "Every channel, including the ones created later"
 msgstr "Minden csatorna, beleértve a később létrehozottakat is"
 
@@ -13447,7 +13447,7 @@ msgid "Fast"
 msgstr "Gyors"
 
 #. js-lingui-id: X9kySA
-#: src/modules/ai/components/NavigationDrawerInboxFavoritesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
 msgid "Favorites"
 msgstr "Kedvencek"
@@ -13804,8 +13804,8 @@ msgid "Filter by record ID"
 msgstr "Szűrés rekordazonosító szerint"
 
 #. js-lingui-id: /+U0Y/
-#: src/modules/ai/components/InboxFilterDropdown.tsx
-#: src/modules/ai/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
+#: src/modules/inbox/components/InboxFilterDropdown.tsx
 msgid "Filter chats"
 msgstr "Beszélgetések szűrése"
 
@@ -14128,10 +14128,10 @@ msgid "Formats"
 msgstr "Formátumok"
 
 #. js-lingui-id: CjVkbV
-#: src/modules/ai/components/InboxDirectMessageTitle.tsx
 #: src/modules/ai/components/NavigationDrawerDirectMessageItem.tsx
 #: src/modules/ai/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai/utils/getAiChatSenderLabel.ts
+#: src/modules/inbox/components/InboxDirectMessageTitle.tsx
 msgid "Former member"
 msgstr "Korábbi tag"
 
@@ -15150,7 +15150,7 @@ msgid "Hide hidden groups"
 msgstr "Rejtett csoportok elrejtése"
 
 #. js-lingui-id: L/mb70
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Hide inbox"
 msgstr "Beérkezett üzenetek elrejtése"
 
@@ -15392,7 +15392,7 @@ msgid "Icon"
 msgstr "Ikon"
 
 #. js-lingui-id: DMpF70
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Icon and color"
 msgstr "Ikon és szín"
 
@@ -15703,7 +15703,7 @@ msgid "Importing Data ..."
 msgstr "Adatok importálása ..."
 
 #. js-lingui-id: bDESCJ
-#: src/modules/ai/components/InboxThreadChannelIcon.tsx
+#: src/modules/inbox/components/InboxThreadChannelIcon.tsx
 msgid "In {channelName}"
 msgstr "{channelName} alatt"
 
@@ -16514,7 +16514,7 @@ msgid "Iterator"
 msgstr "Iterátor"
 
 #. js-lingui-id: R9VnB9
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "Its chats move to {destinationChannelName}. This cannot be undone."
 msgstr "A csevegései ide lesznek áthelyezve: {destinationChannelName}. Ez nem vonható vissza."
 
@@ -17719,7 +17719,7 @@ msgid "Loading retention configuration..."
 msgstr "Megtartási konfiguráció betöltése..."
 
 #. js-lingui-id: zTAQ2r
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Loading roles"
 msgstr "Szerepkörök betöltése"
 
@@ -18203,7 +18203,7 @@ msgid "Margin"
 msgstr "Margó"
 
 #. js-lingui-id: SYhBoR
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Mark all done"
 msgstr "Összes megjelölése készként"
 
@@ -18223,7 +18223,7 @@ msgid "Markdown"
 msgstr "Markdown"
 
 #. js-lingui-id: OybNQG
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Marked as done {eventTime}"
 msgstr "Késznek jelölve: {eventTime}"
 
@@ -18472,7 +18472,7 @@ msgid "Mentioned you"
 msgstr "Megemlítette Önt"
 
 #. js-lingui-id: /bZzdR
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Mentions"
 msgstr "Említések"
 
@@ -19014,8 +19014,8 @@ msgid "Move Down"
 msgstr "Mozgatás lefelé"
 
 #. js-lingui-id: 65HfnJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 msgid "Move its chats to"
 msgstr "Csevegéseinek áthelyezése ide"
 
@@ -19046,9 +19046,9 @@ msgid "Move to another tab"
 msgstr "Áthelyezés másik lapra"
 
 #. js-lingui-id: 8+TFzm
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "Move to channel"
 msgstr "Áthelyezés csatornába"
 
@@ -19192,7 +19192,7 @@ msgstr "N/A"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
+#: src/modules/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
@@ -19336,7 +19336,7 @@ msgstr "Választó mező szükséges"
 
 #. js-lingui-id: k3/EHQ
 #: src/modules/ai/constants/AiChatThreadReasons.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Needs input"
 msgstr "Bevitelt igényel"
 
@@ -19439,14 +19439,14 @@ msgid "New calendar event"
 msgstr "Új naptári esemény"
 
 #. js-lingui-id: BW0+uJ
-#: src/modules/ai/components/NavigationDrawerInboxChannelsSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 msgid "New channel"
 msgstr "Új csatorna"
 
 #. js-lingui-id: hIQkLb
 #: src/modules/ai/components/AiChatPageHeader.tsx
-#: src/modules/ai/components/InboxListHeader.tsx
 #: src/modules/ai/components/NavigationDrawerAiChatThreadItem.tsx
+#: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
 msgid "New chat"
 msgstr "Új csevegés"
@@ -19676,7 +19676,7 @@ msgid "Next charge {totalRenewDate}. Invoice amount may vary if you add members 
 msgstr "Következő terhelés: {totalRenewDate}. A számla összege eltérhet, ha az időszakok között tagokat vagy krediteket ad hozzá"
 
 #. js-lingui-id: vBiulE
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Next chat"
 msgstr "Következő csevegés"
 
@@ -19961,7 +19961,7 @@ msgid "No calling code"
 msgstr "Hívókód nélkül"
 
 #. js-lingui-id: ydE3k+
-#: src/modules/ai/components/InboxThreadChannelPicker.tsx
+#: src/modules/inbox/components/InboxThreadChannelPicker.tsx
 msgid "No channel"
 msgstr "Nincs csatorna"
 
@@ -20008,7 +20008,7 @@ msgstr "Egyetlen beszélgetés sem használja ezt a csatornát."
 
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/ai-chat/InboxPage.tsx
+#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Nincsenek beszélgetések"
 
@@ -20551,7 +20551,7 @@ msgid "No role assigned to this member"
 msgstr "Ehhez a taghoz nincs szerepkör hozzárendelve"
 
 #. js-lingui-id: s7Snbr
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "No roles"
 msgstr "Nincsenek szerepkörök"
 
@@ -20965,7 +20965,7 @@ msgid "Not now"
 msgstr "Most nem"
 
 #. js-lingui-id: IzW9bK
-#: src/modules/ai/components/NavigationDrawerInboxChannelNavigation.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelNavigation.tsx
 msgid "Not open to you"
 msgstr "Nem nyitott az Ön számára"
 
@@ -21566,8 +21566,8 @@ msgstr "Csak Ön fogja látni az e-mailjeit és eseményeit"
 
 #. js-lingui-id: 1TNIig
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -21613,9 +21613,9 @@ msgid "Open chat"
 msgstr "Csevegés megnyitása"
 
 #. js-lingui-id: 4/tvYU
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
-#: src/modules/ai/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
+#: src/modules/inbox/components/InboxLayoutDropdown.tsx
 msgid "Open chats in"
 msgstr "Beszélgetések megnyitása itt"
 
@@ -23072,7 +23072,7 @@ msgid "Previous approval"
 msgstr "Előző jóváhagyás"
 
 #. js-lingui-id: RCsICd
-#: src/modules/ai/components/InboxThreadPagination.tsx
+#: src/modules/inbox/components/InboxThreadPagination.tsx
 msgid "Previous chat"
 msgstr "Előző beszélgetés"
 
@@ -23934,7 +23934,7 @@ msgid "Record label"
 msgstr "Felvétel címkéje"
 
 #. js-lingui-id: XueM/X
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Rekordoldal"
@@ -24405,7 +24405,7 @@ msgid "Remove from blocklist"
 msgstr "Eltávolítás a tiltólistáról"
 
 #. js-lingui-id: T/pF0Z
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderContent.tsx
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
@@ -24557,13 +24557,13 @@ msgstr "Widget eltávolítása"
 #. js-lingui-id: 2wxgft
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 #: src/modules/ai/components/AiChatThreadActionsDropdown.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelActionsDropdown.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelActionsDropdown.tsx
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupDropdown.tsx
 msgid "Rename"
 msgstr "Átnevezés"
 
 #. js-lingui-id: 6PsaMr
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 msgid "Rename chat"
 msgstr "Beszélgetés átnevezése"
 
@@ -24593,7 +24593,7 @@ msgid "Renews on"
 msgstr "Megújulás dátuma"
 
 #. js-lingui-id: M7SqjM
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Reopen"
 msgstr "Újranyitás"
 
@@ -25132,7 +25132,7 @@ msgid "Role updated successfully"
 msgstr "Szerep sikeresen frissítve"
 
 #. js-lingui-id: 5dJK4M
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -25145,8 +25145,8 @@ msgid "Roles"
 msgstr "Szerepkörök"
 
 #. js-lingui-id: //zMaz
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
-#: src/modules/ai/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelRolesSubmenu.tsx
 msgid "Roles in this channel"
 msgstr "Szerepkörök ebben a csatornában"
 
@@ -26637,7 +26637,7 @@ msgid "Selected"
 msgstr "Kijelölt"
 
 #. js-lingui-id: CRzfBf
-#: src/modules/ai/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
 msgid "Selected chats"
 msgstr "Kijelölt csevegések"
 
@@ -27297,7 +27297,7 @@ msgid "Show hidden objects"
 msgstr "Rejtett objektumok megjelenítése"
 
 #. js-lingui-id: 5S6Ndm
-#: src/modules/ai/components/InboxNewThreadListToggle.tsx
+#: src/modules/inbox/components/InboxNewThreadListToggle.tsx
 msgid "Show inbox"
 msgstr "Beérkezett üzenetek megjelenítése"
 
@@ -27665,9 +27665,9 @@ msgstr "kódrészlet"
 
 #. js-lingui-id: 7+i6oV
 #: src/modules/ai/components/AiChatSnoozeMenu.tsx
-#: src/modules/ai/components/InboxBulkActions.tsx
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/inbox/components/InboxBulkActions.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/side-panel/hooks/useOpenSnoozeAiChatInSidePanel.ts
 msgid "Snooze"
 msgstr "Elhalasztás"
@@ -27683,7 +27683,7 @@ msgid "Snooze ended"
 msgstr "Az elhalasztás véget ért"
 
 #. js-lingui-id: e6uj9X
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Az elhalasztás véget ért: {eventTime}"
 
@@ -27700,13 +27700,13 @@ msgstr "Elhalasztás eddig: {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
 #: src/modules/ai/components/AiChatThreadStatusField.tsx
-#: src/modules/ai/constants/InboxChannelNavigationItems.ts
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
 msgstr "Elhalasztva"
 
 #. js-lingui-id: gbfQNt
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Snoozed until {eventTime}"
 msgstr "Elhalasztva eddig: {eventTime}"
 
@@ -27947,7 +27947,7 @@ msgid "Split multiple values"
 msgstr "Több érték szétválasztása"
 
 #. js-lingui-id: /xCSTz
-#: src/modules/ai/constants/InboxLayoutOptions.ts
+#: src/modules/inbox/constants/InboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Osztott nézet"
 
@@ -30555,7 +30555,7 @@ msgid "Translations"
 msgstr "Fordítások"
 
 #. js-lingui-id: R3UKip
-#: src/modules/ai/components/NavigationDrawerInboxTriageSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
 msgid "Triage"
 msgstr "Osztályozás"
 
@@ -31005,7 +31005,7 @@ msgid "Unanswered"
 msgstr "Megválaszolatlan"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/constants/InboxThreadPresetFilterLabels.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Unassigned"
 msgstr "Nincs hozzárendelve"
 
@@ -31413,7 +31413,7 @@ msgid "Unsubscribed"
 msgstr "Leiratkozva"
 
 #. js-lingui-id: v0c5Uz
-#: src/modules/ai/components/InboxThreadStatusNotice.tsx
+#: src/modules/inbox/components/InboxThreadStatusNotice.tsx
 msgid "Unsubscribed {eventTime}. New messages stay out of your inbox unless you're mentioned."
 msgstr "Leiratkozva: {eventTime}. Az új üzenetek nem kerülnek a postaládájába, hacsak meg nem említik."
 
@@ -31439,7 +31439,7 @@ msgstr "Eddig: {snoozedUntilDay}"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadTitle.tsx
-#: src/modules/ai/components/InboxThreadListItem.tsx
+#: src/modules/inbox/components/InboxThreadListItem.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/components/LogConsoleRecordCell.tsx
 #: src/modules/navigation-menu-item/display/automation/hooks/useAutomationNavigationMenuItemTarget.ts
@@ -32730,7 +32730,7 @@ msgid "Waiting for your approval"
 msgstr "Az Ön jóváhagyására vár"
 
 #. js-lingui-id: rZmwg4
-#: src/modules/ai/components/InboxThreadTriageButtons.tsx
+#: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 msgid "Wake now"
 msgstr "Felébresztés most"
 
@@ -33297,7 +33297,7 @@ msgid "Wink"
 msgstr "Kacsintás"
 
 #. js-lingui-id: /Fq7wz
-#: src/modules/ai/components/NavigationDrawerInboxChannelItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
 msgid "With no other channel to move its chats to, only an empty channel can be deleted. This cannot be undone."
 msgstr "Másik csatorna hiányában, ahová a csevegései áthelyezhetők, csak üres csatorna törölhető. Ez nem vonható vissza."
 
