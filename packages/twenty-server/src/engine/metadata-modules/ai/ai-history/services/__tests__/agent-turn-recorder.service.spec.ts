@@ -1,7 +1,11 @@
+import { Test } from '@nestjs/testing';
+
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentTurnEventPublisherService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-event-publisher.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
-const buildService = (queryResult: unknown[]) => {
+const buildService = async (queryResult: Record<string, unknown>[]) => {
   const manager = { query: jest.fn().mockResolvedValue(queryResult) };
   const turnRepository = {
     query: jest.fn(
@@ -18,18 +22,29 @@ const buildService = (queryResult: unknown[]) => {
     publish: jest.fn().mockResolvedValue(undefined),
   };
 
+  const module = await Test.createTestingModule({
+    providers: [
+      AgentTurnRecorderService,
+      {
+        provide: getAgentHistoryRepositoryToken('agentTurn'),
+        useValue: turnRepository,
+      },
+      {
+        provide: AgentTurnEventPublisherService,
+        useValue: turnEventPublisherService,
+      },
+    ],
+  }).compile();
+
   return {
-    service: new AgentTurnRecorderService(
-      turnRepository as never,
-      turnEventPublisherService as never,
-    ),
+    service: module.get(AgentTurnRecorderService),
     turnEventPublisherService,
   };
 };
 
 describe('AgentTurnRecorderService', () => {
   it('publishes the turn it marked running', async () => {
-    const { service, turnEventPublisherService } = buildService([
+    const { service, turnEventPublisherService } = await buildService([
       { id: 'turn-id' },
     ]);
 
@@ -46,7 +61,7 @@ describe('AgentTurnRecorderService', () => {
   });
 
   it('publishes nothing for a turn another stream took over', async () => {
-    const { service, turnEventPublisherService } = buildService([]);
+    const { service, turnEventPublisherService } = await buildService([]);
 
     await expect(
       service.finish({
@@ -66,7 +81,7 @@ describe('AgentTurnRecorderService', () => {
   });
 
   it('publishes the turns a released stream ended', async () => {
-    const { service, turnEventPublisherService } = buildService([
+    const { service, turnEventPublisherService } = await buildService([
       { id: 'thread-id', endedTurnIds: ['turn-id'] },
     ]);
 

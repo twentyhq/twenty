@@ -13,6 +13,9 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 export const AGENT_TURN_BROADCAST_ENTITY_NAME = 'agentTurn';
 
+// A conversation whose turns the database cascade removed along with it
+export const AGENT_TURN_THREAD_BROADCAST_ENTITY_NAME = 'agentTurnThread';
+
 type BroadcastTurn = Pick<AgentTurnWorkspaceEntity, 'id'> &
   Partial<Pick<AgentTurnWorkspaceEntity, 'agentId' | 'threadId' | 'status'>>;
 
@@ -42,12 +45,20 @@ export class AgentTurnEventPublisherService {
 
     await this.broadcastSafely({
       workspaceId,
-      buildEvents: async () =>
-        type === 'deleted'
-          ? turnIds.map((turnId) => this.buildEvent(type, { id: turnId }))
-          : (
-              await this.findTurns({ workspaceId, where: { id: In(turnIds) } })
-            ).map((turn) => this.buildEvent(type, turn)),
+      buildEvents: async () => {
+        if (type === 'deleted') {
+          return turnIds.map((turnId) =>
+            this.buildTurnEvent({ type, turn: { id: turnId } }),
+          );
+        }
+
+        const turns = await this.findTurns({
+          workspaceId,
+          where: { id: In(turnIds) },
+        });
+
+        return turns.map((turn) => this.buildTurnEvent({ type, turn }));
+      },
     });
   }
 
@@ -65,18 +76,21 @@ export class AgentTurnEventPublisherService {
 
     await this.broadcastSafely({
       workspaceId,
-      buildEvents: async () =>
-        (
-          await this.findTurns({
-            workspaceId,
-            where: { threadId: In(threadIds) },
-          })
-        ).map((turn) => this.buildEvent('updated', turn)),
+      buildEvents: async () => {
+        const turns = await this.findTurns({
+          workspaceId,
+          where: { threadId: In(threadIds) },
+        });
+
+        return turns.map((turn) =>
+          this.buildTurnEvent({ type: 'updated', turn }),
+        );
+      },
     });
   }
 
-  // The database cascade has already removed the turns, so each event names the thread they belonged to
-  async publishTurnsDestroyedWithThreads({
+  // The cascade already removed the turns, so only the conversation can be named
+  async publishThreadsDestroyed({
     workspaceId,
     threadIds,
   }: {
@@ -90,9 +104,13 @@ export class AgentTurnEventPublisherService {
     await this.broadcastSafely({
       workspaceId,
       buildEvents: async () =>
-        threadIds.map((threadId) =>
-          this.buildEvent('deleted', { id: threadId, threadId }),
-        ),
+        threadIds.map((threadId) => ({
+          type: 'deleted',
+          entityName: AGENT_TURN_THREAD_BROADCAST_ENTITY_NAME,
+          recordId: threadId,
+          properties: { before: { id: threadId } },
+          requiredPermissionFlag: PermissionFlagType.AI_SETTINGS,
+        })),
     });
   }
 
@@ -116,10 +134,13 @@ export class AgentTurnEventPublisherService {
     }
   }
 
-  private buildEvent(
-    type: WorkspaceBroadcastEvent['type'],
-    turn: BroadcastTurn,
-  ): WorkspaceBroadcastEvent {
+  private buildTurnEvent({
+    type,
+    turn,
+  }: {
+    type: WorkspaceBroadcastEvent['type'];
+    turn: BroadcastTurn;
+  }): WorkspaceBroadcastEvent {
     const record = {
       id: turn.id,
       agentId: turn.agentId,

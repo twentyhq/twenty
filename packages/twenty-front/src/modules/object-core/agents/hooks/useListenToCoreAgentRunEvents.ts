@@ -19,7 +19,6 @@ export const useListenToCoreAgentRunEvents = ({
   agentId,
   onRunsChanged,
 }: UseListenToCoreAgentRunEventsArgs) => {
-  // A run changes several times while it executes, so bursts collapse into one refetch, at least every few seconds
   const onRunsChangedDebounced = useDebouncedCallback(
     () => onRunsChanged(),
     RUN_EVENTS_REFETCH_DEBOUNCE_IN_MS,
@@ -37,6 +36,12 @@ export const useListenToCoreAgentRunEvents = ({
         onRunsChangedDebounced();
       }
     },
+  });
+
+  useListenToMetadataOperationBrowserEvent({
+    metadataName: 'agentTurnThread',
+    operationTypes: ['delete'],
+    onMetadataOperationBrowserEvent: onRunsChangedDebounced,
   });
 
   useListenToBrowserEvent({

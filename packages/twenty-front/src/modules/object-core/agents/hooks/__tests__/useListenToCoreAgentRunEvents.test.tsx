@@ -49,4 +49,22 @@ describe('useListenToCoreAgentRunEvents', () => {
 
     expect(onRunsChanged).not.toHaveBeenCalled();
   });
+
+  it('refetches when a conversation and its runs are destroyed', () => {
+    const onRunsChanged = jest.fn();
+
+    renderHook(() =>
+      useListenToCoreAgentRunEvents({ agentId: 'agent-1', onRunsChanged }),
+    );
+
+    act(() => {
+      dispatchMetadataOperationBrowserEvent({
+        metadataName: 'agentTurnThread',
+        operation: { type: 'delete', deletedRecordId: 'thread-id' },
+      });
+      jest.advanceTimersByTime(1000);
+    });
+
+    expect(onRunsChanged).toHaveBeenCalledTimes(1);
+  });
 });
