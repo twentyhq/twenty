@@ -9,8 +9,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock('@/ai/components/AgentChatMessagesFetchEffect', () => ({
-  AgentChatMessagesFetchEffect: () => null,
+jest.mock('@/ai/components/InboxMessagesFetchEffect', () => ({
+  InboxMessagesFetchEffect: () => null,
 }));
 jest.mock('@/ai/components/AgentChatStreamSubscriptionEffect', () => ({
   AgentChatStreamSubscriptionEffect: () => (

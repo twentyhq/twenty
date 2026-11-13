@@ -1,9 +1,9 @@
 import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
-import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
+import { useCurrentInboxThreadAccess } from '@/ai/hooks/useCurrentInboxThreadAccess';
 
 export const useIsAgentChatToolCallAskedInComposer = (toolCallId: string) => {
   const pendingToolCalls = useAgentChatPendingToolCalls();
-  const access = useCurrentAiChatThreadAccess();
+  const access = useCurrentInboxThreadAccess();
 
   return (
     access === 'writer' &&

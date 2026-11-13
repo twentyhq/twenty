@@ -1,29 +1,29 @@
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { useInboxThreadClick } from '@/ai/hooks/useInboxThreadClick';
+import { useSelectInboxThread } from '@/ai/hooks/useSelectInboxThread';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/inboxSelectedThreadListSourceState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/inboxThreadListThreadsFamilySelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const useOpenAskAiThread = () => {
-  const agentChatSelectedThreadListSource = useAtomStateValue(
-    agentChatSelectedThreadListSourceState,
+  const inboxSelectedThreadListSource = useAtomStateValue(
+    inboxSelectedThreadListSourceState,
   );
-  const agentChatThreadListThreads = useAtomFamilySelectorValue(
-    agentChatThreadListThreadsFamilySelector,
-    agentChatSelectedThreadListSource,
+  const inboxThreadListThreads = useAtomFamilySelectorValue(
+    inboxThreadListThreadsFamilySelector,
+    inboxSelectedThreadListSource,
   );
-  const { selectAiChatThread } = useSelectAiChatThread();
+  const { selectInboxThread } = useSelectInboxThread();
 
-  const { handleThreadClick } = useAiChatThreadClick({
+  const { handleThreadClick } = useInboxThreadClick({
     resetNavigationStack: true,
   });
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const openAskAiThread = (threadId: string) => {
-    const thread = agentChatThreadListThreads.find(
+    const thread = inboxThreadListThreads.find(
       (visibleThread) => visibleThread.id === threadId,
     );
 
@@ -33,7 +33,7 @@ export const useOpenAskAiThread = () => {
     }
 
     if (isValidUuid(threadId)) {
-      selectAiChatThread(threadId);
+      selectInboxThread(threadId);
     }
 
     openAskAiPage({ resetNavigationStack: true });

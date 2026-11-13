@@ -1,5 +1,5 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendInboxMessage';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { GettingStartedImportPreview } from '@/getting-started/components/step-preview/GettingStartedImportPreview';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';
@@ -93,7 +93,7 @@ export const GettingStartedImportAction = () => {
   const { enqueueToast } = useToast();
   const { updateGettingStarted } = useUpdateGettingStarted();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const canSendInboxMessage = useCanSendInboxMessage();
 
   const importFilesWithAi = async (files: File[]) => {
     const chatThreadId = await openAskAiPageWithPreprompt({
@@ -116,7 +116,7 @@ export const GettingStartedImportAction = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
-    disabled: !canSendAgentChatMessage,
+    disabled: !canSendInboxMessage,
     accept: {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
@@ -140,7 +140,7 @@ export const GettingStartedImportAction = () => {
         {...getRootProps({
           role: 'button',
           'aria-label': t`Upload your CRM export`,
-          'aria-disabled': !canSendAgentChatMessage,
+          'aria-disabled': !canSendInboxMessage,
         })}
         data-drag-active={isDragActive || undefined}
       >

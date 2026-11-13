@@ -1,13 +1,13 @@
 import { AppPath } from 'twenty-shared/types';
 
-import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { useIsInboxArtifactSurface } from '@/ai/hooks/useIsInboxArtifactSurface';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useChatTargetNavigation = () => {
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const isInboxArtifactSurface = useIsInboxArtifactSurface();
 
   const openRecordTarget = ({
     recordId,
@@ -16,7 +16,7 @@ export const useChatTargetNavigation = () => {
     recordId: string;
     objectNameSingular: string;
   }) => {
-    if (isAiChatArtifactSurface) {
+    if (isInboxArtifactSurface) {
       openRecordInSidePanel({
         recordId,
         objectNameSingular,

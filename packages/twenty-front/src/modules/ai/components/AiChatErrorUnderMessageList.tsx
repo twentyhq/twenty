@@ -1,10 +1,10 @@
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
 import { AGENT_MESSAGE_ROLE } from '@/ai/constants/AgentMessageRole';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
-import { agentChatMessageIdsSelector } from '@/ai/states/selectors/agentChatMessageIdsSelector';
+import { inboxMessageFamilySelector } from '@/ai/states/selectors/inboxMessageFamilySelector';
+import { inboxMessageIdsSelector } from '@/ai/states/selectors/inboxMessageIdsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -16,22 +16,20 @@ const StyledErrorWrapper = styled.div`
 `;
 
 export const AiChatErrorUnderMessageList = () => {
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
   const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
-    threadId: agentChatDisplayedThread,
+    threadId: inboxDisplayedThread,
   });
   const agentChatIsStreaming = useAtomFamilyStateValue(
     agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
+    { threadId: inboxDisplayedThread },
   );
 
-  const agentChatMessageIds = useAtomStateValue(agentChatMessageIdsSelector);
+  const inboxMessageIds = useAtomStateValue(inboxMessageIdsSelector);
 
-  const lastMessageId = agentChatMessageIds.at(-1);
+  const lastMessageId = inboxMessageIds.at(-1);
   const agentChatMessage = useAtomFamilySelectorValue(
-    agentChatMessageFamilySelector,
+    inboxMessageFamilySelector,
     { messageId: lastMessageId },
   );
 

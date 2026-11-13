@@ -1,7 +1,7 @@
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
+import { type InboxThreadTargetRecord } from '@/ai/types/InboxThreadTargetRecord';
 import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 
 const PAGE_SIZE = 20;
@@ -14,7 +14,7 @@ const buildThread = ({
   id: string;
   updatedAt: string;
   lastActivityAt?: string;
-}): AgentChatThreadRecord => ({
+}): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -29,8 +29,8 @@ const buildLink = ({
   thread,
 }: {
   id: string;
-  thread?: AgentChatThreadRecord | null;
-}): AgentChatThreadTargetRecord => ({
+  thread?: InboxThreadRecord | null;
+}): InboxThreadTargetRecord => ({
   __typename: 'AgentChatThreadTarget',
   id,
   threadId: thread?.id ?? 'missing-thread',

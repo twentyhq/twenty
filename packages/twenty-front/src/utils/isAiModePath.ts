@@ -1,5 +1,5 @@
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isInboxPath } from '~/utils/isInboxPath';
+import { isInboxThreadPath } from '~/utils/isInboxThreadPath';
 
 export const isAiModePath = (pathname: string) =>
-  isAiChatPath(pathname) || isAiChatInboxPath(pathname);
+  isInboxThreadPath(pathname) || isInboxPath(pathname);

@@ -1,35 +1,33 @@
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
-import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { inboxDisplayedThreadMessagesSelector } from '@/ai/states/selectors/inboxDisplayedThreadMessagesSelector';
 import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 import { parsePendingToolCall } from '@/ai/utils/parsePendingToolCall';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const useAgentChatPendingToolCalls = (): AgentChatPendingToolCall[] => {
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
-  const agentChatDisplayedThreadMessages = useAtomStateValue(
-    agentChatDisplayedThreadMessagesSelector,
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const inboxDisplayedThreadMessages = useAtomStateValue(
+    inboxDisplayedThreadMessagesSelector,
   );
   const agentChatIsStreaming = useAtomFamilyStateValue(
     agentChatIsStreamingFamilyState,
-    { threadId: agentChatDisplayedThread },
+    { threadId: inboxDisplayedThread },
   );
 
   return useMemo(
     () =>
       agentChatIsStreaming
         ? []
-        : agentChatDisplayedThreadMessages.flatMap((message) =>
+        : inboxDisplayedThreadMessages.flatMap((message) =>
             message.parts
               .map(parsePendingToolCall)
               .filter((pendingToolCall) => isDefined(pendingToolCall)),
           ),
-    [agentChatDisplayedThreadMessages, agentChatIsStreaming],
+    [inboxDisplayedThreadMessages, agentChatIsStreaming],
   );
 };

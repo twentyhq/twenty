@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
@@ -13,7 +13,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
 export const useProcessWorkspaceSetupCompletion = () => {
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
-  const aiChatSurface = useContext(AiChatSurfaceContext);
+  const inboxSurface = useContext(InboxSurfaceContext);
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
@@ -48,10 +48,10 @@ export const useProcessWorkspaceSetupCompletion = () => {
       return;
     }
 
-    if (aiChatSurface === AI_CHAT_SURFACE.PAGE) {
+    if (inboxSurface === INBOX_SURFACE.PAGE) {
       returnFromExpandedAiChat();
     } else {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(shouldOpenInboxAfterOnboardingState.atom, false);
     }
   };
 

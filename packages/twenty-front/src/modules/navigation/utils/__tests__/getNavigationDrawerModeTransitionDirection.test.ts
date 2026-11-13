@@ -16,7 +16,7 @@ describe('getNavigationDrawerModeTransitionDirection', () => {
     expect(
       getNavigationDrawerModeTransitionDirection({
         previousNavigationDrawerMode: NAVIGATION_DRAWER_TABS.SETTINGS,
-        nextNavigationDrawerMode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        nextNavigationDrawerMode: NAVIGATION_DRAWER_TABS.INBOX_HISTORY,
         textDirection: 'ltr',
       }),
     ).toBe(-1);

@@ -4,11 +4,11 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
-import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
-import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { getInboxBrowsingContextType } from '@/ai/utils/getInboxBrowsingContextType';
+import { getInboxContextStoreInstanceId } from '@/ai/utils/getInboxContextStoreInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -38,8 +38,8 @@ export const useGetBrowsingContext = () => {
       .get(sidePanelNavigationStackState.atom)
       .at(-1);
 
-    const instanceId = getAiChatContextStoreInstanceId({
-      isOnAiChatPage: isCurrentPathAiChatPage(),
+    const instanceId = getInboxContextStoreInstanceId({
+      isOnInboxThreadPage: isCurrentPathInboxThreadPage(),
       isSidePanelOpened,
       currentSidePanelPageId: currentSidePanelPage?.pageId,
     });
@@ -77,7 +77,7 @@ export const useGetBrowsingContext = () => {
       return null;
     }
 
-    const browsingContextType = getAiChatBrowsingContextType({
+    const browsingContextType = getInboxBrowsingContextType({
       pageType,
       viewType,
     });

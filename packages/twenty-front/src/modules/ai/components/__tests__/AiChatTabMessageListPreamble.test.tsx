@@ -2,11 +2,11 @@ import { act, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import type * as React from 'react';
-import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { InboxNonLastMessageIdsList } from '@/ai/components/InboxNonLastMessageIdsList';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
 
-import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { InboxTabMessageList } from '@/ai/components/InboxTabMessageList';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import {
   jotaiStore,
@@ -21,8 +21,8 @@ jest.mock('@/onboarding/components/WorkspaceSetupChatPreamble', () => ({
   WorkspaceSetupChatPreamble: () => <div data-testid="preamble" />,
 }));
 
-jest.mock('@/ai/components/AiChatInitialLoadingIndicator', () => ({
-  AiChatInitialLoadingIndicator: () => (
+jest.mock('@/ai/components/InboxInitialLoadingIndicator', () => ({
+  InboxInitialLoadingIndicator: () => (
     <div data-testid="initial-loading-indicator" />
   ),
 }));
@@ -33,29 +33,29 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
   ),
 }));
 
-jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
-  AiChatNonLastMessageIdsList: jest.fn(() => null),
+jest.mock('@/ai/components/InboxNonLastMessageIdsList', () => ({
+  InboxNonLastMessageIdsList: jest.fn(() => null),
 }));
-jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
-  AiChatLastMessageWithStreamingState: () => null,
+jest.mock('@/ai/components/InboxLastMessageWithStreamingState', () => ({
+  InboxLastMessageWithStreamingState: () => null,
 }));
-jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
-  AiChatThreadInboxStateNotice: () => null,
+jest.mock('@/ai/components/InboxThreadStatusNotice', () => ({
+  InboxThreadStatusNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
 }));
-jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
-  AiChatScrollToBottomButton: () => null,
+jest.mock('@/ai/components/InboxScrollToBottomButton', () => ({
+  InboxScrollToBottomButton: () => null,
 }));
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock(
-  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
+  '@/ai/components/InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => {
     const { useLayoutEffect } = jest.requireActual<typeof React>('react');
     return {
-      AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
+      InboxScrollToBottomOnDisplayedThreadChangeLayoutEffect: () => {
         useLayoutEffect(mockPinScrollToBottom, []);
         return null;
       },
@@ -75,15 +75,15 @@ const THREAD_ID = 'thread-1';
 const renderPreambleBranch = () =>
   render(
     <JotaiProvider store={jotaiStore}>
-      <AiChatTabMessageList />
+      <InboxTabMessageList />
     </JotaiProvider>,
   );
 
-describe('AiChatTabMessageList preamble branch', () => {
+describe('InboxTabMessageList preamble branch', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
   });
 
   it('should render the preamble with the pending response loader when the displayed thread is awaiting its first chunk', () => {
@@ -109,13 +109,13 @@ describe('AiChatTabMessageList preamble branch', () => {
   });
 });
 
-describe('AiChatTabMessageList loading', () => {
+describe('InboxTabMessageList loading', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
+    jotaiStore.set(inboxDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      inboxMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [{ id: 'message-1', role: 'user', parts: [] }],
     );
   });
@@ -127,7 +127,7 @@ describe('AiChatTabMessageList loading', () => {
       finishLoading = resolve;
     });
 
-    jest.mocked(AiChatNonLastMessageIdsList).mockImplementation(() => {
+    jest.mocked(InboxNonLastMessageIdsList).mockImplementation(() => {
       if (!isLoaded) {
         throw loading;
       }

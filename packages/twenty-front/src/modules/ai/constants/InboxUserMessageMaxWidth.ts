@@ -1,0 +1,1 @@
+export const INBOX_USER_MESSAGE_MAX_WIDTH = '560px';

@@ -5,8 +5,8 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
 import { styled } from '@linaria/react';
@@ -90,8 +90,8 @@ const StoreSeederEffect = () => {
   const store = useStore();
 
   useEffect(() => {
-    store.set(currentAiChatThreadState.atom, 'thread-1');
-    store.set(agentChatDisplayedThreadState.atom, 'thread-1');
+    store.set(currentInboxThreadState.atom, 'thread-1');
+    store.set(inboxDisplayedThreadState.atom, 'thread-1');
   }, [store]);
 
   return null;

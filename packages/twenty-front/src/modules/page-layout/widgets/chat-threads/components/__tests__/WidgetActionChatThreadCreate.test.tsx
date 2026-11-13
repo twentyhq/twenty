@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { WidgetActionChatThreadCreate } from '@/page-layout/widgets/chat-threads/components/WidgetActionChatThreadCreate';
@@ -39,7 +39,7 @@ const renderAction = () =>
     {
       wrapper: getJestMetadataAndApolloMocksWrapper({
         onInitializeJotaiStore: (store) => {
-          store.set(newAiChatThreadIdState.atom, NEW_CHAT_ID);
+          store.set(newInboxThreadIdState.atom, NEW_CHAT_ID);
           store.set(recordStoreFamilyState.atomFamily(COMPANY_ID), {
             __typename: 'Company',
             id: COMPANY_ID,

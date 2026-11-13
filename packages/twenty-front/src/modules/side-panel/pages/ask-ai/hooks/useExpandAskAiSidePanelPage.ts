@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { useNavigateToInboxThreadPage } from '@/ai/hooks/useNavigateToInboxThreadPage';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -11,8 +11,8 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { navigateToAiChatPage } = useNavigateToAiChatPage();
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
+  const { navigateToInboxThreadPage } = useNavigateToInboxThreadPage();
 
   return {
     label: t`Expand chat`,
@@ -21,7 +21,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
       : undefined,
     hasExpandShortcut: false,
     expand: () => {
-      navigateToAiChatPage({ threadId: currentAiChatThread });
+      navigateToInboxThreadPage({ threadId: currentInboxThread });
     },
   };
 };

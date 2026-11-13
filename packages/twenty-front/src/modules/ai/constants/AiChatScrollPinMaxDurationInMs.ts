@@ -1,1 +1,0 @@
-export const AI_CHAT_SCROLL_PIN_MAX_DURATION_IN_MS = 3000;

@@ -8,7 +8,7 @@ import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { ComposerHeader } from '@/activities/components/ComposerHeader';
 import { INLINE_EMAIL_BODY_EDITOR_PROFILE } from '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile';
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
-import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
+import { InboxEmailRecipientsRow } from '@/ai/components/internal/InboxEmailRecipientsRow';
 import { type AiChatApprovalReviewEmailDraft } from '@/ai/types/AiChatApprovalReviewEmailDraft';
 
 const StyledEmail = styled.div`
@@ -51,7 +51,7 @@ export const AiChatApprovalEmailReview = ({
   return (
     <StyledEmail>
       <ComposerHeader>
-        <AiChatEmailRecipientsRow
+        <InboxEmailRecipientsRow
           label={t`To`}
           recipients={draft.to}
           disabled={disabled}
@@ -71,13 +71,13 @@ export const AiChatApprovalEmailReview = ({
         />
         {isCcBccShown && (
           <>
-            <AiChatEmailRecipientsRow
+            <InboxEmailRecipientsRow
               label={t`Cc`}
               recipients={draft.cc}
               disabled={disabled}
               onChange={(cc) => updateDraft({ cc })}
             />
-            <AiChatEmailRecipientsRow
+            <InboxEmailRecipientsRow
               label={t`Bcc`}
               recipients={draft.bcc}
               disabled={disabled}

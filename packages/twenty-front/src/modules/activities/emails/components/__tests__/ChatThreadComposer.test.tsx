@@ -13,8 +13,8 @@ jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
-  AgentChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
+jest.mock('@/ai/components/internal/InboxFilePreview', () => ({
+  InboxFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
 }));
 
 const getComposerFileInputOrThrow = (container: HTMLElement) => {

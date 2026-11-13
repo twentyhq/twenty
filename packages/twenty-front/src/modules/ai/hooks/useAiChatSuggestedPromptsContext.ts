@@ -2,8 +2,8 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatSuggestedPromptsContext } from '@/ai/types/AiChatSuggestedPromptsContext';
-import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
-import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
+import { getInboxBrowsingContextType } from '@/ai/utils/getInboxBrowsingContextType';
+import { getInboxContextStoreInstanceId } from '@/ai/utils/getInboxContextStoreInstanceId';
 import { contextStoreCurrentCoreObjectNameComponentState } from '@/context-store/states/contextStoreCurrentCoreObjectNameComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
@@ -13,7 +13,7 @@ import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedSta
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 
 // Reactive counterpart of useGetBrowsingContext, which reads the store only at send time.
 export const useAiChatSuggestedPromptsContext =
@@ -23,8 +23,8 @@ export const useAiChatSuggestedPromptsContext =
       sidePanelNavigationStackState,
     );
 
-    const contextStoreInstanceId = getAiChatContextStoreInstanceId({
-      isOnAiChatPage: isCurrentPathAiChatPage(),
+    const contextStoreInstanceId = getInboxContextStoreInstanceId({
+      isOnInboxThreadPage: isCurrentPathInboxThreadPage(),
       isSidePanelOpened,
       currentSidePanelPageId: sidePanelNavigationStack.at(-1)?.pageId,
     });
@@ -53,7 +53,7 @@ export const useAiChatSuggestedPromptsContext =
       (item) => item.id === contextStoreCurrentObjectMetadataItemId,
     );
 
-    const browsingContextType = getAiChatBrowsingContextType({
+    const browsingContextType = getInboxBrowsingContextType({
       pageType: contextStoreCurrentPageType,
       viewType: contextStoreCurrentViewType,
     });

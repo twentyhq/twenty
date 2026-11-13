@@ -1,0 +1,90 @@
+import { render } from '@testing-library/react';
+import { AppPath } from 'twenty-shared/types';
+
+import { InboxSelectionEffect } from '@/ai/components/InboxSelectionEffect';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
+
+const navigate = jest.fn();
+
+jest.mock('~/hooks/useNavigateApp', () => ({
+  useNavigateApp: () => navigate,
+}));
+
+const buildThreads = (ids: string[]): Pick<InboxThreadRecord, 'id'>[] =>
+  ids.map((id) => ({ id }));
+
+const expectSelected = (threadId: string | null) =>
+  expect(navigate).toHaveBeenLastCalledWith(
+    AppPath.AiChatInbox,
+    { threadId },
+    undefined,
+    { replace: true },
+  );
+
+describe('InboxSelectionEffect', () => {
+  beforeEach(() => {
+    navigate.mockClear();
+  });
+
+  it('selects the chat that takes the place of the one leaving the list', () => {
+    const { rerender } = render(
+      <InboxSelectionEffect
+        selectedThreadId="thread-2"
+        threads={buildThreads(['thread-1', 'thread-2', 'thread-3'])}
+      />,
+    );
+
+    expect(navigate).not.toHaveBeenCalled();
+
+    rerender(
+      <InboxSelectionEffect
+        selectedThreadId="thread-2"
+        threads={buildThreads(['thread-1', 'thread-3'])}
+      />,
+    );
+
+    expectSelected('thread-3');
+  });
+
+  it('selects the previous chat when the last one leaves the list', () => {
+    const { rerender } = render(
+      <InboxSelectionEffect
+        selectedThreadId="thread-2"
+        threads={buildThreads(['thread-1', 'thread-2'])}
+      />,
+    );
+
+    rerender(
+      <InboxSelectionEffect
+        selectedThreadId="thread-2"
+        threads={buildThreads(['thread-1'])}
+      />,
+    );
+
+    expectSelected('thread-1');
+  });
+
+  it('clears the selection when the list empties', () => {
+    const { rerender } = render(
+      <InboxSelectionEffect
+        selectedThreadId="thread-1"
+        threads={buildThreads(['thread-1'])}
+      />,
+    );
+
+    rerender(<InboxSelectionEffect selectedThreadId="thread-1" threads={[]} />);
+
+    expectSelected(null);
+  });
+
+  it('keeps a chat opened from a link that is not listed', () => {
+    render(
+      <InboxSelectionEffect
+        selectedThreadId="thread-9"
+        threads={buildThreads(['thread-1'])}
+      />,
+    );
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+});

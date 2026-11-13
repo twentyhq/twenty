@@ -1,0 +1,57 @@
+import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledActionsRow = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const StyledLeftActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing['0.5']};
+`;
+
+const StyledRightActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+type InboxComposerActionsRowProps = {
+  leftActions?: ReactNode;
+  modelTierDropdownId: string;
+  sendButton: ReactNode;
+  isModelPickerHidden?: boolean;
+};
+
+export const InboxComposerActionsRow = ({
+  leftActions,
+  modelTierDropdownId,
+  sendButton,
+  isModelPickerHidden = false,
+}: InboxComposerActionsRowProps) => {
+  const aiModels = useAtomStateValue(aiModelsState);
+
+  return (
+    <StyledActionsRow>
+      <StyledLeftActions>{leftActions}</StyledLeftActions>
+      <StyledRightActions>
+        {!isModelPickerHidden && (
+          <AiModelTierDropdown
+            dropdownId={modelTierDropdownId}
+            disabled={aiModels.length === 0}
+          />
+        )}
+        {sendButton}
+      </StyledRightActions>
+    </StyledActionsRow>
+  );
+};

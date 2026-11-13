@@ -1,0 +1,1 @@
+export const INBOX_SCROLL_PIN_MAX_DURATION_IN_MS = 3000;

@@ -10,15 +10,15 @@ export const MainNavigationDrawerContent = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  const showAiChatContent =
+  const showInboxContent =
     hasAiPermission &&
-    activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+    activeNavigationDrawerMode === NAVIGATION_DRAWER_TABS.INBOX_HISTORY;
 
   return (
     <NavigationDrawerScrollableContent>
       <NavigationDrawerTabbedContent
-        showAiChatContent={showAiChatContent}
-        shouldMountAiChatContent={hasAiPermission}
+        showInboxContent={showInboxContent}
+        shouldMountInboxContent={hasAiPermission}
         navigationContent={<MainNavigationDrawerNavigationContent />}
       />
     </NavigationDrawerScrollableContent>

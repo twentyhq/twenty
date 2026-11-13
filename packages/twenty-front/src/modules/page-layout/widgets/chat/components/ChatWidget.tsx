@@ -1,14 +1,14 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
-import { AiChatTab } from '@/ai/components/AiChatTab';
-import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { InboxTab } from '@/ai/components/InboxTab';
+import { INBOX_SURFACE } from '@/ai/constants/InboxSurface';
+import { InboxSurfaceContext } from '@/ai/contexts/InboxSurfaceContext';
 import { ChatWidgetOpenInChatPageEffect } from '@/page-layout/widgets/chat/components/ChatWidgetOpenInChatPageEffect';
 import { ChatWidgetThreadSyncEffect } from '@/page-layout/widgets/chat/components/ChatWidgetThreadSyncEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isCurrentPathInboxThreadPage } from '~/utils/isCurrentPathInboxThreadPage';
 
 const StyledChatContainer = styled.div`
   --ai-chat-content-max-width: 768px;
@@ -26,7 +26,7 @@ export const ChatWidget = () => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   // Checked once so leaving for the chat page later does not pull this chat into it
   const [isOpenedBesideChatPage] = useState(
-    () => isInSidePanel && isCurrentPathAiChatPage(),
+    () => isInSidePanel && isCurrentPathInboxThreadPage(),
   );
 
   if (isOpenedBesideChatPage) {
@@ -36,13 +36,11 @@ export const ChatWidget = () => {
   return (
     <StyledChatContainer>
       <ChatWidgetThreadSyncEffect threadId={targetRecord.id} />
-      <AiChatSurfaceContext.Provider
-        value={
-          isInSidePanel ? AI_CHAT_SURFACE.SIDE_PANEL : AI_CHAT_SURFACE.PAGE
-        }
+      <InboxSurfaceContext.Provider
+        value={isInSidePanel ? INBOX_SURFACE.SIDE_PANEL : INBOX_SURFACE.PAGE}
       >
-        <AiChatTab />
-      </AiChatSurfaceContext.Provider>
+        <InboxTab />
+      </InboxSurfaceContext.Provider>
     </StyledChatContainer>
   );
 };

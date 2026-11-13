@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingInboxEnabledState';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { useStore } from 'jotai';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
@@ -20,12 +20,12 @@ export const useEnterWorkspaceAfterOnboardingCheckout = () => {
     }
 
     const isOnboardingAiChatEnabled = store.get(
-      isOnboardingAiChatEnabledState.atom,
+      isOnboardingInboxEnabledState.atom,
     );
 
     store.set(isOnboardingCheckoutPendingState.atom, false);
     store.set(
-      shouldOpenAiChatAfterOnboardingState.atom,
+      shouldOpenInboxAfterOnboardingState.atom,
       isOnboardingAiChatEnabled,
     );
   };

@@ -7,7 +7,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -45,7 +45,7 @@ const createThread = ({
   lastActivityAt: string;
   lastMessageText: string;
   workspaceMemberId?: string;
-}): AgentChatThreadRecord => ({
+}): InboxThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,

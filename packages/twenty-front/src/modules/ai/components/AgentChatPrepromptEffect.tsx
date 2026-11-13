@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/InboxRestoreEditorContentEventName';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/InboxSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -23,12 +23,12 @@ export const AgentChatPrepromptEffect = () => {
     const { serializedDocument, mode } = agentChatPreprompt;
 
     const timeoutId = setTimeout(() => {
-      dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+      dispatchBrowserEvent(INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
         content: serializedDocument,
       });
 
       if (mode === 'SEND') {
-        dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
+        dispatchBrowserEvent(INBOX_SEND_MESSAGE_EVENT_NAME);
       } else {
         setShouldFocusChatEditor(true);
       }

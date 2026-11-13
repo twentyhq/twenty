@@ -1,0 +1,1 @@
+export const INBOX_QUOTE_EXCERPT_MAX_LENGTH = 280;

@@ -1,16 +1,16 @@
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useApplyInboxThreadUpdate } from '@/ai/hooks/useApplyInboxThreadUpdate';
+import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshInboxThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { hasInitializedInboxThreadsState } from '@/ai/states/hasInitializedInboxThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
@@ -26,9 +26,8 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     StartWorkspaceSetupChatDocument,
   );
   const store = useStore();
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
-  const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
+  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
+  const { addInboxThread } = useApplyInboxThreadUpdate();
   const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
     isCompanyEnrichmentFetchInFlightState,
   );
@@ -82,18 +81,18 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           return;
         }
 
-        if (!store.get(shouldOpenAiChatAfterOnboardingState.atom)) {
+        if (!store.get(shouldOpenInboxAfterOnboardingState.atom)) {
           return;
         }
 
-        addAgentChatThread({
+        addInboxThread({
           id: thread.id,
           title: thread.title ?? null,
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
           deletedAt: null,
         });
-        void refreshAgentChatThreadPermissions([thread.id]);
+        void refreshInboxThreadPermissions([thread.id]);
 
         if (result.outcome === WorkspaceSetupChatOutcome.STARTED) {
           store.set(
@@ -104,9 +103,9 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           );
         }
 
-        store.set(hasInitializedAgentChatThreadsState.atom, true);
+        store.set(hasInitializedInboxThreadsState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
-        store.set(currentAiChatThreadState.atom, thread.id);
+        store.set(currentInboxThreadState.atom, thread.id);
       } catch {
         store.set(hasRequestedWorkspaceSetupChatState.atom, false);
 
@@ -117,9 +116,9 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     void startWorkspaceSetupChat();
   }, [
     startWorkspaceSetupChatMutation,
-    refreshAgentChatThreadPermissions,
+    refreshInboxThreadPermissions,
     store,
-    addAgentChatThread,
+    addInboxThread,
     isCompanyEnrichmentFetchInFlight,
     hasWaitedForCompanyEnrichment,
   ]);

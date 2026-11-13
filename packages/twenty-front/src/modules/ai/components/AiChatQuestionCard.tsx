@@ -30,7 +30,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { InboxComposerActionsRow } from '@/ai/components/internal/InboxComposerActionsRow';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
@@ -467,7 +467,7 @@ export const AiChatQuestionCard = ({
       <StyledDivider />
 
       <StyledComposerSection>
-        <AiChatComposerActionsRow
+        <InboxComposerActionsRow
           leftActions={
             <>
               {isDefined(onSkip) && (

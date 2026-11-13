@@ -6,8 +6,8 @@ import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { InboxThreadList } from '@/ai/components/InboxThreadList';
+import { type InboxThreadRecord } from '@/ai/types/InboxThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
@@ -34,7 +34,7 @@ type ChatThreadsCardContentProps = {
   error?: unknown;
   onRetry: () => void;
   onDetachThread: (threadId: string) => void;
-  threads: AgentChatThreadRecord[];
+  threads: InboxThreadRecord[];
   hasNextPage?: boolean;
   pagination?: ReactNode;
 };
@@ -104,7 +104,7 @@ export const ChatThreadsCardContent = ({
 
   return (
     <StyledThreadsContainer>
-      <AiChatThreadList
+      <InboxThreadList
         threads={threads}
         variant="compact"
         selectedThreadIds={

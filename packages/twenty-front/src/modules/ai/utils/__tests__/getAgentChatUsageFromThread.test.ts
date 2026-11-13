@@ -1,5 +1,5 @@
 import { accumulateAgentChatUsage } from '@/ai/utils/accumulateAgentChatUsage';
-import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
+import { formatInboxTokens } from '@/ai/utils/formatInboxTokens';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 const storedThread = {
@@ -59,7 +59,7 @@ describe('getAgentChatUsageFromThread', () => {
     );
 
     expect(usageAfterMessages?.cachedInputTokens).toBe(1773229);
-    expect(formatAiChatTokens(usageAfterMessages?.cachedInputTokens ?? 0)).toBe(
+    expect(formatInboxTokens(usageAfterMessages?.cachedInputTokens ?? 0)).toBe(
       '1.8M',
     );
   });

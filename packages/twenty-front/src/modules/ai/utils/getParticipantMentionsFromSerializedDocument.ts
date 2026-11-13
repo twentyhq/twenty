@@ -7,11 +7,11 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type InboxParticipantMention } from '@/ai/types/InboxParticipantMention';
 
 const getParticipantMentionsFromNode = (
   node: TipTapNode,
-): AgentChatParticipantMention[] => {
+): InboxParticipantMention[] => {
   const workspaceMemberId = node.attrs?.recordId;
   const label = node.attrs?.label;
 
@@ -32,7 +32,7 @@ const getParticipantMentionsFromNode = (
 
 export const getParticipantMentionsFromSerializedDocument = (
   serializedDocument: string,
-): AgentChatParticipantMention[] => {
+): InboxParticipantMention[] => {
   const document = parseCanonicalTipTapJsonDocument(serializedDocument);
 
   if (!isDefined(document)) {

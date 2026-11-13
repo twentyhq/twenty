@@ -15,47 +15,47 @@ import {
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
 
-import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
-import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { INBOX_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/InboxNewThreadDefaultRecipients';
+import { INBOX_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/InboxRefetchMessagesEventName';
+import { INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/InboxRestoreEditorContentEventName';
+import { INBOX_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/InboxSendMessageEventName';
+import { INBOX_STOP_EVENT_NAME } from '@/ai/constants/InboxStopEventName';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
+import { useCanSendInboxMessage } from '@/ai/hooks/useCanSendInboxMessage';
 import { useGetBrowsingContext } from '@/ai/hooks/useGetBrowsingContext';
-import { useOpenNewAgentChatAsDirectMessage } from '@/ai/hooks/useOpenNewAgentChatAsDirectMessage';
+import { useOpenNewInboxAsDirectMessage } from '@/ai/hooks/useOpenNewInboxAsDirectMessage';
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { useProjectInboxThreadToUrl } from '@/ai/hooks/useProjectInboxThreadToUrl';
+import { useRefreshInboxThreadPermissions } from '@/ai/hooks/useRefreshInboxThreadPermissions';
 import { useWarnAboutParticipantMentionsNotAdded } from '@/ai/hooks/useWarnAboutParticipantMentionsNotAdded';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { agentChatThreadMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadMessageFamilySelector';
-import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
-import { getAgentChatMessageQuoteSource } from '@/ai/utils/getAgentChatMessageQuoteSource';
-import { prependAgentChatQuoteToText } from '@/ai/utils/prependAgentChatQuoteToText';
+import { inboxDraftsByThreadIdState } from '@/ai/states/inboxDraftsByThreadIdState';
+import { inboxQuotedMessageIdFamilyState } from '@/ai/states/inboxQuotedMessageIdFamilyState';
+import { inboxMessageAuthorLookupSelector } from '@/ai/states/selectors/inboxMessageAuthorLookupSelector';
+import { inboxThreadMessageFamilySelector } from '@/ai/states/selectors/inboxThreadMessageFamilySelector';
+import { getInboxMessageAuthor } from '@/ai/utils/getInboxMessageAuthor';
+import { getInboxMessageQuoteSource } from '@/ai/utils/getInboxMessageQuoteSource';
+import { prependInboxQuoteToText } from '@/ai/utils/prependInboxQuoteToText';
 import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { inboxSelectedFilesState } from '@/ai/states/inboxSelectedFilesState';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
 import { agentChatUnconfirmedFirstMessageFamilyState } from '@/ai/states/agentChatUnconfirmedFirstMessageFamilyState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/agentChatThreadIsDirectMessageFamilySelector';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { inboxThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/inboxThreadIsDirectMessageFamilySelector';
 import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
 import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
-import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
-import { type AgentChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/inboxIsSendingMessageFamilyState';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/inboxNewThreadChannelIdState';
+import { inboxNewThreadRecipientsFamilyState } from '@/ai/states/inboxNewThreadRecipientsFamilyState';
+import { newInboxThreadIdState } from '@/ai/states/newInboxThreadIdState';
+import { type InboxNewThreadRecipients } from '@/ai/types/InboxNewThreadRecipients';
+import { type InboxParticipantMention } from '@/ai/types/InboxParticipantMention';
 import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
-import { getAgentChatInitialRecipients } from '@/ai/utils/getAgentChatInitialRecipients';
-import { getAgentChatNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getAgentChatNewThreadDirectMessageWorkspaceMemberId';
+import { getInboxInitialRecipients } from '@/ai/utils/getInboxInitialRecipients';
+import { getInboxNewThreadDirectMessageWorkspaceMemberId } from '@/ai/utils/getInboxNewThreadDirectMessageWorkspaceMemberId';
 import { getParticipantMentionsFromSerializedDocument } from '@/ai/utils/getParticipantMentionsFromSerializedDocument';
 import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -80,15 +80,15 @@ import {
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
-type AgentChatMessageToSend = {
+type InboxMessageToSend = {
   threadId: string;
   isNewChat: boolean;
   isDirectMessage: boolean;
-  newInboxChatRecipients: AgentChatNewThreadRecipients | undefined;
+  newInboxChatRecipients: InboxNewThreadRecipients | undefined;
   serializedContentToSend: string;
   contentToSend: string;
-  participantMentions: AgentChatParticipantMention[];
-  initialRecipients: AgentChatParticipantMention[];
+  participantMentions: InboxParticipantMention[];
+  initialRecipients: InboxParticipantMention[];
   isAssistantMentioned: boolean;
   channelId: string | null | undefined;
   quotedMessageId: string | null;
@@ -97,15 +97,14 @@ type AgentChatMessageToSend = {
 export const useAgentChat = () => {
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const canSendInboxMessage = useCanSendInboxMessage();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
   const isDirectMessageIdentityEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
-  const { openNewAgentChatAsDirectMessage } =
-    useOpenNewAgentChatAsDirectMessage();
+  const { openNewInboxAsDirectMessage } = useOpenNewInboxAsDirectMessage();
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
@@ -113,21 +112,16 @@ export const useAgentChat = () => {
     useWarnAboutParticipantMentionsNotAdded();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
-  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+  const setCurrentInboxThread = useSetAtomState(currentInboxThreadState);
+  const { projectInboxThreadToUrl } = useProjectInboxThreadToUrl({
     shouldPreserveClosedInbox: true,
   });
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
+  const { refreshInboxThreadPermissions } = useRefreshInboxThreadPermissions();
   const store = useStore();
 
-  const setAgentChatUploadedFiles = useSetAtomState(
-    agentChatUploadedFilesState,
-  );
+  const setInboxUploadedFiles = useSetAtomState(inboxUploadedFilesState);
 
-  const setAgentChatDraftsByThreadId = useSetAtomState(
-    agentChatDraftsByThreadIdState,
-  );
+  const setInboxDraftsByThreadId = useSetAtomState(inboxDraftsByThreadIdState);
 
   const sendToThread = useCallback(
     async ({
@@ -142,12 +136,13 @@ export const useAgentChat = () => {
       isAssistantMentioned,
       channelId,
       quotedMessageId,
-    }: AgentChatMessageToSend) => {
-      const isSendingMessageAtom =
-        agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
-      const agentChatUploadedFiles = isDirectMessage
+    }: InboxMessageToSend) => {
+      const isSendingMessageAtom = inboxIsSendingMessageFamilyState.atomFamily({
+        threadId,
+      });
+      const inboxUploadedFiles = isDirectMessage
         ? []
-        : store.get(agentChatUploadedFilesState.atom);
+        : store.get(inboxUploadedFilesState.atom);
       const browsingContext = getBrowsingContext();
       const lastSentBrowsingContextAtom =
         agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
@@ -159,7 +154,7 @@ export const useAgentChat = () => {
       const browsingContextToSend = isBrowsingContextChanged
         ? browsingContext
         : null;
-      const fileIds = agentChatUploadedFiles.map(({ fileId }) => fileId);
+      const fileIds = inboxUploadedFiles.map(({ fileId }) => fileId);
       const unconfirmedFirstMessageAtom =
         agentChatUnconfirmedFirstMessageFamilyState.atomFamily(threadId);
       const unconfirmedFirstMessage = isNewChat
@@ -181,7 +176,7 @@ export const useAgentChat = () => {
         role: 'user',
         parts: [
           { type: 'text' as const, text: contentToSend },
-          ...agentChatUploadedFiles,
+          ...inboxUploadedFiles,
         ],
         metadata: {
           createdAt: optimisticMessageCreatedAt,
@@ -191,7 +186,7 @@ export const useAgentChat = () => {
         status: 'sent',
       };
 
-      const messagesAtom = agentChatMessagesFamilyState.atomFamily({
+      const messagesAtom = inboxMessagesFamilyState.atomFamily({
         threadId,
       });
       const errorAtom = agentChatErrorFamilyState.atomFamily({ threadId });
@@ -216,13 +211,13 @@ export const useAgentChat = () => {
       store.set(errorAtom, null);
       store.set(isAwaitingFirstChunkAtom, true);
 
-      const fileAttachments = agentChatUploadedFiles.map((file) => ({
+      const fileAttachments = inboxUploadedFiles.map((file) => ({
         id: file.fileId,
         filename: file.filename,
       }));
 
       if (!isDirectMessage) {
-        setAgentChatUploadedFiles([]);
+        setInboxUploadedFiles([]);
       }
 
       store.set(isSendingMessageAtom, true);
@@ -306,24 +301,24 @@ export const useAgentChat = () => {
         }
 
         if (isNewChat) {
-          await refreshAgentChatThreadPermissions([threadId]);
-          store.set(newAiChatThreadIdState.atom, v4());
-          store.set(agentChatNewThreadChannelIdState.atom, null);
+          await refreshInboxThreadPermissions([threadId]);
+          store.set(newInboxThreadIdState.atom, v4());
+          store.set(inboxNewThreadChannelIdState.atom, null);
           store.set(unconfirmedFirstMessageAtom, null);
 
           if (isDefined(newInboxChatRecipients)) {
             store.set(
-              agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-              AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+              inboxNewThreadRecipientsFamilyState.atomFamily(threadId),
+              INBOX_NEW_THREAD_DEFAULT_RECIPIENTS,
             );
           }
 
-          if (store.get(currentAiChatThreadState.atom) === threadId) {
-            projectAiChatThreadToUrl(threadId);
+          if (store.get(currentInboxThreadState.atom) === threadId) {
+            projectInboxThreadToUrl(threadId);
           }
         }
 
-        dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        dispatchBrowserEvent(INBOX_REFETCH_MESSAGES_EVENT_NAME);
       } catch (error) {
         rollbackOptimisticRestore();
 
@@ -335,17 +330,18 @@ export const useAgentChat = () => {
           });
         }
 
-        setAgentChatDraftsByThreadId((prev) => ({
+        setInboxDraftsByThreadId((prev) => ({
           ...prev,
           [threadId]: serializedContentToSend,
         }));
-        setAgentChatUploadedFiles((currentUploadedFiles) => [
-          ...agentChatUploadedFiles,
+        setInboxUploadedFiles((currentUploadedFiles) => [
+          ...inboxUploadedFiles,
           ...currentUploadedFiles,
         ]);
 
-        const quotedMessageIdAtom =
-          agentChatQuotedMessageIdFamilyState.atomFamily({ threadId });
+        const quotedMessageIdAtom = inboxQuotedMessageIdFamilyState.atomFamily({
+          threadId,
+        });
 
         if (!isDefined(store.get(quotedMessageIdAtom))) {
           store.set(quotedMessageIdAtom, quotedMessageId);
@@ -358,8 +354,8 @@ export const useAgentChat = () => {
           store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
         }
 
-        if (store.get(currentAiChatThreadState.atom) === threadId) {
-          dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+        if (store.get(currentInboxThreadState.atom) === threadId) {
+          dispatchBrowserEvent(INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
             content: serializedContentToSend,
           });
         }
@@ -370,12 +366,12 @@ export const useAgentChat = () => {
     [
       store,
       getBrowsingContext,
-      setAgentChatUploadedFiles,
-      setAgentChatDraftsByThreadId,
+      setInboxUploadedFiles,
+      setInboxDraftsByThreadId,
       modelIdForRequest,
       aiModels,
-      projectAiChatThreadToUrl,
-      refreshAgentChatThreadPermissions,
+      projectInboxThreadToUrl,
+      refreshInboxThreadPermissions,
       apolloClient,
       applyOptimisticRestore,
       attachChatThreadToRecord,
@@ -384,15 +380,16 @@ export const useAgentChat = () => {
   );
 
   const handleSendMessage = useCallback(async () => {
-    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
+    const newInboxThreadId = store.get(newInboxThreadIdState.atom);
     const threadId =
-      store.get(currentAiChatThreadState.atom) ?? newAiChatThreadId;
-    const isNewChat = threadId === newAiChatThreadId;
+      store.get(currentInboxThreadState.atom) ?? newInboxThreadId;
+    const isNewChat = threadId === newInboxThreadId;
     const isDirectMessage = store.get(
-      agentChatThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
+      inboxThreadIsDirectMessageFamilySelector.selectorFamily(threadId),
     );
-    const isSendingMessageAtom =
-      agentChatIsSendingMessageFamilyState.atomFamily({ threadId });
+    const isSendingMessageAtom = inboxIsSendingMessageFamilyState.atomFamily({
+      threadId,
+    });
 
     if (isNewChat && store.get(isSendingMessageAtom)) {
       return;
@@ -400,24 +397,22 @@ export const useAgentChat = () => {
 
     const newInboxChatRecipients =
       isNewChat && isAiChatInboxEnabled
-        ? store.get(
-            agentChatNewThreadRecipientsFamilyState.atomFamily(threadId),
-          )
+        ? store.get(inboxNewThreadRecipientsFamilyState.atomFamily(threadId))
         : undefined;
     const serializedContentToSend =
-      store.get(agentChatDraftsByThreadIdState.atom)[threadId] ?? '';
+      store.get(inboxDraftsByThreadIdState.atom)[threadId] ?? '';
     const draftText = tipTapDocumentToMarkdown(serializedContentToSend).trim();
 
     if (draftText === '') {
       return;
     }
 
-    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+    const quotedMessageIdAtom = inboxQuotedMessageIdFamilyState.atomFamily({
       threadId,
     });
     const quotedMessageId = store.get(quotedMessageIdAtom);
     const quotedMessage = store.get(
-      agentChatThreadMessageFamilySelector.selectorFamily({
+      inboxThreadMessageFamilySelector.selectorFamily({
         threadId,
         messageId: quotedMessageId,
       }),
@@ -431,17 +426,17 @@ export const useAgentChat = () => {
         })?.findOneAgent.label ?? undefined)
       : undefined;
     const quotedMessageSource = isDefined(quotedMessage)
-      ? getAgentChatMessageQuoteSource({
+      ? getInboxMessageQuoteSource({
           message: quotedMessage,
-          author: getAgentChatMessageAuthor({
+          author: getInboxMessageAuthor({
             message: quotedMessage,
-            authorLookup: store.get(agentChatMessageAuthorLookupSelector.atom),
+            authorLookup: store.get(inboxMessageAuthorLookupSelector.atom),
             agentName: quotedAgentName,
           }),
         })
       : null;
     const contentToSend = isDefined(quotedMessageSource)
-      ? prependAgentChatQuoteToText({
+      ? prependInboxQuoteToText({
           text: draftText,
           authorName: quotedMessageSource.author.name,
           excerpt: quotedMessageSource.excerpt,
@@ -464,9 +459,9 @@ export const useAgentChat = () => {
         serializedContentToSend,
       );
     const channelId = isNewChat
-      ? store.get(agentChatNewThreadChannelIdState.atom)
+      ? store.get(inboxNewThreadChannelIdState.atom)
       : undefined;
-    const initialRecipients = getAgentChatInitialRecipients({
+    const initialRecipients = getInboxInitialRecipients({
       recipientWorkspaceMemberIds:
         newInboxChatRecipients?.recipientWorkspaceMemberIds ?? [],
       workspaceMembers: store.get(currentWorkspaceMembersState.atom),
@@ -487,7 +482,7 @@ export const useAgentChat = () => {
       return;
     }
 
-    if (!canSendAgentChatMessage) {
+    if (!canSendInboxMessage) {
       enqueueToast({
         status: 'error',
         children: t`No AI provider is configured on this instance.`,
@@ -497,7 +492,7 @@ export const useAgentChat = () => {
     }
 
     const directMessageWorkspaceMemberId =
-      getAgentChatNewThreadDirectMessageWorkspaceMemberId({
+      getInboxNewThreadDirectMessageWorkspaceMemberId({
         isDirectMessageIdentityEnabled,
         newInboxChatRecipients,
         isAssistantMentioned,
@@ -507,7 +502,7 @@ export const useAgentChat = () => {
       });
 
     if (isDefined(directMessageWorkspaceMemberId)) {
-      const directMessageThreadId = await openNewAgentChatAsDirectMessage({
+      const directMessageThreadId = await openNewInboxAsDirectMessage({
         newChatThreadId: threadId,
         workspaceMemberId: directMessageWorkspaceMemberId,
         serializedDraft: serializedContentToSend,
@@ -532,9 +527,9 @@ export const useAgentChat = () => {
       return;
     }
 
-    const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
+    const inboxSelectedFiles = store.get(inboxSelectedFilesState.atom);
 
-    if (!isDirectMessage && agentChatSelectedFiles.length > 0) {
+    if (!isDirectMessage && inboxSelectedFiles.length > 0) {
       enqueueToast({
         status: 'error',
         children: t`Wait for the attachments to finish uploading.`,
@@ -543,15 +538,15 @@ export const useAgentChat = () => {
       return;
     }
 
-    setCurrentAiChatThread(threadId);
+    setCurrentInboxThread(threadId);
 
-    setAgentChatDraftsByThreadId((prev) => ({
+    setInboxDraftsByThreadId((prev) => ({
       ...prev,
       [threadId]: '',
     }));
     store.set(quotedMessageIdAtom, null);
 
-    dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
+    dispatchBrowserEvent(INBOX_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
       content: '',
     });
 
@@ -571,23 +566,23 @@ export const useAgentChat = () => {
   }, [
     store,
     apolloClient,
-    setAgentChatDraftsByThreadId,
-    canSendAgentChatMessage,
+    setInboxDraftsByThreadId,
+    canSendInboxMessage,
     isAiChatInboxEnabled,
     isDirectMessageIdentityEnabled,
-    openNewAgentChatAsDirectMessage,
+    openNewInboxAsDirectMessage,
     enqueueToast,
-    setCurrentAiChatThread,
+    setCurrentInboxThread,
     sendToThread,
   ]);
 
   useListenToBrowserEvent({
-    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    eventName: INBOX_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handleSendMessage,
   });
 
   const handleStop = useCallback(async () => {
-    const threadId = store.get(currentAiChatThreadState.atom);
+    const threadId = store.get(currentInboxThreadState.atom);
 
     if (!isDefined(threadId)) {
       return;
@@ -609,7 +604,7 @@ export const useAgentChat = () => {
   }, [store, apolloClient, enqueueToast]);
 
   useListenToBrowserEvent({
-    eventName: AGENT_CHAT_STOP_EVENT_NAME,
+    eventName: INBOX_STOP_EVENT_NAME,
     onBrowserEvent: handleStop,
   });
 

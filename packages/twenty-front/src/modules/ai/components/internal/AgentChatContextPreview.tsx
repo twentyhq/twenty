@@ -1,6 +1,6 @@
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { InboxFilePreview } from '@/ai/components/internal/InboxFilePreview';
+import { inboxSelectedFilesState } from '@/ai/states/inboxSelectedFilesState';
+import { inboxUploadedFilesState } from '@/ai/states/inboxUploadedFilesState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -13,21 +13,21 @@ const StyledPreviewsContainer = styled.div`
 `;
 
 export const AgentChatContextPreview = () => {
-  const [agentChatSelectedFiles, setAgentChatSelectedFiles] = useAtomState(
-    agentChatSelectedFilesState,
+  const [inboxSelectedFiles, setInboxSelectedFiles] = useAtomState(
+    inboxSelectedFilesState,
   );
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
-    agentChatUploadedFilesState,
+  const [inboxUploadedFiles, setInboxUploadedFiles] = useAtomState(
+    inboxUploadedFilesState,
   );
 
   const handleRemoveUploadedFile = (fileIndex: number) => {
-    setAgentChatUploadedFiles(
-      agentChatUploadedFiles.filter((_, index) => fileIndex !== index),
+    setInboxUploadedFiles(
+      inboxUploadedFiles.filter((_, index) => fileIndex !== index),
     );
   };
 
   const hasFiles =
-    agentChatSelectedFiles.length > 0 || agentChatUploadedFiles.length > 0;
+    inboxSelectedFiles.length > 0 || inboxUploadedFiles.length > 0;
 
   if (!hasFiles) {
     return null;
@@ -35,13 +35,13 @@ export const AgentChatContextPreview = () => {
 
   return (
     <StyledPreviewsContainer>
-      {agentChatSelectedFiles.map((file, index) => (
-        <AgentChatFilePreview
+      {inboxSelectedFiles.map((file, index) => (
+        <InboxFilePreview
           file={file}
           key={`${index}-${file.name}`}
           onRemove={() => {
-            setAgentChatSelectedFiles(
-              agentChatSelectedFiles.filter(
+            setInboxSelectedFiles(
+              inboxSelectedFiles.filter(
                 (selectedFile) => selectedFile !== file,
               ),
             );
@@ -49,8 +49,8 @@ export const AgentChatContextPreview = () => {
           isUploading
         />
       ))}
-      {agentChatUploadedFiles.map((file, index) => (
-        <AgentChatFilePreview
+      {inboxUploadedFiles.map((file, index) => (
+        <InboxFilePreview
           file={file}
           key={index}
           onRemove={() => handleRemoveUploadedFile(index)}

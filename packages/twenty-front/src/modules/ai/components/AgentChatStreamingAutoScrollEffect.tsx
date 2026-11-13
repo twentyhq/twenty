@@ -2,44 +2,43 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomComponentSelector';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
+import { inboxMessagesFamilyState } from '@/ai/states/inboxMessagesFamilyState';
+import { inboxIsScrolledToBottomComponentSelector } from '@/ai/states/selectors/inboxIsScrolledToBottomComponentSelector';
+import { currentInboxThreadState } from '@/ai/states/currentInboxThreadState';
+import { scrollInboxToBottom } from '@/ai/utils/scrollInboxToBottom';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AgentChatStreamingAutoScrollEffect = () => {
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const currentInboxThread = useAtomStateValue(currentInboxThreadState);
 
-  const agentChatMessages = useAtomFamilyStateValue(
-    agentChatMessagesFamilyState,
-    { threadId: currentAiChatThread },
-  );
+  const inboxMessages = useAtomFamilyStateValue(inboxMessagesFamilyState, {
+    threadId: currentInboxThread,
+  });
 
-  const agentChatIsScrolledToBottom = useAtomComponentSelectorValue(
-    agentChatIsScrolledToBottomComponentSelector,
+  const inboxIsScrolledToBottom = useAtomComponentSelectorValue(
+    inboxIsScrolledToBottomComponentSelector,
   );
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   useEffect(() => {
-    if (!isNonEmptyArray(agentChatMessages)) {
+    if (!isNonEmptyArray(inboxMessages)) {
       return;
     }
 
-    if (!agentChatIsScrolledToBottom) {
+    if (!inboxIsScrolledToBottom) {
       return;
     }
 
     const { scrollWrapperElement } = getScrollWrapperElement();
 
     if (isDefined(scrollWrapperElement)) {
-      scrollAiChatToBottom(scrollWrapperElement);
+      scrollInboxToBottom(scrollWrapperElement);
     }
-  }, [agentChatMessages, agentChatIsScrolledToBottom, getScrollWrapperElement]);
+  }, [inboxMessages, inboxIsScrolledToBottom, getScrollWrapperElement]);
 
   return null;
 };

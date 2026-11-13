@@ -28,7 +28,7 @@ import { maintenanceModeState } from '@/client-config/states/maintenanceModeStat
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { isOnboardingInboxEnabledState } from '@/client-config/states/isOnboardingInboxEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -143,8 +143,8 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setIsDDLLocked = useSetAtomState(isDDLLockedState);
 
-  const setIsOnboardingAiChatEnabled = useSetAtomState(
-    isOnboardingAiChatEnabledState,
+  const setIsOnboardingInboxEnabled = useSetAtomState(
+    isOnboardingInboxEnabledState,
   );
 
   const setMaintenanceMode = useSetAtomState(maintenanceModeState);
@@ -253,7 +253,7 @@ export const useClientConfig = (): UseClientConfigResult => {
           clientConfig?.isClickHouseConfigured ?? false,
         );
         setIsDDLLocked(clientConfig?.isWorkspaceSchemaDDLLocked ?? false);
-        setIsOnboardingAiChatEnabled(
+        setIsOnboardingInboxEnabled(
           clientConfig?.isOnboardingAiChatEnabled ?? false,
         );
         setMaintenanceMode(clientConfig?.maintenance ?? null);
@@ -304,7 +304,7 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsClickHouseConfigured,
       setIsCloudflareIntegrationEnabled,
       setIsDDLLocked,
-      setIsOnboardingAiChatEnabled,
+      setIsOnboardingInboxEnabled,
       setLabPublicFeatureFlags,
       setMaintenanceMode,
       setEnterpriseInstanceType,

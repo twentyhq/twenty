@@ -1,0 +1,166 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { INBOX_RECEIPT_READER_SENTENCE_MAX_COUNT } from '@/ai/constants/InboxReceiptReaderSentenceMaxCount';
+import { inboxDisplayedThreadState } from '@/ai/states/inboxDisplayedThreadState';
+import { inboxIsSendingMessageFamilyState } from '@/ai/states/inboxIsSendingMessageFamilyState';
+import { inboxThreadReadPositionsFamilyState } from '@/ai/states/inboxThreadReadPositionsFamilyState';
+import { inboxMessageIdsSelector } from '@/ai/states/selectors/inboxMessageIdsSelector';
+import { inboxMessageFamilySelector } from '@/ai/states/selectors/inboxMessageFamilySelector';
+import { getInboxMessageReaders } from '@/ai/utils/getInboxMessageReaders';
+import { getInboxSenderLabel } from '@/ai/utils/getInboxSenderLabel';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { formatDisplayList } from '~/utils/format/formatDisplayList';
+
+const StyledReceipt = styled.span`
+  display: inline-flex;
+`;
+
+const StyledReaderList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledReader = styled.div<{ isPending?: boolean }>`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+  opacity: ${({ isPending }) => (isPending ? 0.5 : 1)};
+`;
+
+const StyledPendingLabel = styled.div`
+  margin-top: ${themeCssVariables.spacing[1]};
+  opacity: 0.5;
+`;
+
+type InboxMessageReceiptProps = {
+  messageId: string;
+};
+
+export const InboxMessageReceipt = ({
+  messageId,
+}: InboxMessageReceiptProps) => {
+  const { t } = useLingui();
+  const inboxDisplayedThread = useAtomStateValue(inboxDisplayedThreadState);
+  const inboxThreadReadPositions = useAtomFamilyStateValue(
+    inboxThreadReadPositionsFamilyState,
+    { threadId: inboxDisplayedThread },
+  );
+  const inboxIsSendingMessage = useAtomFamilyStateValue(
+    inboxIsSendingMessageFamilyState,
+    { threadId: inboxDisplayedThread ?? '' },
+  );
+  const inboxMessageIds = useAtomStateValue(inboxMessageIdsSelector);
+  const agentChatMessage = useAtomFamilySelectorValue(
+    inboxMessageFamilySelector,
+    { messageId },
+  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+
+  if (
+    !isDefined(inboxThreadReadPositions) ||
+    !isDefined(agentChatMessage?.metadata?.createdAt)
+  ) {
+    return null;
+  }
+
+  if (inboxIsSendingMessage && inboxMessageIds.at(-1) === messageId) {
+    return <ChatMessageReceipt status="sending" />;
+  }
+
+  const { readerWorkspaceMemberIds, pendingWorkspaceMemberIds } =
+    getInboxMessageReaders({
+      readPositions: inboxThreadReadPositions,
+      createdAt: agentChatMessage.metadata.createdAt,
+      senderWorkspaceMemberId:
+        agentChatMessage.metadata.senderWorkspaceMemberId ?? undefined,
+    });
+
+  if (!isNonEmptyArray(readerWorkspaceMemberIds)) {
+    return <ChatMessageReceipt status="sent" />;
+  }
+
+  const getMember = (workspaceMemberId: string) => {
+    const member = currentWorkspaceMembers.find(
+      ({ id }) => id === workspaceMemberId,
+    );
+
+    return {
+      id: workspaceMemberId,
+      avatarUrl: member?.avatarUrl,
+      name: getInboxSenderLabel({
+        sender: member,
+        isCurrentWorkspaceMember:
+          workspaceMemberId === currentWorkspaceMember?.id,
+      }),
+    };
+  };
+
+  const readers = readerWorkspaceMemberIds.map(getMember);
+  const pendingMembers = pendingWorkspaceMemberIds.map(getMember);
+  const readerNames = formatDisplayList(readers.map(({ name }) => name));
+  const readerCount = readers.length;
+  const recipientCount = readerCount + pendingMembers.length;
+  const isSentence =
+    !isNonEmptyArray(pendingMembers) &&
+    readerCount <= INBOX_RECEIPT_READER_SENTENCE_MAX_COUNT;
+
+  return (
+    <Tooltip
+      content={
+        isSentence ? (
+          t`Read by ${readerNames}`
+        ) : (
+          <StyledReaderList>
+            {t`Read by ${readerCount} of ${recipientCount}`}
+            {readers.map(({ id, name, avatarUrl }) => (
+              <StyledReader key={id}>
+                <Avatar
+                  name={name}
+                  colorSeed={id}
+                  src={getAbsoluteImageUrl(avatarUrl)}
+                  size="sm"
+                  shape="circle"
+                />
+                {name}
+              </StyledReader>
+            ))}
+            {isNonEmptyArray(pendingMembers) && (
+              <StyledPendingLabel>{t`Not yet`}</StyledPendingLabel>
+            )}
+            {pendingMembers.map(({ id, name, avatarUrl }) => (
+              <StyledReader key={id} isPending>
+                <Avatar
+                  name={name}
+                  colorSeed={id}
+                  src={getAbsoluteImageUrl(avatarUrl)}
+                  size="sm"
+                  shape="circle"
+                />
+                {name}
+              </StyledReader>
+            ))}
+          </StyledReaderList>
+        )
+      }
+    >
+      <StyledReceipt>
+        <ChatMessageReceipt status="read" />
+      </StyledReceipt>
+    </Tooltip>
+  );
+};

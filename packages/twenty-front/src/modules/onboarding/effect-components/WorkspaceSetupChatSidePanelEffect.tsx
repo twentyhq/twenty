@@ -2,21 +2,21 @@ import { useLayoutEffect } from 'react';
 import { useStore } from 'jotai';
 
 import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
-import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldContinueInboxInSidePanelState } from '@/ai/states/shouldContinueInboxInSidePanelState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { shouldOpenInboxAfterOnboardingState } from '@/onboarding/states/shouldOpenInboxAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isInboxThreadPath } from '~/utils/isInboxThreadPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 export const WorkspaceSetupChatSidePanelEffect = () => {
-  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-    shouldOpenAiChatAfterOnboardingState,
+  const shouldOpenInboxAfterOnboarding = useAtomStateValue(
+    shouldOpenInboxAfterOnboardingState,
   );
   const store = useStore();
   const { pathname } = useLocation();
@@ -24,28 +24,28 @@ export const WorkspaceSetupChatSidePanelEffect = () => {
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (!shouldOpenAiChatAfterOnboarding) {
+    if (!shouldOpenInboxAfterOnboarding) {
       store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, false);
       return;
     }
 
     if (
       store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) ||
-      isAiChatPath(pathname) ||
+      isInboxThreadPath(pathname) ||
       isSettingsPath(pathname) ||
-      store.get(shouldContinueAiChatInSidePanelState.atom)
+      store.get(shouldContinueInboxInSidePanelState.atom)
     ) {
       return;
     }
 
     store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, true);
     openAskAiPage({ resetNavigationStack: true });
-  }, [shouldOpenAiChatAfterOnboarding, store, pathname, openAskAiPage]);
+  }, [shouldOpenInboxAfterOnboarding, store, pathname, openAskAiPage]);
 
   if (
-    shouldOpenAiChatAfterOnboarding &&
+    shouldOpenInboxAfterOnboarding &&
     !store.get(hasOpenedWorkspaceSetupChatSidePanelState.atom) &&
-    !store.get(shouldContinueAiChatInSidePanelState.atom) &&
+    !store.get(shouldContinueInboxInSidePanelState.atom) &&
     isSettingsPath(pathname)
   ) {
     return (
