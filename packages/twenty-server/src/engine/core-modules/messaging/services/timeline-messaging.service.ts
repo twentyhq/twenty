@@ -10,6 +10,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { escapeForIlike, isDefined } from 'twenty-shared/utils';
 import { In, IsNull, type Repository } from 'typeorm';
 
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
@@ -92,7 +93,10 @@ export class TimelineMessagingService {
         this.applyRecordFilter(queryBuilder, { targetFilter, personIds });
 
         if (isDefined(messageChannelIds)) {
-          this.applyMessageChannelFilter(queryBuilder, messageChannelIds);
+          this.applyMessageChannelFilter(queryBuilder, {
+            workspaceId,
+            messageChannelIds,
+          });
         }
       }
 
@@ -339,18 +343,26 @@ export class TimelineMessagingService {
 
   private applyMessageChannelFilter(
     queryBuilder: WorkspaceSelectQueryBuilder,
-    messageChannelIds: string[],
+    {
+      workspaceId,
+      messageChannelIds,
+    }: { workspaceId: string; messageChannelIds: string[] },
   ): void {
-    queryBuilder
-      .innerJoin('messageThread.messages', 'filteredMessages')
-      .innerJoin(
-        'filteredMessages.messageChannelMessageAssociations',
-        'filteredMessageChannelMessageAssociations',
-      )
-      .andWhere(
-        'filteredMessageChannelMessageAssociations.messageChannelId IN (:...filteredMessageChannelIds)',
-        { filteredMessageChannelIds: messageChannelIds },
-      );
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    queryBuilder.andWhere(
+      `EXISTS (
+        SELECT 1
+        FROM "${schemaName}"."message" "channelMessage"
+        INNER JOIN "${schemaName}"."messageChannelMessageAssociation" "channelMessageAssociation"
+          ON "channelMessageAssociation"."messageId" = "channelMessage"."id"
+          AND "channelMessageAssociation"."deletedAt" IS NULL
+        WHERE "channelMessage"."messageThreadId" = "messageThread"."id"
+          AND "channelMessage"."deletedAt" IS NULL
+          AND "channelMessageAssociation"."messageChannelId" IN (:...filteredMessageChannelIds)
+      )`,
+      { filteredMessageChannelIds: messageChannelIds },
+    );
   }
 
   private applyRecordFilter(

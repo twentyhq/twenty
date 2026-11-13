@@ -1,3 +1,4 @@
+import { TIMELINE_THREADS_REFETCH_QUERIES } from '@/activities/emails/constants/TimelineThreadsRefetchQueries';
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EmailsCardContent } from '@/activities/emails/components/EmailsCardContent';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
@@ -15,24 +17,19 @@ import { type TimelineThreadsWithTotal } from '~/generated/graphql';
 
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
+  const apolloCoreClient = useApolloCoreClient();
   const [timelineThreadChannelFilter, setTimelineThreadChannelFilter] =
     useAtomFamilyState(timelineThreadChannelFilterFamilyState, targetRecord.id);
 
-  const {
-    data,
-    error,
-    firstQueryLoading,
-    isFetchingMore,
-    fetchMoreRecords,
-    refetch,
-  } = useCustomResolver<TimelineThreadsWithTotal>({
-    query: getTimelineThreadsFromObjectRecord,
-    queryName: 'getTimelineThreadsFromObjectRecord',
-    objectName: 'timelineThreads',
-    activityTargetableObject: targetRecord,
-    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-    variables: { channel: timelineThreadChannelFilter },
-  });
+  const { data, error, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+    useCustomResolver<TimelineThreadsWithTotal>({
+      query: getTimelineThreadsFromObjectRecord,
+      queryName: 'getTimelineThreadsFromObjectRecord',
+      objectName: 'timelineThreads',
+      activityTargetableObject: targetRecord,
+      pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+      variables: { channel: timelineThreadChannelFilter },
+    });
 
   useSubscribeTimelineToParticipantChanges({
     queryId: `emails-${targetRecord.id}`,
@@ -40,7 +37,10 @@ export const EmailsCard = () => {
       StandardObjectNameSingular.MessageParticipant,
     relatedPersonIds:
       data?.getTimelineThreadsFromObjectRecord?.relatedPersonIds ?? [],
-    refetch,
+    refetch: () =>
+      apolloCoreClient.refetchQueries({
+        include: TIMELINE_THREADS_REFETCH_QUERIES,
+      }),
   });
 
   const { totalNumberOfThreads, timelineThreads } =

@@ -62,6 +62,8 @@ const MANUAL_THREAD_ID = '20202020-c4a1-4000-8000-000000000006';
 const MANUAL_MESSAGE_ID = '20202020-c4a1-4000-8000-000000000007';
 const MANUAL_THREAD_TARGET_ID = '20202020-c4a1-4000-8000-000000000008';
 const SYNCED_PARTICIPANT_ID = '20202020-c4a1-4000-8000-000000000009';
+const SYNCED_REPLY_MESSAGE_ID = '20202020-c4a1-4000-8000-00000000000b';
+const SYNCED_REPLY_ASSOCIATION_ID = '20202020-c4a1-4000-8000-00000000000c';
 const MANUAL_PARTICIPANT_ID = '20202020-c4a1-4000-8000-00000000000a';
 
 const FIXTURES: { objectMetadataSingularName: string; id: string }[] = [
@@ -82,6 +84,7 @@ const FIXTURES: { objectMetadataSingularName: string; id: string }[] = [
     id: MANUAL_THREAD_TARGET_ID,
   },
   { objectMetadataSingularName: 'message', id: SYNCED_MESSAGE_ID },
+  { objectMetadataSingularName: 'message', id: SYNCED_REPLY_MESSAGE_ID },
   { objectMetadataSingularName: 'message', id: MANUAL_MESSAGE_ID },
   { objectMetadataSingularName: 'messageThread', id: SYNCED_THREAD_ID },
   { objectMetadataSingularName: 'messageThread', id: MANUAL_THREAD_ID },
@@ -166,24 +169,37 @@ describe('timeline thread channel filter (integration)', () => {
       });
     }
 
-    await globalThis.testDataSource.query(
-      `INSERT INTO "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation"
-        (id, "messageId", "messageThreadId", "messageChannelId", "messageExternalId")
-        VALUES ($1, $2, $3, $4, $5)`,
-      [
-        SYNCED_ASSOCIATION_ID,
-        SYNCED_MESSAGE_ID,
-        SYNCED_THREAD_ID,
-        MESSAGE_CHANNEL_DATA_SEED_IDS.TIM,
-        'channel-filter-external-id',
-      ],
-    );
+    await createRecord('message', {
+      id: SYNCED_REPLY_MESSAGE_ID,
+      messageThreadId: SYNCED_THREAD_ID,
+      subject: 'Channel filter thread',
+      text: 'Channel filter reply',
+      receivedAt: new Date(Date.now() + 120_000).toISOString(),
+    });
+
+    for (const [associationId, messageId] of [
+      [SYNCED_ASSOCIATION_ID, SYNCED_MESSAGE_ID],
+      [SYNCED_REPLY_ASSOCIATION_ID, SYNCED_REPLY_MESSAGE_ID],
+    ]) {
+      await globalThis.testDataSource.query(
+        `INSERT INTO "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation"
+          (id, "messageId", "messageThreadId", "messageChannelId", "messageExternalId")
+          VALUES ($1, $2, $3, $4, $5)`,
+        [
+          associationId,
+          messageId,
+          SYNCED_THREAD_ID,
+          MESSAGE_CHANNEL_DATA_SEED_IDS.TIM,
+          `channel-filter-external-id-${messageId}`,
+        ],
+      );
+    }
   });
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
-      `DELETE FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation" WHERE id = $1`,
-      [SYNCED_ASSOCIATION_ID],
+      `DELETE FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation" WHERE id = ANY($1)`,
+      [[SYNCED_ASSOCIATION_ID, SYNCED_REPLY_ASSOCIATION_ID]],
     );
 
     for (const { objectMetadataSingularName, id } of FIXTURES) {
