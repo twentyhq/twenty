@@ -10,7 +10,7 @@ import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMe
 type SendPendingChatMessageArguments = {
   messageChannelId: string;
   messageThreadId: string;
-  pendingMessage: PendingChatMessage;
+  pendingMessage: Pick<PendingChatMessage, 'id' | 'files' | 'text'>;
 };
 
 export const useSendPendingChatMessage = () => {
