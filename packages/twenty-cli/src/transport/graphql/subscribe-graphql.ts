@@ -5,6 +5,7 @@ import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
 import { REQUEST_TIMEOUT_MILLISECONDS } from '@/transport/constants/request-timeout-milliseconds.constant';
 import { RESPONSE_BYTE_LIMIT } from '@/transport/constants/response-byte-limit.constant';
+import { createRequestHeaders } from '@/transport/create-request-headers';
 import {
   createRedirectError,
   toTransportError,
@@ -17,6 +18,7 @@ import { readEventStream } from '@/transport/graphql/read-event-stream';
 import { readGraphqlStreamError } from '@/transport/graphql/read-graphql-stream-error';
 import { readBoundedBody } from '@/transport/read-bounded-body';
 import { resolveRequestUrl } from '@/transport/resolve-request-url';
+import { sendWithProxyHeaderRenewal } from '@/transport/send-with-proxy-header-renewal';
 
 const invalidStream = (message: string) =>
   new CliError({ code: 'INVALID_RESPONSE', message });
@@ -53,25 +55,39 @@ export const subscribeGraphql = async ({
   );
 
   try {
-    const response = await fetchWithProxy(
-      url,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${target.bearerToken}`,
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
-        body: JSON.stringify({ query, variables }),
-        redirect: 'manual',
-        signal: requestSignal,
-      },
-      REQUEST_TIMEOUT_MILLISECONDS,
-    );
+    const response = await sendWithProxyHeaderRenewal({
+      proxyHeaders: target.proxyHeaders,
+      requestUrl: url,
+      canReplay: true,
+      signal: requestSignal,
+      send: (proxyHeaderValues) =>
+        fetchWithProxy(
+          url,
+          {
+            method: 'POST',
+            headers: createRequestHeaders({
+              initHeaders: {
+                'Content-Type': 'application/json',
+                Accept: 'text/event-stream',
+              },
+              bearerToken: target.bearerToken,
+              proxyHeaderValues,
+            }),
+            body: JSON.stringify({ query, variables }),
+            redirect: 'manual',
+            signal: requestSignal,
+          },
+          REQUEST_TIMEOUT_MILLISECONDS,
+        ),
+    });
 
     if (response.status >= 300 && response.status < 400) {
       await response.body?.cancel();
-      throw createRedirectError(response, url);
+      throw createRedirectError({
+        response,
+        url,
+        proxyHeaders: target.proxyHeaders,
+      });
     }
     if (
       response.headers

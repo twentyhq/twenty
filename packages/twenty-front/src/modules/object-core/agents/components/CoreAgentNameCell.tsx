@@ -11,7 +11,6 @@ const StyledContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow: hidden;
