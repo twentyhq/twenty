@@ -5,7 +5,7 @@ import { InboxThreadListGroup } from '@/inbox/components/InboxThreadListGroup';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
-import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { groupThreadsByDate } from '@/inbox/utils/groupThreadsByDate';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
 type InboxThreadListProps = {

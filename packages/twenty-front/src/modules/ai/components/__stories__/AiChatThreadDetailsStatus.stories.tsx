@@ -13,7 +13,7 @@ import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedCha
 import { inboxChannelsState } from '@/inbox/states/inboxChannelsState';
 import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
 import { setAiChatThreadPermissions } from '@/ai/testing/setAiChatThreadPermissions';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -48,7 +48,7 @@ const ACTIVITY_AT = '2020-01-01T00:00:00.000Z';
 const PERSONAL_STATUS_LABEL = 'Change status in Your inbox';
 const CHANNEL_STATUS_LABEL = 'Change status in Sales';
 
-const CHANNEL: AgentChatChannel = {
+const CHANNEL: InboxChannel = {
   id: CHANNEL_ID,
   name: 'Sales',
   icon: 'IconHash',

@@ -1,7 +1,7 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 
-export const inboxChannelsState = createAtomState<AgentChatChannel[] | null>({
+export const inboxChannelsState = createAtomState<InboxChannel[] | null>({
   key: 'inboxChannelsState',
   defaultValue: null,
 });

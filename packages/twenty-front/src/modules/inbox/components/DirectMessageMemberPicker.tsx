@@ -1,4 +1,4 @@
-import { type DirectMessageMember } from '@/ai/types/DirectMessageMember';
+import { type DirectMessageMember } from '@/inbox/types/DirectMessageMember';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';

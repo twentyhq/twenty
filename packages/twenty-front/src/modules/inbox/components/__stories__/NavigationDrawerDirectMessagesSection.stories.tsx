@@ -10,7 +10,7 @@ import { getAppPath } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { DirectMessagePresentationExample } from '@/ai/components/__stories__/DirectMessagePresentationExample';
-import { OpenDirectMessageButton } from '@/ai/components/OpenDirectMessageButton';
+import { OpenDirectMessageButton } from '@/inbox/components/OpenDirectMessageButton';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';

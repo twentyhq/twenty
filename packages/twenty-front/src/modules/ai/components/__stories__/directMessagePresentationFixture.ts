@@ -1,5 +1,5 @@
-import { type DirectMessageMember } from '@/ai/types/DirectMessageMember';
-import { type DirectMessageSidebarItem } from '@/ai/types/DirectMessageSidebarItem';
+import { type DirectMessageMember } from '@/inbox/types/DirectMessageMember';
+import { type DirectMessageSidebarItem } from '@/inbox/types/DirectMessageSidebarItem';
 
 export const DIRECT_MESSAGE_PRESENTATION_FIXTURE = {
   currentMember: {

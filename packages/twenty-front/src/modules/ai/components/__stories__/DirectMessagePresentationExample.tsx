@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconHash, IconMessage } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { DirectMessageMemberPicker } from '@/ai/components/DirectMessageMemberPicker';
+import { DirectMessageMemberPicker } from '@/inbox/components/DirectMessageMemberPicker';
 import { aiChatOnlineWorkspaceMemberIdsState } from '@/ai/states/aiChatOnlineWorkspaceMemberIdsState';
-import { NavigationDrawerDirectMessagesSection } from '@/ai/components/NavigationDrawerDirectMessagesSection';
+import { NavigationDrawerDirectMessagesSection } from '@/inbox/components/NavigationDrawerDirectMessagesSection';
 import { DIRECT_MESSAGE_PRESENTATION_FIXTURE } from '@/ai/components/__stories__/directMessagePresentationFixture';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';

@@ -1,13 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 
 export const getInboxThreadChannelIdOutsideInbox = ({
   threadChannelId,
   channels,
 }: {
   threadChannelId: string | null | undefined;
-  channels: AgentChatChannel[] | null;
+  channels: InboxChannel[] | null;
 }) => {
   if (!isDefined(threadChannelId)) {
     return null;

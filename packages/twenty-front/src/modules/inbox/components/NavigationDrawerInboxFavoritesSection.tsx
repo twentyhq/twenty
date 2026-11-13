@@ -8,13 +8,13 @@ import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemD
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { type InboxChannel } from '@/inbox/types/InboxChannel';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
-  channels: AgentChatChannel[];
+  channels: InboxChannel[];
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
   onThreadClick: (thread: InboxThreadListItemData) => void;
