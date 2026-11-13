@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -13,28 +12,16 @@ export type UsageLimitInstanceOverrideExpiryJobData = {
 
 @Processor(MessageQueue.billingQueue)
 export class UsageLimitInstanceOverrideExpiryJob {
-  constructor(
-    private readonly usageLimitService: UsageLimitService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
-  ) {}
+  constructor(private readonly usageLimitService: UsageLimitService) {}
 
   @Process(UsageLimitInstanceOverrideExpiryJob.name)
   async handle({
     workspaceId,
     usageLimitIds,
   }: UsageLimitInstanceOverrideExpiryJobData): Promise<void> {
-    for (const usageLimitId of usageLimitIds) {
-      try {
-        await this.usageLimitService.delete({
-          workspaceId,
-          usageLimitId,
-          isOperator: true,
-        });
-      } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
-        });
-      }
-    }
+    await this.usageLimitService.deleteInstanceOverrides({
+      workspaceId,
+      usageLimitIds,
+    });
   }
 }

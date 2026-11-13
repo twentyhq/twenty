@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
-import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type EntityManager } from 'typeorm';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DataSource, type EntityManager, In } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -326,6 +326,35 @@ export class UsageLimitService {
     await this.dropCounter(usageLimit);
 
     return true;
+  }
+
+  async deleteInstanceOverrides({
+    workspaceId,
+    usageLimitIds,
+  }: {
+    workspaceId: string;
+    usageLimitIds: string[];
+  }): Promise<void> {
+    const usageLimits = await this.usageLimitRepository.find(workspaceId, {
+      where: { id: In(usageLimitIds), isInstanceOverride: true },
+    });
+
+    if (!isNonEmptyArray(usageLimits)) {
+      return;
+    }
+
+    await this.usageLimitRepository.delete(workspaceId, {
+      id: In(usageLimits.map(({ id }) => id)),
+      isInstanceOverride: true,
+    });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'usageLimits',
+    ]);
+
+    await Promise.all(
+      usageLimits.map((usageLimit) => this.dropCounter(usageLimit)),
+    );
   }
 
   private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
