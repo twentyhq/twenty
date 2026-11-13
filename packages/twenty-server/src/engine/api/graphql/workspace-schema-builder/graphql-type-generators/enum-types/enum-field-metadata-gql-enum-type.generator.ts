@@ -10,8 +10,6 @@ import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { GqlTypesStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/gql-types.storage';
 import { computeEnumFieldGqlTypeKey } from 'src/engine/api/graphql/workspace-schema-builder/utils/compute-stored-gql-type-key-utils/compute-enum-field-gql-type-key.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
-import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
@@ -24,15 +22,10 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
 
   constructor(private readonly gqlTypesStorage: GqlTypesStorage) {}
 
-  public buildAndStore({
-    flatObjectMetadata,
-    fields,
-    flatFieldMetadataOptionMaps,
-  }: {
-    flatObjectMetadata: FlatObjectMetadata;
-    fields: FlatFieldMetadata[];
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-  }) {
+  public buildAndStore(
+    flatObjectMetadata: FlatObjectMetadata,
+    fields: FlatFieldMetadata[],
+  ) {
     for (const fieldMetadata of fields) {
       if (!isEnumFieldMetadataType(fieldMetadata.type)) {
         continue;
@@ -43,31 +36,19 @@ export class EnumFieldMetadataGqlEnumTypeGenerator {
           flatObjectMetadata.nameSingular,
           fieldMetadata.name,
         ),
-        this.generateEnum({
-          objectName: flatObjectMetadata.nameSingular,
-          fieldMetadata,
-          flatFieldMetadataOptionMaps,
-        }),
+        this.generateEnum(flatObjectMetadata.nameSingular, fieldMetadata),
       );
     }
   }
 
-  private generateEnum({
-    objectName,
-    fieldMetadata,
-    flatFieldMetadataOptionMaps,
-  }: {
-    objectName: string;
-    fieldMetadata: FlatFieldMetadata;
-    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-  }): GraphQLEnumType {
+  private generateEnum(
+    objectName: string,
+    fieldMetadata: FlatFieldMetadata,
+  ): GraphQLEnumType {
     // FixMe: It's a hack until Typescript get fixed on union types for reduce function
     // https://github.com/microsoft/TypeScript/issues/36390
     const enumOptions = transformEnumValue(
-      resolveFlatFieldMetadataOptions({
-        flatFieldMetadata: fieldMetadata,
-        flatFieldMetadataOptionMaps,
-      }) ?? undefined,
+      fieldMetadata.options ?? undefined,
     ) as
       | Array<FieldMetadataDefaultOption | FieldMetadataComplexOption>
       | undefined;

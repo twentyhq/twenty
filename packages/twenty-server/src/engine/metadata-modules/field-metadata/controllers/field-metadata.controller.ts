@@ -183,9 +183,7 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = fromFlatFieldMetadataToFieldMetadataDto({
-      flatFieldMetadataWithResolvedOptions: flatField,
-    });
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -223,9 +221,7 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = fromFlatFieldMetadataToFieldMetadataDto({
-      flatFieldMetadataWithResolvedOptions: flatField,
-    });
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -246,9 +242,7 @@ export class FieldMetadataController {
       workspaceId,
     });
 
-    const result = fromFlatFieldMetadataToFieldMetadataDto({
-      flatFieldMetadataWithResolvedOptions: flatField,
-    });
+    const result = fromFlatFieldMetadataToFieldMetadataDto(flatField);
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
