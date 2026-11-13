@@ -30,7 +30,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_INTERNAL_IMPORT_COLUMN_ENABLED]: {
     label: msg`Internal import setting column`,
-    description: msg`Read the internal import setting from its new workspace column. Turn on only after the 2.59 upgrade has completed and servers have restarted.`,
+    description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,

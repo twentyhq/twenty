@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { resolveIsInternalImportEnabled } from 'src/engine/core-modules/workspace/utils/resolve-is-internal-import-enabled.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -26,16 +28,22 @@ export class WorkspaceInternalImportService {
         workspaceId,
       );
 
-    // TODO(@neo773): read isInternalImportEnabled only once the flag is on everywhere
-    const propertyName = isInternalImportColumnEnabled
-      ? 'isInternalImportEnabled'
-      : 'isInternalMessagesImportEnabled';
-
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
-      select: ['id', propertyName],
+      select: [
+        'id',
+        'isInternalImportEnabled',
+        'isInternalMessagesImportEnabled',
+      ],
     });
 
-    return workspace?.[propertyName] ?? false;
+    if (!isDefined(workspace)) {
+      return false;
+    }
+
+    return resolveIsInternalImportEnabled({
+      workspace,
+      isInternalImportColumnEnabled,
+    });
   }
 }

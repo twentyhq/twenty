@@ -56,6 +56,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { getAuthBypassProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-bypass-providers-by-workspace.util';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { resolveIsInternalImportEnabled } from 'src/engine/core-modules/workspace/utils/resolve-is-internal-import-enabled.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -288,9 +289,10 @@ export class WorkspaceResolver {
         workspace.id,
       );
 
-    return isInternalImportColumnEnabled
-      ? workspace.isInternalImportEnabled
-      : workspace.isInternalMessagesImportEnabled;
+    return resolveIsInternalImportEnabled({
+      workspace,
+      isInternalImportColumnEnabled,
+    });
   }
 
   @ResolveField(() => AiDataPolicyDTO, { nullable: true })

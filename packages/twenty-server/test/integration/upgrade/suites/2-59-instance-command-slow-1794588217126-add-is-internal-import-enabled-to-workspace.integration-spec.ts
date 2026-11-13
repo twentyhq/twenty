@@ -1,13 +1,14 @@
 import { type QueryRunner } from 'typeorm';
 
 import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794588217126-add-is-internal-import-enabled-to-workspace';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 jest.useRealTimers();
 
 describe('2-59 slow instance command 1794588217126 - AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand (integration)', () => {
-  const command =
-    new AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand();
+  let command: AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand;
   let queryRunner: QueryRunner;
 
   const findInternalImportFlags = async (): Promise<{
@@ -25,6 +26,9 @@ describe('2-59 slow instance command 1794588217126 - AddIsInternalImportEnabledT
   };
 
   beforeEach(async () => {
+    command = new AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand(
+      getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService'),
+    );
     queryRunner =
       global.workflowTestServices.coreDataSource.createQueryRunner();
     await queryRunner.connect();
@@ -49,6 +53,22 @@ describe('2-59 slow instance command 1794588217126 - AddIsInternalImportEnabledT
       isInternalMessagesImportEnabled: true,
       isInternalImportEnabled: true,
     });
+  });
+
+  it('turns the internal import column feature flag on for existing workspaces', async () => {
+    await globalThis.testDataSource.query(
+      `UPDATE "core"."featureFlag" SET "value" = false WHERE "workspaceId" = $1 AND "key" = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+
+    await command.runDataMigration(globalThis.testDataSource);
+
+    const [featureFlag] = await globalThis.testDataSource.query(
+      `SELECT "value" FROM "core"."featureFlag" WHERE "workspaceId" = $1 AND "key" = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED'`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+
+    expect(featureFlag).toEqual({ value: true });
   });
 
   it('keeps the new column off for workspaces that never enabled internal import', async () => {
