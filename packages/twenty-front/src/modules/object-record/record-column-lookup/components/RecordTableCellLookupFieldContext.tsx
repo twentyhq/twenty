@@ -5,6 +5,9 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { RecordTableCellLookupRelatedRecordEffect } from '@/object-record/record-column-lookup/components/RecordTableCellLookupRelatedRecordEffect';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
@@ -90,35 +93,46 @@ export const RecordTableCellLookupFieldContext = ({
     lookupTargetFieldMetadataItem.name,
   );
 
+  // Opening the cell targets the related record's field, so its editor state must be keyed the same way
   return (
-    <FieldContext.Provider
+    <RecordFieldComponentInstanceContext.Provider
       value={{
-        fieldMetadataItemId: lookupTargetFieldMetadataItem.id,
-        recordId: relatedRecordId,
-        fieldDefinition,
-        useUpdateRecord: useUpdateOneObjectRecordMutation,
-        isLabelIdentifier: false,
-        displayedMaxRows: 1,
-        isRecordFieldReadOnly:
-          !isDefined(relatedRecord) ||
-          isRecordTableCellsNonEditable ||
-          isLookupTargetRestricted ||
-          isRecordFieldReadOnly({
-            isRecordReadOnly: false,
-            objectMetadataId: relationObjectMetadataItem.id,
-            fieldMetadataItem: lookupTargetFieldMetadataItem,
-            fieldDefinition,
-            objectPermissionsByObjectMetadataId,
-          }),
-        isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
+        instanceId: getRecordFieldInputInstanceId({
+          recordId: relatedRecordId,
+          fieldName: lookupTargetFieldMetadataItem.name,
+          prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        }),
       }}
     >
-      {isDefined(relatedRecord) && (
-        <RecordTableCellLookupRelatedRecordEffect
-          relatedRecord={relatedRecord}
-        />
-      )}
-      {children}
-    </FieldContext.Provider>
+      <FieldContext.Provider
+        value={{
+          fieldMetadataItemId: lookupTargetFieldMetadataItem.id,
+          recordId: relatedRecordId,
+          fieldDefinition,
+          useUpdateRecord: useUpdateOneObjectRecordMutation,
+          isLabelIdentifier: false,
+          displayedMaxRows: 1,
+          isRecordFieldReadOnly:
+            !isDefined(relatedRecord) ||
+            isRecordTableCellsNonEditable ||
+            isLookupTargetRestricted ||
+            isRecordFieldReadOnly({
+              isRecordReadOnly: false,
+              objectMetadataId: relationObjectMetadataItem.id,
+              fieldMetadataItem: lookupTargetFieldMetadataItem,
+              fieldDefinition,
+              objectPermissionsByObjectMetadataId,
+            }),
+          isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
+        }}
+      >
+        {isDefined(relatedRecord) && (
+          <RecordTableCellLookupRelatedRecordEffect
+            relatedRecord={relatedRecord}
+          />
+        )}
+        {children}
+      </FieldContext.Provider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };
