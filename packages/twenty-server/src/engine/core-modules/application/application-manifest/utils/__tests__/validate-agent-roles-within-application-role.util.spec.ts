@@ -1,12 +1,13 @@
-import { describe, expect, it } from 'vitest';
-
-import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
 import {
   type AgentManifest,
+  type RoleManifest,
+  normalizeLegacyCompliantRoleManifest,
   type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
+import { validateAgentRolesWithinApplicationRole } from 'src/engine/core-modules/application/application-manifest/utils/validate-agent-roles-within-application-role.util';
 
 const APPLICATION_ROLE_UNIVERSAL_IDENTIFIER = 'application-role';
 const AGENT_ROLE_UNIVERSAL_IDENTIFIER = 'agent-role';
@@ -15,11 +16,15 @@ const PERSON_UNIVERSAL_IDENTIFIER = STANDARD_OBJECTS.person.universalIdentifier;
 
 const buildRole = (
   overrides: Partial<LegacyCompliantRoleManifest> = {},
-): LegacyCompliantRoleManifest => ({
-  universalIdentifier: AGENT_ROLE_UNIVERSAL_IDENTIFIER,
-  label: 'Agent role',
-  ...overrides,
-});
+): RoleManifest =>
+  normalizeLegacyCompliantRoleManifest({
+    role: {
+      universalIdentifier: AGENT_ROLE_UNIVERSAL_IDENTIFIER,
+      label: 'Agent role',
+      ...overrides,
+    },
+    applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
+  });
 
 const applicationRole = buildRole({
   universalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
@@ -209,20 +214,6 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
-  it('reports an agent role that is not defined by the application', () => {
-    const errors = validateAgentRolesWithinApplicationRole({
-      agents: [buildAgent({ roleUniversalIdentifier: 'missing-role' })],
-      roles: [applicationRole],
-      objects: [],
-      permissionFlags: [],
-      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-    });
-
-    expect(errors).toEqual([
-      'Agent "assistant" references role "missing-role", which is not defined by this application.',
-    ]);
-  });
-
   it('accepts an external application role without a local definition', () => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [
@@ -238,25 +229,5 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     });
 
     expect(errors).toEqual([]);
-  });
-
-  it('still checks agent role references with an external application role', () => {
-    const errors = validateAgentRolesWithinApplicationRole({
-      agents: [
-        buildAgent(),
-        buildAgent({
-          name: 'lost-assistant',
-          roleUniversalIdentifier: 'missing-role',
-        }),
-      ],
-      roles: [buildRole({ canReadAllObjectRecords: true })],
-      objects: [],
-      permissionFlags: [],
-      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
-    });
-
-    expect(errors).toEqual([
-      'Agent "lost-assistant" references role "missing-role", which is not defined by this application.',
-    ]);
   });
 });

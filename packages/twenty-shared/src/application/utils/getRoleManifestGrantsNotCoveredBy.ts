@@ -1,10 +1,9 @@
 import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
 import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
-import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
-import {
-  getEffectiveObjectPermissionsFromRoleManifest,
-  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
-} from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { type RoleManifest } from '@/application/roleManifestType';
+import { ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { getRecordsPermissionsFromRoleManifest } from '@/application/utils/getRecordsPermissionsFromRoleManifest';
+import { getReachableObjectPermissionsFromRoleManifest } from '@/application/utils/getReachableObjectPermissionsFromRoleManifest';
 import { getRowLevelRestrictionSignature } from '@/application/utils/getRowLevelRestrictionSignature';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
@@ -29,13 +28,16 @@ const getRoleLevelGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: LegacyCompliantRoleManifest;
-  superset: LegacyCompliantRoleManifest;
+  role: RoleManifest;
+  superset: RoleManifest;
 }): RoleManifestGrant[] => [
   ...OBJECT_PERMISSION_ACTIONS.filter((action) => {
     const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
 
-    return role[roleLevelFlag] && !superset[roleLevelFlag];
+    return (
+      getRecordsPermissionsFromRoleManifest({ role })[roleLevelFlag] &&
+      !getRecordsPermissionsFromRoleManifest({ role: superset })[roleLevelFlag]
+    );
   }).map<RoleManifestGrant>((action) => ({
     type: 'ALL_OBJECT_RECORDS',
     action,
@@ -53,8 +55,8 @@ const getPermissionFlagGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: LegacyCompliantRoleManifest;
-  superset: LegacyCompliantRoleManifest;
+  role: RoleManifest;
+  superset: RoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => {
   const toolFlagUniversalIdentifiers = new Set([
@@ -88,28 +90,33 @@ const getObjectGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: LegacyCompliantRoleManifest;
-  superset: LegacyCompliantRoleManifest;
+  role: RoleManifest;
+  superset: RoleManifest;
 }): RoleManifestGrant[] => {
+  const roleRecordsPermissions = getRecordsPermissionsFromRoleManifest({
+    role,
+  });
+  const supersetRecordsPermissions = getRecordsPermissionsFromRoleManifest({
+    role: superset,
+  });
   const objectUniversalIdentifiers = new Set([
     ...[
-      ...(role.objectPermissions ?? []),
-      ...(superset.objectPermissions ?? []),
+      ...roleRecordsPermissions.objectPermissions,
+      ...supersetRecordsPermissions.objectPermissions,
+      ...roleRecordsPermissions.rowLevelPermissionRules,
+      ...supersetRecordsPermissions.rowLevelPermissionRules,
     ].map((permission) => permission.objectUniversalIdentifier),
-    ...(superset.rowLevelPermissionPredicates ?? []).map(
-      (predicate) => predicate.objectUniversalIdentifier,
-    ),
   ]);
 
   return [...objectUniversalIdentifiers].flatMap(
     (objectUniversalIdentifier): RoleManifestGrant[] => {
       const roleEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role,
           objectUniversalIdentifier,
         });
       const supersetEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role: superset,
           objectUniversalIdentifier,
         });
@@ -155,19 +162,23 @@ const getFieldGrantsNotCoveredBy = ({
   role,
   superset,
 }: {
-  role: LegacyCompliantRoleManifest;
-  superset: LegacyCompliantRoleManifest;
+  role: RoleManifest;
+  superset: RoleManifest;
 }): RoleManifestGrant[] =>
-  (superset.fieldPermissions ?? []).flatMap(
+  getRecordsPermissionsFromRoleManifest({
+    role: superset,
+  }).fieldPermissions.flatMap(
     (supersetFieldPermission): RoleManifestGrant[] => {
       const { objectUniversalIdentifier, fieldUniversalIdentifier } =
         supersetFieldPermission;
       const roleEffectivePermissions =
-        getEffectiveObjectPermissionsFromRoleManifest({
+        getReachableObjectPermissionsFromRoleManifest({
           role,
           objectUniversalIdentifier,
         });
-      const roleFieldPermission = role.fieldPermissions?.find(
+      const roleFieldPermission = getRecordsPermissionsFromRoleManifest({
+        role,
+      }).fieldPermissions.find(
         (permission) =>
           permission.objectUniversalIdentifier === objectUniversalIdentifier &&
           permission.fieldUniversalIdentifier === fieldUniversalIdentifier,
@@ -212,8 +223,8 @@ export const getRoleManifestGrantsNotCoveredBy = ({
   superset,
   toolPermissionFlagUniversalIdentifiers,
 }: {
-  role: LegacyCompliantRoleManifest;
-  superset: LegacyCompliantRoleManifest;
+  role: RoleManifest;
+  superset: RoleManifest;
   toolPermissionFlagUniversalIdentifiers: string[];
 }): RoleManifestGrant[] => [
   ...getRoleLevelGrantsNotCoveredBy({ role, superset }),

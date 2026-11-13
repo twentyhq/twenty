@@ -1,4 +1,8 @@
-import { type LegacyCompliantRoleManifest } from '@/application/roleManifestType';
+import {
+  type RoleManifest,
+  type LegacyCompliantRoleManifest,
+} from '@/application/roleManifestType';
+import { normalizeLegacyCompliantRoleManifest } from '@/application/utils/normalizeLegacyCompliantRoleManifest';
 import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
 import { SystemPermissionFlag } from '@/constants';
 import {
@@ -12,11 +16,11 @@ const EMAIL_FIELD = 'field-email';
 
 const buildRole = (
   overrides: Partial<LegacyCompliantRoleManifest> = {},
-): LegacyCompliantRoleManifest => ({
-  universalIdentifier: 'role',
-  label: 'Role',
-  ...overrides,
-});
+): RoleManifest =>
+  normalizeLegacyCompliantRoleManifest({
+    role: { universalIdentifier: 'role', label: 'Role', ...overrides },
+    applicationUniversalIdentifier: '7a3b1c9e-5d2f-4e8a-9b6c-1f0e2d3c4b5a',
+  });
 
 describe('getRoleManifestGrantsNotCoveredBy', () => {
   it('returns nothing when the superset covers the role', () => {
@@ -347,6 +351,85 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
           toolPermissionFlagUniversalIdentifiers: [],
         }),
       ).toEqual([]);
+    });
+
+    it('treats a declared rule and the deprecated form with the same predicates as the same access', () => {
+      const restrictedRole = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+      const role = buildRole({
+        universalIdentifier: 'role',
+        recordsPermissions: {
+          objects: [
+            {
+              objectUniversalIdentifier: PERSON,
+              rowLevelRecordsPermissions: [
+                {
+                  universalIdentifier: 'role-rule',
+                  canReadRecords: true,
+                  predicateGroups: restrictedRole.recordsPermissions.objects
+                    .flatMap(
+                      (object) => object.rowLevelRecordsPermissions ?? [],
+                    )
+                    .flatMap((rule) => rule.predicateGroups ?? []),
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      for (const roles of [
+        { role, superset },
+        { role: superset, superset: role },
+      ]) {
+        expect(
+          getRoleManifestGrantsNotCoveredBy({
+            ...roles,
+            toolPermissionFlagUniversalIdentifiers: [],
+          }),
+        ).toEqual([]);
+      }
+    });
+
+    it('reports an operation a role only grants through a rule', () => {
+      const role = buildRole({
+        recordsPermissions: {
+          objects: [
+            {
+              objectUniversalIdentifier: PERSON,
+              rowLevelRecordsPermissions: [
+                {
+                  universalIdentifier: 'role-rule',
+                  canReadRecords: true,
+                  predicates: [
+                    {
+                      universalIdentifier: 'role-predicate',
+                      fieldUniversalIdentifier: EMAIL_FIELD,
+                      operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset: buildRole(),
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([
+        {
+          type: 'OBJECT_RECORDS',
+          objectUniversalIdentifier: PERSON,
+          action: 'canReadObjectRecords',
+        },
+      ]);
     });
   });
 });

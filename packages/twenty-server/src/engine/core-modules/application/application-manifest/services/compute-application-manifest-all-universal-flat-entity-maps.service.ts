@@ -5,6 +5,7 @@ import {
   type Manifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type RoleManifest,
   normalizePageLayoutTabManifest,
   getDeclaredLegacyRoleRecordsPermissionsKeys,
   normalizeLegacyCompliantRoleManifest,
@@ -12,7 +13,7 @@ import {
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
@@ -46,6 +47,7 @@ import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
+import { validateAgentRolesWithinApplicationRole } from 'src/engine/core-modules/application/application-manifest/utils/validate-agent-roles-within-application-role.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -369,6 +371,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         .byUniversalIdentifier,
     };
 
+    const roleManifests: RoleManifest[] = [];
+
     for (const role of manifest.roles) {
       // A predicate that has no rule yet is still exported in the legacy properties
       const conflictingLegacyKeys = getDeclaredLegacyRoleRecordsPermissionsKeys(
@@ -394,6 +398,8 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         applicationUniversalIdentifier,
         objectDefaultsByUniversalIdentifier,
       });
+
+      roleManifests.push(roleManifest);
       const universalFlatRole = fromRoleManifestToUniversalFlatRole({
         roleManifest,
         applicationUniversalIdentifier,
@@ -472,6 +478,22 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
             allUniversalFlatEntityMaps.flatRowLevelPermissionPredicateMaps,
         });
       }
+    }
+
+    const agentRoleErrors = validateAgentRolesWithinApplicationRole({
+      agents: manifest.agents ?? [],
+      roles: roleManifests,
+      objects: manifest.objects,
+      permissionFlags: manifest.permissionFlags ?? [],
+      defaultRoleUniversalIdentifier:
+        manifest.application.defaultRoleUniversalIdentifier,
+    });
+
+    if (isNonEmptyArray(agentRoleErrors)) {
+      throw new ApplicationException(
+        agentRoleErrors.join(' '),
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
     }
 
     for (const skillManifest of manifest.skills ?? []) {

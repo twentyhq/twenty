@@ -12,8 +12,6 @@ import { addMissingFieldOptionIds } from '@/app/manifest/utils/add-missing-field
 import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-config-to-role-manifest';
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
-import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
-import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
@@ -695,22 +693,6 @@ export const buildManifest = async (
       fields,
     }),
   );
-
-  if (
-    isDefined(applicationConfig) &&
-    isDefined(resolvedDefaultRoleUniversalIdentifier)
-  ) {
-    errors.push(
-      ...validateAgentRolesWithinApplicationRole({
-        agents,
-        roles,
-        objects,
-        permissionFlags,
-        defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
-        systemPermissionFlag: resolveAppSystemPermissionFlag(appPath),
-      }),
-    );
-  }
 
   const application: ApplicationManifest | undefined =
     applicationConfig && resolvedDefaultRoleUniversalIdentifier

@@ -3,7 +3,7 @@ import {
   getRoleManifestGrantsNotCoveredBy,
   type ObjectManifest,
   type PermissionFlagManifest,
-  type LegacyCompliantRoleManifest,
+  type RoleManifest,
   type RoleManifestGrant,
 } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
@@ -132,25 +132,6 @@ const groupAgentNamesByRoleUniversalIdentifier = ({
   return agentNamesByRoleUniversalIdentifier;
 };
 
-const validateAgentRolesAreDefined = ({
-  agentNamesByRoleUniversalIdentifier,
-  roles,
-}: {
-  agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
-  roles: LegacyCompliantRoleManifest[];
-}): string[] =>
-  [...agentNamesByRoleUniversalIdentifier]
-    .filter(
-      ([roleUniversalIdentifier]) =>
-        !roles.some(
-          (role) => role.universalIdentifier === roleUniversalIdentifier,
-        ),
-    )
-    .map(
-      ([roleUniversalIdentifier, agentNames]) =>
-        `Agent ${describeAgentList(agentNames)} references role "${roleUniversalIdentifier}", which is not defined by this application.`,
-    );
-
 const validateAgentRolesAreCoveredByApplicationRole = ({
   agentNamesByRoleUniversalIdentifier,
   applicationRole,
@@ -160,8 +141,8 @@ const validateAgentRolesAreCoveredByApplicationRole = ({
   systemPermissionFlagNameByUniversalIdentifier,
 }: {
   agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
-  applicationRole: LegacyCompliantRoleManifest;
-  roles: LegacyCompliantRoleManifest[];
+  applicationRole: RoleManifest;
+  roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
   systemPermissionFlagNameByUniversalIdentifier: Map<string, string>;
@@ -217,7 +198,7 @@ export const validateAgentRolesWithinApplicationRole = ({
   systemPermissionFlag = SystemPermissionFlag,
 }: {
   agents: AgentManifest[];
-  roles: LegacyCompliantRoleManifest[];
+  roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
   defaultRoleUniversalIdentifier: string;
@@ -232,23 +213,18 @@ export const validateAgentRolesWithinApplicationRole = ({
       defaultRoleUniversalIdentifier,
     });
 
-  return [
-    ...validateAgentRolesAreDefined({
-      agentNamesByRoleUniversalIdentifier,
-      roles,
-    }),
-    ...(isDefined(applicationRole)
-      ? validateAgentRolesAreCoveredByApplicationRole({
-          agentNamesByRoleUniversalIdentifier,
-          applicationRole,
-          roles,
-          objects,
-          permissionFlags,
-          systemPermissionFlagNameByUniversalIdentifier:
-            buildSystemPermissionFlagNameByUniversalIdentifier(
-              systemPermissionFlag,
-            ),
-        })
-      : []),
-  ];
+  // A partial sync or an external default role leaves nothing to compare against
+  return isDefined(applicationRole)
+    ? validateAgentRolesAreCoveredByApplicationRole({
+        agentNamesByRoleUniversalIdentifier,
+        applicationRole,
+        roles,
+        objects,
+        permissionFlags,
+        systemPermissionFlagNameByUniversalIdentifier:
+          buildSystemPermissionFlagNameByUniversalIdentifier(
+            systemPermissionFlag,
+          ),
+      })
+    : [];
 };

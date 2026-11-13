@@ -1,8 +1,9 @@
 import {
-  type LegacyCompliantRoleManifest,
+  type RoleManifest,
   type LegacyRowLevelPermissionPredicateGroupManifest,
 } from '@/application/roleManifestType';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
+import { getRowLevelPermissionPredicatesFromRoleManifest } from '@/application/utils/getRowLevelPermissionPredicatesFromRoleManifest';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const stringifyWithSortedKeys = (value: unknown): string =>
@@ -56,17 +57,16 @@ export const getRowLevelRestrictionSignature = ({
   role,
   objectUniversalIdentifier,
 }: {
-  role: LegacyCompliantRoleManifest;
+  role: RoleManifest;
   objectUniversalIdentifier: string;
 }): string[] => {
+  const { predicateGroups, predicates } =
+    getRowLevelPermissionPredicatesFromRoleManifest({ role });
   const groupsByUniversalIdentifier = new Map(
-    (role.rowLevelPermissionPredicateGroups ?? []).map((group) => [
-      group.universalIdentifier,
-      group,
-    ]),
+    predicateGroups.map((group) => [group.universalIdentifier, group]),
   );
 
-  return (role.rowLevelPermissionPredicates ?? [])
+  return predicates
     .filter(
       (predicate) =>
         predicate.objectUniversalIdentifier === objectUniversalIdentifier,
