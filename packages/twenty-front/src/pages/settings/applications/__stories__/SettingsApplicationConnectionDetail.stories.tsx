@@ -123,6 +123,9 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           }),
         ),
+        graphql.query('MyMessageChannels', () =>
+          HttpResponse.json({ data: { myMessageChannels: [] } }),
+        ),
         ...graphqlMocks.handlers,
       ],
     },
