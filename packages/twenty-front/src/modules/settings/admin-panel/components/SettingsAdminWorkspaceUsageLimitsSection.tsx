@@ -11,6 +11,9 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type ThemeColor } from 'twenty-ui/theme';
 
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceUsageLimitModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
@@ -25,8 +28,8 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkspaceUsageLimitsQuery } from '~/generated-admin/graphql';
-import { beautifyExactDate } from '~/utils/date-utils';
 
 type SettingsAdminWorkspaceUsageLimitsSectionProps = {
   workspaceId: string;
@@ -48,6 +51,8 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
 }: SettingsAdminWorkspaceUsageLimitsSectionProps) => {
   const { t } = useLingui();
   const { formatLimitValue } = useUsageLimitFormatter();
+  const { timeZone, dateFormat } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
 
@@ -134,7 +139,12 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
               <>
                 {item.isOverridden &&
                   (isDefined(item.endsAt)
-                    ? beautifyExactDate(item.endsAt)
+                    ? formatDateISOStringToDate({
+                        date: item.endsAt,
+                        timeZone,
+                        dateFormat,
+                        localeCatalog,
+                      })
                     : t`Never`)}
               </>
             ),
