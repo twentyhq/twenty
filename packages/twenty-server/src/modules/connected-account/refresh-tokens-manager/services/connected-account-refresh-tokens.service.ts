@@ -75,7 +75,7 @@ export class ConnectedAccountRefreshTokensService {
     return this.refreshAndSaveTokens(connectedAccount, workspaceId);
   }
 
-  // Refresh tokens rotate: a refresh that lost the race reuses the winner's tokens instead of burning the consumed one.
+  // Refresh tokens rotate: a refresh that lost the race reuses the winner's tokens, while valid, instead of burning the consumed one.
   async refreshAndSaveTokens(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
@@ -95,9 +95,13 @@ export class ConnectedAccountRefreshTokensService {
           );
         }
 
-        if (
+        const hasAnotherRefreshLanded =
           latestConnectedAccount.lastCredentialsRefreshedAt?.getTime() !==
-          connectedAccount.lastCredentialsRefreshedAt?.getTime()
+          connectedAccount.lastCredentialsRefreshedAt?.getTime();
+
+        if (
+          hasAnotherRefreshLanded &&
+          (await this.isAccessTokenStillValid(latestConnectedAccount))
         ) {
           return this.getExistingEncryptedTokens(
             latestConnectedAccount,

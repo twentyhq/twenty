@@ -16,6 +16,7 @@ import {
   McpServerExceptionCode,
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { type McpServerTarget } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-target.type';
+import { buildMcpServerSignInRequiredException } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-required-exception.util';
 import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 type ConnectedAccountLookup = Pick<
@@ -77,19 +78,14 @@ export class McpServerConnectedAccountService {
   async findConnectedAccountOrThrowIfSignInRequired(
     target: ConnectedAccountLookup,
   ): Promise<ConnectedAccountEntity | null> {
-    const { connectionProviderId, workspaceId } = target;
-
-    if (!isDefined(connectionProviderId)) {
+    if (!isDefined(target.connectionProviderId)) {
       return null;
     }
 
     const connectedAccount = await this.findUsableConnectedAccount(target);
 
     if (!isDefined(connectedAccount)) {
-      throw new McpServerException(
-        `No connected account usable by the caller for provider ${connectionProviderId} in workspace ${workspaceId}`,
-        McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-      );
+      throw buildMcpServerSignInRequiredException();
     }
 
     return connectedAccount;
@@ -167,9 +163,16 @@ export class McpServerConnectedAccountService {
     connectedAccount: ConnectedAccountEntity;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity> {
-    return this.connectedAccountRepository.findOneByOrFail({
-      id: connectedAccount.id,
-      workspaceId,
-    });
+    const latestConnectedAccount =
+      await this.connectedAccountRepository.findOneBy({
+        id: connectedAccount.id,
+        workspaceId,
+      });
+
+    if (!isDefined(latestConnectedAccount)) {
+      throw buildMcpServerSignInRequiredException();
+    }
+
+    return latestConnectedAccount;
   }
 }

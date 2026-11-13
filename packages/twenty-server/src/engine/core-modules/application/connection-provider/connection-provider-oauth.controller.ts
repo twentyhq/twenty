@@ -28,6 +28,7 @@ import {
 import { buildOAuthDiscoveryClientMetadataUrl } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata-url.util';
 import { buildOAuthDiscoveryClientMetadata } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/build-oauth-discovery-client-metadata.util';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -51,6 +52,7 @@ export class ConnectionProviderOAuthController {
     private readonly userSessionCookieService: UserSessionCookieService,
     private readonly userSessionService: UserSessionService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -67,7 +69,7 @@ export class ConnectionProviderOAuthController {
       client_id: buildOAuthDiscoveryClientMetadataUrl(serverUrl),
       ...buildOAuthDiscoveryClientMetadata({
         serverUrl,
-        frontendUrl: this.twentyConfigService.get('FRONTEND_URL'),
+        frontendUrl: this.domainServerConfigService.getFrontUrl().toString(),
       }),
     });
   }

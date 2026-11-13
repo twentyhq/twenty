@@ -23,6 +23,7 @@ import { McpServerMigrationService } from 'src/engine/metadata-modules/mcp-serve
 import { McpServerSignInService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-sign-in.service';
 import { McpServerToolSyncService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-tool-sync.service';
 import { findMcpServerSignInFlatConnectionProvider } from 'src/engine/metadata-modules/mcp-server/utils/find-mcp-server-sign-in-flat-connection-provider.util';
+import { validateMcpServerSignInInputOrThrow } from 'src/engine/metadata-modules/mcp-server/utils/validate-mcp-server-sign-in-input-or-throw.util';
 
 @Injectable()
 export class McpServerService {
@@ -69,6 +70,8 @@ export class McpServerService {
     workspaceId: string,
     userWorkspaceId?: string,
   ): Promise<McpServerDTO> {
+    validateMcpServerSignInInputOrThrow(input);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -140,6 +143,8 @@ export class McpServerService {
         ['name', 'label', 'url'],
       );
     const { connectionProviderId, isActive, signInScope } = input.update;
+
+    validateMcpServerSignInInputOrThrow({ connectionProviderId, signInScope });
 
     const { flatMcpServerMaps, flatConnectionProviderMaps } =
       await this.mcpServerMigrationService.getFlatMaps(workspaceId);

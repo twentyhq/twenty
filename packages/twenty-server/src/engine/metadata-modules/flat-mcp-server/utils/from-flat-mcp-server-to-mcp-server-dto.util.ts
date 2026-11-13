@@ -3,9 +3,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
 import { type McpServerDTO } from 'src/engine/metadata-modules/mcp-server/dtos/mcp-server.dto';
 
+// The sign-in scope lives on the connection provider, which the flat server does not carry
 export const fromFlatMcpServerToMcpServerDto = (
   flatMcpServer: FlatMcpServer,
-  // The sign-in scope lives on the connection provider, which this flat entity does not carry
 ): Omit<McpServerDTO, 'signInScope'> => ({
   id: flatMcpServer.id,
   name: flatMcpServer.name,

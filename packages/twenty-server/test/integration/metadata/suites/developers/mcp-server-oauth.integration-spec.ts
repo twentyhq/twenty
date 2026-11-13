@@ -196,10 +196,23 @@ describe('MCP server sign-in through an oauth-discovery connection provider (e2e
 
     expect(response.body.data.syncMcpServerTools).toMatchObject({
       tools: [],
-      toolsSyncError: expect.stringContaining(
-        `No connected account usable by the caller for provider ${getConnectionProviderId()}`,
-      ),
+      toolsSyncError:
+        'This MCP server requires signing in. Connect an account to use it.',
     });
+  });
+
+  it('rejects a sign-in scope next to an explicit connection provider', async () => {
+    const response = await createMcpServer({
+      name: `conflict_${uuidv4().slice(0, 8)}`,
+      label: 'Conflicting sign-in input',
+      url: fakeMcpServer.url,
+      connectionProviderId: getConnectionProviderId(),
+      signInScope: 'WORKSPACE',
+    });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      'INVALID_MCP_SERVER_INPUT',
+    );
   });
 
   it('registers Twenty dynamically and sends the user to the authorization server', async () => {

@@ -21,6 +21,7 @@ import {
 } from 'src/engine/metadata-modules/mcp-server/mcp-server.exception';
 import { McpServerConnectedAccountService } from 'src/engine/metadata-modules/mcp-server/services/mcp-server-connected-account.service';
 import { type McpServerTarget } from 'src/engine/metadata-modules/mcp-server/types/mcp-server-target.type';
+import { buildMcpServerSignInRequiredException } from 'src/engine/metadata-modules/mcp-server/utils/build-mcp-server-sign-in-required-exception.util';
 
 const MCP_CLIENT_INFO = { name: 'twenty', version: '1.0.0' };
 const LIST_TOOLS_TIMEOUT_MS = 20_000;
@@ -30,13 +31,6 @@ const SIGN_IN_PROBE_TIMEOUT_MS = 5_000;
 
 const isUnauthorizedError = (error: unknown): boolean =>
   error instanceof StreamableHTTPError && error.code === 401;
-
-// Lands in toolsSyncError, which settings show as is.
-const buildSignInRequiredException = (): McpServerException =>
-  new McpServerException(
-    'This MCP server requires signing in. Connect an account to use it.',
-    McpServerExceptionCode.MCP_SERVER_NOT_CONNECTED,
-  );
 
 @Injectable()
 export class McpServerClientService {
@@ -120,7 +114,7 @@ export class McpServerClientService {
       }
 
       if (!isDefined(connectedAccount)) {
-        throw buildSignInRequiredException();
+        throw buildMcpServerSignInRequiredException();
       }
     }
 
@@ -155,7 +149,7 @@ export class McpServerClientService {
         },
       );
 
-      throw buildSignInRequiredException();
+      throw buildMcpServerSignInRequiredException();
     }
   }
 
