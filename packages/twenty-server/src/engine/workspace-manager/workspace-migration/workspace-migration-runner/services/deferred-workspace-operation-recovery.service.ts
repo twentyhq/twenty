@@ -4,11 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { LessThan, MoreThanOrEqual } from 'typeorm';
 
 import { DeferredWorkspaceOperationEntity } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.entity';
-import { DeferredWorkspaceOperationQueueService } from 'src/engine/metadata-modules/deferred-workspace-operation/services/deferred-workspace-operation-queue.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { DEFERRED_WORKSPACE_OPERATION_MAX_ATTEMPTS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-operation-max-attempts.constant';
 import { DEFERRED_WORKSPACE_OPERATION_STALE_THRESHOLD_MS } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/deferred-workspace-operation-stale-threshold-ms.constant';
+import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class DeferredWorkspaceOperationRecoveryService {
   constructor(
     @InjectWorkspaceScopedRepository(DeferredWorkspaceOperationEntity)
     private readonly deferredWorkspaceOperationRepository: WorkspaceScopedRepository<DeferredWorkspaceOperationEntity>,
-    private readonly deferredWorkspaceOperationQueueService: DeferredWorkspaceOperationQueueService,
+    private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
   ) {}
 
   async resetStaleInProgressOperations(): Promise<number> {
@@ -53,7 +53,7 @@ export class DeferredWorkspaceOperationRecoveryService {
     const workspaceIds = await this.findWorkspaceIdsByStatus('PENDING');
 
     for (const workspaceId of workspaceIds) {
-      await this.deferredWorkspaceOperationQueueService.enqueue(workspaceId);
+      await this.deferredWorkspaceOperationRunnerService.enqueue(workspaceId);
     }
 
     return workspaceIds.length;
@@ -76,7 +76,7 @@ export class DeferredWorkspaceOperationRecoveryService {
 
       if ((affected ?? 0) > 0) {
         retriedOperationCount += affected ?? 0;
-        await this.deferredWorkspaceOperationQueueService.enqueue(
+        await this.deferredWorkspaceOperationRunnerService.enqueue(
           workspaceIdToRetry,
         );
       }

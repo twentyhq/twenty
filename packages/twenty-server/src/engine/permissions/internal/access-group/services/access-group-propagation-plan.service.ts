@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { DeferredWorkspaceOperationQueueService } from 'src/engine/metadata-modules/deferred-workspace-operation/services/deferred-workspace-operation-queue.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { type AccessGroupPropagationProgress } from 'src/engine/permissions/internal/access-group/types/access-group-propagation-progress.type';
@@ -13,6 +12,7 @@ import { areRecordAccessGroupComputesAlreadyPlanned } from 'src/engine/permissio
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 import { RecordAccessGroupRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-access-group.repository';
+import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
@@ -21,7 +21,7 @@ const COMPUTE_OPERATION_NAME = 'compute_recordAccessGroupIds';
 export class AccessGroupPropagationPlanService {
   constructor(
     private readonly cacheLockService: CacheLockService,
-    private readonly deferredWorkspaceOperationQueueService: DeferredWorkspaceOperationQueueService,
+    private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly recordAccessGroupRepository: RecordAccessGroupRepository,
   ) {}
@@ -63,7 +63,7 @@ export class AccessGroupPropagationPlanService {
 
     await this.cacheLockService.withLock(async () => {
       const waitingComputePayloads =
-        await this.deferredWorkspaceOperationQueueService.findOperationPayloads(
+        await this.deferredWorkspaceOperationRunnerService.findOperationPayloads(
           {
             workspaceId,
             name: COMPUTE_OPERATION_NAME,
@@ -82,7 +82,7 @@ export class AccessGroupPropagationPlanService {
         return;
       }
 
-      await this.deferredWorkspaceOperationQueueService.persistAndEnqueue({
+      await this.deferredWorkspaceOperationRunnerService.persistAndEnqueue({
         workspaceId,
         applicationUniversalIdentifier:
           TWENTY_STANDARD_APPLICATION.universalIdentifier,
@@ -108,7 +108,7 @@ export class AccessGroupPropagationPlanService {
     workspaceId: string;
     recordCount: number;
   }): Promise<void> {
-    await this.deferredWorkspaceOperationQueueService.updateInProgressOperationPayload(
+    await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
       {
         workspaceId,
         name: COMPUTE_OPERATION_NAME,
@@ -121,7 +121,7 @@ export class AccessGroupPropagationPlanService {
   }
 
   async resetComputedRecordCount(workspaceId: string): Promise<void> {
-    await this.deferredWorkspaceOperationQueueService.updateInProgressOperationPayload(
+    await this.deferredWorkspaceOperationRunnerService.updateInProgressOperationPayload(
       {
         workspaceId,
         name: COMPUTE_OPERATION_NAME,
@@ -134,7 +134,7 @@ export class AccessGroupPropagationPlanService {
     workspaceId: string,
   ): Promise<AccessGroupPropagationProgress> {
     const computePayloads =
-      await this.deferredWorkspaceOperationQueueService.findOperationPayloads({
+      await this.deferredWorkspaceOperationRunnerService.findOperationPayloads({
         workspaceId,
         name: COMPUTE_OPERATION_NAME,
         statuses: ['PENDING', 'IN_PROGRESS'],

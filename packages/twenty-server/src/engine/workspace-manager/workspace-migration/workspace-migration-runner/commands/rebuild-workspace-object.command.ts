@@ -7,7 +7,6 @@ import {
 } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { DeferredWorkspaceOperationQueueService } from 'src/engine/metadata-modules/deferred-workspace-operation/services/deferred-workspace-operation-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
@@ -37,7 +36,6 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
     private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
-    private readonly deferredWorkspaceOperationQueueService: DeferredWorkspaceOperationQueueService,
   ) {
     super(workspaceIteratorService);
   }
@@ -167,7 +165,7 @@ export class RebuildWorkspaceObjectCommand extends ProvisionedWorkspaceCommandRu
       }
 
       if (scheduledRebuildCount > 0) {
-        await this.deferredWorkspaceOperationQueueService.enqueue(workspaceId);
+        await this.deferredWorkspaceOperationRunnerService.enqueue(workspaceId);
       }
     } finally {
       await queryRunner.release();

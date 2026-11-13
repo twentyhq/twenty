@@ -4,7 +4,6 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { RecomputeRelatedRecordPathTargetsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-related-record-path-targets.job';
 import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
-import { DeferredWorkspaceOperationModule } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.module';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
 import { AccessGroupSyncListener } from 'src/engine/permissions/internal/access-group/listeners/access-group-sync.listener';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
@@ -16,14 +15,15 @@ import { AccessGroupSyncService } from 'src/engine/permissions/internal/access-g
 import { RelatedRecordPathReadModule } from 'src/engine/permissions/internal/related-record-path/related-record-path-read.module';
 import { RecordPermissionRepositoryModule } from 'src/engine/permissions/internal/record-permission-repository/record-permission-repository.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
   imports: [
     CacheLockModule,
-    DeferredWorkspaceOperationModule,
     RecordPermissionRepositoryModule,
     RelatedRecordPathReadModule,
     WorkspaceCacheModule,
+    WorkspaceMigrationRunnerModule,
   ],
   providers: [
     AccessGroupPropagationPlanService,
