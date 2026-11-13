@@ -48,10 +48,7 @@ export const useCustomResolver = <
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const [page, setPage] = useState({
-    pageNumber: 1,
-    hasNextPage: true,
-  });
+  const [hasNextPage, setHasNextPage] = useState(true);
 
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
@@ -72,21 +69,20 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
+  const loadedRecordsCount = data?.[queryName]?.[objectName]?.length ?? 0;
+
   const fetchMoreRecords = async () => {
-    if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
+    if (hasNextPage && !isFetchingMore && !loading) {
       setIsFetchingMore(true);
 
       await fetchMore({
         variables: {
           ...queryVariables,
-          page: page.pageNumber + 1,
+          page: Math.floor(loadedRecordsCount / pageSize) + 1,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
-            setPage((page) => ({
-              ...page,
-              hasNextPage: false,
-            }));
+            setHasNextPage(false);
 
             return {
               [queryName]: {
@@ -107,11 +103,6 @@ export const useCustomResolver = <
           };
         },
       });
-
-      setPage((page) => ({
-        ...page,
-        pageNumber: page.pageNumber + 1,
-      }));
 
       setIsFetchingMore(false);
     }

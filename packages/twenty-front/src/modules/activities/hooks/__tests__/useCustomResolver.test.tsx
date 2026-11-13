@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 
 import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
@@ -52,5 +52,66 @@ describe('useCustomResolver', () => {
         },
       }),
     );
+  });
+
+  const renderTimelineResolver = () =>
+    renderHook(() =>
+      useCustomResolver({
+        query: getTimelineThreadsFromObjectRecord,
+        queryName: 'getTimelineThreadsFromObjectRecord',
+        objectName: 'timelineThreads',
+        activityTargetableObject: {
+          id: 'record-id',
+          targetObjectNameSingular: 'company',
+        },
+        pageSize: 2,
+      }),
+    );
+
+  const mockLoadedThreads = ({
+    count,
+    loading,
+  }: {
+    count: number;
+    loading: boolean;
+  }) => {
+    const fetchMore = jest.fn().mockResolvedValue(undefined);
+
+    useQueryMock.mockReturnValue({
+      data: {
+        getTimelineThreadsFromObjectRecord: {
+          timelineThreads: Array.from({ length: count }, (_, index) => ({
+            id: `thread-${index}`,
+          })),
+        },
+      },
+      loading,
+      fetchMore,
+      error: undefined,
+    });
+
+    return fetchMore;
+  };
+
+  it('requests the page after the rows already in the cache', async () => {
+    const fetchMore = mockLoadedThreads({ count: 4, loading: false });
+    const { result } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+
+    expect(fetchMore).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({ page: 3 }),
+      }),
+    );
+  });
+
+  it('waits for the first page to reload before requesting more', async () => {
+    const fetchMore = mockLoadedThreads({ count: 4, loading: true });
+    const { result } = renderTimelineResolver();
+
+    await act(() => result.current.fetchMoreRecords());
+
+    expect(fetchMore).not.toHaveBeenCalled();
   });
 });
