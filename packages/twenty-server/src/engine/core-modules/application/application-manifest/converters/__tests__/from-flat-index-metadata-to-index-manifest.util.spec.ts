@@ -2,7 +2,11 @@ import {
   type IndexManifest,
   getIndexFieldUniversalIdentifier,
 } from 'twenty-shared/application';
-import { FieldMetadataType, IndexType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  IndexType,
+  OrderByDirection,
+} from 'twenty-shared/types';
 
 import { fromFlatIndexMetadataToIndexManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-index-metadata-to-index-manifest.util';
 import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
@@ -108,6 +112,74 @@ describe('fromFlatIndexMetadataToIndexManifest', () => {
         metadataName: 'index',
       }),
     ).toBeUndefined();
+  });
+
+  it('should keep a field direction through a forward then an inverse conversion', () => {
+    const manifestWithDirection: IndexManifest = {
+      ...INDEX_MANIFEST,
+      isUnique: false,
+      fields: [
+        {
+          ...INDEX_MANIFEST.fields[1],
+          direction: OrderByDirection.DescNullsLast,
+        },
+      ],
+    };
+
+    expect(
+      fromFlatIndexMetadataToIndexManifest({
+        flatIndexMetadata: forward(manifestWithDirection),
+      }),
+    ).toEqual(manifestWithDirection);
+  });
+
+  it('should not see a change between a missing and a null field direction', () => {
+    const flatIndexMetadata = forward(INDEX_MANIFEST);
+    const flatIndexMetadataWithoutDirection = {
+      ...flatIndexMetadata,
+      universalFlatIndexFieldMetadatas:
+        flatIndexMetadata.universalFlatIndexFieldMetadatas.map(
+          ({ direction: _direction, ...indexField }) => indexField,
+        ),
+    };
+
+    expect(
+      compareTwoFlatEntity({
+        fromUniversalFlatEntity: flatIndexMetadata,
+        toUniversalFlatEntity: flatIndexMetadataWithoutDirection,
+        metadataName: 'index',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should see a change when a field direction changes', () => {
+    const titleOnlyManifest: IndexManifest = {
+      ...INDEX_MANIFEST,
+      isUnique: false,
+      fields: [INDEX_MANIFEST.fields[1]],
+    };
+    const descendingFlatIndexMetadata = forward({
+      ...titleOnlyManifest,
+      fields: [
+        {
+          ...titleOnlyManifest.fields[0],
+          direction: OrderByDirection.DescNullsLast,
+        },
+      ],
+    });
+
+    const comparison = compareTwoFlatEntity({
+      fromUniversalFlatEntity: forward(titleOnlyManifest),
+      toUniversalFlatEntity: descendingFlatIndexMetadata,
+      metadataName: 'index',
+    });
+
+    expect(comparison?.update).toMatchObject({
+      name: descendingFlatIndexMetadata.name,
+      universalFlatIndexFieldMetadatas: [
+        { direction: OrderByDirection.DescNullsLast },
+      ],
+    });
   });
 
   it('should write the index type the forward converter defaulted', () => {

@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`generateFlatIndexMetadataWithNameOrThrow field direction pins a distinct name for every other direction 1`] = `
+{
+  "ascNullsFirst": "IDX_59c6750195915dd12d7007ce551",
+  "descNullsFirst": "IDX_5ab521bb5e8be2aa095f6c93833",
+  "descNullsLast": "IDX_f199ae30ea1d8d9b4c886ad96e1",
+}
+`;
+
 exports[`generateFlatIndexMetadataWithNameOrThrow pins names for representative standard-index shapes 1`] = `
 {
   "manyToOneJoin": "IDX_f719a95179070eac397ba18dc70",

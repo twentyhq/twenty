@@ -60,6 +60,7 @@ export const fromUniversalFlatIndexToFlatIndex = ({
           fieldMetadataId: fieldMetadata.id,
           order: universalFlatIndexFieldMetadata.order,
           subFieldName: universalFlatIndexFieldMetadata.subFieldName,
+          direction: universalFlatIndexFieldMetadata.direction ?? null,
           createdAt: now,
           updatedAt: now,
           workspaceId,

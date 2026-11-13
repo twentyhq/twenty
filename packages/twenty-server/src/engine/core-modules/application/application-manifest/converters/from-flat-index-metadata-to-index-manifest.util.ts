@@ -30,5 +30,8 @@ export const fromFlatIndexMetadataToIndexManifest = ({
       ...(isDefined(indexField.subFieldName)
         ? { subFieldName: indexField.subFieldName }
         : {}),
+      ...(isDefined(indexField.direction)
+        ? { direction: indexField.direction }
+        : {}),
     })),
 });

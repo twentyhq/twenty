@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -27,6 +28,7 @@ import { SettingsRow } from 'twenty-ui/components/settings';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { INDEX_FIELD_DIRECTION_LABELS } from '@/settings/data-model/indexes/constants/IndexFieldDirectionLabels';
 import { SettingsObjectIndexTable } from '@/settings/data-model/object-details/components/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '@/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from 'twenty-ui/utilities';
@@ -90,6 +92,23 @@ export const SettingsObjectIndexesSection = ({
         ]),
     );
 
+    const getIndexFieldLabel = (indexField: IndexFieldMetadataItem) => {
+      const fieldMetadataItem = fieldsById.get(indexField.fieldMetadataId);
+
+      if (!isDefined(fieldMetadataItem)) {
+        return morphFieldLabelsById.get(indexField.fieldMetadataId);
+      }
+
+      if (isNonEmptyString(indexField.subFieldName)) {
+        return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
+          fieldMetadataItem.type as CompositeFieldType,
+          indexField.subFieldName as CompositeFieldSubFieldName,
+        )}`;
+      }
+
+      return fieldMetadataItem.label;
+    };
+
     return objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
       id: indexMetadataItem.id,
       name: indexMetadataItem.name,
@@ -103,22 +122,11 @@ export const SettingsObjectIndexesSection = ({
       indexFields:
         indexMetadataItem.indexFieldMetadatas
           ?.map((indexField) => {
-            const fieldMetadataItem = fieldsById.get(
-              indexField.fieldMetadataId,
-            );
+            const indexFieldLabel = getIndexFieldLabel(indexField);
 
-            if (!isDefined(fieldMetadataItem)) {
-              return morphFieldLabelsById.get(indexField.fieldMetadataId);
-            }
-
-            if (isNonEmptyString(indexField.subFieldName)) {
-              return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
-                fieldMetadataItem.type as CompositeFieldType,
-                indexField.subFieldName as CompositeFieldSubFieldName,
-              )}`;
-            }
-
-            return fieldMetadataItem.label;
+            return isDefined(indexFieldLabel) && isDefined(indexField.direction)
+              ? `${indexFieldLabel} · ${t(INDEX_FIELD_DIRECTION_LABELS[indexField.direction])}`
+              : indexFieldLabel;
           })
           .filter((label): label is string => Boolean(label))
           .join(', ') ?? '',
@@ -128,6 +136,7 @@ export const SettingsObjectIndexesSection = ({
     objectMetadataItem.fields,
     objectMetadataItems,
     workspaceCustomApplicationId,
+    t,
   ]);
 
   const filteredItems = useMemo(() => {

@@ -9,7 +9,9 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { OrderByDirection } from 'twenty-shared/types';
 
+import { ADD_DIRECTION_TO_INDEX_FIELD_METADATA_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-direction-to-index-field-metadata-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -68,6 +70,17 @@ export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEnti
   })
   @Column({ type: 'text', nullable: true })
   subFieldName: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_DIRECTION_TO_INDEX_FIELD_METADATA_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(OrderByDirection),
+    nullable: true,
+  })
+  direction: OrderByDirection | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

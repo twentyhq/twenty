@@ -1,3 +1,5 @@
+import { type OrderByDirection } from 'twenty-shared/types';
+
 export type WorkspaceSchemaIndexType =
   | 'BTREE'
   | 'HASH'
@@ -9,6 +11,7 @@ export type WorkspaceSchemaIndexType =
 export type WorkspaceSchemaIndexDefinition = {
   name: string;
   columns: string[];
+  columnDirections?: Partial<Record<string, OrderByDirection>>;
   type?: WorkspaceSchemaIndexType;
   isUnique?: boolean;
   where?: string;

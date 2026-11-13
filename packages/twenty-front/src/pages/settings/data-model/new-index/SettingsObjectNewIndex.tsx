@@ -124,6 +124,10 @@ export const SettingsObjectNewIndex = () => {
       fields: formValues.fields.map((entry) => ({
         fieldMetadataId: entry.fieldMetadataId,
         subFieldName: entry.subFieldName,
+        direction:
+          formValues.indexType === IndexType.BTREE
+            ? entry.direction
+            : undefined,
       })),
       indexType: formValues.indexType,
     });

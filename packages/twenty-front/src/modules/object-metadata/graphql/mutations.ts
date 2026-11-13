@@ -285,6 +285,7 @@ export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
         id
         fieldMetadataId
         subFieldName
+        direction
         createdAt
         updatedAt
         order

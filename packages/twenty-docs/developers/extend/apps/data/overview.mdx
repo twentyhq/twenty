@@ -103,6 +103,26 @@ defineIndex({
 });
 ```
 
+### Sort order
+
+Give a field a `direction` when a list sorts by it. List views put empty values last in both directions, so a list sorted newest first needs `DescNullsLast`. Without a direction, the column sorts ascending with empty values last.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: CONTACT_LOG_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: '…',
+      fieldUniversalIdentifier: OCCURRED_ON_FIELD_UNIVERSAL_IDENTIFIER,
+      direction: 'DescNullsLast',
+    },
+  ],
+});
+```
+
+`direction` takes the same values as `orderBy` (`AscNullsFirst`, `AscNullsLast`, `DescNullsFirst`, `DescNullsLast`) and only applies to BTREE indexes.
+
 ### Other constraints
 
 - Partial `WHERE` clauses stay under admin control — apps can't declare them.

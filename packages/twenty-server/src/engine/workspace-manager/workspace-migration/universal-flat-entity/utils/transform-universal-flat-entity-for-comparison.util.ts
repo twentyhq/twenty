@@ -1,4 +1,5 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { orderObjectProperties } from 'src/engine/metadata-modules/flat-entity/utils/order-object-properties.util';
@@ -30,6 +31,10 @@ export function transformUniversalFlatEntityForComparison<
         for (const item of currentValue) {
           delete item['createdAt'];
           delete item['updatedAt'];
+
+          if (!isDefined(item['direction'])) {
+            delete item['direction'];
+          }
         }
       }
 

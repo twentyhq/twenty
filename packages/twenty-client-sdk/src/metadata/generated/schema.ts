@@ -2009,6 +2009,8 @@ export interface IndexEdge {
 
 export interface IndexField {
     createdAt: Scalars['DateTime']
+    /** Null means ascending with nulls last, the btree default */
+    direction?: OrderByDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     order: Scalars['Float']
@@ -2975,6 +2977,10 @@ export interface OnboardingStepSuccess {
 }
 
 export type OpenRecordIn = 'RECORD_PAGE' | 'SIDE_PANEL'
+
+
+/** Sort direction, including where nulls go */
+export type OrderByDirection = 'AscNullsFirst' | 'AscNullsLast' | 'DescNullsFirst' | 'DescNullsLast'
 
 export interface PageInfo {
     /** The cursor of the last returned record. */
@@ -6131,7 +6137,9 @@ export interface CreateFieldInput {defaultValue?: (Scalars['JSON'] | null),descr
 
 export interface CreateFrontComponentInput {builtComponentChecksum: Scalars['String'],builtComponentPath: Scalars['String'],componentName: Scalars['String'],description?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),name: Scalars['String'],sourceComponentPath: Scalars['String']}
 
-export interface CreateIndexFieldInput {fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
+export interface CreateIndexFieldInput {
+/** Sort order of this column in the index. Match the orderBy you query with, e.g. DescNullsLast for a newest first list. Btree only. */
+direction?: (OrderByDirection | null),fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
 
 export interface CreateIndexInput {fields: CreateIndexFieldInput[],indexType: IndexType,objectMetadataId: Scalars['UUID']}
 
@@ -6870,6 +6878,8 @@ export interface IndexEdgeGenqlSelection{
 
 export interface IndexFieldGenqlSelection{
     createdAt?: boolean | number
+    /** Null means ascending with nulls last, the btree default */
+    direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
     order?: boolean | number
@@ -13526,6 +13536,13 @@ export const enumOnboardingStatus = {
 export const enumOpenRecordIn = {
    RECORD_PAGE: 'RECORD_PAGE' as const,
    SIDE_PANEL: 'SIDE_PANEL' as const
+}
+
+export const enumOrderByDirection = {
+   AscNullsFirst: 'AscNullsFirst' as const,
+   AscNullsLast: 'AscNullsLast' as const,
+   DescNullsFirst: 'DescNullsFirst' as const,
+   DescNullsLast: 'DescNullsLast' as const
 }
 
 export const enumPageLayoutTabLayoutMode = {

@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { INDEX_FIELD_DIRECTION_LABELS } from '@/settings/data-model/indexes/constants/IndexFieldDirectionLabels';
 import { buildIndexableSelectOptions } from '@/settings/data-model/indexes/utils/buildIndexableSelectOptions';
 import { decodeIndexableOptionValue } from '@/settings/data-model/indexes/utils/decodeIndexableOptionValue';
 import { encodeIndexableOptionValue } from '@/settings/data-model/indexes/utils/encodeIndexableOptionValue';
@@ -6,12 +7,13 @@ import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { IconTrash } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { IndexType, OrderByDirection } from '~/generated-metadata/graphql';
 import { type SettingsObjectNewIndexFormValues } from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 type SettingsObjectIndexFieldsFormProps = {
@@ -30,6 +32,11 @@ const StyledSelectWrapper = styled.div`
   min-width: 0;
 `;
 
+const StyledDirectionWrapper = styled.div`
+  flex-shrink: 0;
+  width: ${themeCssVariables.spacing[32]};
+`;
+
 const StyledPlaceholder = styled.div`
   height: ${themeCssVariables.spacing[8]};
   width: ${themeCssVariables.spacing[8]};
@@ -41,6 +48,8 @@ export const SettingsObjectIndexFieldsForm = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const { control } = useFormContext<SettingsObjectNewIndexFormValues>();
+  const indexType = useWatch({ control, name: 'indexType' });
+  const isDirectionEditable = indexType === IndexType.BTREE;
 
   const allOptions = useMemo(
     () => buildIndexableSelectOptions({ indexableFields, getIcon }),
@@ -51,6 +60,14 @@ export const SettingsObjectIndexFieldsForm = ({
     label: t`Select a field`,
     value: '',
   };
+
+  const directionOptions: SelectOption<OrderByDirection>[] = [
+    OrderByDirection.AscNullsLast,
+    OrderByDirection.DescNullsLast,
+  ].map((direction) => ({
+    label: t(INDEX_FIELD_DIRECTION_LABELS[direction]),
+    value: direction,
+  }));
 
   return (
     <Controller
@@ -75,12 +92,26 @@ export const SettingsObjectIndexFieldsForm = ({
           const decoded = decodeIndexableOptionValue(newOptionValue);
 
           if (rowIndex < value.length) {
-            next[rowIndex] = decoded;
+            next[rowIndex] = {
+              ...decoded,
+              direction: value[rowIndex].direction,
+            };
           } else {
-            next.push(decoded);
+            next.push({ ...decoded, direction: OrderByDirection.AscNullsLast });
           }
 
           onChange(next);
+        };
+
+        const handleDirectionChange = (
+          rowIndex: number,
+          direction: OrderByDirection,
+        ) => {
+          onChange(
+            value.map((entry, index) =>
+              index === rowIndex ? { ...entry, direction } : entry,
+            ),
+          );
         };
 
         const handleRemove = (rowIndex: number) => {
@@ -118,6 +149,21 @@ export const SettingsObjectIndexFieldsForm = ({
                       withSearchInput
                     />
                   </StyledSelectWrapper>
+                  {isDirectionEditable && (
+                    <StyledDirectionWrapper>
+                      {!isEmptyRow && (
+                        <Select
+                          dropdownId={`settings-object-new-index-direction-${rowIndex}`}
+                          value={entry.direction}
+                          options={directionOptions}
+                          onChange={(direction) =>
+                            handleDirectionChange(rowIndex, direction)
+                          }
+                          fullWidth
+                        />
+                      )}
+                    </StyledDirectionWrapper>
+                  )}
                   {isEmptyRow ? (
                     <StyledPlaceholder />
                   ) : (

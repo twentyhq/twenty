@@ -103,6 +103,8 @@ If you get an error when setting uniqueness, check for duplicate values in your 
 
 Database indexes are managed automatically — adding your own is rarely necessary and easy to get wrong. For the cases where you know you need one, open `Settings → Data Model → <object>`, go to the **Settings** tab and click **Manage indexes** in the **Advanced** section.
 
+Each field in an index sorts **Ascending** or **Descending**. To speed up a large list sorted newest first, index its date field as **Descending**: an ascending index can't serve that sort.
+
 ## Field Configuration Best Practices
 
 ### Naming Conventions and Limitations

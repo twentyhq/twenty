@@ -1,6 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { GIN_COMPATIBLE_FIELD_TYPES } from 'twenty-shared/constants';
-import { type FieldMetadataType, IndexType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  IndexType,
+  type OrderByDirection,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   IndexMetadataException,
@@ -12,6 +17,7 @@ type IndexFieldForValidation = {
   name: string;
   label: string;
   subFieldName: string | null;
+  direction: OrderByDirection | null;
 };
 
 // GIN requires an operator class for each column. Postgres ships a default
@@ -25,6 +31,22 @@ export const validateIndexTypeAgainstFieldsOrThrow = ({
   indexType: IndexType;
   fields: IndexFieldForValidation[];
 }): void => {
+  if (indexType !== IndexType.BTREE) {
+    const fieldWithDirection = fields.find((field) =>
+      isDefined(field.direction),
+    );
+
+    if (isDefined(fieldWithDirection)) {
+      throw new IndexMetadataException(
+        `${indexType} index does not support a sort direction on field ${fieldWithDirection.name}`,
+        IndexMetadataExceptionCode.INDEX_DIRECTION_NOT_SUPPORTED_FOR_INDEX_TYPE,
+        {
+          userFriendlyMessage: msg`Only BTREE indexes can sort a column. Remove the direction on "${fieldWithDirection.label}" or use a BTREE index.`,
+        },
+      );
+    }
+  }
+
   if (indexType !== IndexType.GIN) {
     return;
   }
