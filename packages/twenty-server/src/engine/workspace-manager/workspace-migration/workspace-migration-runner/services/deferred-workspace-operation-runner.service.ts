@@ -30,6 +30,7 @@ import {
 import { type RunDeferredWorkspaceOperationsJobData } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/jobs/run-deferred-workspace-operations.job';
 import { DeferredWorkspaceOperationHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-operation-handler-registry.service';
 import { type DeferredWorkspaceOperationStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-operation-status.type';
+import { isDeferredWorkspaceOperationNamed } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/is-deferred-workspace-operation-named.util';
 import {
   type DeferredWorkspaceOperation,
   type DeferredWorkspaceOperationName,
@@ -169,19 +170,19 @@ export class DeferredWorkspaceOperationRunnerService {
       return;
     }
 
-    await this.deferredWorkspaceOperationRepository.insert(
-      workspaceId,
-      deferredOperations.map(
-        ({ name, payload }, position) =>
-          ({
-            applicationUniversalIdentifier,
-            name,
-            payload,
-            position,
-            runByVersion: this.twentyConfigService.get('APP_VERSION') ?? null,
-          }) as QueryDeepPartialEntity<DeferredWorkspaceOperationEntity>,
-      ),
-    );
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    try {
+      await this.persist({
+        deferredOperations,
+        workspaceId,
+        applicationUniversalIdentifier,
+        queryRunner,
+      });
+    } finally {
+      await queryRunner.release();
+    }
+
     await this.enqueue(workspaceId);
   }
 
@@ -200,9 +201,11 @@ export class DeferredWorkspaceOperationRunnerService {
         order: { createdAt: 'ASC', position: 'ASC' },
       });
 
-    return deferredOperations.map(
-      ({ payload }) => payload as DeferredWorkspaceOperationPayload<TName>,
-    );
+    return deferredOperations
+      .filter((deferredOperation) =>
+        isDeferredWorkspaceOperationNamed(deferredOperation, name),
+      )
+      .map(({ payload }) => payload);
   }
 
   async updateInProgressOperationPayload<
@@ -224,7 +227,10 @@ export class DeferredWorkspaceOperationRunnerService {
         order: { startedAt: 'DESC' },
       });
 
-    if (!isDefined(inProgressOperation)) {
+    if (
+      !isDefined(inProgressOperation) ||
+      !isDeferredWorkspaceOperationNamed(inProgressOperation, name)
+    ) {
       return;
     }
 
@@ -232,9 +238,7 @@ export class DeferredWorkspaceOperationRunnerService {
       workspaceId,
       { id: inProgressOperation.id, status: 'IN_PROGRESS' },
       {
-        payload: updatePayload(
-          inProgressOperation.payload as DeferredWorkspaceOperationPayload<TName>,
-        ),
+        payload: updatePayload(inProgressOperation.payload),
         startedAt: new Date(),
       } as QueryDeepPartialEntity<DeferredWorkspaceOperationEntity>,
     );
