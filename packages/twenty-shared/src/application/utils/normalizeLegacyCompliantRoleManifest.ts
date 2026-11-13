@@ -97,12 +97,12 @@ const addFieldPermissionToObject = ({
   };
 };
 
-// TODO(@charlesBochet): remove with the legacy role properties once applications declare the normalized shape
 export type LegacyRoleObjectDefaults = {
   isSystem: boolean;
   disabledObjectPermissionActions?: DisableableObjectPermissionAction[] | null;
 };
 
+// TODO(@charlesBochet): remove with the legacy role properties once applications declare the normalized shape
 export const normalizeLegacyCompliantRoleManifest = ({
   role,
   applicationUniversalIdentifier,
