@@ -10,7 +10,6 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { uploadBuiltFrontComponentFile } from 'test/integration/metadata/suites/application/utils/upload-built-front-component-file.util';
 import {
   getLegacySettingsMenuItemUniversalIdentifier,
-  type Manifest,
   type SettingsMenuItemManifest,
 } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';

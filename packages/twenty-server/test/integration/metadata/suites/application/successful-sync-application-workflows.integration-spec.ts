@@ -1,7 +1,6 @@
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { randomUUID } from 'node:crypto';
-import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
