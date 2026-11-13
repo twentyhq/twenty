@@ -4,17 +4,15 @@ import { createManyOperationFactory } from 'test/integration/graphql/utils/creat
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { createViewFilterGroupQueryFactory } from 'test/integration/metadata/suites/view-filter-group/utils/create-view-filter-group-query-factory.util';
-import { createViewFilterQueryFactory } from 'test/integration/metadata/suites/view-filter/utils/create-view-filter-query-factory.util';
-import { createViewQueryFactory } from 'test/integration/metadata/suites/view/utils/create-view-query-factory.util';
-import { destroyViewQueryFactory } from 'test/integration/metadata/suites/view/utils/destroy-view-query-factory.util';
+import { createOneViewFilterGroup } from 'test/integration/metadata/suites/view-filter-group/utils/create-one-view-filter-group.util';
+import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
+import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
-  ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
 
@@ -71,82 +69,58 @@ describe('group by with an unlisted view (integration)', () => {
 
     expect(createdPeople.body.errors).toBeUndefined();
 
-    const personObjectMetadataId = await findObjectMetadataIdByName('person');
+    const token = APPLE_JONY_MEMBER_ACCESS_TOKEN;
 
-    const createViewResponse = await makeMetadataApiRequest(
-      createViewQueryFactory({
-        gqlFields: 'id',
-        input: {
-          name: 'Member private people',
-          objectMetadataId: personObjectMetadataId,
-          icon: 'IconTable',
-          type: ViewType.TABLE,
-          visibility: ViewVisibility.UNLISTED,
-        },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    unlistedViewId = await createOneViewOnObject({
+      objectNameSingular: 'person',
+      input: {
+        name: 'Member private people',
+        visibility: ViewVisibility.UNLISTED,
+      },
+      token,
+    });
+    unlistedSearchViewId = await createOneViewOnObject({
+      objectNameSingular: 'person',
+      input: {
+        name: 'Member private people search',
+        visibility: ViewVisibility.UNLISTED,
+        anyFieldFilterValue: KEPT_JOB_TITLE,
+      },
+      token,
+    });
 
-    expect(createViewResponse.body.errors).toBeUndefined();
-    unlistedViewId = createViewResponse.body.data.createView.id;
+    const { data } = await createOneViewFilterGroup({
+      expectToFail: false,
+      gqlFields: 'id',
+      token,
+      input: {
+        viewId: unlistedViewId,
+        logicalOperator: ViewFilterGroupLogicalOperator.AND,
+        positionInViewFilterGroup: 0,
+      },
+    });
 
-    const createViewFilterGroupResponse = await makeMetadataApiRequest(
-      createViewFilterGroupQueryFactory({
-        gqlFields: 'id',
-        input: {
-          viewId: unlistedViewId,
-          logicalOperator: ViewFilterGroupLogicalOperator.AND,
-          positionInViewFilterGroup: 0,
-        },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(createViewFilterGroupResponse.body.errors).toBeUndefined();
-
-    const createViewFilterResponse = await makeMetadataApiRequest(
-      createViewFilterQueryFactory({
-        gqlFields: 'id',
-        input: {
-          viewId: unlistedViewId,
-          viewFilterGroupId:
-            createViewFilterGroupResponse.body.data.createViewFilterGroup.id,
-          fieldMetadataId: await findFieldMetadataIdByName({
-            objectMetadataId: personObjectMetadataId,
-            fieldName: 'jobTitle',
-          }),
-          operand: ViewFilterOperand.CONTAINS,
-          value: KEPT_JOB_TITLE,
-          positionInViewFilterGroup: 0,
-        },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(createViewFilterResponse.body.errors).toBeUndefined();
-
-    const createSearchViewResponse = await makeMetadataApiRequest(
-      createViewQueryFactory({
-        gqlFields: 'id',
-        input: {
-          name: 'Member private people search',
-          objectMetadataId: personObjectMetadataId,
-          icon: 'IconTable',
-          type: ViewType.TABLE,
-          visibility: ViewVisibility.UNLISTED,
-          anyFieldFilterValue: KEPT_JOB_TITLE,
-        },
-      }),
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(createSearchViewResponse.body.errors).toBeUndefined();
-    unlistedSearchViewId = createSearchViewResponse.body.data.createView.id;
+    await createOneViewFilter({
+      expectToFail: false,
+      gqlFields: 'id',
+      token,
+      input: {
+        viewId: unlistedViewId,
+        viewFilterGroupId: data.createViewFilterGroup.id,
+        fieldMetadataId: await findFieldMetadataIdByName({
+          objectMetadataId: await findObjectMetadataIdByName('person'),
+          fieldName: 'jobTitle',
+        }),
+        operand: ViewFilterOperand.CONTAINS,
+        value: KEPT_JOB_TITLE,
+        positionInViewFilterGroup: 0,
+      },
+    });
   });
 
   afterAll(async () => {
     for (const viewId of [unlistedViewId, unlistedSearchViewId]) {
-      await makeMetadataApiRequest(destroyViewQueryFactory({ viewId }));
+      await destroyOneView({ viewId });
     }
 
     await makeGraphqlApiRequest(
