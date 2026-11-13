@@ -1,7 +1,7 @@
 import { matchPath, useLocation } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
-import { inboxThreadIsDirectMessageFamilySelector } from '@/inbox/states/selectors/inboxThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useIsInboxShowingDirectMessage = () => {
@@ -10,7 +10,7 @@ export const useIsInboxShowingDirectMessage = () => {
     matchPath(AppPath.AiChatInbox, location.pathname)?.params.threadId ?? null;
 
   return useAtomFamilySelectorValue(
-    inboxThreadIsDirectMessageFamilySelector,
+    aiChatThreadIsDirectMessageFamilySelector,
     inboxThreadId,
   );
 };

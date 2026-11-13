@@ -31,7 +31,7 @@ const OPTIMISTIC_VISIT_BY_ACTION: Partial<
   },
 };
 
-export const useUpdateInboxThreadStatus = () => {
+export const useUpdateAiChatThreadStatus = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();

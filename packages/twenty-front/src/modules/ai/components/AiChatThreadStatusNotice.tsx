@@ -6,7 +6,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { useFormatAiChatThreadDate } from '@/ai/hooks/useFormatAiChatThreadDate';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -22,13 +22,13 @@ const StyledNotice = styled.div`
 `;
 
 // Ends the conversation with where the chat stands in the member's inbox
-export const InboxThreadStatusNotice = () => {
+export const AiChatThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { event } = useAtomFamilySelectorValue(
-    inboxThreadMemberStateFamilySelector,
+    aiChatThreadMemberStateFamilySelector,
     currentAiChatThread ?? '',
   );
 

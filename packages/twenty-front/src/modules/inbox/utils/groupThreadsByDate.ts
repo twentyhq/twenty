@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatThreadDateGroup } from '@/ai/types/AiChatThreadDateGroup';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
-import { type InboxThreadListVariant } from '@/inbox/types/InboxThreadListVariant';
+import { type AiChatThreadRowVariant } from '@/ai/types/AiChatThreadRowVariant';
 import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 
 const RECENT_THREAD_DAY_COUNT = 7;
@@ -65,7 +65,7 @@ const getThreadDateGroup = ({
 }: {
   threadActivityAt: Date;
   today: Date;
-  variant: InboxThreadListVariant;
+  variant: AiChatThreadRowVariant;
   daysSinceWeekStart: number;
 }): Omit<AiChatThreadDateGroup, 'threads'> => {
   const daysSinceActivity = differenceInCalendarDays(today, threadActivityAt);
@@ -115,7 +115,7 @@ export const groupThreadsByDate = ({
 }: {
   threads: AiChatThreadRecord[];
   today?: Date;
-  variant?: InboxThreadListVariant;
+  variant?: AiChatThreadRowVariant;
   calendarStartDay?: CalendarStartDay;
 }): AiChatThreadDateGroup[] => {
   const groupedThreadsByDate = new Map<string, AiChatThreadDateGroup>();

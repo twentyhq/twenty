@@ -3,18 +3,18 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationDrawerInboxChannelItem } from '@/inbox/components/NavigationDrawerInboxChannelItem';
 import { NavigationDrawerInboxThreadItem } from '@/inbox/components/NavigationDrawerInboxThreadItem';
 import { inboxChannelSummariesState } from '@/inbox/states/inboxChannelSummariesState';
-import { inboxAccessibleChannelsSelector } from '@/inbox/states/selectors/inboxAccessibleChannelsSelector';
+import { aiChatAccessibleChannelsSelector } from '@/ai/states/selectors/aiChatAccessibleChannelsSelector';
 import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type InboxChannel } from '@/inbox/types/InboxChannel';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
-  channels: InboxChannel[];
+  channels: AiChatChannel[];
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
   onThreadClick: (thread: InboxThreadListItemData) => void;
@@ -27,8 +27,8 @@ export const NavigationDrawerInboxFavoritesSection = ({
   onThreadClick,
 }: NavigationDrawerInboxFavoritesSectionProps) => {
   const { t } = useLingui();
-  const inboxAccessibleChannels = useAtomStateValue(
-    inboxAccessibleChannelsSelector,
+  const aiChatAccessibleChannels = useAtomStateValue(
+    aiChatAccessibleChannelsSelector,
   );
   const inboxChannelSummaries = useAtomStateValue(inboxChannelSummariesState);
   const canManageChannels = useHasPermissionFlag(
@@ -49,7 +49,7 @@ export const NavigationDrawerInboxFavoritesSection = ({
           key={channel.id}
           channel={channel}
           summary={inboxChannelSummaries[channel.id]}
-          destinationChannels={inboxAccessibleChannels.filter(
+          destinationChannels={aiChatAccessibleChannels.filter(
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}

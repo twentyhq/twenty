@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { useMarkInboxThreadAsDoneInChannel } from '@/inbox/hooks/useMarkInboxThreadAsDoneInChannel';
-import { useReopenInboxThreadInChannel } from '@/inbox/hooks/useReopenInboxThreadInChannel';
-import { useUpdateInboxThreadStatus } from '@/inbox/hooks/useUpdateInboxThreadStatus';
+import { useMarkAiChatThreadAsDoneInChannel } from '@/ai/hooks/useMarkAiChatThreadAsDoneInChannel';
+import { useReopenAiChatThreadInChannel } from '@/ai/hooks/useReopenAiChatThreadInChannel';
+import { useUpdateAiChatThreadStatus } from '@/ai/hooks/useUpdateAiChatThreadStatus';
 import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
 import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-export const useExecuteInboxThreadStatusAction = () => {
+export const useExecuteAiChatThreadStatusAction = () => {
   const [isPending, setIsPending] = useState(false);
-  const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
+  const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
   const { markAgentChatThreadAsDoneInChannel } =
-    useMarkInboxThreadAsDoneInChannel();
-  const { reopenAgentChatThreadInChannel } = useReopenInboxThreadInChannel();
+    useMarkAiChatThreadAsDoneInChannel();
+  const { reopenAgentChatThreadInChannel } = useReopenAiChatThreadInChannel();
   const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
   const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
 
@@ -41,7 +41,7 @@ export const useExecuteInboxThreadStatusAction = () => {
     await updateAgentChatThreadInboxState({ threadIds, action });
   };
 
-  const executeInboxThreadStatusAction = async ({
+  const executeAiChatThreadStatusAction = async ({
     threadIds,
     action,
     isInChannel,
@@ -73,5 +73,5 @@ export const useExecuteInboxThreadStatusAction = () => {
     }
   };
 
-  return { executeInboxThreadStatusAction, isPending };
+  return { executeAiChatThreadStatusAction, isPending };
 };
