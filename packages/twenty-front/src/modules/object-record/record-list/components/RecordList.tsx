@@ -1,4 +1,3 @@
-import { RecordIndexTabs } from '@/object-record/record-index-tab/components/RecordIndexTabs';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { RecordListBody } from '@/object-record/record-list/components/RecordListBody';
@@ -43,7 +42,6 @@ export const RecordList = () => {
       <RecordSelectionEscapeHotkeyEffect />
       <RecordListSSESubscribeEffect />
       <RecordIndexRemoveSortingModal />
-      <RecordIndexTabs />
       <RecordListFieldTooltip>
         <ScrollWrapper
           componentInstanceId={`scroll-wrapper-record-list-${recordListId}`}

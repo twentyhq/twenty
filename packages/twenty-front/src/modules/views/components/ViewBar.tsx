@@ -6,6 +6,7 @@ import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsSortsEffect } from '@/views/components/QueryParamsSortsEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
+import { RecordIndexTabs } from '@/object-record/record-index-tab/components/RecordIndexTabs';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
@@ -41,10 +42,15 @@ export const ViewBar = ({
     return;
   }
 
+  const leftComponent = (
+    <>
+      <ViewPickerDropdown />
+      <RecordIndexTabs />
+    </>
+  );
+
   if (isReadOnly) {
-    return (
-      <TopBar className={className} leftComponent={<ViewPickerDropdown />} />
-    );
+    return <TopBar className={className} leftComponent={leftComponent} />;
   }
 
   return (
@@ -62,7 +68,7 @@ export const ViewBar = ({
       <ViewBarPageTitle />
       <TopBar
         className={className}
-        leftComponent={<ViewPickerDropdown />}
+        leftComponent={leftComponent}
         rightComponent={
           <>
             <ObjectFilterDropdownComponentInstanceContext.Provider

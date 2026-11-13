@@ -17,12 +17,18 @@ import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
+import { isRecordIndexTabsSupportedForViewType } from '@/object-record/record-index-tab/utils/isRecordIndexTabsSupportedForViewType';
+import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { ViewKey } from '@/views/types/ViewKey';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/computeViewPickerVisibleViews';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/icon';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { IconLayoutNavbar, IconPlus } from 'twenty-ui/icon';
 import { ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
@@ -73,6 +79,20 @@ export const ViewPickerListContent = () => {
   };
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown();
+
+  const isRecordIndexTabsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_GROUP_TABS_ENABLED,
+  );
+
+  const recordIndexTabFieldMetadataItem = useAtomComponentStateValue(
+    recordIndexTabFieldMetadataItemComponentState,
+  );
+
+  // Tabs belong to the current view, like grouping, which the default view does not allow
+  const shouldShowTabFieldPicker =
+    isRecordIndexTabsEnabled &&
+    currentView?.key !== ViewKey.INDEX &&
+    isRecordIndexTabsSupportedForViewType(currentView?.type);
 
   const handleAddViewButtonClick = () => {
     openCreateViewDropdown(currentView);
@@ -210,6 +230,15 @@ export const ViewPickerListContent = () => {
       )}
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer scrollable={false}>
+        {shouldShowTabFieldPicker && (
+          <ListItemButton
+            onClick={() => setViewPickerMode('tab-field')}
+            startIcon={<IconLayoutNavbar />}
+            description={recordIndexTabFieldMetadataItem?.label ?? t`None`}
+            descriptionPlacement="end"
+            hasSubmenu
+          >{t`Tabs`}</ListItemButton>
+        )}
         <ListItemButton
           onClick={handleAddViewButtonClick}
           startIcon={<IconPlus />}

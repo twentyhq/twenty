@@ -10,6 +10,9 @@ import { ViewPickerContentCreateMode } from '@/views/view-picker/components/View
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
+import { ViewPickerTabFieldContent } from '@/views/view-picker/components/ViewPickerTabFieldContent';
+import { isRecordIndexTabsDisplayedComponentSelector } from '@/object-record/record-index-tab/states/selectors/isRecordIndexTabsDisplayedComponentSelector';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
@@ -69,6 +72,11 @@ export const ViewPickerDropdown = () => {
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
 
+  // The All tab carries the total when tabs are displayed
+  const isRecordIndexTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordIndexTabsDisplayedComponentSelector,
+  );
+
   const { getIcon } = useIcons();
   const CurrentViewIcon = getIcon(currentView?.icon);
 
@@ -98,7 +106,9 @@ export const ViewPickerDropdown = () => {
             <OverflowingTextWithTooltip text={currentView?.name ?? t`All`} />
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            {isDefined(totalCount) && <>· {formatNumber(totalCount)} </>}
+            {isDefined(totalCount) && !isRecordIndexTabsDisplayed && (
+              <>· {formatNumber(totalCount)} </>
+            )}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
@@ -115,6 +125,8 @@ export const ViewPickerDropdown = () => {
                 <ViewPickerContentEffect />
               </>
             );
+          case 'tab-field':
+            return <ViewPickerTabFieldContent />;
           case 'edit':
             return (
               <>

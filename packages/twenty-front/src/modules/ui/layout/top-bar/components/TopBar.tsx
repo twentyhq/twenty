@@ -35,11 +35,16 @@ const StyledTopBar = styled.div`
 `;
 
 const StyledLeftSection = styled.div`
+  align-items: center;
+  align-self: stretch;
   display: flex;
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledRightSection = styled.div`
   display: flex;
+  flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.regular};
   gap: ${themeCssVariables.betweenSiblingsGap};
 `;

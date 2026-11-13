@@ -1,27 +1,32 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useUpdateRecordIndexTabField } from '@/object-record/record-index-tab/hooks/useUpdateRecordIndexTabField';
 import { canDisplayRecordIndexTabsForFieldMetadataItem } from '@/object-record/record-index-tab/utils/canDisplayRecordIndexTabsForFieldMetadataItem';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexTabFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexTabFieldMetadataItemComponentState';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
+import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 
-export const ObjectOptionsDropdownRecordIndexTabFieldsContent = () => {
+export const ViewPickerTabFieldContent = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const { recordIndexId, objectMetadataItem, resetContent, closeDropdown } =
-    useObjectOptionsDropdown();
+  const { recordIndexId, objectMetadataItem } = useRecordIndexContextOrThrow();
+
+  const { setViewPickerMode } = useViewPickerMode();
+
+  const { closeDropdown } = useCloseDropdown();
 
   const { canPersistChanges } = useCanPersistViewChanges();
 
@@ -41,6 +46,7 @@ export const ObjectOptionsDropdownRecordIndexTabFieldsContent = () => {
     fieldMetadataItem: FieldMetadataItem | undefined,
   ) => {
     updateRecordIndexTabField(fieldMetadataItem);
+    setViewPickerMode('list');
     closeDropdown();
   };
 
@@ -49,7 +55,7 @@ export const ObjectOptionsDropdownRecordIndexTabFieldsContent = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={resetContent}
+            onClick={() => setViewPickerMode('list')}
             Icon={IconChevronLeft}
           />
         }

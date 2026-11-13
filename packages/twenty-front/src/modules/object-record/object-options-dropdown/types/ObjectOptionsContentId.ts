@@ -8,7 +8,6 @@ export type ObjectOptionsContentId =
   | 'recordGroupSort'
   | 'recordGroupLoadLimit'
   | 'addRecordGroup'
-  | 'recordIndexTabFields'
   | 'calendarFields'
   | 'calendarView'
   | 'visibility';
