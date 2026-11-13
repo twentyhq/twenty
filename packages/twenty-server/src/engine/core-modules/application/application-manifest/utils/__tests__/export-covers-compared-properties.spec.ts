@@ -114,6 +114,7 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
   settings: { label: 'Next step', recordLimit: 1 },
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {

@@ -14,6 +14,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
 import { validateFlatViewFieldSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-settings.util';
 import { validateLabelIdentifierFieldMetadataIdFlatViewField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-label-identifier-field-metadata-id-flat-view-field.util';
 
@@ -92,6 +93,32 @@ export class FlatViewFieldValidatorService {
           flatFieldMetadata: settingsFlatFieldMetadata,
         }),
       );
+    }
+
+    const relationTargetFieldMetadataUniversalIdentifier =
+      flatEntityUpdate.relationTargetFieldMetadataUniversalIdentifier;
+
+    if (isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
+      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+        universalIdentifier:
+          updatedFlatViewField.fieldMetadataUniversalIdentifier,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      if (isDefined(flatFieldMetadata)) {
+        validationResult.errors.push(
+          ...validateFlatViewFieldRelationTarget({
+            isCanonical: updatedFlatViewField.isCanonical,
+            flatFieldMetadata,
+            relationTargetFlatFieldMetadata:
+              findFlatEntityByUniversalIdentifier({
+                universalIdentifier:
+                  relationTargetFieldMetadataUniversalIdentifier,
+                flatEntityMaps: flatFieldMetadataMaps,
+              }),
+          }),
+        );
+      }
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
@@ -243,6 +270,25 @@ export class FlatViewFieldValidatorService {
           flatFieldMetadata,
         }),
       );
+
+      if (
+        isDefined(
+          flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+        )
+      ) {
+        validationResult.errors.push(
+          ...validateFlatViewFieldRelationTarget({
+            isCanonical: flatViewFieldToValidate.isCanonical,
+            flatFieldMetadata,
+            relationTargetFlatFieldMetadata:
+              findFlatEntityByUniversalIdentifier({
+                universalIdentifier:
+                  flatViewFieldToValidate.relationTargetFieldMetadataUniversalIdentifier,
+                flatEntityMaps: flatFieldMetadataMaps,
+              }),
+          }),
+        );
+      }
     }
 
     const flatView = findFlatEntityByUniversalIdentifier({
