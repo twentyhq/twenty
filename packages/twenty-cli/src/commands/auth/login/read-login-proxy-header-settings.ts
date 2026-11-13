@@ -12,18 +12,17 @@ import { type ProxyHeaderSettings } from '@/proxy-headers/types/proxy-header-set
 import { parseApiUrl } from '@/target/parse-api-url';
 
 const isSavedForServer = ({
-  existingRemote,
+  savedApiUrl,
   remoteName,
   apiUrl,
 }: {
-  existingRemote: RemoteEntry;
+  savedApiUrl: string;
   remoteName: string;
   apiUrl: string;
 }) => {
   try {
     return (
-      parseApiUrl({ rawUrl: existingRemote.apiUrl, sourceName: remoteName }) ===
-      apiUrl
+      parseApiUrl({ rawUrl: savedApiUrl, sourceName: remoteName }) === apiUrl
     );
   } catch {
     // A malformed saved URL must not block --replace from fixing it.
@@ -45,7 +44,13 @@ const readSettingsSavedForServer = ({
   }
 
   // Never send one proxy's credentials to a remote's new server.
-  if (!isSavedForServer({ existingRemote, remoteName, apiUrl })) {
+  if (
+    !isSavedForServer({
+      savedApiUrl: existingRemote.apiUrl,
+      remoteName,
+      apiUrl,
+    })
+  ) {
     return { headers: {} };
   }
 
