@@ -8,8 +8,6 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Button, Field, Input } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
-import { FIND_APPLICATION_CONNECTED_ACCOUNTS } from '@/settings/applications/graphql/queries/findApplicationConnectedAccounts';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -68,16 +66,8 @@ export const SidePanelConnectApplicationWithApiKeyPage = () => {
               connectApplicationWithApiKeyTarget.reconnectingConnectedAccountId,
           },
         },
-        refetchQueries: [
-          { query: GET_MY_CONNECTED_ACCOUNTS },
-          {
-            query: FIND_APPLICATION_CONNECTED_ACCOUNTS,
-            variables: {
-              applicationId: connectApplicationWithApiKeyTarget.applicationId,
-            },
-          },
-        ],
-        awaitRefetchQueries: true,
+        // By name so only mounted lists refetch: the workspace list needs a permission the member may lack
+        refetchQueries: ['MyConnectedAccounts', 'ApplicationConnectedAccounts'],
       });
     } catch (error) {
       setErrorMessage(getErrorMessageFromApolloError(error as Error));
