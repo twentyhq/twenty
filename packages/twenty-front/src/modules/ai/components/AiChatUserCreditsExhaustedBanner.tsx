@@ -1,26 +1,35 @@
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconSettings } from 'twenty-ui/icon';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
+import { aiChatUserCreditsBannerDismissalState } from '@/ai/states/agentChatUserCreditsBannerDismissalState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const AiChatUserCreditsExhaustedBanner = () => {
   const { t } = useLingui();
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const navigateSettings = useNavigateSettings();
+
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const [
-    agentChatUserCreditsBannerDismissal,
-    setAgentChatUserCreditsBannerDismissal,
-  ] = useAtomState(agentChatUserCreditsBannerDismissalState);
+    aiChatUserCreditsBannerDismissal,
+    setAiChatUserCreditsBannerDismissal,
+  ] = useAtomState(aiChatUserCreditsBannerDismissalState);
 
   const { userCreditsUsage } = useAiChatUserCreditsUsage({
     skip: isWorkspaceSetupChat,
@@ -34,37 +43,55 @@ export const AiChatUserCreditsExhaustedBanner = () => {
     return null;
   }
 
-  const { periodEnd, daysUntilReset, isFallingBackToWorkspaceCredits } =
-    userCreditsUsage;
+  const { periodEnd, isFallingBackToWorkspaceCredits } = userCreditsUsage;
 
   if (
-    agentChatUserCreditsBannerDismissal?.workspaceMemberId ===
+    aiChatUserCreditsBannerDismissal?.workspaceMemberId ===
       currentWorkspaceMember.id &&
-    agentChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
-    agentChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
+    aiChatUserCreditsBannerDismissal.periodEnd === periodEnd &&
+    aiChatUserCreditsBannerDismissal.isFallingBackToWorkspaceCredits ===
       isFallingBackToWorkspaceCredits
   ) {
     return null;
   }
 
+  const dismissAction = (
+    <InlineBanner.Action
+      onClick={() =>
+        setAiChatUserCreditsBannerDismissal({
+          workspaceMemberId: currentWorkspaceMember.id,
+          periodEnd,
+          isFallingBackToWorkspaceCredits,
+        })
+      }
+    >{t`Dismiss`}</InlineBanner.Action>
+  );
+
+  if (isFallingBackToWorkspaceCredits) {
+    return (
+      <AiChatInlineBanner
+        status="info"
+        action={dismissAction}
+      >{t`Weekly personal AI usage reached. Now using workspace credits.`}</AiChatInlineBanner>
+    );
+  }
+
+  if (hasPermissionToManageBilling) {
+    return (
+      <AiChatInlineBanner
+        action={
+          <InlineBanner.Action
+            startIcon={<IconSettings />}
+            onClick={() => navigateSettings(SettingsPath.Billing)}
+          >{t`Settings`}</InlineBanner.Action>
+        }
+      >{t`Weekly personal AI usage reached. Enable workspace credits to continue.`}</AiChatInlineBanner>
+    );
+  }
+
   return (
     <AiChatInlineBanner
-      status={isFallingBackToWorkspaceCredits ? 'info' : 'error'}
-      action={
-        <InlineBanner.Action
-          onClick={() =>
-            setAgentChatUserCreditsBannerDismissal({
-              workspaceMemberId: currentWorkspaceMember.id,
-              periodEnd,
-              isFallingBackToWorkspaceCredits,
-            })
-          }
-        >{t`Dismiss`}</InlineBanner.Action>
-      }
-    >
-      {isFallingBackToWorkspaceCredits
-        ? t`Using workspace credits for ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`
-        : t`Personal usage limit resets in ${plural(daysUntilReset, { one: '# day', other: '# days' })}.`}
-    </AiChatInlineBanner>
+      action={dismissAction}
+    >{t`Weekly personal AI usage reached. Ask an admin to enable workspace credits.`}</AiChatInlineBanner>
   );
 };

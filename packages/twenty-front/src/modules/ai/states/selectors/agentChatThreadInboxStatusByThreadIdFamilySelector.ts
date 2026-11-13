@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type AgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { getAgentChatThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
+import { inboxThreadMemberStateFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { getInboxThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type AgentChatThreadInboxStatusByThreadIdFamilyKey = {
+type InboxThreadMemberStateByThreadIdFamilyKey = {
   threadIds: string[];
   // Chats of the channel on screen are filed for the whole channel
   channelId?: string | null;
@@ -23,25 +23,22 @@ const CHANNEL_STATUS_SCOPES: Record<
   [AgentChatChannelThreadStatus.DONE]: 'ARCHIVED',
 };
 
-export const agentChatThreadInboxStatusByThreadIdFamilySelector =
+export const inboxThreadMemberStateByThreadIdFamilySelector =
   createAtomFamilySelector<
     Record<string, AgentChatThreadInboxStatus>,
-    AgentChatThreadInboxStatusByThreadIdFamilyKey
+    InboxThreadMemberStateByThreadIdFamilyKey
   >({
-    key: 'agentChatThreadInboxStatusByThreadIdFamilySelector',
+    key: 'inboxThreadMemberStateByThreadIdFamilySelector',
     get:
-      ({
-        threadIds,
-        channelId,
-      }: AgentChatThreadInboxStatusByThreadIdFamilyKey) =>
+      ({ threadIds, channelId }: InboxThreadMemberStateByThreadIdFamilyKey) =>
       ({ get }) =>
         Object.fromEntries(
           threadIds.map((threadId) => {
             const inboxStatus = get(
-              agentChatThreadInboxStatusFamilySelector,
+              inboxThreadMemberStateFamilySelector,
               threadId,
             );
-            const thread = get(agentChatThreadRecordFamilySelector, threadId);
+            const thread = get(aiChatThreadRecordFamilySelector, threadId);
 
             if (!isDefined(channelId) || thread?.channelId !== channelId) {
               return [threadId, inboxStatus];
@@ -52,9 +49,7 @@ export const agentChatThreadInboxStatusByThreadIdFamilySelector =
               {
                 ...inboxStatus,
                 scope:
-                  CHANNEL_STATUS_SCOPES[
-                    getAgentChatThreadChannelStatus(thread)
-                  ],
+                  CHANNEL_STATUS_SCOPES[getInboxThreadChannelStatus(thread)],
                 isChannelCopy: true,
               },
             ];

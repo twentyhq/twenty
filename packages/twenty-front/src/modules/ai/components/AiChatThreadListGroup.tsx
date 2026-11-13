@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
+import { type InboxThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 
 const COMPACT_HEADER_PADDING = `0 ${themeCssVariables.spacing[1]}`;
 const DEFAULT_HEADER_PADDING = `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`;
@@ -31,19 +31,19 @@ const StyledTitle = styled.h3<{ $isCompact: boolean }>`
     $isCompact ? '0' : `${themeCssVariables.spacing[1]} 0`};
 `;
 
-type AiChatThreadListGroupProps = {
+type InboxThreadListGroupProps = {
   title: string;
-  variant?: AiChatThreadListVariant;
+  variant?: InboxThreadListVariant;
   count?: number;
   children: ReactNode;
 };
 
-export const AiChatThreadListGroup = ({
+export const InboxThreadListGroup = ({
   title,
   variant = 'default',
   count,
   children,
-}: AiChatThreadListGroupProps) => {
+}: InboxThreadListGroupProps) => {
   const titleId = useId();
   const isCompact = variant === 'compact';
 

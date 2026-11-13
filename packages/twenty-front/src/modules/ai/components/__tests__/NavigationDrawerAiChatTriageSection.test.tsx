@@ -9,9 +9,9 @@ import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { NavigationDrawerInboxTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -80,14 +80,14 @@ const renderTriage = ({
           ]}
         >
           <MemoryRouter initialEntries={[path]}>
-            <NavigationDrawerAiChatTriageSection />
+            <NavigationDrawerInboxTriageSection />
           </MemoryRouter>
         </MockedProvider>
       </I18nProvider>
     </JotaiProvider>,
   );
 
-describe('NavigationDrawerAiChatTriageSection', () => {
+describe('NavigationDrawerInboxTriageSection', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
@@ -148,7 +148,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE,
     AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED,
   ])('keeps Open current for the %s filter', (presetFilter) => {
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
       presetFilter,
     });
@@ -168,7 +168,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('marks Snoozed as current while its conversations are shown', () => {
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
     });
@@ -193,7 +193,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
   });
 
   it('marks no status current while a channel is shown', () => {
-    setAgentChatSelectedChannelView(jotaiStore, {
+    setInboxSelectedChannelView(jotaiStore, {
       channelId: 'sales',
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,
@@ -212,12 +212,10 @@ describe('NavigationDrawerAiChatTriageSection', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Snoozed' }));
 
-    expect(jotaiStore.get(agentChatSelectedThreadListSourceState.atom)).toEqual(
-      {
-        type: 'presetFilter',
-        presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
-      },
-    );
+    expect(jotaiStore.get(inboxSelectedThreadListSourceState.atom)).toEqual({
+      type: 'presetFilter',
+      presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,
+    });
     expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
       threadId: null,
     });

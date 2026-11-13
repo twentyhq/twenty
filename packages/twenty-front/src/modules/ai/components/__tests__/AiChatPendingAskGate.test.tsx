@@ -9,21 +9,21 @@ import {
 } from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
-import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
+import { type AiChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
-const useAgentChatPendingToolCalls = jest.fn();
+const useAiChatPendingToolCalls = jest.fn();
 let displayedThreadId = 'thread-1';
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
   useAtomStateValue: () => displayedThreadId,
 }));
 jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
-  useAgentChatPendingToolCalls: () => useAgentChatPendingToolCalls(),
+  useAiChatPendingToolCalls: () => useAiChatPendingToolCalls(),
 }));
 jest.mock('@/ai/components/AiChatQuestionCard', () => ({
   AiChatQuestionCard: ({
     pendingQuestion,
   }: {
-    pendingQuestion: AgentChatPendingQuestion;
+    pendingQuestion: AiChatPendingQuestion;
   }) => (
     <div role="group" aria-label="Questions">
       {pendingQuestion.kind === 'question'
@@ -84,7 +84,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows the question the thread waits on in place of the composer', () => {
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       { toolCallId: 'call-1', kind: 'question', question: QUESTION },
     ]);
 
@@ -97,7 +97,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows an email waiting for approval in place of the composer', () => {
-    useAgentChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
 
     renderGate();
 
@@ -108,7 +108,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows a form to fill in place of the composer', () => {
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       {
         toolCallId: 'call-4',
         kind: 'form',
@@ -125,7 +125,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('steps through several requests, starting with the oldest', async () => {
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       EMAIL_APPROVAL,
       { toolCallId: 'call-3', kind: 'question', question: QUESTION },
     ]);
@@ -158,7 +158,7 @@ describe('AiChatPendingAskGate', () => {
       fields: [{ name: 'closeDate', label: 'Close date', type: 'DATE' }],
     };
 
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       EMAIL_APPROVAL,
       { toolCallId: 'call-3', kind: 'question', question: QUESTION },
       formRequest,
@@ -167,7 +167,7 @@ describe('AiChatPendingAskGate', () => {
     const { rerender } = renderGate();
 
     await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
-    useAgentChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL, formRequest]);
+    useAiChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL, formRequest]);
     rerender(
       <I18nProvider i18n={i18n}>
         <AiChatPendingAskGate>
@@ -181,7 +181,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('opens another conversation on its oldest request', async () => {
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       EMAIL_APPROVAL,
       { toolCallId: 'call-3', kind: 'question', question: QUESTION },
     ]);
@@ -191,7 +191,7 @@ describe('AiChatPendingAskGate', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
 
     displayedThreadId = 'thread-2';
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       { toolCallId: 'call-5', kind: 'question', question: QUESTION },
       EMAIL_APPROVAL,
     ]);
@@ -208,7 +208,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('opens a later batch of requests on its oldest one', async () => {
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       EMAIL_APPROVAL,
       { toolCallId: 'call-3', kind: 'question', question: QUESTION },
     ]);
@@ -224,9 +224,9 @@ describe('AiChatPendingAskGate', () => {
       );
 
     await userEvent.click(screen.getByRole('button', { name: 'Next request' }));
-    useAgentChatPendingToolCalls.mockReturnValue([]);
+    useAiChatPendingToolCalls.mockReturnValue([]);
     rerenderGate();
-    useAgentChatPendingToolCalls.mockReturnValue([
+    useAiChatPendingToolCalls.mockReturnValue([
       { toolCallId: 'call-6', kind: 'question', question: QUESTION },
       { ...EMAIL_APPROVAL, toolCallId: 'call-7' },
     ]);
@@ -237,7 +237,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows the composer once nothing is pending', () => {
-    useAgentChatPendingToolCalls.mockReturnValue([]);
+    useAiChatPendingToolCalls.mockReturnValue([]);
 
     renderGate();
 

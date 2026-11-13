@@ -2,28 +2,27 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAddAgentChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useFetchAgentChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
-import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { mergeLoadedAgentChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
+import { useAddAiChatThreadParticipants } from '@/ai/hooks/useAddAgentChatThreadParticipants';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useFetchAiChatThreadsPage } from '@/ai/hooks/useFetchAgentChatThreadsPage';
+import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { mergeLoadedAiChatThread } from '@/ai/utils/mergeLoadedAgentChatThread';
+import { getAiChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
-export const useLoadAgentChatThread = () => {
+export const useLoadAiChatThread = () => {
   const store = useStore();
-  const { refreshAgentChatThreadPermissions } =
-    useRefreshAgentChatThreadPermissions();
-  const { addLoadedAgentChatThread } = useApplyAgentChatThreadUpdate();
-  const { fetchAgentChatThreadsPage } = useFetchAgentChatThreadsPage();
-  const { addAgentChatThreadParticipants } =
-    useAddAgentChatThreadParticipants();
+  const { refreshAiChatThreadPermissions } =
+    useRefreshAiChatThreadPermissions();
+  const { addLoadedAiChatThread } = useApplyAiChatThreadUpdate();
+  const { fetchAiChatThreadsPage } = useFetchAiChatThreadsPage();
+  const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
 
   // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
-  const loadAgentChatThread = useCallback(
+  const loadAiChatThread = useCallback(
     async (threadId: string) => {
-      const page = await fetchAgentChatThreadsPage({
+      const page = await fetchAiChatThreadsPage({
         lastCursor: null,
         threadIdFilter: { id: { eq: threadId } },
       });
@@ -38,36 +37,36 @@ export const useLoadAgentChatThread = () => {
         return null;
       }
 
-      await refreshAgentChatThreadPermissions([thread.id]);
+      await refreshAiChatThreadPermissions([thread.id]);
 
-      const loadedThread = mergeLoadedAgentChatThread({
+      const loadedThread = mergeLoadedAiChatThread({
         loadedThread: thread,
         storedThread: store.get(
-          agentChatThreadRecordFamilySelector.selectorFamily(thread.id),
+          aiChatThreadRecordFamilySelector.selectorFamily(thread.id),
         ),
       });
 
-      addLoadedAgentChatThread(loadedThread);
-      addAgentChatThreadParticipants(page.participants);
+      addLoadedAiChatThread(loadedThread);
+      addAiChatThreadParticipants(page.participants);
 
-      const usageAtom = agentChatUsageFamilyState.atomFamily({
+      const usageAtom = aiChatUsageFamilyState.atomFamily({
         threadId: thread.id,
       });
 
       if (!isDefined(store.get(usageAtom))) {
-        store.set(usageAtom, getAgentChatUsageFromThread(loadedThread));
+        store.set(usageAtom, getAiChatUsageFromThread(loadedThread));
       }
 
       return loadedThread;
     },
     [
-      addLoadedAgentChatThread,
-      addAgentChatThreadParticipants,
-      fetchAgentChatThreadsPage,
-      refreshAgentChatThreadPermissions,
+      addLoadedAiChatThread,
+      addAiChatThreadParticipants,
+      fetchAiChatThreadsPage,
+      refreshAiChatThreadPermissions,
       store,
     ],
   );
 
-  return { loadAgentChatThread };
+  return { loadAiChatThread };
 };

@@ -1,31 +1,30 @@
 import { useLingui } from '@lingui/react/macro';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { NavigationDrawerAiChatTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
-import { useAgentChatOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
+import { NavigationDrawerInboxTriageItem } from '@/ai/components/NavigationDrawerAiChatTriageItem';
+import { useInboxOpenThreadsSummary } from '@/ai/hooks/useAgentChatOpenThreadsSummary';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 
-const AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
+const INBOX_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
-export const NavigationDrawerAiChatTriageSection = () => {
+export const NavigationDrawerInboxTriageSection = () => {
   const { t } = useLingui();
-  const { openThreadCount, hasUnreadOpenThread } =
-    useAgentChatOpenThreadsSummary();
+  const { openThreadCount, hasUnreadOpenThread } = useInboxOpenThreadsSummary();
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
+      sectionId={INBOX_TRIAGE_NAVIGATION_SECTION_ID}
       label={t`Triage`}
     >
-      <NavigationDrawerAiChatTriageItem
+      <NavigationDrawerInboxTriageItem
         presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.OPEN}
         count={openThreadCount}
         isUnread={hasUnreadOpenThread}
       />
-      <NavigationDrawerAiChatTriageItem
+      <NavigationDrawerInboxTriageItem
         presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED}
       />
-      <NavigationDrawerAiChatTriageItem
+      <NavigationDrawerInboxTriageItem
         presetFilter={AGENT_CHAT_THREAD_PRESET_FILTER.DONE}
       />
     </CollapsibleNavigationDrawerSection>

@@ -1,8 +1,8 @@
-import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
+import { useAiChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
 import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 
-export const useIsAgentChatToolCallAskedInComposer = (toolCallId: string) => {
-  const pendingToolCalls = useAgentChatPendingToolCalls();
+export const useIsAiChatToolCallAskedInComposer = (toolCallId: string) => {
+  const pendingToolCalls = useAiChatPendingToolCalls();
   const access = useCurrentAiChatThreadAccess();
 
   return (

@@ -451,7 +451,7 @@ Pentru ștergeri permanente, folosiți `.destroyed`.
 | `condiție`                         | [Expresie de regulă](/ro/user-guide/data-model/capabilities/validation-rules#write-a-condition) opțională pe care înregistrarea trebuie să o îndeplinească. `anterior.\<field>` o citește înainte de o actualizare. Necesită `objectUniversalIdentifier`. |
 | `batchMode`                        | Boolean opțional. Când este `true`, funcția de gestionare este apelată o dată pentru fiecare lot de înregistrări, în loc de o dată pentru fiecare înregistrare. Serverul decide câte înregistrări conține un lot, până la 200.                                          |
 
-Compilarea eșuează atunci când un obiect sau un câmp este necunoscut ori când condiția citește un câmp pe care obiectul nu îl are. O condiție citește câmpurile proprii ale înregistrării; o relație de tip mulți-la-unu este citită prin ID-ul său, cum ar fi `companyId`.
+Compilarea eșuează atunci când un obiect sau un câmp este necunoscut ori când condiția citește un câmp pe care obiectul nu îl are. O condiție citește înregistrarea în modul în care o returnează API-ul, ca o regulă de validare: `company.id` pentru compania asociată, `company.employees > 100` pentru unul dintre câmpurile sale. Câmpurile asociate sunt citite când evenimentul este declanșat, cu permisiunile aplicației, astfel că o înregistrare asociată pe care aplicația nu o poate citi este considerată goală. `previous.` acoperă numai câmpurile proprii ale înregistrării.
 
 <Note>
   Anteriorul `databaseEventTriggerSettings`, cu `eventName` (precum

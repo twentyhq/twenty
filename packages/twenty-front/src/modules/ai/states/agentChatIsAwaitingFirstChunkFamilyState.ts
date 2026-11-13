@@ -1,9 +1,9 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const agentChatIsAwaitingFirstChunkFamilyState = createAtomFamilyState<
+export const aiChatIsAwaitingFirstChunkFamilyState = createAtomFamilyState<
   boolean,
   { threadId: string | null }
 >({
-  key: 'agentChatIsAwaitingFirstChunkFamilyState',
+  key: 'aiChatIsAwaitingFirstChunkFamilyState',
   defaultValue: false,
 });

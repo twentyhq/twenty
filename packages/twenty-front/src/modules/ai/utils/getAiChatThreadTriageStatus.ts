@@ -6,7 +6,7 @@ const TRIAGE_STATUS_BY_SCOPE = {
   ARCHIVED: 'done',
 } as const;
 
-export const getAiChatThreadTriageStatus = ({
+export const getInboxThreadTriageStatus = ({
   hasAiPermission,
   isInboxEnabled,
   areParticipantsLoaded,

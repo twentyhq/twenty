@@ -1,12 +1,12 @@
-import { getAgentChatParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
+import { getAiChatParticipantAdditionStatus } from '@/ai/utils/getAgentChatParticipantAdditionStatus';
 
 const INITIAL_RECIPIENT = { workspaceMemberId: 'jane', label: 'Jane' };
 const PARTICIPANT_MENTION = { workspaceMemberId: 'jony', label: 'Jony' };
 
-describe('getAgentChatParticipantAdditionStatus', () => {
+describe('getAiChatParticipantAdditionStatus', () => {
   it('does not require verification when every requested participant was accepted', () => {
     expect(
-      getAgentChatParticipantAdditionStatus({
+      getAiChatParticipantAdditionStatus({
         initialRecipients: [INITIAL_RECIPIENT],
         participantMentions: [PARTICIPANT_MENTION],
         addedWorkspaceMemberIds: [
@@ -19,7 +19,7 @@ describe('getAgentChatParticipantAdditionStatus', () => {
 
   it('preserves mention warnings while initial recipient membership is unknown', () => {
     expect(
-      getAgentChatParticipantAdditionStatus({
+      getAiChatParticipantAdditionStatus({
         initialRecipients: [INITIAL_RECIPIENT],
         participantMentions: [PARTICIPANT_MENTION],
         addedWorkspaceMemberIds: [],
@@ -29,7 +29,7 @@ describe('getAgentChatParticipantAdditionStatus', () => {
 
   it('does not warn about recipients delivered before a failed first send', () => {
     expect(
-      getAgentChatParticipantAdditionStatus({
+      getAiChatParticipantAdditionStatus({
         initialRecipients: [INITIAL_RECIPIENT],
         participantMentions: [],
         addedWorkspaceMemberIds: [],
@@ -48,7 +48,7 @@ describe('getAgentChatParticipantAdditionStatus', () => {
     'warns when a selected recipient is absent from a thread with $scenario',
     ({ writerWorkspaceMemberIds }) => {
       expect(
-        getAgentChatParticipantAdditionStatus({
+        getAiChatParticipantAdditionStatus({
           initialRecipients: [INITIAL_RECIPIENT],
           participantMentions: [],
           addedWorkspaceMemberIds: [],
@@ -63,7 +63,7 @@ describe('getAgentChatParticipantAdditionStatus', () => {
 
   it('warns about an unconfirmed mention even when its recipient is already a member', () => {
     expect(
-      getAgentChatParticipantAdditionStatus({
+      getAiChatParticipantAdditionStatus({
         initialRecipients: [INITIAL_RECIPIENT],
         participantMentions: [INITIAL_RECIPIENT],
         addedWorkspaceMemberIds: [],

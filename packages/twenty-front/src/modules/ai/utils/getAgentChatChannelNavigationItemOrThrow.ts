@@ -1,12 +1,12 @@
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 
-export const getAgentChatChannelNavigationItemOrThrow = (
-  channelView: Pick<AgentChatChannelView, 'channelStatus'>,
+export const getInboxChannelNavigationItemOrThrow = (
+  channelView: Pick<InboxChannelView, 'channelStatus'>,
 ) => {
-  const navigationItem = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.find(
+  const navigationItem = INBOX_CHANNEL_NAVIGATION_ITEMS.find(
     ({ channelStatus }) => channelStatus === channelView.channelStatus,
   );
 

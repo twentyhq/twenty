@@ -1,6 +1,6 @@
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 
-export type AgentChatSelectedThreadListSource = Exclude<
-  AgentChatThreadListSource,
+export type InboxSelectedThreadListSource = Exclude<
+  InboxThreadListSource,
   { type: 'recent' }
 >;

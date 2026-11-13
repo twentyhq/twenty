@@ -9,7 +9,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Conexiunile sunt acreditări pe care un utilizator le deține pentru un serviciu extern (Linear, GitHub, Slack, ...). Aplicația ta declară **cum** sunt obținute acele acreditări — un **furnizor de conexiune** — și le folosește în timpul execuției pentru a efectua apeluri autentificate către API-ul terț.
 
-OAuth 2.0 este integrat. Serviciile cu propriul flux de conectare — o pagină de autentificare găzduită, un ID de cont transmis prin webhook — folosesc un furnizor `custom`, unde aplicația ta gestionează fluxul, iar Twenty păstrează utilizatorul, spațiul de lucru și conexiunea salvată. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
+OAuth 2.0 este integrat, fie cu un client pe care îl înregistrați dvs. (`oauth`), fie descoperit din serviciu (`oauth-discovery`). Serviciile cu propriul flux de conectare — o pagină de autentificare găzduită, un ID de cont transmis prin webhook — folosesc un furnizor `custom`, unde aplicația ta gestionează fluxul, iar Twenty păstrează utilizatorul, spațiul de lucru și conexiunea salvată. Tipurile viitoare de acreditări (jetoane de acces personale, chei API, autentificare de bază) se vor integra în aceeași interfață — aplicațiile care deja folosesc `defineConnectionProvider({ type: 'oauth', ... })` nu vor trebui să migreze.
 
 <AccordionGroup>
 
@@ -96,7 +96,9 @@ Puncte cheie:
 * `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
 * Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
 * Până când ambele `serverVariables` sunt completate, fila General a aplicației afișează un indiciu „necesită administrator de server”, iar butonul „Adaugă conexiune” este dezactivat.
-* `type` este `'oauth'` (cu un bloc `oauth`) sau `'custom'` (cu un bloc `custom`, consultați "Fluxuri de conexiune personalizate"). Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de acestea.
+* `type` este `'oauth'` (cu un bloc `oauth`), `'oauth-discovery'` (cu un bloc `oauthDiscovery`, vedeți mai jos) sau `'custom'` (cu un bloc `custom`, vedeți „Fluxuri de conexiune personalizate”). Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de acestea.
+
+Pentru un serviciu care își publică setările OAuth, cum ar fi un server MCP la distanță, declarați `type: 'oauth-discovery'` cu `oauthDiscovery: { resourceUrl }`, un URL HTTP sau HTTPS. La momentul conectării, Twenty descoperă serverul de autorizare din resursă (RFC 9728), se identifică prin documentul său de metadate ale clientului atunci când serverul îl acceptă, în caz contrar înregistrează dinamic un client și reîmprospătează tokenurile ca orice conexiune OAuth. Nu sunt necesare `serverVariables`. Funcționalitatea de descoperire este disponibilă în Twenty 2.59.0: dacă aplicația dvs. declară un furnizor `oauth-discovery`, declarați `"engines": { "twenty": ">=2.59.0" }` în `package.json` al acesteia.
 
 URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lista albă este:
 
@@ -233,7 +235,7 @@ Ambele funcții rulează în timp ce membrul așteaptă o redirecționare, astfe
 
 Twenty nu reîmprospătează și nu revocă conexiunile personalizate. Eliberați ceea ce deține serviciul pentru cont în `onDisconnectLogicFunction`.
 
-`type` al unui furnizor, precum `scope` al acestuia, nu se poate modifica după ce este sincronizat: pentru a muta un serviciu între `oauth` și `custom`, declarați un furnizor nou cu un `universalIdentifier` nou.
+`type` al unui furnizor, la fel ca `scope` al acestuia, nu se poate schimba după sincronizare: pentru a muta un serviciu între `oauth`, `oauth-discovery` și `custom`, declarați un furnizor nou cu un `universalIdentifier` nou.
 
 Furnizorii personalizați sunt disponibili în Twenty 2.52.0.
 
@@ -460,7 +462,7 @@ Fiecare conexiune are:
 | `scopes`            | Permisiunile OAuth acordate de furnizorul din amonte (distincte de `scope` — nu au legătură)                                                                                                                                                                                     |
 | `userWorkspaceId`   | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP                                                                                                                                         |
 | `workspaceMemberId` | ID-ul membrului spațiului de lucru al proprietarului sau `null` dacă acesta a părăsit între timp spațiul de lucru                                                                                                                                                                |
-| `providerType`      | `'oauth'` sau `'custom'`, tipul furnizorului de conexiune. Verificați-l pentru a restrânge `accessToken`                                                                                                                                                                         |
+| `providerType`      | `'oauth'` sau `'custom'`, tipul furnizorului de conexiune (conexiunile `oauth-discovery` raportează `'oauth'`). Verificați-l pentru a restrânge `accessToken`                                                                                                                    |
 | `accessToken`       | Token de acces OAuth actual (reîmprospătat automat dacă a expirat), setat întotdeauna când `providerType` este `'oauth'`. Pentru `'custom'`, `null` cu excepția cazului în care callback-ul a returnat unul                                                                      |
 | `name`              | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                                                                                                                                                             |
 | `identificator`     | Eticheta contului din amonte conectat, reîmprospătată la fiecare reconectare: `handle` returnat de funcția de identificare când există unul, altfel e-mailul din OIDC `id_token` returnat la schimbul de tokenuri, revenind la e-mailul utilizatorului Twenty care se conectează |

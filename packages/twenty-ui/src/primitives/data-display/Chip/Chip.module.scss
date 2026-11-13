@@ -7,16 +7,13 @@
   --tw-chip-default-max-width: calc(
     100% + var(--tw-chip-padding-start) + var(--tw-chip-padding-end)
   );
-  box-sizing: content-box;
+  // Border-box so limits use the rendered border, which zoom snaps to device pixels
+  box-sizing: border-box;
   align-items: center;
   display: inline-flex;
   gap: var(--t-spacing-1);
-  block-size: calc(var(--t-spacing-3) - 2 * var(--tw-chip-border-width));
-  max-inline-size: calc(
-    var(--tw-chip-max-width, var(--tw-chip-default-max-width)) -
-      var(--tw-chip-padding-start) - var(--tw-chip-padding-end) - 2 *
-      var(--tw-chip-border-width)
-  );
+  block-size: calc(var(--t-spacing-3) + 2 * var(--t-spacing-1));
+  max-inline-size: var(--tw-chip-max-width, var(--tw-chip-default-max-width));
   padding-block: var(--t-spacing-1);
   padding-inline: var(--tw-chip-padding-start) var(--tw-chip-padding-end);
   user-select: none;
@@ -32,7 +29,7 @@
     min-inline-size: 0;
   }
   &[data-size='md'] {
-    block-size: calc(var(--t-spacing-4) - 2 * var(--tw-chip-border-width));
+    block-size: calc(var(--t-spacing-4) + 2 * var(--t-spacing-1));
   }
   &[data-shape='round'] {
     border-radius: var(--t-border-radius-pill);

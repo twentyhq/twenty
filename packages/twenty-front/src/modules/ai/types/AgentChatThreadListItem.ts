@@ -1,7 +1,7 @@
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export type AgentChatThreadListItem = Pick<
-  AgentChatThreadRecord,
+export type InboxThreadListItemData = Pick<
+  AiChatThreadRecord,
   | 'id'
   | 'title'
   | 'conversationType'

@@ -1,18 +1,18 @@
-import { useSettingsAgentChatChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
-import { settingsDraftRoleAgentChatChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
+import { useSettingsInboxChannels } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSettingsAgentChatChannels';
+import { settingsDraftRoleInboxChannelAccessFamilyState } from '@/settings/roles/states/settingsDraftRoleAgentChatChannelAccessFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const useRoleAgentChatChannelIds = (roleId: string) => {
-  const settingsAgentChatChannels = useSettingsAgentChatChannels();
-  const settingsDraftRoleAgentChatChannelAccess = useAtomFamilyStateValue(
-    settingsDraftRoleAgentChatChannelAccessFamilyState,
+export const useRoleInboxChannelIds = (roleId: string) => {
+  const settingsInboxChannels = useSettingsInboxChannels();
+  const settingsDraftRoleInboxChannelAccess = useAtomFamilyStateValue(
+    settingsDraftRoleInboxChannelAccessFamilyState,
     roleId,
   );
 
-  return settingsAgentChatChannels
+  return settingsInboxChannels
     .filter(
       (channel) =>
-        settingsDraftRoleAgentChatChannelAccess[channel.id] ??
+        settingsDraftRoleInboxChannelAccess[channel.id] ??
         channel.roleIds.includes(roleId),
     )
     .map(({ id }) => id);

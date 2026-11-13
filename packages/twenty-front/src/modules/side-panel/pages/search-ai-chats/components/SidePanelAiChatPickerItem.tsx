@@ -1,13 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconMessage } from 'twenty-ui/icon';
 
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { type AgentChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
+import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
+import { type AiChatThreadDisplayIdentity } from '@/ai/types/AgentChatThreadDisplayIdentity';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type SidePanelAiChatPickerItemProps = {
-  thread: AgentChatThreadDisplayIdentity & { id: string };
+  thread: AiChatThreadDisplayIdentity & { id: string };
   isOpeningThread: boolean;
   onOpen: (threadId: string) => void;
 };
@@ -18,7 +18,7 @@ export const SidePanelAiChatPickerItem = ({
   onOpen,
 }: SidePanelAiChatPickerItemProps) => {
   const { t } = useLingui();
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`New chat`,
   });

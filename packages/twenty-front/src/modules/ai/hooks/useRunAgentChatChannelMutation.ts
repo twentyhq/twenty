@@ -3,15 +3,15 @@ import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
+import { useRefreshInboxChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 
-export const useRunAgentChatChannelMutation = () => {
+export const useRunInboxChannelMutation = () => {
   const client = useApolloClient();
   const { enqueueToast } = useToast();
-  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
+  const { refreshInboxChannels } = useRefreshInboxChannels();
 
-  const runAgentChatChannelMutation = useCallback(
+  const runInboxChannelMutation = useCallback(
     async <TData, TVariables extends Record<string, unknown>>({
       mutation,
       variables,
@@ -22,7 +22,7 @@ export const useRunAgentChatChannelMutation = () => {
       try {
         const { data } = await client.mutate({ mutation, variables });
 
-        await refreshAgentChatChannels();
+        await refreshInboxChannels();
 
         return data ?? undefined;
       } catch (error) {
@@ -31,8 +31,8 @@ export const useRunAgentChatChannelMutation = () => {
         return undefined;
       }
     },
-    [client, enqueueToast, refreshAgentChatChannels],
+    [client, enqueueToast, refreshInboxChannels],
   );
 
-  return { runAgentChatChannelMutation };
+  return { runInboxChannelMutation };
 };

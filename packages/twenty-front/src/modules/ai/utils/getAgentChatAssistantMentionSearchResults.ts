@@ -2,7 +2,7 @@ import { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from 'twenty-shared
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 
-export const getAgentChatAssistantMentionSearchResults = ({
+export const getAiChatAssistantMentionSearchResults = ({
   query,
   assistantDisplayName,
   objectLabelSingular,

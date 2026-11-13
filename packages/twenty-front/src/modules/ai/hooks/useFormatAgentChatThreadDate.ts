@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 // Today reads as its time alone, other days in the member's date format
-export const useFormatAgentChatThreadDate = () => {
+export const useFormatAiChatThreadDate = () => {
   const { t } = useLingui();
   const { timeZone, dateFormat, timeFormat } = useDateTimeFormat();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
@@ -20,7 +20,7 @@ export const useFormatAgentChatThreadDate = () => {
   const formatTime = (date: Date) =>
     formatInTimeZone(date, timeZone, timeFormat, { locale: localeCatalog });
 
-  const formatAgentChatThreadDay = (date: Date) =>
+  const formatAiChatThreadDay = (date: Date) =>
     isTodayInTimeZone(date)
       ? formatTime(date)
       : formatDateISOStringToDate({
@@ -30,7 +30,7 @@ export const useFormatAgentChatThreadDate = () => {
           localeCatalog,
         });
 
-  const formatAgentChatThreadDateTime = (date: Date) => {
+  const formatAiChatThreadDateTime = (date: Date) => {
     if (isTodayInTimeZone(date)) {
       const time = formatTime(date);
 
@@ -46,5 +46,5 @@ export const useFormatAgentChatThreadDate = () => {
     });
   };
 
-  return { formatAgentChatThreadDay, formatAgentChatThreadDateTime };
+  return { formatAiChatThreadDay, formatAiChatThreadDateTime };
 };

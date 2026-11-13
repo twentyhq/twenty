@@ -6,10 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useRefreshRecordPermissions } from '@/object-record/record-sharing/hooks/useRefreshRecordPermissions';
 
-export const useRefreshAgentChatThreadPermissions = () => {
+export const useRefreshAiChatThreadPermissions = () => {
   const store = useStore();
   const { refreshRecordPermissions } = useRefreshRecordPermissions();
-  const refreshAgentChatThreadPermissions = useCallback(
+  const refreshAiChatThreadPermissions = useCallback(
     async (threadIds: string[]) => {
       const objectMetadata = store.get(
         objectMetadataItemFamilySelector.selectorFamily({
@@ -29,5 +29,5 @@ export const useRefreshAgentChatThreadPermissions = () => {
     },
     [store, refreshRecordPermissions],
   );
-  return { refreshAgentChatThreadPermissions };
+  return { refreshAiChatThreadPermissions };
 };

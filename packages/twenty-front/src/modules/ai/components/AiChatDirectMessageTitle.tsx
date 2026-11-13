@@ -5,8 +5,8 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { getAgentChatDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { getInboxDirectMessagePeerWorkspaceMemberIds } from '@/ai/utils/getAgentChatDirectMessagePeerWorkspaceMemberIds';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -20,16 +20,16 @@ const StyledTitle = styled.div`
   min-width: 0;
 `;
 
-type AiChatDirectMessageTitleProps = {
+type InboxDirectMessageTitleProps = {
   threadId: string;
 };
 
-export const AiChatDirectMessageTitle = ({
+export const InboxDirectMessageTitle = ({
   threadId,
-}: AiChatDirectMessageTitleProps) => {
+}: InboxDirectMessageTitleProps) => {
   const { t } = useLingui();
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     threadId,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -38,7 +38,7 @@ export const AiChatDirectMessageTitle = ({
   );
 
   const [peerWorkspaceMemberId] = isDefined(thread)
-    ? getAgentChatDirectMessagePeerWorkspaceMemberIds({
+    ? getInboxDirectMessagePeerWorkspaceMemberIds({
         thread,
         currentWorkspaceMemberId: currentWorkspaceMember?.id,
       })

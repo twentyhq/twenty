@@ -1118,10 +1118,10 @@ msgstr "{roleTargetName} liitetään \"{newRoleName}\" -rooliin."
 msgid "{runCount, plural, one {# turn} other {# turns}}"
 msgstr "{runCount, plural, one {# kierros} other {# kierrosta}}"
 
-#. js-lingui-id: dQRNg5
+#. js-lingui-id: yHihjH
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
-msgid "{scopeLabel} — the instance default is {defaultText}. Saving applies to this workspace only."
-msgstr "{scopeLabel} — instanssin oletusarvo on {defaultText}. Tallentaminen koskee vain tätä työtilaa."
+msgid "{scopeLabel} — the default for this workspace is {defaultText}. Saving applies to this workspace only."
+msgstr "{scopeLabel} — tämän työtilan oletusarvo on {defaultText}. Tallentaminen koskee vain tätä työtilaa."
 
 #. js-lingui-id: FTxMFo
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -1652,6 +1652,11 @@ msgstr "Lomake avautuu henkilölle, joka käynnistää työnkulun, ja se täytet
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Lomake avautuu työnkulun käynnistävälle henkilölle, ja se täytetään heti. Tällä laukaisimella se näkyy vain työnkulun suorituksessa. Jos haluat pyytää jotakuta vastaamaan tai hyväksymään jotain hänen saapuneissa viesteissään, käytä sen sijaan Lähetä saapuneisiin -vaihetta."
+
+#. js-lingui-id: 8fNMpo
+#: src/modules/activities/emails/components/ChatThreadComposer.tsx
+msgid "A message can have up to {maxAttachmentCount} files"
+msgstr "Viestissä voi olla enintään {maxAttachmentCount} tiedostoa"
 
 #. js-lingui-id: 5R8uEq
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -2942,7 +2947,7 @@ msgid "agent"
 msgstr "agentti"
 
 #. js-lingui-id: iEQQyu
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/utils/getAgentChatAgentAuthor.ts
 #: src/modules/getting-started/components/step-preview/GettingStartedStepPreviewAgentRun.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentSectionContexts.tsx
@@ -3333,6 +3338,11 @@ msgstr "Kaikki kanavat"
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
 msgstr "Kaikki yritykset"
+
+#. js-lingui-id: S63MQu
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "All conversations"
+msgstr "Kaikki keskustelut"
 
 #. js-lingui-id: 1kLn6M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -4479,8 +4489,8 @@ msgid "Assignment"
 msgstr "Tehtävänanto"
 
 #. js-lingui-id: d/bvvp
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
 #: src/modules/ai/hooks/useAiChatEditor.ts
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Assistant"
 msgstr "Avustaja"
 
@@ -6538,6 +6548,7 @@ msgid "Clear"
 msgstr "Tyhjennä"
 
 #. js-lingui-id: Q2mGA7
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentFilterDropdown.tsx
 msgid "Clear filter"
@@ -7379,7 +7390,7 @@ msgstr "Vahvistetaan maksuasi"
 #. js-lingui-id: iSLIjg
 #: src/modules/settings/applications/components/SettingsMarketplaceAppConnectButton.tsx
 msgid "Connect"
-msgstr ""
+msgstr "Yhdistä"
 
 #. js-lingui-id: jtSEaa
 #: src/pages/auth/Authorize.tsx
@@ -8698,7 +8709,7 @@ msgstr "Krediitit"
 #. js-lingui-id: 6AopcF
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits · 14d"
-msgstr ""
+msgstr "Krediitit · 14 pv"
 
 #. js-lingui-id: x4qjZw
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
@@ -8738,7 +8749,7 @@ msgstr "Suunnitelman käyttöoikeuden lisäksi myönnetyt krediitit. Niitä voi 
 #. js-lingui-id: hujkPL
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Credits per day"
-msgstr ""
+msgstr "Krediittiä päivässä"
 
 #. js-lingui-id: 7CTZ9z
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -11205,7 +11216,7 @@ msgid "else if"
 msgstr "muuten jos"
 
 #. js-lingui-id: O3oNi5
-#: src/modules/activities/emails/components/MessageChannelLogo.tsx
+#: src/modules/activities/emails/utils/getMessageChannelLabel.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 #: src/modules/object-record/object-filter-dropdown/constants/ActorSourceFilterOptions.ts
 #: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
@@ -13076,7 +13087,7 @@ msgid "Failed to link the related records to this event"
 msgstr "Liittyvien tietueiden linkittäminen tähän tapahtumaan epäonnistui"
 
 #. js-lingui-id: XC1d54
-#: src/modules/ai/components/AiChatAgentMessageHeader.tsx
+#: src/modules/ai/components/AiChatAgentAuthorResolver.tsx
 msgid "Failed to load agent details."
 msgstr "Agentin tietojen lataaminen epäonnistui."
 
@@ -13774,6 +13785,11 @@ msgstr "Suodata tietue-ID:n mukaan"
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 #: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
 msgid "Filter chats"
+msgstr "Suodata keskusteluja"
+
+#. js-lingui-id: KGtrou
+#: src/modules/page-layout/widgets/messages/components/WidgetActionMessagesFilter.tsx
+msgid "Filter conversations"
 msgstr "Suodata keskusteluja"
 
 #. js-lingui-id: /VmB4B
@@ -19957,6 +19973,11 @@ msgstr "Mikään määritysmuuttuja ei vastaa nykyisiä suodattimiasi. Yritä mu
 msgid "No content"
 msgstr "Ei sisältöä"
 
+#. js-lingui-id: xHzV2w
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No conversation uses this channel."
+msgstr "Yksikään keskustelu ei käytä tätä kanavaa."
+
 #. js-lingui-id: ICXANZ
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -20229,6 +20250,11 @@ msgstr "Tästä vaiheesta ei tallentunut lokitietoja."
 #: src/modules/activities/timeline-activities/components/EventList.tsx
 msgid "No matching activity"
 msgstr "Ei vastaavaa toimintoa"
+
+#. js-lingui-id: fV9l8S
+#: src/modules/activities/emails/components/EmailsCardNoMatchingConversation.tsx
+msgid "No matching conversations"
+msgstr "Ei vastaavia keskusteluja"
 
 #. js-lingui-id: Dfn8RY
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
@@ -20577,6 +20603,11 @@ msgstr "Kohteita ei ole saatavilla"
 msgid "No test result yet"
 msgstr "Testitulosta ei vielä ole saatavilla"
 
+#. js-lingui-id: hn2q8h
+#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+msgid "No text content"
+msgstr "Ei tekstisisältöä"
+
 #. js-lingui-id: h9Kktq
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "No tools match your search"
@@ -20788,6 +20819,8 @@ msgstr "Solmun asetukset"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/security/components/SettingsSecurityEditableProfileFields.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -22571,11 +22604,6 @@ msgstr "Henkilökohtainen tekoälyn käyttö"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Personal usage"
 msgstr "Henkilökohtainen käyttö"
-
-#. js-lingui-id: /XUQpE
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Personal usage limit resets in {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Henkilökohtaisen käytön raja nollautuu {daysUntilReset, plural, one {# päivän} other {# päivän}} kuluttua."
 
 #. js-lingui-id: zmwvG2
 #: src/modules/object-record/record-field/ui/meta-types/input/components/PhonesFieldInput.tsx
@@ -24566,12 +24594,18 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit-asennuslinkit edellyttävät HTTPS MCP -URL-osoitetta."
 
 #. js-lingui-id: ImOQa9
+#: src/modules/ai/components/AiChatMessage.tsx
 #: src/modules/ai/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 #: src/modules/side-panel/hooks/useOpenComposeEmailInSidePanel.ts
 msgid "Reply"
 msgstr "Vastaa"
+
+#. js-lingui-id: VKsaTi
+#: src/modules/ai/components/AiChatComposerQuotePreview.tsx
+msgid "Replying to"
+msgstr "Vastataan henkilölle"
 
 #. js-lingui-id: Q3LOVJ
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
@@ -26957,6 +26991,7 @@ msgstr "Asetetaan <0>tietokantaasi</0>..."
 
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai/components/AiChatApprovalMergeReviewContent.tsx
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerModes.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
@@ -27692,7 +27727,7 @@ msgstr "Tietueen keskusteluja haettaessa tapahtui virhe."
 #. js-lingui-id: 3hQqVv
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "Something went wrong while fetching this record's messages."
-msgstr ""
+msgstr "Jotain meni pieleen haettaessa tämän tietueen viestejä."
 
 #. js-lingui-id: teokEm
 #: src/modules/log-console/components/LogConsoleResults.tsx
@@ -30244,7 +30279,7 @@ msgstr "Tokenit"
 #. js-lingui-id: TfREwe
 #: src/modules/object-core/agents/components/CoreAgentOverviewTab.tsx
 msgid "Tokens · 14d"
-msgstr ""
+msgstr "Tokenit · 14 pv"
 
 #. js-lingui-id: oK9ArN
 #: src/modules/ui/input/hooks/useColorLabels.ts
@@ -31150,7 +31185,7 @@ msgstr "Tuntematon jäsennysvirhe"
 
 #. js-lingui-id: lZSo+Q
 #: src/modules/activities/emails/components/EmailThreadMessageSender.tsx
-#: src/modules/ai/components/AiChatMessageAuthorHeader.tsx
+#: src/modules/ai/utils/getAgentChatMessageAuthor.ts
 msgid "Unknown sender"
 msgstr "Tuntematon lähettäjä"
 
@@ -32170,11 +32205,6 @@ msgstr "Käytetään sovelluksen oletusarvoa. Määritä ympäristömuuttujien k
 msgid "Using default value. Set a custom value to override."
 msgstr "Käytetään oletusarvoa. Aseta mukautettu arvo ohittaaksesi."
 
-#. js-lingui-id: XpFkxG
-#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
-msgid "Using workspace credits for {daysUntilReset, plural, one {# day} other {# days}}."
-msgstr "Käytetään työtilan krediittejä {daysUntilReset, plural, one {# päivän} other {# päivän}} ajan."
-
 #. js-lingui-id: TIUH1Q
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "UTC is used when no time zone is selected"
@@ -32483,7 +32513,7 @@ msgid "View only — You can read this conversation."
 msgstr "Vain katselu — Voit lukea tämän keskustelun."
 
 #. js-lingui-id: lD7M9Z
-#: src/modules/ai/components/AiChatQuotedMessagePreview.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 msgid "View original message"
 msgstr "Näytä alkuperäinen viesti"
 
@@ -32764,7 +32794,7 @@ msgstr "Keskustelujen lataaminen ei onnistunut"
 #. js-lingui-id: BapVy1
 #: src/modules/activities/emails/components/EmailsCardErrorState.tsx
 msgid "We couldn't load the messages"
-msgstr ""
+msgstr "Viestejä ei voitu ladata"
 
 #. js-lingui-id: TvNBSn
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
@@ -32950,6 +32980,21 @@ msgstr "Viikko"
 msgid "Weekly"
 msgstr "Viikoittain"
 
+#. js-lingui-id: fWh1RG
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Ask an admin to enable workspace credits."
+msgstr "Henkilökohtaisen tekoälyn viikoittainen käyttöraja on saavutettu. Pyydä ylläpitäjää ottamaan työtilan krediitit käyttöön."
+
+#. js-lingui-id: GkVwb2
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Enable workspace credits to continue."
+msgstr "Henkilökohtaisen tekoälyn viikoittainen käyttöraja on saavutettu. Ota työtilan krediitit käyttöön jatkaaksesi."
+
+#. js-lingui-id: Kf6mmq
+#: src/modules/ai/components/AiChatUserCreditsExhaustedBanner.tsx
+msgid "Weekly personal AI usage reached. Now using workspace credits."
+msgstr "Henkilökohtaisen tekoälyn viikoittainen käyttöraja on saavutettu. Käytössä ovat nyt työtilan krediitit."
+
 #. js-lingui-id: IAUiSh
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
 msgid "weeks"
@@ -32991,10 +33036,10 @@ msgstr "Miten voin auttaa sinua?"
 msgid "What can you do?"
 msgstr "Mitä voit tehdä?"
 
-#. js-lingui-id: 9Y4G6f
+#. js-lingui-id: wnVLbt
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
-msgid "What caps this workspace. Instance defaults come from config variables and only an operator can replace one."
-msgstr "Mikä rajoittaa tätä työtilaa. Instanssin oletusarvot tulevat määritysmuuttujista, ja vain operaattori voi korvata yhden niistä."
+msgid "What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one."
+msgstr "Mikä rajoittaa tätä työtilaa. Oletusarvot tulevat määritysmuuttujista ja työtilan sopimuksesta, ja vain operaattori voi korvata jonkin niistä."
 
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -33751,6 +33796,8 @@ msgstr "Eilen"
 
 #. js-lingui-id: kWJmRL
 #: src/modules/activities/timeline-activities/utils/getTimelineActivityAuthorFullName.ts
+#: src/modules/ai/components/AiChatComposerQuote.tsx
+#: src/modules/ai/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai/utils/getAgentChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx

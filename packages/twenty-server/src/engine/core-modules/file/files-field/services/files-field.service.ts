@@ -27,6 +27,23 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+type FieldMetadataReference =
+  | { fieldMetadataId: string }
+  | { fieldMetadataUniversalIdentifier: string };
+
+const buildFieldMetadataWhere = (
+  fieldMetadataReference: FieldMetadataReference,
+) => {
+  if ('fieldMetadataId' in fieldMetadataReference) {
+    return { id: fieldMetadataReference.fieldMetadataId };
+  }
+
+  return {
+    universalIdentifier:
+      fieldMetadataReference.fieldMetadataUniversalIdentifier,
+  };
+};
+
 @Injectable()
 export class FilesFieldService {
   constructor(
@@ -179,12 +196,13 @@ export class FilesFieldService {
   async copyFileIntoFilesField({
     fileId,
     workspaceId,
-    fieldMetadataId,
+    shouldAssertStorageStock,
+    ...fieldMetadataReference
   }: {
     fileId: string;
     workspaceId: string;
-    fieldMetadataId: string;
-  }): Promise<FileEntity> {
+    shouldAssertStorageStock?: boolean;
+  } & FieldMetadataReference): Promise<FileEntity> {
     const sourceFile = await this.fileRepository.findOne(workspaceId, {
       where: { id: fileId },
     });
@@ -211,7 +229,7 @@ export class FilesFieldService {
       workspaceId,
       {
         select: ['applicationId', 'universalIdentifier'],
-        where: { id: fieldMetadataId },
+        where: buildFieldMetadataWhere(fieldMetadataReference),
       },
     );
 
@@ -253,6 +271,7 @@ export class FilesFieldService {
         isTemporaryFile: true,
         toDelete: false,
       },
+      shouldAssertStorageStock,
     });
   }
 

@@ -1,10 +1,10 @@
 import { createStore } from 'jotai';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { inboxDirectMessageSidebarItemsSelector } from '@/ai/states/selectors/agentChatDirectMessageSidebarItemsSelector';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -25,7 +25,7 @@ const buildThread = ({
   conversationType: AgentChatThreadConversationType;
   peerWorkspaceMemberId?: string | null;
   deletedAt?: string | null;
-}): AgentChatThreadRecord => ({
+}): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title: id,
@@ -39,10 +39,10 @@ const buildThread = ({
   lastActivityAt,
 });
 
-const setUpStore = (threads: AgentChatThreadRecord[]) => {
+const setUpStore = (threads: AiChatThreadRecord[]) => {
   const store = createStore();
 
-  setAgentChatThreadList(store, threads);
+  setInboxThreadList(store, threads);
   store.set(currentWorkspaceMemberState.atom, mockedWorkspaceMemberData);
   store.set(currentWorkspaceMembersState.atom, [
     mockedWorkspaceMemberData,
@@ -57,7 +57,7 @@ const setUpStore = (threads: AgentChatThreadRecord[]) => {
   return store;
 };
 
-describe('agentChatDirectMessageSidebarItemsSelector', () => {
+describe('inboxDirectMessageSidebarItemsSelector', () => {
   it('lists open direct messages, newest first, with the other member', () => {
     const store = setUpStore([
       buildThread({
@@ -86,7 +86,7 @@ describe('agentChatDirectMessageSidebarItemsSelector', () => {
       }),
     ]);
 
-    expect(store.get(agentChatDirectMessageSidebarItemsSelector.atom)).toEqual([
+    expect(store.get(inboxDirectMessageSidebarItemsSelector.atom)).toEqual([
       { threadId: 'former-member-dm', peer: null, isUnread: false },
       {
         threadId: 'older-dm',
@@ -110,7 +110,7 @@ describe('agentChatDirectMessageSidebarItemsSelector', () => {
         peerWorkspaceMemberId: PEER_MEMBER_ID,
       }),
     ]);
-    store.set(agentChatThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       'unread-dm': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'participant',
@@ -127,7 +127,7 @@ describe('agentChatDirectMessageSidebarItemsSelector', () => {
 
     expect(
       store
-        .get(agentChatDirectMessageSidebarItemsSelector.atom)
+        .get(inboxDirectMessageSidebarItemsSelector.atom)
         .map(({ threadId, isUnread }) => ({ threadId, isUnread })),
     ).toEqual([{ threadId: 'unread-dm', isUnread: true }]);
   });

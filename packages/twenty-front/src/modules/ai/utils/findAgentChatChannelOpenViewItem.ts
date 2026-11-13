@@ -1,15 +1,15 @@
-import { AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
+import { INBOX_CHANNEL_OPEN_VIEW_ITEMS } from '@/ai/constants/AgentChatChannelOpenViewItems';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
-export const findAgentChatChannelOpenViewItem = (
+export const findInboxChannelOpenViewItem = (
   channelView: Pick<
-    AgentChatChannelView,
+    InboxChannelView,
     'channelStatus' | 'assignment' | 'filter'
   >,
 ) =>
   channelView.channelStatus === AgentChatChannelThreadStatus.OPEN
-    ? AGENT_CHAT_CHANNEL_OPEN_VIEW_ITEMS.find(
+    ? INBOX_CHANNEL_OPEN_VIEW_ITEMS.find(
         ({ assignment, filter }) =>
           assignment === channelView.assignment &&
           filter === channelView.filter,

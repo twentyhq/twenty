@@ -12,7 +12,7 @@ const isAssistantMentionedInNode = (node: TipTapNode): boolean =>
       AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR) ||
   (node.content ?? []).some(isAssistantMentionedInNode);
 
-export const isAgentChatAssistantMentionedInSerializedDocument = (
+export const isAiChatAssistantMentionedInSerializedDocument = (
   serializedDocument: string,
 ): boolean => {
   const document = parseCanonicalTipTapJsonDocument(serializedDocument);

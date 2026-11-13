@@ -1,11 +1,11 @@
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
-import { type AgentChatSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
+import { type InboxSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
 
-export const isAgentChatSelectedThreadListSourceAccessible = ({
+export const isInboxSelectedThreadListSourceAccessible = ({
   source,
   channels,
 }: {
-  source: AgentChatSelectedThreadListSource;
+  source: InboxSelectedThreadListSource;
   channels: Pick<AgentChatChannel, 'id' | 'isAccessible'>[];
 }) =>
   source.type !== 'channel' ||

@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type AgentChatChannel } from '~/generated-metadata/graphql';
@@ -11,26 +11,26 @@ const StyledName = styled.span`
   color: ${themeCssVariables.font.color.primary};
 `;
 
-type SettingsRolePermissionsAgentChatChannelTableRowProps = {
+type SettingsRolePermissionsInboxChannelTableRowProps = {
   channel: Pick<AgentChatChannel, 'name' | 'icon' | 'color'>;
   isChecked: boolean;
   isEditable: boolean;
   onToggle: () => void;
 };
 
-export const SettingsRolePermissionsAgentChatChannelTableRow = ({
+export const SettingsRolePermissionsInboxChannelTableRow = ({
   channel,
   isChecked,
   isEditable,
   onToggle,
-}: SettingsRolePermissionsAgentChatChannelTableRowProps) => (
+}: SettingsRolePermissionsInboxChannelTableRowProps) => (
   <TableRow
     gridAutoColumns="1fr 24px"
     onClick={isEditable ? onToggle : undefined}
     cursor={isEditable ? 'pointer' : 'default'}
   >
     <TableCell gap={themeCssVariables.spacing[2]}>
-      <AgentChatChannelIcon channel={channel} />
+      <InboxChannelIcon channel={channel} />
       <StyledName>{channel.name}</StyledName>
     </TableCell>
     <TableCell

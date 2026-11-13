@@ -3,7 +3,7 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -37,7 +37,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
       id: THREAD_ID,
       lastActivityAt: LAST_ACTIVITY_AT,
     } as never);
-    store.set(agentChatThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: ARCHIVED_PARTICIPANT,
     });
 
@@ -53,9 +53,7 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(recordStoreFamilyState.atomFamily(THREAD_ID)),
     ).toMatchObject({ lastActivityAt: sentAt });
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
-    ).toEqual({
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
       __typename: 'AgentChatThreadParticipant' as const,
       threadId: THREAD_ID,
       lastReadAt: sentAt,
@@ -73,15 +71,15 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(recordStoreFamilyState.atomFamily(THREAD_ID)),
     ).toMatchObject({ lastActivityAt: LAST_ACTIVITY_AT });
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
-    ).toEqual(ARCHIVED_PARTICIPANT);
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
+      ARCHIVED_PARTICIPANT,
+    );
   });
 
   it('preserves a newer participant event when sending fails', async () => {
     const store = createStore();
 
-    store.set(agentChatThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: ARCHIVED_PARTICIPANT,
     });
 
@@ -99,14 +97,14 @@ describe('useOptimisticallyRestoreOnSend', () => {
       updatedAt: '2026-10-01T12:01:00.000Z',
     };
 
-    store.set(agentChatThreadParticipantsState.atom, {
+    store.set(aiChatThreadParticipantsState.atom, {
       [THREAD_ID]: mentionedAgainParticipant,
     });
 
     act(() => rollback());
 
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
-    ).toEqual(mentionedAgainParticipant);
+    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
+      mentionedAgainParticipant,
+    );
   });
 });

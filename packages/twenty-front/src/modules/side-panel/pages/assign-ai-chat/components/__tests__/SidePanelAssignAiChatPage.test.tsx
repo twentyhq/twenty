@@ -12,7 +12,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -22,11 +22,11 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const assignAgentChatThreads = jest.fn();
+const assignAiChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
 jest.mock('@/ai/hooks/useAssignAgentChatThreads', () => ({
-  useAssignAgentChatThreads: () => ({ assignAgentChatThreads }),
+  useAssignAiChatThreads: () => ({ assignAiChatThreads }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -48,7 +48,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const setThreads = (threads: { id: string; assigneeId: string | null }[]) => {
-  setAgentChatThreadList(
+  setInboxThreadList(
     jotaiStore,
     threads.map(
       ({ id, assigneeId }) =>
@@ -105,7 +105,7 @@ describe('SidePanelAssignAiChatPage', () => {
     await userEvent.click(screen.getByText('Phil Schiler'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignAiChatThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       assigneeWorkspaceMemberId: 'phil',
     });
@@ -132,7 +132,7 @@ describe('SidePanelAssignAiChatPage', () => {
 
     await userEvent.click(screen.getByText('No assignee'));
 
-    expect(assignAgentChatThreads).toHaveBeenCalledWith({
+    expect(assignAiChatThreads).toHaveBeenCalledWith({
       threadIds: ['thread-1'],
       assigneeWorkspaceMemberId: null,
     });

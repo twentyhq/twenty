@@ -26,7 +26,7 @@ export const RecordTableHeaderDnd = () => {
   return (
     <RecordTableHeaderDndKitProvider>
       {scrollableRecordFields.map((recordField, index) => (
-        <React.Fragment key={recordField.fieldMetadataItemId}>
+        <React.Fragment key={recordField.id}>
           <DragDropItemDropTargetSlot>
             <DragDropItemDropTarget
               index={index}
@@ -35,7 +35,7 @@ export const RecordTableHeaderDnd = () => {
             />
           </DragDropItemDropTargetSlot>
           <DragDropItemSortableCell
-            id={recordField.fieldMetadataItemId}
+            id={recordField.id}
             index={index}
             group={RECORD_TABLE_HEADER_DROPPABLE_ID}
             disabled={isRecordTableColumnHeadersReadOnly}
@@ -43,7 +43,7 @@ export const RecordTableHeaderDnd = () => {
             collisionDetector={closestCenter}
           >
             <RecordTableHeaderCell
-              key={recordField.fieldMetadataItemId}
+              key={recordField.id}
               recordField={recordField}
               recordFieldIndex={index + 1}
             />

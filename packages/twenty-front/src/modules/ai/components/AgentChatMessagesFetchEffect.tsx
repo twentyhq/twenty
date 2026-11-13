@@ -7,17 +7,17 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
-import { agentChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
-import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
-import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
-import { agentChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
-import { agentChatHandleEventCallbackFamilyState } from '@/ai/states/agentChatHandleEventCallbackFamilyState';
-import { agentChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
-import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
-import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
+import { aiChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChatLiveReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai/states/agentChatMessageReactionsFamilyState';
+import { aiChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { aiChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
+import { aiChatFirstLiveSeqFamilyState } from '@/ai/states/agentChatFirstLiveSeqFamilyState';
+import { aiChatHandleEventCallbackFamilyState } from '@/ai/states/agentChatHandleEventCallbackFamilyState';
+import { aiChatIsAwaitingPersistedRefetchFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchFamilyState';
+import { aiChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
+import { aiChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
@@ -31,32 +31,30 @@ import {
 } from '~/generated-metadata/graphql';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
-export const AgentChatMessagesFetchEffect = () => {
+export const AiChatMessagesFetchEffect = () => {
   const store = useStore();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const isNewThread = useIsOnNewAiChatSlot() || currentAiChatThread === null;
 
-  const setAgentChatMessagesLoading = useSetAtomState(
-    agentChatMessagesLoadingState,
-  );
+  const setAiChatMessagesLoading = useSetAtomState(aiChatMessagesLoadingState);
 
   const setSkipMessagesSkeletonUntilLoaded = useSetAtomState(
     skipMessagesSkeletonUntilLoadedState,
   );
 
-  const setAgentChatFetchedMessages = useSetAtomFamilyState(
-    agentChatFetchedMessagesFamilyState,
+  const setAiChatFetchedMessages = useSetAtomFamilyState(
+    aiChatFetchedMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
 
-  const setAgentChatQueuedMessages = useSetAtomFamilyState(
-    agentChatQueuedMessagesFamilyState,
+  const setAiChatQueuedMessages = useSetAtomFamilyState(
+    aiChatQueuedMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
 
-  const setAgentChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
-    agentChatIsAwaitingPersistedRefetchFamilyState,
+  const setAiChatIsAwaitingPersistedRefetch = useSetAtomFamilyState(
+    aiChatIsAwaitingPersistedRefetchFamilyState,
     { threadId: currentAiChatThread },
   );
 
@@ -70,7 +68,7 @@ export const AgentChatMessagesFetchEffect = () => {
   const handleDataLoaded = useCallback(
     (data: GetChatMessagesQuery) => {
       const error = store.get(
-        agentChatErrorFamilyState.atomFamily({ threadId: currentAiChatThread }),
+        aiChatErrorFamilyState.atomFamily({ threadId: currentAiChatThread }),
       );
       if (isGraphqlErrorOfType(error, 'NOT_FOUND')) {
         return;
@@ -78,7 +76,7 @@ export const AgentChatMessagesFetchEffect = () => {
       const uiMessages = mapAgentMessagesToUIMessages(data.chatMessages ?? []);
       // A live snapshot is at least as recent as a fetch, which may have been read before it
       const liveReactionRevisions = store.get(
-        agentChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatLiveReactionRevisionsFamilyState.atomFamily({
           threadId: currentAiChatThread,
         }),
       );
@@ -89,19 +87,19 @@ export const AgentChatMessagesFetchEffect = () => {
         }
 
         store.set(
-          agentChatMessageReactionsFamilyState.atomFamily({
+          aiChatMessageReactionsFamilyState.atomFamily({
             messageId: message.id,
           }),
           message.reactions,
         );
       }
-      setAgentChatFetchedMessages(
+      setAiChatFetchedMessages(
         uiMessages.filter((message) => message.status !== 'queued'),
       );
-      setAgentChatQueuedMessages(
+      setAiChatQueuedMessages(
         uiMessages.filter((message) => message.status === 'queued'),
       );
-      setAgentChatIsAwaitingPersistedRefetch(false);
+      setAiChatIsAwaitingPersistedRefetch(false);
 
       const catchup = data.chatStreamCatchupChunks;
 
@@ -118,7 +116,7 @@ export const AgentChatMessagesFetchEffect = () => {
       const familyKey = { threadId };
 
       const handleEvent = store.get(
-        agentChatHandleEventCallbackFamilyState.atomFamily(familyKey),
+        aiChatHandleEventCallbackFamilyState.atomFamily(familyKey),
       );
 
       if (!isDefined(handleEvent)) {
@@ -126,7 +124,7 @@ export const AgentChatMessagesFetchEffect = () => {
       }
 
       const firstLiveSeq = store.get(
-        agentChatFirstLiveSeqFamilyState.atomFamily(familyKey),
+        aiChatFirstLiveSeqFamilyState.atomFamily(familyKey),
       );
 
       for (let index = 0; index < catchup.chunks.length; index++) {
@@ -147,25 +145,25 @@ export const AgentChatMessagesFetchEffect = () => {
     },
     [
       currentAiChatThread,
-      setAgentChatFetchedMessages,
-      setAgentChatQueuedMessages,
-      setAgentChatIsAwaitingPersistedRefetch,
+      setAiChatFetchedMessages,
+      setAiChatQueuedMessages,
+      setAiChatIsAwaitingPersistedRefetch,
       store,
     ],
   );
 
   const handleLoadingChange = useCallback(
     (loading: boolean) => {
-      setAgentChatMessagesLoading(loading);
+      setAiChatMessagesLoading(loading);
 
       if (!loading) {
-        setAgentChatIsAwaitingPersistedRefetch(false);
+        setAiChatIsAwaitingPersistedRefetch(false);
       }
     },
-    [setAgentChatMessagesLoading, setAgentChatIsAwaitingPersistedRefetch],
+    [setAiChatMessagesLoading, setAiChatIsAwaitingPersistedRefetch],
   );
 
-  const { refetch: refetchAgentChatMessages } = useQueryWithCallbacks(
+  const { refetch: refetchAiChatMessages } = useQueryWithCallbacks(
     GetChatMessagesDocument,
     {
       variables: { threadId: currentAiChatThread ?? '' },
@@ -182,17 +180,17 @@ export const AgentChatMessagesFetchEffect = () => {
       return;
     }
 
-    refetchAgentChatMessages();
-  }, [refetchAgentChatMessages, isNewThread]);
+    refetchAiChatMessages();
+  }, [refetchAiChatMessages, isNewThread]);
 
   useListenToBrowserEvent({
-    eventName: AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME,
+    eventName: AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
     onBrowserEvent: handleRefetchMessages,
   });
 
   const handleSseClientReconnected = useCallback(() => {
     store.set(
-      agentChatLiveReactionRevisionsFamilyState.atomFamily({
+      aiChatLiveReactionRevisionsFamilyState.atomFamily({
         threadId: currentAiChatThread,
       }),
       {},

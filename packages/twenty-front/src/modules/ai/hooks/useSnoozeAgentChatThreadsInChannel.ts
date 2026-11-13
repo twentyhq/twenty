@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
 
-import { useUpdateAgentChatThreadChannelCopy } from '@/ai/hooks/useUpdateAgentChatThreadChannelCopy';
+import { useUpdateInboxThreadChannelCopy } from '@/ai/hooks/useUpdateAgentChatThreadChannelCopy';
 import { SnoozeAgentChatThreadInChannelDocument } from '~/generated-metadata/graphql';
 
-export const useSnoozeAgentChatThreadsInChannel = () => {
-  const { updateAgentChatThreadChannelCopy } =
-    useUpdateAgentChatThreadChannelCopy();
+export const useSnoozeInboxThreadsInChannel = () => {
+  const { updateInboxThreadChannelCopy } = useUpdateInboxThreadChannelCopy();
 
-  const snoozeAgentChatThreadsInChannel = useCallback(
+  const snoozeInboxThreadsInChannel = useCallback(
     async ({
       threadIds,
       snoozedUntil,
@@ -17,7 +16,7 @@ export const useSnoozeAgentChatThreadsInChannel = () => {
     }) => {
       await Promise.all(
         threadIds.map((threadId) =>
-          updateAgentChatThreadChannelCopy({
+          updateInboxThreadChannelCopy({
             mutation: SnoozeAgentChatThreadInChannelDocument,
             variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
             optimisticChannelCopy: {
@@ -28,8 +27,8 @@ export const useSnoozeAgentChatThreadsInChannel = () => {
         ),
       );
     },
-    [updateAgentChatThreadChannelCopy],
+    [updateInboxThreadChannelCopy],
   );
 
-  return { snoozeAgentChatThreadsInChannel };
+  return { snoozeInboxThreadsInChannel };
 };

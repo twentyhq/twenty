@@ -9,7 +9,7 @@ import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/
 import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 
-export const AgentChatToolIndexInvalidationEffect = () => {
+export const AiChatToolIndexInvalidationEffect = () => {
   const { invalidateToolIndex } = useInvalidateToolIndex();
 
   // Installing an app broadcasts many entities at once; one rebuild is enough

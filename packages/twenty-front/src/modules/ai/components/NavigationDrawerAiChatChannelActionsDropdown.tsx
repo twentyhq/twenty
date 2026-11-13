@@ -10,17 +10,17 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 
-import { NavigationDrawerAiChatChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
-import { useAddAgentChatChannelToFavorites } from '@/ai/hooks/useAddAgentChatChannelToFavorites';
-import { useIsAgentChatChannelFavorite } from '@/ai/hooks/useIsAgentChatChannelFavorite';
-import { useRemoveAgentChatChannelFromFavorites } from '@/ai/hooks/useRemoveAgentChatChannelFromFavorites';
+import { NavigationDrawerInboxChannelRolesSubmenu } from '@/ai/components/NavigationDrawerAiChatChannelRolesSubmenu';
+import { useAddInboxChannelToFavorites } from '@/ai/hooks/useAddAgentChatChannelToFavorites';
+import { useIsInboxChannelFavorite } from '@/ai/hooks/useIsAgentChatChannelFavorite';
+import { useRemoveInboxChannelFromFavorites } from '@/ai/hooks/useRemoveAgentChatChannelFromFavorites';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { type UpdateAgentChatChannelInput } from '~/generated-metadata/graphql';
 
-type NavigationDrawerAiChatChannelActionsDropdownProps = {
+type NavigationDrawerInboxChannelActionsDropdownProps = {
   channel: AgentChatChannel;
   destinationChannels: AgentChatChannel[];
   dropdownId: string;
@@ -31,7 +31,7 @@ type NavigationDrawerAiChatChannelActionsDropdownProps = {
   onDelete: (destinationChannelId: string | null) => void;
 };
 
-export const NavigationDrawerAiChatChannelActionsDropdown = ({
+export const NavigationDrawerInboxChannelActionsDropdown = ({
   channel,
   destinationChannels,
   dropdownId,
@@ -40,14 +40,13 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
   onChangeAppearance,
   onUpdate,
   onDelete,
-}: NavigationDrawerAiChatChannelActionsDropdownProps) => {
+}: NavigationDrawerInboxChannelActionsDropdownProps) => {
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
-  const isAgentChatChannelFavorite = useIsAgentChatChannelFavorite(channel.id);
-  const { addAgentChatChannelToFavorites } =
-    useAddAgentChatChannelToFavorites();
-  const { removeAgentChatChannelFromFavorites } =
-    useRemoveAgentChatChannelFromFavorites();
+  const isInboxChannelFavorite = useIsInboxChannelFavorite(channel.id);
+  const { addInboxChannelToFavorites } = useAddInboxChannelToFavorites();
+  const { removeInboxChannelFromFavorites } =
+    useRemoveInboxChannelFromFavorites();
 
   return (
     <DropdownRoot type="menu" dropdownId={dropdownId}>
@@ -61,17 +60,17 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
       <DropdownContent side="right" align="start">
         <Dropdown.Section>
           {channel.isAccessible &&
-            (isAgentChatChannelFavorite ? (
+            (isInboxChannelFavorite ? (
               <Dropdown.ActionItem
                 startIcon={<IconHeartOff />}
-                onClick={() => removeAgentChatChannelFromFavorites(channel.id)}
+                onClick={() => removeInboxChannelFromFavorites(channel.id)}
               >
                 {t`Remove from favorites`}
               </Dropdown.ActionItem>
             ) : (
               <Dropdown.ActionItem
                 startIcon={<IconHeart />}
-                onClick={() => addAgentChatChannelToFavorites(channel.id)}
+                onClick={() => addInboxChannelToFavorites(channel.id)}
               >
                 {t`Add to favorites`}
               </Dropdown.ActionItem>
@@ -87,7 +86,7 @@ export const NavigationDrawerAiChatChannelActionsDropdown = ({
               >
                 {t`Icon and color`}
               </Dropdown.ActionItem>
-              <NavigationDrawerAiChatChannelRolesSubmenu
+              <NavigationDrawerInboxChannelRolesSubmenu
                 roleIds={channel.roleIds}
                 onChange={(roleIds) => onUpdate({ roleIds })}
               />

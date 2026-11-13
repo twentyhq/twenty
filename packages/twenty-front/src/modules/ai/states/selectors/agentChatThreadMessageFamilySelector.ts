@@ -1,18 +1,18 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Nullable } from 'twenty-shared/types';
 
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatThreadMessageFamilySelector = createAtomFamilySelector<
+export const aiChatThreadMessageFamilySelector = createAtomFamilySelector<
   Nullable<ExtendedUIMessage>,
   { threadId: Nullable<string>; messageId: Nullable<string> }
 >({
-  key: 'agentChatThreadMessageFamilySelector',
+  key: 'aiChatThreadMessageFamilySelector',
   get:
     ({ threadId, messageId }) =>
     ({ get }) =>
-      get(agentChatMessagesFamilyState, { threadId: threadId ?? null }).find(
+      get(aiChatMessagesFamilyState, { threadId: threadId ?? null }).find(
         ({ id }) => id === messageId,
       ),
 });

@@ -24,6 +24,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Share calendar events across channels`,
     description: msg`Store a meeting synced by several calendars of the same provider once, instead of once per calendar.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED]: {
+    label: msg`Skip internal meetings`,
+    description: msg`Skip calendar events with no participant outside the workspace domain, unless internal import is turned on.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,

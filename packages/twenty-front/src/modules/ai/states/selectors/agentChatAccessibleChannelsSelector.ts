@@ -1,13 +1,11 @@
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 
-export const agentChatAccessibleChannelsSelector = createAtomSelector<
+export const inboxAccessibleChannelsSelector = createAtomSelector<
   AgentChatChannel[]
 >({
-  key: 'agentChatAccessibleChannelsSelector',
+  key: 'inboxAccessibleChannelsSelector',
   get: ({ get }) =>
-    (get(agentChatChannelsState) ?? []).filter(
-      ({ isAccessible }) => isAccessible,
-    ),
+    (get(inboxChannelsState) ?? []).filter(({ isAccessible }) => isAccessible),
 });

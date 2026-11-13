@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 
-export const getAiChatThreadChannelIdOutsideInbox = ({
+export const getInboxThreadChannelIdOutsideInbox = ({
   threadChannelId,
   channels,
 }: {

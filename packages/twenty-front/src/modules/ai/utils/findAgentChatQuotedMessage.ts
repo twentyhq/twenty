@@ -1,13 +1,13 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { type AgentChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
-import { type AgentChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
-import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { type AiChatMessageAuthorLookup } from '@/ai/types/AgentChatMessageAuthorLookup';
+import { type AiChatMessageQuote } from '@/ai/types/AgentChatMessageQuote';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { getAiChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 // a reply does not store the id it quotes, so the original is matched by the quoted text
-export const findAgentChatQuotedMessage = ({
+export const findAiChatQuotedMessage = ({
   messages,
   replyMessageId,
   quote,
@@ -15,8 +15,8 @@ export const findAgentChatQuotedMessage = ({
 }: {
   messages: ExtendedUIMessage[];
   replyMessageId: string;
-  quote: Pick<AgentChatMessageQuote, 'authorName' | 'excerpt'>;
-  authorLookup: AgentChatMessageAuthorLookup<
+  quote: Pick<AiChatMessageQuote, 'authorName' | 'excerpt'>;
+  authorLookup: AiChatMessageAuthorLookup<
     Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>
   >;
 }) => {
@@ -29,11 +29,11 @@ export const findAgentChatQuotedMessage = ({
   }
 
   return messages.slice(0, replyMessageIndex).findLast((message) => {
-    if (getAgentChatMessageQuoteExcerpt(message) !== quote.excerpt) {
+    if (getAiChatMessageQuoteExcerpt(message) !== quote.excerpt) {
       return false;
     }
 
-    const author = getAgentChatMessageAuthor({ message, authorLookup });
+    const author = getAiChatMessageAuthor({ message, authorLookup });
 
     // a placeholder name (former member, agent not loaded here) cannot be compared
     return !author.isNameResolved || author.name === quote.authorName;

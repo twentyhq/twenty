@@ -1,10 +1,10 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { isAgentChatDraftsByThreadId } from '@/ai/utils/isAgentChatDraftsByThreadId';
+import { isAiChatDraftsByThreadId } from '@/ai/utils/isAgentChatDraftsByThreadId';
 
-describe('isAgentChatDraftsByThreadId', () => {
+describe('isAiChatDraftsByThreadId', () => {
   it('accepts empty and canonical drafts', () => {
     expect(
-      isAgentChatDraftsByThreadId({
+      isAiChatDraftsByThreadId({
         empty: '',
         draft: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       }),
@@ -13,11 +13,11 @@ describe('isAgentChatDraftsByThreadId', () => {
 
   it('rejects legacy and malformed drafts', () => {
     expect(
-      isAgentChatDraftsByThreadId({
+      isAiChatDraftsByThreadId({
         draft: JSON.stringify({ type: 'doc', content: [] }),
       }),
     ).toBe(false);
-    expect(isAgentChatDraftsByThreadId({ draft: 'Hello' })).toBe(false);
-    expect(isAgentChatDraftsByThreadId([])).toBe(false);
+    expect(isAiChatDraftsByThreadId({ draft: 'Hello' })).toBe(false);
+    expect(isAiChatDraftsByThreadId([])).toBe(false);
   });
 });

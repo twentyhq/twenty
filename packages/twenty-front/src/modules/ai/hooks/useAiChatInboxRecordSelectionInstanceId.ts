@@ -1,16 +1,16 @@
 import { useId, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
-import { getAiChatInboxRecordSelectionScope } from '@/ai/utils/getAiChatInboxRecordSelectionScope';
+import { getInboxRecordSelectionScope } from '@/ai/utils/getAiChatInboxRecordSelectionScope';
 
-export const useAiChatInboxRecordSelectionInstanceId = () => {
+export const useInboxRecordSelectionInstanceId = () => {
   const baseInstanceId = useId();
   const { threadId } = useParams();
   const { key: locationKey } = useLocation();
   const [selectionScope, setSelectionScope] = useState(() =>
-    getAiChatInboxRecordSelectionScope({ threadId, locationKey }),
+    getInboxRecordSelectionScope({ threadId, locationKey }),
   );
-  const nextSelectionScope = getAiChatInboxRecordSelectionScope({
+  const nextSelectionScope = getInboxRecordSelectionScope({
     threadId,
     locationKey,
     previousScope: selectionScope,

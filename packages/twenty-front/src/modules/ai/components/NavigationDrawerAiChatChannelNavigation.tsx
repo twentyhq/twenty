@@ -2,13 +2,13 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
-import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
-import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
+import { InboxChannelIcon } from '@/ai/components/AgentChatChannelIcon';
+import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
+import { useOpenInboxChannel } from '@/ai/hooks/useOpenAgentChatChannel';
 import { type AgentChatChannelSummary } from '@/ai/types/AgentChatChannelSummary';
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { getAgentChatChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
-import { getAgentChatChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
+import { getInboxChannelNavigationItemOrThrow } from '@/ai/utils/getAgentChatChannelNavigationItemOrThrow';
+import { getInboxChannelViewKey } from '@/ai/utils/getAgentChatChannelViewKey';
 import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -16,10 +16,10 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 
-type NavigationDrawerAiChatChannelNavigationProps = {
+type NavigationDrawerInboxChannelNavigationProps = {
   channel: AgentChatChannel;
   summary?: AgentChatChannelSummary;
-  channelView: AgentChatChannelView | null;
+  channelView: InboxChannelView | null;
   isActive: boolean;
   isExpandable?: boolean;
   icon?: ReactElement;
@@ -27,7 +27,7 @@ type NavigationDrawerAiChatChannelNavigationProps = {
   isRightOptionsDropdownOpen?: boolean;
 };
 
-export const NavigationDrawerAiChatChannelNavigation = ({
+export const NavigationDrawerInboxChannelNavigation = ({
   channel,
   summary,
   channelView,
@@ -36,14 +36,14 @@ export const NavigationDrawerAiChatChannelNavigation = ({
   icon,
   rightOptions,
   isRightOptionsDropdownOpen,
-}: NavigationDrawerAiChatChannelNavigationProps) => {
+}: NavigationDrawerInboxChannelNavigationProps) => {
   const { t } = useLingui();
   const childrenId = useId();
-  const { openAgentChatChannel } = useOpenAgentChatChannel();
+  const { openInboxChannel } = useOpenInboxChannel();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const channelViewKey = isDefined(channelView)
-    ? getAgentChatChannelViewKey(channelView)
+    ? getInboxChannelViewKey(channelView)
     : null;
   const [collapsedChannelViewKey, setCollapsedChannelViewKey] = useState<
     string | null
@@ -64,22 +64,22 @@ export const NavigationDrawerAiChatChannelNavigation = ({
     canShowChildren && isActive && collapsedChannelViewKey !== channelViewKey;
   const selectedItem =
     isActive && isDefined(channelView)
-      ? getAgentChatChannelNavigationItemOrThrow(channelView)
+      ? getInboxChannelNavigationItemOrThrow(channelView)
       : undefined;
-  const selectedIndex = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.findIndex(
+  const selectedIndex = INBOX_CHANNEL_NAVIGATION_ITEMS.findIndex(
     (item) => item === selectedItem,
   );
 
   const handleClick = () => {
     if (!isActive) {
       setCollapsedChannelViewKey(null);
-      openAgentChatChannel({ channelId: channel.id });
+      openInboxChannel({ channelId: channel.id });
 
       return;
     }
 
     if (!canShowChildren && isDefined(channelView)) {
-      openAgentChatChannel(channelView);
+      openInboxChannel(channelView);
 
       return;
     }
@@ -92,7 +92,7 @@ export const NavigationDrawerAiChatChannelNavigation = ({
       <NavigationDrawerItem
         label={channel.name}
         secondaryLabel={isChannelAccessible ? undefined : t`Not open to you`}
-        Icon={icon ?? <AgentChatChannelIcon channel={channel} />}
+        Icon={icon ?? <InboxChannelIcon channel={channel} />}
         variant={isChannelAccessible ? 'default' : 'tertiary'}
         isUnread={summary?.hasUnreadOpen}
         active={isActive && !areChildrenVisible}
@@ -111,7 +111,7 @@ export const NavigationDrawerAiChatChannelNavigation = ({
       />
       {areChildrenVisible && (
         <div id={childrenId}>
-          {AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.map(
+          {INBOX_CHANNEL_NAVIGATION_ITEMS.map(
             ({ channelStatus, label, Icon, countKey, unreadKey }, index) => {
               const count = summary?.[countKey];
 
@@ -129,11 +129,11 @@ export const NavigationDrawerAiChatChannelNavigation = ({
                   subItemIndentation="compact"
                   subItemState={getNavigationSubItemLeftAdornment({
                     index,
-                    arrayLength: AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.length,
+                    arrayLength: INBOX_CHANNEL_NAVIGATION_ITEMS.length,
                     selectedIndex,
                   })}
                   onClick={() =>
-                    openAgentChatChannel({
+                    openInboxChannel({
                       channelId: channel.id,
                       channelStatus,
                     })

@@ -5,10 +5,10 @@ import { expect, userEvent, within } from 'storybook/test';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
-import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
-import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
+import { NavigationDrawerInboxTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
+import { INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { inboxSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -42,14 +42,14 @@ const StyledNavigation = styled.div`
 const isSelectedThreadSelected = () =>
   jotaiStore.get(
     isRecordSelectedComponentFamilyState.atomFamily({
-      instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+      instanceId: INBOX_INSTANCE_ID,
       familyKey: SELECTED_THREAD_ID,
     }),
   );
 
 const meta: Meta = {
   title: 'Modules/AI/NavigationDrawerAiChatTriageSection',
-  component: NavigationDrawerAiChatTriageSection,
+  component: NavigationDrawerInboxTriageSection,
   decorators: [
     (Story) => (
       <MockedProvider
@@ -97,21 +97,21 @@ const meta: Meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
-    setAgentChatSelectedChannelView(jotaiStore, null);
-    jotaiStore.set(agentChatSelectedThreadListSourceState.atom, {
+    setInboxSelectedChannelView(jotaiStore, null);
+    jotaiStore.set(inboxSelectedThreadListSourceState.atom, {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,
     });
     jotaiStore.set(
       recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
-        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        instanceId: INBOX_INSTANCE_ID,
         familyKey: NO_RECORD_GROUP_FAMILY_KEY,
       }),
       [SELECTED_THREAD_ID],
     );
     jotaiStore.set(
       isRecordSelectedComponentFamilyState.atomFamily({
-        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        instanceId: INBOX_INSTANCE_ID,
         familyKey: SELECTED_THREAD_ID,
       }),
       true,
@@ -131,7 +131,7 @@ export const OpenRestoresEveryOpenChat: Story = {
     await expect(isSelectedThreadSelected()).toBe(true);
     await userEvent.click(openItem);
     await expect(
-      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+      jotaiStore.get(inboxSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
@@ -149,7 +149,7 @@ export const SnoozedClearsSelection: Story = {
 
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
     await expect(
-      jotaiStore.get(agentChatSelectedThreadListSourceState.atom),
+      jotaiStore.get(inboxSelectedThreadListSourceState.atom),
     ).toEqual({
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED,

@@ -1,22 +1,22 @@
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { agentChatThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { inboxThreadListThreadsFamilySelector } from '@/ai/states/selectors/agentChatThreadListThreadsFamilySelector';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-export const useAgentChatThreadList = (source: AgentChatThreadListSource) => {
+export const useInboxThreadList = (source: InboxThreadListSource) => {
   const threads = useAtomFamilySelectorValue(
-    agentChatThreadListThreadsFamilySelector,
+    inboxThreadListThreadsFamilySelector,
     source,
   );
-  const agentChatThreadList = useAtomFamilyStateValue(
-    agentChatThreadListFamilyState,
-    getAgentChatThreadListSourceKey(source),
+  const inboxThreadList = useAtomFamilyStateValue(
+    inboxThreadListFamilyState,
+    getInboxThreadListSourceKey(source),
   );
 
   const sortedThreads = useMemo(
@@ -26,7 +26,7 @@ export const useAgentChatThreadList = (source: AgentChatThreadListSource) => {
 
   return {
     threads: sortedThreads,
-    agentChatThreadList,
-    isLoading: !isDefined(agentChatThreadList),
+    inboxThreadList,
+    isLoading: !isDefined(inboxThreadList),
   };
 };

@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
-import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
-import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
+import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { aiChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
+import { aiChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
-  type AgentChatThreadVisit,
-  agentChatThreadVisitState,
+  type AiChatThreadVisit,
+  aiChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { isAiChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,27 +21,24 @@ import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
-export const AgentChatThreadMarkAsReadEffect = () => {
+export const AiChatThreadMarkAsReadEffect = () => {
   const store = useStore();
   // The displayed thread rather than the selected one, which can still be
   // loading or fail to load
-  const agentChatDisplayedThread = useAtomStateValue(
-    agentChatDisplayedThreadState,
-  );
+  const aiChatDisplayedThread = useAtomStateValue(aiChatDisplayedThreadState);
   const threadId =
-    isDefined(agentChatDisplayedThread) && isValidUuid(agentChatDisplayedThread)
-      ? agentChatDisplayedThread
+    isDefined(aiChatDisplayedThread) && isValidUuid(aiChatDisplayedThread)
+      ? aiChatDisplayedThread
       : null;
   const lastActivityAt = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
+    aiChatThreadRecordFamilySelector,
     threadId ?? '',
   )?.lastActivityAt;
-  const agentChatThreadParticipants = useAtomStateValue(
-    agentChatThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
-  const { updateAgentChatThreadInboxState } =
-    useUpdateAgentChatThreadInboxState();
+  const { updateAgentChatThreadInboxState } = useUpdateInboxThreadStatus();
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
@@ -57,35 +54,35 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(agentChatThreadOpenViewCountState.atom, (count) => count + 1);
+    store.set(aiChatThreadOpenViewCountState.atom, (count) => count + 1);
 
     return () => {
-      store.set(agentChatThreadOpenViewCountState.atom, (count) => count - 1);
+      store.set(aiChatThreadOpenViewCountState.atom, (count) => count - 1);
 
-      if (store.get(agentChatThreadOpenViewCountState.atom) !== 0) {
+      if (store.get(aiChatThreadOpenViewCountState.atom) !== 0) {
         return;
       }
 
-      store.set(agentChatThreadVisitState.atom, (visit) =>
+      store.set(aiChatThreadVisitState.atom, (visit) =>
         visit?.threadId === threadId ? null : visit,
       );
 
       // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
-        agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
       );
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
       const reopenedThreadActivity = store.get(
-        agentChatReopenedThreadActivityState.atom,
+        aiChatReopenedThreadActivityState.atom,
       );
 
       if (
         isDefined(thread) &&
         isDefined(workspaceMemberId) &&
         thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
-        isAgentChatThreadSettledForMember({
+        isAiChatThreadSettledForMember({
           thread,
-          participant: store.get(agentChatThreadParticipantsState.atom)?.[
+          participant: store.get(aiChatThreadParticipantsState.atom)?.[
             threadId
           ],
           workspaceMemberId,
@@ -103,22 +100,22 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
-      !isDefined(agentChatThreadParticipants) ||
+      !isDefined(aiChatThreadParticipants) ||
       !isDefined(lastActivityAt)
     ) {
       return;
     }
 
-    const participant = agentChatThreadParticipants[threadId];
+    const participant = aiChatThreadParticipants[threadId];
     const { isUnread } = getAgentChatThreadInboxStatus({
       lastActivityAt,
       participant,
     });
-    const storedVisit = store.get(agentChatThreadVisitState.atom);
+    const storedVisit = store.get(aiChatThreadVisitState.atom);
 
     // Taken once per visit, before the read mark, so it sees where the member
     // left off
-    const newVisit: AgentChatThreadVisit = {
+    const newVisit: AiChatThreadVisit = {
       threadId,
       isUnread,
       lastReadAt: participant?.lastReadAt ?? null,
@@ -127,7 +124,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     const visit = storedVisit?.threadId === threadId ? storedVisit : newVisit;
 
     if (visit !== storedVisit) {
-      store.set(agentChatThreadVisitState.atom, visit);
+      store.set(aiChatThreadVisitState.atom, visit);
     }
 
     const isReadRequested =
@@ -144,7 +141,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    store.set(agentChatThreadVisitState.atom, {
+    store.set(aiChatThreadVisitState.atom, {
       ...visit,
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,
@@ -157,7 +154,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
   }, [
     isVisible,
     lastActivityAt,
-    agentChatThreadParticipants,
+    aiChatThreadParticipants,
     updateAgentChatThreadInboxState,
     store,
     threadId,

@@ -6,9 +6,30 @@ import userEvent from '@testing-library/user-event';
 import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadComposer';
 
 const mockSendAppChannelMessage = jest.fn();
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
+}));
+
+jest.mock('@/ai/components/internal/AgentChatFilePreview', () => ({
+  AiChatFilePreview: ({ file }: { file: File }) => <span>{file.name}</span>,
+}));
+
+const getComposerFileInputOrThrow = (container: HTMLElement) => {
+  const fileInput = container.querySelector('input[type="file"]');
+
+  if (!(fileInput instanceof HTMLInputElement)) {
+    throw new Error('The composer file input is missing');
+  }
+
+  return fileInput;
+};
 
 describe('ChatThreadComposer', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     mockSendAppChannelMessage.mockReset();
     sessionStorage.clear();
   });
@@ -75,6 +96,80 @@ describe('ChatThreadComposer', () => {
 
     await waitFor(() =>
       expect(screen.queryByText('Hello')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('sends attached files without text and keeps them on retry', async () => {
+    mockSendAppChannelMessage
+      .mockRejectedValueOnce(new Error('Network error'))
+      .mockResolvedValueOnce(undefined);
+
+    const onMessageSent = jest.fn().mockResolvedValue(undefined);
+    const deck = new File(['deck'], 'deck.pdf', { type: 'application/pdf' });
+
+    const { container } = render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          canAttachFiles
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={onMessageSent}
+        />
+      </I18nProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+
+    const fileInput = getComposerFileInputOrThrow(container);
+
+    await userEvent.upload(fileInput, deck);
+
+    expect(screen.getByText('deck.pdf')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
+
+    await waitFor(() => expect(onMessageSent).toHaveBeenCalledTimes(1));
+
+    const [firstCall, secondCall] = mockSendAppChannelMessage.mock.calls;
+
+    expect(firstCall[0].text).toBe('');
+    expect(firstCall[0].files).toHaveLength(1);
+    expect(firstCall[0].files[0]).toBe(deck);
+    expect(secondCall[0].id).toBe(firstCall[0].id);
+    expect(secondCall[0].files[0]).toBe(deck);
+  });
+
+  it('keeps at most 20 files on a message and warns about the extra ones', async () => {
+    const { container } = render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          canAttachFiles
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={jest.fn()}
+        />
+      </I18nProvider>,
+    );
+
+    const fileInput = getComposerFileInputOrThrow(container);
+
+    await userEvent.upload(
+      fileInput,
+      Array.from(
+        { length: 21 },
+        (_value, index) => new File(['file'], `file-${index}.pdf`),
+      ),
+    );
+
+    expect(screen.getByText('file-19.pdf')).toBeInTheDocument();
+    expect(screen.queryByText('file-20.pdf')).not.toBeInTheDocument();
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'error' }),
     );
   });
 

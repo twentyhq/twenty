@@ -1,6 +1,6 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const agentChatUserCreditsBannerDismissalState = createAtomState<{
+export const aiChatUserCreditsBannerDismissalState = createAtomState<{
   workspaceMemberId: string;
   periodEnd: string;
   isFallingBackToWorkspaceCredits: boolean;

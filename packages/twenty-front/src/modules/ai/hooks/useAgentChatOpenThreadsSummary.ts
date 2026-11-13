@@ -8,7 +8,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY = {
+const EMPTY_INBOX_OPEN_THREADS_SUMMARY = {
   openThreadCount: 0,
   unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
@@ -23,7 +23,7 @@ const EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY = {
 
 // Counted by the server over every chat, past the pages loaded here; it is
 // read again wherever the member's inbox state changes
-export const useAgentChatOpenThreadsSummary = () => {
+export const useInboxOpenThreadsSummary = () => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -33,7 +33,5 @@ export const useAgentChatOpenThreadsSummary = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  return (
-    data?.agentChatOpenThreadsSummary ?? EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY
-  );
+  return data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY;
 };
