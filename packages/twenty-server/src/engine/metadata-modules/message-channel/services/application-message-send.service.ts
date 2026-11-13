@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type SendAppMessageEmail } from 'twenty-shared/application';
+import {
+  type SendAppMessageAttachment,
+  type SendAppMessageEmail,
+} from 'twenty-shared/application';
 import {
   MessageChannelType,
   MessageParticipantRole,
@@ -324,6 +327,26 @@ export class ApplicationMessageSendService {
     }
   }
 
+  private async releaseAttachmentClaims({
+    attachments,
+    workspaceId,
+    deliveryKey,
+  }: {
+    attachments: SendAppChannelMessageAttachmentInput[];
+    workspaceId: string;
+    deliveryKey: string;
+  }): Promise<void> {
+    for (const { id } of attachments) {
+      const claimKey = `app-message-attachment-claim:${workspaceId}:${id}`;
+
+      if (
+        (await this.cacheStorageService.get<string>(claimKey)) === deliveryKey
+      ) {
+        await this.cacheStorageService.del(claimKey);
+      }
+    }
+  }
+
   private async deliver({
     workspaceId,
     messageChannel,
@@ -356,6 +379,53 @@ export class ApplicationMessageSendService {
       deliveryKey,
     });
 
+    try {
+      return await this.sendClaimedDelivery({
+        workspaceId,
+        messageChannel,
+        connectionProviderId,
+        connectedAccountId,
+        messageThreadId,
+        idempotencyKey,
+        reply,
+        attachments,
+        deliveryKey,
+        attachmentsToSend,
+      });
+    } catch (error) {
+      await this.releaseAttachmentClaims({
+        attachments,
+        workspaceId,
+        deliveryKey,
+      });
+
+      throw error;
+    }
+  }
+
+  private async sendClaimedDelivery({
+    workspaceId,
+    messageChannel,
+    connectionProviderId,
+    connectedAccountId,
+    messageThreadId,
+    idempotencyKey,
+    reply,
+    attachments,
+    deliveryKey,
+    attachmentsToSend,
+  }: {
+    workspaceId: string;
+    messageChannel: MessageChannelEntity;
+    connectionProviderId: string;
+    connectedAccountId: string;
+    messageThreadId: string;
+    idempotencyKey: string;
+    reply: ValidatedAppReply;
+    attachments: SendAppChannelMessageAttachmentInput[];
+    deliveryKey: string;
+    attachmentsToSend: SendAppMessageAttachment[];
+  }): Promise<AppMessageDelivery> {
     const sender =
       await this.messagingProviderMessageSenderService.resolveSenderOrThrow({
         messagingProviderUniversalIdentifier:

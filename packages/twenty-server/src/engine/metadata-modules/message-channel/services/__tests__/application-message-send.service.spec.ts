@@ -96,6 +96,9 @@ describe('ApplicationMessageSendService', () => {
       set: async (key: string, value: unknown) => {
         cache.set(key, value);
       },
+      del: async (key: string) => {
+        cache.delete(key);
+      },
       setIfAbsent: async (key: string, value: unknown) => {
         if (cache.has(key)) {
           return false;
@@ -149,6 +152,23 @@ describe('ApplicationMessageSendService', () => {
 
     expect(sendOrThrow).toHaveBeenCalledTimes(1);
     expect(copyIntoAttachmentFileFieldOrThrow).toHaveBeenCalledTimes(1);
+  });
+
+  it('should free the uploads of a send the provider rejected for another message', async () => {
+    sendOrThrow.mockRejectedValueOnce(
+      new Error('Provider rejected the message'),
+    );
+
+    await expect(service.send(SEND_ARGS)).rejects.toThrow(
+      'Provider rejected the message',
+    );
+
+    await expect(
+      service.send({ ...SEND_ARGS, idempotencyKey: 'idempotency-key-2' }),
+    ).resolves.toEqual({
+      messageId: 'message-1',
+      messageThreadId: 'message-thread-1',
+    });
   });
 
   it('should return the saved reply on retry without needing the deleted uploads', async () => {
