@@ -47,6 +47,7 @@ describe('ApplicationMessageSendService', () => {
   const executeInWorkspaceContext = jest.fn();
   const deleteFiles = jest.fn();
   let cache: Map<string, unknown>;
+  let failingCacheKeyPrefix: string | null;
 
   const service = new ApplicationMessageSendService(
     {
@@ -94,6 +95,13 @@ describe('ApplicationMessageSendService', () => {
     {
       get: async (key: string) => cache.get(key),
       set: async (key: string, value: unknown) => {
+        if (
+          failingCacheKeyPrefix !== null &&
+          key.startsWith(failingCacheKeyPrefix)
+        ) {
+          throw new Error('Cache unavailable');
+        }
+
         cache.set(key, value);
       },
       del: async (key: string) => {
@@ -114,6 +122,7 @@ describe('ApplicationMessageSendService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     cache = new Map();
+    failingCacheKeyPrefix = null;
     executeInWorkspaceContext.mockResolvedValue(CONVERSATION);
     buildAttachmentsToSendOrThrow.mockResolvedValue([
       { filename: 'deck.pdf', downloadUrl: 'https://twenty.example/deck' },
@@ -170,6 +179,16 @@ describe('ApplicationMessageSendService', () => {
       messageId: 'message-1',
       messageThreadId: 'message-thread-1',
     });
+  });
+
+  it('should keep the uploads claimed when recording a send the provider accepted fails', async () => {
+    failingCacheKeyPrefix = 'app-message-delivery:';
+
+    await expect(service.send(SEND_ARGS)).rejects.toThrow('Cache unavailable');
+
+    expect(cache.has('app-message-attachment-claim:workspace-1:upload-1')).toBe(
+      true,
+    );
   });
 
   it('should release the uploads it claimed when another message holds one of its uploads', async () => {
