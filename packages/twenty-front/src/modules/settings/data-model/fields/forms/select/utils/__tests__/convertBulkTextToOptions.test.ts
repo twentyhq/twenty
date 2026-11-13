@@ -171,6 +171,35 @@ describe('convertBulkTextToOptions', () => {
     expect(result[3].position).toBe(3);
   });
 
+  it('skips a line repeating an earlier one', () => {
+    const result = convertBulkTextToOptions({
+      text: 'Option 1\noption 1\nOption 2',
+      currentOptions: [],
+    });
+
+    expect(result.map(({ label }) => label)).toEqual(['Option 1', 'Option 2']);
+  });
+
+  it('does not match an option a previous line already renamed', () => {
+    const doneOption: FieldMetadataItemOption = {
+      id: 'done',
+      label: 'Done',
+      value: 'COMPLETED',
+      color: 'green',
+      position: 0,
+    };
+
+    const result = convertBulkTextToOptions({
+      text: 'Completed\nDone',
+      currentOptions: [doneOption],
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual({ ...doneOption, label: 'Completed' });
+    expect(result[1]).toMatchObject({ label: 'Done', value: 'DONE' });
+    expect(result[1].id).not.toBe('done');
+  });
+
   describe('with inactive and application options', () => {
     const newOption: FieldMetadataItemOption = {
       id: 'new',

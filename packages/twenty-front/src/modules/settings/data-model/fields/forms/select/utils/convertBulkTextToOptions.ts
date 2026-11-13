@@ -17,19 +17,26 @@ export const convertBulkTextToOptions = ({
     .trim()
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line.length > 0);
+    .filter(
+      (line, index, lines) =>
+        line.length > 0 &&
+        lines.findIndex(
+          (otherLine) => otherLine.toLowerCase() === line.toLowerCase(),
+        ) === index,
+    );
 
   const listedOptions: FieldMetadataItemOption[] = [];
 
   for (const label of parsedBulkTextOptions) {
-    const optionWithLabel = currentOptions.find(
+    const unlistedOptions = currentOptions.filter(
+      (option) => !listedOptions.some(({ id }) => id === option.id),
+    );
+    const optionWithLabel = unlistedOptions.find(
       (option) => option.label.toLowerCase() === label.toLowerCase(),
     );
     // A new option reusing a kept option's value would be a duplicate, so the line renames it.
-    const optionWithValue = currentOptions.find(
-      (option) =>
-        option.value === computeOptionValueFromLabel(label) &&
-        !listedOptions.some(({ id }) => id === option.id),
+    const optionWithValue = unlistedOptions.find(
+      (option) => option.value === computeOptionValueFromLabel(label),
     );
     const existingOption =
       optionWithLabel ??
