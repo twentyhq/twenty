@@ -9,7 +9,6 @@ import {
 import {
   convertEmailBodyToEmailDocument,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -43,8 +42,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-
-const CONVERSATION_LOOKUP_MESSAGE_LIMIT = 50;
+import { ApplicationThreadLatestMessagesService } from 'src/engine/metadata-modules/message-channel/services/application-thread-latest-messages.service';
 
 const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -97,6 +95,7 @@ export class ApplicationMessageSendService {
     private readonly messagingProviderMessageSenderService: MessagingProviderMessageSenderService,
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly applicationThreadLatestMessagesService: ApplicationThreadLatestMessagesService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
@@ -377,57 +376,24 @@ export class ApplicationMessageSendService {
     const conversation =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const threadMessages = await this.workspaceOrmManager
-            .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
-              'message',
-            )
-            .find({ where: { messageThreadId }, select: { id: true } });
+          const latestThreadMessages =
+            await this.applicationThreadLatestMessagesService.find({
+              messageChannelId: messageChannel.id,
+              messageThreadId,
+            });
 
-          const threadMessageIds = threadMessages.map((message) => message.id);
-
-          if (!isNonEmptyArray(threadMessageIds)) {
+          if (!isDefined(latestThreadMessages)) {
             return null;
           }
 
-          const associations = await this.workspaceOrmManager
-            .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
-              'messageChannelMessageAssociation',
-            )
-            .find({
-              where: {
-                messageChannelId: messageChannel.id,
-                messageId: In(threadMessageIds),
-              },
-              select: { messageId: true, messageThreadExternalId: true },
-            });
-
-          if (!isNonEmptyArray(associations)) {
-            return null;
-          }
-
-          const latestMessages = await this.workspaceOrmManager
-            .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
-              'message',
-            )
-            .find({
-              where: {
-                id: In(
-                  associations.map((association) => association.messageId),
-                ),
-              },
-              select: { id: true },
-              order: { receivedAt: 'DESC' },
-              take: CONVERSATION_LOOKUP_MESSAGE_LIMIT,
-            });
-
-          const messageIds = latestMessages.map((message) => message.id);
+          const { threadExternalId, latestMessageIds } = latestThreadMessages;
 
           const participants = await this.workspaceOrmManager
             .getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
               'messageParticipant',
             )
             .find({
-              where: { messageId: In(messageIds) },
+              where: { messageId: In(latestMessageIds) },
               select: {
                 messageId: true,
                 handle: true,
@@ -438,26 +404,17 @@ export class ApplicationMessageSendService {
               },
             });
 
-          const byRecency = <TRow extends { messageId: string }>(
-            rows: TRow[],
-          ): TRow[] =>
-            messageIds.flatMap((messageId) =>
-              rows.filter((row) => row.messageId === messageId),
-            );
-
-          const threadExternalId = byRecency(associations).find((association) =>
-            isDefined(association.messageThreadExternalId),
-          )?.messageThreadExternalId;
-
-          if (!isDefined(threadExternalId)) {
-            return null;
-          }
+          const participantsByRecency = latestMessageIds.flatMap((messageId) =>
+            participants.filter(
+              (participant) => participant.messageId === messageId,
+            ),
+          );
 
           return {
             threadExternalId,
             recipients: await this.dropLinksToDeletedRecords(
               buildAppMessageReplyRecipients({
-                participants: byRecency(participants),
+                participants: participantsByRecency,
                 channelHandle: messageChannel.handle,
               }),
             ),

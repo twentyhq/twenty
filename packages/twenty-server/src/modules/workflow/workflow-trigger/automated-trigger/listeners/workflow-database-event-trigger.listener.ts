@@ -16,9 +16,6 @@ import { In } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -46,10 +43,7 @@ import {
   type BaseDatabaseEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import {
-  WorkflowTriggerJob,
-  type WorkflowTriggerJobData,
-} from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
@@ -71,8 +65,7 @@ export class WorkflowDatabaseEventTriggerListener {
 
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.workflowQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly workflowTriggerDispatchWorkspaceService: WorkflowTriggerDispatchWorkspaceService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
@@ -414,22 +407,23 @@ export class WorkflowDatabaseEventTriggerListener {
 
       for (const eventPayload of eventsWithWatchedFields) {
         if (this.eventMatchesRecordFilter({ eventPayload, eventListener })) {
-          await this.messageQueueService.add<WorkflowTriggerJobData>(
-            WorkflowTriggerJob.name,
+          await this.workflowTriggerDispatchWorkspaceService.enqueueTriggerOrFailRun(
             {
-              workspaceId,
-              workflowId:
-                eventListener.legacyWorkflowId ?? eventListener.workflowId,
-              ...buildCoreDispatchIds(eventListener),
-              payload: eventPayload,
-            },
-            {
-              retryLimit: 3,
-              ...buildApplicationQueueJobScope({
+              jobData: {
                 workspaceId,
-                applicationId,
-                flatApplicationMaps,
-              }),
+                workflowId:
+                  eventListener.legacyWorkflowId ?? eventListener.workflowId,
+                ...buildCoreDispatchIds(eventListener),
+                payload: eventPayload,
+              },
+              jobOptions: {
+                retryLimit: 3,
+                ...buildApplicationQueueJobScope({
+                  workspaceId,
+                  applicationId,
+                  flatApplicationMaps,
+                }),
+              },
             },
           );
         }

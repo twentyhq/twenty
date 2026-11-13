@@ -63,6 +63,7 @@ export class OAuthTokenController {
           clientSecret: body.client_secret,
           codeVerifier: body.code_verifier,
           redirectUri: body.redirect_uri ?? '',
+          resource: body.resource,
         });
         break;
 

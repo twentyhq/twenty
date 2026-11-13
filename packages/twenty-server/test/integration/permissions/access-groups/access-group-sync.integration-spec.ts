@@ -201,11 +201,11 @@ const readProgress = async (): Promise<AccessGroupPropagationProgressDTO> => {
 };
 
 describe('access group propagation progress (integration)', () => {
+  const personId = v4();
   let recordAccessGroupComputationService: RecordAccessGroupComputationService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
   let roleId: string;
-  const temporaryPersonIds = [v4(), v4()];
 
   beforeAll(async () => {
     recordAccessGroupComputationService =
@@ -236,16 +236,16 @@ describe('access group propagation progress (integration)', () => {
 
     roleId = data.createOneRole.id;
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
+    await global.testDataSource.query(
+      `INSERT INTO ${PERSON_TABLE} ("id", "jobTitle") VALUES ($1, 'Paris office')`,
+      [personId],
+    );
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
       value: true,
       expectToFail: false,
     });
     await waitForAllJobsToFinish();
-    await global.testDataSource.query(
-      `INSERT INTO ${PERSON_TABLE} ("id") SELECT UNNEST($1::uuid[])`,
-      [temporaryPersonIds],
-    );
     await global.testDataSource.query(`ANALYZE ${PERSON_TABLE}`);
   });
 
@@ -259,8 +259,8 @@ describe('access group propagation progress (integration)', () => {
     await deleteOneRole({ expectToFail: false, input: { idToDelete: roleId } });
     await waitForAllJobsToFinish();
     await global.testDataSource.query(
-      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
-      [temporaryPersonIds],
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
+      [personId],
     );
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,

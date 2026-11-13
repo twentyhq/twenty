@@ -9,8 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDrawerAiChatChannelNavigation } from '@/ai/components/NavigationDrawerAiChatChannelNavigation';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
-import { setAgentChatShownChannelView } from '@/ai/testing/setAgentChatShownChannelView';
+import { agentChatSelectedChannelViewSelector } from '@/ai/states/selectors/agentChatSelectedChannelViewSelector';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -57,7 +57,7 @@ const ChannelNavigationStory = ({
   ComponentProps<typeof NavigationDrawerAiChatChannelNavigation>,
   'channel' | 'summary' | 'isExpandable' | 'rightOptions'
 >) => {
-  const channelView = useAtomStateValue(agentChatShownChannelViewSelector);
+  const channelView = useAtomStateValue(agentChatSelectedChannelViewSelector);
 
   return (
     <StyledNavigation>
@@ -80,11 +80,11 @@ const meta = {
   render: ChannelNavigationStory,
   beforeEach: ({ args }) => {
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
-    setAgentChatShownChannelView(jotaiStore, args.channelView);
+    setAgentChatSelectedChannelView(jotaiStore, args.channelView);
 
     return () => {
       jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
-      setAgentChatShownChannelView(jotaiStore, null);
+      setAgentChatSelectedChannelView(jotaiStore, null);
     };
   },
   args: {
@@ -129,14 +129,14 @@ export const Open: Story = {
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.SNOOZED,
     });
     await userEvent.click(canvas.getByRole('button', { name: 'Done' }));
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.DONE,
@@ -151,7 +151,7 @@ export const Open: Story = {
       'true',
     );
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual({
       ...OPEN_VIEW,
       channelStatus: AgentChatChannelThreadStatus.DONE,
@@ -168,7 +168,7 @@ export const Collapsed: Story = {
     await expect(channel).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(channel);
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual(OPEN_VIEW);
     await expect(channel).toHaveAttribute('aria-expanded', 'true');
   },
@@ -196,7 +196,7 @@ export const KeyboardAndOptions: Story = {
     await expect(onOptions).toHaveBeenCalledTimes(1);
     await expect(channel).toHaveAttribute('aria-expanded', 'true');
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual(OPEN_VIEW);
     await userEvent.tab();
     await expect(
@@ -221,7 +221,7 @@ export const NeedsInput: Story = {
     await expect(openItem).toHaveAttribute('aria-current', 'true');
     await userEvent.click(openItem);
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual(OPEN_VIEW);
   },
 };
@@ -252,7 +252,7 @@ export const Favorite: Story = {
     await expect(channel).not.toHaveAttribute('aria-expanded');
     await userEvent.click(channel);
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toEqual(OPEN_VIEW);
     await expect(
       canvas.queryByRole('button', { name: OPEN_CHANNEL_LABEL_PATTERN }),
@@ -266,7 +266,7 @@ export const SameViewKeepsCollapsed: Story = {
       <ChannelNavigationStory channel={args.channel} summary={args.summary} />
       <Button
         onClick={() =>
-          setAgentChatShownChannelView(jotaiStore, { ...OPEN_VIEW })
+          setAgentChatSelectedChannelView(jotaiStore, { ...OPEN_VIEW })
         }
       >
         Reselect view
@@ -332,7 +332,7 @@ export const Inaccessible: Story = {
     ).not.toBeInTheDocument();
     await userEvent.click(canvas.getByText(/Not open to you/));
     await expect(
-      jotaiStore.get(agentChatShownChannelViewSelector.atom),
+      jotaiStore.get(agentChatSelectedChannelViewSelector.atom),
     ).toBeNull();
     await userEvent.tab();
     await expect(
@@ -349,7 +349,7 @@ export const ReturnToTriage: Story = {
   render: (args) => (
     <>
       <ChannelNavigationStory channel={args.channel} summary={args.summary} />
-      <Button onClick={() => setAgentChatShownChannelView(jotaiStore, null)}>
+      <Button onClick={() => setAgentChatSelectedChannelView(jotaiStore, null)}>
         Open triage
       </Button>
     </>

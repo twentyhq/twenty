@@ -12,7 +12,7 @@ import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadLi
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -172,7 +172,7 @@ describe('useLoadAgentChatThreadList', () => {
       endCursor: 'end',
       lastLoadedActivityAt: null,
     });
-    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
+    expect(store.get(agentChatRecentThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
   });
@@ -274,9 +274,9 @@ describe('useLoadAgentChatThreadList', () => {
       },
       'thread-2': streamedParticipant,
     });
-    expect(store.get(agentChatThreadsSelector.atom)[0]).not.toHaveProperty(
-      'participants',
-    );
+    expect(
+      store.get(agentChatRecentThreadsSelector.atom)[0],
+    ).not.toHaveProperty('participants');
   });
 
   it('loads a favorite outside the page without changing the main pagination', async () => {

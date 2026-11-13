@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { AGENT_CHAT_THREAD_FILTER_STATUS } from 'twenty-shared/ai';
+import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
@@ -20,7 +20,7 @@ export const agentChatSelectedThreadListSourceState =
     localStorageOptions: { getOnInit: true },
     validateInitFn: (source) => {
       if (source.type === 'presetFilter') {
-        return Object.values(AGENT_CHAT_THREAD_FILTER_STATUS).includes(
+        return Object.values(AGENT_CHAT_THREAD_PRESET_FILTER).includes(
           source.presetFilter,
         );
       }
