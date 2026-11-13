@@ -7,7 +7,7 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
-import { type AiChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
+import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
 
 const getParticipantMentionsFromNode = (
   node: TipTapNode,

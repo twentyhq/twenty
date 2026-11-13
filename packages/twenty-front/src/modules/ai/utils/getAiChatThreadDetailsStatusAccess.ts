@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
-import { type InboxThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
+import { type InboxThreadTriageStatus } from '@/ai/types/InboxThreadTriageStatus';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
 
 export const getAiChatThreadDetailsStatusAccess = ({

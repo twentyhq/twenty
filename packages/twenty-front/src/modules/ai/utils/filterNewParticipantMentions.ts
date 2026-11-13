@@ -1,5 +1,5 @@
-import { type AiChatParticipantMention } from '@/ai/types/AgentChatParticipantMention';
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
 export const filterNewParticipantMentions = ({
   participantMentions,

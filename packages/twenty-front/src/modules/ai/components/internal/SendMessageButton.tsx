@@ -1,10 +1,10 @@
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { aiChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
-import { aiChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AiChatSendMessageEventName';
+import { AI_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AiChatStopEventName';
+import { aiChatIsLoadingSelector } from '@/ai/states/selectors/aiChatIsLoadingSelector';
+import { aiChatIsStreamingFamilyState } from '@/ai/states/aiChatIsStreamingFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
-import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
+import { aiChatInputIsEmptySelector } from '@/ai/states/selectors/aiChatInputIsEmptySelector';
+import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconButton } from 'twenty-ui/components/input';

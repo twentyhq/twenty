@@ -7,10 +7,10 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AiChatApprovalReviewDeck } from '@/ai/components/AiChatApprovalReviewDeck';
 import { AiChatRecordApprovalReview } from '@/ai/components/AiChatRecordApprovalReview';
-import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { type AiChatPendingRecordApproval } from '@/ai/types/AgentChatPendingRecordApproval';
-import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAgentChatRecordApprovalGroupId';
+import { useAnswerAiChatToolCall } from '@/ai/hooks/useAnswerAiChatToolCall';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { type AiChatPendingRecordApproval } from '@/ai/types/AiChatPendingRecordApproval';
+import { getAiChatRecordApprovalGroupId } from '@/ai/utils/getAiChatRecordApprovalGroupId';
 import { buildRejectedToolCallOutput } from '@/ai/utils/buildRejectedToolCallOutput';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 

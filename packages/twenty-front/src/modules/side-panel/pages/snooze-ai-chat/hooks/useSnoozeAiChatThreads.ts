@@ -1,8 +1,8 @@
 import { useStore } from 'jotai';
 
-import { useSnoozeInboxThreadsInChannel } from '@/ai/hooks/useSnoozeAgentChatThreadsInChannel';
-import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
-import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
+import { useSnoozeInboxThreadsInChannel } from '@/ai/hooks/useSnoozeInboxThreadsInChannel';
+import { useUpdateInboxThreadStatus } from '@/ai/hooks/useUpdateInboxThreadStatus';
+import { isSnoozeInboxForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeInboxForChannelComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 

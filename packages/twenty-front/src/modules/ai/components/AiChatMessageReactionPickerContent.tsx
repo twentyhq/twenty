@@ -4,8 +4,8 @@ import { EmojiPicker, LightIconButton } from 'twenty-ui/components/input';
 import { IconMoodPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AI_CHAT_EMOJIBASE_URL } from '@/ai/constants/AgentChatEmojibaseUrl';
-import { AI_CHAT_QUICK_REACTION_EMOJIS } from '@/ai/constants/AgentChatQuickReactionEmojis';
+import { AI_CHAT_EMOJIBASE_URL } from '@/ai/constants/AiChatEmojibaseUrl';
+import { AI_CHAT_QUICK_REACTION_EMOJIS } from '@/ai/constants/AiChatQuickReactionEmojis';
 
 const StyledQuickReactions = styled.div`
   align-items: center;

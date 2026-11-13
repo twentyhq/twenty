@@ -3,11 +3,11 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import type * as React from 'react';
 import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessageIdsList';
-import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 
 import { AiChatTabMessageList } from '@/ai/components/AiChatTabMessageList';
-import { aiChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatDisplayedThreadState } from '@/ai/states/aiChatDisplayedThreadState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -39,7 +39,7 @@ jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
 jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
   AiChatLastMessageWithStreamingState: () => null,
 }));
-jest.mock('@/ai/components/AiChatThreadInboxStateNotice', () => ({
+jest.mock('@/ai/components/InboxThreadStatusNotice', () => ({
   InboxThreadStatusNotice: () => null,
 }));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
@@ -51,7 +51,7 @@ jest.mock('@/ai/components/AiChatScrollToBottomButton', () => ({
 const mockPinScrollToBottom = jest.fn();
 
 jest.mock(
-  '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
+  '@/ai/components/AiChatScrollToBottomOnDisplayedThreadChangeLayoutEffect',
   () => {
     const { useLayoutEffect } = jest.requireActual<typeof React>('react');
     return {
@@ -62,7 +62,7 @@ jest.mock(
     };
   },
 );
-jest.mock('@/ai/components/AgentChatStreamingAutoScrollEffect', () => ({
+jest.mock('@/ai/components/AiChatStreamingAutoScrollEffect', () => ({
   AiChatStreamingAutoScrollEffect: () => null,
 }));
 

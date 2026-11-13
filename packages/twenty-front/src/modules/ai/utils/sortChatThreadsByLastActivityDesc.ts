@@ -1,5 +1,5 @@
-import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { getAiChatThreadLastActivityAt } from '@/ai/utils/getAiChatThreadLastActivityAt';
 
 const getLastActivityMs = (
   thread: Pick<AiChatThreadRecord, 'lastActivityAt' | 'updatedAt'>,

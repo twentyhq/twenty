@@ -12,7 +12,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { setInboxThreadList } from '@/ai/testing/setInboxThreadList';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -25,7 +25,7 @@ i18n.activate(SOURCE_LOCALE);
 const assignAiChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useAssignAgentChatThreads', () => ({
+jest.mock('@/ai/hooks/useAssignAiChatThreads', () => ({
   useAssignAiChatThreads: () => ({ assignAiChatThreads }),
 }));
 
