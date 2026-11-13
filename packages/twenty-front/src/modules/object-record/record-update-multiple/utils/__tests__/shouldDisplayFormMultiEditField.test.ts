@@ -43,4 +43,66 @@ describe('shouldDisplayFormMultiEditField', () => {
 
     expect(shouldDisplayFormMultiEditField(field)).toBe(false);
   });
+
+  describe('field permissions', () => {
+    it('should return false when the user cannot update the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'restricted-field-id',
+      });
+
+      const objectPermissions = {
+        unreadableFields: [],
+        uneditableFields: ['restricted-field-id'],
+      };
+
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        false,
+      );
+    });
+
+    it('should return false when the user cannot read the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'restricted-field-id',
+      });
+
+      const objectPermissions = {
+        unreadableFields: ['restricted-field-id'],
+        uneditableFields: [],
+      };
+
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        false,
+      );
+    });
+
+    it('should return true when the user can read and update the field', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'allowed-field-id',
+      });
+
+      const objectPermissions = {
+        unreadableFields: [],
+        uneditableFields: [],
+      };
+
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        true,
+      );
+    });
+
+    it('should return true when the field has no restrictions in objectPermissions', () => {
+      const field = createMockFieldMetadataItem({
+        id: 'unrestricted-field-id',
+      });
+
+      const objectPermissions = {
+        unreadableFields: ['other-field-id'],
+        uneditableFields: ['other-field-id'],
+      };
+
+      expect(shouldDisplayFormMultiEditField(field, objectPermissions)).toBe(
+        true,
+      );
+    });
+  });
 });
