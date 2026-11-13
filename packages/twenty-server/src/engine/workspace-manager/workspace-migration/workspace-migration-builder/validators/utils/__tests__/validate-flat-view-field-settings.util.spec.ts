@@ -1,4 +1,8 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RelationType,
+  type ViewFieldSettings,
+} from 'twenty-shared/types';
 
 import { validateFlatViewFieldSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-settings.util';
 
@@ -86,4 +90,16 @@ describe('validateFlatViewFieldSettings', () => {
       }),
     ).toHaveLength(1);
   });
+
+  it.each(['Next step', ['Next step'], 3])(
+    'rejects settings that are not an object: %j',
+    (settings) => {
+      expect(
+        validateFlatViewFieldSettings({
+          settings: settings as unknown as ViewFieldSettings,
+          flatFieldMetadata: TEXT_FIELD,
+        }),
+      ).toHaveLength(1);
+    },
+  );
 });
