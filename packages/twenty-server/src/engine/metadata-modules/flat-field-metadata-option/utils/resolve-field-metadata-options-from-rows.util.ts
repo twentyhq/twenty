@@ -24,17 +24,23 @@ export const resolveFieldMetadataOptionsFromRows = ({
     return fieldMetadataEntity.options ?? null;
   }
 
-  return [...fieldMetadataOptionRows]
-    .sort(
-      (first, second) =>
-        first.position - second.position ||
-        first.universalIdentifier.localeCompare(second.universalIdentifier),
-    )
-    .map(({ universalIdentifier, value, label, color, position }) => ({
+  const sortedFieldMetadataOptionRows = [...fieldMetadataOptionRows].sort(
+    (first, second) =>
+      first.position - second.position ||
+      first.universalIdentifier.localeCompare(second.universalIdentifier),
+  );
+  // Rows of different applications can share a position, while option lists need distinct ones.
+  const hasSharedPosition =
+    new Set(sortedFieldMetadataOptionRows.map(({ position }) => position))
+      .size < sortedFieldMetadataOptionRows.length;
+
+  return sortedFieldMetadataOptionRows.map(
+    ({ universalIdentifier, value, label, color, position }, index) => ({
       id: universalIdentifier,
       value,
       label,
-      position,
+      position: hasSharedPosition ? index : position,
       ...(isDefined(color) ? { color } : {}),
-    }));
+    }),
+  );
 };
