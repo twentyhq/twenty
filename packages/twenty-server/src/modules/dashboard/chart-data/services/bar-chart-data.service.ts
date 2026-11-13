@@ -99,6 +99,7 @@ export class BarChartDataService {
       const primaryAxisGroupByField = getFieldMetadata(
         configuration.primaryAxisGroupByFieldMetadataId,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
       );
 
       const aggregateField = getFieldMetadata(
@@ -116,6 +117,7 @@ export class BarChartDataService {
         secondaryAxisGroupByField = getFieldMetadata(
           configuration.secondaryAxisGroupByFieldMetadataId!,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
         );
       }
 
@@ -202,7 +204,6 @@ export class BarChartDataService {
           primaryAxisGroupByField,
           secondaryAxisGroupByField,
           aggregateField,
-          flatFieldMetadataOptionMaps,
           configuration,
           userTimezone,
           firstDayOfTheWeek,
@@ -216,7 +217,6 @@ export class BarChartDataService {
         filteredRawResults: resolvedResults,
         primaryAxisGroupByField,
         aggregateField,
-        flatFieldMetadataOptionMaps,
         configuration,
         userTimezone,
         firstDayOfTheWeek,

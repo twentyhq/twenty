@@ -5,7 +5,6 @@ import {
   isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import {
@@ -21,7 +20,6 @@ import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-sel
 type ApplyGapFillingParams = {
   data: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity: ObjectRecordGroupByDateGranularity | null | undefined;
   omitNullValues: boolean;
   isDescOrder: boolean;
@@ -37,7 +35,6 @@ type ApplyGapFillingResult = {
 export const applyGapFilling = ({
   data,
   primaryAxisGroupByField,
-  flatFieldMetadataOptionMaps,
   dateGranularity,
   omitNullValues,
   isDescOrder,
@@ -79,10 +76,7 @@ export const applyGapFilling = ({
   );
 
   if (isPrimaryFieldSelect && !isArrayFieldWithoutSplit) {
-    const selectOptions = getSelectOptions({
-      fieldMetadata: primaryAxisGroupByField,
-      flatFieldMetadataOptionMaps,
-    });
+    const selectOptions = getSelectOptions(primaryAxisGroupByField);
 
     const fillSelectGapsFn = isTwoDimensional
       ? fillSelectGapsTwoDimensional

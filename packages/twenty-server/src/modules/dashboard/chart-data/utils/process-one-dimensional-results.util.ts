@@ -4,7 +4,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
@@ -25,7 +24,6 @@ export type ProcessOneDimensionalResultsOutput = {
 type ProcessOneDimensionalResultsParams = {
   rawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
   subFieldName?: string | null;
   userTimezone: string;
@@ -36,7 +34,6 @@ type ProcessOneDimensionalResultsParams = {
 export const processOneDimensionalResults = ({
   rawResults,
   primaryAxisGroupByField,
-  flatFieldMetadataOptionMaps,
   dateGranularity,
   subFieldName,
   userTimezone,
@@ -58,7 +55,6 @@ export const processOneDimensionalResults = ({
     const formattedValue = formatDimensionValue({
       value: rawValue,
       fieldMetadata: primaryAxisGroupByField,
-      flatFieldMetadataOptionMaps,
       dateGranularity: dateGranularity ?? undefined,
       subFieldName: subFieldName ?? undefined,
       userTimezone,
