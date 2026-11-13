@@ -103,6 +103,8 @@ export class ApplicationGrantRoleService {
               workspaceCustomApplicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               flatEntityMaps,
+              flatRowLevelPermissionRuleMaps:
+                flatEntityMaps.flatRowLevelPermissionRuleMaps,
               now: new Date().toISOString(),
             }),
           // The builder mutates these maps, so it must not get the cache's own
@@ -208,6 +210,7 @@ export class ApplicationGrantRoleService {
       'flatRolePermissionFlagMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
+      'flatRowLevelPermissionRuleMaps',
     ]);
 
     const flatApplication = findActiveFlatApplicationById(
