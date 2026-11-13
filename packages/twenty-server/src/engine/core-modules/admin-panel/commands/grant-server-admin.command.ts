@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
-import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 type GrantServerAdminCommandOptions = {
@@ -25,7 +24,6 @@ export class GrantServerAdminCommand extends CommandRunner {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly coreEntityCacheService: CoreEntityCacheService,
-    private readonly serverAdminLockService: ServerAdminLockService,
   ) {
     super();
   }
@@ -43,29 +41,27 @@ export class GrantServerAdminCommand extends CommandRunner {
     _passedParams: string[],
     options: GrantServerAdminCommandOptions,
   ): Promise<void> {
-    await this.serverAdminLockService.runExclusively(async () => {
-      const user = await this.userRepository.findOne({
-        where: { email: options.email },
-      });
-
-      if (!isDefined(user)) {
-        throw new Error(`No active user found with email ${options.email}`);
-      }
-
-      if (user.canAccessFullAdminPanel && user.canImpersonate) {
-        this.logger.log(`${user.email} is already a server admin`);
-
-        return;
-      }
-
-      await this.userRepository.update(
-        { id: user.id },
-        { canAccessFullAdminPanel: true, canImpersonate: true },
-      );
-
-      await this.coreEntityCacheService.invalidate('user', user.id);
-
-      this.logger.log(`Granted server admin access to ${user.email}`);
+    const user = await this.userRepository.findOne({
+      where: { email: options.email },
     });
+
+    if (!isDefined(user)) {
+      throw new Error(`No active user found with email ${options.email}`);
+    }
+
+    if (user.canAccessFullAdminPanel && user.canImpersonate) {
+      this.logger.log(`${user.email} is already a server admin`);
+
+      return;
+    }
+
+    await this.userRepository.update(
+      { id: user.id },
+      { canAccessFullAdminPanel: true, canImpersonate: true },
+    );
+
+    await this.coreEntityCacheService.invalidate('user', user.id);
+
+    this.logger.log(`Granted server admin access to ${user.email}`);
   }
 }

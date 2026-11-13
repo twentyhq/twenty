@@ -29,12 +29,10 @@ export class PostgresAdvisoryLockService {
   async tryWithLock<T>(
     lockName: string,
     callback: () => Promise<T>,
-    { isShared = false }: { isShared?: boolean } = {},
   ): Promise<PostgresAdvisoryLockResult<T>> {
     const lockSession = await PostgresAdvisoryLockSession.tryAcquire(
       this.coreDataSource,
       lockName,
-      isShared,
     );
 
     if (!lockSession) {
@@ -94,7 +92,6 @@ class PostgresAdvisoryLockSession {
     private readonly connection: PoolClient,
     private readonly releaseConnection: (error?: Error) => void,
     private readonly lockName: string,
-    private readonly isShared: boolean,
   ) {
     this.connection.on('error', this.handleConnectionError);
   }
@@ -102,7 +99,6 @@ class PostgresAdvisoryLockSession {
   static async tryAcquire(
     dataSource: DataSource,
     lockName: string,
-    isShared: boolean,
   ): Promise<PostgresAdvisoryLockSession | undefined> {
     const [connection, releaseConnection] = (await (
       dataSource.driver as PostgresDriver
@@ -111,7 +107,6 @@ class PostgresAdvisoryLockSession {
       connection,
       releaseConnection,
       lockName,
-      isShared,
     );
 
     let isLockAcquired: boolean;
@@ -152,9 +147,7 @@ class PostgresAdvisoryLockSession {
     const {
       rows: [result],
     } = await this.connection.query<{ acquired: boolean }>(
-      this.isShared
-        ? `SELECT pg_try_advisory_lock_shared(hashtextextended($1, 0)) AS "acquired"`
-        : `SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS "acquired"`,
+      `SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS "acquired"`,
       [this.lockName],
     );
 
@@ -165,9 +158,7 @@ class PostgresAdvisoryLockSession {
     const {
       rows: [result],
     } = await this.connection.query<{ released: boolean }>(
-      this.isShared
-        ? `SELECT pg_advisory_unlock_shared(hashtextextended($1, 0)) AS "released"`
-        : `SELECT pg_advisory_unlock(hashtextextended($1, 0)) AS "released"`,
+      `SELECT pg_advisory_unlock(hashtextextended($1, 0)) AS "released"`,
       [this.lockName],
     );
 

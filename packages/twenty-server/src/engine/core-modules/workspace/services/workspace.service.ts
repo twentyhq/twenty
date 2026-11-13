@@ -83,6 +83,7 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { softDeleteUserUnlessLastServerAdmin } from 'src/engine/core-modules/user/utils/soft-delete-user-unless-last-server-admin.util';
 import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { buildAiDataPolicy } from 'src/engine/core-modules/workspace/utils/build-ai-data-policy.util';
 import { type UpdateWorkspaceAllowedEmbeddingOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-embedding-origins.input';
@@ -1295,7 +1296,10 @@ export class WorkspaceService {
       : userWorkspaces.length > 0;
 
     if (!hasOtherUserWorkspaces) {
-      await this.userRepository.softDelete(userId);
+      await softDeleteUserUnlessLastServerAdmin({
+        manager: this.userRepository.manager,
+        userId,
+      });
       await this.coreEntityCacheService.invalidate('user', userId);
     }
   }

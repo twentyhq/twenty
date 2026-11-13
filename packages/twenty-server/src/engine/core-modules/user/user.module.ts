@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationModule } from 'src/engine/core-modules/email-verification/email-verification.module';
@@ -10,7 +9,6 @@ import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { GlobalWorkspaceMemberListener } from 'src/engine/core-modules/user/services/global-workspace-member.listener';
-import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { UserEntityCacheProviderService } from 'src/engine/core-modules/user/services/user-entity-cache-provider.service';
 import { WorkspaceFlatWorkspaceMemberMapCacheService } from 'src/engine/core-modules/user/services/workspace-flat-workspace-member-map-cache.service';
 import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
@@ -45,12 +43,10 @@ import { UserService } from './services/user.service';
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,
-    TypeORMModule,
   ],
-  exports: [UserService, WorkspaceMemberTranspiler, ServerAdminLockService],
+  exports: [UserService, WorkspaceMemberTranspiler],
   providers: [
     UserService,
-    ServerAdminLockService,
     UserResolver,
     UserEntityCacheProviderService,
     WorkspaceMemberTranspiler,

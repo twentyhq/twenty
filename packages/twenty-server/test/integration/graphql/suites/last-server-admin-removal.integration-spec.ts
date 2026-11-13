@@ -1,33 +1,31 @@
 import { randomUUID } from 'crypto';
 
 import gql from 'graphql-tag';
-import { authenticator } from 'otplib';
 import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
+import { activateWorkspace } from 'test/integration/graphql/utils/activate-workspace.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
-import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
+import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
+import { signUpInNewWorkspace } from 'test/integration/graphql/utils/sign-up-in-new-workspace.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
-import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
+import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { In } from 'typeorm';
 
-import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { SERVER_ADMINS_LOCK_NAME } from 'src/engine/core-modules/user/constants/server-admins-lock-name.constant';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
-import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
-const TOTP_STEP_MS = 30_000;
-const MINIMUM_TOTP_STEP_REMAINING_MS = 10_000;
-
-type Member = {
+type SignedUpUser = {
   id: string;
-  workspaceMemberId: string;
   accessToken: string;
+};
+
+type Member = SignedUpUser & {
+  workspaceMemberId: string;
 };
 
 const currentUserOperation = {
@@ -60,7 +58,7 @@ const setCanAccessFullAdminPanel = async (
   );
 };
 
-const signUpMember = async (): Promise<Member> => {
+const signUpServerAdmin = async (): Promise<Member> => {
   const accessToken = await signUpInWorkspaceAndGetAccessToken(
     `last-server-admin-${randomUUID()}@example.com`,
   );
@@ -72,111 +70,57 @@ const signUpMember = async (): Promise<Member> => {
 
   const { id, workspaceMember } = response.body.data.currentUser;
 
+  await setCanAccessFullAdminPanel([id], true);
+
   return { id, workspaceMemberId: workspaceMember.id, accessToken };
 };
 
-const signUpServerAdmin = async (): Promise<Member> => {
-  const serverAdmin = await signUpMember();
+const signUpInOwnWorkspace = async () => {
+  const email = `last-server-admin-${randomUUID()}@example.com`;
 
-  await setCanAccessFullAdminPanel([serverAdmin.id], true);
-
-  return serverAdmin;
-};
-
-const enableTwoFactorAuthentication = async (accessToken: string) => {
-  const { data } = await initiateOtpProvisioningForAuthenticatedUser({
-    accessToken,
+  const { data: signUpData } = await signUp({
+    input: { email, password: 'Test123!@#' },
     expectToFail: false,
   });
 
-  const secret =
-    new URL(
-      data.initiateOTPProvisioningForAuthenticatedUser.uri,
-    ).searchParams.get('secret') ?? '';
+  const workspaceAgnosticAccessToken =
+    signUpData.signUp.tokens.accessOrWorkspaceAgnosticToken.token;
 
-  await verifyTwoFactorAuthenticationMethod({
-    otp: authenticator.generate(secret),
-    accessToken,
-    expectToFail: false,
-  });
-
-  return secret;
-};
-
-const waitUntilSafelyInsideTotpStep = async () => {
-  const millisecondsRemainingInStep =
-    TOTP_STEP_MS - (Date.now() % TOTP_STEP_MS);
-
-  if (millisecondsRemainingInStep < MINIMUM_TOTP_STEP_REMAINING_MS) {
-    await new Promise((resolve) =>
-      setTimeout(resolve, millisecondsRemainingInStep + 100),
-    );
-  }
-};
-
-const updateServerAdminAccess = ({
-  userId,
-  canAccessFullAdminPanel,
-  canImpersonate,
-  secret,
-  totpStepOffset = 1,
-  accessToken,
-}: {
-  userId: string;
-  canAccessFullAdminPanel: boolean;
-  canImpersonate?: boolean;
-  secret: string;
-  totpStepOffset?: number;
-  accessToken: string;
-}) =>
-  makeAdminPanelApiRequest(
-    {
-      query: gql`
-        mutation UpdateServerAdminAccess(
-          $userId: UUID!
-          $canAccessFullAdminPanel: Boolean
-          $canImpersonate: Boolean
-          $otp: String
-        ) {
-          updateServerAdminAccess(
-            userId: $userId
-            canAccessFullAdminPanel: $canAccessFullAdminPanel
-            canImpersonate: $canImpersonate
-            otp: $otp
-          ) {
-            id
-          }
-        }
-      `,
-      variables: {
-        userId,
-        canAccessFullAdminPanel,
-        canImpersonate,
-        otp: authenticator
-          .clone({ epoch: Date.now() + totpStepOffset * TOTP_STEP_MS })
-          .generate(secret),
-      },
-    },
-    accessToken,
+  await getCoreRepository<UserEntity>(UserEntity).update(
+    { email },
+    { isEmailVerified: true },
   );
 
-const holdServerAdminsLockFromAnotherInstance = async (
-  callback: () => Promise<void>,
-  { isShared }: { isShared: boolean },
-) => {
-  const lockResult =
-    await getAppProviderByClassName<PostgresAdvisoryLockService>(
-      'PostgresAdvisoryLockService',
-    ).tryWithLock(SERVER_ADMINS_LOCK_NAME, callback, { isShared });
+  const {
+    data: { signUpInNewWorkspace: newWorkspace },
+  } = await signUpInNewWorkspace({
+    accessToken: workspaceAgnosticAccessToken,
+    expectToFail: false,
+  });
 
-  expect(lockResult.acquired).toBe(true);
+  const {
+    data: { getAuthTokensFromLoginToken: authTokens },
+  } = await getAuthTokensFromLoginToken({
+    origin: newWorkspace.workspace.workspaceUrls.subdomainUrl,
+    loginToken: newWorkspace.loginToken.token,
+    expectToFail: false,
+  });
+
+  const accessToken = authTokens.tokens.accessOrWorkspaceAgnosticToken.token;
+
+  await activateWorkspace({ accessToken, expectToFail: false });
+
+  const { id } = await getCoreRepository<UserEntity>(UserEntity).findOneOrFail({
+    where: { email },
+  });
+
+  return {
+    id,
+    accessToken,
+    workspaceAgnosticAccessToken,
+    workspaceId: newWorkspace.workspace.id,
+  };
 };
-
-const runWhileServerAdminsChange = (callback: () => Promise<void>) =>
-  holdServerAdminsLockFromAnotherInstance(callback, { isShared: false });
-
-const runWhileAUserIsRemoved = (callback: () => Promise<void>) =>
-  holdServerAdminsLockFromAnotherInstance(callback, { isShared: true });
 
 const expectServerAdminToBeUntouched = async (serverAdmin: Member) => {
   const user = await getCoreRepository<UserEntity>(UserEntity).findOne({
@@ -198,7 +142,7 @@ const expectServerAdminToBeUntouched = async (serverAdmin: Member) => {
 describe('Removing the last server admin', () => {
   let otherServerAdminIds: string[];
   let serverAdmin: Member;
-  let extraMembers: Member[];
+  let extraUsers: SignedUpUser[];
 
   beforeAll(async () => {
     const otherServerAdmins = await getCoreRepository<UserEntity>(
@@ -213,21 +157,20 @@ describe('Removing the last server admin', () => {
 
   beforeEach(async () => {
     serverAdmin = await signUpServerAdmin();
-    extraMembers = [];
+    extraUsers = [];
   });
 
   afterEach(async () => {
     await setCanAccessFullAdminPanel(otherServerAdminIds, true);
-    await setCanAccessFullAdminPanel([USER_DATA_SEED_IDS.SCOTT], false);
 
-    for (const member of [serverAdmin, ...extraMembers]) {
-      const isMemberStillActive = await getCoreRepository<UserEntity>(
+    for (const user of [serverAdmin, ...extraUsers]) {
+      const isUserStillActive = await getCoreRepository<UserEntity>(
         UserEntity,
-      ).exists({ where: { id: member.id } });
+      ).exists({ where: { id: user.id } });
 
-      if (isMemberStillActive) {
+      if (isUserStillActive) {
         await deleteUser({
-          accessToken: member.accessToken,
+          accessToken: user.accessToken,
           expectToFail: false,
         });
       }
@@ -269,187 +212,48 @@ describe('Removing the last server admin', () => {
 
       await expectServerAdminToBeUntouched(serverAdmin);
     });
-  });
 
-  describe('while server admins are being changed', () => {
-    it('should refuse to remove a server admin before touching their member', async () => {
-      await runWhileServerAdminsChange(async () => {
-        const { data, errors } = await deleteUserFromWorkspace({
-          input: { workspaceMemberIdToDelete: serverAdmin.workspaceMemberId },
-          expectToFail: true,
-          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        });
+    it('should keep their account when their only workspace is deleted', async () => {
+      const soleWorkspaceServerAdmin = await signUpInOwnWorkspace();
 
-        expect(data).toBeNull();
-        expect(errors[0].extensions.code).toBe(ErrorCode.CONFLICT);
+      extraUsers.push({
+        id: soleWorkspaceServerAdmin.id,
+        accessToken: soleWorkspaceServerAdmin.workspaceAgnosticAccessToken,
       });
 
-      await expectServerAdminToBeUntouched(serverAdmin);
-    });
-
-    it('should refuse to remove a member before touching them', async () => {
-      const member = await signUpMember();
-
-      extraMembers.push(member);
-
-      await runWhileServerAdminsChange(async () => {
-        const { data, errors } = await deleteUserFromWorkspace({
-          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
-          expectToFail: true,
-          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        });
-
-        expect(data).toBeNull();
-        expect(errors[0].extensions.code).toBe(ErrorCode.CONFLICT);
-      });
+      await setCanAccessFullAdminPanel([serverAdmin.id], false);
+      await setCanAccessFullAdminPanel([soleWorkspaceServerAdmin.id], true);
 
       const response = await makeMetadataApiRequest(
-        currentUserOperation,
-        member.accessToken,
+        {
+          query: gql`
+            mutation DeleteCurrentWorkspace {
+              deleteCurrentWorkspace {
+                id
+              }
+            }
+          `,
+        },
+        soleWorkspaceServerAdmin.accessToken,
       );
 
-      expect(response.body.data.currentUser.workspaceMember.id).toBe(
-        member.workspaceMemberId,
-      );
-    });
+      expect(response.body.errors).toBeUndefined();
 
-    it('should refuse to revoke admin panel access from another server admin', async () => {
-      const secret = await enableTwoFactorAuthentication(
-        serverAdmin.accessToken,
-      );
-
-      await runWhileServerAdminsChange(async () => {
-        const response = await updateServerAdminAccess({
-          userId: USER_DATA_SEED_IDS.JANE,
-          canAccessFullAdminPanel: false,
-          secret,
-          accessToken: serverAdmin.accessToken,
-        });
-
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.CONFLICT,
-        );
+      const deletedWorkspace = await getCoreRepository<WorkspaceEntity>(
+        WorkspaceEntity,
+      ).findOne({
+        where: { id: soleWorkspaceServerAdmin.workspaceId },
+        withDeleted: true,
       });
 
-      const jane = await getCoreRepository<UserEntity>(
-        UserEntity,
-      ).findOneOrFail({ where: { id: USER_DATA_SEED_IDS.JANE } });
+      expect(deletedWorkspace?.deletedAt).not.toBeNull();
 
-      expect(jane.canAccessFullAdminPanel).toBe(true);
-    });
-  });
-
-  describe('while a user is being removed', () => {
-    it('should refuse to promote a user to server admin', async () => {
-      const secret = await enableTwoFactorAuthentication(
-        serverAdmin.accessToken,
-      );
-
-      await runWhileAUserIsRemoved(async () => {
-        const response = await updateServerAdminAccess({
-          userId: USER_DATA_SEED_IDS.SCOTT,
-          canAccessFullAdminPanel: true,
-          secret,
-          accessToken: serverAdmin.accessToken,
-        });
-
-        expect(response.body.errors[0].extensions.code).toBe(
-          ErrorCode.CONFLICT,
-        );
+      const keptUser = await getCoreRepository<UserEntity>(UserEntity).findOne({
+        where: { id: soleWorkspaceServerAdmin.id },
       });
 
-      const scott = await getCoreRepository<UserEntity>(
-        UserEntity,
-      ).findOneOrFail({ where: { id: USER_DATA_SEED_IDS.SCOTT } });
-
-      expect(scott.canAccessFullAdminPanel).toBe(false);
+      expect(keptUser?.canAccessFullAdminPanel).toBe(true);
     });
-
-    it('should still remove another member', async () => {
-      const member = await signUpMember();
-
-      await runWhileAUserIsRemoved(async () => {
-        const { errors } = await deleteUserFromWorkspace({
-          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
-          expectToFail: false,
-          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        });
-
-        expect(errors).toBeUndefined();
-      });
-
-      const removedMember = await getCoreRepository<UserEntity>(
-        UserEntity,
-      ).findOne({ where: { id: member.id }, withDeleted: true });
-
-      expect(removedMember?.deletedAt).not.toBeNull();
-    });
-  });
-
-  it('should apply overlapping admin access changes on top of each other', async () => {
-    const target = await signUpMember();
-
-    extraMembers.push(target);
-
-    await getCoreRepository<UserEntity>(UserEntity).update(
-      { id: target.id },
-      { canImpersonate: true },
-    );
-
-    await waitUntilSafelyInsideTotpStep();
-
-    const secret = await enableTwoFactorAuthentication(serverAdmin.accessToken);
-
-    const responses = await Promise.all([
-      updateServerAdminAccess({
-        userId: target.id,
-        canAccessFullAdminPanel: true,
-        canImpersonate: false,
-        secret,
-        totpStepOffset: 1,
-        accessToken: serverAdmin.accessToken,
-      }),
-      updateServerAdminAccess({
-        userId: target.id,
-        canAccessFullAdminPanel: true,
-        secret,
-        totpStepOffset: -1,
-        accessToken: serverAdmin.accessToken,
-      }),
-    ]);
-
-    expect(responses.map(({ body }) => body.errors)).toEqual([
-      undefined,
-      undefined,
-    ]);
-
-    const updatedTarget = await getCoreRepository<UserEntity>(
-      UserEntity,
-    ).findOneOrFail({ where: { id: target.id } });
-
-    expect(updatedTarget.canAccessFullAdminPanel).toBe(true);
-    expect(updatedTarget.canImpersonate).toBe(false);
-  });
-
-  it('should remove more members at once than the database pool has connections', async () => {
-    const members: Member[] = [];
-    const poolSize = Number(process.env.PG_POOL_MAX_CONNECTIONS ?? 10);
-
-    for (let index = 0; index < poolSize + 2; index++) {
-      members.push(await signUpMember());
-    }
-
-    const removals = await Promise.all(
-      members.map((member) =>
-        deleteUserFromWorkspace({
-          input: { workspaceMemberIdToDelete: member.workspaceMemberId },
-          expectToFail: false,
-          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        }),
-      ),
-    );
-
-    expect(removals.every(({ errors }) => errors === undefined)).toBe(true);
   });
 
   it('should remove a server admin from their only workspace when another server admin is left', async () => {

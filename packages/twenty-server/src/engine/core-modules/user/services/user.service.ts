@@ -32,11 +32,12 @@ import {
   UpdateWorkspaceMemberEmailJob,
   UpdateWorkspaceMemberEmailJobData,
 } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
-import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserExceptionCode } from 'src/engine/core-modules/user/user.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { isLastServerAdminWithOtherUsers } from 'src/engine/core-modules/user/utils/is-last-server-admin-with-other-users.util';
+import { softDeleteUserUnlessLastServerAdmin } from 'src/engine/core-modules/user/utils/soft-delete-user-unless-last-server-admin.util';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -77,7 +78,6 @@ export class UserService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    private readonly serverAdminLockService: ServerAdminLockService,
   ) {}
 
   async refreshWorkspaceIfPendingOrOngoingCreation<
@@ -277,8 +277,7 @@ export class UserService {
           );
         }
 
-        await this.userRepository.softDelete({ id: userId });
-        await this.coreEntityCacheService.invalidate('user', userId);
+        await this.softDeleteUser(userId);
       },
     });
 
@@ -333,8 +332,7 @@ export class UserService {
           actingUserWorkspaceId,
         );
 
-        await this.userRepository.softDelete(userId);
-        await this.coreEntityCacheService.invalidate('user', userId);
+        await this.softDeleteUser(userId);
       },
     });
 
@@ -348,57 +346,28 @@ export class UserService {
     user: Pick<UserEntity, 'id'>;
     removeUser: () => Promise<void>;
   }) {
-    const isRemoved = await this.serverAdminLockService.runShared(async () => {
-      if (await this.isServerAdmin(user.id)) {
-        return false;
-      }
-
-      await removeUser();
-
-      return true;
-    });
-
-    if (isRemoved) {
-      return;
-    }
-
-    await this.serverAdminLockService.runExclusively(async () => {
-      await this.assertIsNotLastServerAdminOrThrow(user.id);
-      await removeUser();
-    });
-  }
-
-  private isServerAdmin(userId: string) {
-    return this.userRepository.exists({
-      where: { id: userId, canAccessFullAdminPanel: true },
-    });
-  }
-
-  private async assertIsNotLastServerAdminOrThrow(userId: string) {
-    const serverAdmins = await this.userRepository.find({
-      select: { id: true },
-      where: { canAccessFullAdminPanel: true },
-    });
-
-    const isLastServerAdmin =
-      serverAdmins.length === 1 && serverAdmins[0].id === userId;
-
-    if (!isLastServerAdmin) {
-      return;
-    }
-
-    const hasOtherUser = await this.userRepository.exists({
-      where: { id: Not(userId) },
-    });
-
-    if (!hasOtherUser) {
-      return;
-    }
-
-    throw new PermissionsException(
-      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
-      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    const isLastServerAdmin = await this.userRepository.manager.transaction(
+      (manager) =>
+        isLastServerAdminWithOtherUsers({ manager, userId: user.id }),
     );
+
+    if (isLastServerAdmin) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+        PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      );
+    }
+
+    await removeUser();
+  }
+
+  private async softDeleteUser(userId: string) {
+    await softDeleteUserUnlessLastServerAdmin({
+      manager: this.userRepository.manager,
+      userId,
+    });
+
+    await this.coreEntityCacheService.invalidate('user', userId);
   }
 
   async removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(

@@ -18,7 +18,6 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
-import { ServerAdminLockService } from 'src/engine/core-modules/user/services/server-admin-lock.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
@@ -34,7 +33,6 @@ export class AdminPanelServerAdminService {
     private readonly i18nService: I18nService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly serverAdminLockService: ServerAdminLockService,
   ) {}
 
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
@@ -65,11 +63,11 @@ export class AdminPanelServerAdminService {
       throw new UserInputError('No administrator access change was provided.');
     }
 
-    const targetUserExists = await this.userRepository.exists({
+    const targetUser = await this.userRepository.findOne({
       where: { id: targetUserId },
     });
 
-    if (!targetUserExists) {
+    if (!isDefined(targetUser)) {
       throw new UserInputError('User not found.');
     }
 
@@ -87,73 +85,54 @@ export class AdminPanelServerAdminService {
       );
     }
 
-    const { targetUser, hasChange } =
-      await this.serverAdminLockService.runExclusively(() =>
-        this.userRepository.manager.transaction(async (manager) => {
-          const targetUser = await manager.findOne(UserEntity, {
-            where: { id: targetUserId },
-          });
+    const nextCanAccessFullAdminPanel =
+      canAccessFullAdminPanel ?? targetUser.canAccessFullAdminPanel;
+    const nextCanImpersonate = canImpersonate ?? targetUser.canImpersonate;
 
-          if (!isDefined(targetUser)) {
-            throw new UserInputError('User not found.');
-          }
-
-          const nextCanAccessFullAdminPanel =
-            canAccessFullAdminPanel ?? targetUser.canAccessFullAdminPanel;
-          const nextCanImpersonate =
-            canImpersonate ?? targetUser.canImpersonate;
-
-          const hasChange =
-            nextCanAccessFullAdminPanel !==
-              targetUser.canAccessFullAdminPanel ||
-            nextCanImpersonate !== targetUser.canImpersonate;
-
-          if (!hasChange) {
-            return { targetUser, hasChange };
-          }
-
-          const isRevokingFullAdmin =
-            targetUser.canAccessFullAdminPanel === true &&
-            nextCanAccessFullAdminPanel === false;
-
-          if (isRevokingFullAdmin) {
-            const lockedFullAdmins = await manager.find(UserEntity, {
-              where: { canAccessFullAdminPanel: true },
-              lock: { mode: 'pessimistic_write' },
-            });
-
-            const otherFullAdmins = lockedFullAdmins.filter(
-              (admin) => admin.id !== targetUserId,
-            );
-
-            if (otherFullAdmins.length === 0) {
-              throw new UserInputError(
-                'You cannot revoke admin panel access from the last server administrator.',
-                {
-                  userFriendlyMessage: msg`You cannot revoke admin panel access from the last server administrator.`,
-                },
-              );
-            }
-          }
-
-          targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
-          targetUser.canImpersonate = nextCanImpersonate;
-
-          await manager.save(UserEntity, targetUser);
-
-          return { targetUser, hasChange };
-        }),
-      );
+    const hasChange =
+      nextCanAccessFullAdminPanel !== targetUser.canAccessFullAdminPanel ||
+      nextCanImpersonate !== targetUser.canImpersonate;
 
     if (!hasChange) {
       return this.toServerAdminDTO(targetUser);
     }
 
+    const isRevokingFullAdmin =
+      targetUser.canAccessFullAdminPanel === true &&
+      nextCanAccessFullAdminPanel === false;
+
+    targetUser.canAccessFullAdminPanel = nextCanAccessFullAdminPanel;
+    targetUser.canImpersonate = nextCanImpersonate;
+
+    await this.userRepository.manager.transaction(async (manager) => {
+      if (isRevokingFullAdmin) {
+        const lockedFullAdmins = await manager.find(UserEntity, {
+          where: { canAccessFullAdminPanel: true },
+          lock: { mode: 'pessimistic_write' },
+        });
+
+        const otherFullAdmins = lockedFullAdmins.filter(
+          (admin) => admin.id !== targetUserId,
+        );
+
+        if (otherFullAdmins.length === 0) {
+          throw new UserInputError(
+            'You cannot revoke admin panel access from the last server administrator.',
+            {
+              userFriendlyMessage: msg`You cannot revoke admin panel access from the last server administrator.`,
+            },
+          );
+        }
+      }
+
+      await manager.save(UserEntity, targetUser);
+    });
+
     await this.coreEntityCacheService.invalidate('user', targetUserId);
 
     this.logger.log(
       `Server admin access for user ${targetUserId} updated by ${actor.id}: ` +
-        `canAccessFullAdminPanel=${targetUser.canAccessFullAdminPanel}, canImpersonate=${targetUser.canImpersonate}`,
+        `canAccessFullAdminPanel=${nextCanAccessFullAdminPanel}, canImpersonate=${nextCanImpersonate}`,
     );
 
     this.emitServerAdminAccessChangedEvent({
