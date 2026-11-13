@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { randomBytes } from 'node:crypto';
+
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -53,8 +55,10 @@ import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/rel
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
+import { MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS } from 'src/engine/permissions/internal/related-record-path/constants/max-bound-related-record-path-source-ids.constant';
 import {
   type BuildEntrySQLCondition,
+  type BuildListedTablePathSQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
 } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-join-sql-condition.util';
 import { buildAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-access-sql-condition.util';
@@ -371,18 +375,74 @@ export class RecordPermissionsReadService {
 
     return combineSQLConditionOutcomesWithOr([
       sqlCondition,
+      await this.buildListingRelatedRecordPathSQLCondition({
+        objectAccessRequest,
+        tableAlias,
+      }),
+    ]);
+  }
+
+  // Bound ids let Postgres size the list and hash it; a subquery array is walked for every row
+  private async buildListingRelatedRecordPathSQLCondition({
+    objectAccessRequest,
+    tableAlias,
+  }: {
+    objectAccessRequest: PermissionsObjectAccessRequest;
+    tableAlias: string;
+  }): Promise<SQLCondition | boolean> {
+    const buildSQLCondition = (
+      buildListedTablePathSQLCondition: BuildListedTablePathSQLCondition,
+    ) =>
       this.buildRelatedRecordPathJoinSQLCondition({
         ...objectAccessRequest,
         tableAlias,
         isUncorrelated: true,
+        buildListedTablePathSQLCondition,
         buildEntrySQLCondition: (entry) =>
           entry.tableAlias !== tableAlias &&
           this.buildRecordShareOrCreatorEntrySQLCondition({
             ...objectAccessRequest,
             ...entry,
           }),
-      }),
-    ]);
+      });
+
+    const sourceIdsQueries: SQLCondition[] = [];
+
+    buildSQLCondition(({ sourceIdsQuery }) => {
+      sourceIdsQueries.push(sourceIdsQuery);
+
+      return false;
+    });
+
+    const sourceIdsOfPaths = await Promise.all(
+      sourceIdsQueries.map((sourceIdsQuery) =>
+        this.recordPermissionReadRepository.findRelatedRecordPathSourceIds({
+          workspaceId: objectAccessRequest.principals.workspaceId,
+          sourceIdsQuery,
+          limit: MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS + 1,
+        }),
+      ),
+    );
+    let pathIndex = 0;
+
+    return buildSQLCondition(({ targetColumnExpression, sourceIdsQuery }) => {
+      const parameterName = `relatedRecordPathSourceIds_${randomBytes(5).toString('hex')}`;
+      const sourceIds = sourceIdsOfPaths[pathIndex++];
+
+      if (sourceIds.length === 0) {
+        return false;
+      }
+
+      return sourceIds.length > MAX_BOUND_RELATED_RECORD_PATH_SOURCE_IDS
+        ? {
+            sql: `${targetColumnExpression} IN (${sourceIdsQuery.sql})`,
+            parameters: sourceIdsQuery.parameters,
+          }
+        : {
+            sql: `${targetColumnExpression} = ANY(:${parameterName})`,
+            parameters: { [parameterName]: sourceIds },
+          };
+    });
   }
 
   private async findPrincipalsAccessGroupCompactIds(
@@ -742,10 +802,12 @@ export class RecordPermissionsReadService {
     tableAlias,
     buildEntrySQLCondition,
     isUncorrelated,
+    buildListedTablePathSQLCondition,
   }: PermissionsObjectAccessRequest & {
     tableAlias: string;
     buildEntrySQLCondition: BuildEntrySQLCondition;
     isUncorrelated?: boolean;
+    buildListedTablePathSQLCondition?: BuildListedTablePathSQLCondition;
   }): SQLCondition | boolean {
     return buildRelatedRecordPathJoinSQLCondition({
       workspaceId: principals.workspaceId,
@@ -754,6 +816,7 @@ export class RecordPermissionsReadService {
       metadataMaps,
       buildEntrySQLCondition,
       isUncorrelated,
+      buildListedTablePathSQLCondition,
       canRelatedRecordPathExtendAccessToObject: (reachedFlatObjectMetadata) =>
         canRelatedRecordPathExtendAccessToObject({
           principals,

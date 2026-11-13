@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
@@ -18,6 +20,11 @@ export type BuildEntrySQLCondition = (args: {
   tableAlias: string;
 }) => SQLCondition | boolean;
 
+export type BuildListedTablePathSQLCondition = (args: {
+  targetColumnExpression: string;
+  sourceIdsQuery: SQLCondition;
+}) => SQLCondition | boolean;
+
 export const buildRelatedRecordPathJoinSQLCondition = ({
   workspaceId,
   flatObjectMetadata,
@@ -27,6 +34,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   canRelatedRecordPathExtendAccessToObject,
   arePrivateRecordsApplicable,
   isUncorrelated = false,
+  buildListedTablePathSQLCondition,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
@@ -40,6 +48,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     flatObjectMetadata: FlatObjectMetadata,
   ) => boolean;
   isUncorrelated?: boolean;
+  buildListedTablePathSQLCondition?: BuildListedTablePathSQLCondition;
 }): SQLCondition | boolean => {
   const resolvedRelatedRecordPaths = isAccessGroupsEnabled({
     featureFlagsMap: metadataMaps.featureFlagsMap,
@@ -96,14 +105,29 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
 
     const fromAndWhere = `FROM ${fromExpressions.join(', ')} WHERE ${whereConditions.join(' AND ')}`;
     const lastHop = resolvedPath.hops[lastHopIndex];
+    const parameters =
+      sourceSQLCondition === true ? {} : sourceSQLCondition.parameters;
 
-    return {
-      sql: isUncorrelated
-        ? `${escapeIdentifier(targetTableAlias)}.${escapeIdentifier(lastHop.targetColumnName)} = ANY(ARRAY(SELECT ${escapeIdentifier(hopTableAliases[lastHopIndex])}.${escapeIdentifier(lastHop.sourceColumnName)} ${fromAndWhere}))`
-        : `EXISTS (SELECT 1 ${fromAndWhere})`,
-      parameters:
-        sourceSQLCondition === true ? {} : sourceSQLCondition.parameters,
+    if (!isUncorrelated) {
+      return { sql: `EXISTS (SELECT 1 ${fromAndWhere})`, parameters };
+    }
+
+    const targetColumnExpression = `${escapeIdentifier(targetTableAlias)}.${escapeIdentifier(lastHop.targetColumnName)}`;
+    const sourceIdsQuery = {
+      sql: `SELECT ${escapeIdentifier(hopTableAliases[lastHopIndex])}.${escapeIdentifier(lastHop.sourceColumnName)} ${fromAndWhere}`,
+      parameters,
     };
+
+    return targetTableAlias === tableAlias &&
+      isDefined(buildListedTablePathSQLCondition)
+      ? buildListedTablePathSQLCondition({
+          targetColumnExpression,
+          sourceIdsQuery,
+        })
+      : {
+          sql: `${targetColumnExpression} = ANY(ARRAY(${sourceIdsQuery.sql}))`,
+          parameters,
+        };
   };
 
   const buildReadableSQLCondition = ({

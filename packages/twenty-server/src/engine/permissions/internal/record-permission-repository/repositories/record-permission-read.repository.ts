@@ -217,6 +217,28 @@ export class RecordPermissionReadRepository {
     return rows.map(({ joinValue }) => joinValue);
   }
 
+  async findRelatedRecordPathSourceIds({
+    workspaceId,
+    sourceIdsQuery,
+    limit,
+  }: {
+    workspaceId: string;
+    sourceIdsQuery: SQLCondition;
+    limit: number;
+  }): Promise<string[]> {
+    const rows = await this.recordPermissionQueryService.execute<{
+      sourceId: string | null;
+    }>({
+      workspaceId,
+      query: {
+        sql: `SELECT "sourceIds"."sourceId" FROM (${sourceIdsQuery.sql}) AS "sourceIds"("sourceId") LIMIT :sourceIdsLimit`,
+        parameters: { ...sourceIdsQuery.parameters, sourceIdsLimit: limit },
+      },
+    });
+
+    return rows.map(({ sourceId }) => sourceId).filter(isDefined);
+  }
+
   async findRecordIdsMatchingSQLCondition({
     workspaceId,
     flatObjectMetadata,

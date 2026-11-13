@@ -11,6 +11,7 @@ import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-rel
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import {
   type BuildEntrySQLCondition,
+  type BuildListedTablePathSQLCondition,
   buildRelatedRecordPathJoinSQLCondition,
 } from 'src/engine/permissions/internal/related-record-path/utils/build-related-record-path-join-sql-condition.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
@@ -179,9 +180,11 @@ const buildAttachmentCondition = ({
   disabledObjectNames = [],
   privateObjectNames = [],
   isUncorrelated,
+  buildListedTablePathSQLCondition,
   ...metadataMapsArgs
 }: Parameters<typeof buildMetadataMaps>[0] & {
   isUncorrelated?: boolean;
+  buildListedTablePathSQLCondition?: BuildListedTablePathSQLCondition;
   entryByObject: Record<string, boolean | 'owned'>;
   disabledObjectNames?: string[];
   privateObjectNames?: string[];
@@ -197,6 +200,7 @@ const buildAttachmentCondition = ({
     arePrivateRecordsApplicable: (flatObjectMetadata) =>
       privateObjectNames.includes(flatObjectMetadata.nameSingular),
     isUncorrelated,
+    buildListedTablePathSQLCondition,
   });
 
 describe('buildRelatedRecordPathJoinSQLCondition', () => {
@@ -221,6 +225,26 @@ describe('buildRelatedRecordPathJoinSQLCondition', () => {
       }),
     ).toEqual({
       sql: `"attachment"."targetCompanyId" = ANY(ARRAY(SELECT "related_record_path_0"."id" FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner)))`,
+      parameters: { related_record_path_0Owner: 'member-id' },
+    });
+  });
+
+  it('hands the source ids query of a path on the listed table to the caller', () => {
+    expect(
+      buildAttachmentCondition({
+        paths: [companyAttachmentsPath],
+        entryByObject: { company: 'owned' },
+        isUncorrelated: true,
+        buildListedTablePathSQLCondition: ({
+          targetColumnExpression,
+          sourceIdsQuery,
+        }) => ({
+          sql: `${targetColumnExpression} = ANY(:sourceIds) /* ${sourceIdsQuery.sql} */`,
+          parameters: sourceIdsQuery.parameters,
+        }),
+      }),
+    ).toEqual({
+      sql: `"attachment"."targetCompanyId" = ANY(:sourceIds) /* SELECT "related_record_path_0"."id" FROM "${SCHEMA}"."_company" AS "related_record_path_0" WHERE "related_record_path_0"."deletedAt" IS NULL AND ("related_record_path_0"."ownerId" = :related_record_path_0Owner) */`,
       parameters: { related_record_path_0Owner: 'member-id' },
     });
   });
