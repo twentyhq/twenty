@@ -13,6 +13,7 @@ import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from 'src/engine/core-modules/
 import { type BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
+import { type BillingArrangementUsageLimitSnapshot } from 'src/engine/core-modules/billing/types/billing-arrangement-usage-limit-snapshot.type';
 import { nullableBigintColumnTransformer } from 'src/engine/twenty-orm/utils/nullable-bigint-column-transformer.util';
 
 @Entity({ name: 'billingArrangement', schema: 'core' })
@@ -73,6 +74,9 @@ export class BillingArrangementEntity {
 
   @Column({ nullable: true, type: 'uuid' })
   usageLimitId: string | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  usageLimitSnapshot: BillingArrangementUsageLimitSnapshot | null;
 
   @Column({ nullable: false, type: 'timestamptz' })
   startsAt: Date;

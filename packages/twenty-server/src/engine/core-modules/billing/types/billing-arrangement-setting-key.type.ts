@@ -12,5 +12,6 @@ export type BillingArrangementSettingKey = keyof Pick<
   | 'stripeCreditNoteId'
   | 'creditGrantId'
   | 'usageLimitId'
+  | 'usageLimitSnapshot'
   | 'endsAt'
 >;

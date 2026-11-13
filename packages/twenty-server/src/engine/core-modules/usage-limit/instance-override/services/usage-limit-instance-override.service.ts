@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
+import { type BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -15,6 +15,7 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
+import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 
 @Injectable()
 export class UsageLimitInstanceOverrideService {
@@ -28,11 +29,15 @@ export class UsageLimitInstanceOverrideService {
     workspaceId,
     input,
     endsAt,
+    label,
+    comment,
     grantedByUserId,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
     endsAt: Date | null;
+    label: BillingArrangementLabel;
+    comment: string | null;
     grantedByUserId: string;
   }): Promise<UsageLimitEntity> {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
@@ -69,8 +74,8 @@ export class UsageLimitInstanceOverrideService {
           workspaceId,
           arrangement: {
             type: BillingArrangementType.LIMIT_OVERRIDE,
-            label: BillingArrangementLabel.OTHER,
-            comment: null,
+            label,
+            comment,
             seats: null,
             seatCapMode: null,
             stripePriceId: null,
@@ -79,6 +84,11 @@ export class UsageLimitInstanceOverrideService {
             stripeCreditNoteId: null,
             creditGrantId: null,
             usageLimitId: usageLimit.id,
+            usageLimitSnapshot: {
+              ...buildUsageLimitScope(usageLimit),
+              limitValue: usageLimit.limitValue,
+              burstValue: usageLimit.burstValue,
+            },
             startsAt,
             endsAt,
           },

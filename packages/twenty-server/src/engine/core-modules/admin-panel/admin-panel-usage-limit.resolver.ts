@@ -1,6 +1,8 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import {
   AdminPanelCreateUsageLimitInput,
@@ -14,6 +16,7 @@ import {
 import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
@@ -64,13 +67,24 @@ export class AdminPanelUsageLimitResolver {
 
   @Mutation(() => AdminPanelUsageLimitDTO)
   async createWorkspaceUsageLimit(
-    @Args() { workspaceId, payload, endsAt }: AdminPanelCreateUsageLimitInput,
+    @Args()
+    {
+      workspaceId,
+      payload,
+      endsAt,
+      label,
+      comment,
+    }: AdminPanelCreateUsageLimitInput,
     @AuthUser() actor: AuthContextUser,
   ): Promise<AdminPanelUsageLimitDTO> {
+    const trimmedComment = comment?.trim();
+
     const usageLimit = await this.usageLimitInstanceOverrideService.create({
       workspaceId,
       input: payload,
       endsAt: endsAt ?? null,
+      label: label ?? BillingArrangementLabel.OTHER,
+      comment: isNonEmptyString(trimmedComment) ? trimmedComment : null,
       grantedByUserId: actor.id,
     });
 

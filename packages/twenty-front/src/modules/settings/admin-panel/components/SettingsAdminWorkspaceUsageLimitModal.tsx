@@ -11,6 +11,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { billingState } from '@/client-config/states/billingState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/constants/BillingArrangementReasonLabels';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
@@ -21,11 +22,15 @@ import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitI
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
+import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type DeleteWorkspaceUsageLimitMutation } from '~/generated-admin/graphql';
+import {
+  BillingArrangementLabel,
+  type DeleteWorkspaceUsageLimitMutation,
+} from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceUsageLimitModalProps = {
   dialogId: string;
@@ -42,6 +47,8 @@ const StyledFields = styled.div`
 const StyledActionSlot = styled.div`
   flex: 1;
 `;
+
+const COMMENT_MAX_LENGTH = 500;
 
 export const SettingsAdminWorkspaceUsageLimitModal = ({
   dialogId,
@@ -65,6 +72,10 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     isDefined(row.burstValue) ? String(row.burstValue) : '',
   );
   const [endsAt, setEndsAt] = useState<Date | undefined>(undefined);
+  const [label, setLabel] = useState<BillingArrangementLabel>(
+    BillingArrangementLabel.OTHER,
+  );
+  const [comment, setComment] = useState('');
 
   const mutationOptions = {
     client: apolloAdminClient,
@@ -129,6 +140,8 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
           workspaceId,
           payload,
           endsAt: endsAt?.toISOString() ?? null,
+          label,
+          comment: comment.trim() || null,
         },
       });
 
@@ -233,14 +246,42 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
               )}
 
               {isBillingEnabled && !row.isOverridden && (
-                <SettingsDatePickerInput
-                  instanceId={`${dialogId}-ends-at`}
-                  label={t`Ends (optional)`}
-                  placeholder={t`No end date`}
-                  value={endsAt}
-                  onChange={setEndsAt}
-                  isInModal
-                />
+                <>
+                  <SettingsDatePickerInput
+                    instanceId={`${dialogId}-ends-at`}
+                    label={t`Ends (optional)`}
+                    placeholder={t`No end date`}
+                    value={endsAt}
+                    onChange={setEndsAt}
+                    isInModal
+                  />
+
+                  <Select
+                    dropdownId={`${dialogId}-label`}
+                    label={t`Reason`}
+                    value={label}
+                    options={Object.values(BillingArrangementLabel).map(
+                      (arrangementLabel) => ({
+                        value: arrangementLabel,
+                        label: t(
+                          BILLING_ARRANGEMENT_REASON_LABELS[arrangementLabel],
+                        ),
+                      }),
+                    )}
+                    onChange={setLabel}
+                    fullWidth
+                  />
+
+                  <SettingsTextInput
+                    instanceId={`${dialogId}-comment`}
+                    label={t`Comment`}
+                    placeholder={t`Compensation for the October outage`}
+                    value={comment}
+                    onChange={setComment}
+                    maxLength={COMMENT_MAX_LENGTH}
+                    fullWidth
+                  />
+                </>
               )}
             </StyledFields>
           </Dialog.Body>

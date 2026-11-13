@@ -31,7 +31,7 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
     optional: ['endsAt'],
   },
   [BillingArrangementType.LIMIT_OVERRIDE]: {
-    required: ['usageLimitId'],
+    required: ['usageLimitId', 'usageLimitSnapshot'],
     optional: ['endsAt'],
   },
   [BillingArrangementType.REFUND]: {
