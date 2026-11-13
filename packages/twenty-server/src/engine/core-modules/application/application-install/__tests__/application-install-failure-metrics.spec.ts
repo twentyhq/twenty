@@ -10,6 +10,7 @@ import { ApplicationVersionValidationService } from 'src/engine/core-modules/app
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -115,9 +116,6 @@ describe('ApplicationInstallService failure metrics', () => {
       workspaceId: WORKSPACE_ID,
     });
 
-  const countedKeys = () =>
-    metricsService.incrementCounterBy.mock.calls.map(([{ key }]) => key);
-
   describe.each([
     {
       operation: 'install',
@@ -141,10 +139,26 @@ describe('ApplicationInstallService failure metrics', () => {
 
       await expect(install()).rejects.toThrow('Workspace is too old');
 
-      expect(countedKeys()).toEqual([failedKey]);
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledTimes(1);
+      expect(metricsService.incrementCounterBy).toHaveBeenCalledWith({
+        key: failedKey,
+        amount: 1,
+        attributes: {
+          universal_identifier: '6f1b5d8e-1d1e-4b1a-9a43-2f4cbbd0e001',
+          app_name: 'Some app',
+          source_type: ApplicationRegistrationSourceType.NPM,
+          version: '2.0.0',
+          error_code: ApplicationExceptionCode.WORKSPACE_VERSION_INCOMPATIBLE,
+        },
+      });
       expect(
         eventLogEmitterService.recordApplicationPlatformEvents,
       ).toHaveBeenCalledTimes(1);
+      expect(
+        eventLogEmitterService.recordApplicationPlatformEvents,
+      ).toHaveBeenCalledWith([
+        expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+      ]);
     });
 
     it('does not count the failure for an unlisted app', async () => {
@@ -152,7 +166,7 @@ describe('ApplicationInstallService failure metrics', () => {
 
       await expect(install()).rejects.toThrow('Workspace is too old');
 
-      expect(countedKeys()).toEqual([]);
+      expect(metricsService.incrementCounterBy).not.toHaveBeenCalled();
       expect(
         eventLogEmitterService.recordApplicationPlatformEvents,
       ).toHaveBeenCalledTimes(1);
