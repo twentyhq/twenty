@@ -8,7 +8,10 @@ export const findInactiveFieldMetadataOptionValues = ({
   flatFieldMetadataOptionMaps,
 }: {
   fieldMetadataUniversalIdentifier: string | undefined;
-  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
+  flatFieldMetadataOptionMaps: Pick<
+    FlatFieldMetadataOptionMaps,
+    'byUniversalIdentifier'
+  >;
 }): ReadonlySet<string> =>
   new Set(
     Object.values(flatFieldMetadataOptionMaps.byUniversalIdentifier)

@@ -144,7 +144,6 @@ describe('a workspace overrides the options of a standard field', () => {
         .map(({ id }) => id)
         .sort(),
     ).toEqual(originalOptions.map(({ id }) => id).sort());
-    // The owner is derived from the option rows when the field is read, and never stored.
     expect(
       updatedOptions.map(({ value, applicationId, isActive }) => ({
         value,

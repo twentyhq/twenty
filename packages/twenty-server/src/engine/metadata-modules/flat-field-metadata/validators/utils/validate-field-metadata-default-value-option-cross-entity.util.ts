@@ -213,7 +213,6 @@ export const validateFieldMetadataDefaultValueOptionCrossEntity = ({
       fromInactiveOptionValuesByFieldMetadataUniversalIdentifier.get(
         fieldMetadataUniversalIdentifier,
       );
-    // Only a migration that sets the default or deactivates its option breaks the rule, so unrelated edits still pass.
     const isDefaultValueSet =
       createdFieldMetadataUniversalIdentifiers.has(
         fieldMetadataUniversalIdentifier,
