@@ -14,7 +14,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { buildSecureFetchLike } from 'src/engine/core-modules/secure-http-client/utils/build-secure-fetch-like.util';
 import {
   McpServerException,
   McpServerExceptionCode,
@@ -174,11 +173,7 @@ export class McpServerClientService {
     const signal = AbortSignal.timeout(timeoutMs);
     const client = new Client(MCP_CLIENT_INFO);
     const transport = new StreamableHTTPClientTransport(new URL(target.url), {
-      fetch: buildSecureFetchLike({
-        secureHttpClientService: this.secureHttpClientService,
-        context: { workspaceId: target.workspaceId, source: 'mcp-server' },
-        timeoutMs,
-      }),
+      fetch: this.buildFetch({ workspaceId: target.workspaceId, timeoutMs }),
       requestInit: isDefined(accessToken)
         ? { headers: { Authorization: `Bearer ${accessToken}` } }
         : undefined,
