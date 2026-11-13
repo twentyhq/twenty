@@ -20,7 +20,7 @@ import { ProgramSwitchStrip } from '@/sections/partner-programs';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
 
-export const generateMetadata = buildRouteMetadata('affiliatePartners');
+export const generateMetadata = buildRouteMetadata('partnersCreators');
 
 export default async function AffiliateProgramPage({
   params,
@@ -39,7 +39,8 @@ export default async function AffiliateProgramPage({
         data={buildBreadcrumbListJsonLd(
           [
             { name: 'Home', path: '/' },
-            { name: 'Creator program', path: '/affiliate-partners' },
+            { name: 'Partners', path: '/partners' },
+            { name: 'Creators', path: '/partners/creators' },
           ],
           locale,
         )}
@@ -53,7 +54,7 @@ export default async function AffiliateProgramPage({
           heading={msg`You implement Twenty *for clients?*`}
           body={msg`Integrators earn 20% on the clients they bring, and Lead Integrators also get client briefs.`}
           label={msg`See the integrator program`}
-          href="/partners/become"
+          href="/partners/integrators"
         />
         <AffiliateProgramFaq />
         <AffiliateApply />

@@ -328,7 +328,7 @@ export function AffiliateApplicationForm() {
                 <Trans>
                   I agree to the{' '}
                   <TermsLink
-                    href={localizeHref(locale, '/affiliate-partners/terms')}
+                    href={localizeHref(locale, '/partners/terms')}
                   >
                     Affiliate Program Terms
                   </TermsLink>

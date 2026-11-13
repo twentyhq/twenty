@@ -20,7 +20,7 @@ import { PartnerSignoff } from '@/sections/partner-signoff';
 import { PartnerTestimonials } from '@/sections/testimonials';
 import { TrustedBy } from '@/sections/trusted-by';
 
-export const generateMetadata = buildRouteMetadata('partnersBecome');
+export const generateMetadata = buildRouteMetadata('partnersIntegrators');
 
 export default async function BecomePartnerPage({
   params,
@@ -40,7 +40,7 @@ export default async function BecomePartnerPage({
           [
             { name: 'Home', path: '/' },
             { name: 'Partners', path: '/partners' },
-            { name: 'Become an integrator', path: '/partners/become' },
+            { name: 'Integrators', path: '/partners/integrators' },
           ],
           locale,
         )}
@@ -60,7 +60,7 @@ export default async function BecomePartnerPage({
           heading={msg`You create content, *not implementations?*`}
           body={msg`Creators, communities and tech partners earn 20% on every team they bring to Twenty.`}
           label={msg`See the creator program`}
-          href="/affiliate-partners"
+          href="/partners/creators"
         />
         <BecomePartnerFaq />
       </main>
