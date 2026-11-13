@@ -148,7 +148,7 @@ const allPetsView: FlatView = {
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
-  scopedViewFieldId: null,
+  ownerViewFieldId: null,
   overrides: null,
   viewFieldIds: [],
   viewFieldGroupIds: [],

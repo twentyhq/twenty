@@ -159,7 +159,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
-      scopedViewFieldUniversalIdentifier: null,
+      ownerViewFieldUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
     };
 
@@ -272,7 +272,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       kanbanAggregateOperation: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
-      scopedViewFieldUniversalIdentifier: null,
+      ownerViewFieldUniversalIdentifier: null,
       viewFilterGroupUniversalIdentifiers: [],
     };
 

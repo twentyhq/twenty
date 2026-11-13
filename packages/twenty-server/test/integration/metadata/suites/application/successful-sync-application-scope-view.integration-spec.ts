@@ -61,7 +61,7 @@ describe('Sync application should succeed when a view field and its scope view a
                 STANDARD_OBJECTS.person.universalIdentifier,
               type: ViewType.TABLE_WIDGET,
               icon: 'IconFilter',
-              scopedViewFieldUniversalIdentifier: PEOPLE_VIEW_FIELD_ID,
+              ownerViewFieldUniversalIdentifier: PEOPLE_VIEW_FIELD_ID,
             },
           ],
         },
@@ -78,7 +78,7 @@ describe('Sync application should succeed when a view field and its scope view a
       gqlFields: `
         id
         universalIdentifier
-        scopedViewFieldId
+        ownerViewFieldId
         viewFields {
           id
           universalIdentifier
@@ -98,6 +98,6 @@ describe('Sync application should succeed when a view field and its scope view a
     );
 
     expect(peopleViewField).toBeDefined();
-    expect(scopeView?.scopedViewFieldId).toBe(peopleViewField?.id);
+    expect(scopeView?.ownerViewFieldId).toBe(peopleViewField?.id);
   });
 });

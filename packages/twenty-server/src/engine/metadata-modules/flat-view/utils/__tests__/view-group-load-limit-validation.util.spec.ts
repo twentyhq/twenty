@@ -62,7 +62,7 @@ const existingFlatView: FlatView = {
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
-  scopedViewFieldId: null,
+  ownerViewFieldId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
   kanbanColumnWidth: null,
@@ -95,7 +95,7 @@ const existingFlatView: FlatView = {
   calendarFieldMetadataUniversalIdentifier: null,
   calendarEndFieldMetadataUniversalIdentifier: null,
   mainGroupByFieldMetadataUniversalIdentifier: null,
-  scopedViewFieldUniversalIdentifier: null,
+  ownerViewFieldUniversalIdentifier: null,
   universalOverrides: null,
 };
 

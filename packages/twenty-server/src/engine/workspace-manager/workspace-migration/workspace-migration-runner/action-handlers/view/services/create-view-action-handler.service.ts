@@ -39,7 +39,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
       kanbanAggregateOperationFieldMetadataId,
       mainGroupByFieldMetadataId,
       objectMetadataId,
-      scopedViewFieldId,
+      ownerViewFieldId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -68,7 +68,7 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
         kanbanAggregateOperationFieldMetadataId,
         mainGroupByFieldMetadataId,
         objectMetadataId,
-        scopedViewFieldId,
+        ownerViewFieldId,
         overrides,
         id: action.id ?? v4(),
         applicationId: flatApplication.id,

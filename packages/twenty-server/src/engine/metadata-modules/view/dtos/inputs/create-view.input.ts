@@ -139,7 +139,7 @@ export class CreateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  scopedViewFieldId?: string;
+  ownerViewFieldId?: string;
 
   @IsOptional()
   @IsEnum(ViewVisibility)

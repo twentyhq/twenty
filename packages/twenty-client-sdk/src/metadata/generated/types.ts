@@ -4445,11 +4445,11 @@ export default {
             "openRecordIn": [
                 682
             ],
+            "ownerViewFieldId": [
+                557
+            ],
             "position": [
                 8
-            ],
-            "scopedViewFieldId": [
-                557
             ],
             "shouldDisplayGroupsAsTabs": [
                 1
@@ -16425,11 +16425,11 @@ export default {
             "openRecordIn": [
                 682
             ],
+            "ownerViewFieldId": [
+                557
+            ],
             "position": [
                 8
-            ],
-            "scopedViewFieldId": [
-                557
             ],
             "shouldDisplayGroupsAsTabs": [
                 1

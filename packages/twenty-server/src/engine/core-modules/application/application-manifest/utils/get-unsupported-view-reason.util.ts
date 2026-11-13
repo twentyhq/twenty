@@ -60,10 +60,10 @@ export const getUnsupportedViewReason = ({
   }
 
   if (
-    isDefined(flatView.scopedViewFieldUniversalIdentifier) &&
+    isDefined(flatView.ownerViewFieldUniversalIdentifier) &&
     !isDefined(
       allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier[
-        flatView.scopedViewFieldUniversalIdentifier
+        flatView.ownerViewFieldUniversalIdentifier
       ],
     )
   ) {

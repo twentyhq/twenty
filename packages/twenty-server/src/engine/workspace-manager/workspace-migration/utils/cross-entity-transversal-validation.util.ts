@@ -3,7 +3,7 @@ import { validateNavigationMenuItemPageLayoutReferenceCrossEntity } from 'src/en
 import { validateObjectMetadataCrossEntity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-cross-entity.util';
 import { validatePermissionFlagNotInUseCrossEntity } from 'src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util';
 import { validateViewFieldLabelIdentifierCrossEntity } from 'src/engine/metadata-modules/flat-view-field/validators/utils/validate-view-field-label-identifier-cross-entity.util';
-import { validateViewScopedViewFieldCrossEntity } from 'src/engine/metadata-modules/flat-view/validators/utils/validate-view-scoped-view-field-cross-entity.util';
+import { validateViewOwnerViewFieldCrossEntity } from 'src/engine/metadata-modules/flat-view/validators/utils/validate-view-owner-view-field-cross-entity.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -60,7 +60,7 @@ export const crossEntityTransversalValidation = ({
       orchestratorActionsReport,
     });
 
-  const { view } = validateViewScopedViewFieldCrossEntity({
+  const { view } = validateViewOwnerViewFieldCrossEntity({
     optimisticUniversalFlatMaps,
     orchestratorActionsReport,
   });
