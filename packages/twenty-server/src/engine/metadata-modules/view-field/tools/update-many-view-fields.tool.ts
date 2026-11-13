@@ -63,6 +63,7 @@ export class UpdateManyViewFieldsTool extends BaseTool<
               size: viewField.size,
               position: viewField.position,
               aggregateOperation: viewField.aggregateOperation,
+              settings: viewField.settings,
             },
           },
           workspaceId,

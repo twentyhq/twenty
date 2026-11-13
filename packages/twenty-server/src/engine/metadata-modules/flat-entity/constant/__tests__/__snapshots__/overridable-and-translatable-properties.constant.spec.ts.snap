@@ -127,6 +127,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "aggregateOperation",
     "viewFieldGroupId",
+    "settings",
     "isActive",
   ],
   "viewFieldGroup": [

@@ -45,6 +45,7 @@ export class CreateViewFieldTool extends BaseTool<
         size: input.size,
         position: input.position,
         aggregateOperation: input.aggregateOperation,
+        settings: input.settings,
       },
       workspaceId,
     });
@@ -60,6 +61,7 @@ export class CreateViewFieldTool extends BaseTool<
         size: viewField.size,
         position: viewField.position,
         aggregateOperation: viewField.aggregateOperation,
+        settings: viewField.settings,
       },
     };
   }

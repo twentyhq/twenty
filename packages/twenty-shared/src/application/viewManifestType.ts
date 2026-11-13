@@ -7,6 +7,7 @@ import {
   type ViewKey,
   type ViewOpenRecordIn,
   type ViewSortDirection,
+  type ViewFieldSettings,
   type ViewType,
   type ViewVisibility,
 } from '@/types';
@@ -25,6 +26,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   position: number;
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
+  settings?: ViewFieldSettings;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {

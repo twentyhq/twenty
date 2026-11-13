@@ -1906,6 +1906,7 @@ input CreateViewFieldInput {
   id: UUID
   isVisible: Boolean = true
   position: Float = 0
+  settings: ViewFieldSettingsInput
   size: Float = 0
   viewFieldGroupId: UUID
   viewId: UUID!
@@ -5680,6 +5681,7 @@ input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
   position: Float
+  settings: ViewFieldSettingsInput
   size: Float
   viewFieldGroupId: UUID
 }
@@ -6326,6 +6328,7 @@ type ViewField {
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
   position: Float!
+  settings: ViewFieldSettings
   size: Float!
   universalIdentifier: UUID!
   updatedAt: DateTime!
@@ -6347,6 +6350,16 @@ type ViewFieldGroup {
   viewFields: [ViewField!]!
   viewId: UUID!
   workspaceId: UUID!
+}
+
+type ViewFieldSettings {
+  label: String
+  recordLimit: Int
+}
+
+input ViewFieldSettingsInput {
+  label: String
+  recordLimit: Int
 }
 
 type ViewFilter {

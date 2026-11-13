@@ -1,15 +1,18 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
   IsNumber,
   IsOptional,
   IsUUID,
+  ValidateNested,
 } from 'class-validator';
 import { AggregateOperations } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldSettingsInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/view-field-settings.input';
 
 @InputType()
 export class CreateViewFieldInput {
@@ -50,6 +53,12 @@ export class CreateViewFieldInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   viewFieldGroupId?: string;
+
+  @IsOptional()
+  @Type(() => ViewFieldSettingsInput)
+  @ValidateNested()
+  @Field(() => ViewFieldSettingsInput, { nullable: true })
+  settings?: ViewFieldSettingsInput | null;
 
   @HideField()
   universalIdentifier?: string;
