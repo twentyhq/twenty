@@ -126,6 +126,8 @@ export const SidePanelRecordPageFieldSettings = () => {
     useRecordTableSettingsDescriptions({
       objectMetadataId: targetObjectMetadataId,
       viewId: currentViewId,
+      widgetId: widgetInEditMode?.id ?? '',
+      pageLayoutId,
     });
 
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
