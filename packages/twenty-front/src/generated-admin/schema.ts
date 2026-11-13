@@ -162,7 +162,7 @@ export type AdminPanelUsageLimitDefault = {
   __typename?: 'AdminPanelUsageLimitDefault';
   isOverridable: Scalars['Boolean']['output'];
   limitKind: Scalars['String']['output'];
-  limitValue: Scalars['BigInt']['output'];
+  limitValue?: Maybe<Scalars['BigInt']['output']>;
   operationType: UsageOperationType;
   overriddenByUsageLimitId?: Maybe<Scalars['UUID']['output']>;
   periodCount: Scalars['Int']['output'];
@@ -544,6 +544,7 @@ export enum FeatureFlagKey {
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_COLUMN_SETTINGS_ENABLED = 'IS_COLUMN_SETTINGS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',

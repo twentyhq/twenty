@@ -490,6 +490,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "format": "uuid",
           "type": "string",
         },
+        "isCanonical": {
+          "default": true,
+          "description": "False adds an extra column for a field the view already shows. Only extra columns accept settings; the field's own column follows the data model.",
+          "type": "boolean",
+        },
         "isVisible": {
           "default": true,
           "description": "Whether the field is visible in the view.",
@@ -503,7 +508,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "settings": {
           "anyOf": [
             {
-              "description": "Per-column display settings for this view.",
+              "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
               "properties": {
                 "label": {
                   "anyOf": [
@@ -590,7 +595,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
         "settings": {
           "anyOf": [
             {
-              "description": "Per-column display settings for this view.",
+              "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
               "properties": {
                 "label": {
                   "anyOf": [
@@ -680,6 +685,11 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "format": "uuid",
                 "type": "string",
               },
+              "isCanonical": {
+                "default": true,
+                "description": "False adds an extra column for a field the view already shows. Only extra columns accept settings; the field's own column follows the data model.",
+                "type": "boolean",
+              },
               "isVisible": {
                 "default": true,
                 "description": "Whether the field is visible in the view.",
@@ -693,7 +703,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "settings": {
                 "anyOf": [
                   {
-                    "description": "Per-column display settings for this view.",
+                    "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
                     "properties": {
                       "label": {
                         "anyOf": [
@@ -794,7 +804,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               "settings": {
                 "anyOf": [
                   {
-                    "description": "Per-column display settings for this view.",
+                    "description": "Display settings for an extra (non-canonical) column. Must be null on canonical columns.",
                     "properties": {
                       "label": {
                         "anyOf": [

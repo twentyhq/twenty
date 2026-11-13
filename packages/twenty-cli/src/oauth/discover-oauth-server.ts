@@ -3,6 +3,7 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type OAuthServer } from '@/oauth/types/oauth-server.type';
 import { CliError } from '@/output/cli-error';
+import { type ProxyHeaders } from '@/proxy-headers/types/proxy-headers.type';
 import { API_URL_PROTOCOLS } from '@/target/constants/api-url-protocols.constant';
 import { formatApiUrl } from '@/target/format-api-url';
 import { assertUrlWithinTarget } from '@/transport/assert-url-within-target';
@@ -29,12 +30,14 @@ const parseHttpUrl = (value: unknown) => {
 
 export const discoverOAuthServer = async ({
   apiUrl,
+  proxyHeaders,
   signal,
 }: {
   apiUrl: string;
+  proxyHeaders?: ProxyHeaders;
   signal: AbortSignal;
 }): Promise<OAuthServer> => {
-  const response = await createBoundedFetch({ apiUrl, signal })(
+  const response = await createBoundedFetch({ apiUrl, proxyHeaders, signal })(
     resolveRequestUrl({ apiUrl, path: DISCOVERY_PATH }),
     { headers: { Accept: 'application/json' } },
   );

@@ -4,6 +4,7 @@ import { useSaveColumnScope } from '@/object-record/record-column-scope/hooks/us
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useUpdateRecordTableColumnSettings } from '@/object-record/record-table/hooks/useUpdateRecordTableColumnSettings';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -79,11 +80,10 @@ const SidePanelEditColumnPageContent = ({
   );
 
   const recordField = currentRecordFields.find(
-    (currentRecordField) =>
-      currentRecordField.fieldMetadataItemId === request.fieldMetadataItemId,
+    (currentRecordField) => currentRecordField.id === request.recordFieldId,
   );
 
-  if (!isDefined(recordField)) {
+  if (!isDefined(recordField) || isCanonicalRecordField(recordField)) {
     return null;
   }
 
@@ -93,7 +93,7 @@ const SidePanelEditColumnPageContent = ({
 };
 
 const SidePanelEditColumnForm = ({
-  request: { recordTableId, fieldMetadataItemId },
+  request: { recordTableId },
   recordField,
 }: {
   request: EditColumnRequest;
@@ -109,7 +109,7 @@ const SidePanelEditColumnForm = ({
 
   const { foundFieldMetadataItem: fieldMetadataItem } =
     useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
-      fieldMetadataItemId,
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
     });
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -154,7 +154,7 @@ const SidePanelEditColumnForm = ({
 
     const areSettingsSaved = await updateRecordTableColumnSettings({
       recordTableId,
-      fieldMetadataItemId,
+      recordFieldId: recordField.id,
       settings: computeViewFieldSettings({
         label: columnName,
         recordLimit: isDefined(relationObjectMetadataItem) ? recordLimit : '',

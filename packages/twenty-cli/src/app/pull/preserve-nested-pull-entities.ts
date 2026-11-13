@@ -113,7 +113,8 @@ export const preserveNestedPullEntities = ({
       if (
         skippedPaths.has(change.relativePath) ||
         change.kind === 'translation' ||
-        change.kind === 'dependency'
+        change.kind === 'dependency' ||
+        change.kind === 'publicAsset'
       ) {
         continue;
       }

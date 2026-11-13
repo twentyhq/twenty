@@ -22,9 +22,9 @@ exports[`Webhook role assignment should fail when creating a webhook through RES
     "messages": [
       "Entity performing the request does not have permission",
     ],
-    "statusCode": 400,
+    "statusCode": 403,
   },
-  "status": 400,
+  "status": 403,
 }
 `;
 
@@ -74,9 +74,9 @@ exports[`Webhook role assignment should fail when editing a webhook through REST
     "messages": [
       "Entity performing the request does not have permission",
     ],
-    "statusCode": 400,
+    "statusCode": 403,
   },
-  "status": 400,
+  "status": 403,
 }
 `;
 

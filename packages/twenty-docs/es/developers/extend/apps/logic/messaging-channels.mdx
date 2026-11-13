@@ -277,13 +277,56 @@ export const linkedinSendMessageHandler = async ({
 
 La carga útil contiene el `messagingProviderName`, el `threadExternalId` de la conversación tal como se ingirió, el `text`, la `idempotencyKey` y los `recipients`: los participantes del mensaje más reciente del hilo, excepto el identificador propio del canal, para que no se envíen mensajes a alguien que solo participó en un intercambio anterior. Prefiera la conversación propia del proveedor en lugar de `recipients` cuando su API envíe a un ID de conversación. Devuelve el id del proveedor para el mensaje enviado como `externalId`.
 
-El `conversationStyle` de la carga útil coincide con el del proveedor (`'chat'` cuando no declara ninguno). Con `'email'` (por ejemplo, una aplicación que sincroniza Outlook o Gmail), los miembros responden con el redactor de correo electrónico en su lugar, y la carga útil también incluye un bloque `email`: el `subject`, el cuerpo de texto enriquecido compilado a `html`, los destinatarios de `cc` y `bcc`, e `inReplyToExternalId`, el `externalId` del mensaje al que se responde cuando Twenty lo conoce. `recipients` son entonces las direcciones `To` que eligió el miembro y `text` es la versión de texto sin formato del cuerpo. Los archivos adjuntos aún no se envían. Requiere `"engines": { "twenty": ">=2.58.0" }`.
+El `conversationStyle` de la carga útil coincide con el del proveedor (`'chat'` cuando no declara ninguno). Con `'email'` (por ejemplo, una aplicación que sincroniza Outlook o Gmail), los miembros responden con el redactor de correo electrónico en su lugar, y la carga útil también incluye un bloque `email`: el `subject`, el cuerpo de texto enriquecido compilado a `html`, los destinatarios de `cc` y `bcc`, e `inReplyToExternalId`, el `externalId` del mensaje al que se responde cuando Twenty lo conoce. `recipients` son entonces las direcciones `To` que eligió el miembro y `text` es la versión de texto sin formato del cuerpo. Requiere `"engines": { "twenty": ">=2.58.0" }`.
 
-Twenty registra entonces la respuesta en el hilo como un mensaje saliente del canal, con los mismos destinatarios, para que se muestre de inmediato. Cuando su webhook entregue más tarde el mismo mensaje, ingerirlo con ese `externalId` no cambia nada.
+Cuando el espacio de trabajo tiene habilitados los archivos adjuntos de mensajes, un miembro puede adjuntar archivos a una respuesta, y la respuesta puede entonces tener un `text` vacío. La mutación también acepta `attachments`, como máximo 20, cada uno con el `id` de un archivo cargado como archivo adjunto de correo electrónico y su `name`. El `attachments` de la carga útil los enumera y es una matriz vacía para una respuesta de solo texto. Cada uno tiene un `filename`, un `contentType`, un `size` en bytes y una `downloadUrl`: un enlace firmado que tu función obtiene para conseguir el archivo, de modo que los bytes nunca viajan en la carga útil. Comprueba `size` con el límite de tu proveedor antes de descargar y genera un error cuando el proveedor no pueda entregar un archivo, en lugar de enviar solo el texto, para que el miembro vea que la respuesta falla:
+
+```ts
+const files = await Promise.all(
+  attachments.map(async ({ filename, contentType, downloadUrl }) => ({
+    filename,
+    contentType,
+    content: Buffer.from(await (await fetch(downloadUrl)).arrayBuffer()),
+  })),
+);
+```
+
+`attachments` requiere `"engines": { "twenty": ">=2.59.0" }`.
+
+Luego, Twenty registra la respuesta en el hilo como un mensaje saliente del canal, con los mismos destinatarios y sus archivos adjuntos, por lo que se muestra de inmediato. Cuando su webhook entregue más tarde el mismo mensaje, ingerirlo con ese `externalId` no cambia nada.
 
 La función se ejecuta dentro de la solicitud `sendAppChannelMessage`. Si genera una excepción o no devuelve ningún `externalId`, la mutación falla y no se registra nada.
 
 Una vez que su función devuelve un resultado, Twenty conserva la entrega durante 24 horas asociada al miembro, al canal, al hilo y a la `idempotencyKey`. Si el registro de la respuesta falla después, la mutación falla, y reintentarla con la misma clave registra la respuesta entregada sin volver a llamar a su función; un reintento de una respuesta ya registrada la devuelve. Un reintento mientras la primera llamada aún se está enviando espera a que termine. Una clave nueva es una respuesta nueva. Su función aún puede llamarse dos veces para una respuesta si el cliente reintenta con una clave nueva o después de esas 24 horas, o si la propia función falla después de que el proveedor haya aceptado el mensaje, por lo que debe reenviar `idempotencyKey` al proveedor cuando su API admita envíos idempotentes. Un canal con `isSyncEnabled: false` rechaza respuestas sin llamar a su función. Un canal sin proveedor de mensajería, o cuyo proveedor no tiene `sendMessageLogicFunction` o ya no existe, no puede enviar; sus conversaciones se mantienen tal como están. Requiere `"engines": { "twenty": ">=2.52.0" }`.
+
+## Marcar conversaciones como leídas
+
+Twenty no mantiene ningún estado de lectura para los mensajes de la aplicación, pero puede informar a tu proveedor cuando un miembro lee una conversación en Twenty para que el proveedor la marque como leída en el origen. Declara una `markThreadAsReadLogicFunction` en el proveedor de mensajería:
+
+```ts src/messaging-providers/linkedin-messaging.ts
+export default defineMessagingProvider({
+  // ...
+  markThreadAsReadLogicFunction: {
+    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
+  },
+});
+```
+
+```ts src/logic-functions/handlers/linkedin-mark-thread-as-read-handler.ts
+import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
+
+export const linkedinMarkThreadAsReadHandler = async ({
+  connectedAccountId,
+  threadExternalId,
+}: MarkAppThreadAsReadPayload) => {
+  await markLinkedinConversationAsRead({
+    connectedAccountId,
+    conversationUrn: threadExternalId,
+  });
+};
+```
+
+Cuando el propietario de la cuenta del canal abre una de sus conversaciones, Twenty llama a la mutación `markAppChannelThreadAsRead`, que ejecuta tu función con `messagingProviderName`, `connectedAccountId`, `messageChannelId` y el `threadExternalId` de la conversación. Su valor de retorno se ignora. Los miembros con los que solo se comparte la cuenta nunca lo activan, y las llamadas para el mismo miembro y hilo se omiten durante 30 segundos, por lo que volver a abrir una conversación no vuelve a llamar a tu proveedor. La llamada se realiza según el mejor esfuerzo: el hilo se abre independientemente de lo que haga tu función. Nunca se llama a un proveedor sin `markThreadAsReadLogicFunction`. Requiere `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Listar y actualizar canales
 

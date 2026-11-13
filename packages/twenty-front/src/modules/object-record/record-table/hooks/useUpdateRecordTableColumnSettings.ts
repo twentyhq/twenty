@@ -13,11 +13,11 @@ export const useUpdateRecordTableColumnSettings = () => {
   const updateRecordTableColumnSettings = useCallback(
     async ({
       recordTableId,
-      fieldMetadataItemId,
+      recordFieldId,
       settings,
     }: {
       recordTableId: string;
-      fieldMetadataItemId: string;
+      recordFieldId: string;
       settings: ViewFieldSettings | null;
     }) => {
       const currentRecordFieldsAtom =
@@ -27,10 +27,7 @@ export const useUpdateRecordTableColumnSettings = () => {
 
       const recordFieldToUpdate = store
         .get(currentRecordFieldsAtom)
-        .find(
-          (recordField) =>
-            recordField.fieldMetadataItemId === fieldMetadataItemId,
-        );
+        .find((recordField) => recordField.id === recordFieldId);
 
       if (!isDefined(recordFieldToUpdate)) {
         return false;

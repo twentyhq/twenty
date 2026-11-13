@@ -6,6 +6,7 @@ export type RecordField = {
   fieldMetadataItemId: string;
   position: number;
   isVisible: boolean;
+  isCanonical?: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
   settings?: ViewFieldSettings | null;

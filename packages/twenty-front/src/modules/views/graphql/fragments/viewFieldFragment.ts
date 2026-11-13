@@ -6,6 +6,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
     fieldMetadataId
     viewId
     isVisible
+    isCanonical
     position
     size
     aggregateOperation

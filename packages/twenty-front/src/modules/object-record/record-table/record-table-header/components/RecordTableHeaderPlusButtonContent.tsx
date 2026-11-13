@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
@@ -49,6 +50,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItemToFilter) =>
       !visibleRecordFields
+        .filter(isCanonicalRecordField)
         .map((recordField) => recordField.fieldMetadataItemId)
         .includes(fieldMetadataItemToFilter.id),
   );

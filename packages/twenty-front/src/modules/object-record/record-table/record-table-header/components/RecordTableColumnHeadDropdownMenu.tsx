@@ -1,26 +1,33 @@
 import { Dropdown } from 'twenty-ui/components/navigation';
 
+import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useAddRecordTableColumn } from '@/object-record/record-table/hooks/useAddRecordTableColumn';
+import { useCanConfigureRecordTableColumns } from '@/object-record/record-table/hooks/useCanConfigureRecordTableColumns';
+import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
 import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowsSort,
+  IconColumnInsertRight,
   IconEdit,
   IconEyeOff,
   IconFilter,
+  IconTrash,
 } from 'twenty-ui/icon';
 
 type RecordTableColumnHeadDropdownMenuProps = {
@@ -44,15 +51,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const secondVisibleRecordField = visibleRecordFields[1];
   const canMove = isLabelIdentifier !== true;
   const canMoveLeft =
-    recordField.fieldMetadataItemId !==
-      secondVisibleRecordField?.fieldMetadataItemId && canMove;
+    recordField.id !== secondVisibleRecordField?.id && canMove;
 
   const lastVisibleRecordField =
     visibleRecordFields[visibleRecordFields.length - 1];
 
-  const canMoveRight =
-    recordField.fieldMetadataItemId !==
-      lastVisibleRecordField?.fieldMetadataItemId && canMove;
+  const canMoveRight = recordField.id !== lastVisibleRecordField?.id && canMove;
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -68,7 +72,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
       return;
     }
 
-    moveTableColumn('left', recordField.fieldMetadataItemId);
+    moveTableColumn('left', recordField.id);
   };
 
   const handleColumnMoveRight = () => {
@@ -76,12 +80,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
       return;
     }
 
-    moveTableColumn('right', recordField.fieldMetadataItemId);
+    moveTableColumn('right', recordField.id);
   };
 
   const handleColumnVisibility = async () => {
     await changeRecordFieldVisibility({
       fieldMetadataId: recordField.fieldMetadataItemId,
+      recordFieldId: recordField.id,
       isVisible: false,
     });
   };
@@ -106,25 +111,56 @@ export const RecordTableColumnHeadDropdownMenu = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const isColumnSettingsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
-  );
+  const { foundFieldMetadataItem: fieldMetadataItem } =
+    useAtomFamilySelectorValue(fieldMetadataItemByIdSelector, {
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+    });
+
+  const canConfigureColumns = useCanConfigureRecordTableColumns();
   const { canPersistChanges } = useCanPersistViewChanges();
-  const canEditColumn = isColumnSettingsEnabled && canPersistChanges;
+  const isCanonical = isCanonicalRecordField(recordField);
+
+  const canAddColumn =
+    canConfigureColumns &&
+    isCanonical &&
+    isDefined(fieldMetadataItem) &&
+    isOneToManyRelationField(fieldMetadataItem);
+  const canEditColumn = canConfigureColumns && !isCanonical;
+  const canDeleteColumn = canPersistChanges && !isCanonical;
+  const canHide = isLabelIdentifier !== true && isCanonical;
 
   const { openEditColumnInSidePanel } = useOpenEditColumnInSidePanel();
+  const { addRecordTableColumn } = useAddRecordTableColumn(recordTableId);
+  const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
+
+  const handleAddColumnClick = async () => {
+    const addedRecordField = await addRecordTableColumn(recordField);
+
+    openEditColumnInSidePanel({
+      recordTableId,
+      recordFieldId: addedRecordField.id,
+    });
+  };
 
   const handleEditColumnClick = () => {
     openEditColumnInSidePanel({
       recordTableId,
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
+      recordFieldId: recordField.id,
     });
   };
 
-  const showSeparator =
-    (isFilterable || isSortable) &&
-    (isLabelIdentifier !== true || canEditColumn);
-  const canHide = isLabelIdentifier !== true;
+  const handleDeleteColumnClick = async () => {
+    await deleteRecordTableColumn(recordField.id);
+  };
+
+  const hasColumnActions =
+    canAddColumn ||
+    canEditColumn ||
+    canMoveLeft ||
+    canMoveRight ||
+    canHide ||
+    canDeleteColumn;
+  const showSeparator = (isFilterable || isSortable) && hasColumnActions;
 
   return (
     <Dropdown.Section>
@@ -141,6 +177,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
         >{t`Sort`}</Dropdown.ActionItem>
       )}
       {showSeparator && <Dropdown.Separator />}
+      {canAddColumn && (
+        <Dropdown.ActionItem
+          startIcon={<IconColumnInsertRight />}
+          onClick={handleAddColumnClick}
+        >{t`Add column`}</Dropdown.ActionItem>
+      )}
       {canEditColumn && (
         <Dropdown.ActionItem
           startIcon={<IconEdit />}
@@ -166,6 +208,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
           startIcon={<IconEyeOff />}
           onClick={handleColumnVisibility}
         >{t`Hide`}</Dropdown.ActionItem>
+      )}
+      {canDeleteColumn && (
+        <Dropdown.ActionItem
+          startIcon={<IconTrash />}
+          onClick={handleDeleteColumnClick}
+        >{t`Delete column`}</Dropdown.ActionItem>
       )}
     </Dropdown.Section>
   );

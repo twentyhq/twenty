@@ -3,7 +3,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 
 export type EditColumnRequest = {
   recordTableId: string;
-  fieldMetadataItemId: string;
+  recordFieldId: string;
 };
 
 export const editColumnRequestComponentState =

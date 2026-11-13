@@ -8,32 +8,202 @@ and reconciliation tests.
 
 See the [app tooling overview](../README.md) for package boundaries.
 
-## Contract
+## Target and project creation
 
-- An existing application's local identifier selects the target. With no local definition, the command fetches `currentWorkspace.workspaceCustomApplication.universalIdentifier`. Apply baseline recording still queries only the workspace ID.
-- Outside an app, pull offers to create a local project and install its dependencies before reconciliation. Noninteractive creation requires `--path` and `--yes`. The initializer omits demo entities, and unrelated nonempty directories are refused.
-- Missing custom applications fail before project creation. The worker still checks that the local identity matches the export before writing.
-- Source scanning stays inside the disposable CLI worker so configs containing functions are never serialized through IPC. Only the server export and report cross that boundary. Selected credentials are removed from the worker environment. App source is trusted developer code, not sandboxed code.
-- The wire/export and baseline boundary check identity and envelope fields, not every metadata collection. `toPullManifest` is the single explicit assertion into the typed writers, preserving their trust in the server schema. Missing/null object and field collections are consumed with `?? []`, like the other collections. Malformed entity contents can still make reconciliation fail before writing. We do not duplicate the server's schema.
-- The baseline file is an envelope whose `manifest` member is an `ExportedManifest`. Reconciliation walks arrays generically without maintaining a second collection list. Unrecognized collections and non-array metadata survive; protected or unreconciled definitions retain their prior baseline entries.
-- `preparePullEntities` resolves the source layout once for current and baseline entities. Planning, overwrite reporting and nested-definition protection consume these prepared entities. A definition can leave a parent only when another retained or written file contains it, or its remote deletion is confirmed.
-- Fields already declared with `defineField` stay in their existing files, even when the server exports them inside an object. Object generation excludes those fields; baseline comparisons use the same source layout. Pull also removes duplicate inline copies left in object files, while retaining the standalone definitions.
-- Before destination writes, `assertPullSdkExports` checks the actual imports emitted by the writer against the app's SDK. It checks export presence, not every config shape; run typecheck to validate the generated definitions against the installed SDK.
-- Temporary files and the baseline live under `.twenty/cli`. Apply and pull share `createPullBaseWrite` as the serializer. The baseline is bound to the API URL, workspace UUID and application UUID. Pull stages it with mode 0600 and writes it after the source files.
-- The baseline can carry `sourceFingerprints`, a SHA-256 per app-relative source, locale and dependency file. Apply captures them before building. Pull reports an overwritten local change when a file it rewrites or deletes no longer matches its fingerprint. Without a fingerprint it compares the file with the writer's rendering of the baseline, which is reliable only for source produced by that writer. Pull carries fingerprints forward, updating the files it writes and dropping the ones it deletes.
-- Ordinary I/O failures restore originals. Cancellation is checked before committing the staged plan, not halfway through it. An acknowledged successful commit wins over cancellation. The parent can forcibly kill an unresponsive worker after its grace period, so an unacknowledged result has outcome `unknown`, never a claim that rollback succeeded. Failed rollback retains backups and reports their directory; failure to clean up after a completed commit has outcome `pulled`.
-- Human reporting uses CLI terminal escaping, machine reporting contains the full coverage and path lists, and gaps warn without stopping successful writes. Unknown coverage status strings remain visible. Pull does not prompt for approval or require a clean Git checkout; remote changes overwrite conflicting local edits and are included in the report.
+An existing application's local identifier selects the target. With no local
+definition, the command fetches
+`currentWorkspace.workspaceCustomApplication.universalIdentifier`. Apply
+baseline recording still queries only the workspace ID.
 
-Translation string extraction uses the CLI's TypeScript parser. Traversal, static-string rules, whitespace normalization and deduplication are checked against the SDK reference by parity tests. It does not depend on ts-morph or load parser tooling for help and command discovery.
+Outside an app, pull offers to create a local project and install its
+dependencies before reconciliation. Noninteractive creation requires `--path`
+and `--yes`. The initializer omits demo entities, and unrelated nonempty
+directories are refused.
 
-Workflows arrive in `manifest.workflows` and are written as `defineWorkflow` files. Their filter operands and form field types use SDK enums; filter group logical operators stay string literals, which every SDK with `defineWorkflow` accepts. A workflow the server cannot express as a definition is reported as `UNSUPPORTED` coverage, so its local file is kept. Each `CODE` step's source is written verbatim to a `.code.ts` file in a folder beside the workflow, named after the workflow file without `.workflow.ts` or `.ts`. The file is named after the kebab-cased step name, capped at 80 characters, or the first 8 characters of the step identifier when the name has no usable characters. When that path is taken by another step or an unrelated local file, the name gets that identifier prefix, then a numeric suffix; only the step's own previous file is overwritten. The workflow reads it with `readFileSync(join(__dirname, ...))` because a text import would not type-check in the app. The loader never evaluates `.code.ts` files as app definitions, even if their source contains a `defineX` default export. They remain in the source inventory for fingerprints and reconciliation. Pull deletes the ones a regenerated or deleted workflow no longer references, even when the step survives under a new name.
+Missing custom applications fail before project creation. The worker still
+checks that the local identity matches the export before writing.
 
-Skills and agents arrive in `manifest.skills` and `manifest.agents` and are written as `defineSkill` and `defineAgent` files, with no enum bindings. The server exports one only when its definition reproduces the stored entity; otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
+## Worker and schema boundary
 
-Pull requests `exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true)`. Existing clients that do not request source files continue to receive coverage gaps for frontend components and their widgets, without reading component source from storage. Apply baseline recording opts in to source export too, so a later pull compares the same supported components. Pull restores `dependencies/package.json` and `dependencies/yarn.lock` to the project root, in the same transaction as metadata and the baseline. Exact folder and filename checks accept only that dependency pair and source files explicitly referenced by exported front components. Record attachments, public assets and unrelated source files are refused. If the remote package omits `twenty-sdk`, pull retains the local SDK dependency so the workspace custom app remains usable with the CLI. The baseline stores remote `dependencyFingerprints` separately from written `sourceFingerprints` for this case. Other exported dependency contents are copied exactly. Dependency files unchanged on the server preserve local edits; remote changes replace local contents and use the usual overwrite report. Missing remote files leave local files untouched. Pull does not install dependencies, generate the typed client or write logic-function source. Export responses have a 16 MiB cap. Pull does not modify the workspace. Because pull is partial, `app apply` of the workspace custom application only deletes entities missing from source with `--prune`.
+Source scanning stays inside the disposable CLI worker so configs containing
+functions are never serialized through IPC. Only the server export and report
+cross that boundary. Selected credentials are removed from the worker
+environment. App source is trusted developer code, not sandboxed code.
 
-Tests cover writers, planning and reconciliation. Command tests build the actual Vite worker, exercise an authoring-only SDK, local mock HTTP, credentials/output isolation, SDK export refusal and forced termination after the first destination write. The repository SDK tests cover canonical generated definitions, nested coverage, translation preservation, target mismatch, overwrite reporting and rollback.
+The wire/export and baseline boundary check identity and envelope fields, not
+every metadata collection. `toPullManifest` is the single explicit assertion
+into the typed writers, preserving their trust in the server schema.
+Missing/null object and field collections are consumed with `?? []`, like the
+other collections.
 
-Front component entry files are restored from their stored original TSX, at their original path or the existing local definition's path. No JSX is regenerated. Export reports missing source, computed identifiers, and unsupported widget availability as coverage gaps; widgets referencing those components remain unexported. Imports are preserved without checking whether they can be resolved. Imported local files are not pulled yet; missing dependencies must be restored before building or applying. Support for imported local files is tracked separately in [#29462](https://github.com/twentyhq/twenty/issues/29462). An explicit GraphQL rejection of the source-export argument retries once without it, preserving older servers' metadata pull.
+Malformed entity contents can still make reconciliation fail before writing. We
+do not duplicate the server's schema.
 
-Pull records remote source hashes separately from local fingerprints. Unchanged remote source preserves local edits, including after repeated pulls; changed source uses the existing overwrite report, even if only comments changed and the compiled checksum stayed the same. An occupied destination or a missing declared source aborts the entire pull before writes. Supported page-layout widgets keep their component identifiers. Run `yarn install` after dependency changes before building the pulled TSX.
+## Reconcile definitions
+
+The baseline file is an envelope whose `manifest` member is an
+`ExportedManifest`. Reconciliation walks arrays generically without maintaining
+a second collection list. Unrecognized collections and non-array metadata
+survive; protected or unreconciled definitions retain their prior baseline
+entries.
+
+`preparePullEntities` resolves the source layout once for current and baseline
+entities. Planning, overwrite reporting and nested-definition protection consume
+these prepared entities. A definition can leave a parent only when another
+retained or written file contains it, or its remote deletion is confirmed.
+
+Fields already declared with `defineField` stay in their existing files, even
+when the server exports them inside an object. Object generation excludes those
+fields; baseline comparisons use the same source layout. Pull also removes
+duplicate inline copies left in object files, while retaining the standalone
+definitions.
+
+Before destination writes, `assertPullSdkExports` checks the actual imports
+emitted by the writer against the app's SDK. It checks export presence, not
+every config shape; run typecheck to validate the generated definitions against
+the installed SDK.
+
+## Baseline and local edits
+
+Temporary files and the baseline live under `.twenty/cli`. Apply and pull share
+`createPullBaseWrite` as the serializer. The baseline is bound to the API URL,
+workspace UUID and application UUID. Pull stages it with mode 0600 and writes it
+after the source files.
+
+The baseline can carry `sourceFingerprints`, a SHA-256 per app-relative source,
+locale and dependency file. Apply captures them before building. Pull reports an
+overwritten local change when a file it rewrites or deletes no longer matches
+its fingerprint.
+
+Without a fingerprint it compares the file with the writer's rendering of the
+baseline, which is reliable only for source produced by that writer. Pull
+carries fingerprints forward, updating the files it writes and dropping the ones
+it deletes.
+
+## Commit and recovery
+
+Ordinary I/O failures restore originals. Cancellation is checked before
+committing the staged plan, not halfway through it. An acknowledged successful
+commit wins over cancellation. The parent can forcibly kill an unresponsive
+worker after its grace period, so an unacknowledged result has outcome
+`unknown`, never a claim that rollback succeeded.
+
+Failed rollback retains backups and reports their directory; failure to clean up
+after a completed commit has outcome `pulled`.
+
+## Reporting
+
+Human reporting uses CLI terminal escaping, machine reporting contains the full
+coverage and path lists, and gaps warn without stopping successful writes.
+Unknown coverage status strings remain visible. Reconciliation does not prompt
+for overwrite approval or require a clean Git checkout; remote changes overwrite
+conflicting local edits and are included in the report.
+
+## Translations
+
+Translation string extraction uses the CLI's TypeScript parser. Traversal,
+static-string rules, whitespace normalization and deduplication are checked
+against the SDK reference by parity tests. It does not depend on ts-morph or
+load parser tooling for help and command discovery.
+
+## Workflows and Code-step files
+
+Workflows arrive in `manifest.workflows` and are written as `defineWorkflow`
+files. Their filter operands and form field types use SDK enums; filter group
+logical operators stay string literals, which every SDK with `defineWorkflow`
+accepts. A workflow the server cannot express as a definition is reported as
+`UNSUPPORTED` coverage, so its local file is kept.
+
+Each `CODE` step's source is written verbatim to a `.code.ts` file in a folder
+beside the workflow, named after the workflow file without `.workflow.ts` or
+`.ts`. The file is named after the kebab-cased step name, capped at 80
+characters, or the first 8 characters of the step identifier when the name has
+no usable characters.
+
+When that path is taken by another step or an unrelated local file, the name
+gets that identifier prefix, then a numeric suffix; only the step's own previous
+file is overwritten. The workflow reads it with
+`readFileSync(join(__dirname, ...))` because a text import would not type-check
+in the app.
+
+The loader never evaluates `.code.ts` files as app definitions, even if their
+source contains a `defineX` default export. They remain in the source inventory
+for fingerprints and reconciliation. Pull deletes the ones a regenerated or
+deleted workflow no longer references, even when the step survives under a new
+name.
+
+## Skills and agents
+
+Skills and agents arrive in `manifest.skills` and `manifest.agents` and are
+written as `defineSkill` and `defineAgent` files, with no enum bindings. The
+server exports one only when its definition reproduces the stored entity;
+otherwise it is reported as `UNSUPPORTED` coverage, so its local file is kept.
+
+## Exported files and compatibility
+
+Pull requests
+`exportApplication(shouldIncludeDependencies: true, shouldIncludeSourceFiles: true, shouldIncludePublicAssets: true)`.
+Existing clients that do not request source files continue to receive coverage
+gaps for frontend components and their widgets, without reading component source
+from storage.
+
+Apply baseline recording opts in to source export too, so a later pull compares
+the same supported components. Pull restores `dependencies/package.json` and
+`dependencies/yarn.lock` to the project root, in the same transaction as
+metadata and the baseline.
+
+Exact folder and filename checks accept only that dependency pair, declared
+frontend component sources, and `public-asset` files under `public/`. Public
+assets travel as base64 and are restored as bytes, preserving images and fonts.
+Record attachments and unrelated files are refused.
+
+Public assets unchanged on the server preserve local edits; remote changes use
+the usual overwrite report. Missing remote assets leave local files untouched.
+If the remote package omits `twenty-sdk`, pull retains the local SDK dependency
+so the workspace custom app remains usable with the CLI.
+
+The baseline stores remote `dependencyFingerprints` separately from written
+`sourceFingerprints` for this case. Other exported dependency contents are
+copied exactly. Dependency files unchanged on the server preserve local edits;
+remote changes replace local contents and use the usual overwrite report.
+Missing remote files leave local files untouched.
+
+After project setup, reconciliation does not install dependencies, generate the
+typed client or write logic-function source. Export responses have a 16 MiB cap.
+Pull does not modify the workspace. Because pull is partial, `app apply` of the
+workspace custom application only deletes entities missing from source with
+`--prune`.
+
+## Front component source
+
+Front component entry files are restored from their stored original TSX, at
+their original path or the existing local definition's path. No JSX is
+regenerated. Export reports missing source, computed identifiers, and
+unsupported widget availability as coverage gaps; widgets referencing those
+components remain unexported.
+
+Imports are preserved without checking whether they can be resolved. Imported
+local files are not pulled yet; missing dependencies must be restored before
+building or applying. Support for imported local files is tracked separately in
+[#29462](https://github.com/twentyhq/twenty/issues/29462).
+
+An explicit GraphQL rejection of the source-export argument retries once without
+it, preserving older servers' metadata pull.
+
+Pull records remote source hashes separately from local fingerprints. Unchanged
+remote source preserves local edits, including after repeated pulls; changed
+source uses the existing overwrite report, even if only comments changed and the
+compiled checksum stayed the same.
+
+An occupied destination or a missing declared source aborts the entire pull
+before writes. Supported page-layout widgets keep their component identifiers.
+Run `yarn install` after dependency changes before building the pulled TSX.
+
+## Verification
+
+Tests cover writers, planning and reconciliation. Command tests build the actual
+Vite worker, exercise an authoring-only SDK, local mock HTTP, credentials/output
+isolation, SDK export refusal and forced termination after the first destination
+write. The repository SDK tests cover canonical generated definitions, nested
+coverage, translation preservation, target mismatch, overwrite reporting and
+rollback.

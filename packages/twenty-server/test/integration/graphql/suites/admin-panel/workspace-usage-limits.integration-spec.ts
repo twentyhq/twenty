@@ -86,6 +86,19 @@ const STORAGE_STOCK_PAYLOAD = {
   burstValue: null,
 };
 
+const USER_CREDIT_QUOTA_PAYLOAD = {
+  resourceType: UsageResourceType.AI,
+  operationType: UsageOperationType.ALL,
+  spenderType: 'userWorkspace',
+  spenderId: null,
+  limitKind: 'quota',
+  periodCount: 1,
+  periodUnit: 'week',
+  unit: UsageUnit.USER_CREDIT,
+  limitValue: 3_000_000,
+  burstValue: null,
+};
+
 describe('Workspace usage limits from the admin panel', () => {
   const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
     'TwentyConfigService',
@@ -175,6 +188,34 @@ describe('Workspace usage limits from the admin panel', () => {
       ),
     ).toEqual(
       expect.objectContaining({ overriddenByUsageLimitId: usageLimitId }),
+    );
+  });
+
+  it('lets an operator override the AI credits each member gets per week, even without a default value', async () => {
+    const response = await makeAdminPanelApiRequest({
+      query: CREATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: USER_CREDIT_QUOTA_PAYLOAD,
+      },
+    });
+
+    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
+
+    jestExpectToBeDefined(usageLimitId);
+
+    const workspaceUsageLimits = await findWorkspaceUsageLimits();
+
+    expect(workspaceUsageLimits.defaults).toContainEqual(
+      expect.objectContaining({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.ALL,
+        spenderType: 'userWorkspace',
+        unit: UsageUnit.USER_CREDIT,
+        limitValue: null,
+        isOverridable: true,
+        overriddenByUsageLimitId: usageLimitId,
+      }),
     );
   });
 

@@ -35,13 +35,6 @@ import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/be
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import {
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
@@ -103,23 +96,15 @@ export class ViewController {
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
-
-    if (!isDefined(view)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          ),
-        },
-      );
-    }
+    const view =
+      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+        id,
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
 
     const processedViews = await this.processViewsWithTemplates(
       [view],

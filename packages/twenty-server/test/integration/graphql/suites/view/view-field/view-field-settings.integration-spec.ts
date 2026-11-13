@@ -41,7 +41,7 @@ describe('View field settings', () => {
     }
   });
 
-  it('creates a view field with a column label, then updates and clears it', async () => {
+  it('creates an extra column with a label, then updates and clears it', async () => {
     const {
       data: { createViewField },
     } = await createOneViewField({
@@ -50,6 +50,7 @@ describe('View field settings', () => {
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
+        isCanonical: false,
         settings: { label: '  Next step  ' },
       },
     });
@@ -95,6 +96,7 @@ describe('View field settings', () => {
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
+        isCanonical: false,
         settings: { recordLimit: 1 },
       },
     });
@@ -112,6 +114,7 @@ describe('View field settings', () => {
       input: {
         fieldMetadataId: testSetup.testFieldMetadataId,
         viewId: testSetup.testViewId,
+        isCanonical: false,
         settings: { label: '   ' },
       },
     });
@@ -119,77 +122,91 @@ describe('View field settings', () => {
     expect(response.errors).toBeDefined();
   });
 
-  describe('on a view field owned by the standard application', () => {
+  it('rejects settings on a canonical column', async () => {
+    const response = await createOneViewField({
+      expectToFail: true,
+      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
+      input: {
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: testSetup.testViewId,
+        settings: { label: 'Next step' },
+      },
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'Only non-canonical view fields can have settings',
+    );
+  });
+
+  it('rejects adding settings to an existing canonical column', async () => {
+    const {
+      data: { createViewField },
+    } = await createOneViewField({
+      expectToFail: false,
+      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
+      input: {
+        fieldMetadataId: testSetup.testFieldMetadataId,
+        viewId: testSetup.testViewId,
+      },
+    });
+
+    createdViewFieldId = createViewField.id;
+
+    const response = await updateOneViewField({
+      expectToFail: true,
+      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
+      input: {
+        id: createViewField.id,
+        update: { settings: { label: 'Next step' } },
+      },
+    });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'Only non-canonical view fields can have settings',
+    );
+  });
+
+  it('rejects settings routed to overrides on a standard canonical column', async () => {
     const STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
       STANDARD_OBJECTS.company.views.allCompanies.viewFields.domainName
         .universalIdentifier;
 
-    let standardViewFieldId: string;
-
-    beforeAll(async () => {
-      const {
-        data: { getViews },
-      } = await findViews<{
-        viewFields: { id: string; universalIdentifier: string }[];
-      }>({
-        expectToFail: false,
-        gqlFields: `
-          viewFields {
-            id
-            universalIdentifier
-          }
-        `,
-      });
-
-      const standardViewField = getViews
-        .flatMap(({ viewFields }) => viewFields)
-        .find(
-          ({ universalIdentifier }) =>
-            universalIdentifier === STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
-        );
-
-      if (!isDefined(standardViewField)) {
-        throw new Error('Standard company domain view field not found');
-      }
-
-      standardViewFieldId = standardViewField.id;
+    const {
+      data: { getViews },
+    } = await findViews<{
+      viewFields: { id: string; universalIdentifier: string }[];
+    }>({
+      expectToFail: false,
+      gqlFields: `
+        viewFields {
+          id
+          universalIdentifier
+        }
+      `,
     });
 
-    afterAll(async () => {
-      await updateOneViewField({
-        expectToFail: false,
-        input: { id: standardViewFieldId, update: { settings: null } },
-      });
-    });
-
-    it('stores a valid column label as an override', async () => {
-      const {
-        data: { updateViewField },
-      } = await updateOneViewField({
-        expectToFail: false,
-        gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
-        input: {
-          id: standardViewFieldId,
-          update: { settings: { label: 'Website' } },
-        },
-      });
-
-      expect(updateViewField.settings?.label).toBe('Website');
-    });
-
-    it('rejects invalid settings routed to overrides', async () => {
-      const response = await updateOneViewField({
-        expectToFail: true,
-        gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
-        input: {
-          id: standardViewFieldId,
-          update: { settings: { recordLimit: 1 } },
-        },
-      });
-
-      expect(JSON.stringify(response.errors)).toContain(
-        'View field record limit is only supported on one-to-many relation fields',
+    const standardViewField = getViews
+      .flatMap(({ viewFields }) => viewFields)
+      .find(
+        ({ universalIdentifier }) =>
+          universalIdentifier === STANDARD_VIEW_FIELD_UNIVERSAL_IDENTIFIER,
       );
+
+    if (!isDefined(standardViewField)) {
+      throw new Error('Standard company domain view field not found');
+    }
+
+    const response = await updateOneViewField({
+      expectToFail: true,
+      gqlFields: VIEW_FIELD_WITH_SETTINGS_GQL_FIELDS,
+      input: {
+        id: standardViewField.id,
+        update: { settings: { label: 'Website' } },
+      },
     });
+
+    expect(JSON.stringify(response.errors)).toContain(
+      'Only non-canonical view fields can have settings',
+    );
   });
 });
