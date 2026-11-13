@@ -8,8 +8,10 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -54,6 +56,11 @@ export const useFindManyRecordIndexTableParams = (
     instanceId,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorValue(
+    isRecordGroupTabsDisplayedComponentSelector,
+    instanceId,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const flattenedFieldMetadataItems = useAtomStateValue(
@@ -94,8 +101,8 @@ export const useFindManyRecordIndexTableParams = (
     objectNameSingular,
     filter: combinedFilter,
     orderBy,
-    // Omitting limit lets ungrouped views fall through to QUERY_DEFAULT_LIMIT_RECORDS
-    ...(isDefined(currentRecordGroupDefinition)
+    // Omitting limit lets ungrouped views and group tabs fall through to QUERY_DEFAULT_LIMIT_RECORDS
+    ...(isDefined(currentRecordGroupDefinition) && !isRecordGroupTabsDisplayed
       ? { limit: recordIndexGroupLoadLimit }
       : {}),
   };

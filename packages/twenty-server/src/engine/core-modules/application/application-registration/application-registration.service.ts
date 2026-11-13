@@ -37,6 +37,7 @@ import {
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import {
@@ -52,7 +53,6 @@ import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/ap
 import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
 import { type PaginatedApplicationRegistrationsDTO } from 'src/engine/core-modules/application/application-registration/dtos/paginated-application-registrations.dto';
-import { type PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
 import {
   type UpdateApplicationRegistrationInput,
   type UpdateApplicationRegistrationPayload,
@@ -452,46 +452,6 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
-  async findOneByClientId(
-    clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-    });
-  }
-
-  async findPublicByClientId(
-    clientId: string,
-  ): Promise<PublicApplicationRegistrationDTO | null> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
-      select: [
-        'id',
-        'name',
-        'logo',
-        'logoFileId',
-        'sourceType',
-        'sourcePackage',
-        'latestAvailableVersion',
-        'websiteUrl',
-        'oAuthScopes',
-      ],
-    });
-
-    if (!registration) {
-      return null;
-    }
-
-    return {
-      id: registration.id,
-      name: registration.name,
-      logoUrl:
-        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
-      websiteUrl: registration.websiteUrl,
-      oAuthScopes: registration.oAuthScopes,
-    };
-  }
-
   async createWithClientSecret({
     input,
     ownerWorkspaceId,
@@ -542,7 +502,8 @@ export class ApplicationRegistrationService {
     if (
       isDefined(existingByUid) ||
       fields.universalIdentifier.toLowerCase() ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
+      isVerifiedOAuthClientUniversalIdentifier(fields.universalIdentifier)
     ) {
       throw new ApplicationRegistrationException(
         `Universal identifier ${fields.universalIdentifier} is already claimed`,
@@ -1484,7 +1445,10 @@ export class ApplicationRegistrationService {
       params.applicationRegistrationId,
     );
 
-    if (isDefined(registration.ownerWorkspaceId)) {
+    if (
+      isDefined(registration.ownerWorkspaceId) ||
+      isVerifiedOAuthClientUniversalIdentifier(registration.universalIdentifier)
+    ) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_ALREADY_OWNED,

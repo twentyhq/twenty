@@ -297,6 +297,32 @@ describe('isRecordMatchingFilter', () => {
   });
 
   it.each([
+    [{ not: { jobTitle: { eq: 'Engineer' } } }, false],
+    [{ not: { jobTitle: { is: 'NULL' } } }, false],
+    [
+      {
+        or: [
+          { jobTitle: { eq: 'Engineer' } },
+          { companyId: { eq: 'company-1' } },
+        ],
+      },
+      true,
+    ],
+  ] as [RecordGqlOperationFilter, boolean][])(
+    'keeps a comparison with a null value unknown under "not", as SQL does (%j)',
+    (filter, expected) => {
+      expect(
+        isRecordMatchingFilter({
+          record: { ...baseRecord, jobTitle: null },
+          filter,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it.each([
     ['London', false],
     ['Paris', true],
   ])(

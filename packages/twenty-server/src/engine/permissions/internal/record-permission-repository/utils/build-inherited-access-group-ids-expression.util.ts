@@ -2,7 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildRecordPrivacySQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-record-privacy-sql-condition.util';
+import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { type RelatedRecordPathAccessGroupSource } from 'src/engine/permissions/internal/record-permission-repository/types/related-record-path-access-group-source.type';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
@@ -48,7 +48,7 @@ export const buildInheritedAccessGroupIdsExpression = ({
     ]),
     ...(isSourcePrivacyApplicable
       ? [
-          buildRecordPrivacySQLCondition({
+          buildPrivateRecordStateSQLCondition({
             tableAlias: sourceTableAlias,
             isPrivate: false,
           }).sql,

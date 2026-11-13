@@ -1,3 +1,9 @@
+type AccessGroupPropagationProgress {
+  isInProgress: Boolean!
+  remainingRecordCount: Int!
+  totalRecordCount: Int!
+}
+
 input ActivateWorkspaceInput {
   """
   Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
@@ -3472,7 +3478,7 @@ type Mutation {
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
-  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
+  authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, resource: String, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
   cancelSwitchBillingPlan: BillingUpdate!
@@ -4244,6 +4250,8 @@ type PreviewMessageCampaignSendOutputDTO {
 
 type PublicApplicationRegistration {
   id: UUID!
+  isClaimingVerifiedClientName: Boolean!
+  isVerified: Boolean!
   logoUrl: String
   name: String!
   oAuthScopes: [String!]!
@@ -4299,6 +4307,7 @@ type PublicWorkspaceDataSummary {
 }
 
 type Query {
+  accessGroupPropagationProgress: AccessGroupPropagationProgress!
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
   agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!

@@ -342,7 +342,7 @@ describe('workflow deletion cleanup', () => {
           ).toBe(0);
           expect(
             await countRows(
-              `core."deferredWorkspaceMigrationAction" WHERE "workspaceId" = $1 AND name = $2`,
+              `core."deferredWorkspaceOperation" WHERE "workspaceId" = $1 AND name = $2`,
               [SEED_APPLE_WORKSPACE_ID, 'delete_workflowRuns'],
             ),
           ).toBe(0);

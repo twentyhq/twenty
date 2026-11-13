@@ -64,7 +64,7 @@ export const AiChatRecordApprovalReview = ({
     const fieldDefinition = fieldDefinitionsByArgumentName.get(columnId);
     const isRecordColumn = columnId === RECORD_COLUMN_ID;
     const iconName = isRecordColumn
-      ? objectMetadataItem?.icon
+      ? objectMetadataItem.icon
       : fieldDefinition?.iconName;
     const Icon = getIcon(iconName);
 
@@ -72,7 +72,7 @@ export const AiChatRecordApprovalReview = ({
       id: columnId,
       label:
         (isRecordColumn
-          ? objectMetadataItem?.labelSingular
+          ? objectMetadataItem.labelSingular
           : fieldDefinition?.label) ?? columnId,
       icon: isDefined(iconName) ? (
         <Icon size={theme.icon.size.sm} />

@@ -4,13 +4,16 @@ import { useParams } from 'react-router-dom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { AI_CHAT_NEW_THREAD_PATH_SEGMENT } from '@/ai/constants/AiChatNewThreadPathSegment';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatPageThreadUrlSyncEffect = () => {
@@ -25,10 +28,14 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const currentAiChatThreadData = useAtomStateValue(
     currentAiChatThreadDataSelector,
   );
-  const areAgentChatThreadsLoaded =
-    useAtomStateValue(agentChatThreadListState) !== null;
+  const areAgentChatThreadsLoaded = isDefined(
+    useAtomFamilyStateValue(
+      agentChatThreadListFamilyState,
+      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+    ),
+  );
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useLoadAgentChatThread();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });

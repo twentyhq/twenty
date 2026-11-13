@@ -16,9 +16,6 @@ import { In } from 'typeorm';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -37,20 +34,16 @@ import { isCachedDatabaseEventTrigger } from 'src/engine/core-modules/workflow/u
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
-import { filterEventsMatchingDatabaseEventTrigger } from 'src/engine/workspace-event-emitter/utils/filter-events-matching-database-event-trigger.util';
+import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
 import { isDatabaseEventTriggerListeningToEvent } from 'src/engine/workspace-event-emitter/utils/is-database-event-trigger-listening-to-event.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
   type AutomatedTriggerSettings,
   type BaseDatabaseEventTriggerSettings,
-  type UpdateEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
-import {
-  WorkflowTriggerJob,
-  type WorkflowTriggerJobData,
-} from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
+import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
@@ -72,8 +65,7 @@ export class WorkflowDatabaseEventTriggerListener {
 
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.workflowQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly workflowTriggerDispatchWorkspaceService: WorkflowTriggerDispatchWorkspaceService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
@@ -404,33 +396,34 @@ export class WorkflowDatabaseEventTriggerListener {
         );
       }
 
-      const { events: eventsWithWatchedFields } =
-        filterEventsMatchingDatabaseEventTrigger({
-          events: readableEventsByApplicationId.get(applicationId) ?? [],
-          eventName: databaseEventName,
-          watchedFields: (eventListener.settings as UpdateEventTriggerSettings)
-            .fields,
-          fields: [],
-        });
+      const eventsWithWatchedFields = filterEventsByUpdatedFields({
+        events: readableEventsByApplicationId.get(applicationId) ?? [],
+        eventName: databaseEventName,
+        watchedFields:
+          'fields' in eventListener.settings
+            ? eventListener.settings.fields
+            : undefined,
+      });
 
       for (const eventPayload of eventsWithWatchedFields) {
         if (this.eventMatchesRecordFilter({ eventPayload, eventListener })) {
-          await this.messageQueueService.add<WorkflowTriggerJobData>(
-            WorkflowTriggerJob.name,
+          await this.workflowTriggerDispatchWorkspaceService.enqueueTriggerOrFailRun(
             {
-              workspaceId,
-              workflowId:
-                eventListener.legacyWorkflowId ?? eventListener.workflowId,
-              ...buildCoreDispatchIds(eventListener),
-              payload: eventPayload,
-            },
-            {
-              retryLimit: 3,
-              ...buildApplicationQueueJobScope({
+              jobData: {
                 workspaceId,
-                applicationId,
-                flatApplicationMaps,
-              }),
+                workflowId:
+                  eventListener.legacyWorkflowId ?? eventListener.workflowId,
+                ...buildCoreDispatchIds(eventListener),
+                payload: eventPayload,
+              },
+              jobOptions: {
+                retryLimit: 3,
+                ...buildApplicationQueueJobScope({
+                  workspaceId,
+                  applicationId,
+                  flatApplicationMaps,
+                }),
+              },
             },
           );
         }

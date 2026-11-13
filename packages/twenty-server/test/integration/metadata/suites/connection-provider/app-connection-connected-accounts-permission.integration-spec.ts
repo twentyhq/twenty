@@ -4,6 +4,8 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { readFlowCookie } from 'test/integration/metadata/suites/connection-provider/utils/read-flow-cookie.util';
+import { buildSignedInBrowserHeaders } from 'test/integration/metadata/suites/connection-provider/utils/build-signed-in-browser-headers.util';
 import { generateTransientTokenResponse } from 'test/integration/utils/generate-transient-token.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -57,6 +59,8 @@ describe('app connection connected accounts permission', () => {
       [provider.id],
     );
 
+  let browserCookie: string | undefined;
+
   const authorize = async (accessToken: string): Promise<URL> => {
     const transient = await generateTransientTokenResponse({
       token: accessToken,
@@ -64,17 +68,20 @@ describe('app connection connected accounts permission', () => {
 
     expect(transient.errors).toBeUndefined();
 
+    const transientToken =
+      transient.data.generateTransientToken.transientToken.token;
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/authorize')
+      .set(await buildSignedInBrowserHeaders({ transientToken }))
       .query({
         applicationId: provider.applicationId,
         providerName: provider.name,
-        transientToken:
-          transient.data.generateTransientToken.transientToken.token,
+        transientToken,
         scope: 'USER',
       });
 
     expect(response.status).toBe(302);
+    browserCookie = readFlowCookie(response);
 
     return new URL(response.headers.location);
   };
@@ -82,6 +89,7 @@ describe('app connection connected accounts permission', () => {
   const callback = async (state: string, code: string): Promise<URL> => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .get('/auth/apps/callback')
+      .set('Cookie', browserCookie ?? '')
       .query({ state, code });
 
     expect(response.status).toBe(302);
@@ -212,7 +220,7 @@ describe('app connection connected accounts permission', () => {
       scope: 'USER',
       reconnectingConnectedAccountId: null,
       redirectLocation: null,
-      codeVerifier: null,
+      flowSecretId: null,
     };
 
     const state = await jwtWrapperService.signAsyncOrThrow(statePayload, {

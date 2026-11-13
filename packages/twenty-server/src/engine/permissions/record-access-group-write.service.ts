@@ -8,7 +8,7 @@ import { MAX_RECORDS_RECOMPUTED_IN_WRITE } from 'src/engine/permissions/internal
 import { RecordAccessGroupPropagationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-propagation.service';
 import { RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type RelatedRecords } from 'src/engine/permissions/types/related-records.type';
-import { areRecordAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/are-record-access-groups-enabled.util';
+import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RecordAccessGroupWriteService {
     objectMetadataId: string;
   }): Promise<boolean> {
     return (
-      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
+      isAccessGroupsEnabled({ featureFlagsMap }) &&
       (await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
         {
           workspaceId,
@@ -48,8 +48,8 @@ export class RecordAccessGroupWriteService {
     objectMetadataId: string;
   }): Promise<boolean> {
     return (
-      areRecordAccessGroupsEnabled({ featureFlagsMap }) &&
-      ((await this.recordAccessGroupComputationService.isObjectReachedByRlsRuleRelation(
+      isAccessGroupsEnabled({ featureFlagsMap }) &&
+      ((await this.recordAccessGroupComputationService.isObjectReferencedByRlsRuleRelation(
         {
           workspaceId,
           objectMetadataId,
@@ -79,7 +79,7 @@ export class RecordAccessGroupWriteService {
     recordsBefore: Record<string, unknown>[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
-    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+    if (!isAccessGroupsEnabled({ featureFlagsMap })) {
       return [];
     }
 
@@ -125,7 +125,7 @@ export class RecordAccessGroupWriteService {
     relatedRecordsBeforeDelete?: RelatedRecords[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<RelatedRecords[]> {
-    if (!areRecordAccessGroupsEnabled({ featureFlagsMap })) {
+    if (!isAccessGroupsEnabled({ featureFlagsMap })) {
       return [];
     }
 
@@ -181,7 +181,7 @@ export class RecordAccessGroupWriteService {
     for (const {
       objectMetadataId,
       recordIds,
-      propagatedFromObjectMetadataIds,
+      fromRelatedObjectMetadataIds,
     } of recordsToQueue) {
       if (
         await this.recordAccessGroupComputationService.isObjectUsingRecordAccessGroups(
@@ -196,7 +196,7 @@ export class RecordAccessGroupWriteService {
             workspaceId,
             objectMetadataId,
             recordIds,
-            propagatedFromObjectMetadataIds,
+            fromRelatedObjectMetadataIds,
           },
         );
       }

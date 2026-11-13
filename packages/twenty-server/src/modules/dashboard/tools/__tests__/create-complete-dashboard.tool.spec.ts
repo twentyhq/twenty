@@ -15,15 +15,18 @@ const buildDeps = ({ insert }: { insert: jest.Mock }) => {
     destroy,
     deps: {
       pageLayoutService: {
+        findByIdOrThrow: jest.fn(),
         create: jest.fn().mockResolvedValue({ id: PAGE_LAYOUT_ID }),
         destroy,
       },
       pageLayoutTabService: {
+        findByIdOrThrow: jest.fn(),
         create: jest.fn().mockResolvedValue({ id: 'tab-id' }),
       },
       pageLayoutWidgetService: { create: jest.fn() },
-      flatEntityMapsCacheService: {
-        getOrRecomputeManyOrAllFlatEntityMaps: jest.fn(),
+      pageLayoutToolService: {
+        computePageLayoutIdentifierMaps: jest.fn(),
+        assertFrontComponentWidgetAvailableOnPageLayoutOrThrow: jest.fn(),
       },
       recordPositionService: {
         buildRecordPosition: jest.fn().mockResolvedValue(1),
