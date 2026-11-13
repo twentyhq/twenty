@@ -112,8 +112,8 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ai/hooks/useChatThreads', () => ({
-  useChatThreads: () => ({ threads: mockThreads, loading: false }),
+jest.mock('@/ai/hooks/useAgentChatThreadList', () => ({
+  useAgentChatThreadList: () => ({ threads: mockThreads, isLoading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
@@ -147,8 +147,8 @@ jest.mock('@/ai/components/NavigationDrawerAiChatChannelsSection', () => ({
   NavigationDrawerAiChatChannelsSection: () => null,
 }));
 
-jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
-  AgentChatThreadsFetchMoreTrigger: () => <div>Load more chats</div>,
+jest.mock('@/ai/components/AgentChatThreadListFetchMoreTrigger', () => ({
+  AgentChatThreadListFetchMoreTrigger: () => <div>Load more chats</div>,
 }));
 
 jest.mock('@/ai/components/NavigationDrawerAiChatThreadSection', () => ({

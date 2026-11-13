@@ -7,7 +7,7 @@ import { type CommonResponseBody } from 'test/integration/metadata/types/common-
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
-import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
+import { waitForDeferredWorkspaceOperationsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-operations-or-throw.util';
 
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
@@ -23,7 +23,7 @@ export const updateOneObjectMetadata = async ({
     gqlFields,
   });
 
-  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+  await waitForDeferredWorkspaceOperationsOrThrow();
 
   const response = await makeMetadataApiRequest(graphqlOperation);
 

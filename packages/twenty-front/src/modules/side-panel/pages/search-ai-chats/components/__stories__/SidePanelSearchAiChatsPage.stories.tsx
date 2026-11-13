@@ -19,7 +19,9 @@ import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
@@ -170,6 +172,7 @@ const getChatPageResponse = ({
           hasPreviousPage: false,
           startCursor: threads.at(0)?.id ?? null,
           endCursor: nextPageCursor ?? threads.at(-1)?.id ?? null,
+          lastLoadedActivityAt: null,
         },
         totalCount: threads.length,
       },
@@ -360,11 +363,17 @@ const meta = {
       });
     }
 
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: RECENT_THREAD_IDS,
-      hasNextPage: true,
-      endCursor: RECENT_CHATS_CURSOR,
-    });
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: RECENT_THREAD_IDS,
+        hasNextPage: true,
+        endCursor: RECENT_CHATS_CURSOR,
+        lastLoadedActivityAt: null,
+      },
+    );
     jotaiStore.set(agentChatThreadParticipantsState.atom, {});
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
@@ -797,7 +806,12 @@ export const FailedSearch: Story = {
 
 export const NoChatsYet: Story = {
   beforeEach: () => {
-    jotaiStore.set(agentChatThreadListState.atom, null);
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      null,
+    );
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -806,11 +820,17 @@ export const NoChatsYet: Story = {
       await canvas.findByRole('status', { name: 'Loading chats...' }),
     ).toBeVisible();
 
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: [],
-      hasNextPage: false,
-      endCursor: null,
-    });
+    jotaiStore.set(
+      agentChatThreadListFamilyState.atomFamily(
+        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      ),
+      {
+        threadIds: [],
+        hasNextPage: false,
+        endCursor: null,
+        lastLoadedActivityAt: null,
+      },
+    );
 
     await expect(await canvas.findByText('No chats yet')).toBeVisible();
 

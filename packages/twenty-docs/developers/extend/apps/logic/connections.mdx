@@ -9,7 +9,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
 
-OAuth 2.0 is built in. Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+OAuth 2.0 is built in, either with a client you register yourself (`oauth`) or discovered from the service (`oauth-discovery`). Services with their own connection flow — a hosted login page, an account id delivered by webhook — use a `custom` provider, where your app drives the flow and Twenty keeps the user, the workspace and the saved connection. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
 
 <AccordionGroup>
 
@@ -96,7 +96,9 @@ Key points:
 - `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
 - Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
 - Until both `serverVariables` are filled in, the app's General tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-- `type` is `'oauth'` (with an `oauth` block) or `'custom'` (with a `custom` block, see "Custom connection flows"). The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside these.
+- `type` is `'oauth'` (with an `oauth` block), `'oauth-discovery'` (with an `oauthDiscovery` block, see below) or `'custom'` (with a `custom` block, see "Custom connection flows"). The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside these.
+
+For a service that publishes its OAuth settings, such as a remote MCP server, declare `type: 'oauth-discovery'` with `oauthDiscovery: { resourceUrl }`, an HTTP or HTTPS URL. At connect time Twenty discovers the authorization server from the resource (RFC 9728), identifies itself with its client metadata document when the server supports it, otherwise registers a client dynamically, and refreshes tokens like any OAuth connection. No `serverVariables` are needed. Discovery ships with Twenty 2.59.0: if your app declares an `oauth-discovery` provider, declare `"engines": { "twenty": ">=2.59.0" }` in its `package.json`.
 
 The OAuth callback URL your provider needs to whitelist is:
 
@@ -233,7 +235,7 @@ Both functions run while the member waits on a redirect, so their timeout is cap
 
 Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
 
-A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth` and `custom`, declare a new provider with a new `universalIdentifier`.
+A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth`, `oauth-discovery` and `custom`, declare a new provider with a new `universalIdentifier`.
 
 Custom providers ship with Twenty 2.52.0.
 
@@ -460,7 +462,7 @@ Each connection has:
 | `scopes`            | OAuth permissions granted by the upstream provider (distinct from `scope` — those are unrelated)                                                                                                                           |
 | `userWorkspaceId`   | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers                                                                                                                   |
 | `workspaceMemberId` | The owner's workspace member id, or `null` if they've since left the workspace                                                                                                                                             |
-| `providerType`      | `'oauth'` or `'custom'`, the type of the connection provider. Check it to narrow `accessToken`                                                                                                                       |
+| `providerType`      | `'oauth'` or `'custom'`, the type of the connection provider (`oauth-discovery` connections report `'oauth'`). Check it to narrow `accessToken`                                                                  |
 | `accessToken`       | Fresh OAuth access token (refreshed automatically if expired), always set when `providerType` is `'oauth'`. For `'custom'`, `null` unless the callback returned one                                                   |
 | `name`              | The connection's display name (auto-derived at OAuth callback, user-renameable)                                                                                                                                            |
 | `handle`            | The connected upstream account's label, refreshed on each reconnect: the `handle` returned by the identify function when there is one, otherwise the email from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email |

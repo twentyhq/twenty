@@ -4,7 +4,7 @@ import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
 import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { agentChatSelectedThreadListSourceState } from '@/ai/states/agentChatSelectedThreadListSourceState';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -33,11 +33,9 @@ export const useOpenAgentChatChannel = () => {
         Pick<AgentChatChannelView, 'channelStatus' | 'assignment' | 'filter'>
       >) => {
       resetRecordSelection();
-      store.set(agentChatChannelViewState.atom, {
-        channelId,
-        channelStatus,
-        assignment,
-        filter,
+      store.set(agentChatSelectedThreadListSourceState.atom, {
+        type: 'channel',
+        channelView: { channelId, channelStatus, assignment, filter },
       });
       navigate(AppPath.AiChatInbox, { threadId: null }, undefined, {
         replace: isMatchingPathname(

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { AiChatInboxNewThreadChannelEffect } from '@/ai/components/AiChatInboxNewThreadChannelEffect';
-import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
+import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import {
   AgentChatChannelAssignmentFilter,
@@ -16,8 +16,8 @@ const renderEffect = (shownChannelId: string | null) => {
   const store = createStore();
 
   store.set(agentChatNewThreadChannelIdState.atom, 'previous-channel-id');
-  store.set(
-    agentChatChannelViewState.atom,
+  setAgentChatSelectedChannelView(
+    store,
     shownChannelId === null
       ? null
       : {

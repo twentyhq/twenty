@@ -56,6 +56,8 @@ This is your first diagnostic: it tells you exactly which objects, fields, and l
 
 Destructive changes (`to destroy`) are listed with what they drop (e.g. `objectMetadata "auditNote" — drops the table and all its rows`) and require interactive confirmation, or `--yes` in scripts.
 
+A deletion that only happens because another one removes what it belongs to (a deleted object's fields, views and page layouts, the relation fields pointing at it, a deleted field's view columns and widgets) is folded into that deletion: its block ends with `also destroys N dependent entities`, and the warning names each dropped table or column once. The server marks these deletions with `cascadedFromUniversalIdentifier`; against an older server, every deletion is listed. `--json` still lists every action, and `summary.cascaded` counts the folded ones.
+
 A sync deletes every entity your app owns that your source no longer declares. When a plan contains destroys it says so and points at `--no-prune` (formerly `--no-delete`, which still works), which makes the sync additive: creates and updates are applied, nothing missing from your source is deleted, and the settings component and uninstall hook bindings of the app stay as they are when your source does not declare them. Use it when your source is intentionally partial, for example while adopting an app that was built in the UI. The workspace Custom application is the exception: since pull cannot export everything it owns yet, its sync is additive unless you pass `--prune`. Servers released before this change still delete by default, so pass `--no-prune` when applying the Custom application to one.
 
 When a sync fails on a single entity, the error names the offending entity and its `universalIdentifier`, for example:

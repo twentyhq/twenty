@@ -1,5 +1,6 @@
 import { type JSONSchema7 } from 'json-schema';
 
+import { FIND_RECORDS_TOOL_DEFAULT_LIMIT } from 'src/engine/core-modules/record-crud/constants/find-records-tool-default-limit.constant';
 import { generateRecordOrderByJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/order-by.json-schema';
 import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-filter.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
@@ -24,9 +25,8 @@ export const generateFindToolInputSchema = ({
   return buildObjectJsonSchema({
     properties: {
       limit: {
-        description:
-          'Maximum number of records to return (default: 10, max: 100). Start small and increase only if needed.',
-        default: 10,
+        description: `Maximum number of records to return (default: ${FIND_RECORDS_TOOL_DEFAULT_LIMIT}, max: 100). Start small and increase only if needed.`,
+        default: FIND_RECORDS_TOOL_DEFAULT_LIMIT,
         type: 'integer',
         exclusiveMinimum: 0,
       },

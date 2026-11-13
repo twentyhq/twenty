@@ -7251,6 +7251,9 @@ export default {
                         4,
                         "String!"
                     ],
+                    "resource": [
+                        4
+                    ],
                     "scope": [
                         4
                     ],
@@ -11120,6 +11123,12 @@ export default {
         "PublicApplicationRegistration": {
             "id": [
                 557
+            ],
+            "isClaimingVerifiedClientName": [
+                1
+            ],
+            "isVerified": [
+                1
             ],
             "logoUrl": [
                 4
