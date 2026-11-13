@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -30,6 +31,7 @@ import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
+import { CalendarRecurringEventWakeUpService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-recurring-event-wake-up.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -51,6 +53,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MicrosoftCalendarDriverModule,
     EmailAliasManagerModule,
     FeatureFlagModule,
+    PendingWakeUpModule,
   ],
   providers: [
     BlocklistRepository,
@@ -61,6 +64,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     CalendarGetCalendarEventsService,
     CalendarImportEventsService,
     CalendarSaveEventsService,
+    CalendarRecurringEventWakeUpService,
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
     CalendarEventListFetchJob,
