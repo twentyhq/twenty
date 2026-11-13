@@ -77,8 +77,9 @@ export class ApplicationManifestApplyService {
     await this.applicationGrantRoleService.upsertGrantRole({
       workspaceId,
       applicationId: application.id,
+      // A partial sync can leave the default role out: it then keeps the legacy treatment
       isRequestedRoleDeclaredWithLegacyProperties:
-        isDefined(requestedRole) &&
+        !isDefined(requestedRole) ||
         getDeclaredLegacyRoleRecordsPermissionsKeys({ role: requestedRole })
           .length > 0,
     });
