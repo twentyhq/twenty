@@ -7,9 +7,14 @@ import {
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
-const SUPPORTED_TYPES = ['oauth', 'custom', 'apiKey'] as const;
+const SUPPORTED_TYPES = [
+  'oauth',
+  'oauth-discovery',
+  'custom',
+  'apiKey',
+] as const;
 
 type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,
@@ -153,14 +158,23 @@ export const defineConnectionProvider: DefineEntity<
     }
   }
 
+  if (
+    config.type === 'oauth-discovery' &&
+    !isHttpUrl(config.oauthDiscovery?.resourceUrl ?? '')
+  ) {
+    errors.push(
+      "Connection provider with type 'oauth-discovery' must declare oauthDiscovery.resourceUrl as an HTTP or HTTPS URL",
+    );
+  }
+
   if (config.type === 'custom') {
     errors.push(...getCustomConfigErrors(config.custom));
   }
 
   if (config.type === 'apiKey') {
-    if ('oauth' in config || 'custom' in config) {
+    if ('oauth' in config || 'oauthDiscovery' in config || 'custom' in config) {
       errors.push(
-        "Connection provider with type 'apiKey' must not declare an `oauth` or `custom` config block",
+        "Connection provider with type 'apiKey' must not declare an `oauth`, `oauthDiscovery` or `custom` config block",
       );
     }
     if (!isDefined(config.identifyAccountLogicFunction)) {

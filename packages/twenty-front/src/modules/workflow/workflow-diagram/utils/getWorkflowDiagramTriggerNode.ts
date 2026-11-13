@@ -1,3 +1,4 @@
+import { AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION } from '@/workflow/workflow-diagram/constants/AutomaticallyLaidOutNodePlaceholderPosition';
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { getWorkflowStepDisplayName } from '@/workflow/utils/getWorkflowStepDisplayName';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -70,14 +71,8 @@ export const getWorkflowDiagramTriggerNode = ({
       stepId: 'trigger',
       hasNextStepIds:
         isDefined(trigger.nextStepIds) && trigger.nextStepIds.length > 0,
-      position: trigger.position ?? {
-        x: 0,
-        y: 0,
-      },
     } satisfies WorkflowDiagramStepNodeData,
-    position: trigger.position ?? {
-      x: 0,
-      y: 0,
-    },
+    position:
+      trigger.position ?? AUTOMATICALLY_LAID_OUT_NODE_PLACEHOLDER_POSITION,
   };
 };

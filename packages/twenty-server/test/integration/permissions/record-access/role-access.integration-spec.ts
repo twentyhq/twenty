@@ -30,6 +30,17 @@ const REACHES_NOTHING: PermissionTestExpectedAnswers = {
   canUpdateRecords: false,
 };
 
+const REACHES_READ_AND_UPDATE: PermissionTestExpectedAnswers = {
+  findRecordsActions: {
+    canRead: true,
+    canUpdate: true,
+    canSoftDelete: false,
+    canDelete: false,
+  },
+  canReadRecords: true,
+  canUpdateRecords: true,
+};
+
 const NO_LIMITING_PRINCIPAL: PermissionTestPrincipals['limitingPrincipal'] = {
   type: 'none',
 };
@@ -96,10 +107,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level does not apply its filter',
+          it: 'with row level only blocks the main role',
           limitingPrincipal: { type: 'agent', role: 'rowLevel' },
-          record: 'outsideCategoryFilter',
-          expected: REACHES_EVERY_OPERATION,
+          record: 'insideEveryFilter',
+          expected: REACHES_NOTHING,
         },
         {
           it: 'does not widen a row level main role',
@@ -111,25 +122,58 @@ describePermissionTestWorkspace({
     });
 
     describeRecordAccess({
-      name: 'two row level filters',
+      name: 'a row level limiting principal beside a row level main role',
       mainPrincipal: { type: 'workspaceMember', role: 'rowLevel' },
       limitingPrincipal: { type: 'agent', role: 'rowLevel' },
       applicationPrincipal: CUSTOM_APPLICATION,
       cases: [
         {
-          it: 'reach a record matching both',
+          it: 'blocks a record matching both filters',
           record: 'insideEveryFilter',
-          expected: REACHES_EVERY_OPERATION,
-        },
-        {
-          it: 'drop a record outside the main filter',
-          record: 'outsideStatusFilter',
           expected: REACHES_NOTHING,
         },
         {
-          it: 'keep a record outside the limiting filter',
+          it: 'blocks a record outside the limiting filter',
           record: 'outsideCategoryFilter',
-          expected: REACHES_EVERY_OPERATION,
+          expected: REACHES_NOTHING,
+        },
+      ],
+    });
+
+    describeRecordAccess({
+      name: 'a record shared with a member whose role has no access',
+      mainPrincipal: { type: 'workspaceMember', role: 'none' },
+      limitingPrincipal: NO_LIMITING_PRINCIPAL,
+      applicationPrincipal: CUSTOM_APPLICATION,
+      cases: [
+        {
+          it: 'is reached at the shared level',
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_READ_AND_UPDATE,
+        },
+        {
+          it: 'is reached through a limiting principal with all records',
+          limitingPrincipal: { type: 'agent', role: 'allRecords' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_READ_AND_UPDATE,
+        },
+        {
+          it: 'is blocked by a limiting principal with no access',
+          limitingPrincipal: { type: 'agent', role: 'none' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_NOTHING,
+        },
+        {
+          it: 'is blocked by a limiting principal with row level only',
+          limitingPrincipal: { type: 'agent', role: 'rowLevel' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_NOTHING,
+        },
+        {
+          it: 'is blocked by an application principal with no access',
+          applicationPrincipal: { type: 'application', role: 'none' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_NOTHING,
         },
       ],
     });
@@ -152,7 +196,7 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level does not apply its filter',
+          it: 'with all records and a row level rule does not apply its filter',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
           expected: REACHES_EVERY_OPERATION,

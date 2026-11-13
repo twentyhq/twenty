@@ -53,6 +53,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         usePkce: true,
       },
       customConfig: null,
+      oauthDiscoveryConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
       onConnectLogicFunctionUniversalIdentifier: null,
       onDisconnectLogicFunctionUniversalIdentifier: null,
@@ -116,6 +117,28 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
     });
   });
 
+  it('keeps only the protected resource url for an oauth-discovery provider', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'linear-mcp',
+          displayName: 'Linear MCP',
+          type: 'oauth-discovery',
+          oauthDiscovery: { resourceUrl: 'https://mcp.linear.app/mcp' },
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result).toMatchObject({
+      type: 'oauth-discovery',
+      oauthConfig: null,
+      customConfig: null,
+      oauthDiscoveryConfig: { resourceUrl: 'https://mcp.linear.app/mcp' },
+    });
+  });
+
   it('stores an apiKey provider without any sub-config', () => {
     const result =
       fromConnectionProviderManifestToUniversalFlatConnectionProvider({
@@ -129,9 +152,12 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         now: NOW,
       });
 
-    expect(result.type).toBe('apiKey');
-    expect(result.oauthConfig).toBeNull();
-    expect(result.customConfig).toBeNull();
+    expect(result).toMatchObject({
+      type: 'apiKey',
+      oauthConfig: null,
+      customConfig: null,
+      oauthDiscoveryConfig: null,
+    });
   });
 
   it('resolves the identifyAccountLogicFunction universalIdentifier into the flat field when provided', () => {

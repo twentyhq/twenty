@@ -5,23 +5,33 @@ import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole'
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/utils/newFieldPermissionsFilter';
+import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
+import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { useStore } from 'jotai';
 import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useMutation } from '@apollo/client/react';
+import { doNotTranslate } from 'twenty-shared/i18n';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type RowLevelPermissionPredicateGroupLogicalOperator,
   type RowLevelPermissionPredicateOperand,
   type Role,
   CreateOneRoleDocument,
+  GetRolesDocument,
   UpdateOneRoleDocument,
   UpsertFieldPermissionsDocument,
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
+import { resolveSettingsRoleObjectRecordsGrant } from '@/settings/roles/role/utils/resolveSettingsRoleObjectRecordsGrant';
 
 const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'label',
@@ -37,6 +47,13 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canBeAssignedToUsers',
   'canBeAssignedToAgents',
   'canBeAssignedToApiKeys',
+];
+
+const ALL_OBJECT_RECORDS_GRANT_KEYS: Array<keyof Role> = [
+  'canReadAllObjectRecords',
+  'canUpdateAllObjectRecords',
+  'canSoftDeleteAllObjectRecords',
+  'canDestroyAllObjectRecords',
 ];
 
 export const useSaveDraftRoleToDB = ({
@@ -70,6 +87,46 @@ export const useSaveDraftRoleToDB = ({
     settingsDraftRoleFamilyState,
     roleId,
   );
+
+  const apolloClient = useApolloClient();
+  const store = useStore();
+  const routedFlowStateScopeId = useRoutedFlowStateScopeId();
+  const setSettingsDraftRole = useSetAtomFamilyState(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsInitialDraftRole = useSetAtomFamilyState(
+    settingsInitialDraftRoleFamilyState,
+    roleId,
+  );
+  const setSettingsPersistedRole = useSetAtomFamilyState(
+    settingsPersistedRoleFamilyState,
+    roleId,
+  );
+
+  const replaceDraftRoleWithSavedRole = async (
+    savedDraftRole: RoleWithPartialMembers,
+  ) => {
+    const { data } = await apolloClient.query({
+      query: GetRolesDocument,
+      fetchPolicy: 'network-only',
+    });
+    const fetchedRole = data?.getRoles.find((role) => role.id === roleId);
+
+    if (!isDefined(fetchedRole)) {
+      throw new Error(doNotTranslate('Saved role not found'));
+    }
+
+    const savedRole = withRowLevelPermissionRuleGrants(fetchedRole);
+
+    setSettingsPersistedRole(savedRole);
+    setSettingsInitialDraftRole(savedRole);
+    setSettingsDraftRole((currentDraftRole) =>
+      isDeeplyEqual(currentDraftRole, savedDraftRole)
+        ? savedRole
+        : currentDraftRole,
+    );
+  };
 
   const dirtyFields = getRoleDirtyFields(
     settingsDraftRole,
@@ -167,6 +224,88 @@ export const useSaveDraftRoleToDB = ({
     return createdRoleId;
   };
 
+  const rowLevelPermissionObjectMetadataIds = new Set(
+    (settingsDraftRole.rowLevelPermissionPredicates ?? []).map(
+      ({ objectMetadataId }) => objectMetadataId,
+    ),
+  );
+  const persistedRowLevelPermissionObjectMetadataIds = new Set(
+    (settingsPersistedRole?.rowLevelPermissionPredicates ?? []).map(
+      ({ objectMetadataId }) => objectMetadataId,
+    ),
+  );
+
+  // Rules carry the grant of a filtered object, so a change to either side rewrites both
+  const shouldSyncObjectRecordsGrants =
+    isDefined(dirtyFields.objectPermissions) ||
+    isDefined(dirtyFields.rowLevelPermissionPredicates) ||
+    isDefined(dirtyFields.rowLevelPermissionPredicateGroups) ||
+    (rowLevelPermissionObjectMetadataIds.size > 0 &&
+      ALL_OBJECT_RECORDS_GRANT_KEYS.some((key) => key in dirtyFields));
+
+  const upsertObjectPermissionsForRole = async (targetRoleId: string) => {
+    const objectMetadataIdsToResolve = [
+      ...new Set([
+        ...rowLevelPermissionObjectMetadataIds,
+        ...persistedRowLevelPermissionObjectMetadataIds,
+      ]),
+    ];
+
+    await upsertObjectPermissions({
+      variables: {
+        upsertObjectPermissionsInput: {
+          roleId: targetRoleId,
+          objectPermissions: [
+            ...(settingsDraftRole.objectPermissions ?? [])
+              .filter(
+                ({ objectMetadataId }) =>
+                  !objectMetadataIdsToResolve.includes(objectMetadataId),
+              )
+              .map((objectPermission) => ({
+                objectMetadataId: objectPermission.objectMetadataId,
+                canReadObjectRecords: objectPermission.canReadObjectRecords,
+                canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
+                canSoftDeleteObjectRecords:
+                  objectPermission.canSoftDeleteObjectRecords,
+                canDestroyObjectRecords:
+                  objectPermission.canDestroyObjectRecords,
+              })),
+            ...objectMetadataIdsToResolve.map((objectMetadataId) => {
+              if (rowLevelPermissionObjectMetadataIds.has(objectMetadataId)) {
+                return {
+                  objectMetadataId,
+                  canReadObjectRecords: false,
+                  canUpdateObjectRecords: false,
+                  canSoftDeleteObjectRecords: false,
+                  canDestroyObjectRecords: false,
+                };
+              }
+
+              const objectPermission =
+                settingsDraftRole.objectPermissions?.find(
+                  (draftObjectPermission) =>
+                    draftObjectPermission.objectMetadataId === objectMetadataId,
+                );
+
+              return {
+                objectMetadataId,
+                canReadObjectRecords:
+                  objectPermission?.canReadObjectRecords ?? null,
+                canUpdateObjectRecords:
+                  objectPermission?.canUpdateObjectRecords ?? null,
+                canSoftDeleteObjectRecords:
+                  objectPermission?.canSoftDeleteObjectRecords ?? null,
+                canDestroyObjectRecords:
+                  objectPermission?.canDestroyObjectRecords ?? null,
+              };
+            }),
+          ],
+        },
+      },
+      refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+    });
+  };
+
   const updateExistingRole = async () => {
     if (isDefined(dirtyFields.permissionFlags)) {
       await upsertPermissionFlags({
@@ -214,25 +353,8 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (isDefined(dirtyFields.objectPermissions)) {
-      await upsertObjectPermissions({
-        variables: {
-          upsertObjectPermissionsInput: {
-            roleId: roleId,
-            objectPermissions:
-              settingsDraftRole.objectPermissions?.map((objectPermission) => ({
-                objectMetadataId: objectPermission.objectMetadataId,
-                canReadObjectRecords: objectPermission.canReadObjectRecords,
-                canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
-                canSoftDeleteObjectRecords:
-                  objectPermission.canSoftDeleteObjectRecords,
-                canDestroyObjectRecords:
-                  objectPermission.canDestroyObjectRecords,
-              })) ?? [],
-          },
-        },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-      });
+    if (shouldSyncObjectRecordsGrants) {
+      await upsertObjectPermissionsForRole(roleId);
     }
 
     if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
@@ -253,10 +375,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (
-      isDefined(dirtyFields.rowLevelPermissionPredicates) ||
-      isDefined(dirtyFields.rowLevelPermissionPredicateGroups)
-    ) {
+    if (shouldSyncObjectRecordsGrants) {
       await upsertRowLevelPermissionPredicatesForRole(roleId);
     }
 
@@ -330,6 +449,14 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
+      const objectRecordsGrant = resolveSettingsRoleObjectRecordsGrant({
+        role: settingsDraftRole,
+        objectMetadataId,
+      });
+      const persistedRule = (
+        settingsPersistedRole?.rowLevelPermissionRules ?? []
+      ).find((rule) => rule.objectMetadataId === objectMetadataId);
+
       await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
@@ -351,6 +478,10 @@ export const useSaveDraftRoleToDB = ({
               positionInRowLevelPermissionPredicateGroup:
                 predicate.positionInRowLevelPermissionPredicateGroup,
             })),
+            ...objectRecordsGrant,
+            canCreateRecords:
+              persistedRule?.canCreateRecords ??
+              objectRecordsGrant.canUpdateRecords,
             predicateGroups: objectPredicateGroups.map((group) => ({
               id: group.id,
               objectMetadataId,
@@ -385,25 +516,8 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (isDefined(dirtyFields.objectPermissions)) {
-      await upsertObjectPermissions({
-        variables: {
-          upsertObjectPermissionsInput: {
-            roleId: targetRoleId,
-            objectPermissions:
-              settingsDraftRole.objectPermissions?.map((objectPermission) => ({
-                objectMetadataId: objectPermission.objectMetadataId,
-                canReadObjectRecords: objectPermission.canReadObjectRecords,
-                canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
-                canSoftDeleteObjectRecords:
-                  objectPermission.canSoftDeleteObjectRecords,
-                canDestroyObjectRecords:
-                  objectPermission.canDestroyObjectRecords,
-              })) ?? [],
-          },
-        },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-      });
+    if (shouldSyncObjectRecordsGrants) {
+      await upsertObjectPermissionsForRole(targetRoleId);
     }
 
     if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
@@ -424,10 +538,7 @@ export const useSaveDraftRoleToDB = ({
       });
     }
 
-    if (
-      isDefined(dirtyFields.rowLevelPermissionPredicates) ||
-      isDefined(dirtyFields.rowLevelPermissionPredicateGroups)
-    ) {
+    if (shouldSyncObjectRecordsGrants) {
       await upsertRowLevelPermissionPredicatesForRole(targetRoleId);
     }
   };
@@ -469,13 +580,23 @@ export const useSaveDraftRoleToDB = ({
   const saveDraftRoleToDB = async () => {
     removeUselessFieldPermissions();
 
+    const savedDraftRole = store.get(
+      settingsDraftRoleFamilyState.getAtom(roleId, routedFlowStateScopeId),
+    );
+
     const savedRoleId = isCreateMode
       ? await createNewRole()
       : await updateExistingRole();
 
-    if (isDefined(savedRoleId) && isDefined(onSuccess)) {
+    if (!isDefined(savedRoleId)) {
+      return;
+    }
+
+    if (isDefined(onSuccess)) {
       await onSuccess(savedRoleId);
     }
+
+    await replaceDraftRoleWithSavedRole(savedDraftRole);
   };
 
   return {

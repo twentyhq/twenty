@@ -3,10 +3,7 @@ import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import {
-  type AgentJsonResponseFormat,
-  type AgentResponseFormat,
-} from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
+import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateAgentResponseFormat = ({
@@ -63,7 +60,8 @@ export const validateAgentResponseFormat = ({
 
   if (
     type === 'text' &&
-    isDefined((responseFormat as unknown as AgentJsonResponseFormat).schema)
+    'schema' in responseFormat &&
+    isDefined(responseFormat.schema)
   ) {
     errors.push({
       code: AiExceptionCode.INVALID_AGENT_INPUT,

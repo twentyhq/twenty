@@ -276,7 +276,7 @@ export class ApplicationConnectionsListService {
 
       return {
         ...connectionFields,
-        providerType: provider.type,
+        providerType: provider.type === 'apiKey' ? 'apiKey' : 'oauth',
         accessToken: await this.decryptAccessToken({ account, workspaceId }),
       };
     } catch (error) {

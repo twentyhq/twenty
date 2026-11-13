@@ -1,7 +1,7 @@
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type StoredOAuthConnectionProviderConfig } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -17,12 +17,14 @@ const REQUIRED_OAUTH_CONFIG_KEYS = [
 export const validateConnectionProviderTypeConfig = ({
   type,
   oauthConfig,
+  oauthDiscoveryConfig,
   customConfig,
   identifyAccountLogicFunctionUniversalIdentifier,
 }: Pick<
   UniversalFlatConnectionProvider,
   | 'type'
   | 'oauthConfig'
+  | 'oauthDiscoveryConfig'
   | 'customConfig'
   | 'identifyAccountLogicFunctionUniversalIdentifier'
 >): FlatEntityValidationError<ConnectionProviderExceptionCode>[] => {
@@ -45,6 +47,19 @@ export const validateConnectionProviderTypeConfig = ({
         message: t`Connection provider oauthConfig.${label} is required`,
         userFriendlyMessage: msg`OAuth ${label} is required`,
       }));
+    }
+    case 'oauth-discovery': {
+      if (!isHttpUrl(oauthDiscoveryConfig?.resourceUrl ?? '')) {
+        return [
+          {
+            code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+            message: t`Connection provider with type 'oauth-discovery' needs an HTTP or HTTPS oauthDiscoveryConfig.resourceUrl`,
+            userFriendlyMessage: msg`OAuth discovery connection provider needs the URL of the resource it signs in to`,
+          },
+        ];
+      }
+
+      return [];
     }
     case 'custom': {
       if (
@@ -69,11 +84,15 @@ export const validateConnectionProviderTypeConfig = ({
       const errors: FlatEntityValidationError<ConnectionProviderExceptionCode>[] =
         [];
 
-      if (isDefined(oauthConfig) || isDefined(customConfig)) {
+      if (
+        isDefined(oauthConfig) ||
+        isDefined(oauthDiscoveryConfig) ||
+        isDefined(customConfig)
+      ) {
         errors.push({
           code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-          message: t`Connection provider with type 'apiKey' must not have an oauthConfig or customConfig`,
-          userFriendlyMessage: msg`API key connection provider must not declare an oauth or custom config block`,
+          message: t`Connection provider with type 'apiKey' must not have an oauthConfig, oauthDiscoveryConfig or customConfig`,
+          userFriendlyMessage: msg`API key connection provider must not declare an oauth, oauth discovery or custom config block`,
         });
       }
 

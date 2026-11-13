@@ -13,8 +13,10 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
+import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/application/application-authorization/utils/is-refresh-token-covered-by-authorization.util';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -22,6 +24,7 @@ import { OAuthErrorResponse } from 'src/engine/core-modules/application/applicat
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
 import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -45,6 +48,7 @@ export class OAuthService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly applicationAuthorizationService: ApplicationAuthorizationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly applicationService: ApplicationService,
     private readonly applicationInstallService: ApplicationInstallService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -56,6 +60,7 @@ export class OAuthService {
     clientSecret?: string;
     codeVerifier?: string;
     redirectUri: string;
+    resource?: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
     const {
       authorizationCode,
@@ -63,6 +68,7 @@ export class OAuthService {
       clientSecret,
       codeVerifier,
       redirectUri,
+      resource,
     } = params;
 
     if (!authorizationCode) {
@@ -164,6 +170,19 @@ export class OAuthService {
           'redirect_uri does not match the one used in the authorization request',
         );
       }
+    }
+
+    const storedResource = authCodeToken.context?.resource;
+
+    if (
+      isDefined(storedResource) &&
+      isDefined(resource) &&
+      resource !== storedResource
+    ) {
+      return this.errorResponse(
+        'invalid_target',
+        'resource does not match the one used in the authorization request',
+      );
     }
 
     const storedCodeChallenge = authCodeToken.context?.codeChallenge;
@@ -402,6 +421,7 @@ export class OAuthService {
           userId: payload.userId,
           workspaceId: payload.workspaceId,
           applicationId: application.id,
+          refreshToken: payload,
         });
 
         if (authorizationError) {
@@ -444,15 +464,18 @@ export class OAuthService {
     let applicationRegistration: ApplicationRegistrationEntity | undefined;
 
     if (clientId) {
-      const clientValidation = await this.validateClient(clientId);
+      const registration =
+        await this.oAuthClientRegistrationResolverService.findRegistrationByOAuthClientId(
+          clientId,
+        );
 
-      if ('error' in clientValidation) {
+      if (!isDefined(registration)) {
         return { success: false };
       }
 
       if (clientSecret) {
         const secretError = await this.validateClientSecret(
-          clientValidation,
+          registration,
           clientSecret,
         );
 
@@ -461,7 +484,7 @@ export class OAuthService {
         }
       }
 
-      applicationRegistration = clientValidation;
+      applicationRegistration = registration;
     }
 
     try {
@@ -558,9 +581,10 @@ export class OAuthService {
 
       if (
         isDefined(decoded.userId) &&
-        (await this.isAuthorizationRevoked({
+        !(await this.isRefreshTokenAuthorized({
           userId: decoded.userId,
           applicationId: decoded.applicationId,
+          refreshToken: decoded,
         }))
       ) {
         return { active: false };
@@ -617,7 +641,9 @@ export class OAuthService {
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+      await this.oAuthClientRegistrationResolverService.findByClientId(
+        clientId,
+      );
 
     if (!applicationRegistration) {
       return this.errorResponse('invalid_client', 'Client not found');
@@ -648,10 +674,12 @@ export class OAuthService {
     userId,
     workspaceId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     workspaceId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
   }): Promise<OAuthErrorResponse | null> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -659,10 +687,15 @@ export class OAuthService {
         applicationId,
       });
 
-    if (isDefined(authorization?.revokedAt)) {
+    if (
+      isDefined(authorization) &&
+      !isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+    ) {
       return this.errorResponse(
         'invalid_grant',
-        'The user revoked this application access',
+        isDefined(authorization.revokedAt)
+          ? 'The user revoked this application access'
+          : 'Refresh token was issued for an earlier authorization',
       );
     }
 
@@ -731,12 +764,14 @@ export class OAuthService {
     );
   }
 
-  private async isAuthorizationRevoked({
+  private async isRefreshTokenAuthorized({
     userId,
     applicationId,
+    refreshToken,
   }: {
     userId: string;
     applicationId: string;
+    refreshToken: Pick<ApplicationRefreshTokenJwtPayload, 'iat'>;
   }): Promise<boolean> {
     const authorization =
       await this.applicationAuthorizationService.findByUserAndApplication({
@@ -744,7 +779,10 @@ export class OAuthService {
         applicationId,
       });
 
-    return isDefined(authorization?.revokedAt);
+    return (
+      !isDefined(authorization) ||
+      isRefreshTokenCoveredByAuthorization({ authorization, refreshToken })
+    );
   }
 
   // RFC 6749 §3.3: an empty scope means no scopes, not one blank one

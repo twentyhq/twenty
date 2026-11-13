@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import {
   Logger,
   type OnModuleDestroy,
@@ -22,6 +24,7 @@ import { v4 } from 'uuid';
 
 import {
   type QueueCronJobOptions,
+  type QueueJobLimiter,
   type QueueJobOptions,
   type QueueJobRecipient,
   type QueueJobScope,
@@ -119,6 +122,8 @@ export class BullMQDriver
         this.queueMap[queueName].toKey(jobId),
       keyPrefix: options.prefix ?? 'bull',
       metricsService,
+      isGroupLimiterEnabled: () =>
+        twentyConfigService.get('IS_WORKER_GROUP_LIMITER_ENABLED'),
     });
     this.jobSizeLimiter = new JobSizeLimiter(
       metricsService,
@@ -476,9 +481,10 @@ export class BullMQDriver
       this.emitJobChange({ queueName, job, state: 'failed' }),
     );
 
-    this.workerMap[queueName].on('completed', (job) =>
-      this.releaseFinishedJobMemory({ queueName, job }),
-    );
+    this.workerMap[queueName].on('completed', (job) => {
+      void this.clearOversizedCompletedJobData(job);
+      this.releaseFinishedJobMemory({ queueName, job });
+    });
     this.workerMap[queueName].on('failed', (job) => {
       if (isDefined(job?.finishedOn)) {
         this.releaseFinishedJobMemory({ queueName, job });
@@ -651,7 +657,10 @@ export class BullMQDriver
     }
 
     if (options.id && !options.doNotCheckDuplicatesBasedOnPrefix) {
-      const waitingJobIds = await this.getWaitingJobIds(queueName);
+      const waitingJobIds = await this.getWaitingJobIds({
+        queueName,
+        includeDelayed: this.isPacedJob(options.limiter),
+      });
 
       if (
         isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: options.id })
@@ -673,6 +682,7 @@ export class BullMQDriver
     const [jobOptions] = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: [options],
+      limiters: [options.limiter],
       additionalGroupKeys: options.groupKeys,
       delay: options.delay,
       staticPriority: queueOptions.priority,
@@ -888,6 +898,34 @@ export class BullMQDriver
     });
   }
 
+  private async clearOversizedCompletedJobData(job: Job): Promise<void> {
+    const { memorySizeBytes: chargedSizeBytes }: BullMQJobsOptions = job.opts;
+    // A charged job was already sized at enqueue, so its payload is not serialized again here
+    const memorySizeBytes =
+      chargedSizeBytes ??
+      computeJobSizeBytes({ data: job.data, options: job.opts });
+
+    if (
+      memorySizeBytes <=
+      this.twentyConfigService.get('JOB_QUEUE_MAX_JOB_SIZE_BYTES')
+    ) {
+      return;
+    }
+
+    try {
+      await job.updateData({
+        memorySizeBytes,
+        hash: createHash('sha256')
+          .update(JSON.stringify(job.data) ?? '')
+          .digest('hex'),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to clear completed job ${job.id}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   private releaseFinishedJobMemory({
     queueName,
     job,
@@ -909,9 +947,24 @@ export class BullMQDriver
     });
   }
 
-  private async getWaitingJobIds(queueName: MessageQueue): Promise<string[]> {
+  // A paced job waits in the delayed set, so only paced jobs dedupe against it.
+  private isPacedJob(limiter: QueueJobLimiter | undefined): boolean {
+    return (
+      isDefined(limiter) && this.fairQueueScheduler.isGroupLimiterEnabled()
+    );
+  }
+
+  private async getWaitingJobIds({
+    queueName,
+    includeDelayed,
+  }: {
+    queueName: MessageQueue;
+    includeDelayed: boolean;
+  }): Promise<string[]> {
     return this.queueMap[queueName].getRanges(
-      ['waiting', 'paused', 'prioritized'],
+      includeDelayed
+        ? ['waiting', 'paused', 'prioritized', 'delayed']
+        : ['waiting', 'paused', 'prioritized'],
       0,
       -1,
     );
@@ -919,17 +972,41 @@ export class BullMQDriver
 
   private async filterOutAlreadyWaitingJobs<
     TJob extends QueueJobToAdd<MessageQueueJobData>,
-  >(queueName: MessageQueue, jobs: TJob[]): Promise<TJob[]> {
+  >({
+    queueName,
+    jobs,
+    defaultLimiter,
+  }: {
+    queueName: MessageQueue;
+    jobs: TJob[];
+    defaultLimiter: QueueJobLimiter | undefined;
+  }): Promise<TJob[]> {
     if (!jobs.some((job) => isDefined(job.jobId))) {
       return jobs;
     }
 
-    const waitingJobIds = await this.getWaitingJobIds(queueName);
+    const isPacedJobById = (job: TJob) =>
+      isDefined(job.jobId) && this.isPacedJob(job.limiter ?? defaultLimiter);
+    const waitingJobIds = await this.getWaitingJobIds({
+      queueName,
+      includeDelayed: false,
+    });
+    const waitingOrDelayedJobIds = jobs.some(isPacedJobById)
+      ? [
+          ...waitingJobIds,
+          ...(await this.queueMap[queueName].getRanges(['delayed'], 0, -1)),
+        ]
+      : waitingJobIds;
 
     return jobs.filter(
-      ({ jobId }) =>
-        !isDefined(jobId) ||
-        !isQueueJobIdAlreadyWaiting({ waitingJobIds, jobIdOrPrefix: jobId }),
+      (job) =>
+        !isDefined(job.jobId) ||
+        !isQueueJobIdAlreadyWaiting({
+          waitingJobIds: isPacedJobById(job)
+            ? waitingOrDelayedJobIds
+            : waitingJobIds,
+          jobIdOrPrefix: job.jobId,
+        }),
     );
   }
 
@@ -948,7 +1025,11 @@ export class BullMQDriver
     const indexedJobs = jobs.map((job, inputIndex) => ({ ...job, inputIndex }));
     const jobsToAdd = options?.doNotCheckDuplicatesBasedOnPrefix
       ? indexedJobs
-      : await this.filterOutAlreadyWaitingJobs(queueName, indexedJobs);
+      : await this.filterOutAlreadyWaitingJobs({
+          queueName,
+          jobs: indexedJobs,
+          defaultLimiter: options?.limiter,
+        });
 
     if (jobsToAdd.length === 0) {
       return { jobs: [], availableBytes: null };
@@ -975,9 +1056,26 @@ export class BullMQDriver
       shouldReportSizes: true,
     });
 
+    // BullMQ ignores a re-added job id, so it must not take a pacing slot.
+    const existingPacedJobIds = this.fairQueueScheduler.isGroupLimiterEnabled()
+      ? await this.findExistingJobIds({
+          queueName,
+          jobIds: jobsToAdd.flatMap((job) =>
+            isDefined(job.jobId) && isDefined(job.limiter ?? options?.limiter)
+              ? [job.jobId]
+              : [],
+          ),
+        })
+      : new Set<string>();
+
     const jobOptions = await this.fairQueueScheduler.computeJobOptions({
       queueName,
       scopes: jobsToAdd,
+      limiters: jobsToAdd.map((job) =>
+        isDefined(job.jobId) && existingPacedJobIds.has(job.jobId)
+          ? undefined
+          : (job.limiter ?? options?.limiter),
+      ),
       additionalGroupKeys: options?.groupKeys,
       delay: options?.delay,
       staticPriority: queueOptions.priority,
@@ -1007,6 +1105,39 @@ export class BullMQDriver
       ),
       availableBytes,
     };
+  }
+
+  async removeJob(queueName: MessageQueue, jobId: string): Promise<boolean> {
+    const job = await this.queueMap[queueName].getJob(jobId);
+
+    if (!isDefined(job)) {
+      return false;
+    }
+
+    const { memoryGroupKeys, memorySizeBytes }: BullMQJobsOptions = job.opts;
+    const chargedJob = isNonEmptyArray(memoryGroupKeys)
+      ? { queueName, jobId, groupKeys: memoryGroupKeys }
+      : undefined;
+
+    // Released while the job exists, so a re-enqueue of its id is deduplicated, not admitted on this charge
+    if (isDefined(chargedJob)) {
+      await this.jobMemoryLimiter.release(chargedJob);
+    }
+
+    try {
+      await job.remove();
+    } catch (error) {
+      if (isDefined(chargedJob) && isDefined(memorySizeBytes)) {
+        await this.jobMemoryLimiter.restore({
+          ...chargedJob,
+          sizeBytes: memorySizeBytes,
+        });
+      }
+
+      throw error;
+    }
+
+    return true;
   }
 
   async getJobs<T extends MessageQueueJobData>(

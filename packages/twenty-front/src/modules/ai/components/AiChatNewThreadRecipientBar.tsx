@@ -8,7 +8,7 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { AgentChatChannelIcon } from '@/ai/components/AgentChatChannelIcon';
 import { AiChatAssistantAvatar } from '@/ai/components/AiChatAssistantAvatar';
-import { AiChatNewThreadRecipientChip } from '@/ai/components/AiChatNewThreadRecipientChip';
+import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai/hooks/useAiChatAssistantProfile';
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
@@ -68,7 +68,12 @@ export const AiChatNewThreadRecipientBar = () => {
 
   const isCreatingChat = isOnNewAiChatSlot || !isDefined(currentAiChatThread);
 
-  if (!isAiChatInboxEnabled || !isCreatingChat || isWorkspaceSetupChat) {
+  if (
+    !isAiChatInboxEnabled ||
+    !isCreatingChat ||
+    isWorkspaceSetupChat ||
+    agentChatIsSendingMessage
+  ) {
     return null;
   }
 
@@ -80,14 +85,12 @@ export const AiChatNewThreadRecipientBar = () => {
     <FormFieldRow
       ref={recipientRowRef}
       aria-label={t`Recipients`}
-      aria-busy={agentChatIsSendingMessage}
       contentPaddingInline={0}
     >
       {recipients.isAssistantParticipant && (
-        <AiChatNewThreadRecipientChip
+        <ChatRecipientChip
           label={assistantName}
           avatar={<AiChatAssistantAvatar />}
-          disabled={agentChatIsSendingMessage}
           onRemove={() => {
             focusAddRecipientsButton();
             setRecipients((current) => ({
@@ -101,10 +104,9 @@ export const AiChatNewThreadRecipientBar = () => {
         const label = getWorkspaceMemberNameOrEmail(workspaceMember);
 
         return (
-          <AiChatNewThreadRecipientChip
+          <ChatRecipientChip
             key={workspaceMember.id}
             label={label}
-            disabled={agentChatIsSendingMessage}
             avatar={
               <Avatar
                 name={label}
@@ -128,9 +130,8 @@ export const AiChatNewThreadRecipientBar = () => {
         );
       })}
       {isDefined(channel) && (
-        <AiChatNewThreadRecipientChip
+        <ChatRecipientChip
           label={channel.name}
-          disabled={agentChatIsSendingMessage}
           avatar={
             <AgentChatChannelIcon channel={channel} size={theme.icon.size.sm} />
           }
@@ -146,7 +147,6 @@ export const AiChatNewThreadRecipientBar = () => {
         multiple
       >
         <Dropdown.Trigger
-          disabled={agentChatIsSendingMessage}
           render={
             <LightButton
               ref={addRecipientsButtonRef}

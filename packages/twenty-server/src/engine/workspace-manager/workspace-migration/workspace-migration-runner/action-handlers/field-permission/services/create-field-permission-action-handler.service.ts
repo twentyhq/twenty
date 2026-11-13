@@ -29,6 +29,7 @@ export class CreateFieldPermissionActionHandlerService extends WorkspaceMigratio
       objectMetadataId,
       fieldMetadataId,
       rowLevelPermissionPredicateGroupId,
+      rowLevelPermissionRuleId,
     } = resolveUniversalRelationIdentifiersToIds({
       flatEntityMaps: allFlatEntityMaps,
       metadataName: action.metadataName,
@@ -43,6 +44,7 @@ export class CreateFieldPermissionActionHandlerService extends WorkspaceMigratio
         objectMetadataId,
         fieldMetadataId,
         rowLevelPermissionPredicateGroupId,
+        rowLevelPermissionRuleId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

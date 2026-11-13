@@ -224,6 +224,7 @@ const sendUploadedBytes = async ({
 
       try {
         const status = await putUploadFile({
+          target: context.target,
           uploadUrl: uploadTarget.uploadUrl,
           contentType: uploadTarget.contentType,
           bytes,

@@ -12,6 +12,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT } from 'src/engine/core-modules/record-crud/constants/group-by-records-tool-default-limit.constant';
+import { GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS } from 'src/engine/core-modules/record-crud/constants/group-by-records-tool-max-dimensions.constant';
 import { generateRecordFilterJsonSchema } from 'src/engine/core-modules/record-crud/json-schemas/record-filter.json-schema';
 import { type JsonSchemaDefinitions } from 'src/engine/core-modules/record-crud/types/json-schema-definitions.type';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
@@ -218,9 +220,9 @@ export const generateGroupByToolInputSchema = ({
   return buildObjectJsonSchema({
     properties: {
       groupBy: {
-        description: `Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${groupByEntries.map(({ label }) => label).join(', ')}.`,
+        description: `Fields to group by (max ${GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS}). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: ${groupByEntries.map(({ label }) => label).join(', ')}.`,
         minItems: 1,
-        maxItems: 2,
+        maxItems: GROUP_BY_RECORDS_TOOL_MAX_DIMENSIONS,
         type: 'array',
         items:
           groupByEntrySchemas.length === 1
@@ -239,9 +241,8 @@ export const generateGroupByToolInputSchema = ({
         type: 'string',
       },
       limit: {
-        description:
-          'Maximum number of groups to return (default: 50, max: 100).',
-        default: 50,
+        description: `Maximum number of groups to return (default: ${GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT}, max: 100).`,
+        default: GROUP_BY_RECORDS_TOOL_DEFAULT_LIMIT,
         type: 'integer',
         exclusiveMinimum: 0,
       },

@@ -253,7 +253,7 @@ await createMessageChannel({
 
 Il provider di messaggistica deve appartenere alla tua app e utilizzare il provider di connessione dell'account del canale; il relativo provider di connessione non può cambiare dopo la prima sincronizzazione. La modifica della funzione di invio in una versione successiva si applica a ogni canale associato al provider.
 
-Le risposte vengono inviate con la mutazione `sendAppChannelMessage`, che accetta il canale, il thread, il testo e un `idempotencyKey` (un UUID generato dal client per ogni risposta e riutilizzato quando la ritenta) ed esegue la funzione del provider:
+Le risposte vengono inviate con la mutation `sendAppChannelMessage`, che accetta il canale, il thread, `text` oppure, per i provider il cui `conversationStyle` è `'email'`, un blocco `email` (`to`, `cc`, `bcc`, `subject`, `body` in rich text, `inReplyTo`), e un `idempotencyKey` (un UUID che il client genera per ogni risposta e riutilizza quando la ritenta), ed esegue la funzione del provider:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';
@@ -276,6 +276,8 @@ export const linkedinSendMessageHandler = async ({
 ```
 
 Il payload contiene `messagingProviderName`, il `threadExternalId` della conversazione così come è stato importato, il `text`, l'`idempotencyKey` e i `recipients`: i partecipanti all'ultimo messaggio del thread diversi dall'identificativo del canale stesso, in modo che non venga inviato alcun messaggio a chi ha partecipato solo a uno scambio precedente. Preferisci la conversazione del provider ai `recipients` quando la sua API invia a un ID conversazione. Restituisce l'ID del provider per il messaggio inviato come `externalId`.
+
+Il `conversationStyle` del payload corrisponde a quello del provider (`'chat'` quando non ne dichiara alcuno). Con `'email'` (ad esempio un'app che sincronizza Outlook o Gmail), i membri rispondono invece con il compositore di email e il payload contiene anche un blocco `email`: l'`subject`, il corpo in rich text compilato in `html`, i destinatari `cc` e `bcc` e `inReplyToExternalId`, l'`externalId` del messaggio a cui si sta rispondendo quando Twenty lo conosce. `recipients` sono quindi gli indirizzi `To` scelti dal membro e `text` è la versione in testo normale del corpo. Gli allegati non vengono ancora inviati. Richiede `"engines": { "twenty": ">=2.58.0" }`.
 
 Twenty registra quindi la risposta nel thread come messaggio in uscita dal canale, con gli stessi destinatari, così viene visualizzata immediatamente. Quando il tuo webhook recapita in seguito lo stesso messaggio, la sua importazione con quell'`externalId` non cambia nulla.
 

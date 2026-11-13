@@ -28,7 +28,8 @@ const StyledPage = styled.div`
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[20]} ${themeCssVariables.spacing[10]}
+    ${themeCssVariables.spacing[12]};
 `;
 
 const StyledContent = styled.div`

@@ -23,6 +23,7 @@ describe('validateConnectionProviderTypeConfig', () => {
       validateConnectionProviderTypeConfig({
         type: 'oauth',
         oauthConfig: OAUTH_CONFIG,
+        oauthDiscoveryConfig: null,
         customConfig: null,
         identifyAccountLogicFunctionUniversalIdentifier: null,
       }),
@@ -33,6 +34,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'oauth',
       oauthConfig: null,
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
     });
@@ -45,6 +47,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'oauth',
       oauthConfig: { ...OAUTH_CONFIG, tokenEndpoint: '', clientIdVariable: '' },
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
     });
@@ -60,6 +63,7 @@ describe('validateConnectionProviderTypeConfig', () => {
       validateConnectionProviderTypeConfig({
         type: 'apiKey',
         oauthConfig: null,
+        oauthDiscoveryConfig: null,
         customConfig: null,
         identifyAccountLogicFunctionUniversalIdentifier:
           IDENTIFY_ACCOUNT_UNIVERSAL_IDENTIFIER,
@@ -71,6 +75,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'apiKey',
       oauthConfig: null,
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
     });
@@ -83,6 +88,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'apiKey',
       oauthConfig: OAUTH_CONFIG,
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier:
         IDENTIFY_ACCOUNT_UNIVERSAL_IDENTIFIER,
@@ -90,8 +96,33 @@ describe('validateConnectionProviderTypeConfig', () => {
 
     expect(errors).toHaveLength(1);
     expect(errors[0]?.message).toContain(
-      'must not have an oauthConfig or customConfig',
+      'must not have an oauthConfig, oauthDiscoveryConfig or customConfig',
     );
+  });
+
+  it('should accept an oauth-discovery provider with an http resourceUrl', () => {
+    expect(
+      validateConnectionProviderTypeConfig({
+        type: 'oauth-discovery',
+        oauthConfig: null,
+        oauthDiscoveryConfig: { resourceUrl: 'https://mcp.linear.app/mcp' },
+        customConfig: null,
+        identifyAccountLogicFunctionUniversalIdentifier: null,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should reject an oauth-discovery provider without a resourceUrl', () => {
+    const errors = validateConnectionProviderTypeConfig({
+      type: 'oauth-discovery',
+      oauthConfig: null,
+      oauthDiscoveryConfig: null,
+      customConfig: null,
+      identifyAccountLogicFunctionUniversalIdentifier: null,
+    });
+
+    expect(errors).toHaveLength(1);
+    expect(errors[0]?.message).toContain('oauthDiscoveryConfig.resourceUrl');
   });
 
   it('should accept a custom provider with authorize and callback logic functions', () => {
@@ -99,6 +130,7 @@ describe('validateConnectionProviderTypeConfig', () => {
       validateConnectionProviderTypeConfig({
         type: 'custom',
         oauthConfig: null,
+        oauthDiscoveryConfig: null,
         customConfig: {
           authorizeLogicFunctionUniversalIdentifier:
             '0f5c8f0e-3c39-4a3b-9a59-2f1c1d3b4a10',
@@ -114,6 +146,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'custom',
       oauthConfig: null,
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
     });
@@ -126,6 +159,7 @@ describe('validateConnectionProviderTypeConfig', () => {
     const errors = validateConnectionProviderTypeConfig({
       type: 'basicAuth' as never,
       oauthConfig: null,
+      oauthDiscoveryConfig: null,
       customConfig: null,
       identifyAccountLogicFunctionUniversalIdentifier: null,
     });

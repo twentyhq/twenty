@@ -15,7 +15,10 @@ import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useContext, type ReactNode } from 'react';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 type RecordTableCellFieldContextGenericProps = {
   recordField: RecordField;
   children: ReactNode;
@@ -52,7 +55,7 @@ export const RecordTableCellFieldContextGeneric = ({
     return null;
   }
 
-  let hasObjectReadPermissions = canReachSomeRecords({
+  let hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
     operationType: 'read',
   });
@@ -71,7 +74,7 @@ export const RecordTableCellFieldContextGeneric = ({
       relationObjectMetadataId,
     );
 
-    hasObjectReadPermissions = canReachSomeRecords({
+    hasObjectReadPermissions = canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: relationObjectPermissions,
       operationType: 'read',
     });
@@ -99,7 +102,7 @@ export const RecordTableCellFieldContextGeneric = ({
 
         if (targetObjectMetadataIds.length > 0) {
           hasObjectReadPermissions = targetObjectMetadataIds.some((targetId) =>
-            canReachSomeRecords({
+            canAccessThroughAllRecordsOrRlsPermission({
               objectRecordsPermissions: getObjectPermissionsForObject(
                 objectPermissionsByObjectMetadataId,
                 targetId,

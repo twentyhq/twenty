@@ -188,7 +188,12 @@ export const SettingsApplicationConnectionDetail = () => {
   }: {
     connection: ApplicationConnectedAccount;
     provider: FrontendApplicationConnectionProvider;
-  }): { key: string; label: string; value: ReactNode }[] => {
+  }): {
+    key: string;
+    label: string;
+    value: ReactNode;
+    isMultiline?: boolean;
+  }[] => {
     const scopes = connection.scopes ?? [];
 
     return [
@@ -217,6 +222,7 @@ export const SettingsApplicationConnectionDetail = () => {
             {
               key: 'scopes',
               label: t`Granted OAuth scopes`,
+              isMultiline: true,
               value:
                 scopes.length > 0 ? (
                   <StyledScopeList>
@@ -353,7 +359,16 @@ export const SettingsApplicationConnectionDetail = () => {
                       <TableCell color={themeCssVariables.font.color.secondary}>
                         {row.label}
                       </TableCell>
-                      <TableCell minWidth="0" overflow="hidden">
+                      <TableCell
+                        minWidth="0"
+                        overflow="hidden"
+                        height={row.isMultiline ? 'auto' : undefined}
+                        padding={
+                          row.isMultiline
+                            ? `${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}`
+                            : undefined
+                        }
+                      >
                         {row.value}
                       </TableCell>
                     </TableRow>

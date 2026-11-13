@@ -36,6 +36,7 @@ export const fromRoleManifestToUniversalFlatRole = ({
     roleTargetUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
+    rowLevelPermissionRuleUniversalIdentifiers: [],
     rolePermissionFlagUniversalIdentifiers: [],
     rowLevelPermissionPredicateUniversalIdentifiers: [],
     agentChatChannelRoleUniversalIdentifiers: [],

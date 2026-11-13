@@ -1,9 +1,11 @@
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { getAgentChatThreadInboxStatus } from 'twenty-shared/ai';
 
 import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentChatThreadInboxState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatReopenedThreadActivityState } from '@/ai/states/agentChatReopenedThreadActivityState';
 import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import {
@@ -11,7 +13,6 @@ import {
   agentChatThreadVisitState,
 } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -74,10 +75,14 @@ export const AgentChatThreadMarkAsReadEffect = () => {
         agentChatThreadRecordFamilySelector.selectorFamily(threadId),
       );
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
+      const reopenedThreadActivity = store.get(
+        agentChatReopenedThreadActivityState.atom,
+      );
 
       if (
         isDefined(thread) &&
         isDefined(workspaceMemberId) &&
+        thread.lastActivityAt !== reopenedThreadActivity[threadId] &&
         isAgentChatThreadSettledForMember({
           thread,
           participant: store.get(agentChatThreadParticipantsState.atom)?.[

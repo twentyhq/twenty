@@ -1,16 +1,20 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ChangeEvent, type KeyboardEvent, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { IconButton, LightIconButton } from 'twenty-ui/components/input';
+import { IconArrowUp, IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
+import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThreadComposerDraft';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
-import { isNonEmptyString } from '@sniptt/guards';
-import { IconButton } from 'twenty-ui/components/input';
-import { IconArrowUp } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -26,20 +30,6 @@ const StyledPendingMessages = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   max-height: ${themeCssVariables.spacing[30]};
   overflow-y: auto;
-`;
-
-const StyledInputBox = styled.div`
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-
-  &:focus-within {
-    border-color: ${themeCssVariables.color.blue};
-  }
 `;
 
 const StyledTextarea = styled(TextareaAutosize)`
@@ -58,60 +48,94 @@ const StyledTextarea = styled(TextareaAutosize)`
   }
 `;
 
-const StyledFooter = styled.div`
+const StyledFiles = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledActions = styled.div`
   align-items: center;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+`;
+
+const StyledLeftActions = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing['0.5']};
+`;
+
+const StyledFileInput = styled.input`
+  display: none;
 `;
 
 type ChatThreadComposerProps = {
-  messageThreadId: string;
-  messageChannelId: string;
   channelName: string;
   recipientName: string | null;
   isDisconnected: boolean;
+  isSendDisabled?: boolean;
+  onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
+  canAttachFiles?: boolean;
+  draftKey?: string;
 };
 
 export const ChatThreadComposer = ({
-  messageThreadId,
-  messageChannelId,
   channelName,
   recipientName,
   isDisconnected,
+  isSendDisabled = false,
+  onSendMessage,
   onMessageSent,
+  canAttachFiles = false,
+  draftKey,
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
-  const { sendAppChannelMessage } = useSendAppChannelMessage();
-  const [draft, setDraft] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [draft, setDraft] = useChatThreadComposerDraft(draftKey);
+  const [files, setFiles] = useState<File[]>([]);
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
   );
 
-  const setPendingMessageStatus = (
+  const text = draft.trim();
+  const canSend =
+    !isDisconnected &&
+    !isSendDisabled &&
+    (isNonEmptyString(text) || isNonEmptyArray(files));
+
+  const updatePendingMessage = (
     id: string,
-    status: PendingChatMessage['status'] | null,
+    update: Pick<PendingChatMessage, 'status' | 'errorMessage'>,
   ) =>
     setPendingMessages((currentPendingMessages) =>
-      status === null
-        ? currentPendingMessages.filter((message) => message.id !== id)
-        : currentPendingMessages.map((message) =>
-            message.id === id ? { ...message, status } : message,
-          ),
+      currentPendingMessages.map((message) =>
+        message.id === id ? { ...message, ...update } : message,
+      ),
+    );
+
+  const discardPendingMessage = (id: string) =>
+    setPendingMessages((currentPendingMessages) =>
+      currentPendingMessages.filter((message) => message.id !== id),
     );
 
   const send = async (pendingMessage: PendingChatMessage) => {
-    setPendingMessageStatus(pendingMessage.id, 'sending');
+    updatePendingMessage(pendingMessage.id, {
+      status: 'sending',
+      errorMessage: undefined,
+    });
 
     try {
-      await sendAppChannelMessage({
-        messageChannelId,
-        messageThreadId,
-        text: pendingMessage.text,
-        idempotencyKey: pendingMessage.id,
+      await onSendMessage(pendingMessage);
+    } catch (error) {
+      updatePendingMessage(pendingMessage.id, {
+        status: 'failed',
+        errorMessage:
+          error instanceof Error
+            ? getErrorMessageFromApolloError(error)
+            : undefined,
       });
-    } catch {
-      setPendingMessageStatus(pendingMessage.id, 'failed');
 
       return;
     }
@@ -132,19 +156,18 @@ export const ChatThreadComposer = ({
       return;
     }
 
-    setPendingMessageStatus(pendingMessage.id, 'sent');
+    updatePendingMessage(pendingMessage.id, { status: 'sent' });
   };
 
   const handleSubmit = () => {
-    const text = draft.trim();
-
-    if (!isNonEmptyString(text) || isDisconnected) {
+    if (!canSend) {
       return;
     }
 
     const pendingMessage: PendingChatMessage = {
       id: v4(),
       text,
+      files,
       status: 'sending',
     };
 
@@ -153,6 +176,7 @@ export const ChatThreadComposer = ({
       pendingMessage,
     ]);
     setDraft('');
+    setFiles([]);
     send(pendingMessage);
   };
 
@@ -161,6 +185,13 @@ export const ChatThreadComposer = ({
       event.preventDefault();
       handleSubmit();
     }
+  };
+
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(event.target.files ?? []);
+
+    setFiles((currentFiles) => [...currentFiles, ...selectedFiles]);
+    event.target.value = '';
   };
 
   const getPlaceholder = () => {
@@ -181,13 +212,14 @@ export const ChatThreadComposer = ({
             <ChatThreadPendingMessage
               key={pendingMessage.id}
               pendingMessage={pendingMessage}
+              isRetryDisabled={isSendDisabled || isDisconnected}
               onRetry={send}
-              onDiscard={({ id }) => setPendingMessageStatus(id, null)}
+              onDiscard={({ id }) => discardPendingMessage(id)}
             />
           ))}
         </StyledPendingMessages>
       )}
-      <StyledInputBox>
+      <StyledChatComposerBox>
         <StyledTextarea
           aria-label={t`Message`}
           placeholder={getPlaceholder()}
@@ -198,20 +230,55 @@ export const ChatThreadComposer = ({
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
         />
-        <StyledFooter>
+        {isNonEmptyArray(files) && (
+          <StyledFiles>
+            {files.map((file, index) => (
+              <AgentChatFilePreview
+                key={`${index}-${file.name}`}
+                file={file}
+                onRemove={() =>
+                  setFiles((currentFiles) =>
+                    currentFiles.filter((currentFile) => currentFile !== file),
+                  )
+                }
+              />
+            ))}
+          </StyledFiles>
+        )}
+        <StyledActions>
+          <StyledLeftActions>
+            {canAttachFiles && (
+              <>
+                <StyledFileInput
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  onChange={handleFileInputChange}
+                />
+                <LightIconButton
+                  aria-label={t`Attach files`}
+                  disabled={isDisconnected}
+                  emphasis="subtle"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <IconPlus />
+                </LightIconButton>
+              </>
+            )}
+          </StyledLeftActions>
           <IconButton
             variant="solid"
             color="accent"
             shape="round"
             size="sm"
             aria-label={t`Send`}
-            disabled={isDisconnected || !isNonEmptyString(draft.trim())}
+            disabled={!canSend}
             onClick={handleSubmit}
           >
             <IconArrowUp />
           </IconButton>
-        </StyledFooter>
-      </StyledInputBox>
+        </StyledActions>
+      </StyledChatComposerBox>
     </StyledContainer>
   );
 };
