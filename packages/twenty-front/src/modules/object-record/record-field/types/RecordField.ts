@@ -1,3 +1,4 @@
+import { type ViewFieldSettings } from 'twenty-shared/types';
 import { type AggregateOperations } from '~/generated-metadata/graphql';
 
 export type RecordField = {
@@ -7,4 +8,5 @@ export type RecordField = {
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
+  settings?: ViewFieldSettings | null;
 };

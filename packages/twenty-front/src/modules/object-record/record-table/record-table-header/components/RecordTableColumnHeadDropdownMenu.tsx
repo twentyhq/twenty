@@ -8,12 +8,17 @@ import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/us
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
+import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowsSort,
+  IconEdit,
   IconEyeOff,
   IconFilter,
 } from 'twenty-ui/icon';
@@ -101,8 +106,24 @@ export const RecordTableColumnHeadDropdownMenu = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
+  const isColumnSettingsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED,
+  );
+  const { canPersistChanges } = useCanPersistViewChanges();
+  const canEditColumn = isColumnSettingsEnabled && canPersistChanges;
+
+  const { openEditColumnInSidePanel } = useOpenEditColumnInSidePanel();
+
+  const handleEditColumnClick = () => {
+    openEditColumnInSidePanel({
+      recordTableId,
+      fieldMetadataItemId: recordField.fieldMetadataItemId,
+    });
+  };
+
   const showSeparator =
-    (isFilterable || isSortable) && isLabelIdentifier !== true;
+    (isFilterable || isSortable) &&
+    (isLabelIdentifier !== true || canEditColumn);
   const canHide = isLabelIdentifier !== true;
 
   return (
@@ -120,6 +141,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
         >{t`Sort`}</Dropdown.ActionItem>
       )}
       {showSeparator && <Dropdown.Separator />}
+      {canEditColumn && (
+        <Dropdown.ActionItem
+          startIcon={<IconEdit />}
+          onClick={handleEditColumnClick}
+        >{t`Edit column`}</Dropdown.ActionItem>
+      )}
       {canMoveLeft && (
         <Dropdown.ActionItem
           startIcon={<IconArrowLeft />}

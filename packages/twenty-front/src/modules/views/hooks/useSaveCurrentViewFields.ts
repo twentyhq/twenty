@@ -1,3 +1,4 @@
+import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -63,6 +64,9 @@ export const useSaveCurrentViewFields = () => {
               isVisible: viewFieldToCreateOrUpdate.isVisible,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
+              settings: getViewFieldSettingsInput(
+                viewFieldToCreateOrUpdate.settings,
+              ),
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(
@@ -88,12 +92,14 @@ export const useSaveCurrentViewFields = () => {
                   size: existingField.size,
                   isVisible: existingField.isVisible,
                   aggregateOperation: existingField.aggregateOperation,
+                  settings: getViewFieldSettingsInput(existingField.settings),
                 },
                 {
                   position: createViewFieldInput.position,
                   size: createViewFieldInput.size,
                   isVisible: createViewFieldInput.isVisible,
                   aggregateOperation: createViewFieldInput.aggregateOperation,
+                  settings: createViewFieldInput.settings,
                 },
               )
             ) {
@@ -116,6 +122,7 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
+                      settings: createViewFieldInput.settings,
                     },
                   },
                 },

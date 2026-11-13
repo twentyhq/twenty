@@ -88,4 +88,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`HTTP requests in the logic function runtime`,
     description: msg`Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda.`,
   },
+  [FeatureFlagKey.IS_COLUMN_SETTINGS_ENABLED]: {
+    label: msg`Column settings`,
+    description: msg`Add an Edit column action to table column headers, to rename a column for one view. Enable after the instance upgrade completes.`,
+  },
 };

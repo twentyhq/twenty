@@ -10,6 +10,10 @@ export const VIEW_FIELD_FRAGMENT = gql`
     size
     aggregateOperation
     viewFieldGroupId
+    settings {
+      label
+      recordLimit
+    }
     isActive
     createdAt
     updatedAt
