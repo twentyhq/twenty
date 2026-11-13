@@ -1,10 +1,10 @@
-import { isAgentChatThreadInFilterStatus } from 'twenty-shared/ai';
+import { isAgentChatThreadInPresetFilter } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { filterAgentChatThreadsWithinLoadedPages } from '@/ai/utils/filterAgentChatThreadsWithinLoadedPages';
@@ -19,7 +19,7 @@ export const agentChatThreadListThreadsFamilySelector =
     get:
       (source) =>
       ({ get }) => {
-        const recentThreads = get(agentChatThreadsSelector);
+        const recentThreads = get(agentChatRecentThreadsSelector);
 
         if (source.type === 'recent') {
           return recentThreads.filter(
@@ -63,10 +63,10 @@ export const agentChatThreadListThreadsFamilySelector =
 
           return (
             !isDefined(thread.deletedAt) &&
-            isAgentChatThreadInFilterStatus({
+            isAgentChatThreadInPresetFilter({
               thread,
               inboxStatus,
-              filterStatus: source.presetFilter,
+              presetFilter: source.presetFilter,
             })
           );
         });

@@ -1,7 +1,7 @@
 import { createStore } from 'jotai';
 import {
-  AGENT_CHAT_THREAD_FILTER_STATUS,
-  type AgentChatThreadFilterStatus,
+  AGENT_CHAT_THREAD_PRESET_FILTER,
+  type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
@@ -163,7 +163,7 @@ const THREADS: {
   },
 ];
 
-const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
+const getVisibleThreadIds = (presetFilter: AgentChatThreadPresetFilter) => {
   const store = createStore();
 
   setAgentChatThreadList(
@@ -193,7 +193,7 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
     .get(
       agentChatThreadListThreadsFamilySelector.selectorFamily({
         type: 'presetFilter',
-        presetFilter: filterStatus,
+        presetFilter,
       }),
     )
     .map(({ id }) => id);
@@ -202,7 +202,7 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
 describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
   it.each([
     [
-      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+      AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
       [
         'read',
         'archived-then-active',
@@ -213,14 +213,14 @@ describe('agentChatThreadListThreadsFamilySelector for a preset filter', () => {
         'mentioned',
       ],
     ],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT, ['needs-input']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS, ['mentioned']],
-    [AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED, ['snoozed']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT, ['needs-input']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS, ['mentioned']],
+    [AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED, ['snoozed']],
     [
-      AGENT_CHAT_THREAD_FILTER_STATUS.DONE,
+      AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
       ['archived', 'done-needs-input', 'unsubscribed-then-active'],
     ],
-  ])('lists the %s threads', (filterStatus, expectedThreadIds) => {
-    expect(getVisibleThreadIds(filterStatus)).toEqual(expectedThreadIds);
+  ])('lists the %s threads', (presetFilter, expectedThreadIds) => {
+    expect(getVisibleThreadIds(presetFilter)).toEqual(expectedThreadIds);
   });
 });

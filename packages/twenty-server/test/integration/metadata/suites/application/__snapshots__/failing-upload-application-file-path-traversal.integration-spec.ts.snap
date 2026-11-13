@@ -105,14 +105,14 @@ exports[`Upload application file should fail when filePath has an invalid extens
 }
 `;
 
-exports[`Upload application file should fail when filePath has an invalid extension for Source (.js instead of .ts) 1`] = `
+exports[`Upload application file should fail when filePath has an invalid extension for Source (.sh) 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Invalid file extension. Allowed extensions: .ts, .tsx, .json",
+  "message": "Invalid file extension. Allowed extensions: .ts, .tsx, .js, .jsx, .mjs, .cjs, .mts, .cts, .json, .css, .png, .jpg, .jpeg, .gif, .svg, .webp, .avif, .ico, .woff, .woff2, .ttf, .eot, .otf",
   "name": "UserInputError",
 }
 `;

@@ -7251,6 +7251,9 @@ export default {
                         4,
                         "String!"
                     ],
+                    "resource": [
+                        4
+                    ],
                     "scope": [
                         4
                     ],
@@ -11121,6 +11124,12 @@ export default {
             "id": [
                 557
             ],
+            "isClaimingVerifiedClientName": [
+                1
+            ],
+            "isVerified": [
+                1
+            ],
             "logoUrl": [
                 4
             ],
@@ -11572,6 +11581,9 @@ export default {
                 62,
                 {
                     "shouldIncludeDependencies": [
+                        1
+                    ],
+                    "shouldIncludePublicAssets": [
                         1
                     ],
                     "shouldIncludeSourceFiles": [
