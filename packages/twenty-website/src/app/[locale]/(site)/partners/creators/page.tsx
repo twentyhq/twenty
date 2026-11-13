@@ -19,7 +19,7 @@ import {
 import { AffiliateAudiences } from '@/sections/affiliate-program';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { PartnerHero } from '@/sections/partner-hero';
+import { CREATORS_HERO_IMAGE_URL, PartnerHero } from '@/sections/partner-hero';
 import {
   CREATOR_STEPS,
   ProgramExplainer,
@@ -58,6 +58,7 @@ export default async function CreatorProgramPage({
       <Menu communityStats={communityStats} />
       <main>
         <PartnerHero
+          visualImageUrl={CREATORS_HERO_IMAGE_URL}
           heading={msg`Become a\n*Twenty creator*`}
           body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
           actions={
