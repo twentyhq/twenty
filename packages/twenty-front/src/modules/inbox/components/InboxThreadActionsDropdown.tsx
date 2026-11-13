@@ -24,7 +24,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
 
-type AiChatThreadActionsDropdownProps = {
+type InboxThreadActionsDropdownProps = {
   thread: {
     id: string;
     title?: string | null;
@@ -39,14 +39,14 @@ type AiChatThreadActionsDropdownProps = {
   shouldShowMore?: boolean;
 };
 
-export const AiChatThreadActionsDropdown = ({
+export const InboxThreadActionsDropdown = ({
   thread,
   instanceId,
   onRenameRequested,
   onDetach,
   shouldShowTriageActions = false,
   shouldShowMore = true,
-}: AiChatThreadActionsDropdownProps) => {
+}: InboxThreadActionsDropdownProps) => {
   const { t } = useLingui();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
   const { targetAiChatThreadsInContextStore } =

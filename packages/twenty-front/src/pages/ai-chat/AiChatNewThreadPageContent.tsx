@@ -1,3 +1,4 @@
+import { InboxNewThreadListToggle } from '@/inbox/components/InboxNewThreadListToggle';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
@@ -27,7 +28,12 @@ export const AiChatNewThreadPageContent = ({
   showInformationBanner = true,
 }: AiChatNewThreadPageContentProps) => (
   <PageCardLayout
-    header={<AiChatPageHeader actionButton={headerActions} />}
+    header={
+      <AiChatPageHeader
+        icon={<InboxNewThreadListToggle />}
+        actionButton={headerActions}
+      />
+    }
     showInformationBanner={showInformationBanner}
   >
     <StyledChatContainer>

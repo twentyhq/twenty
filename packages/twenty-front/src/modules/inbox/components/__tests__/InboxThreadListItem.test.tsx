@@ -27,8 +27,8 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
-  AiChatThreadActionsDropdown: () => null,
+jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
+  InboxThreadActionsDropdown: () => null,
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadRename', () => ({
