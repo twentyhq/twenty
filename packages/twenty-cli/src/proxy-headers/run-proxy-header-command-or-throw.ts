@@ -1,6 +1,7 @@
 import { isNumber } from '@sniptt/guards';
 import execa from 'execa';
 import { onExit } from 'signal-exit';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CliError } from '@/output/cli-error';
 import { createCancelledError } from '@/output/create-cancelled-error';
@@ -33,19 +34,23 @@ const signalProcessTree = ({
   }
 };
 
-const STOP_GRACE_PERIOD_MILLISECONDS = 1000;
+const isProcessTreeRunning = (subprocess: execa.ExecaChildProcess) => {
+  const processId = subprocess.pid;
 
-const stopProcessTree = (subprocess: execa.ExecaChildProcess) => {
-  signalProcessTree({ subprocess, signalName: 'SIGTERM' });
+  if (IS_WINDOWS || !isNumber(processId)) {
+    return subprocess.exitCode === null && subprocess.signalCode === null;
+  }
 
-  setTimeout(() => {
-    signalProcessTree({ subprocess, signalName: 'SIGKILL' });
+  try {
+    process.kill(-processId, 0);
 
-    // A process that left the group may still hold the pipes open.
-    subprocess.stdout?.destroy();
-    subprocess.stderr?.destroy();
-  }, STOP_GRACE_PERIOD_MILLISECONDS).unref();
+    return true;
+  } catch {
+    return false;
+  }
 };
+
+const STOP_GRACE_PERIOD_MILLISECONDS = 1000;
 
 const describeFailure = ({
   isTimedOut,
@@ -86,9 +91,25 @@ export const runProxyHeaderCommandOrThrow = async ({
   const removeExitHook = onExit(() =>
     signalProcessTree({ subprocess, signalName: 'SIGKILL' }),
   );
+  let forceStopTimer: NodeJS.Timeout | undefined;
   let isTimedOut = false;
-  const stop = () => stopProcessTree(subprocess);
-  const timer = setTimeout(() => {
+  let isSucceeded = false;
+  const stop = () => {
+    if (isDefined(forceStopTimer)) {
+      return;
+    }
+
+    signalProcessTree({ subprocess, signalName: 'SIGTERM' });
+    // Kept referenced so the CLI cannot exit before stopping what ignored SIGTERM.
+    forceStopTimer = setTimeout(() => {
+      signalProcessTree({ subprocess, signalName: 'SIGKILL' });
+      // A process that left the group may still hold the pipes open.
+      subprocess.stdout?.destroy();
+      subprocess.stderr?.destroy();
+      removeExitHook();
+    }, STOP_GRACE_PERIOD_MILLISECONDS);
+  };
+  const timeoutTimer = setTimeout(() => {
     isTimedOut = true;
     stop();
   }, PROXY_HEADER_COMMAND.TIMEOUT_MILLISECONDS);
@@ -124,13 +145,26 @@ export const runProxyHeaderCommandOrThrow = async ({
       });
     }
 
-    return parseProxyHeaderLinesOrThrow({
+    const headers = parseProxyHeaderLinesOrThrow({
       lines: (result.stdout ?? '').split(/\r?\n/),
       sourceName: SOURCE_NAME,
     });
+
+    isSucceeded = true;
+
+    return headers;
   } finally {
-    removeExitHook();
-    clearTimeout(timer);
+    clearTimeout(timeoutTimer);
     signal.removeEventListener('abort', stop);
+
+    // A failed run can leave processes behind, for example past the output limit.
+    if (!isSucceeded) {
+      stop();
+    }
+
+    if (!isDefined(forceStopTimer) || !isProcessTreeRunning(subprocess)) {
+      clearTimeout(forceStopTimer);
+      removeExitHook();
+    }
   }
 };

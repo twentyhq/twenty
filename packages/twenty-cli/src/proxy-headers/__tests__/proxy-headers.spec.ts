@@ -34,6 +34,25 @@ const PACKAGE_PATH = resolve(__dirname, '../../..');
 
 const TSX_PATH = resolve(PACKAGE_PATH, '../../node_modules/.bin/tsx');
 
+const startCliProcess = ({
+  script,
+  args,
+}: {
+  script: string;
+  args: string[];
+}) =>
+  execa(
+    TSX_PATH,
+    [
+      '-e',
+      `import { existsSync, readFileSync } from 'node:fs';
+import { runProxyHeaderCommandOrThrow } from './src/proxy-headers/run-proxy-header-command-or-throw.ts';
+${script}`,
+      ...args,
+    ],
+    { cwd: PACKAGE_PATH, reject: false },
+  );
+
 const PROXY_SIGN_IN_URL =
   'https://team.cloudflareaccess.com/cdn-cgi/access/login/twenty.example.com';
 
@@ -252,15 +271,13 @@ describe('proxy headers', () => {
     expect(server.requests).toEqual([]);
   });
 
-  it('never quotes malformed command output in errors', async () => {
+  it.each([
+    "console.log('Token leaked-secret: expired');",
+    "console.log('leaked-secret: invalid\\u0001value');",
+  ])('never quotes malformed command output in errors: %s', async (script) => {
     vi.stubEnv('TWENTY_API_URL', server.url);
     vi.stubEnv('TWENTY_API_KEY', API_KEY);
-    vi.stubEnv(
-      'TWENTY_PROXY_HEADER_COMMAND',
-      createNodeCommand({
-        script: "console.log('Token leaked-secret: expired');",
-      }),
-    );
+    vi.stubEnv('TWENTY_PROXY_HEADER_COMMAND', createNodeCommand({ script }));
 
     const { stdout, envelope } = await readWorkspace();
 
@@ -556,16 +573,12 @@ describe('proxy headers', () => {
     'stops processes started by the header command when the CLI is terminated',
     async () => {
       const pidPath = join(home, 'orphan-pid');
-      const cli = execa(
-        TSX_PATH,
-        [
-          '-e',
-          `import { runProxyHeaderCommandOrThrow } from './src/proxy-headers/run-proxy-header-command-or-throw.ts';
-runProxyHeaderCommandOrThrow({ command: process.argv[1], signal: new AbortController().signal });`,
+      const cli = startCliProcess({
+        script: `runProxyHeaderCommandOrThrow({ command: process.argv[1], signal: new AbortController().signal });`,
+        args: [
           `echo "cf-access-token: $(sh -c 'echo $$ > ${pidPath}; exec sleep 30')"`,
         ],
-        { cwd: PACKAGE_PATH, reject: false },
-      );
+      });
 
       await vi.waitFor(
         async () => {
@@ -590,6 +603,69 @@ runProxyHeaderCommandOrThrow({ command: process.argv[1], signal: new AbortContro
       }
     },
     15_000,
+  );
+
+  it.skipIf(process.platform === 'win32')(
+    'force-stops what ignores SIGTERM before a cancelled CLI exits',
+    async () => {
+      const pidPath = join(home, 'stubborn-pid');
+      const cli = startCliProcess({
+        script: `const [command, pidPath] = process.argv.slice(1);
+const controller = new AbortController();
+runProxyHeaderCommandOrThrow({ command, signal: controller.signal }).catch(() => undefined);
+const poll = setInterval(() => {
+  if (existsSync(pidPath) && readFileSync(pidPath, 'utf8').trim() !== '') {
+    clearInterval(poll);
+    controller.abort();
+  }
+}, 20);`,
+        args: [
+          `sh -c 'trap "" TERM; echo $$ > ${pidPath}; exec sleep 30' >/dev/null 2>&1 & wait`,
+          pidPath,
+        ],
+      });
+
+      await cli;
+
+      const stubbornPid = Number((await readFile(pidPath, 'utf8')).trim());
+
+      try {
+        expect(await isProcessRunning(stubbornPid)).toBe(false);
+      } finally {
+        if (await isProcessRunning(stubbornPid)) {
+          process.kill(stubbornPid, 'SIGKILL');
+        }
+      }
+    },
+    15_000,
+  );
+
+  it.skipIf(process.platform === 'win32')(
+    'stops a header command that exceeds the output limit',
+    async () => {
+      const pidPath = join(home, 'verbose-pid');
+      const run = runProxyHeaderCommandOrThrow({
+        command: `echo $$ > ${pidPath}; head -c 70000 /dev/zero | tr '\\0' x; exec sleep 30`,
+        signal: new AbortController().signal,
+      });
+
+      await expect(run).rejects.toMatchObject({ code: 'PROXY_HEADERS_FAILED' });
+
+      const verbosePid = Number((await readFile(pidPath, 'utf8')).trim());
+
+      try {
+        await vi.waitFor(
+          async () => {
+            expect(await isProcessRunning(verbosePid)).toBe(false);
+          },
+          { timeout: 5_000 },
+        );
+      } finally {
+        if (await isProcessRunning(verbosePid)) {
+          process.kill(verbosePid, 'SIGKILL');
+        }
+      }
+    },
   );
 
   it('keeps proxy settings out of app worker environments', () => {

@@ -34,7 +34,7 @@ export const validateProxyHeaderOrThrow = ({
   const normalizedValue = value.trim();
 
   if (!HEADER_NAME_PATTERN.test(normalizedName)) {
-    // The rejected text may come from command output, so it is never quoted.
+    // Names may come from command output, so a rejected one is never quoted.
     throw createInvalidHeaderError({
       sourceName,
       reason:
@@ -52,7 +52,8 @@ export const validateProxyHeaderOrThrow = ({
   if (INVALID_HEADER_VALUE_PATTERN.test(normalizedValue)) {
     throw createInvalidHeaderError({
       sourceName,
-      reason: `the value of ${normalizedName} contains a line break or a character HTTP headers cannot carry, such as a smart quote.`,
+      reason:
+        'a header value contains a line break or a character HTTP headers cannot carry, such as a smart quote.',
     });
   }
 
