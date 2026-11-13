@@ -68,32 +68,57 @@ export const computeFieldMetadataOptionEnumChanges = ({
     }
   }
 
-  const getOptionRowsOfField = ({
-    optionRowByUniversalIdentifier,
-    fieldMetadataUniversalIdentifier,
-  }: {
-    optionRowByUniversalIdentifier: Partial<Record<string, OptionRow>>;
-    fieldMetadataUniversalIdentifier: string;
-  }) =>
-    Object.values(optionRowByUniversalIdentifier).filter(
-      (optionRow): optionRow is OptionRow =>
-        optionRow?.fieldMetadataUniversalIdentifier ===
-        fieldMetadataUniversalIdentifier,
-    );
+  const groupTouchedFieldOptionRows = (
+    optionRowByUniversalIdentifier: Partial<Record<string, OptionRow>>,
+  ) => {
+    const optionRowsByFieldMetadataUniversalIdentifier = new Map<
+      string,
+      OptionRow[]
+    >();
+
+    for (const optionRow of Object.values(optionRowByUniversalIdentifier)) {
+      if (
+        !isDefined(optionRow) ||
+        !touchedFieldMetadataUniversalIdentifiers.has(
+          optionRow.fieldMetadataUniversalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
+      const optionRowsOfField =
+        optionRowsByFieldMetadataUniversalIdentifier.get(
+          optionRow.fieldMetadataUniversalIdentifier,
+        ) ?? [];
+
+      optionRowsOfField.push(optionRow);
+      optionRowsByFieldMetadataUniversalIdentifier.set(
+        optionRow.fieldMetadataUniversalIdentifier,
+        optionRowsOfField,
+      );
+    }
+
+    return optionRowsByFieldMetadataUniversalIdentifier;
+  };
+
+  const fromOptionRowsByFieldMetadataUniversalIdentifier =
+    groupTouchedFieldOptionRows(fromOptionRowByUniversalIdentifier);
+  const toOptionRowsByFieldMetadataUniversalIdentifier =
+    groupTouchedFieldOptionRows(toOptionRowByUniversalIdentifier);
 
   return new Map(
     [...touchedFieldMetadataUniversalIdentifiers].map(
       (fieldMetadataUniversalIdentifier) => [
         fieldMetadataUniversalIdentifier,
         {
-          fromOptionRows: getOptionRowsOfField({
-            optionRowByUniversalIdentifier: fromOptionRowByUniversalIdentifier,
-            fieldMetadataUniversalIdentifier,
-          }),
-          toOptionRows: getOptionRowsOfField({
-            optionRowByUniversalIdentifier: toOptionRowByUniversalIdentifier,
-            fieldMetadataUniversalIdentifier,
-          }),
+          fromOptionRows:
+            fromOptionRowsByFieldMetadataUniversalIdentifier.get(
+              fieldMetadataUniversalIdentifier,
+            ) ?? [],
+          toOptionRows:
+            toOptionRowsByFieldMetadataUniversalIdentifier.get(
+              fieldMetadataUniversalIdentifier,
+            ) ?? [],
           hasFieldAction: fieldMetadataUniversalIdentifiersWithFieldAction.has(
             fieldMetadataUniversalIdentifier,
           ),

@@ -5,18 +5,22 @@ const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const OPEN_OPTION_ID = '20202020-0000-4000-8000-000000000101';
 const CLOSED_OPTION_ID = '20202020-0000-4000-8000-000000000102';
 const PAUSED_OPTION_ID = '20202020-0000-4000-8000-000000000103';
+const OTHER_FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000002';
+const OTHER_FIELD_OPTION_ID = '20202020-0000-4000-8000-000000000201';
 
 const buildOptionRow = ({
   universalIdentifier,
   value,
   position,
+  fieldMetadataUniversalIdentifier = FIELD_UNIVERSAL_IDENTIFIER,
 }: {
   universalIdentifier: string;
   value: string;
   position: number;
+  fieldMetadataUniversalIdentifier?: string;
 }) => ({
   universalIdentifier,
-  fieldMetadataUniversalIdentifier: FIELD_UNIVERSAL_IDENTIFIER,
+  fieldMetadataUniversalIdentifier,
   value,
   label: value,
   color: null,
@@ -109,5 +113,33 @@ describe('computeFieldMetadataOptionEnumChanges', () => {
       true,
     );
     expect(enumChanges.has(OPEN_OPTION_ID)).toBe(false);
+  });
+
+  it('keeps the rows of other fields out of a field change', () => {
+    const enumChanges = computeFieldMetadataOptionEnumChanges({
+      actions: optionActions,
+      flatFieldMetadataOptionMaps: {
+        byUniversalIdentifier: {
+          ...flatFieldMetadataOptionMaps.byUniversalIdentifier,
+          [OTHER_FIELD_OPTION_ID]: buildOptionRow({
+            universalIdentifier: OTHER_FIELD_OPTION_ID,
+            value: 'OTHER',
+            position: 0,
+            fieldMetadataUniversalIdentifier: OTHER_FIELD_UNIVERSAL_IDENTIFIER,
+          }),
+        },
+      },
+    });
+    const enumChange = enumChanges.get(FIELD_UNIVERSAL_IDENTIFIER);
+
+    expect(toValues(enumChange?.fromOptionRows ?? [])).toEqual([
+      'OPEN',
+      'CLOSED',
+    ]);
+    expect(toValues(enumChange?.toOptionRows ?? [])).toEqual([
+      'OPENED',
+      'PAUSED',
+    ]);
+    expect(enumChanges.has(OTHER_FIELD_UNIVERSAL_IDENTIFIER)).toBe(false);
   });
 });
