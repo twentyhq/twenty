@@ -108,6 +108,10 @@ export function validatePartnerApplicationStep(
     errors.twentyExperienceNotes = 'too_short';
   }
 
+  if (stepId === 'commercials' && !state.acceptsTerms) {
+    errors.acceptsTerms = 'terms_required';
+  }
+
   for (const check of STEP_FORMAT_CHECKS[stepId] ?? []) {
     const value = state[check.field];
     if (value && !check.schema.safeParse(value).success) {

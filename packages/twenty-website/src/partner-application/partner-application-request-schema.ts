@@ -42,6 +42,9 @@ export const partnerApplicationRequestSchema = z.strictObject({
     }),
   twentyExperienceProofLink: httpUrlFieldSchema,
   hourlyRate: z.number({ error: 'Hourly rate is required.' }).nonnegative(),
+  acceptsTerms: z
+    .boolean()
+    .refine((value) => value, { error: 'The program terms must be accepted.' }),
   projectBudgetMin: z
     .number({ error: 'Minimum project budget is required.' })
     .nonnegative(),

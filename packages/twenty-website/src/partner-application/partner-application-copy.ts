@@ -19,6 +19,7 @@ export const PARTNER_APPLICATION_COPY = {
     invalidEmail: msg`Enter a valid email address.`,
     invalidUrl: msg`Enter a valid URL (starting with http:// or https://).`,
     invalidAmount: msg`Enter a valid amount using numbers only.`,
+    termsRequired: msg`Please agree to the Partner Program Terms.`,
     notesTooShort: msg`Please write at least ${TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation.`,
     submitFailed: msg`We could not submit your application. Please try again in a moment.`,
   },

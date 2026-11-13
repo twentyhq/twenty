@@ -1,6 +1,6 @@
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 
-// Change only together with the "Twenty Affiliate Program Terms" doc.
+// Change only together with the "Twenty Partner Program Terms" doc.
 export function AffiliateProgramTermsDocument() {
   return (
     <>
@@ -257,12 +257,13 @@ export function AffiliateProgramTermsDocument() {
       <ul>
         <li>
           Say clearly that you earn a commission when you share your link or
-          code (for example &ldquo;affiliate link&rdquo; or &ldquo;#ad&rdquo;),
-          as required by the FTC and similar rules in other countries.
+          code (for example &ldquo;#ad&rdquo; or &ldquo;I earn a commission if
+          you sign up&rdquo;), as required by the FTC and similar rules in other
+          countries.
         </li>
         <li>
           Describe Twenty accurately: no invented features, prices, discounts or
-          claims of partnership beyond being an affiliate.
+          claims of a closer relationship with Twenty than the Partner Program.
         </li>
         <li>
           Follow the rules of the platforms you post on, and anti-spam laws when
