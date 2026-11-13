@@ -7,7 +7,7 @@ import { GRADIENT, HERO_COMPOSITION, mediaUp, spacing } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { BrowseDirectoryButton } from './BrowseDirectoryButton';
-import { MARKETPLACE_HERO_IMAGE_URL } from './partner-visual-config';
+import { MARKETPLACE_HERO_IMAGE_URL } from './marketplace-hero-image-url';
 import { PartnerVisual } from './PartnerVisual';
 
 const GradientBackdrop = styled.div`

@@ -17,7 +17,7 @@ import {
 } from '@/tokens';
 import { Body, Eyebrow, Heading, SectionShell } from '@/ui';
 
-import { type ProgramStep } from './program-steps.data';
+import { type ProgramStep } from './program-step.type';
 
 // Same recipe as partner-lead/PartnerServicesExplainer, so program pages read
 // like /partners; sections may not import each other.
@@ -50,7 +50,6 @@ const ExplainerStack = styled.ol`
   flex-direction: column;
   gap: ${spacing(3)};
   list-style: none;
-  margin: 0;
   padding: 0;
 `;
 

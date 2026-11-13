@@ -6,11 +6,6 @@ import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/Halfton
 // under the cursor. The image is contained at previewDistance 3.2, and the
 // hover radii grow from the authored 6.1 framing as the image fills the frame.
 // Program pages swap the photo and keep the same halftone and blue hover.
-export const CREATORS_HERO_IMAGE_URL =
-  '/images/partners/hero/creators-hero.webp';
-export const MARKETPLACE_HERO_IMAGE_URL =
-  '/images/partners/hero/marketplace-hero.webp';
-
 export const PARTNER_HERO_VISUAL: Pick<
   HalftoneImageBackdropProps,
   'imageUrl' | 'settings'

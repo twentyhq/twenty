@@ -72,7 +72,10 @@ export function PartnerBecomeStrip() {
             {i18n._(msg`Learn more about the integrator program`)}
           </LearnMoreLink>
         </BecomeCopy>
-        <BecomePartnerButton label={msg`Apply as an integrator`} variant="outlined" />
+        <BecomePartnerButton
+          label={msg`Apply as an integrator`}
+          variant="outlined"
+        />
       </BecomeRow>
     </SectionShell>
   );
