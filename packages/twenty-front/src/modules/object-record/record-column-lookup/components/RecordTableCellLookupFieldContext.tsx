@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordTableCellLookupRelatedRecordEffect } from '@/object-record/record-column-lookup/components/RecordTableCellLookupRelatedRecordEffect';
@@ -8,6 +9,9 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
@@ -50,6 +54,14 @@ export const RecordTableCellLookupFieldContext = ({
     objectMetadataItems,
   });
 
+  const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
+    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? '',
+  });
+
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
+
   const lookupTargetFieldMetadataItem = relationObjectMetadataItem?.fields.find(
     (field) => field.id === recordField.relationTargetFieldMetadataId,
   );
@@ -69,21 +81,36 @@ export const RecordTableCellLookupFieldContext = ({
     operationType: 'read',
   });
 
+  const fieldDefinition = formatFieldMetadataItemAsFieldDefinition({
+    field: lookupTargetFieldMetadataItem,
+    objectMetadataItem: relationObjectMetadataItem,
+  });
+
+  const isLookupTargetRestricted = restrictedFieldNames.includes(
+    lookupTargetFieldMetadataItem.name,
+  );
+
   return (
     <FieldContext.Provider
       value={{
         fieldMetadataItemId: lookupTargetFieldMetadataItem.id,
         recordId: relatedRecordId,
-        fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-          field: lookupTargetFieldMetadataItem,
-          objectMetadataItem: relationObjectMetadataItem,
-        }),
+        fieldDefinition,
+        useUpdateRecord: useUpdateOneObjectRecordMutation,
         isLabelIdentifier: false,
         displayedMaxRows: 1,
-        isRecordFieldReadOnly: true,
-        isForbidden:
-          !canReadRelatedRecord ||
-          restrictedFieldNames.includes(lookupTargetFieldMetadataItem.name),
+        isRecordFieldReadOnly:
+          !isDefined(relatedRecord) ||
+          isRecordTableCellsNonEditable ||
+          isLookupTargetRestricted ||
+          isRecordFieldReadOnly({
+            isRecordReadOnly: false,
+            objectMetadataId: relationObjectMetadataItem.id,
+            fieldMetadataItem: lookupTargetFieldMetadataItem,
+            fieldDefinition,
+            objectPermissionsByObjectMetadataId,
+          }),
+        isForbidden: !canReadRelatedRecord || isLookupTargetRestricted,
       }}
     >
       {isDefined(relatedRecord) && (
