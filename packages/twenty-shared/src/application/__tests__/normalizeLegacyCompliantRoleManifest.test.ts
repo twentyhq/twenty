@@ -185,4 +185,56 @@ describe('normalizeLegacyCompliantRoleManifest', () => {
       ],
     });
   });
+
+  it('should give a derived rule the default access of its object when the role declares none', () => {
+    const { recordsPermissions } = normalizeLegacyCompliantRoleManifest({
+      role: {
+        ...ROLE,
+        canUpdateAllObjectRecords: true,
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: 'message-predicate',
+            objectUniversalIdentifier: 'message',
+            fieldUniversalIdentifier: 'owner',
+            operand: RowLevelPermissionPredicateOperand.IS,
+          },
+          {
+            universalIdentifier: 'association-predicate',
+            objectUniversalIdentifier: 'association',
+            fieldUniversalIdentifier: 'owner',
+            operand: RowLevelPermissionPredicateOperand.IS,
+          },
+        ],
+      },
+      applicationUniversalIdentifier: APPLICATION,
+      objectDefaultsByUniversalIdentifier: {
+        message: { isSystem: true },
+        association: {
+          isSystem: false,
+          disabledObjectPermissionActions: ['canUpdateObjectRecords'],
+        },
+      },
+    });
+
+    expect(
+      recordsPermissions.objects.map(
+        ({ objectUniversalIdentifier, rowLevelRecordsPermissions }) => ({
+          objectUniversalIdentifier,
+          canReadRecords: rowLevelRecordsPermissions?.[0]?.canReadRecords,
+          canUpdateRecords: rowLevelRecordsPermissions?.[0]?.canUpdateRecords,
+        }),
+      ),
+    ).toStrictEqual([
+      {
+        objectUniversalIdentifier: 'message',
+        canReadRecords: true,
+        canUpdateRecords: true,
+      },
+      {
+        objectUniversalIdentifier: 'association',
+        canReadRecords: false,
+        canUpdateRecords: false,
+      },
+    ]);
+  });
 });

@@ -128,6 +128,32 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
     ]);
   });
 
+  it('should keep the row of a declared field permission that restricts nothing', () => {
+    const { fieldPermissions } = convert({
+      recordsPermissions: {
+        objects: [
+          {
+            objectUniversalIdentifier: 'company',
+            fieldPermissionIdentifiers: [
+              {
+                fieldUniversalIdentifier: 'secret',
+                universalIdentifier: 'stored-field-permission',
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(fieldPermissions).toMatchObject([
+      {
+        universalIdentifier: 'stored-field-permission',
+        canReadFieldValue: null,
+        canUpdateFieldValue: null,
+      },
+    ]);
+  });
+
   it('should refuse field restrictions on a rule that has no predicate group to hold them', () => {
     expect(() =>
       convert({

@@ -1,3 +1,4 @@
+import { type DisableableObjectPermissionAction } from '@/application/objectPermissionActionType';
 import { getRowLevelPermissionRuleUniversalIdentifier } from '@/application/deterministic-identifier/get-row-level-permission-rule-universal-identifier.util';
 import {
   type AllRecordsPermissionsManifest,
@@ -97,12 +98,21 @@ const addFieldPermissionToObject = ({
 };
 
 // TODO(@charlesBochet): remove with the legacy role properties once applications declare the normalized shape
+export type LegacyRoleObjectDefaults = {
+  isSystem: boolean;
+  disabledObjectPermissionActions?: DisableableObjectPermissionAction[] | null;
+};
+
 export const normalizeLegacyCompliantRoleManifest = ({
   role,
   applicationUniversalIdentifier,
+  objectDefaultsByUniversalIdentifier = {},
 }: {
   role: LegacyCompliantRoleManifest;
   applicationUniversalIdentifier: string;
+  objectDefaultsByUniversalIdentifier?: Partial<
+    Record<string, LegacyRoleObjectDefaults>
+  >;
 }): RoleManifest => {
   const {
     canReadAllObjectRecords,
@@ -208,32 +218,54 @@ export const normalizeLegacyCompliantRoleManifest = ({
 
     if (!derivedRuleByUniversalIdentifier.has(universalIdentifier)) {
       const object = findOrCreateObject(objectUniversalIdentifier);
-      const canUpdateRecords =
-        object.canUpdateAllRecords ??
-        allRecordsPermissions.canUpdateAllRecords ??
-        false;
+      const objectDefaults =
+        objectDefaultsByUniversalIdentifier[objectUniversalIdentifier];
+      // Same default as the runtime gives an object permission that declares nothing
+      const resolveGrant = ({
+        declaredOnObject,
+        declaredOnAllObjects,
+        action,
+      }: {
+        declaredOnObject: boolean | undefined;
+        declaredOnAllObjects: boolean | undefined;
+        action: DisableableObjectPermissionAction;
+      }): boolean =>
+        declaredOnObject ??
+        (((objectDefaults?.isSystem ?? false) ||
+          (declaredOnAllObjects ?? false)) &&
+          !(objectDefaults?.disabledObjectPermissionActions ?? []).includes(
+            action,
+          ));
+      const canUpdateRecords = resolveGrant({
+        declaredOnObject: object.canUpdateAllRecords,
+        declaredOnAllObjects: allRecordsPermissions.canUpdateAllRecords,
+        action: 'canUpdateObjectRecords',
+      });
 
       derivedRuleByUniversalIdentifier.set(universalIdentifier, {
         universalIdentifier,
         objectUniversalIdentifier,
-        canReadRecords:
-          object.canReadAllRecords ??
-          allRecordsPermissions.canReadAllRecords ??
-          false,
+        canReadRecords: resolveGrant({
+          declaredOnObject: object.canReadAllRecords,
+          declaredOnAllObjects: allRecordsPermissions.canReadAllRecords,
+          action: 'canReadObjectRecords',
+        }),
         canCreateRecords:
           object.canCreateAllRecords ??
           object.canUpdateAllRecords ??
           allRecordsPermissions.canCreateAllRecords ??
           canUpdateRecords,
         canUpdateRecords,
-        canSoftDeleteRecords:
-          object.canSoftDeleteAllRecords ??
-          allRecordsPermissions.canSoftDeleteAllRecords ??
-          false,
-        canDestroyRecords:
-          object.canDestroyAllRecords ??
-          allRecordsPermissions.canDestroyAllRecords ??
-          false,
+        canSoftDeleteRecords: resolveGrant({
+          declaredOnObject: object.canSoftDeleteAllRecords,
+          declaredOnAllObjects: allRecordsPermissions.canSoftDeleteAllRecords,
+          action: 'canSoftDeleteObjectRecords',
+        }),
+        canDestroyRecords: resolveGrant({
+          declaredOnObject: object.canDestroyAllRecords,
+          declaredOnAllObjects: allRecordsPermissions.canDestroyAllRecords,
+          action: 'canDestroyObjectRecords',
+        }),
       });
     }
 

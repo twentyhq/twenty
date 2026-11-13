@@ -64,36 +64,43 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     rowLevelPermissionRuleUniversalIdentifier: string | null;
     rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
   }): UniversalFlatFieldPermission[] =>
-    [...new Set([...unreadableFields, ...uneditableFields])].map(
-      (fieldUniversalIdentifier) => ({
-        universalIdentifier:
-          fieldPermissionIdentifiers.find(
-            (fieldPermissionIdentifier) =>
-              fieldPermissionIdentifier.fieldUniversalIdentifier ===
-              fieldUniversalIdentifier,
-          )?.universalIdentifier ??
-          getFieldPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier,
+    // A declared field permission that restricts nothing still gets its row, so a stored restriction is lifted
+    [
+      ...new Set([
+        ...unreadableFields,
+        ...uneditableFields,
+        ...fieldPermissionIdentifiers.map(
+          ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
+        ),
+      ]),
+    ].map((fieldUniversalIdentifier) => ({
+      universalIdentifier:
+        fieldPermissionIdentifiers.find(
+          (fieldPermissionIdentifier) =>
+            fieldPermissionIdentifier.fieldUniversalIdentifier ===
             fieldUniversalIdentifier,
-            rowLevelPermissionPredicateGroupUniversalIdentifier,
-          }),
-        applicationUniversalIdentifier,
-        roleUniversalIdentifier,
-        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
-        fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
-        rowLevelPermissionPredicateGroupUniversalIdentifier,
-        rowLevelPermissionRuleUniversalIdentifier,
-        canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
-          ? false
-          : null,
-        canUpdateFieldValue: uneditableFields.includes(fieldUniversalIdentifier)
-          ? false
-          : null,
-        createdAt: now,
-        updatedAt: now,
-      }),
-    );
+        )?.universalIdentifier ??
+        getFieldPermissionUniversalIdentifier({
+          applicationUniversalIdentifier,
+          roleUniversalIdentifier,
+          fieldUniversalIdentifier,
+          rowLevelPermissionPredicateGroupUniversalIdentifier,
+        }),
+      applicationUniversalIdentifier,
+      roleUniversalIdentifier,
+      objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+      rowLevelPermissionPredicateGroupUniversalIdentifier,
+      rowLevelPermissionRuleUniversalIdentifier,
+      canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
+        ? false
+        : null,
+      canUpdateFieldValue: uneditableFields.includes(fieldUniversalIdentifier)
+        ? false
+        : null,
+      createdAt: now,
+      updatedAt: now,
+    }));
 
   const rules = objects.flatMap(
     ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>

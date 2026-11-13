@@ -363,6 +363,7 @@ export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontC
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
+export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';

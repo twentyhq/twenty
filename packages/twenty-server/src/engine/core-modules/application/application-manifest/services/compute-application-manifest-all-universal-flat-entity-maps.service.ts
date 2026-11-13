@@ -361,10 +361,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       });
     }
 
+    // Standard objects are not in the manifest, so the workspace ones come first
+    const objectDefaultsByUniversalIdentifier = {
+      ...existingAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
+      ...allUniversalFlatEntityMaps.flatObjectMetadataMaps
+        .byUniversalIdentifier,
+    };
+
     for (const role of manifest.roles) {
       const roleManifest = normalizeLegacyCompliantRoleManifest({
         role,
         applicationUniversalIdentifier,
+        objectDefaultsByUniversalIdentifier,
       });
       const universalFlatRole = fromRoleManifestToUniversalFlatRole({
         roleManifest,
