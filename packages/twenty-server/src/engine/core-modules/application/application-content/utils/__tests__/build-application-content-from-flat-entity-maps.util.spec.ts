@@ -94,6 +94,8 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   position: 0,
   aggregateOperation: null,
   settings: null,
+  relationTargetFieldMetadataId: null,
+  relationTargetFieldMetadataUniversalIdentifier: null,
   isActive: true,
   isSystemSideEffect: false,
   isCanonical: true,

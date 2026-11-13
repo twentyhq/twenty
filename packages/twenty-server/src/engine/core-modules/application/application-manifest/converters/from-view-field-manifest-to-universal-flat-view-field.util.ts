@@ -29,6 +29,8 @@ export const fromViewFieldManifestToUniversalFlatViewField = ({
     position: viewFieldManifest.position,
     aggregateOperation: viewFieldManifest.aggregateOperation ?? null,
     settings: viewFieldManifest.settings ?? null,
+    relationTargetFieldMetadataUniversalIdentifier:
+      viewFieldManifest.relationTargetFieldMetadataUniversalIdentifier ?? null,
     universalOverrides: null,
     createdAt: now,
     updatedAt: now,
