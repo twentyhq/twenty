@@ -319,7 +319,7 @@ Once your function returns, Twenty keeps the delivery for 24 hours under the mem
 
 ## Marking threads as read
 
-Twenty keeps no read state for app messages, but it can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
+Twenty can tell your provider when a member reads a conversation in Twenty so the provider marks it as read upstream. Declare a `markThreadAsReadLogicFunction` on the messaging provider:
 
 ```ts src/messaging-providers/linkedin-messaging.ts
 export default defineMessagingProvider({
