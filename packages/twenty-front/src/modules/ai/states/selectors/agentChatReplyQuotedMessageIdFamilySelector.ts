@@ -1,35 +1,35 @@
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { agentChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
-import { findAgentChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
-import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
+import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
+import { aiChatDisplayedThreadMessagesSelector } from '@/ai/states/selectors/agentChatDisplayedThreadMessagesSelector';
+import { findAiChatQuotedMessage } from '@/ai/utils/findAgentChatQuotedMessage';
+import { parseAiChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatReplyQuotedMessageIdFamilySelector =
+export const aiChatReplyQuotedMessageIdFamilySelector =
   createAtomFamilySelector<Nullable<string>, { replyMessageId: string }>({
-    key: 'agentChatReplyQuotedMessageIdFamilySelector',
+    key: 'aiChatReplyQuotedMessageIdFamilySelector',
     get:
       ({ replyMessageId }) =>
       ({ get }) => {
-        const messages = get(agentChatDisplayedThreadMessagesSelector);
+        const messages = get(aiChatDisplayedThreadMessagesSelector);
         const replyText =
           messages
             .find(({ id }) => id === replyMessageId)
             ?.parts.find((part) => part.type === 'text')?.text ?? '';
-        const quote = parseAgentChatMessageQuote(replyText);
+        const quote = parseAiChatMessageQuote(replyText);
 
         if (!isDefined(quote)) {
           return null;
         }
 
         return (
-          findAgentChatQuotedMessage({
+          findAiChatQuotedMessage({
             messages,
             replyMessageId,
             quote,
-            authorLookup: get(agentChatMessageAuthorLookupSelector),
+            authorLookup: get(aiChatMessageAuthorLookupSelector),
           })?.id ?? null
         );
       },

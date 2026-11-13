@@ -1,1 +1,1 @@
-export type AiChatThreadListVariant = 'default' | 'compact';
+export type InboxThreadListVariant = 'default' | 'compact';

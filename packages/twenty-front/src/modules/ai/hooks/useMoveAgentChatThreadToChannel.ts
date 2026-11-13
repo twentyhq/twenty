@@ -4,19 +4,18 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { useApplyAiChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useRefreshInboxChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { MoveAgentChatThreadToChannelDocument } from '~/generated-metadata/graphql';
 
-export const useMoveAgentChatThreadToChannel = () => {
+export const useMoveInboxThreadToChannel = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { refreshAgentChatChannelSummaries } =
-    useRefreshAgentChatChannelSummaries();
+  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
   const moveAgentChatThreadToChannel = useCallback(
     async ({
@@ -27,14 +26,14 @@ export const useMoveAgentChatThreadToChannel = () => {
       channelId: string | null;
     }) => {
       const previousThread = store.get(
-        agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
       );
 
       if (!isDefined(previousThread?.channelId) && !isDefined(channelId)) {
         return;
       }
 
-      applyAgentChatThreadUpdate({
+      applyAiChatThreadUpdate({
         id: threadId,
         channelId,
         channelArchivedAt: null,
@@ -46,16 +45,15 @@ export const useMoveAgentChatThreadToChannel = () => {
           mutation: MoveAgentChatThreadToChannelDocument,
           variables: { threadId, channelId },
         });
-        await refreshAgentChatChannelSummaries();
+        await refreshInboxChannelSummaries();
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
 
         if (
-          store.get(
-            agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-          )?.channelId === channelId
+          store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
+            ?.channelId === channelId
         ) {
-          applyAgentChatThreadUpdate({
+          applyAiChatThreadUpdate({
             id: threadId,
             channelId: previousThread?.channelId ?? null,
             channelArchivedAt: previousThread?.channelArchivedAt ?? null,
@@ -65,10 +63,10 @@ export const useMoveAgentChatThreadToChannel = () => {
       }
     },
     [
-      applyAgentChatThreadUpdate,
+      applyAiChatThreadUpdate,
       client,
       enqueueToast,
-      refreshAgentChatChannelSummaries,
+      refreshInboxChannelSummaries,
       store,
     ],
   );

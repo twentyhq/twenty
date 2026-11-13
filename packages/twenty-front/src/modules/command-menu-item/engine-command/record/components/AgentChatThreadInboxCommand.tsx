@@ -1,21 +1,21 @@
-import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
+import { useExecuteInboxThreadStatusAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { type AgentChatInboxAction } from '~/generated-metadata/graphql';
 
-type AgentChatThreadInboxCommandProps = {
+type InboxThreadInboxCommandProps = {
   action: AgentChatInboxAction | 'assign';
 };
 
-export const AgentChatThreadInboxCommand = ({
+export const InboxThreadInboxCommand = ({
   action,
-}: AgentChatThreadInboxCommandProps) => {
+}: InboxThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const { executeAgentChatThreadInboxAction } =
-    useExecuteAgentChatThreadInboxAction();
+  const { executeInboxThreadStatusAction } =
+    useExecuteInboxThreadStatusAction();
 
   const handleExecute = () =>
-    executeAgentChatThreadInboxAction({
+    executeInboxThreadStatusAction({
       threadIds: selectedRecords.map(({ id }) => id),
       action,
       isInChannel: selectedRecords.every(

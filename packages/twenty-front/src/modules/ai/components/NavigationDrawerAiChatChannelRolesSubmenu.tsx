@@ -7,16 +7,16 @@ import { useIcons } from 'twenty-ui/icon/provider';
 
 import { GetAgentChatChannelRolesDocument } from '~/generated-metadata/graphql';
 
-type NavigationDrawerAiChatChannelRolesSubmenuProps = {
+type NavigationDrawerInboxChannelRolesSubmenuProps = {
   roleIds: string[];
   onChange: (roleIds: string[]) => void;
 };
 
 // Roles with access to all channels read it either way, so they stay checked
-export const NavigationDrawerAiChatChannelRolesSubmenu = ({
+export const NavigationDrawerInboxChannelRolesSubmenu = ({
   roleIds,
   onChange,
-}: NavigationDrawerAiChatChannelRolesSubmenuProps) => {
+}: NavigationDrawerInboxChannelRolesSubmenuProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const { data, loading } = useQuery(GetAgentChatChannelRolesDocument, {

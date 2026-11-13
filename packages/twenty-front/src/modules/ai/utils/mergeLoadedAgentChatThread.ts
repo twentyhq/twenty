@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export const mergeLoadedAgentChatThread = ({
+export const mergeLoadedAiChatThread = ({
   loadedThread,
   storedThread,
 }: {
-  loadedThread: AgentChatThreadRecord;
-  storedThread: Partial<AgentChatThreadRecord> | null | undefined;
-}): AgentChatThreadRecord => {
+  loadedThread: AiChatThreadRecord;
+  storedThread: Partial<AiChatThreadRecord> | null | undefined;
+}): AiChatThreadRecord => {
   if (
     !isDefined(storedThread?.updatedAt) ||
     new Date(storedThread.updatedAt) < new Date(loadedThread.updatedAt)

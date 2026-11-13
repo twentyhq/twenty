@@ -1,6 +1,6 @@
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { setInboxThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -60,7 +60,7 @@ describe('useSelectAiChatThread', () => {
     );
   });
   it('restores usage from an archived thread and preserves it on reselection', () => {
-    const thread: AgentChatThreadRecord = {
+    const thread: AiChatThreadRecord = {
       __typename: 'AgentChatThread',
       id: 'archived-thread',
       title: null,
@@ -75,8 +75,8 @@ describe('useSelectAiChatThread', () => {
       totalInputCredits: 125000,
       totalOutputCredits: 50000,
     };
-    setAgentChatThreadList(jotaiStore, [thread]);
-    const usageAtom = agentChatUsageFamilyState.atomFamily({
+    setInboxThreadList(jotaiStore, [thread]);
+    const usageAtom = aiChatUsageFamilyState.atomFamily({
       threadId: thread.id,
     });
     const { result } = renderHook(() => useSelectAiChatThread(), {

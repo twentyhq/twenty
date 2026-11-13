@@ -1,17 +1,17 @@
 import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai/constants/AiChatQuoteExcerptMaxLength';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { getAiChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 
-describe('getAgentChatMessageQuoteExcerpt', () => {
+describe('getAiChatMessageQuoteExcerpt', () => {
   it('keeps a short message as is', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getAiChatMessageQuoteExcerpt({
         parts: [{ type: 'text', text: ' On it. ' }],
       }),
     ).toBe('On it.');
   });
 
   it('truncates a long message', () => {
-    const excerpt = getAgentChatMessageQuoteExcerpt({
+    const excerpt = getAiChatMessageQuoteExcerpt({
       parts: [
         {
           type: 'text',
@@ -25,7 +25,7 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
   it('leaves out the quote a reply starts with', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getAiChatMessageQuoteExcerpt({
         parts: [
           {
             type: 'text',
@@ -38,7 +38,7 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
   it('keeps a blockquote that is not a reply quote', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getAiChatMessageQuoteExcerpt({
         parts: [
           {
             type: 'text',
@@ -51,7 +51,7 @@ describe('getAgentChatMessageQuoteExcerpt', () => {
 
   it('keeps the text an assistant wrote around its tool calls', () => {
     expect(
-      getAgentChatMessageQuoteExcerpt({
+      getAiChatMessageQuoteExcerpt({
         parts: [
           { type: 'reasoning', text: 'Looking for deals.' },
           { type: 'text', text: 'Let me check.' },

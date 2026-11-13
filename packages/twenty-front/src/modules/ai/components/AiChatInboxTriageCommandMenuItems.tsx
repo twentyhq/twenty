@@ -1,17 +1,17 @@
 import { type ReactNode, useContext } from 'react';
 
-import { AI_CHAT_INBOX_TRIAGE_ENGINE_COMPONENT_KEYS } from '@/ai/constants/AiChatInboxTriageEngineComponentKeys';
+import { INBOX_TRIAGE_ENGINE_COMPONENT_KEYS } from '@/ai/constants/AiChatInboxTriageEngineComponentKeys';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 
-type AiChatInboxTriageCommandMenuItemsProps = {
+type InboxTriageCommandMenuItemsProps = {
   children: ReactNode;
 };
 
 // The list header only has room for triage; every other command stays in the
 // command menu
-export const AiChatInboxTriageCommandMenuItems = ({
+export const InboxTriageCommandMenuItems = ({
   children,
-}: AiChatInboxTriageCommandMenuItemsProps) => {
+}: InboxTriageCommandMenuItemsProps) => {
   const commandMenuContext = useContext(CommandMenuContext);
 
   return (
@@ -20,7 +20,7 @@ export const AiChatInboxTriageCommandMenuItems = ({
         ...commandMenuContext,
         commandMenuItems: commandMenuContext.commandMenuItems.filter(
           ({ engineComponentKey }) =>
-            AI_CHAT_INBOX_TRIAGE_ENGINE_COMPONENT_KEYS.has(engineComponentKey),
+            INBOX_TRIAGE_ENGINE_COMPONENT_KEYS.has(engineComponentKey),
         ),
       }}
     >

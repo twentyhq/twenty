@@ -2,21 +2,21 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
-import { getAgentChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
+import { aiChatMessageAuthorLookupSelector } from '@/ai/states/selectors/agentChatMessageAuthorLookupSelector';
+import { getAiChatMessageAuthor } from '@/ai/utils/getAgentChatMessageAuthor';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useAgentChatMessageAuthor = (
+export const useAiChatMessageAuthor = (
   message: Nullable<Pick<ExtendedUIMessage, 'id' | 'role' | 'metadata'>>,
 ) => {
-  const agentChatMessageAuthorLookup = useAtomStateValue(
-    agentChatMessageAuthorLookupSelector,
+  const aiChatMessageAuthorLookup = useAtomStateValue(
+    aiChatMessageAuthorLookupSelector,
   );
 
   return isDefined(message)
-    ? getAgentChatMessageAuthor({
+    ? getAiChatMessageAuthor({
         message,
-        authorLookup: agentChatMessageAuthorLookup,
+        authorLookup: aiChatMessageAuthorLookup,
       })
     : null;
 };

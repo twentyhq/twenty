@@ -1,22 +1,22 @@
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const agentChatRecentThreadsSelector = createAtomSelector<
-  AgentChatThreadRecord[]
+export const inboxRecentThreadsSelector = createAtomSelector<
+  AiChatThreadRecord[]
 >({
-  key: 'agentChatRecentThreadsSelector',
+  key: 'inboxRecentThreadsSelector',
   get: ({ get }) =>
     (
       get(
-        agentChatThreadListFamilyState,
-        getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+        inboxThreadListFamilyState,
+        getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
       )?.threadIds ?? []
     )
-      .map((threadId) => get(agentChatThreadRecordFamilySelector, threadId))
+      .map((threadId) => get(aiChatThreadRecordFamilySelector, threadId))
       .filter(isDefined),
 });

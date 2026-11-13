@@ -1,14 +1,14 @@
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 
-import { type AgentChatSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
-import { isAgentChatSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
+import { type InboxSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
+import { isInboxSelectedThreadListSourceAccessible } from '@/ai/utils/isAgentChatSelectedThreadListSourceAccessible';
 import {
   AgentChatChannelAssignmentFilter,
   AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-const SALES_CHANNEL_SOURCE: AgentChatSelectedThreadListSource = {
+const SALES_CHANNEL_SOURCE: InboxSelectedThreadListSource = {
   type: 'channel',
   channelView: {
     channelId: 'sales',
@@ -18,10 +18,10 @@ const SALES_CHANNEL_SOURCE: AgentChatSelectedThreadListSource = {
   },
 };
 
-describe('isAgentChatSelectedThreadListSourceAccessible', () => {
+describe('isInboxSelectedThreadListSourceAccessible', () => {
   it('keeps a preset filter whatever the channels are', () => {
     expect(
-      isAgentChatSelectedThreadListSourceAccessible({
+      isInboxSelectedThreadListSourceAccessible({
         source: {
           type: 'presetFilter',
           presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
@@ -33,7 +33,7 @@ describe('isAgentChatSelectedThreadListSourceAccessible', () => {
 
   it('keeps a channel the member can access', () => {
     expect(
-      isAgentChatSelectedThreadListSourceAccessible({
+      isInboxSelectedThreadListSourceAccessible({
         source: SALES_CHANNEL_SOURCE,
         channels: [{ id: 'sales', isAccessible: true }],
       }),
@@ -45,7 +45,7 @@ describe('isAgentChatSelectedThreadListSourceAccessible', () => {
     ['is no longer accessible', [{ id: 'sales', isAccessible: false }]],
   ])('drops a channel that %s', (_case, channels) => {
     expect(
-      isAgentChatSelectedThreadListSourceAccessible({
+      isInboxSelectedThreadListSourceAccessible({
         source: SALES_CHANNEL_SOURCE,
         channels,
       }),

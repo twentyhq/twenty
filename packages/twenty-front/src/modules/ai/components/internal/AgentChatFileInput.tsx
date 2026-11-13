@@ -6,11 +6,11 @@ const StyledFileInput = styled.input`
   display: none;
 `;
 
-type AgentChatFileInputProps = {
+type AiChatFileInputProps = {
   ref: Ref<HTMLInputElement>;
 };
 
-export const AgentChatFileInput = ({ ref }: AgentChatFileInputProps) => {
+export const AiChatFileInput = ({ ref }: AiChatFileInputProps) => {
   const { uploadFiles } = useAiChatFileUpload();
 
   const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {

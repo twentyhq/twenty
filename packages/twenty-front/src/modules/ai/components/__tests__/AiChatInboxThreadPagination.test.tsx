@@ -5,11 +5,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { AiChatInboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { setAgentChatSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
+import { InboxThreadPagination } from '@/ai/components/AiChatInboxThreadPagination';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { setInboxSelectedChannelView } from '@/ai/testing/setAgentChatSelectedChannelView';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -24,13 +24,13 @@ import { messages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const loadAgentChatThreadList = jest.fn();
+const loadInboxThreadList = jest.fn();
 
 jest.mock('@/ai/hooks/useLoadAgentChatThreadList', () => ({
-  useLoadAgentChatThreadList: () => ({ loadAgentChatThreadList }),
+  useLoadInboxThreadList: () => ({ loadInboxThreadList }),
 }));
 
-const ACTIVE_PRESET_FILTER_SOURCE: AgentChatThreadListSource = {
+const ACTIVE_PRESET_FILTER_SOURCE: InboxThreadListSource = {
   type: 'presetFilter',
   presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
 };
@@ -47,8 +47,8 @@ const renderPagination = ({
   onThreadSelect?: (threadId: string) => void;
 }) => {
   jotaiStore.set(
-    agentChatThreadListFamilyState.atomFamily(
-      getAgentChatThreadListSourceKey(ACTIVE_PRESET_FILTER_SOURCE),
+    inboxThreadListFamilyState.atomFamily(
+      getInboxThreadListSourceKey(ACTIVE_PRESET_FILTER_SOURCE),
     ),
     {
       threadIds: THREADS.map(({ id }) => id),
@@ -61,7 +61,7 @@ const renderPagination = ({
   return render(
     <JotaiProvider store={jotaiStore}>
       <I18nProvider i18n={i18n}>
-        <AiChatInboxThreadPagination
+        <InboxThreadPagination
           threads={THREADS}
           threadId={threadId}
           onThreadSelect={onThreadSelect}
@@ -71,10 +71,10 @@ const renderPagination = ({
   );
 };
 
-describe('AiChatInboxThreadPagination', () => {
+describe('InboxThreadPagination', () => {
   beforeEach(() => {
     resetJotaiStore();
-    loadAgentChatThreadList.mockClear();
+    loadInboxThreadList.mockClear();
   });
 
   it('moves to the previous and next chats', () => {
@@ -92,7 +92,7 @@ describe('AiChatInboxThreadPagination', () => {
     expect(onThreadSelect).toHaveBeenCalledTimes(2);
     expect(onThreadSelect).toHaveBeenNthCalledWith(1, 'thread-1');
     expect(onThreadSelect).toHaveBeenNthCalledWith(2, 'thread-3');
-    expect(loadAgentChatThreadList).not.toHaveBeenCalled();
+    expect(loadInboxThreadList).not.toHaveBeenCalled();
   });
 
   it('stops at the last chat once every chat is loaded', () => {
@@ -114,8 +114,8 @@ describe('AiChatInboxThreadPagination', () => {
 
     expect(onThreadSelect).toHaveBeenCalledTimes(1);
     expect(onThreadSelect).toHaveBeenCalledWith('thread-3');
-    expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
-    expect(loadAgentChatThreadList).toHaveBeenCalledWith({
+    expect(loadInboxThreadList).toHaveBeenCalledTimes(1);
+    expect(loadInboxThreadList).toHaveBeenCalledWith({
       source: ACTIVE_PRESET_FILTER_SOURCE,
       mode: 'fetch-more',
     });
@@ -133,8 +133,8 @@ describe('AiChatInboxThreadPagination', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
     expect(onThreadSelect).not.toHaveBeenCalled();
-    expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
-    expect(loadAgentChatThreadList).toHaveBeenCalledWith({
+    expect(loadInboxThreadList).toHaveBeenCalledTimes(1);
+    expect(loadInboxThreadList).toHaveBeenCalledWith({
       source: ACTIVE_PRESET_FILTER_SOURCE,
       mode: 'fetch-more',
     });
@@ -157,10 +157,10 @@ describe('AiChatInboxThreadPagination', () => {
       filter: AgentChatChannelThreadFilter.ANY,
     };
 
-    setAgentChatSelectedChannelView(jotaiStore, channelView);
+    setInboxSelectedChannelView(jotaiStore, channelView);
     jotaiStore.set(
-      agentChatThreadListFamilyState.atomFamily(
-        getAgentChatThreadListSourceKey({ type: 'channel', channelView }),
+      inboxThreadListFamilyState.atomFamily(
+        getInboxThreadListSourceKey({ type: 'channel', channelView }),
       ),
       {
         threadIds: THREADS.map(({ id }) => id),
@@ -174,8 +174,8 @@ describe('AiChatInboxThreadPagination', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Next chat' }));
 
-    expect(loadAgentChatThreadList).toHaveBeenCalledTimes(1);
-    expect(loadAgentChatThreadList).toHaveBeenCalledWith({
+    expect(loadInboxThreadList).toHaveBeenCalledTimes(1);
+    expect(loadInboxThreadList).toHaveBeenCalledWith({
       source: { type: 'channel', channelView },
       mode: 'fetch-more',
     });

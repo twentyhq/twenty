@@ -4,7 +4,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -40,7 +40,7 @@ export const SidePanelAiChatPickerSearchResults = ({
   );
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
   const { records, loading, hasNextPage, error, fetchMoreRecords, refetch } =
-    useFindManyRecords<AgentChatThreadRecord>({
+    useFindManyRecords<AiChatThreadRecord>({
       objectNameSingular: StandardObjectNameSingular.AgentChatThread,
       recordGqlFields: AI_CHAT_PICKER_RECORD_GQL_FIELDS,
       filter: getAiChatThreadSearchFilter({

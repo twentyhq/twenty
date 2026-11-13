@@ -6,11 +6,11 @@ import {
   type TipTapNode,
 } from 'twenty-shared/utils';
 
-import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
+import { type AiChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
 
 const getConversationTargetsFromNode = (
   node: TipTapNode,
-): AgentChatConversationTarget[] => {
+): AiChatConversationTarget[] => {
   const objectNameSingular = node.attrs?.objectNameSingular;
   const recordId = node.attrs?.recordId;
 
@@ -28,7 +28,7 @@ const getConversationTargetsFromNode = (
 
 export const getConversationTargetsFromSerializedDocument = (
   serializedDocument: string,
-): AgentChatConversationTarget[] => {
+): AiChatConversationTarget[] => {
   const document = parseCanonicalTipTapJsonDocument(serializedDocument);
 
   return isDefined(document) ? getConversationTargetsFromNode(document) : [];

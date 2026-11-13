@@ -14,7 +14,7 @@ import { v4 } from 'uuid';
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
 import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThreadComposerDraft';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { AiChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
@@ -249,7 +249,7 @@ export const ChatThreadComposer = ({
         {isNonEmptyArray(files) && (
           <StyledFiles>
             {files.map((file, index) => (
-              <AgentChatFilePreview
+              <AiChatFilePreview
                 key={`${index}-${file.name}`}
                 file={file}
                 onRemove={() =>

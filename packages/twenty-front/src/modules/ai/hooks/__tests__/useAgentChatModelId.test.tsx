@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { useAiChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
@@ -17,16 +17,16 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 const renderHooks = () =>
   renderHook(
     () => ({
-      setSelectedTier: useSetAtomState(agentChatUserSelectedModelTierState),
+      setSelectedTier: useSetAtomState(aiChatUserSelectedModelTierState),
       setShouldOpenAiChatAfterOnboarding: useSetAtomState(
         shouldOpenAiChatAfterOnboardingState,
       ),
-      ...useAgentChatModelId(),
+      ...useAiChatModelId(),
     }),
     { wrapper: Wrapper },
   );
 
-describe('useAgentChatModelId', () => {
+describe('useAiChatModelId', () => {
   beforeEach(() => {
     window.localStorage.clear();
     resetJotaiStore();

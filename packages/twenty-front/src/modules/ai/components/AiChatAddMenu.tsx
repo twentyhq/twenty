@@ -13,7 +13,7 @@ import {
 
 import { AiChatAddMenuRecordsPage } from '@/ai/components/AiChatAddMenuRecordsPage';
 import { AiChatAddMenuSkillsPage } from '@/ai/components/AiChatAddMenuSkillsPage';
-import { AgentChatFileInput } from '@/ai/components/internal/AgentChatFileInput';
+import { AiChatFileInput } from '@/ai/components/internal/AgentChatFileInput';
 import { AI_CHAT_ADD_MENU_PAGE } from '@/ai/constants/AiChatAddMenuPage';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -31,7 +31,7 @@ export const AiChatAddMenu = ({ editor }: AiChatAddMenuProps) => {
 
   return (
     <>
-      <AgentChatFileInput ref={fileInputRef} />
+      <AiChatFileInput ref={fileInputRef} />
       <DropdownRoot
         dropdownId={`ai-chat-add-menu-${instanceId}`}
         type="menu"

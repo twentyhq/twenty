@@ -1,19 +1,19 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
-import { isAgentChatThreadInChannelThreadFilter } from '@/ai/utils/isAgentChatThreadInChannelThreadFilter';
+import { type InboxChannelView } from '@/ai/types/AgentChatChannelView';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getInboxThreadChannelStatus } from '@/ai/utils/getAgentChatThreadChannelStatus';
+import { isInboxThreadInChannelThreadFilter } from '@/ai/utils/isAgentChatThreadInChannelThreadFilter';
 import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
-export const isAgentChatThreadInChannelView = ({
+export const isInboxThreadInChannelView = ({
   thread,
   channelView,
   currentWorkspaceMemberId,
   isMentioned,
 }: {
   thread: Pick<
-    AgentChatThreadRecord,
+    AiChatThreadRecord,
     | 'deletedAt'
     | 'channelId'
     | 'assigneeId'
@@ -22,15 +22,15 @@ export const isAgentChatThreadInChannelView = ({
     | 'channelSnoozedUntil'
     | 'pendingQuestionMessageId'
   >;
-  channelView: AgentChatChannelView;
+  channelView: InboxChannelView;
   currentWorkspaceMemberId: string | undefined;
   isMentioned: boolean;
 }): boolean => {
   if (
     isDefined(thread.deletedAt) ||
     thread.channelId !== channelView.channelId ||
-    getAgentChatThreadChannelStatus(thread) !== channelView.channelStatus ||
-    !isAgentChatThreadInChannelThreadFilter({
+    getInboxThreadChannelStatus(thread) !== channelView.channelStatus ||
+    !isInboxThreadInChannelThreadFilter({
       thread,
       filter: channelView.filter,
       isMentioned,

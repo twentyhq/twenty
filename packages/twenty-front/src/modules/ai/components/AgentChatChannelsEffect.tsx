@@ -2,10 +2,10 @@ import { useCallback, useEffect } from 'react';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useRefreshAgentChatChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
-import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { useRefreshInboxChannelSummaries } from '@/ai/hooks/useRefreshAgentChatChannelSummaries';
+import { useRefreshInboxChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -19,9 +19,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 // Changes come in bursts, as a message updates a chat and its members' rows
-const AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
+const INBOX_CHANNELS_REFRESH_DEBOUNCE_MS = 1000;
 
-export const AgentChatChannelsEffect = () => {
+export const InboxChannelsEffect = () => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -32,24 +32,23 @@ export const AgentChatChannelsEffect = () => {
   const isEnabled =
     isAiChatInboxEnabled && hasAiPermission && !isWorkspaceSuspended;
 
-  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
-  const { refreshAgentChatChannelSummaries } =
-    useRefreshAgentChatChannelSummaries();
+  const { refreshInboxChannels } = useRefreshInboxChannels();
+  const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
   const debouncedRefreshChannels = useDebouncedCallback(
-    () => void refreshAgentChatChannels(),
-    AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS,
+    () => void refreshInboxChannels(),
+    INBOX_CHANNELS_REFRESH_DEBOUNCE_MS,
   );
   const debouncedRefreshSummaries = useDebouncedCallback(
-    () => void refreshAgentChatChannelSummaries(),
-    AGENT_CHAT_CHANNELS_REFRESH_DEBOUNCE_MS,
+    () => void refreshInboxChannelSummaries(),
+    INBOX_CHANNELS_REFRESH_DEBOUNCE_MS,
   );
 
   useEffect(() => {
     if (isEnabled) {
-      void refreshAgentChatChannels();
+      void refreshInboxChannels();
     }
-  }, [isEnabled, refreshAgentChatChannels]);
+  }, [isEnabled, refreshInboxChannels]);
 
   const handleChannelOperation = useCallback(() => {
     if (isEnabled) {
@@ -72,11 +71,11 @@ export const AgentChatChannelsEffect = () => {
     onBrowserEvent: handleChannelOperation,
   });
 
-  const agentChatThreadRecordUpdateCount = useAtomStateValue(
-    agentChatThreadRecordUpdateCountState,
+  const aiChatThreadRecordUpdateCount = useAtomStateValue(
+    aiChatThreadRecordUpdateCountState,
   );
-  const agentChatThreadParticipants = useAtomStateValue(
-    agentChatThreadParticipantsState,
+  const aiChatThreadParticipants = useAtomStateValue(
+    aiChatThreadParticipantsState,
   );
 
   useEffect(() => {
@@ -84,10 +83,10 @@ export const AgentChatChannelsEffect = () => {
       debouncedRefreshSummaries();
     }
   }, [
-    agentChatThreadParticipants,
+    aiChatThreadParticipants,
     debouncedRefreshSummaries,
     isEnabled,
-    agentChatThreadRecordUpdateCount,
+    aiChatThreadRecordUpdateCount,
   ]);
 
   return null;

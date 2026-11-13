@@ -1,20 +1,20 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { isAgentChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
+import { isAiChatMessageOwn } from '@/ai/utils/isAgentChatMessageOwn';
 
-type IsAgentChatQueuedMessageRemovableParams = {
+type IsAiChatQueuedMessageRemovableParams = {
   message: Pick<ExtendedUIMessage, 'role' | 'metadata'>;
   currentWorkspaceMemberId: string | undefined;
   isAiChatInboxEnabled: boolean;
   isReadOnly: boolean;
 };
 
-export const isAgentChatQueuedMessageRemovable = ({
+export const isAiChatQueuedMessageRemovable = ({
   message,
   currentWorkspaceMemberId,
   isAiChatInboxEnabled,
   isReadOnly,
-}: IsAgentChatQueuedMessageRemovableParams) => {
+}: IsAiChatQueuedMessageRemovableParams) => {
   if (isReadOnly) {
     return false;
   }
@@ -23,7 +23,7 @@ export const isAgentChatQueuedMessageRemovable = ({
     return true;
   }
 
-  return isAgentChatMessageOwn({
+  return isAiChatMessageOwn({
     message,
     currentWorkspaceMemberId,
     isSenderlessUserMessageOwn: false,

@@ -1,9 +1,9 @@
-import { mergeAgentChatThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
+import { mergeInboxThreadListIds } from '@/ai/utils/mergeAgentChatThreadListIds';
 
-describe('mergeAgentChatThreadListIds', () => {
+describe('mergeInboxThreadListIds', () => {
   it('replaces the list on refresh, keeping chats added while it ran', () => {
     expect(
-      mergeAgentChatThreadListIds({
+      mergeInboxThreadListIds({
         mode: 'refresh',
         threadIdsBeforeRequest: ['old', 'kept-by-page'],
         currentThreadIds: ['added', 'old', 'kept-by-page'],
@@ -14,7 +14,7 @@ describe('mergeAgentChatThreadListIds', () => {
 
   it('appends the next page after the current list without duplicates', () => {
     expect(
-      mergeAgentChatThreadListIds({
+      mergeInboxThreadListIds({
         mode: 'fetch-more',
         threadIdsBeforeRequest: ['first'],
         currentThreadIds: ['added', 'first'],

@@ -4,18 +4,18 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { useLoadAgentChatThread } from '@/ai/hooks/useLoadAgentChatThread';
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
-import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useLoadAiChatThread } from '@/ai/hooks/useLoadAgentChatThread';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { aiChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { aiChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { inboxRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
+import { inboxFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -52,15 +52,15 @@ jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
   generateFindManyRecordsQuery: () => 'find-many-agent-chat-threads',
 }));
 
-const refreshAgentChatThreadPermissions = jest.fn();
+const refreshAiChatThreadPermissions = jest.fn();
 
 jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
-  useRefreshAgentChatThreadPermissions: () => ({
-    refreshAgentChatThreadPermissions,
+  useRefreshAiChatThreadPermissions: () => ({
+    refreshAiChatThreadPermissions,
   }),
 }));
 
-const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
+const buildThread = (id: string, title: string): AiChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
   title,
@@ -70,7 +70,7 @@ const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
 });
 
 const buildPage = (
-  threads: AgentChatThreadRecord[],
+  threads: AiChatThreadRecord[],
   { hasNextPage = false, endCursor = 'end' } = {},
 ) => ({
   data: {
@@ -87,8 +87,8 @@ const buildPage = (
   },
 });
 
-const RECENT_THREAD_LIST_ATOM = agentChatThreadListFamilyState.atomFamily(
-  getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+const RECENT_THREAD_LIST_ATOM = inboxThreadListFamilyState.atomFamily(
+  getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
 );
 
 const buildStore = () => {
@@ -106,45 +106,44 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
-const useAgentChatThreadLoading = () => {
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+const useAiChatThreadLoading = () => {
+  const { loadInboxThreadList } = useLoadInboxThreadList();
 
   return {
-    loadAgentChatThreadList,
-    refreshAgentChatThreads: () =>
-      loadAgentChatThreadList({
-        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+    loadInboxThreadList,
+    refreshAiChatThreads: () =>
+      loadInboxThreadList({
+        source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'refresh',
       }),
-    fetchMoreAgentChatThreads: () =>
-      loadAgentChatThreadList({
-        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+    fetchMoreAiChatThreads: () =>
+      loadInboxThreadList({
+        source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'fetch-more',
       }),
-    ...useLoadAgentChatThread(),
+    ...useLoadAiChatThread(),
   };
 };
 
 const renderRefresh = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useAgentChatThreadLoading(), {
+  renderHook(() => useAiChatThreadLoading(), {
     wrapper: getWrapper(store),
   }).result;
 
-describe('useLoadAgentChatThreadList', () => {
+describe('useLoadInboxThreadList', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    refreshAgentChatThreadPermissions.mockResolvedValue(undefined);
+    refreshAiChatThreadPermissions.mockResolvedValue(undefined);
   });
 
   it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
     const store = buildStore();
-    const { result, rerender } = renderHook(
-      () => useLoadAgentChatThreadList(),
-      { wrapper: getWrapper(store) },
-    );
-    const load = result.current.loadAgentChatThreadList;
+    const { result, rerender } = renderHook(() => useLoadInboxThreadList(), {
+      wrapper: getWrapper(store),
+    });
+    const load = result.current.loadInboxThreadList;
     rerender();
-    expect(result.current.loadAgentChatThreadList).toBe(load);
+    expect(result.current.loadInboxThreadList).toBe(load);
   });
 
   it('loads the most recently active chats and the member read state', async () => {
@@ -154,7 +153,7 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenCalledWith(
@@ -172,7 +171,7 @@ describe('useLoadAgentChatThreadList', () => {
       endCursor: 'end',
       lastLoadedActivityAt: null,
     });
-    expect(store.get(agentChatRecentThreadsSelector.atom)).toMatchObject([
+    expect(store.get(inboxRecentThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
   });
@@ -211,7 +210,7 @@ describe('useLoadAgentChatThreadList', () => {
       mentionsResolvedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
-    store.set(agentChatThreadStreamedParticipantsState.atom, {
+    store.set(aiChatThreadStreamedParticipantsState.atom, {
       'thread-2': streamedParticipant,
     });
     queryMock.mockResolvedValue(
@@ -236,7 +235,7 @@ describe('useLoadAgentChatThreadList', () => {
               },
             ],
           },
-        } as AgentChatThreadRecord,
+        } as AiChatThreadRecord,
         {
           ...buildThread('thread-2', 'Second'),
           participants: {
@@ -250,16 +249,16 @@ describe('useLoadAgentChatThreadList', () => {
               },
             ],
           },
-        } as AgentChatThreadRecord,
+        } as AiChatThreadRecord,
       ]),
     );
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await result.current.refreshAiChatThreads();
     });
 
-    expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
+    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
       'thread-1': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
@@ -274,9 +273,9 @@ describe('useLoadAgentChatThreadList', () => {
       },
       'thread-2': streamedParticipant,
     });
-    expect(
-      store.get(agentChatRecentThreadsSelector.atom)[0],
-    ).not.toHaveProperty('participants');
+    expect(store.get(inboxRecentThreadsSelector.atom)[0]).not.toHaveProperty(
+      'participants',
+    );
   });
 
   it('loads a favorite outside the page without changing the main pagination', async () => {
@@ -319,7 +318,7 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenCalledTimes(2);
@@ -335,10 +334,10 @@ describe('useLoadAgentChatThreadList', () => {
     );
     expect(
       store.get(
-        agentChatThreadRecordFamilySelector.selectorFamily('favorite-thread'),
+        aiChatThreadRecordFamilySelector.selectorFamily('favorite-thread'),
       ),
     ).toMatchObject(favoriteThread);
-    expect(store.get(agentChatFavoriteThreadsSelector.atom)).toMatchObject([
+    expect(store.get(inboxFavoriteThreadsSelector.atom)).toMatchObject([
       {
         id: 'favorite-thread',
         conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
@@ -369,8 +368,8 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
-      await result.current.fetchMoreAgentChatThreads();
+      await result.current.refreshAiChatThreads();
+      await result.current.fetchMoreAiChatThreads();
     });
 
     expect(queryMock).toHaveBeenLastCalledWith(
@@ -386,7 +385,7 @@ describe('useLoadAgentChatThreadList', () => {
     });
 
     await act(async () => {
-      expect(await result.current.fetchMoreAgentChatThreads()).toBeUndefined();
+      expect(await result.current.fetchMoreAiChatThreads()).toBeUndefined();
     });
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
@@ -405,7 +404,7 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual(['thread-1']);
@@ -417,7 +416,7 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAgentChatThreads();
+      await result.current.refreshAiChatThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
@@ -437,9 +436,9 @@ describe('useLoadAgentChatThreadList', () => {
       buildPage([buildThread('old-thread', 'Old chat')]),
     );
     await act(async () => {
-      expect(
-        await result.current.loadAgentChatThread('old-thread'),
-      ).toMatchObject({ id: 'old-thread' });
+      expect(await result.current.loadAiChatThread('old-thread')).toMatchObject(
+        { id: 'old-thread' },
+      );
     });
     expect(queryMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
@@ -457,14 +456,12 @@ describe('useLoadAgentChatThreadList', () => {
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {
-      expect(await result.current.loadAgentChatThread('gone')).toBeNull();
+      expect(await result.current.loadAiChatThread('gone')).toBeNull();
     });
 
     queryMock.mockRejectedValueOnce(new Error('Network error'));
     await act(async () => {
-      expect(
-        await result.current.loadAgentChatThread('unknown'),
-      ).toBeUndefined();
+      expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
     });
   });
 
@@ -483,13 +480,11 @@ describe('useLoadAgentChatThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.loadAgentChatThread('old-thread');
+      await result.current.loadAiChatThread('old-thread');
     });
 
     expect(
-      store.get(
-        agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
-      ),
+      store.get(aiChatUsageFamilyState.atomFamily({ threadId: 'old-thread' })),
     ).toMatchObject({ inputTokens: 42 });
   });
 });

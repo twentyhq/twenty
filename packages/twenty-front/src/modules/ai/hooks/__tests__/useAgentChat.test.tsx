@@ -14,20 +14,20 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
-import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
-import { useAgentChat } from '@/ai/hooks/useAgentChat';
-import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
-import { agentChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
-import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
-import { agentChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
-import { agentChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
-import { agentChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
-import { agentChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
-import { type AgentChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
-import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
-import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai/constants/AgentChatNewThreadDefaultRecipients';
+import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { useAiChat } from '@/ai/hooks/useAgentChat';
+import { aiChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
+import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/agentChatQuotedMessageIdFamilyState';
+import { aiChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { inboxNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/agentChatNewThreadRecipientsFamilyState';
+import { aiChatIsSendingMessageFamilyState } from '@/ai/states/agentChatIsSendingMessageFamilyState';
+import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkFamilyState';
+import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai/states/selectors/agentChatIsAssistantReplyPendingFamilySelector';
+import { type AiChatNewThreadRecipients } from '@/ai/types/AgentChatNewThreadRecipients';
+import { aiChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { aiChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -62,12 +62,12 @@ jest.mock('@/ai/hooks/useAttachChatThreadToRecord', () => ({
   useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
-const loadAgentChatThread = jest.fn(async (threadId: string) => ({
+const loadAiChatThread = jest.fn(async (threadId: string) => ({
   id: threadId,
 }));
 
 jest.mock('@/ai/hooks/useLoadAgentChatThread', () => ({
-  useLoadAgentChatThread: () => ({ loadAgentChatThread }),
+  useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 
 const DRAFTS_STORAGE_KEY = 'ai/agentChatDraftsByThreadIdState';
@@ -134,7 +134,7 @@ const OPEN_DIRECT_MESSAGE_MOCK: MockedResponse = {
 const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
 
-const renderAgentChat = ({
+const renderAiChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
   hasAiModels = true,
@@ -142,7 +142,7 @@ const renderAgentChat = ({
   isDirectMessageIdentityEnabled = false,
   isDirectMessage = false,
   newThreadChannelId = null,
-  newThreadRecipients = AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
+  newThreadRecipients = AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS,
   currentThreadId = null,
   objectMetadataItems,
 }: {
@@ -153,7 +153,7 @@ const renderAgentChat = ({
   isDirectMessageIdentityEnabled?: boolean;
   isDirectMessage?: boolean;
   newThreadChannelId?: string | null;
-  newThreadRecipients?: AgentChatNewThreadRecipients;
+  newThreadRecipients?: AiChatNewThreadRecipients;
   currentThreadId?: string | null;
   objectMetadataItems?: EnrichedObjectMetadataItem[];
 }) => {
@@ -175,10 +175,10 @@ const renderAgentChat = ({
       });
       store.set(currentAiChatThreadState.atom, currentThreadId);
       store.set(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
         newThreadRecipients,
       );
-      store.set(agentChatNewThreadChannelIdState.atom, newThreadChannelId);
+      store.set(inboxNewThreadChannelIdState.atom, newThreadChannelId);
       store.set(currentWorkspaceMembersState.atom, [
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
@@ -218,10 +218,10 @@ const renderAgentChat = ({
 
   return renderHook(
     () => {
-      useAtomStateValue(agentChatDraftsByThreadIdState);
+      useAtomStateValue(aiChatDraftsByThreadIdState);
 
       return {
-        ...useAgentChat(),
+        ...useAiChat(),
         apolloClient: useApolloClient(),
         currentAiChatThread: useAtomStateValue(currentAiChatThreadState),
         newAiChatThreadId: useAtomStateValue(newAiChatThreadIdState),
@@ -248,20 +248,20 @@ const holdNextMutation = (apolloClient: ReturnType<typeof useApolloClient>) => {
 };
 
 const send = async (result: {
-  current: Pick<ReturnType<typeof useAgentChat>, 'handleSendMessage'>;
+  current: Pick<ReturnType<typeof useAiChat>, 'handleSendMessage'>;
 }) => {
   await act(async () => {
     await result.current.handleSendMessage();
   });
 };
 
-describe('useAgentChat', () => {
+describe('useAiChat', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('files a chat started from a record under it once its message is sent', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: DRAFT_STARTED_FROM_COMPANY,
       },
@@ -279,7 +279,7 @@ describe('useAgentChat', () => {
   });
 
   it('keeps the new chat and its first message id until that message is sent', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -302,7 +302,7 @@ describe('useAgentChat', () => {
   });
 
   it('finishes sending while recipient verification is still pending', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -333,7 +333,7 @@ describe('useAgentChat', () => {
     expect(result.current.newAiChatThreadId).not.toBe(THREAD_ID);
     expect(
       jotaiStore.get(
-        agentChatIsSendingMessageFamilyState.atomFamily({
+        aiChatIsSendingMessageFamilyState.atomFamily({
           threadId: THREAD_ID,
         }),
       ),
@@ -341,7 +341,7 @@ describe('useAgentChat', () => {
   });
 
   it('files the chat when the retry of a failed first send goes through', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: DRAFT_STARTED_FROM_COMPANY,
       },
@@ -364,7 +364,7 @@ describe('useAgentChat', () => {
   });
 
   it('gives a first message edited after a failed send a new id', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -374,7 +374,7 @@ describe('useAgentChat', () => {
     await send(result);
 
     act(() => {
-      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
         ...drafts,
         [THREAD_ID]:
           serializePlainTextAsAdvancedTextEditorDocument('Hello again'),
@@ -390,7 +390,7 @@ describe('useAgentChat', () => {
   });
 
   it('keeps the first message id when the draft is saved differently but sends the same text', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -400,7 +400,7 @@ describe('useAgentChat', () => {
     await send(result);
 
     act(() => {
-      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
         ...drafts,
         [THREAD_ID]: serializeJsonContentAsAdvancedTextEditorDocument({
           type: 'doc',
@@ -421,7 +421,7 @@ describe('useAgentChat', () => {
   });
 
   it('does not file a chat under a record it only mentions', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: DRAFT_MENTIONING_COMPANY,
       },
@@ -434,7 +434,7 @@ describe('useAgentChat', () => {
   });
 
   it('keeps the composer while attachments upload and clears it on send', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -443,10 +443,10 @@ describe('useAgentChat', () => {
     const restoreEditorContent = jest.fn();
 
     window.addEventListener(
-      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
-    jotaiStore.set(agentChatSelectedFilesState.atom, [
+    jotaiStore.set(aiChatSelectedFilesState.atom, [
       new File(['brief'], 'brief.pdf'),
     ]);
 
@@ -454,7 +454,7 @@ describe('useAgentChat', () => {
 
     expect(restoreEditorContent).not.toHaveBeenCalled();
 
-    jotaiStore.set(agentChatSelectedFilesState.atom, []);
+    jotaiStore.set(aiChatSelectedFilesState.atom, []);
 
     await send(result);
 
@@ -463,13 +463,13 @@ describe('useAgentChat', () => {
     );
 
     window.removeEventListener(
-      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
   });
 
   it('does not file a chat that mentions no record', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -482,7 +482,7 @@ describe('useAgentChat', () => {
   });
 
   it('sends without asking for a reply in the inbox when no AI is configured', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -499,7 +499,7 @@ describe('useAgentChat', () => {
   });
 
   it('requests an assistant reply for an Ada mention in a direct message', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [DIRECT_MESSAGE_THREAD_ID]:
           serializeMentionTagAsAdvancedTextEditorDocument({
@@ -529,7 +529,7 @@ describe('useAgentChat', () => {
   });
 
   it('does not send without AI outside the inbox', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -543,7 +543,7 @@ describe('useAgentChat', () => {
   });
 
   it('creates an inbox chat with Ada selected by default', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -564,7 +564,7 @@ describe('useAgentChat', () => {
   });
 
   it('sends only selected workspace members without mentioning them, then clears them', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -592,9 +592,9 @@ describe('useAgentChat', () => {
     );
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
-    ).toEqual(AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
+    ).toEqual(AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
   });
 
   it('keeps the draft without sending when Ada is removed and no recipients remain', async () => {
@@ -603,7 +603,7 @@ describe('useAgentChat', () => {
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [],
     };
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: { [THREAD_ID]: draft },
       sendChatMessageOutcomes: [],
       isAiChatInboxEnabled: true,
@@ -618,7 +618,7 @@ describe('useAgentChat', () => {
     expect(result.current.newAiChatThreadId).toBe(THREAD_ID);
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual(recipients);
   });
@@ -626,7 +626,7 @@ describe('useAgentChat', () => {
   it('sends a new chat to one person in their direct message and keeps its draft', async () => {
     const directMessageDraft =
       serializePlainTextAsAdvancedTextEditorDocument('Unsent');
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
         [DIRECT_MESSAGE_THREAD_ID]: directMessageDraft,
@@ -660,14 +660,14 @@ describe('useAgentChat', () => {
     });
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
-    ).toEqual(AGENT_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
+    ).toEqual(AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS);
   });
 
   it('keeps a new chat edited while its direct message opens', async () => {
     const laterEdit = serializePlainTextAsAdvancedTextEditorDocument('Later');
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -690,7 +690,7 @@ describe('useAgentChat', () => {
     });
 
     act(() => {
-      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
         ...drafts,
         [THREAD_ID]: laterEdit,
       }));
@@ -710,7 +710,7 @@ describe('useAgentChat', () => {
     expect(readPersistedDrafts()[THREAD_ID]).toBe(laterEdit);
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual({
       isAssistantParticipant: false,
@@ -719,7 +719,7 @@ describe('useAgentChat', () => {
   });
 
   it('stays on the chat opened while the direct message opens', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -737,7 +737,7 @@ describe('useAgentChat', () => {
     );
 
     window.addEventListener(
-      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
 
@@ -757,7 +757,7 @@ describe('useAgentChat', () => {
     });
 
     window.removeEventListener(
-      AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
+      AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
 
@@ -771,7 +771,7 @@ describe('useAgentChat', () => {
 
   it('keeps a new chat to one person as a draft while it has attachments', async () => {
     const draft = serializePlainTextAsAdvancedTextEditorDocument('Hello');
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: { [THREAD_ID]: draft },
       sendChatMessageOutcomes: [],
       isAiChatInboxEnabled: true,
@@ -783,7 +783,7 @@ describe('useAgentChat', () => {
     });
     const mutate = jest.spyOn(result.current.apolloClient, 'mutate');
 
-    jotaiStore.set(agentChatUploadedFilesState.atom, [
+    jotaiStore.set(aiChatUploadedFilesState.atom, [
       {
         type: 'file',
         fileId: 'file-id',
@@ -795,7 +795,7 @@ describe('useAgentChat', () => {
 
     await send(result);
 
-    jotaiStore.set(agentChatUploadedFilesState.atom, []);
+    jotaiStore.set(aiChatUploadedFilesState.atom, []);
 
     expect(mutate).not.toHaveBeenCalled();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: draft });
@@ -803,7 +803,7 @@ describe('useAgentChat', () => {
   });
 
   it('sends a typed Ada mention independently of recipient selection', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializeMentionTagAsAdvancedTextEditorDocument({
           objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
@@ -831,7 +831,7 @@ describe('useAgentChat', () => {
   });
 
   it('sends a participant mention when the recipient bar is empty', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializeMentionTagAsAdvancedTextEditorDocument({
           objectNameSingular: StandardObjectNameSingular.WorkspaceMember,
@@ -865,7 +865,7 @@ describe('useAgentChat', () => {
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [RECIPIENT_ID],
     };
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -879,18 +879,15 @@ describe('useAgentChat', () => {
     expect(result.current.newAiChatThreadId).toBe(THREAD_ID);
     expect(
       jotaiStore.get(
-        agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
+        aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
       ),
     ).toEqual(recipients);
     expect(readPersistedDrafts()[THREAD_ID]).toContain('Hello');
 
-    jotaiStore.set(
-      agentChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
-      {
-        isAssistantParticipant: true,
-        recipientWorkspaceMemberIds: [],
-      },
-    );
+    jotaiStore.set(aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID), {
+      isAssistantParticipant: true,
+      recipientWorkspaceMemberIds: [],
+    });
 
     await send(result);
 
@@ -903,10 +900,10 @@ describe('useAgentChat', () => {
   });
 
   it('keeps the quote after a failed send so the retry still sends it', async () => {
-    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+    const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily({
       threadId: THREAD_ID,
     });
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Yes'),
       },
@@ -914,7 +911,7 @@ describe('useAgentChat', () => {
       isAiChatInboxEnabled: true,
     });
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
+      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
       [
         {
           id: 'quoted-message',
@@ -941,10 +938,10 @@ describe('useAgentChat', () => {
   });
 
   it('keeps a quote picked while a failed send was in flight', async () => {
-    const quotedMessageIdAtom = agentChatQuotedMessageIdFamilyState.atomFamily({
+    const quotedMessageIdAtom = aiChatQuotedMessageIdFamilyState.atomFamily({
       threadId: EXISTING_THREAD_ID,
     });
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [EXISTING_THREAD_ID]:
           serializePlainTextAsAdvancedTextEditorDocument('Yes'),
@@ -954,7 +951,7 @@ describe('useAgentChat', () => {
       isAiChatInboxEnabled: true,
     });
     jotaiStore.set(
-      agentChatMessagesFamilyState.atomFamily({
+      aiChatMessagesFamilyState.atomFamily({
         threadId: EXISTING_THREAD_ID,
       }),
       [
@@ -992,7 +989,7 @@ describe('useAgentChat', () => {
   });
 
   it('keeps recipient editing locked until the send settles and unlocks a retry', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -1011,12 +1008,13 @@ describe('useAgentChat', () => {
       pendingSend = result.current.handleSendMessage();
     });
 
-    const isSendingMessageAtom =
-      agentChatIsSendingMessageFamilyState.atomFamily({ threadId: THREAD_ID });
+    const isSendingMessageAtom = aiChatIsSendingMessageFamilyState.atomFamily({
+      threadId: THREAD_ID,
+    });
 
     expect(jotaiStore.get(isSendingMessageAtom)).toBe(true);
     jotaiStore.set(
-      agentChatIsAwaitingFirstChunkFamilyState.atomFamily({
+      aiChatIsAwaitingFirstChunkFamilyState.atomFamily({
         threadId: THREAD_ID,
       }),
       false,
@@ -1043,7 +1041,7 @@ describe('useAgentChat', () => {
   });
 
   it('does not overwrite an existing chat with new-chat recipients', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [EXISTING_THREAD_ID]:
           serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -1074,7 +1072,7 @@ describe('useAgentChat', () => {
   });
 
   it('sends a follow-up in an existing chat while the previous send is pending', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [EXISTING_THREAD_ID]:
           serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -1090,7 +1088,7 @@ describe('useAgentChat', () => {
       firstSend = result.current.handleSendMessage();
     });
     act(() => {
-      jotaiStore.set(agentChatDraftsByThreadIdState.atom, (drafts) => ({
+      jotaiStore.set(aiChatDraftsByThreadIdState.atom, (drafts) => ({
         ...drafts,
         [EXISTING_THREAD_ID]:
           serializePlainTextAsAdvancedTextEditorDocument('Follow-up'),
@@ -1113,7 +1111,7 @@ describe('useAgentChat', () => {
   });
 
   it('files a new chat into the channel it was started in, then forgets that channel', async () => {
-    const result = renderAgentChat({
+    const result = renderAiChat({
       persistedDrafts: {
         [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       },
@@ -1130,7 +1128,7 @@ describe('useAgentChat', () => {
 
     expect(sentChannelId).toHaveBeenCalledTimes(1);
     expect(sentChannelId).toHaveBeenCalledWith(CHANNEL_ID);
-    expect(jotaiStore.get(agentChatNewThreadChannelIdState.atom)).toBeNull();
+    expect(jotaiStore.get(inboxNewThreadChannelIdState.atom)).toBeNull();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 
@@ -1140,7 +1138,7 @@ describe('useAgentChat', () => {
   ])(
     'shows the assistant reply as pending only once the server starts one ($outcome)',
     async ({ outcome, isAssistantReplyPending }) => {
-      const result = renderAgentChat({
+      const result = renderAiChat({
         persistedDrafts: {
           [EXISTING_THREAD_ID]:
             serializePlainTextAsAdvancedTextEditorDocument('Hello'),
@@ -1150,7 +1148,7 @@ describe('useAgentChat', () => {
       });
       const releaseMutation = holdNextMutation(result.current.apolloClient);
       const isAssistantReplyPendingAtom =
-        agentChatIsAssistantReplyPendingFamilySelector.selectorFamily(
+        aiChatIsAssistantReplyPendingFamilySelector.selectorFamily(
           EXISTING_THREAD_ID,
         );
 

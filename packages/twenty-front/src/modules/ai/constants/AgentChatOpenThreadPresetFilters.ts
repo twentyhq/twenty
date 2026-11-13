@@ -3,7 +3,7 @@ import {
   type AgentChatThreadPresetFilter,
 } from 'twenty-shared/ai';
 
-export const AGENT_CHAT_OPEN_THREAD_PRESET_FILTERS: readonly AgentChatThreadPresetFilter[] =
+export const INBOX_OPEN_THREAD_PRESET_FILTERS: readonly AgentChatThreadPresetFilter[] =
   [
     AGENT_CHAT_THREAD_PRESET_FILTER.OPEN,
     AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT,

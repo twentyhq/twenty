@@ -21,8 +21,8 @@ import { useAiChatUserCreditsUsage } from '@/ai/hooks/useAiChatUserCreditsUsage'
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
-import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
-import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
+import { aiChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
+import { aiChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
@@ -59,7 +59,7 @@ export const AiChatContextUsageButton = () => {
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const agentChatUsage = useAtomFamilyStateValue(agentChatUsageFamilyState, {
+  const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
     threadId: currentAiChatThread,
   });
 
@@ -67,22 +67,22 @@ export const AiChatContextUsageButton = () => {
 
   const { chatTier } = useWorkspaceAiModelTiers();
 
-  const agentChatUserSelectedModelTier = useAtomStateValue(
-    agentChatUserSelectedModelTierState,
+  const aiChatUserSelectedModelTier = useAtomStateValue(
+    aiChatUserSelectedModelTierState,
   );
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
   const modelTier = isWorkspaceSetupChat
     ? 'fast'
-    : (agentChatUserSelectedModelTier ?? chatTier);
+    : (aiChatUserSelectedModelTier ?? chatTier);
 
   const contextWindow =
-    agentChatUsage?.contextWindowTokens ??
+    aiChatUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
 
-  const conversationSize = agentChatUsage?.conversationSize ?? 0;
+  const conversationSize = aiChatUsage?.conversationSize ?? 0;
 
   const percentage =
     contextWindow > 0
@@ -192,7 +192,7 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
             {showDetails && <AiChatContextUsageDetails />}
-            {isDefined(agentChatUsage) && (
+            {isDefined(aiChatUsage) && (
               <>
                 <Separator />
                 <StyledFooter>

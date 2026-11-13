@@ -3,7 +3,7 @@ import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH } from '@/ai/constants/AiChatQuoteExcerptMaxLength';
-import { parseAgentChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
+import { parseAiChatMessageQuote } from '@/ai/utils/parseAgentChatMessageQuote';
 
 // matching a reply rescans the thread on every streamed chunk, while only the streaming message changes
 const EXCERPT_BY_MESSAGE = new WeakMap<
@@ -11,21 +11,21 @@ const EXCERPT_BY_MESSAGE = new WeakMap<
   string
 >();
 
-const computeAgentChatMessageQuoteExcerpt = (
+const computeAiChatMessageQuoteExcerpt = (
   message: Pick<ExtendedUIMessage, 'parts'>,
 ) => {
   const fullText = message.parts
     .flatMap((part) => (part.type === 'text' ? [part.text.trim()] : []))
     .filter(isNonEmptyString)
     .join('\n\n');
-  const text = parseAgentChatMessageQuote(fullText)?.replyText ?? fullText;
+  const text = parseAiChatMessageQuote(fullText)?.replyText ?? fullText;
 
   return text.length > AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH
     ? `${text.slice(0, AI_CHAT_QUOTE_EXCERPT_MAX_LENGTH).trimEnd()}…`
     : text;
 };
 
-export const getAgentChatMessageQuoteExcerpt = (
+export const getAiChatMessageQuoteExcerpt = (
   message: Pick<ExtendedUIMessage, 'parts'>,
 ) => {
   const cachedExcerpt = EXCERPT_BY_MESSAGE.get(message);
@@ -34,7 +34,7 @@ export const getAgentChatMessageQuoteExcerpt = (
     return cachedExcerpt;
   }
 
-  const excerpt = computeAgentChatMessageQuoteExcerpt(message);
+  const excerpt = computeAiChatMessageQuoteExcerpt(message);
 
   EXCERPT_BY_MESSAGE.set(message, excerpt);
 

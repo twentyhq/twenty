@@ -11,7 +11,7 @@ import {
 } from 'twenty-ui/icon';
 import { type AgentChatThreadPresetFilter } from 'twenty-shared/ai';
 
-export const AGENT_CHAT_THREAD_PRESET_FILTER_ICONS: Record<
+export const INBOX_THREAD_PRESET_FILTER_ICONS: Record<
   AgentChatThreadPresetFilter,
   IconComponent
 > = {

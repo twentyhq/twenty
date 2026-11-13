@@ -1,35 +1,35 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
-import { agentChatThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
-import { type AgentChatThreadListSource } from '@/ai/types/AgentChatThreadListSource';
-import { getAgentChatThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
+import { useLoadInboxThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { inboxThreadListFamilyState } from '@/ai/states/agentChatThreadListFamilyState';
+import { type InboxThreadListSource } from '@/ai/types/AgentChatThreadListSource';
+import { getInboxThreadListSourceKey } from '@/ai/utils/getAgentChatThreadListSourceKey';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-type AgentChatThreadListLoadEffectProps = {
-  source: AgentChatThreadListSource;
+type InboxThreadListLoadEffectProps = {
+  source: InboxThreadListSource;
 };
 
-export const AgentChatThreadListLoadEffect = ({
+export const InboxThreadListLoadEffect = ({
   source,
-}: AgentChatThreadListLoadEffectProps) => {
+}: InboxThreadListLoadEffectProps) => {
   const isRecentThreadListLoaded = isDefined(
     useAtomFamilyStateValue(
-      agentChatThreadListFamilyState,
-      getAgentChatThreadListSourceKey(AGENT_CHAT_RECENT_THREAD_LIST_SOURCE),
+      inboxThreadListFamilyState,
+      getInboxThreadListSourceKey(INBOX_RECENT_THREAD_LIST_SOURCE),
     ),
   );
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
-  const sourceKey = getAgentChatThreadListSourceKey(source);
+  const { loadInboxThreadList } = useLoadInboxThreadList();
+  const sourceKey = getInboxThreadListSourceKey(source);
 
   useEffect(() => {
     if (isRecentThreadListLoaded) {
-      void loadAgentChatThreadList({ source, mode: 'refresh' });
+      void loadInboxThreadList({ source, mode: 'refresh' });
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRecentThreadListLoaded, loadAgentChatThreadList, sourceKey]);
+  }, [isRecentThreadListLoaded, loadInboxThreadList, sourceKey]);
 
   return null;
 };

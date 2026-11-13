@@ -1,8 +1,8 @@
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
-export const settingsDraftRoleAgentChatChannelAccessFamilyState =
+export const settingsDraftRoleInboxChannelAccessFamilyState =
   createAtomFamilyState<Record<string, boolean>, string>({
-    key: 'settingsDraftRoleAgentChatChannelAccessFamilyState',
+    key: 'settingsDraftRoleInboxChannelAccessFamilyState',
     scope: 'routed-flow',
     defaultValue: {},
   });

@@ -3,16 +3,16 @@ import { useCallback } from 'react';
 
 import { GetAgentChatOpenThreadsSummaryDocument } from '~/generated-metadata/graphql';
 
-export const useRefreshAgentChatOpenThreadsSummary = () => {
+export const useRefreshInboxOpenThreadsSummary = () => {
   const client = useApolloClient();
 
   // Runs in the background, so a failure keeps the counts shown until the
   // next change rather than reaching the member
-  const refreshAgentChatOpenThreadsSummary = useCallback(() => {
+  const refreshInboxOpenThreadsSummary = useCallback(() => {
     client
       .refetchQueries({ include: [GetAgentChatOpenThreadsSummaryDocument] })
       .catch(() => undefined);
   }, [client]);
 
-  return { refreshAgentChatOpenThreadsSummary };
+  return { refreshInboxOpenThreadsSummary };
 };

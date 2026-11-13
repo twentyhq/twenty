@@ -1,10 +1,10 @@
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { type AgentChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
-import { getAgentChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
+import { type AiChatMessageAuthor } from '@/ai/types/AgentChatMessageAuthor';
+import { getAiChatMessageQuoteExcerpt } from '@/ai/utils/getAgentChatMessageQuoteExcerpt';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
-export const getAgentChatMessageQuoteSource = <
+export const getAiChatMessageQuoteSource = <
   TWorkspaceMember extends Pick<
     PartialWorkspaceMember,
     'id' | 'name' | 'userEmail'
@@ -14,9 +14,9 @@ export const getAgentChatMessageQuoteSource = <
   author,
 }: {
   message: Pick<ExtendedUIMessage, 'id' | 'parts'>;
-  author: AgentChatMessageAuthor<TWorkspaceMember>;
+  author: AiChatMessageAuthor<TWorkspaceMember>;
 }) => ({
   messageId: message.id,
   author,
-  excerpt: getAgentChatMessageQuoteExcerpt(message),
+  excerpt: getAiChatMessageQuoteExcerpt(message),
 });

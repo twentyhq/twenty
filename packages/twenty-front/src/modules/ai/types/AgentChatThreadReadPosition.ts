@@ -1,4 +1,4 @@
-export type AgentChatThreadReadPosition = {
+export type AiChatThreadReadPosition = {
   workspaceMemberId: string;
   lastReadAt: string | null;
 };

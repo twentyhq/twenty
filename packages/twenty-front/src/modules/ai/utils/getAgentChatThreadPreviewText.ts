@@ -1,28 +1,28 @@
 import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
-import { getAgentChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { getAiChatPreviewPlainText } from '@/ai/utils/getAgentChatPreviewPlainText';
+import { getAiChatSenderLabel } from '@/ai/utils/getAgentChatSenderLabel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
 // Members' messages carry who wrote them; agent replies read as plain text,
 // as they do in the chat itself
-export const getAgentChatThreadPreviewText = ({
+export const getAiChatThreadPreviewText = ({
   thread,
   workspaceMembers,
   currentWorkspaceMemberId,
   assistantDisplayName,
 }: {
   thread: Pick<
-    AgentChatThreadRecord,
+    AiChatThreadRecord,
     'lastMessageText' | 'lastMessageSenderWorkspaceMemberId'
   >;
   workspaceMembers: Pick<PartialWorkspaceMember, 'id' | 'name' | 'userEmail'>[];
   currentWorkspaceMemberId: string | undefined;
   assistantDisplayName: string;
 }): string | null => {
-  const text = getAgentChatPreviewPlainText({
+  const text = getAiChatPreviewPlainText({
     markdown: thread.lastMessageText ?? '',
     assistantDisplayName,
   });
@@ -37,7 +37,7 @@ export const getAgentChatThreadPreviewText = ({
     return text;
   }
 
-  const senderLabel = getAgentChatSenderLabel({
+  const senderLabel = getAiChatSenderLabel({
     sender: workspaceMembers.find(({ id }) => id === senderId),
     isCurrentWorkspaceMember: senderId === currentWorkspaceMemberId,
   });

@@ -3,8 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
+import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
+import { aiChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 
@@ -21,7 +21,7 @@ export const AiChatSentMessageHandOffEffect = ({
 
   const handOffSentMessage = () => {
     if (!isComposerCentered) {
-      store.set(agentChatSentMessageHandOffState.atom, null);
+      store.set(aiChatSentMessageHandOffState.atom, null);
       return;
     }
 
@@ -33,14 +33,14 @@ export const AiChatSentMessageHandOffEffect = ({
       return;
     }
 
-    store.set(agentChatSentMessageHandOffState.atom, {
+    store.set(aiChatSentMessageHandOffState.atom, {
       composerTextRect: getTextBoundingClientRect(editor.view.dom),
       messageId: null,
     });
   };
 
   useListenToBrowserEvent({
-    eventName: AGENT_CHAT_SEND_MESSAGE_EVENT_NAME,
+    eventName: AI_CHAT_SEND_MESSAGE_EVENT_NAME,
     onBrowserEvent: handOffSentMessage,
   });
 

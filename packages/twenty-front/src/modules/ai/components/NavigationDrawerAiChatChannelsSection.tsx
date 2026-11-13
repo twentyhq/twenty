@@ -5,12 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
 
-import { NavigationDrawerAiChatChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
-import { useCreateAgentChatChannel } from '@/ai/hooks/useCreateAgentChatChannel';
-import { useOpenAgentChatChannel } from '@/ai/hooks/useOpenAgentChatChannel';
-import { agentChatChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
-import { agentChatChannelsState } from '@/ai/states/agentChatChannelsState';
-import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
+import { NavigationDrawerInboxChannelItem } from '@/ai/components/NavigationDrawerAiChatChannelItem';
+import { useCreateInboxChannel } from '@/ai/hooks/useCreateAgentChatChannel';
+import { useOpenInboxChannel } from '@/ai/hooks/useOpenAgentChatChannel';
+import { inboxChannelSummariesState } from '@/ai/states/agentChatChannelSummariesState';
+import { inboxChannelsState } from '@/ai/states/agentChatChannelsState';
+import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -20,35 +20,33 @@ import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/us
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
+const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
-export const NavigationDrawerAiChatChannelsSection = () => {
+export const NavigationDrawerInboxChannelsSection = () => {
   const { t } = useLingui();
-  const agentChatChannels = useAtomStateValue(agentChatChannelsState);
-  const agentChatAccessibleChannels = useAtomStateValue(
-    agentChatAccessibleChannelsSelector,
+  const inboxChannels = useAtomStateValue(inboxChannelsState);
+  const inboxAccessibleChannels = useAtomStateValue(
+    inboxAccessibleChannelsSelector,
   );
-  const agentChatChannelSummaries = useAtomStateValue(
-    agentChatChannelSummariesState,
-  );
+  const inboxChannelSummaries = useAtomStateValue(inboxChannelSummariesState);
   const { openNavigationSection } = useNavigationSection(
-    AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID,
+    INBOX_CHANNELS_NAVIGATION_SECTION_ID,
   );
-  const { createAgentChatChannel } = useCreateAgentChatChannel();
+  const { createAgentChatChannel } = useCreateInboxChannel();
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
-  const { openAgentChatChannel } = useOpenAgentChatChannel();
+  const { openInboxChannel } = useOpenInboxChannel();
   const isNavigationDrawerContentExpanded =
     useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
-  if (!isDefined(agentChatChannels)) {
+  if (!isDefined(inboxChannels)) {
     return null;
   }
 
   // Listed only for who manages channels, so they keep a way to set them up
-  const inaccessibleChannels = agentChatChannels.filter(
+  const inaccessibleChannels = inboxChannels.filter(
     ({ isAccessible }) => !isAccessible,
   );
 
@@ -69,15 +67,15 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     const channelId = await createAgentChatChannel(trimmedName);
 
     if (isDefined(channelId)) {
-      openAgentChatChannel({ channelId });
+      openInboxChannel({ channelId });
     }
   };
 
   return (
     <CollapsibleNavigationDrawerSection
-      sectionId={AI_CHAT_CHANNELS_NAVIGATION_SECTION_ID}
+      sectionId={INBOX_CHANNELS_NAVIGATION_SECTION_ID}
       label={t`Channels`}
-      alwaysShowRightIcon={agentChatAccessibleChannels.length === 0}
+      alwaysShowRightIcon={inboxAccessibleChannels.length === 0}
       rightIcon={
         canManageChannels ? (
           <LightIconButton
@@ -90,23 +88,23 @@ export const NavigationDrawerAiChatChannelsSection = () => {
         ) : undefined
       }
     >
-      {agentChatAccessibleChannels.map((channel) => (
-        <NavigationDrawerAiChatChannelItem
+      {inboxAccessibleChannels.map((channel) => (
+        <NavigationDrawerInboxChannelItem
           key={channel.id}
           channel={channel}
-          summary={agentChatChannelSummaries[channel.id]}
-          destinationChannels={agentChatAccessibleChannels.filter(
+          summary={inboxChannelSummaries[channel.id]}
+          destinationChannels={inboxAccessibleChannels.filter(
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}
         />
       ))}
       {inaccessibleChannels.map((channel) => (
-        <NavigationDrawerAiChatChannelItem
+        <NavigationDrawerInboxChannelItem
           key={channel.id}
           channel={channel}
           summary={undefined}
-          destinationChannels={agentChatAccessibleChannels}
+          destinationChannels={inboxAccessibleChannels}
           canManage={canManageChannels}
         />
       ))}

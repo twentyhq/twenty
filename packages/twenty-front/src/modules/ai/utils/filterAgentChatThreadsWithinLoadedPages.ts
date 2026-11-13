@@ -1,18 +1,18 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadList } from '@/ai/types/AgentChatThreadList';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type InboxLoadedThreadList } from '@/ai/types/AgentChatThreadList';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
-export const filterAgentChatThreadsWithinLoadedPages = ({
+export const filterAiChatThreadsWithinLoadedPages = ({
   threads,
   pagedList,
 }: {
-  threads: AgentChatThreadRecord[];
+  threads: AiChatThreadRecord[];
   pagedList: Pick<
-    AgentChatThreadList,
+    InboxLoadedThreadList,
     'threadIds' | 'hasNextPage' | 'lastLoadedActivityAt'
   > | null;
-}): AgentChatThreadRecord[] => {
+}): AiChatThreadRecord[] => {
   if (!isDefined(pagedList) || !pagedList.hasNextPage) {
     return threads;
   }

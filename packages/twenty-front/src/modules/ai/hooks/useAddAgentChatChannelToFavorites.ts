@@ -5,12 +5,12 @@ import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { getNextUserFavoritePosition } from '@/navigation-menu-item/common/utils/getNextUserFavoritePosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-export const useAddAgentChatChannelToFavorites = () => {
+export const useAddInboxChannelToFavorites = () => {
   const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
 
-  const addAgentChatChannelToFavorites = (channelId: string) => {
+  const addInboxChannelToFavorites = (channelId: string) => {
     void createManyNavigationMenuItems([
       {
         id: v4(),
@@ -22,5 +22,5 @@ export const useAddAgentChatChannelToFavorites = () => {
     ]);
   };
 
-  return { addAgentChatChannelToFavorites };
+  return { addInboxChannelToFavorites };
 };

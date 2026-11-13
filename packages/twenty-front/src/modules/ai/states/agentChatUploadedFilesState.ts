@@ -1,10 +1,8 @@
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-import { type AgentChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
+import { type AiChatFileUIPart } from '@/ai/types/AgentChatFileUIPart';
 
-export const agentChatUploadedFilesState = createAtomState<
-  AgentChatFileUIPart[]
->({
+export const aiChatUploadedFilesState = createAtomState<AiChatFileUIPart[]>({
   key: 'ai/agentChatUploadedFilesState',
   defaultValue: [],
   useSessionStorage: true,

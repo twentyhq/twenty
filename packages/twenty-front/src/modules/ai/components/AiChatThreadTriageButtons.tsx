@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconArrowBackUp, IconBell, IconCheck, IconZzz } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-type AiChatThreadTriageButtonsProps = {
+type InboxThreadTriageButtonsProps = {
   status: 'open' | 'snoozed' | 'done';
   isPending?: boolean;
   onSnooze: () => void;
@@ -10,13 +10,13 @@ type AiChatThreadTriageButtonsProps = {
   onReopen: () => void;
 };
 
-export const AiChatThreadTriageButtons = ({
+export const InboxThreadTriageButtons = ({
   status,
   isPending = false,
   onSnooze,
   onDone,
   onReopen,
-}: AiChatThreadTriageButtonsProps) => {
+}: InboxThreadTriageButtonsProps) => {
   const { t } = useLingui();
 
   if (status === 'done') {

@@ -2,9 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
-import { type AgentChatSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
-import { findAgentChatChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
+import { INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatDefaultSelectedThreadListSource';
+import { type InboxSelectedThreadListSource } from '@/ai/types/AgentChatSelectedThreadListSource';
+import { findInboxChannelOpenViewItem } from '@/ai/utils/findAgentChatChannelOpenViewItem';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 import {
   AgentChatChannelAssignmentFilter,
@@ -12,10 +12,10 @@ import {
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
-export const agentChatSelectedThreadListSourceState =
-  createAtomState<AgentChatSelectedThreadListSource>({
+export const inboxSelectedThreadListSourceState =
+  createAtomState<InboxSelectedThreadListSource>({
     key: 'agentChatSelectedThreadListSourceState',
-    defaultValue: AGENT_CHAT_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
+    defaultValue: INBOX_DEFAULT_SELECTED_THREAD_LIST_SOURCE,
     useLocalStorage: true,
     localStorageOptions: { getOnInit: true },
     validateInitFn: (source) => {
@@ -30,7 +30,7 @@ export const agentChatSelectedThreadListSourceState =
       return (
         isDefined(channelView) &&
         isNonEmptyString(channelView.channelId) &&
-        (isDefined(findAgentChatChannelOpenViewItem(channelView)) ||
+        (isDefined(findInboxChannelOpenViewItem(channelView)) ||
           (Object.values(AgentChatChannelThreadStatus).includes(
             channelView.channelStatus,
           ) &&

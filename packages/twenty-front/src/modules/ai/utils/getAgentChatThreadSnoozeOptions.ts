@@ -2,7 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Temporal } from 'temporal-polyfill';
 
-export type AgentChatThreadSnoozeOption = {
+export type AiChatThreadSnoozeOption = {
   key: 'laterToday' | 'thisEvening' | 'tomorrow' | 'nextWeek';
   label: MessageDescriptor;
   date: Date;
@@ -34,13 +34,13 @@ const isSameDay = (
 
 // An option that is already behind, or that lands on the same moment as
 // another, is left out rather than shown twice.
-export const getAgentChatThreadSnoozeOptions = ({
+export const getAiChatThreadSnoozeOptions = ({
   now: instant,
   timeZone,
 }: {
   now: Date;
   timeZone: string;
-}): AgentChatThreadSnoozeOption[] => {
+}): AiChatThreadSnoozeOption[] => {
   // Worked out on the member's clock, which can differ from the browser's
   const now = Temporal.Instant.fromEpochMilliseconds(
     instant.getTime(),

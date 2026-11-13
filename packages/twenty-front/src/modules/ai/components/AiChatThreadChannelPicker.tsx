@@ -4,41 +4,38 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconFolderSymlink } from 'twenty-ui/icon';
 
-import { useMoveAgentChatThreadToChannel } from '@/ai/hooks/useMoveAgentChatThreadToChannel';
-import { agentChatAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { useMoveInboxThreadToChannel } from '@/ai/hooks/useMoveAgentChatThreadToChannel';
+import { inboxAccessibleChannelsSelector } from '@/ai/states/selectors/agentChatAccessibleChannelsSelector';
+import { type AiChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type AiChatThreadChannelPickerProps = {
-  thread: AgentChatThreadRecord;
+type InboxThreadChannelPickerProps = {
+  thread: AiChatThreadRecord;
   dropdownId: string;
 };
 
 // A chat without an owner has no one to fall back to, so it stays in a channel
-export const AiChatThreadChannelPicker = ({
+export const InboxThreadChannelPicker = ({
   thread,
   dropdownId,
-}: AiChatThreadChannelPickerProps) => {
+}: InboxThreadChannelPickerProps) => {
   const { t } = useLingui();
-  const agentChatAccessibleChannels = useAtomStateValue(
-    agentChatAccessibleChannelsSelector,
+  const inboxAccessibleChannels = useAtomStateValue(
+    inboxAccessibleChannelsSelector,
   );
-  const { moveAgentChatThreadToChannel } = useMoveAgentChatThreadToChannel();
+  const { moveAgentChatThreadToChannel } = useMoveInboxThreadToChannel();
   const currentChannelId = thread.channelId ?? null;
   const canLeaveChannels = isDefined(thread.workspaceMemberId);
 
-  if (
-    agentChatAccessibleChannels.length === 0 &&
-    !isDefined(currentChannelId)
-  ) {
+  if (inboxAccessibleChannels.length === 0 && !isDefined(currentChannelId)) {
     return null;
   }
 
   const options = [
     ...(canLeaveChannels ? [{ id: null, name: t`No channel` }] : []),
-    ...agentChatAccessibleChannels.map(({ id, name }) => ({ id, name })),
+    ...inboxAccessibleChannels.map(({ id, name }) => ({ id, name })),
   ];
 
   return (

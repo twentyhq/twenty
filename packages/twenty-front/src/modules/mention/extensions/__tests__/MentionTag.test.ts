@@ -6,7 +6,7 @@ import { Text } from '@tiptap/extension-text';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
-import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
+import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
 import { parseChatReferences } from '@/ai/utils/parseChatReferences';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
@@ -94,7 +94,7 @@ describe('MentionTag', () => {
       ]);
       expect(messageText.endsWith(', @Ada wrote this.')).toBe(true);
       expect(
-        isAgentChatAssistantMentionedInSerializedDocument(savedDocument),
+        isAiChatAssistantMentionedInSerializedDocument(savedDocument),
       ).toBe(true);
     });
 

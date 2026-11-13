@@ -1,12 +1,12 @@
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const agentChatThreadIsDirectMessageFamilySelector =
+export const inboxThreadIsDirectMessageFamilySelector =
   createAtomFamilySelector<boolean, string | null>({
-    key: 'agentChatThreadIsDirectMessageFamilySelector',
+    key: 'inboxThreadIsDirectMessageFamilySelector',
     get:
       (threadId) =>
       ({ get }) => {
@@ -15,8 +15,7 @@ export const agentChatThreadIsDirectMessageFamilySelector =
         }
 
         return (
-          get(agentChatThreadRecordFamilySelector, threadId)
-            ?.conversationType ===
+          get(aiChatThreadRecordFamilySelector, threadId)?.conversationType ===
           AgentChatThreadConversationType.DIRECT_MESSAGE
         );
       },
