@@ -14771,7 +14771,7 @@ msgstr "אפור"
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
-msgstr "תום גדול יותר או שווה\aF"
+msgstr ""
 
 #. js-lingui-id: CZXzs4
 #: src/modules/localization/hooks/useLocaleOptions.ts
