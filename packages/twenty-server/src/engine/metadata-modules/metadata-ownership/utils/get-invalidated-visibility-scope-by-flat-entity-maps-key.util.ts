@@ -79,18 +79,25 @@ const getTouchedRootPrivacyScopes = ({
 
   return rows.flatMap((row): TouchedRootPrivacyScope[] => {
     const rootId = row[rootIdProperty];
-    const roots = isString(rootId)
-      ? loadedRootFlatEntityMaps
-          .map((flatEntityMaps) =>
-            findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: rootId,
-              flatEntityMaps,
-            }),
-          )
-          .filter(isDefined)
-      : [];
 
-    return roots.length === 0 ? ['private'] : roots.map(scopeOfRoot);
+    if (!isString(rootId)) {
+      return ['private'];
+    }
+
+    const roots = loadedRootFlatEntityMaps
+      .map((flatEntityMaps) =>
+        findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: rootId,
+          flatEntityMaps,
+        }),
+      )
+      .filter(isDefined);
+
+    if (roots.length === 0) {
+      return ['private'];
+    }
+
+    return roots.map(scopeOfRoot);
   });
 };
 
