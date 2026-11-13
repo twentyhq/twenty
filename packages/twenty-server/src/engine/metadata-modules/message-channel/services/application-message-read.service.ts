@@ -14,10 +14,10 @@ import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
-import { findAppThreadLatestMessages } from 'src/engine/metadata-modules/message-channel/utils/find-app-thread-latest-messages.util';
 import { MessagingProviderThreadReadMarkerService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-thread-read-marker.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { ApplicationThreadLatestMessagesService } from 'src/engine/metadata-modules/message-channel/services/application-thread-latest-messages.service';
 
 const APP_THREAD_MARK_AS_READ_THROTTLE_TTL_MS = 30 * 1000;
 
@@ -29,6 +29,7 @@ export class ApplicationMessageReadService {
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly messagingProviderThreadReadMarkerService: MessagingProviderThreadReadMarkerService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly applicationThreadLatestMessagesService: ApplicationThreadLatestMessagesService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
@@ -106,8 +107,7 @@ export class ApplicationMessageReadService {
       const latestThreadMessages =
         await this.workspaceOrmManager.executeInWorkspaceContext(
           () =>
-            findAppThreadLatestMessages({
-              workspaceOrmManager: this.workspaceOrmManager,
+            this.applicationThreadLatestMessagesService.find({
               messageChannelId,
               messageThreadId,
             }),

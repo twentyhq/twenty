@@ -1,11 +1,7 @@
 import { MessageChannelExceptionCode } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
 import { ApplicationMessageReadService } from 'src/engine/metadata-modules/message-channel/services/application-message-read.service';
-import { findAppThreadLatestMessages } from 'src/engine/metadata-modules/message-channel/utils/find-app-thread-latest-messages.util';
 
-jest.mock(
-  'src/engine/metadata-modules/message-channel/utils/find-app-thread-latest-messages.util',
-  () => ({ findAppThreadLatestMessages: jest.fn() }),
-);
+const findAppThreadLatestMessages = jest.fn();
 
 const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
 const USER_WORKSPACE_ID = '66666666-6666-4666-8666-666666666666';
@@ -79,6 +75,7 @@ describe('ApplicationMessageReadService', () => {
       connectedAccountMetadataService as never,
       messagingProviderThreadReadMarkerService as never,
       workspaceOrmManager as never,
+      { find: findAppThreadLatestMessages } as never,
       cacheStorageService as never,
     );
 
@@ -91,13 +88,10 @@ describe('ApplicationMessageReadService', () => {
   };
 
   beforeEach(() => {
-    jest
-      .mocked(findAppThreadLatestMessages)
-      .mockReset()
-      .mockResolvedValue({
-        threadExternalId: 'chat-1',
-        latestMessageIds: ['message-1'],
-      });
+    findAppThreadLatestMessages.mockReset().mockResolvedValue({
+      threadExternalId: 'chat-1',
+      latestMessageIds: ['message-1'],
+    });
   });
 
   it('asks the messaging provider to mark the thread as read for its owner', async () => {
@@ -224,7 +218,7 @@ describe('ApplicationMessageReadService', () => {
   });
 
   it('does nothing when the thread has no message in the channel', async () => {
-    jest.mocked(findAppThreadLatestMessages).mockResolvedValue(null);
+    findAppThreadLatestMessages.mockResolvedValue(null);
     const {
       service,
       messagingProviderThreadReadMarkerService,

@@ -34,7 +34,6 @@ import {
   type AppMessageReplyRecipient,
   buildAppMessageReplyRecipients,
 } from 'src/engine/metadata-modules/message-channel/utils/build-app-message-reply-recipients.util';
-import { findAppThreadLatestMessages } from 'src/engine/metadata-modules/message-channel/utils/find-app-thread-latest-messages.util';
 import { withKnownParticipantIdentities } from 'src/engine/metadata-modules/message-channel/utils/with-known-participant-identities.util';
 import { MessagingProviderMessageSenderService } from 'src/engine/metadata-modules/messaging-provider/services/messaging-provider-message-sender.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -43,6 +42,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { ApplicationThreadLatestMessagesService } from 'src/engine/metadata-modules/message-channel/services/application-thread-latest-messages.service';
 
 const APP_MESSAGE_DELIVERY_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -95,6 +95,7 @@ export class ApplicationMessageSendService {
     private readonly messagingProviderMessageSenderService: MessagingProviderMessageSenderService,
     private readonly applicationMessageIngestionService: ApplicationMessageIngestionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly applicationThreadLatestMessagesService: ApplicationThreadLatestMessagesService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleMessaging)
@@ -375,11 +376,11 @@ export class ApplicationMessageSendService {
     const conversation =
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const latestThreadMessages = await findAppThreadLatestMessages({
-            workspaceOrmManager: this.workspaceOrmManager,
-            messageChannelId: messageChannel.id,
-            messageThreadId,
-          });
+          const latestThreadMessages =
+            await this.applicationThreadLatestMessagesService.find({
+              messageChannelId: messageChannel.id,
+              messageThreadId,
+            });
 
           if (!isDefined(latestThreadMessages)) {
             return null;
