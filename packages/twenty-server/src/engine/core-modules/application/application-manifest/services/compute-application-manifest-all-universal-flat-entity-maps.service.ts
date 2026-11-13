@@ -44,6 +44,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { findInactiveFieldMetadataOptionValues } from 'src/engine/core-modules/application/application-manifest/utils/find-inactive-field-metadata-option-values.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import {
@@ -593,7 +594,21 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
         });
       }
 
+      // Deactivating an option deletes its groups, so a sync must not bring its column back.
+      const inactiveOptionValues = findInactiveFieldMetadataOptionValues({
+        fieldMetadataUniversalIdentifier:
+          viewManifest.mainGroupByFieldMetadataUniversalIdentifier,
+        existingFlatFieldMetadataOptionMaps:
+          existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+        incomingFlatFieldMetadataOptionMaps:
+          allUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+      });
+
       for (const viewGroupManifest of viewManifest.groups ?? []) {
+        if (inactiveOptionValues.has(viewGroupManifest.fieldValue)) {
+          continue;
+        }
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity: fromViewGroupManifestToUniversalFlatViewGroup({
             viewGroupManifest,

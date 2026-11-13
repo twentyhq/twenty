@@ -2,7 +2,7 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataOptionActive } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 type FieldMetadataOption =
@@ -26,13 +26,28 @@ export const normalizeUpdatedFieldMetadataOptions = <
   );
 
   return updatedOptions.map((updatedOption) => {
-    const existingOption = isDefined(updatedOption.id)
+    const {
+      id: updatedOptionId,
+      isActive,
+      applicationId: _applicationId,
+      ...optionProperties
+    } = updatedOption;
+    const existingOption = isDefined(updatedOptionId)
       ? undefined
       : unclaimedExistingOptionByValue.get(updatedOption.value);
 
     unclaimedExistingOptionByValue.delete(updatedOption.value);
 
     // An explicit id, even null, is kept as sent so option id validation still sees it.
-    return { id: existingOption?.id ?? v4(), ...updatedOption };
+    const id =
+      updatedOptionId === undefined
+        ? (existingOption?.id ?? v4())
+        : updatedOptionId;
+
+    return {
+      id,
+      ...optionProperties,
+      ...(isFieldMetadataOptionActive({ isActive }) ? {} : { isActive: false }),
+    } as TOption;
   });
 };

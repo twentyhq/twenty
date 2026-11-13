@@ -41,6 +41,7 @@ describe('getFieldMetadata', () => {
         byUniversalIdentifier: {
           [OPTION_UNIVERSAL_IDENTIFIER]: getFlatFieldMetadataOptionMock({
             universalIdentifier: OPTION_UNIVERSAL_IDENTIFIER,
+            applicationId: fieldMetadata.applicationId,
             value: 'ACTIVE',
             label: 'Renamed',
             color: 'green',

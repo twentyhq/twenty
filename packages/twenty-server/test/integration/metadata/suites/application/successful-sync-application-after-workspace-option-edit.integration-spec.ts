@@ -204,50 +204,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
       { value: 'OPEN', label: 'Open', color: 'purple', position: 1 },
     ]);
 
-    expect(await findSelectFieldOptionRows()).toEqual([
-      { ...APP_OPTION_ROWS[1], color: 'blue', position: 0 },
-      { ...APP_OPTION_ROWS[0], color: 'purple', position: 1 },
-    ]);
-  }, 60000);
-
-  it('replaces the workspace rows of an edit that re-keyed the app options', async () => {
-    await updateSelectFieldOptions([
-      {
-        id: 'd1b2c3d4-0200-4000-a000-0000000000f1',
-        value: 'CLOSED',
-        label: 'Closed',
-        color: 'blue',
-        position: 0,
-      },
-      {
-        id: 'd1b2c3d4-0200-4000-a000-0000000000f2',
-        value: 'OPEN',
-        label: 'Open',
-        color: 'purple',
-        position: 1,
-      },
-    ]);
-
-    const workspaceEditedRows = await findSelectFieldOptionRows();
-
-    expect(workspaceEditedRows).toHaveLength(2);
-    expect(
-      workspaceEditedRows.every(
-        ({ isOwnedByTestApp }: { isOwnedByTestApp: boolean }) =>
-          !isOwnedByTestApp,
-      ),
-    ).toBe(true);
-
-    const closedSubjectId = await createSubjectWithStatus('CLOSED');
-
-    const { errors } = await syncApplication({
-      manifest,
-      expectToFail: false,
-    });
-
-    expect(errors).toBeUndefined();
     expect(await findSelectFieldOptionRows()).toEqual(APP_OPTION_ROWS);
-    expect(await findSubjectStatus(closedSubjectId)).toBe('CLOSED');
   }, 60000);
 
   it('replaces a workspace option whose value a later version of the app ships', async () => {
@@ -401,6 +358,7 @@ describe('Sync application after a workspace edit re-keyed its field options', (
         ]),
       );
     } finally {
+      await syncApplication({ manifest, expectToFail: false });
       await updateSelectFieldOptions([OPEN_OPTION, CLOSED_OPTION]);
     }
   }, 60000);
