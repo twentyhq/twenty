@@ -19,7 +19,7 @@ export class UsageLimitInstanceOverrideExpiryJob {
     workspaceId,
     usageLimitIds,
   }: UsageLimitInstanceOverrideExpiryJobData): Promise<void> {
-    await this.usageLimitService.deleteInstanceOverrides({
+    await this.usageLimitService.deleteLimits({
       workspaceId,
       usageLimitIds,
     });
