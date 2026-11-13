@@ -34,7 +34,8 @@ import { type DeferredWorkspaceOperation } from 'src/engine/workspace-manager/wo
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import { getDerivedCacheTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-derived-cache-triggers.util';
 import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-flat-entity-maps-keys-to-invalidate-for-workspace-migration.util';
-import { buildFieldMetadataOptionEnumChangeTracker } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-tracker.util';
+import { computeFieldMetadataOptionEnumChanges } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/compute-field-metadata-option-enum-changes.util';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -52,6 +53,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly deferredWorkspaceOperationRunnerService: DeferredWorkspaceOperationRunnerService,
     private readonly inFlightDeferredWorkspaceOperationsService: InFlightDeferredWorkspaceOperationsService,
+    private readonly fieldMetadataOptionEnumSchemaService: FieldMetadataOptionEnumSchemaService,
   ) {}
 
   async invalidateCache({
@@ -385,8 +387,8 @@ export class WorkspaceMigrationRunnerService {
     let slowestActionLabel = 'n/a';
     let actionCount = 0;
 
-    const fieldMetadataOptionEnumChangeTracker =
-      buildFieldMetadataOptionEnumChangeTracker({
+    const fieldMetadataOptionEnumChanges =
+      computeFieldMetadataOptionEnumChanges({
         actions,
         flatFieldMetadataOptionMaps:
           cachedAllFlatEntityMaps.flatFieldMetadataOptionMaps,
@@ -399,6 +401,15 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       await queryRunner.query(`SET LOCAL lock_timeout = '8s'`);
+
+      await this.fieldMetadataOptionEnumSchemaService.applyEnumChangesOfFieldsWithoutFieldAction(
+        {
+          fieldMetadataOptionEnumChanges,
+          allFlatEntityMaps,
+          queryRunner,
+          workspaceId,
+        },
+      );
 
       for (const action of actions) {
         const actionStart = performance.now();
@@ -415,7 +426,7 @@ export class WorkspaceMigrationRunnerService {
                 preallocatedIdByUniversalIdentifierByMetadataName,
                 getSearchFieldMetadatasByTsVectorFieldId:
                   searchFieldMetadatasByTsVectorFieldIdAccessor.get,
-                fieldMetadataOptionEnumChangeTracker,
+                fieldMetadataOptionEnumChanges,
                 shouldDeferActions,
               },
             },

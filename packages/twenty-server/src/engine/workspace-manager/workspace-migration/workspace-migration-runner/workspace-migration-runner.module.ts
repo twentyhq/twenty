@@ -8,6 +8,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DeferredWorkspaceOperationEntity } from 'src/engine/metadata-modules/deferred-workspace-operation/deferred-workspace-operation.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
@@ -19,6 +20,7 @@ import { DeferredWorkspaceOperationRecoveryService } from 'src/engine/workspace-
 import { DeferredWorkspaceOperationGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-gauge.service';
 import { DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 import { InFlightDeferredWorkspaceOperationsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-operations.service';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -31,9 +33,11 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     TypeOrmModule.forFeature([DeferredWorkspaceOperationEntity]),
     WorkspaceIteratorModule,
     MetricsModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     WorkspaceMigrationRunnerService,
+    FieldMetadataOptionEnumSchemaService,
     WorkspaceMigrationRunnerActionHandlerRegistryService,
     DeferredWorkspaceOperationHandlerRegistryService,
     DeferredWorkspaceOperationRunnerService,

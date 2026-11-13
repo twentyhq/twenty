@@ -136,8 +136,8 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       (flatFieldMetadata) =>
         applyFieldMetadataOptionRowsToCreatedFlatFieldMetadata({
           flatFieldMetadata,
-          fieldMetadataOptionEnumChangeTracker:
-            context.fieldMetadataOptionEnumChangeTracker,
+          fieldMetadataOptionEnumChanges:
+            context.fieldMetadataOptionEnumChanges,
         }),
     );
 

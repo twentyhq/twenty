@@ -4,7 +4,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { type PreallocatedIdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-relation-identifiers-to-ids.util';
-import { type FieldMetadataOptionEnumChangeTracker } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
+import { type FieldMetadataOptionEnumChangeOfMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 import {
   type AllFlatWorkspaceMigrationAction,
   type AllUniversalWorkspaceMigrationAction,
@@ -22,7 +22,10 @@ export type WorkspaceMigrationActionRunnerArgs<
   getSearchFieldMetadatasByTsVectorFieldId?: (
     tsVectorFieldMetadataId: string,
   ) => FlatSearchFieldMetadata[];
-  fieldMetadataOptionEnumChangeTracker?: FieldMetadataOptionEnumChangeTracker;
+  fieldMetadataOptionEnumChanges?: ReadonlyMap<
+    string,
+    FieldMetadataOptionEnumChangeOfMigration
+  >;
   shouldDeferActions?: boolean;
 };
 

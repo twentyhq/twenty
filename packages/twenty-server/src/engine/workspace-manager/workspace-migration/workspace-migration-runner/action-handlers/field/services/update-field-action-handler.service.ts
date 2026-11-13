@@ -25,12 +25,9 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { resolveSearchVectorAsExpressionForTsVectorField } from 'src/engine/metadata-modules/flat-search-field-metadata/utils/resolve-search-vector-as-expression-for-ts-vector-field.util';
-import { buildFieldMetadataOptionEnumChangeFromOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-from-options.util';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
-import {
-  type FieldMetadataOptionEnumChange,
-  type FieldMetadataOptionEnumChangeTracker,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
+import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-field-metadata-options-to-option-rows.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
@@ -224,12 +221,23 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       optimisticFlatFieldMetadata.name = update.name;
     }
 
-    const enumChange = this.resolveEnumChange({
-      currentFlatFieldMetadata,
-      toOptions: update.options,
-      fieldMetadataOptionEnumChangeTracker:
-        context.fieldMetadataOptionEnumChangeTracker,
-    });
+    // Before the option table exists there are no option rows, so the enum follows the options of the update.
+    // TODO: drop the options fallback once every instance has run the 2.56 option table command, with the options column drop.
+    const enumChange = !isEnumFlatFieldMetadata(currentFlatFieldMetadata)
+      ? undefined
+      : (context.fieldMetadataOptionEnumChanges?.get(
+          currentFlatFieldMetadata.universalIdentifier,
+        ) ??
+        (isDefined(update.options) && !isFieldMetadataOptionEntityAvailable()
+          ? {
+              fromOptionRows: fromFieldMetadataOptionsToOptionRows(
+                currentFlatFieldMetadata.options,
+              ),
+              toOptionRows: fromFieldMetadataOptionsToOptionRows(
+                update.options,
+              ),
+            }
+          : undefined));
 
     if (isDefined(enumChange)) {
       // Rebuilding the enum recreates the column, so the new default value goes with it.
@@ -417,32 +425,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     }
-  }
-
-  private resolveEnumChange({
-    currentFlatFieldMetadata,
-    toOptions,
-    fieldMetadataOptionEnumChangeTracker,
-  }: {
-    currentFlatFieldMetadata: FlatFieldMetadata;
-    toOptions: FlatFieldMetadata['options'] | undefined;
-    fieldMetadataOptionEnumChangeTracker:
-      | FieldMetadataOptionEnumChangeTracker
-      | undefined;
-  }): FieldMetadataOptionEnumChange | undefined {
-    if (!isEnumFlatFieldMetadata(currentFlatFieldMetadata)) {
-      return undefined;
-    }
-
-    return (
-      fieldMetadataOptionEnumChangeTracker?.consume(
-        currentFlatFieldMetadata.universalIdentifier,
-      ) ??
-      buildFieldMetadataOptionEnumChangeFromOptions({
-        fromOptions: currentFlatFieldMetadata.options,
-        toOptions,
-      })
-    );
   }
 
   private async handleFieldNameUpdate({

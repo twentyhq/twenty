@@ -1,5 +1,5 @@
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
-import { buildFieldMetadataOptionEnumChangeTracker } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-field-metadata-option-enum-change-tracker.util';
+import { computeFieldMetadataOptionEnumChanges } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/compute-field-metadata-option-enum-changes.util';
 
 const FIELD_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const OPEN_OPTION_ID = '20202020-0000-4000-8000-000000000101';
@@ -64,14 +64,12 @@ const optionActions = [
 const toValues = (optionRows: { value: string }[]) =>
   optionRows.map(({ value }) => value);
 
-describe('buildFieldMetadataOptionEnumChangeTracker', () => {
-  it('gives the rows of a field before and after the migration, once', () => {
-    const tracker = buildFieldMetadataOptionEnumChangeTracker({
+describe('computeFieldMetadataOptionEnumChanges', () => {
+  it('gives the rows of a field before and after the migration', () => {
+    const enumChange = computeFieldMetadataOptionEnumChanges({
       actions: optionActions,
       flatFieldMetadataOptionMaps,
-    });
-
-    const enumChange = tracker.consume(FIELD_UNIVERSAL_IDENTIFIER);
+    }).get(FIELD_UNIVERSAL_IDENTIFIER);
 
     expect(toValues(enumChange?.fromOptionRows ?? [])).toEqual([
       'OPEN',
@@ -81,20 +79,20 @@ describe('buildFieldMetadataOptionEnumChangeTracker', () => {
       'OPENED',
       'PAUSED',
     ]);
-    expect(tracker.consume(FIELD_UNIVERSAL_IDENTIFIER)).toBeUndefined();
+    expect(enumChange?.hasFieldAction).toBe(false);
   });
 
   it('gives nothing for a field no option action touches', () => {
-    const tracker = buildFieldMetadataOptionEnumChangeTracker({
-      actions: [],
-      flatFieldMetadataOptionMaps,
-    });
-
-    expect(tracker.consume(FIELD_UNIVERSAL_IDENTIFIER)).toBeUndefined();
+    expect(
+      computeFieldMetadataOptionEnumChanges({
+        actions: [],
+        flatFieldMetadataOptionMaps,
+      }).get(FIELD_UNIVERSAL_IDENTIFIER),
+    ).toBeUndefined();
   });
 
   it('tells when the field has its own action in the migration', () => {
-    const tracker = buildFieldMetadataOptionEnumChangeTracker({
+    const enumChanges = computeFieldMetadataOptionEnumChanges({
       actions: [
         ...optionActions,
         {
@@ -107,7 +105,9 @@ describe('buildFieldMetadataOptionEnumChangeTracker', () => {
       flatFieldMetadataOptionMaps,
     });
 
-    expect(tracker.hasFieldAction(FIELD_UNIVERSAL_IDENTIFIER)).toBe(true);
-    expect(tracker.hasFieldAction(OPEN_OPTION_ID)).toBe(false);
+    expect(enumChanges.get(FIELD_UNIVERSAL_IDENTIFIER)?.hasFieldAction).toBe(
+      true,
+    );
+    expect(enumChanges.has(OPEN_OPTION_ID)).toBe(false);
   });
 });

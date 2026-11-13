@@ -11,7 +11,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   type FieldMetadataOptionEnumChange,
-  type FieldMetadataOptionEnumChangeTracker,
+  type FieldMetadataOptionEnumChangeOfMigration,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/field-metadata-option-enum-change.type';
 import { fromFieldMetadataOptionsToOptionRows } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/from-field-metadata-options-to-option-rows.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -23,17 +23,17 @@ export class FieldMetadataOptionEnumSchemaService {
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
-  async applyEnumChangeOfOptionAction({
-    fieldMetadataUniversalIdentifier,
-    fieldMetadataOptionEnumChangeTracker,
+  // Fields without their own action have their enum rebuilt before any action, so later ones see the final column.
+  async applyEnumChangesOfFieldsWithoutFieldAction({
+    fieldMetadataOptionEnumChanges,
     allFlatEntityMaps: { flatFieldMetadataMaps, flatObjectMetadataMaps },
     queryRunner,
     workspaceId,
   }: {
-    fieldMetadataUniversalIdentifier: string;
-    fieldMetadataOptionEnumChangeTracker:
-      | FieldMetadataOptionEnumChangeTracker
-      | undefined;
+    fieldMetadataOptionEnumChanges: ReadonlyMap<
+      string,
+      FieldMetadataOptionEnumChangeOfMigration
+    >;
     allFlatEntityMaps: Pick<
       AllFlatEntityMaps,
       'flatFieldMetadataMaps' | 'flatObjectMetadataMaps'
@@ -41,44 +41,37 @@ export class FieldMetadataOptionEnumSchemaService {
     queryRunner: QueryRunner;
     workspaceId: string;
   }): Promise<void> {
-    if (
-      !isDefined(fieldMetadataOptionEnumChangeTracker) ||
-      fieldMetadataOptionEnumChangeTracker.hasFieldAction(
-        fieldMetadataUniversalIdentifier,
-      )
-    ) {
-      return;
-    }
-
-    const enumChange = fieldMetadataOptionEnumChangeTracker.consume(
-      fieldMetadataUniversalIdentifier,
-    );
-    const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: fieldMetadataUniversalIdentifier,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-    const flatObjectMetadata = isDefined(flatFieldMetadata)
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: flatFieldMetadata.objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        })
-      : undefined;
-
-    if (
-      !isDefined(enumChange) ||
-      !isDefined(flatFieldMetadata) ||
-      !isDefined(flatObjectMetadata)
-    ) {
-      return;
-    }
-
-    await this.applyEnumChange({
+    for (const [
+      universalIdentifier,
       enumChange,
-      flatFieldMetadata,
-      flatObjectMetadata,
-      queryRunner,
-      workspaceId,
-    });
+    ] of fieldMetadataOptionEnumChanges) {
+      const flatFieldMetadata = findFlatEntityByUniversalIdentifier({
+        universalIdentifier,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+      const flatObjectMetadata = isDefined(flatFieldMetadata)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: flatFieldMetadata.objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
+
+      if (
+        enumChange.hasFieldAction ||
+        !isDefined(flatFieldMetadata) ||
+        !isDefined(flatObjectMetadata)
+      ) {
+        continue;
+      }
+
+      await this.applyEnumChange({
+        enumChange,
+        flatFieldMetadata,
+        flatObjectMetadata,
+        queryRunner,
+        workspaceId,
+      });
+    }
   }
 
   // Returns false when the enum already holds the target values, so the column is left alone.

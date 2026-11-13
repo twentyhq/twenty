@@ -182,8 +182,8 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         const flatFieldMetadata =
           applyFieldMetadataOptionRowsToCreatedFlatFieldMetadata({
             flatFieldMetadata: createdFlatFieldMetadata,
-            fieldMetadataOptionEnumChangeTracker:
-              context.fieldMetadataOptionEnumChangeTracker,
+            fieldMetadataOptionEnumChanges:
+              context.fieldMetadataOptionEnumChanges,
           });
 
         await this.executeSingleFieldMetadataWorkspaceSchema({
