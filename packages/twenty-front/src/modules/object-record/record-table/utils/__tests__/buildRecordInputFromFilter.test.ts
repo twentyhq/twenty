@@ -2,6 +2,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
 import {
   FieldMetadataType,
+  RecordFilterGroupLogicalOperator,
   RelationType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
@@ -278,6 +279,119 @@ describe('buildRecordInputFromFilter', () => {
       ],
       objectMetadataItem: mockObjectMetadataItem,
       currentRecordId: 'current-record-id',
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({});
+  });
+
+  it('should skip filters on fields the role cannot edit via uneditableFields', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_TEXT,
+          type: FieldMetadataType.TEXT,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+        }),
+        createFilter({
+          id: 'filter-id-2',
+          fieldMetadataId: FIELD_ID_NUMBER,
+          type: FieldMetadataType.NUMBER,
+          operand: ViewFilterOperand.IS,
+          value: '42',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      uneditableFields: [FIELD_ID_TEXT],
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ revenue: 42 });
+  });
+
+  it('should preserve required defaults when uneditableFields is not provided (e.g. RLS predicates)', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_TEXT,
+          type: FieldMetadataType.TEXT,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+        }),
+      ],
+      objectMetadataItem: {
+        ...mockObjectMetadataItem,
+        updatableFields: [],
+      } as typeof mockObjectMetadataItem,
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ companyName: 'Acme' });
+  });
+
+  it('should skip filters inside an OR record filter group while keeping AND group filters', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          id: 'filter-and',
+          fieldMetadataId: FIELD_ID_TEXT,
+          type: FieldMetadataType.TEXT,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+          recordFilterGroupId: 'group-and',
+        }),
+        createFilter({
+          id: 'filter-or',
+          fieldMetadataId: FIELD_ID_NUMBER,
+          type: FieldMetadataType.NUMBER,
+          operand: ViewFilterOperand.IS,
+          value: '42',
+          recordFilterGroupId: 'group-or',
+        }),
+      ],
+      currentRecordFilterGroups: [
+        {
+          id: 'group-and',
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        },
+        {
+          id: 'group-or',
+          parentRecordFilterGroupId: 'group-and',
+          logicalOperator: RecordFilterGroupLogicalOperator.OR,
+        },
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ companyName: 'Acme' });
+  });
+
+  it('should skip filters inside an AND group nested under an OR ancestor group', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          id: 'filter-nested-and',
+          fieldMetadataId: FIELD_ID_TEXT,
+          type: FieldMetadataType.TEXT,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+          recordFilterGroupId: 'child-and',
+        }),
+      ],
+      currentRecordFilterGroups: [
+        {
+          id: 'root-or',
+          logicalOperator: RecordFilterGroupLogicalOperator.OR,
+        },
+        {
+          id: 'child-and',
+          parentRecordFilterGroupId: 'root-or',
+          logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        },
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
       timeZone: 'UTC',
     });
 
