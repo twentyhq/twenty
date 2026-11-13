@@ -1259,7 +1259,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Subdomains no workspace can use when multi-workspace is enabled, on top of the built-in reserved list (status, internal-tools). Exact match',
+      'Additional subdomains no workspace can use when multi-workspace is enabled (status, internal-tools). The built-in reserved list still applies. Exact match, no patterns',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()

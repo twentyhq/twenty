@@ -201,10 +201,11 @@ export class SubdomainManagerService {
   }
 
   private getSubdomainsReservedByConfig(): string[] {
+    // A JSON array config value can hold numbers, and 123 is a valid subdomain.
     return [
       this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
       ...this.twentyConfigService.get('ADDITIONAL_RESERVED_SUBDOMAINS'),
-    ].map((subdomain) => subdomain.toLowerCase());
+    ].map((subdomain) => String(subdomain).toLowerCase());
   }
 
   private appendNumberedSuffix(base: string, suffix: number): string {
