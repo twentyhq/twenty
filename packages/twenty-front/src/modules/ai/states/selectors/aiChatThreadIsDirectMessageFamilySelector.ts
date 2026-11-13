@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-export const inboxThreadIsDirectMessageFamilySelector =
+export const aiChatThreadIsDirectMessageFamilySelector =
   createAtomFamilySelector<boolean, string | null>({
-    key: 'inboxThreadIsDirectMessageFamilySelector',
+    key: 'aiChatThreadIsDirectMessageFamilySelector',
     get:
       (threadId) =>
       ({ get }) => {

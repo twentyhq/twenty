@@ -6,10 +6,10 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
-import { InboxChannelIcon } from '@/inbox/components/InboxChannelIcon';
+import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
 import { NavigationDrawerInboxChannelActionsDropdown } from '@/inbox/components/NavigationDrawerInboxChannelActionsDropdown';
 import { NavigationDrawerInboxChannelNavigation } from '@/inbox/components/NavigationDrawerInboxChannelNavigation';
-import { useInboxChannelIcon } from '@/inbox/hooks/useInboxChannelIcon';
+import { useAiChatChannelIcon } from '@/ai/hooks/useAiChatChannelIcon';
 import { useDeleteInboxChannel } from '@/inbox/hooks/useDeleteInboxChannel';
 import { useIsInboxShowingDirectMessage } from '@/inbox/hooks/useIsInboxShowingDirectMessage';
 import { useUpdateInboxChannel } from '@/inbox/hooks/useUpdateInboxChannel';
@@ -23,7 +23,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type InboxChannel } from '@/inbox/types/InboxChannel';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 const StyledIconPickerTrigger = styled.div`
@@ -36,9 +36,9 @@ const StyledIconPickerTrigger = styled.div`
 const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 type NavigationDrawerInboxChannelItemProps = {
-  channel: InboxChannel;
+  channel: AiChatChannel;
   summary: InboxChannelSummary | undefined;
-  destinationChannels: InboxChannel[];
+  destinationChannels: AiChatChannel[];
   canManage: boolean;
   isExpandable?: boolean;
 };
@@ -56,7 +56,7 @@ export const NavigationDrawerInboxChannelItem = ({
   const dropdownId = `ai-chat-channel-actions-${instanceId}`;
   const iconPickerDropdownId = `ai-chat-channel-icon-${instanceId}`;
   const deleteDialogId = `ai-chat-channel-delete-${instanceId}`;
-  const ChannelIcon = useInboxChannelIcon(channel.icon);
+  const ChannelIcon = useAiChatChannelIcon(channel.icon);
   const inboxSelectedChannelView = useAtomStateValue(
     inboxSelectedChannelViewSelector,
   );
@@ -105,7 +105,7 @@ export const NavigationDrawerInboxChannelItem = ({
     ({ id }) => id === deleteDestinationChannelId,
   )?.name;
   const channelName = channel.name;
-  const coloredIcon = <InboxChannelIcon channel={channel} />;
+  const coloredIcon = <AiChatChannelIcon channel={channel} />;
 
   const icon = canManage ? (
     <StyledIconPickerTrigger

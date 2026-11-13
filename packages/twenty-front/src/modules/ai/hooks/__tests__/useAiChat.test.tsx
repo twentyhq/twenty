@@ -20,7 +20,7 @@ import { useAiChat } from '@/ai/hooks/useAiChat';
 import { aiChatMessagesFamilyState } from '@/ai/states/aiChatMessagesFamilyState';
 import { aiChatQuotedMessageIdFamilyState } from '@/ai/states/aiChatQuotedMessageIdFamilyState';
 import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
-import { inboxNewThreadChannelIdState } from '@/inbox/states/inboxNewThreadChannelIdState';
+import { aiChatNewThreadChannelIdState } from '@/ai/states/aiChatNewThreadChannelIdState';
 import { aiChatNewThreadRecipientsFamilyState } from '@/ai/states/aiChatNewThreadRecipientsFamilyState';
 import { aiChatIsSendingMessageFamilyState } from '@/ai/states/aiChatIsSendingMessageFamilyState';
 import { aiChatIsAwaitingFirstChunkFamilyState } from '@/ai/states/aiChatIsAwaitingFirstChunkFamilyState';
@@ -178,7 +178,7 @@ const renderAiChat = ({
         aiChatNewThreadRecipientsFamilyState.atomFamily(THREAD_ID),
         newThreadRecipients,
       );
-      store.set(inboxNewThreadChannelIdState.atom, newThreadChannelId);
+      store.set(aiChatNewThreadChannelIdState.atom, newThreadChannelId);
       store.set(currentWorkspaceMembersState.atom, [
         { ...mockedWorkspaceMemberData, id: RECIPIENT_ID },
       ]);
@@ -1128,7 +1128,7 @@ describe('useAiChat', () => {
 
     expect(sentChannelId).toHaveBeenCalledTimes(1);
     expect(sentChannelId).toHaveBeenCalledWith(CHANNEL_ID);
-    expect(jotaiStore.get(inboxNewThreadChannelIdState.atom)).toBeNull();
+    expect(jotaiStore.get(aiChatNewThreadChannelIdState.atom)).toBeNull();
     expect(readPersistedDrafts()).toEqual({ [THREAD_ID]: '' });
   });
 

@@ -5,7 +5,7 @@ import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamily
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { sortChatThreadsByLastActivityDesc } from '@/inbox/utils/sortChatThreadsByLastActivityDesc';
+import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 

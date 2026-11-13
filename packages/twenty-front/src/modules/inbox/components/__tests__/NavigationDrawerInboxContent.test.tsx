@@ -17,7 +17,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type InboxChannel } from '@/inbox/types/InboxChannel';
+import { type AiChatChannel } from '@/ai/types/AiChatChannel';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -44,7 +44,7 @@ const buildDirectMessageThread = (id: string): AiChatThreadRecord => ({
 });
 
 const mockFavoriteThreadsAtom = atom<InboxThreadListItemData[]>([]);
-const mockFavoriteChannelsAtom = atom<InboxChannel[]>([]);
+const mockFavoriteChannelsAtom = atom<AiChatChannel[]>([]);
 let mockThreads: AiChatThreadRecord[] = [];
 
 jest.mock('@/inbox/states/selectors/inboxFavoriteThreadsSelector', () => ({
@@ -75,7 +75,7 @@ jest.mock('@/inbox/components/NavigationDrawerInboxChannelItem', () => ({
   NavigationDrawerInboxChannelItem: ({
     channel,
   }: {
-    channel: InboxChannel;
+    channel: AiChatChannel;
   }) => <div>{channel.name}</div>,
 }));
 

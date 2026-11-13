@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AiChatNewThreadRecipients } from '@/ai/types/AiChatNewThreadRecipients';
 import { type AiChatParticipantMention } from '@/ai/types/AiChatParticipantMention';
 
-export const getInboxNewThreadDirectMessageWorkspaceMemberId = ({
+export const getAiChatNewThreadDirectMessageWorkspaceMemberId = ({
   isDirectMessageIdentityEnabled,
   newInboxChatRecipients,
   isAssistantMentioned,

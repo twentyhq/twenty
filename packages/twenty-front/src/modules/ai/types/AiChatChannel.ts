@@ -1,3 +1,3 @@
 import { type AgentChatChannel as InboxChannelRow } from '~/generated-metadata/graphql';
 
-export type InboxChannel = Omit<InboxChannelRow, 'isCustom'>;
+export type AiChatChannel = Omit<InboxChannelRow, 'isCustom'>;

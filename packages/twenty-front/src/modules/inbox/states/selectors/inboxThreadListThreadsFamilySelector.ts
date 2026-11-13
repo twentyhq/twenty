@@ -2,7 +2,7 @@ import { isAgentChatThreadInPresetFilter } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
-import { inboxThreadMemberStateFamilySelector } from '@/inbox/states/selectors/inboxThreadMemberStateFamilySelector';
+import { aiChatThreadMemberStateFamilySelector } from '@/ai/states/selectors/aiChatThreadMemberStateFamilySelector';
 import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { type InboxThreadListSource } from '@/inbox/types/InboxThreadListSource';
@@ -28,7 +28,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
           (thread) =>
             !isDefined(thread.deletedAt) &&
             (!isDefined(thread.channelId) ||
-              get(inboxThreadMemberStateFamilySelector, thread.id).scope !==
+              get(aiChatThreadMemberStateFamilySelector, thread.id).scope !==
                 'NONE'),
         );
       }
@@ -50,7 +50,7 @@ export const inboxThreadListThreadsFamilySelector = createAtomFamilySelector<
 
       const threads = [...threadsById.values()].filter((thread) => {
         const inboxStatus = get(
-          inboxThreadMemberStateFamilySelector,
+          aiChatThreadMemberStateFamilySelector,
           thread.id,
         );
 
