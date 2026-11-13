@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,6 +21,8 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 
 @Injectable()
 export class ApplicationUninstallRunnerService {
+  private readonly logger = new Logger(ApplicationUninstallRunnerService.name);
+
   constructor(
     private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
@@ -74,10 +76,16 @@ export class ApplicationUninstallRunnerService {
       const applicationRegistration =
         await this.applicationRegistrationLookupService
           .findOneByUniversalIdentifierGlobal(universalIdentifier)
-          .catch(() => null);
+          .catch((lookupError: unknown) => {
+            this.logger.warn(
+              `Skipping uninstall failure metric: registration lookup failed for ${universalIdentifier} in workspace ${workspaceId}`,
+              lookupError,
+            );
 
-      // Same rule as install: only listed apps count towards platform health.
-      if (applicationRegistration?.isListed === true) {
+            return null;
+          });
+
+      if (applicationRegistration?.isListed) {
         this.metricsService.incrementCounterBy({
           key: MetricsKeys.AppUninstallFailed,
           amount: 1,
