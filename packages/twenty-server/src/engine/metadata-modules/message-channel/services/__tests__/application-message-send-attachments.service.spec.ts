@@ -114,6 +114,16 @@ describe('ApplicationMessageSendAttachmentsService', () => {
       ).rejects.toThrow('Attachment file(s) not found: photo.png (file-2)');
       expect(signFileByIdUrl).not.toHaveBeenCalled();
     });
+
+    it('should reject a file sent twice in the same message', async () => {
+      await expect(
+        service.buildAttachmentsToSendOrThrow({
+          attachments: [ATTACHMENTS[0], ATTACHMENTS[0]],
+          workspaceId: 'workspace-1',
+        }),
+      ).rejects.toThrow(MessageChannelException);
+      expect(findFiles).not.toHaveBeenCalled();
+    });
   });
 
   describe('copyIntoAttachmentFileFieldOrThrow', () => {

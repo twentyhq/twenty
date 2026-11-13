@@ -58,9 +58,18 @@ export class ApplicationMessageSendAttachmentsService {
       );
     }
 
+    const attachmentIds = attachments.map(({ id }) => id);
+
+    if (new Set(attachmentIds).size !== attachmentIds.length) {
+      throw new MessageChannelException(
+        'The same attachment file cannot be sent more than once in a message',
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
     const files = await this.fileRepository.find(workspaceId, {
       where: {
-        id: In(attachments.map(({ id }) => id)),
+        id: In(attachmentIds),
         path: Like(`${FileFolder.EmailAttachment}/%`),
         status: FILE_STATUS.UPLOADED,
       },
