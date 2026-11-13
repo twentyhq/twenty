@@ -6,4 +6,4 @@ export const isCurrentRecordViewFilter = ({
   value,
 }: Pick<ViewFilter, 'value'>) =>
   jsonRelationFilterValueSchema.safeParse(value).data
-    ?.isCurrentRecordSelected === true;
+    ?.isCurrentRecordSelected ?? false;
