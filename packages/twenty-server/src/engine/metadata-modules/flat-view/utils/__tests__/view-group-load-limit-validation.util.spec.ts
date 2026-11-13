@@ -188,6 +188,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:
@@ -210,6 +211,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:

@@ -57,8 +57,8 @@ export class WorkspaceGraphqlSchemaSDLService {
       data: {
         flatObjectMetadataMaps: allFlatObjectMetadataMaps,
         flatFieldMetadataMaps: allFlatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps,
         flatIndexMaps: allFlatIndexMaps,
+        flatFieldMetadataOptionMaps,
         flatApplicationMaps,
       },
       hashes,
@@ -84,6 +84,13 @@ export class WorkspaceGraphqlSchemaSDLService {
       );
     }
 
+    if (!isDefined(flatFieldMetadataOptionMaps)) {
+      throw new FlatEntityMapsException(
+        'Field metadata option collection not found',
+        FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
     let flatObjectMetadataMaps = allFlatObjectMetadataMaps;
     let flatFieldMetadataMaps = allFlatFieldMetadataMaps;
     let flatIndexMaps = allFlatIndexMaps;
@@ -103,7 +110,6 @@ export class WorkspaceGraphqlSchemaSDLService {
         twentyStandardApplicationId,
         flatObjectMetadataMaps: allFlatObjectMetadataMaps,
         flatFieldMetadataMaps: allFlatFieldMetadataMaps,
-        flatFieldMetadataOptionMaps,
         flatIndexMaps: allFlatIndexMaps,
       });
 
