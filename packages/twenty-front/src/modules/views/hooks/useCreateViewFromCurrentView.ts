@@ -168,8 +168,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       }
 
       const newViewId = result.response.data?.createView.id;
+      const newViewVisibility = result.response.data?.createView.visibility;
 
-      if (!isDefined(newViewId)) {
+      if (!isDefined(newViewId) || !isDefined(newViewVisibility)) {
         throw new Error(doNotTranslate('Failed to create view'));
       }
 
@@ -198,7 +199,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
       if (
         fieldResult.status === 'failed' ||
-        !(await copyColumnScopes(newViewFieldIdByViewFieldId))
+        !(await copyColumnScopes({
+          newViewFieldIdByViewFieldId,
+          ownerViewVisibility: newViewVisibility,
+        }))
       ) {
         return undefined;
       }
