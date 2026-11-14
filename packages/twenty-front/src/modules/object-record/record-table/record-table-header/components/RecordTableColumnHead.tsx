@@ -51,7 +51,7 @@ export const RecordTableColumnHead = ({
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
       <FieldDescriptionTooltip
-        label={fieldMetadataItem?.label}
+        label={recordField.settings?.label ?? fieldMetadataItem?.label}
         description={fieldMetadataItem?.description}
       />
     </StyledTitle>

@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -52,7 +53,9 @@ export const ViewFieldsSearchDropdownSection = ({
   );
 
   const visibleFieldIds = new Set(
-    visibleRecordFields.map((recordField) => recordField.fieldMetadataItemId),
+    visibleRecordFields
+      .filter(isCanonicalRecordField)
+      .map((recordField) => recordField.fieldMetadataItemId),
   );
 
   const fieldMetadataItemLabelIdentifier =

@@ -1,3 +1,4 @@
+import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
@@ -30,19 +31,19 @@ export const useSaveCurrentViewFields = () => {
   const saveViewFields = useCallback(
     async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
       if (!canPersistChanges) {
-        return;
+        return false;
       }
 
       const currentViewId = store.get(currentViewIdCallbackState);
 
       if (!currentViewId) {
-        return;
+        return false;
       }
 
       const view = getViewFromState(currentViewId);
 
       if (!isDefined(view)) {
-        return;
+        return false;
       }
 
       const currentViewFields = view.viewFields;
@@ -61,8 +62,12 @@ export const useSaveCurrentViewFields = () => {
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
               position: viewFieldToCreateOrUpdate.position,
               isVisible: viewFieldToCreateOrUpdate.isVisible,
+              isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
+              settings: getViewFieldSettingsInput(
+                viewFieldToCreateOrUpdate.settings,
+              ),
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(
@@ -87,12 +92,14 @@ export const useSaveCurrentViewFields = () => {
                   size: existingField.size,
                   isVisible: existingField.isVisible,
                   aggregateOperation: existingField.aggregateOperation,
+                  settings: getViewFieldSettingsInput(existingField.settings),
                 },
                 {
                   position: createViewFieldInput.position,
                   size: createViewFieldInput.size,
                   isVisible: createViewFieldInput.isVisible,
                   aggregateOperation: createViewFieldInput.aggregateOperation,
+                  settings: createViewFieldInput.settings,
                 },
               )
             ) {
@@ -115,6 +122,7 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
+                      settings: createViewFieldInput.settings,
                     },
                   },
                 },
@@ -127,10 +135,15 @@ export const useSaveCurrentViewFields = () => {
           },
         );
 
-      await Promise.all([
+      const [createResult, updateResult] = await Promise.all([
         performViewFieldApiCreate({ inputs: viewFieldsToCreate }),
         performViewFieldApiUpdate(viewFieldsToUpdate),
       ]);
+
+      return (
+        createResult.status === 'successful' &&
+        updateResult.status === 'successful'
+      );
     },
     [
       store,
