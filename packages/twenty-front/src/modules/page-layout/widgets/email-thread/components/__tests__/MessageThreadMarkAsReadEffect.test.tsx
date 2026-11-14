@@ -3,6 +3,8 @@ import { render } from '@testing-library/react';
 import { MessageThreadMarkAsReadEffect } from '@/page-layout/widgets/email-thread/components/MessageThreadMarkAsReadEffect';
 
 const mockMarkAppChannelThreadAsRead = jest.fn();
+const mockMarkMessageThreadAsRead = jest.fn();
+const mockIsImpersonating = jest.fn();
 const mockUseReplyConnectedAccount = jest.fn();
 const mockHasSendPermission = jest.fn();
 
@@ -10,6 +12,16 @@ jest.mock('@/activities/emails/hooks/useMarkAppChannelThreadAsRead', () => ({
   useMarkAppChannelThreadAsRead: () => ({
     markAppChannelThreadAsRead: mockMarkAppChannelThreadAsRead,
   }),
+}));
+
+jest.mock('@/activities/emails/hooks/useMarkMessageThreadAsRead', () => ({
+  useMarkMessageThreadAsRead: () => ({
+    markMessageThreadAsRead: mockMarkMessageThreadAsRead,
+  }),
+}));
+
+jest.mock('@/auth/states/isImpersonatingState', () => ({
+  isImpersonatingState: 'isImpersonatingState',
 }));
 
 jest.mock('@/activities/emails/hooks/useReplyConnectedAccount', () => ({
@@ -21,7 +33,10 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
 }));
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue', () => ({
-  useAtomStateValue: () => ({ userWorkspaceId: 'owner-user-workspace-id' }),
+  useAtomStateValue: (state: unknown) =>
+    state === 'isImpersonatingState'
+      ? mockIsImpersonating()
+      : { userWorkspaceId: 'owner-user-workspace-id' },
 }));
 
 const mockChannel = ({
@@ -59,7 +74,46 @@ describe('MessageThreadMarkAsReadEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockHasSendPermission.mockReturnValue(true);
+    mockIsImpersonating.mockReturnValue(false);
     mockChannel();
+  });
+
+  it('marks the thread as read in Twenty when its channel owner opens it', () => {
+    renderEffect();
+
+    expect(mockMarkMessageThreadAsRead).toHaveBeenCalledTimes(1);
+    expect(mockMarkMessageThreadAsRead).toHaveBeenCalledWith('thread-id');
+  });
+
+  it('marks the thread as read in Twenty again when a new message arrives while it is open', () => {
+    const { rerender } = renderEffect();
+
+    rerender(
+      <MessageThreadMarkAsReadEffect
+        messageChannelId="channel-id"
+        messageThreadId="thread-id"
+        latestMessageId="message-2"
+      />,
+    );
+
+    expect(mockMarkMessageThreadAsRead).toHaveBeenCalledTimes(2);
+  });
+
+  it('marks the thread as read in Twenty on a channel without a messaging provider', () => {
+    mockChannel({ messagingProviderUniversalIdentifier: null });
+
+    renderEffect();
+
+    expect(mockMarkMessageThreadAsRead).toHaveBeenCalledTimes(1);
+    expect(mockMarkMessageThreadAsRead).toHaveBeenCalledWith('thread-id');
+  });
+
+  it('does not mark the thread as read in Twenty while impersonating', () => {
+    mockIsImpersonating.mockReturnValue(true);
+
+    renderEffect();
+
+    expect(mockMarkMessageThreadAsRead).not.toHaveBeenCalled();
   });
 
   it('marks the thread as read once when its channel owner opens it', () => {
@@ -100,6 +154,7 @@ describe('MessageThreadMarkAsReadEffect', () => {
     renderEffect();
 
     expect(mockMarkAppChannelThreadAsRead).not.toHaveBeenCalled();
+    expect(mockMarkMessageThreadAsRead).not.toHaveBeenCalled();
   });
 
   it('does not mark the thread as read without the permission to send', () => {
