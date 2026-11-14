@@ -187,6 +187,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           aggregateOperation: viewField.aggregateOperation,
           viewFieldGroupId: viewField.viewFieldGroupId,
           settings: getViewFieldSettingsInput(viewField.settings),
+          relationTargetFieldMetadataId:
+            viewField.relationTargetFieldMetadataId,
           viewId: newViewId,
         })),
       });

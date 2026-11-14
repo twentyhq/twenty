@@ -68,6 +68,8 @@ export const useSaveCurrentViewFields = () => {
               settings: getViewFieldSettingsInput(
                 viewFieldToCreateOrUpdate.settings,
               ),
+              relationTargetFieldMetadataId:
+                viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
               viewId: currentViewId,
             };
             const existingField = currentViewFields.find(
@@ -93,6 +95,8 @@ export const useSaveCurrentViewFields = () => {
                   isVisible: existingField.isVisible,
                   aggregateOperation: existingField.aggregateOperation,
                   settings: getViewFieldSettingsInput(existingField.settings),
+                  relationTargetFieldMetadataId:
+                    existingField.relationTargetFieldMetadataId ?? null,
                 },
                 {
                   position: createViewFieldInput.position,
@@ -100,6 +104,8 @@ export const useSaveCurrentViewFields = () => {
                   isVisible: createViewFieldInput.isVisible,
                   aggregateOperation: createViewFieldInput.aggregateOperation,
                   settings: createViewFieldInput.settings,
+                  relationTargetFieldMetadataId:
+                    createViewFieldInput.relationTargetFieldMetadataId ?? null,
                 },
               )
             ) {
@@ -123,6 +129,8 @@ export const useSaveCurrentViewFields = () => {
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
                       settings: createViewFieldInput.settings,
+                      relationTargetFieldMetadataId:
+                        createViewFieldInput.relationTargetFieldMetadataId,
                     },
                   },
                 },

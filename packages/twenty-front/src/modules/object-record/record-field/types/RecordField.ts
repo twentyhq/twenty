@@ -10,4 +10,5 @@ export type RecordField = {
   size: number;
   aggregateOperation?: AggregateOperations | null;
   settings?: ViewFieldSettings | null;
+  relationTargetFieldMetadataId?: string | null;
 };
