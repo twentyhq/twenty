@@ -60,7 +60,10 @@ export const RecordTableScopedRelationsRefreshEffect = () => {
 
       const parentRecordIds = getScopedRelationAffectedParentRecordIds({
         operation,
-        parentRecordIds: store.get(parentRecordIdsCallbackState),
+        // Ungrouped tables index ids by row, leaving holes for unloaded rows
+        parentRecordIds: store
+          .get(parentRecordIdsCallbackState)
+          .filter(isDefined),
         getParentRecord: (parentRecordId) =>
           store.get(recordStoreFamilyState.atomFamily(parentRecordId)),
         aliases: changedRelationAliases.map(({ alias }) => alias),

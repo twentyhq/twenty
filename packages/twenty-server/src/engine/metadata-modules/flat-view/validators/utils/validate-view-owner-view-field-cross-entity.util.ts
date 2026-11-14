@@ -25,7 +25,11 @@ const getOwnerViewFieldErrorMessages = ({
 }: {
   scopeView: Pick<
     UniversalFlatView,
-    'type' | 'objectMetadataUniversalIdentifier'
+    | 'type'
+    | 'objectMetadataUniversalIdentifier'
+    | 'applicationUniversalIdentifier'
+    | 'visibility'
+    | 'createdByUserWorkspaceId'
   >;
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
   ownerViewFieldUniversalIdentifier: string;
@@ -53,6 +57,33 @@ const getOwnerViewFieldErrorMessages = ({
     return {
       message: t`Only a non-canonical view field can be scoped`,
       userFriendlyMessage: msg`Only added columns can be scoped`,
+    };
+  }
+
+  if (
+    ownerViewField.applicationUniversalIdentifier !==
+    scopeView.applicationUniversalIdentifier
+  ) {
+    return {
+      message: t`A view scoping a view field must belong to the same application`,
+      userFriendlyMessage: msg`This column cannot be scoped`,
+    };
+  }
+
+  const ownerParentView = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: ownerViewField.viewUniversalIdentifier,
+    flatEntityMaps: optimisticUniversalFlatMaps.flatViewMaps,
+  });
+
+  if (
+    isDefined(ownerParentView) &&
+    (ownerParentView.visibility !== scopeView.visibility ||
+      ownerParentView.createdByUserWorkspaceId !==
+        scopeView.createdByUserWorkspaceId)
+  ) {
+    return {
+      message: t`A view scoping a view field must share the visibility of the view holding that field`,
+      userFriendlyMessage: msg`A column scope follows the visibility of its view`,
     };
   }
 
@@ -105,22 +136,72 @@ const getOwnerViewFieldErrorMessages = ({
 export const validateViewOwnerViewFieldCrossEntity = ({
   optimisticUniversalFlatMaps,
   orchestratorActionsReport,
+  isWorkspaceCaller,
 }: {
   optimisticUniversalFlatMaps: OwnerViewFieldValidationMaps;
-  orchestratorActionsReport: Pick<OrchestratorActionsReport, 'view'>;
-}): Pick<OrchestratorFailureReport, 'view'> => {
-  const validationErrors: Pick<OrchestratorFailureReport, 'view'> = {
+  orchestratorActionsReport: Pick<
+    OrchestratorActionsReport,
+    'view' | 'viewField'
+  >;
+  isWorkspaceCaller: boolean;
+}): Pick<OrchestratorFailureReport, 'view' | 'viewField'> => {
+  const validationErrors: Pick<
+    OrchestratorFailureReport,
+    'view' | 'viewField'
+  > = {
     view: [],
+    viewField: [],
   };
 
-  // The owner never changes after creation, but a type update could turn a scope into a regular view
+  // A workspace caller relies on the database cascade; an application must drop the scope views it keeps declaring
+  if (!isWorkspaceCaller) {
+    const ownerViewFieldUniversalIdentifiersOfKeptScopeViews = new Set(
+      Object.values(
+        optimisticUniversalFlatMaps.flatViewMaps.byUniversalIdentifier,
+      )
+        .map((flatView) => flatView?.ownerViewFieldUniversalIdentifier)
+        .filter(isDefined),
+    );
+
+    for (const { universalIdentifier } of orchestratorActionsReport.viewField
+      .delete) {
+      if (
+        !ownerViewFieldUniversalIdentifiersOfKeptScopeViews.has(
+          universalIdentifier,
+        )
+      ) {
+        continue;
+      }
+
+      const failedValidation = getEmptyFlatEntityValidationError({
+        flatEntityMinimalInformation: { universalIdentifier },
+        metadataName: 'viewField',
+        type: 'delete',
+      });
+
+      failedValidation.errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`A view field cannot be removed while the view scoping it is kept`,
+        userFriendlyMessage: msg`Remove the column scope before removing the column`,
+      });
+
+      validationErrors.viewField.push(failedValidation);
+    }
+  }
+
+  // The owner never changes after creation, but a type or visibility update could break the scope
   const scopeViewsToValidate = [
     ...orchestratorActionsReport.view.create.map(({ flatEntity }) => ({
       scopeView: flatEntity,
       type: 'create' as const,
     })),
     ...orchestratorActionsReport.view.update
-      .filter(({ update }) => isDefined(update.type))
+      .filter(
+        ({ update }) =>
+          isDefined(update.type) ||
+          isDefined(update.visibility) ||
+          update.createdByUserWorkspaceId !== undefined,
+      )
       .map(({ universalIdentifier }) => ({
         scopeView: findFlatEntityByUniversalIdentifier({
           universalIdentifier,

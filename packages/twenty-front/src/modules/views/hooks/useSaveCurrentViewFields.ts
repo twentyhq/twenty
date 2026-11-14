@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { getViewFieldSettingsInput } from '@/views/utils/getViewFieldSettingsInput';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -57,18 +58,22 @@ export const useSaveCurrentViewFields = () => {
             { viewFieldsToCreate, viewFieldsToUpdate },
             viewFieldToCreateOrUpdate,
           ) => {
+            const settings = getViewFieldSettingsInput(
+              viewFieldToCreateOrUpdate.settings,
+            );
+
             const createViewFieldInput: CreateViewFieldInput = {
               id: viewFieldToCreateOrUpdate.id,
               fieldMetadataId: viewFieldToCreateOrUpdate.fieldMetadataId,
               position: viewFieldToCreateOrUpdate.position,
               isVisible: viewFieldToCreateOrUpdate.isVisible,
-              isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
-              settings: getViewFieldSettingsInput(
-                viewFieldToCreateOrUpdate.settings,
-              ),
               viewId: currentViewId,
+              ...(isCanonicalRecordField(viewFieldToCreateOrUpdate)
+                ? {}
+                : { isCanonical: false }),
+              ...(isDefined(settings) ? { settings } : {}),
             };
             const existingField = currentViewFields.find(
               (currentViewField) =>
@@ -85,21 +90,25 @@ export const useSaveCurrentViewFields = () => {
               };
             }
 
+            const areSettingsUnchanged = isDeeplyEqual(
+              getViewFieldSettingsInput(existingField.settings),
+              settings,
+            );
+
             if (
+              areSettingsUnchanged &&
               isDeeplyEqual(
                 {
                   position: existingField.position,
                   size: existingField.size,
                   isVisible: existingField.isVisible,
                   aggregateOperation: existingField.aggregateOperation,
-                  settings: getViewFieldSettingsInput(existingField.settings),
                 },
                 {
                   position: createViewFieldInput.position,
                   size: createViewFieldInput.size,
                   isVisible: createViewFieldInput.isVisible,
                   aggregateOperation: createViewFieldInput.aggregateOperation,
-                  settings: createViewFieldInput.settings,
                 },
               )
             ) {
@@ -122,7 +131,7 @@ export const useSaveCurrentViewFields = () => {
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
-                      settings: createViewFieldInput.settings,
+                      ...(areSettingsUnchanged ? {} : { settings }),
                     },
                   },
                 },

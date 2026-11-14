@@ -1,6 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { isScopedRelationColumn } from '@/object-record/record-column-scope/utils/isScopedRelationColumn';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -62,7 +63,13 @@ export const RecordTableCellFieldContextGeneric = ({
 
   const scopeView = useAtomFamilySelectorValue(
     scopeViewFromOwnerViewFieldIdFamilySelector,
-    { ownerViewFieldId: recordField.id },
+    // Canonical cells share one key so they do not each derive a scope lookup
+    {
+      ownerViewFieldId:
+        isColumnSettingsEnabled && !isCanonicalRecordField(recordField)
+          ? recordField.id
+          : '',
+    },
   );
 
   if (!isDefined(fieldMetadataItem)) {

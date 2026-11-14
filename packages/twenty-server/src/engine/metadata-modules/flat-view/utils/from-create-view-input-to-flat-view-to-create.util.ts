@@ -12,6 +12,7 @@ import {
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { computeFlatViewGroupsOnViewCreate } from 'src/engine/metadata-modules/flat-view-group/utils/compute-flat-view-groups-on-view-create.util';
 import { validateViewGroupLoadLimitOrThrow } from 'src/engine/metadata-modules/flat-view/utils/validate-view-group-load-limit-or-throw.util';
@@ -27,6 +28,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
   flatViewFieldMaps,
+  flatViewMaps,
 }: {
   createViewInput: CreateViewInput;
   createdByUserWorkspaceId?: string;
@@ -35,6 +37,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
   flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
   flatViewFieldMaps: AllFlatEntityMaps['flatViewFieldMaps'];
+  flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
 }): {
   flatViewToCreate: UniversalFlatView & { id: string };
   flatViewGroupsToCreate: UniversalFlatViewGroup[];
@@ -78,6 +81,20 @@ export const fromCreateViewInputToFlatViewToCreate = ({
   const mainGroupByFieldMetadataId =
     createViewInput.mainGroupByFieldMetadataId ?? null;
 
+  // A scope view is part of its owner column, so it shares the visibility of the view holding that column
+  const ownerFlatViewField = isDefined(createViewInput.ownerViewFieldId)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: createViewInput.ownerViewFieldId,
+        flatEntityMaps: flatViewFieldMaps,
+      })
+    : undefined;
+  const ownerParentFlatView = isDefined(ownerFlatViewField)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: ownerFlatViewField.viewId,
+        flatEntityMaps: flatViewMaps,
+      })
+    : undefined;
+
   const flatViewToCreate: UniversalFlatView & { id: string } = {
     id: viewId,
     objectMetadataUniversalIdentifier,
@@ -106,8 +123,13 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
-    visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
-    createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
+    visibility:
+      ownerParentFlatView?.visibility ??
+      createViewInput.visibility ??
+      ViewVisibility.WORKSPACE,
+    createdByUserWorkspaceId: isDefined(ownerParentFlatView)
+      ? ownerParentFlatView.createdByUserWorkspaceId
+      : (createdByUserWorkspaceId ?? null),
     isActive: true,
     isSystemSideEffect: false,
     universalOverrides: null,

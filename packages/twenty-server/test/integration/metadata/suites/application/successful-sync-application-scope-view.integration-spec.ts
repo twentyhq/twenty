@@ -14,6 +14,49 @@ const COMPANY_VIEW_ID = uuidv4();
 const PEOPLE_VIEW_FIELD_ID = uuidv4();
 const SCOPE_VIEW_ID = uuidv4();
 
+const buildScopeViewManifest = ({
+  withPeopleViewField,
+}: {
+  withPeopleViewField: boolean;
+}) =>
+  buildBaseManifest({
+    appId: APP_ID,
+    roleId: APP_ROLE_ID,
+    overrides: {
+      views: [
+        {
+          universalIdentifier: COMPANY_VIEW_ID,
+          name: 'Accounts with key people',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+          type: ViewType.TABLE,
+          icon: 'IconTable',
+          fields: withPeopleViewField
+            ? [
+                {
+                  universalIdentifier: PEOPLE_VIEW_FIELD_ID,
+                  fieldMetadataUniversalIdentifier:
+                    STANDARD_OBJECTS.company.fields.people.universalIdentifier,
+                  position: 1,
+                  isCanonical: false,
+                  settings: { label: 'Key person', recordLimit: 1 },
+                },
+              ]
+            : [],
+        },
+        {
+          universalIdentifier: SCOPE_VIEW_ID,
+          name: 'Key people',
+          objectUniversalIdentifier:
+            STANDARD_OBJECTS.person.universalIdentifier,
+          type: ViewType.TABLE_WIDGET,
+          icon: 'IconFilter',
+          ownerViewFieldUniversalIdentifier: PEOPLE_VIEW_FIELD_ID,
+        },
+      ],
+    },
+  });
+
 describe('Sync application should succeed when a view field and its scope view are created together', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
@@ -32,41 +75,7 @@ describe('Sync application should succeed when a view field and its scope view a
 
   it('creates the scope view pointing at a view field created in the same sync', async () => {
     const { errors } = await syncApplication({
-      manifest: buildBaseManifest({
-        appId: APP_ID,
-        roleId: APP_ROLE_ID,
-        overrides: {
-          views: [
-            {
-              universalIdentifier: COMPANY_VIEW_ID,
-              name: 'Accounts with key people',
-              objectUniversalIdentifier:
-                STANDARD_OBJECTS.company.universalIdentifier,
-              type: ViewType.TABLE,
-              icon: 'IconTable',
-              fields: [
-                {
-                  universalIdentifier: PEOPLE_VIEW_FIELD_ID,
-                  fieldMetadataUniversalIdentifier:
-                    STANDARD_OBJECTS.company.fields.people.universalIdentifier,
-                  position: 1,
-                  isCanonical: false,
-                  settings: { label: 'Key person', recordLimit: 1 },
-                },
-              ],
-            },
-            {
-              universalIdentifier: SCOPE_VIEW_ID,
-              name: 'Key people',
-              objectUniversalIdentifier:
-                STANDARD_OBJECTS.person.universalIdentifier,
-              type: ViewType.TABLE_WIDGET,
-              icon: 'IconFilter',
-              ownerViewFieldUniversalIdentifier: PEOPLE_VIEW_FIELD_ID,
-            },
-          ],
-        },
-      }),
+      manifest: buildScopeViewManifest({ withPeopleViewField: true }),
       expectToFail: false,
     });
 
@@ -100,5 +109,16 @@ describe('Sync application should succeed when a view field and its scope view a
 
     expect(peopleViewField).toBeDefined();
     expect(scopeView?.ownerViewFieldId).toBe(peopleViewField?.id);
+  });
+
+  it('refuses to drop the scoped view field while the manifest keeps its scope view', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildScopeViewManifest({ withPeopleViewField: false }),
+      expectToFail: true,
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'A view field cannot be removed while the view scoping it is kept',
+    );
   });
 });
