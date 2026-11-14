@@ -4,8 +4,8 @@ import {
   FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
   QUERY_MAX_RECORDS,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  FieldMetadataType,
   type ObjectRecord,
   type ObjectRecordsOperationType,
 } from 'twenty-shared/types';

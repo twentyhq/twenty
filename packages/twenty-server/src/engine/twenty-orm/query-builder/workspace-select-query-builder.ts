@@ -105,8 +105,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithColumnNullifyApplied = new Set<string>();
   private readonly columnNullifyConditions: ColumnNullifyConditions = {};
-  private readonly columnNullifyReplacements: ColumnNullifyReplacements =
-    {};
+  private readonly columnNullifyReplacements: ColumnNullifyReplacements = {};
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
