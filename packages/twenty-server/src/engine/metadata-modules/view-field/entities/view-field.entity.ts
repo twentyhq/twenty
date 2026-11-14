@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -37,6 +38,10 @@ export type ViewFieldOverrides = {
 };
 
 @Entity({ name: 'viewField', schema: 'core' })
+@Check(
+  'CHK_VIEW_FIELD_CANONICAL_HAS_NO_SETTINGS',
+  `"isCanonical" = false OR "settings" IS NULL`,
+)
 @Index('IDX_VIEW_FIELD_APPLICATION_ID', ['applicationId'])
 @Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])

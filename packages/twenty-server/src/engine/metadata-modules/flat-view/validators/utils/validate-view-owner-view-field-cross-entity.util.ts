@@ -1,9 +1,9 @@
 import { msg, t } from '@lingui/core/macro';
-import { ViewType } from 'twenty-shared/types';
+import { RelationType, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { isOneToManyRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-one-to-many-relation-universal-flat-field-metadata.util';
+import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import {
   type OrchestratorActionsReport,
@@ -63,7 +63,10 @@ const getOwnerViewFieldErrorMessages = ({
 
   if (
     !isDefined(scopedFieldMetadata) ||
-    !isOneToManyRelationUniversalFlatFieldMetadata(scopedFieldMetadata)
+    !isRelationUniversalFlatFieldMetadataOfType({
+      flatFieldMetadata: scopedFieldMetadata,
+      relationType: RelationType.ONE_TO_MANY,
+    })
   ) {
     return {
       message: t`Only a view field of a one-to-many relation can be scoped`,
