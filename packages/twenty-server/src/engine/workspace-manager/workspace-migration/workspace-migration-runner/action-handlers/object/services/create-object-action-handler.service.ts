@@ -25,6 +25,7 @@ import {
   WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
+import { applyFieldMetadataOptionRowsToCreatedFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/apply-field-metadata-option-rows-to-created-flat-field-metadata.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -130,7 +131,15 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
       allFlatEntityMaps,
       getSearchFieldMetadatasByTsVectorFieldId,
     } = context;
-    const { flatEntity: flatObjectMetadata, flatFieldMetadatas } = flatAction;
+    const { flatEntity: flatObjectMetadata } = flatAction;
+    const flatFieldMetadatas = flatAction.flatFieldMetadatas.map(
+      (flatFieldMetadata) =>
+        applyFieldMetadataOptionRowsToCreatedFlatFieldMetadata({
+          flatFieldMetadata,
+          fieldMetadataOptionEnumChanges:
+            context.fieldMetadataOptionEnumChanges,
+        }),
+    );
 
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,

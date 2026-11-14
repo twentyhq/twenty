@@ -2,7 +2,7 @@ import { type RoleConfig } from '@/app/manifest/types/role-config.type';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 
 export const fromRoleConfigToRoleManifest = ({
@@ -11,7 +11,7 @@ export const fromRoleConfigToRoleManifest = ({
 }: {
   roleConfig: RoleConfig;
   applicationUniversalIdentifier: string;
-}): RoleManifest => {
+}): LegacyCompliantRoleManifest => {
   return {
     ...roleConfig,
     objectPermissions: (roleConfig.objectPermissions ?? []).map(

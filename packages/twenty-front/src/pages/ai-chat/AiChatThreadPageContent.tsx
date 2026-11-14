@@ -3,7 +3,7 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { inboxThreadIsDirectMessageFamilySelector } from '@/inbox/states/selectors/inboxThreadIsDirectMessageFamilySelector';
+import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { RecordShowPageContent } from '~/pages/object-record/RecordShowPageContent';
 
@@ -20,7 +20,7 @@ export const AiChatThreadPageContent = ({
   headerTitlePrefix,
 }: AiChatThreadPageContentProps) => {
   const isDirectMessage = useAtomFamilySelectorValue(
-    inboxThreadIsDirectMessageFamilySelector,
+    aiChatThreadIsDirectMessageFamilySelector,
     threadId,
   );
 

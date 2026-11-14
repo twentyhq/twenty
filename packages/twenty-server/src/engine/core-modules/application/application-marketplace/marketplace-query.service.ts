@@ -4,7 +4,10 @@ import { isUUID } from 'class-validator';
 import {
   getFieldPermissionUniversalIdentifier,
   getObjectPermissionUniversalIdentifier,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
+  getReachableObjectPermissionsFromRoleManifest,
+  getRecordsPermissionsFromRoleManifest,
+  normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -237,9 +240,22 @@ export class MarketplaceQueryService {
     role,
     applicationUniversalIdentifier,
   }: {
-    role: RoleManifest;
+    role: LegacyCompliantRoleManifest;
     applicationUniversalIdentifier: string;
   }): MarketplaceAppRoleDTO {
+    const normalizedRole = normalizeLegacyCompliantRoleManifest({
+      role,
+      applicationUniversalIdentifier,
+    });
+    const recordsPermissions = getRecordsPermissionsFromRoleManifest({
+      role: normalizedRole,
+    });
+    const objectUniversalIdentifiersWithRules = new Set(
+      recordsPermissions.rowLevelPermissionRules.map(
+        (rule) => rule.objectUniversalIdentifier,
+      ),
+    );
+
     return {
       universalIdentifier: role.universalIdentifier,
       label: role.label,
@@ -247,39 +263,65 @@ export class MarketplaceQueryService {
       icon: role.icon,
       canUpdateAllSettings: role.canUpdateAllSettings,
       canAccessAllTools: role.canAccessAllTools,
-      canReadAllObjectRecords: role.canReadAllObjectRecords,
-      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
-      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
-      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+      canReadAllObjectRecords: recordsPermissions.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: recordsPermissions.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords:
+        recordsPermissions.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: recordsPermissions.canDestroyAllObjectRecords,
       permissionFlagUniversalIdentifiers:
         role.permissionFlagUniversalIdentifiers,
-      objectPermissions: role.objectPermissions?.map((permission) => ({
-        universalIdentifier:
-          permission.universalIdentifier ??
-          getObjectPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: role.universalIdentifier,
-            objectUniversalIdentifier: permission.objectUniversalIdentifier,
-          }),
-        objectUniversalIdentifier: permission.objectUniversalIdentifier,
-        canReadObjectRecords: permission.canReadObjectRecords,
-        canUpdateObjectRecords: permission.canUpdateObjectRecords,
-        canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
-        canDestroyObjectRecords: permission.canDestroyObjectRecords,
-      })),
-      fieldPermissions: role.fieldPermissions?.map((permission) => ({
-        universalIdentifier:
-          permission.universalIdentifier ??
-          getFieldPermissionUniversalIdentifier({
-            applicationUniversalIdentifier,
-            roleUniversalIdentifier: role.universalIdentifier,
-            fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
-          }),
-        objectUniversalIdentifier: permission.objectUniversalIdentifier,
-        fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
-        canReadFieldValue: permission.canReadFieldValue,
-        canUpdateFieldValue: permission.canUpdateFieldValue,
-      })),
+      objectPermissions: recordsPermissions.objectPermissions.map(
+        (permission) => {
+          const { objectUniversalIdentifier } = permission;
+          // The listing has no rules yet, so an object reached through rules shows what they grant
+          const reachablePermissions = objectUniversalIdentifiersWithRules.has(
+            objectUniversalIdentifier,
+          )
+            ? getReachableObjectPermissionsFromRoleManifest({
+                role: normalizedRole,
+                objectUniversalIdentifier,
+              })
+            : undefined;
+
+          return {
+            universalIdentifier:
+              permission.universalIdentifier ??
+              getObjectPermissionUniversalIdentifier({
+                applicationUniversalIdentifier,
+                roleUniversalIdentifier: role.universalIdentifier,
+                objectUniversalIdentifier,
+              }),
+            objectUniversalIdentifier,
+            canReadObjectRecords:
+              reachablePermissions?.canReadObjectRecords ??
+              permission.canReadObjectRecords,
+            canUpdateObjectRecords:
+              reachablePermissions?.canUpdateObjectRecords ??
+              permission.canUpdateObjectRecords,
+            canSoftDeleteObjectRecords:
+              reachablePermissions?.canSoftDeleteObjectRecords ??
+              permission.canSoftDeleteObjectRecords,
+            canDestroyObjectRecords:
+              reachablePermissions?.canDestroyObjectRecords ??
+              permission.canDestroyObjectRecords,
+          };
+        },
+      ),
+      fieldPermissions: recordsPermissions.fieldPermissions.map(
+        (permission) => ({
+          universalIdentifier:
+            permission.universalIdentifier ??
+            getFieldPermissionUniversalIdentifier({
+              applicationUniversalIdentifier,
+              roleUniversalIdentifier: role.universalIdentifier,
+              fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+            }),
+          objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          canReadFieldValue: permission.canReadFieldValue,
+          canUpdateFieldValue: permission.canUpdateFieldValue,
+        }),
+      ),
     };
   }
 }

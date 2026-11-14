@@ -12,6 +12,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildRecordShareNoneAccessLevelOptionSyncOperations } from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-none-access-level-option-sync-operations.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type FlatEntityToCreateDeleteUpdate } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { computeFieldMetadataOptionOperationsForFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/compute-field-metadata-option-operations-for-field-metadatas.util';
+import { isFieldMetadataOptionEntityAvailable } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/is-field-metadata-option-entity-available.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -112,6 +115,10 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
               TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: fieldMetadataOperations,
+              ...(await this.computeFieldMetadataOptionOperations({
+                workspaceId,
+                fieldMetadataOperations,
+              })),
             },
           },
         );
@@ -136,6 +143,36 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
       }
       throw error;
     }
+  }
+
+  // Real upgrades run this before the option table exists; the 2.57 backfill then creates the rows.
+  // TODO: remove once 2.59 has run on every workspace, together with the options column drop.
+  private async computeFieldMetadataOptionOperations({
+    workspaceId,
+    fieldMetadataOperations,
+  }: {
+    workspaceId: string;
+    fieldMetadataOperations: FlatEntityToCreateDeleteUpdate<'fieldMetadata'>;
+  }) {
+    if (!isFieldMetadataOptionEntityAvailable()) {
+      return {};
+    }
+
+    const { flatFieldMetadataOptionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataOptionMaps',
+      ]);
+
+    return {
+      fieldMetadataOption:
+        computeFieldMetadataOptionOperationsForFieldMetadatas({
+          flatFieldMetadatasToUpdate:
+            fieldMetadataOperations.flatEntityToUpdate,
+          existingFlatFieldMetadataOptionMaps: flatFieldMetadataOptionMaps,
+          applicationUniversalIdentifier:
+            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        }),
+    };
   }
 
   private async deleteRestrictions(
