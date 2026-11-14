@@ -5,7 +5,15 @@ import { StopPropagationContainer } from '@/object-record/record-board/record-bo
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordCardBodyContainer } from '@/object-record/record-card/components/RecordCardBodyContainer';
+import { getRecordCardFieldInstanceIdPrefix } from '@/object-record/record-card/utils/getRecordCardFieldInstanceIdPrefix';
+import { RecordFieldLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordFieldLookupFieldContext';
+import { getRecordFieldColumnDisplay } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnDisplay';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
+import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { useScopedRelationAliases } from '@/object-record/record-column-scope/hooks/useScopedRelationAliases';
+import { getScopedRelationAlias } from '@/object-record/record-column-scope/utils/getScopedRelationAlias';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import {
   FieldContext,
@@ -51,6 +59,10 @@ export const RecordBoardCardBody = () => {
     visibleRecordFieldsComponentSelector,
   );
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const scopedRelationAliases = useScopedRelationAliases();
+
   const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
     (recordField) =>
       recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
@@ -87,6 +99,65 @@ export const RecordBoardCardBody = () => {
           fieldMetadataItem.name,
         );
 
+        const fieldInstanceIdPrefix = getRecordCardFieldInstanceIdPrefix({
+          cardInstanceIdPrefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+          recordField,
+        });
+
+        const anchorId = isDragOverlay
+          ? undefined
+          : `${fieldInstanceIdPrefix}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`;
+
+        const lookupTarget = getRecordFieldLookupTarget({
+          recordField,
+          fieldMetadataItem,
+          objectMetadataItems,
+        });
+
+        const { label } = getRecordFieldColumnDisplay({
+          recordField,
+          fieldMetadataItem,
+          objectMetadataItems,
+        });
+
+        if (isDefined(lookupTarget)) {
+          // Two cards can show the same related record, so the cell instance is keyed by the card's record too
+          const lookupInstanceIdPrefix = `${fieldInstanceIdPrefix}-${recordId}`;
+
+          return (
+            <StopPropagationContainer key={recordField.id}>
+              <RecordFieldLookupFieldContext
+                recordId={recordId}
+                fieldMetadataItem={fieldMetadataItem}
+                relationObjectMetadataItem={
+                  lookupTarget.relationObjectMetadataItem
+                }
+                lookupTargetFieldMetadataItem={
+                  lookupTarget.lookupTargetFieldMetadataItem
+                }
+                instanceIdPrefix={lookupInstanceIdPrefix}
+                isNonEditable
+                label={label}
+                fieldContextOverrides={{
+                  maxWidth: 156,
+                  isDisplayModeFixHeight: true,
+                  triggerEvent: 'CLICK',
+                  anchorId,
+                }}
+              >
+                <RecordInlineCell instanceIdPrefix={lookupInstanceIdPrefix} />
+              </RecordFieldLookupFieldContext>
+            </StopPropagationContainer>
+          );
+        }
+
+        // The card's hover and edit portals find a cell by field, so an added column stays read-only here
+        const isAddedColumn = !isCanonicalRecordField(recordField);
+
+        const isScopedRelation = scopedRelationAliases.some(
+          ({ alias }) => alias === getScopedRelationAlias(recordField.id),
+        );
+
         return (
           <StopPropagationContainer key={recordField.id}>
             <FieldContext.Provider
@@ -96,6 +167,7 @@ export const RecordBoardCardBody = () => {
                 isLabelIdentifier: false,
                 isForbidden: isFieldRestricted,
                 isRecordFieldReadOnly:
+                  isAddedColumn ||
                   isFieldRestricted ||
                   isRecordFieldReadOnly({
                     isRecordReadOnly,
@@ -104,14 +176,17 @@ export const RecordBoardCardBody = () => {
                     fieldDefinition: correspondingFieldDefinition,
                     objectPermissionsByObjectMetadataId,
                   }),
-                fieldDefinition: correspondingFieldDefinition,
+                fieldDefinition: { ...correspondingFieldDefinition, label },
                 useUpdateRecord: useUpdateOneRecordHook,
                 isDisplayModeFixHeight: true,
                 triggerEvent: 'CLICK',
-                anchorId: isDragOverlay
+                anchorId,
+                scopedRelationViewFieldId: isScopedRelation
+                  ? recordField.id
+                  : undefined,
+                onMouseEnter: isAddedColumn
                   ? undefined
-                  : `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${correspondingFieldDefinition.metadata.fieldName}`,
-                onMouseEnter: () => handleMouseEnter(index),
+                  : () => handleMouseEnter(index),
               }}
             >
               <RecordFieldComponentInstanceContext.Provider
@@ -119,13 +194,11 @@ export const RecordBoardCardBody = () => {
                   instanceId: getRecordFieldInputInstanceId({
                     recordId,
                     fieldName: correspondingFieldDefinition.metadata.fieldName,
-                    prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
+                    prefix: fieldInstanceIdPrefix,
                   }),
                 }}
               >
-                <RecordInlineCell
-                  instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
-                />
+                <RecordInlineCell instanceIdPrefix={fieldInstanceIdPrefix} />
               </RecordFieldComponentInstanceContext.Provider>
             </FieldContext.Provider>
           </StopPropagationContainer>

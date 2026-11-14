@@ -1,4 +1,4 @@
-import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
+import { RecordFieldLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordFieldLookupFieldContext';
 import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -7,8 +7,10 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
+import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/utils/getRecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,6 +30,10 @@ export const RecordTableCellFieldContextWrapper = ({
     fieldMetadataItemByFieldMetadataItemId,
     labelIdentifierFieldMetadataItem,
   } = useRecordIndexContextOrThrow();
+
+  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
+    isRecordTableCellsNonEditableComponentState,
+  );
 
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
@@ -50,17 +56,20 @@ export const RecordTableCellFieldContextWrapper = ({
   // The lookup cell keys its own editor instance to the related record
   if (isDefined(lookupTarget)) {
     return (
-      <RecordTableCellLookupFieldContext
+      <RecordFieldLookupFieldContext
         key={instanceId}
-        recordFieldId={recordField.id}
+        recordId={recordId}
         fieldMetadataItem={fieldMetadataItem}
         relationObjectMetadataItem={lookupTarget.relationObjectMetadataItem}
         lookupTargetFieldMetadataItem={
           lookupTarget.lookupTargetFieldMetadataItem
         }
+        instanceIdPrefix={getRecordTableCellInputIdPrefix(recordField.id)}
+        isNonEditable={isRecordTableCellsNonEditable}
+        fieldContextOverrides={{ displayedMaxRows: 1 }}
       >
         {children}
-      </RecordTableCellLookupFieldContext>
+      </RecordFieldLookupFieldContext>
     );
   }
 
