@@ -65,7 +65,13 @@ describe('Message channel visibility through personal role rules (integration)',
   const syncRules = async () => {
     await getAppProviderByClassName<ChannelVisibilityRuleSyncService>(
       'ChannelVisibilityRuleSyncService',
-    ).syncWorkspace(SEED_APPLE_WORKSPACE_ID);
+    )
+      .syncWorkspace(SEED_APPLE_WORKSPACE_ID)
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('DEBUGSYNC', JSON.stringify(error, null, 1).slice(0, 4000));
+        throw error;
+      });
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
     ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);

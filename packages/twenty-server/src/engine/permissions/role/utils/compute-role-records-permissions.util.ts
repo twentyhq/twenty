@@ -17,6 +17,11 @@ import { type RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/r
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
 
+const CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
+  STANDARD_OBJECTS.message.universalIdentifier,
+  STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+];
+
 const WORKFLOW_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS: string[] = [
   LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
   STANDARD_OBJECTS.workflowRun.universalIdentifier,
@@ -34,6 +39,8 @@ type RoleDefinitionForRecordsPermissions = Pick<
   isPermissionFlagGranted: (permissionFlag: PermissionFlagType) => boolean;
   // an AI run scope leaves system objects readable but not writable unless it grants them
   areSystemObjectsReadOnlyByDefault?: boolean;
+  // roles then reach a system object only through an explicit grant, and channel objects never through a role wide one
+  isChannelVisibilityRlsEnabled?: boolean;
   objectPermissions: Pick<
     ObjectPermissionEntity,
     | 'objectMetadataId'
@@ -118,8 +125,19 @@ const resolveObjectRecordsAccess = ({
     };
   }
 
+  const isChannelVisibilityRlsEnabled =
+    roleDefinition.isChannelVisibilityRlsEnabled ?? false;
+  const isSystemObjectReadableByDefault =
+    isSystem && !isChannelVisibilityRlsEnabled;
   const isSystemObjectWritableByDefault =
-    isSystem && !roleDefinition.areSystemObjectsReadOnlyByDefault;
+    isSystemObjectReadableByDefault &&
+    !roleDefinition.areSystemObjectsReadOnlyByDefault;
+  const isRoleWideGrantApplicable = !(
+    isChannelVisibilityRlsEnabled &&
+    CHANNEL_VISIBILITY_OBJECT_UNIVERSAL_IDENTIFIERS.includes(
+      universalIdentifier,
+    )
+  );
   const objectPermissionOverride = objectPermissions.find(
     (objectPermission) =>
       objectPermission.objectMetadataId === objectMetadataId,
@@ -128,27 +146,32 @@ const resolveObjectRecordsAccess = ({
   return {
     canCreate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canCreateObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canCreateAllObjectRecords,
+      hasAllObjectsPermission:
+        isRoleWideGrantApplicable && roleDefinition.canCreateAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canRead: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canReadObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canReadAllObjectRecords,
-      isSystemObject: isSystem,
+      hasAllObjectsPermission:
+        isRoleWideGrantApplicable && roleDefinition.canReadAllObjectRecords,
+      isSystemObject: isSystemObjectReadableByDefault,
     }),
     canUpdate: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canUpdateObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canUpdateAllObjectRecords,
+      hasAllObjectsPermission:
+        isRoleWideGrantApplicable && roleDefinition.canUpdateAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canSoftDelete: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canSoftDeleteAllObjectRecords,
+      hasAllObjectsPermission:
+        isRoleWideGrantApplicable && roleDefinition.canSoftDeleteAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
     canDestroy: resolveObjectPermissionValue({
       objectValue: objectPermissionOverride?.canDestroyObjectRecords,
-      hasAllObjectsPermission: roleDefinition.canDestroyAllObjectRecords,
+      hasAllObjectsPermission:
+        isRoleWideGrantApplicable && roleDefinition.canDestroyAllObjectRecords,
       isSystemObject: isSystemObjectWritableByDefault,
     }),
   };

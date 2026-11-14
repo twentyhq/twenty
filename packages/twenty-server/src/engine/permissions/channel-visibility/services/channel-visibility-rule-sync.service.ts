@@ -8,6 +8,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { type ObjectPermissionAction } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v5 } from 'uuid';
@@ -81,9 +82,9 @@ export class ChannelVisibilityRuleSyncService {
       });
     const objectsRules = await this.findObjectsRules(workspaceId);
 
-    await this.revokeRoleGrantsOnChannelObjects({
+    await this.grantSystemObjectsExplicitly({
       workspaceId,
-      objectNameSingulars: objectsRules.map(
+      channelObjectNameSingulars: objectsRules.map(
         ({ objectNameSingular }) => objectNameSingular,
       ),
     });
@@ -100,28 +101,33 @@ export class ChannelVisibilityRuleSyncService {
     }
   }
 
-  // an all records grant wins over rules, so what roles granted before would show every message unmasked
-  private async revokeRoleGrantsOnChannelObjects({
+  // without the default, a role that relied on it would lose every system object the day the flag turns on
+  private async grantSystemObjectsExplicitly({
     workspaceId,
-    objectNameSingulars,
+    channelObjectNameSingulars,
   }: {
     workspaceId: string;
-    objectNameSingulars: string[];
+    channelObjectNameSingulars: string[];
   }): Promise<void> {
-    const { objectIdByName } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['objectIdByName'],
-    );
-    const { flatRoleMaps, flatObjectPermissionMaps } =
+    const { flatRoleMaps, flatObjectPermissionMaps, flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleMaps', 'flatObjectPermissionMaps'],
+          flatMapsKeys: [
+            'flatRoleMaps',
+            'flatObjectPermissionMaps',
+            'flatObjectMetadataMaps',
+          ],
         },
       );
-    const channelObjectMetadataIds = objectNameSingulars
-      .map((objectNameSingular) => objectIdByName[objectNameSingular])
-      .filter(isDefined);
+    const systemFlatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        ({ isSystem, nameSingular }) =>
+          isSystem && !channelObjectNameSingulars.includes(nameSingular),
+      );
     const flatObjectPermissions = Object.values(
       flatObjectPermissionMaps.byUniversalIdentifier,
     ).filter(isDefined);
@@ -134,15 +140,14 @@ export class ChannelVisibilityRuleSyncService {
       const roleObjectPermissions = flatObjectPermissions.filter(
         ({ roleId }) => roleId === flatRole.id,
       );
-      const isAlreadyRevoked = channelObjectMetadataIds.every(
-        (objectMetadataId) =>
-          roleObjectPermissions.some(
-            (objectPermission) =>
-              objectPermission.objectMetadataId === objectMetadataId,
-          ),
+      const objectMetadataIdsWithOverride = new Set(
+        roleObjectPermissions.map(({ objectMetadataId }) => objectMetadataId),
+      );
+      const flatObjectMetadatasToGrant = systemFlatObjectMetadatas.filter(
+        ({ id }) => !objectMetadataIdsWithOverride.has(id),
       );
 
-      if (isAlreadyRevoked) {
+      if (flatObjectMetadatasToGrant.length === 0) {
         continue;
       }
 
@@ -152,29 +157,41 @@ export class ChannelVisibilityRuleSyncService {
         input: {
           roleId: flatRole.id,
           objectPermissions: [
-            ...roleObjectPermissions
-              .filter(
-                ({ objectMetadataId }) =>
-                  !channelObjectMetadataIds.includes(objectMetadataId),
-              )
-              .map((objectPermission) => ({
-                objectMetadataId: objectPermission.objectMetadataId,
-                canReadObjectRecords:
-                  objectPermission.canReadObjectRecords ?? undefined,
-                canUpdateObjectRecords:
-                  objectPermission.canUpdateObjectRecords ?? undefined,
-                canSoftDeleteObjectRecords:
-                  objectPermission.canSoftDeleteObjectRecords ?? undefined,
-                canDestroyObjectRecords:
-                  objectPermission.canDestroyObjectRecords ?? undefined,
-              })),
-            ...channelObjectMetadataIds.map((objectMetadataId) => ({
-              objectMetadataId,
-              canReadObjectRecords: false,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
+            ...roleObjectPermissions.map((objectPermission) => ({
+              objectMetadataId: objectPermission.objectMetadataId,
+              canReadObjectRecords:
+                objectPermission.canReadObjectRecords ?? undefined,
+              canUpdateObjectRecords:
+                objectPermission.canUpdateObjectRecords ?? undefined,
+              canSoftDeleteObjectRecords:
+                objectPermission.canSoftDeleteObjectRecords ?? undefined,
+              canDestroyObjectRecords:
+                objectPermission.canDestroyObjectRecords ?? undefined,
             })),
+            ...flatObjectMetadatasToGrant.map(
+              ({ id, disabledObjectPermissionActions }) => {
+                const grantUnlessDisabled = (action: ObjectPermissionAction) =>
+                  (disabledObjectPermissionActions ?? []).includes(action)
+                    ? undefined
+                    : true;
+
+                return {
+                  objectMetadataId: id,
+                  canReadObjectRecords: grantUnlessDisabled(
+                    'canReadObjectRecords',
+                  ),
+                  canUpdateObjectRecords: grantUnlessDisabled(
+                    'canUpdateObjectRecords',
+                  ),
+                  canSoftDeleteObjectRecords: grantUnlessDisabled(
+                    'canSoftDeleteObjectRecords',
+                  ),
+                  canDestroyObjectRecords: grantUnlessDisabled(
+                    'canDestroyObjectRecords',
+                  ),
+                };
+              },
+            ),
           ],
         },
       });

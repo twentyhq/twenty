@@ -6,7 +6,7 @@ import {
   type PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -36,6 +36,7 @@ const ROLES_PERMISSIONS_ROWS_REQUIREMENT = {
     where: { deletedAt: IsNull() },
   },
   rowLevelPermissionRule: { columns: true, groupBy: ['roleId'] },
+  featureFlag: ['key', 'value'],
   objectMetadata: [
     'id',
     'isSystem',
@@ -69,6 +70,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
       rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
       rowLevelPermissionRule: rowLevelPermissionRules,
+      featureFlag: featureFlags,
       objectMetadata: workspaceObjectMetadataCollection,
       fieldMetadata: morphRelationFieldMetadatas,
     } = rows;
@@ -83,6 +85,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
       ]),
     );
 
+    const isChannelVisibilityRlsEnabled = featureFlags.some(
+      ({ key, value }) =>
+        key === FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED && value,
+    );
     const permissionsByRoleId: Record<string, RoleRecordsPermissions> = {};
 
     for (const role of roles) {
@@ -108,6 +114,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
           canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
           isPermissionFlagGranted,
+          isChannelVisibilityRlsEnabled,
           objectPermissions: objectPermissions.byRoleId.get(role.id) ?? [],
           fieldPermissions: fieldPermissions.byRoleId.get(role.id) ?? [],
           rowLevelPermissionPredicates:
